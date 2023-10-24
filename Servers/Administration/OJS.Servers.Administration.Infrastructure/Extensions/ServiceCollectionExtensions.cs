@@ -7,6 +7,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Users;
+    using OJS.Servers.Infrastructure.Checks;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common.Models.Configurations;
     using SoftUni.Data.Infrastructure.Enumerations;
@@ -24,7 +25,8 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
             IConfiguration configuration)
-            => services
+        {
+            services
                 .AddWebServer<TProgram>()
                 .AddHttpContextServices()
                 .AddHangfireServer(AppName)
@@ -38,6 +40,10 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .ConfigureSettings(configuration)
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
+
+            services.AddHttpContextAccessor();
+            services.AddHealthChecks().AddCheck<HealthCheck>(nameof(HealthCheck));
+        }
 
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,

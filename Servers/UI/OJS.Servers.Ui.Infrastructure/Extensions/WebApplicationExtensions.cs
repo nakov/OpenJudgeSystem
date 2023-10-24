@@ -13,6 +13,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             this WebApplication app,
             string apiVersion)
         {
+            app.UseHealthChecks("/health");
             app
                 .UseDefaults()
                 .MapDefaultRoutes()

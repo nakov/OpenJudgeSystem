@@ -1,17 +1,18 @@
 ﻿namespace OJS.Servers.Worker.Infrastructure.Extensions
 {
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Utils;
     using OJS.Data;
+    using OJS.Servers.Infrastructure.Checks;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Worker.Models.Configuration;
     using OJS.Workers.Common;
     using OJS.Workers.SubmissionProcessors;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-
     public static class ServiceCollectionExtensions
     {
         private const string SubmissionsProcessorIdentifierNumberEnvVariableName =
@@ -31,7 +32,8 @@
                 .AddConfiguration(configuration)
                 .AddControllers();
 
-            services.AddHealthChecks();
+            services.AddHttpContextAccessor();
+            services.AddHealthChecks().AddCheck<HealthCheck>(nameof(HealthCheck));
         }
 
         public static WebApplication ConfigureWebApplication(this WebApplication app)
@@ -40,7 +42,7 @@
             app.UseAutoMapper();
             app.MapControllers();
 
-            app.MapHealthChecks("/health");
+            app.UseHealthChecks("/health");
             return app;
         }
 
