@@ -14,6 +14,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .UseDefaults()
                 .UseStaticFiles();
 
+            app.UseHealthChecks("/health");
             return app
                 .UseAutoCrudAdmin()
                 .MapDefaultRoutes()
