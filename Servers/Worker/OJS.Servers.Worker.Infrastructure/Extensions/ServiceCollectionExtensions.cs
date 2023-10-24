@@ -20,8 +20,8 @@
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
             IConfiguration configuration)
-            => services
-                .AddWebServer<TProgram>()
+        {
+            services.AddWebServer<TProgram>()
                 .AddScoped<DbContext, OjsDbContext>()
                 .AddSubmissionExecutor()
                 .AddMemoryCache()
@@ -31,12 +31,16 @@
                 .AddConfiguration(configuration)
                 .AddControllers();
 
+            services.AddHealthChecks();
+        }
+
         public static WebApplication ConfigureWebApplication(this WebApplication app)
         {
             app.UseCustomExceptionHandling();
             app.UseAutoMapper();
             app.MapControllers();
 
+            app.MapHealthChecks("/health");
             return app;
         }
 

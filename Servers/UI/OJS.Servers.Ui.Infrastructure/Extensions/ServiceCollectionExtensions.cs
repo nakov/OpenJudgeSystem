@@ -39,6 +39,8 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddLogging()
                 .ConfigureSettings(configuration)
                 .AddControllersWithViews();
+
+            services.AddHealthChecks();
         }
 
         private static IServiceCollection ConfigureSettings(
