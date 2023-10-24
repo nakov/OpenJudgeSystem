@@ -62,10 +62,11 @@ const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
 ${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
 const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
 ${administrationBaseUrl}/Contests/Edit?PK=${id}`;
+const getAdministrationTestEditUrl = (id: string) => `${administrationBaseUrl}/Tests/Edit?PK=${id}`;
 
 const getAdministrationContestProblemsInternalUrl = (id: string) => `/Contest/Problems/${id}`;
-
 const getAdministrationContestEditInternalUrl = (id: string) => `/Contest/Edit/${id}`;
+const getAdministrationTestEditInternalUrl = (id: string) => `/Tests/Edit/${id}`;
 
 const getAdministrationParticipants = (id : number) => `
 ${administrationBaseUrl}/Participants?ContestId-equals=${id}`;
@@ -312,4 +313,6 @@ export {
     getAdministrationTestsByProblem,
     getAdministrationParticipants,
     getContestsByStrategyUrl,
+    getAdministrationTestEditUrl,
+    getAdministrationTestEditInternalUrl,
 };
