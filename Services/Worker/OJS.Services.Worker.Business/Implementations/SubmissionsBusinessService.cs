@@ -74,9 +74,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeLineEndings)
         {
             submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
-                .Mutate(x => x.Input = x.Input
-                    .Replace("\r\n", "\n")
-                    .Replace("\\r\\n", "\\n"))
+                .Mutate(tc =>
+                {
+                    tc.Input = tc.Input
+                        .Replace("\r\n", "\n")
+                        .Replace("\\r\\n", "\\n");
+                    tc.Output = tc.Output
+                        .Replace("\r\n", "\n")
+                        .Replace("\\r\\n", "\\n");
+                })
                 .ToList();
         }
     }
