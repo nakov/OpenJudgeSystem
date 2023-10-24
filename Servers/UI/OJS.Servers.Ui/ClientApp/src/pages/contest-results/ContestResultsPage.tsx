@@ -102,10 +102,6 @@ const totalResultColumn: GridColDef = {
     align: 'center',
 };
 
-interface IContestResultsTypeWithRowNumber extends IContestResultsParticipationType {
-    rowNumber?: number;
-}
-
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { state: { user } } = useAuth();
