@@ -40,6 +40,7 @@ interface ISubmissionsDetailsContext {
         setDownloadErrorMessage: (message: string | null) => void;
         setCurrentSubmission: (submission: ISubmissionDetailsType | null) => void;
         setSubmissionResultsUrlParams: (params: IGetSubmissionDetailsByIdUrlParams | null) => void;
+        getDetails: (submissionId: number) => void;
     };
 }
 
@@ -278,6 +279,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 setDownloadErrorMessage,
                 setCurrentSubmission,
                 setSubmissionResultsUrlParams,
+                getDetails,
             },
         }),
         [
@@ -292,6 +294,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             isLoading,
             submissionDetailsLoading,
             setSubmissionResultsUrlParams,
+            getDetails,
         ],
     );
 

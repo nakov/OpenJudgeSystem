@@ -45,6 +45,7 @@ const SubmissionDetails = () => {
             setCurrentSubmission,
             selectSubmissionById,
             setSubmissionResultsUrlParams,
+            getDetails,
         },
     } = useSubmissionsDetails();
     const {
@@ -162,8 +163,10 @@ const SubmissionDetails = () => {
                 submissionId,
                 page: problemSubmissionsPage,
             });
+
+            getDetails(submissionId);
         },
-        [ problemSubmissionsPage, currentSubmission, setSubmissionResultsUrlParams ],
+        [ problemSubmissionsPage, currentSubmission, setSubmissionResultsUrlParams, getDetails ],
     );
 
     const handlePageChange = useCallback(
