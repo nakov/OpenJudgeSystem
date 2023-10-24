@@ -28,7 +28,10 @@ import styles from './ContestDetailsPage.module.scss';
 
 const compareByOrderBy = (p1: IContestDetailsProblemType, p2: IContestDetailsProblemType) => p1.orderBy - p2.orderBy;
 
-const getButtonAccessibility = (canParticipate: boolean | undefined, isAdminOrLecturer: boolean | undefined) => {
+const getButtonAccessibility = (
+    canParticipate: boolean | undefined,
+    isAdminOrLecturer: boolean | undefined,
+) => {
     const isAccessible = canParticipate || isAdminOrLecturer;
     const isAccessibleForAdminOrLecturerInContest = !canParticipate && isAdminOrLecturer;
     return { isAccessible, isAccessibleForAdminOrLecturerInContest };

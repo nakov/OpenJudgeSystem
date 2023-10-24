@@ -1,7 +1,7 @@
 interface IContestResultsType {
     id: number;
     name: string;
-    userHasContestRights: boolean;
+    userIsInRoleForContest: boolean;
     problems: IContestResultsProblemType[];
     results: IContestResultsParticipationType[];
 }
