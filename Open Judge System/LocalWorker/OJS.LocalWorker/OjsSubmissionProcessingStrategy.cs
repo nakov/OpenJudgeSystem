@@ -41,7 +41,7 @@
             this.submissionsForProcessingData = submissionsForProcessingData;
         }
 
-        public override IOjsSubmission RetrieveSubmission()
+        public override IOjsSubmission RetrieveSubmission(WorkerType workerType)
         {
             lock (this.SubmissionsForProcessing)
             {
@@ -49,6 +49,7 @@
                 {
                     this.submissionsForProcessingData
                         .GetAllUnprocessed()
+                        .Where(s => s.WorkerType == workerType)
                         .OrderBy(x => x.Id)
                         .Select(x => x.SubmissionId)
                         .ToList()
