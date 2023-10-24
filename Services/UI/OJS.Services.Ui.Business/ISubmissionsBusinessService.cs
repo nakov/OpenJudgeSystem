@@ -26,7 +26,6 @@
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
         // Task HardDeleteAllArchived();
-       // SubmissionDetailsWithResultsModel
 
         Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page);
 
