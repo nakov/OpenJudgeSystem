@@ -64,7 +64,7 @@ public class SubmissionsController : BaseApiController
         bool withStackTrace)
     {
         var result = new FullExecutionResultResponseModel();
-
+        var startedExecutionTime = DateTime.UtcNow;
         try
         {
             var executionResult = this.submissionsBusiness.ExecuteSubmission(submission);
@@ -80,6 +80,10 @@ public class SubmissionsController : BaseApiController
         catch (Exception ex)
         {
             result.SetException(ex, withStackTrace);
+        }
+        finally
+        {
+            result.SetStartedAndCompletedExecutionOn(startedExecutionTime, completedExecutionOn: DateTime.UtcNow);
         }
 
         return await Task.FromResult(result);
