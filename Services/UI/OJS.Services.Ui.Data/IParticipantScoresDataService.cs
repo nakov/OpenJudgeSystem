@@ -10,6 +10,8 @@ namespace OJS.Services.Ui.Data
 
     public interface IParticipantScoresDataService : IDataService<ParticipantScore>
     {
+        Task<IEnumerable<ParticipantScore>> GetByParticipantId(int participantId);
+
         Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId);
 
         Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId);
@@ -42,8 +44,5 @@ namespace OJS.Services.Ui.Data
         Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByProblemIdsAndParticipation(
             IEnumerable<int> problemIds,
             IEnumerable<int> participantIds);
-
-        Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByParticipation(
-            int participantId);
     }
 }

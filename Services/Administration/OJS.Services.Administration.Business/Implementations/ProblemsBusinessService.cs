@@ -7,7 +7,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
-    using OJS.Data.Models.Submissions;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
     using OJS.Services.Common;
@@ -15,7 +14,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure.Exceptions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
@@ -59,49 +57,11 @@ namespace OJS.Services.Administration.Business.Implementations
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         }
 
-        public async Task RetestById(int id)
-        {
-            var submissions = await this.submissionsData.GetAllByProblem(id)
-                .Include(s => s.SubmissionType)
-                .Include(s => s.Problem)
-                .Include(s => s.Problem!.Checker)
-                .Include(s => s.Problem!.Tests)
-                .ToListAsync();
-
-            var submissionIds = submissions.Select(s => s.Id).ToList();
-
-            using (var scope = TransactionsHelper.CreateTransactionScope(
-                       IsolationLevel.RepeatableRead,
-                       TransactionScopeAsyncFlowOption.Enabled))
-            {
-                await this.participantScoresData.DeleteAllByProblem(id);
-
-                await this.submissionsData.SetAllToUnprocessedByProblem(id);
-
-                await this.submissionsForProcessingData.AddOrUpdateBySubmissionIds(submissionIds);
-
-                scope.Complete();
-            }
-
-            await submissions.ForEachSequential(async s =>
-            {
-                await this.testRunsData.DeleteBySubmission(s.Id);
-
-                await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(
-                    s.Map<SubmissionServiceModel>());
-            });
-        }
-
         public async Task DeleteById(int id)
         {
             var problem = this.problemsData
                 .GetByIdQuery(id)
-                .Select(p => new
-                {
-                    p.ProblemGroupId,
-                    p.ProblemGroup.ContestId,
-                    p.IsDeleted,
-                })
+                .Select(p => new { p.ProblemGroupId, p.ProblemGroup.ContestId, p.IsDeleted, })
                 .FirstOrDefault();
 
             if (problem == null || problem.IsDeleted)
@@ -179,6 +139,28 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
+
+        public async Task RetestById(int id)
+        {
+            var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id);
+
+            var submissionIds = submissions.Select(s => s.Id).ToList();
+
+            using (var scope = TransactionsHelper.CreateTransactionScope(
+                       IsolationLevel.RepeatableRead,
+                       TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
+
+                await this.participantScoresData.DeleteAllByProblem(id);
+
+                await this.submissionsData.SetAllToUnprocessedByProblem(id);
+
+                scope.Complete();
+            }
+
+            await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
+        }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
         {
