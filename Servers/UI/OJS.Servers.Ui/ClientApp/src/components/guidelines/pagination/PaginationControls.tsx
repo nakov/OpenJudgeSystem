@@ -1,6 +1,7 @@
 import React from 'react';
 import Pagination from '@mui/material/Pagination';
 
+import { PageBoundaryCount, PageSiblingCount } from '../../../common/constants';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
 
@@ -23,9 +24,13 @@ const PaginationControls = ({
     return (
         <Pagination
           count={count}
+          siblingCount={PageSiblingCount}
+          boundaryCount={PageBoundaryCount}
           onChange={(ev, value) => onChange(value)}
           page={page}
           className={paginationClassNames}
+          showFirstButton
+          showLastButton
         />
     );
 };

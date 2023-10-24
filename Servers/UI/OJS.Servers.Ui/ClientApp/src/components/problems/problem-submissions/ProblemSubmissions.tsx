@@ -52,10 +52,8 @@ const ProblemSubmissions = () => {
     const handlePageChange = useCallback(
         (page: number) => {
             changeProblemSubmissionsPage(page);
-
-            loadSubmissions(currentProblem!.id, page);
         },
-        [ changeProblemSubmissionsPage, currentProblem, loadSubmissions ],
+        [ changeProblemSubmissionsPage ],
     );
 
     const refreshButtonClass = 'refreshButton';
