@@ -78,7 +78,7 @@ const routes = [
         Element: AdministrationPage,
     },
     {
-        path: '/Submissions/Retest',
+        path: '/Submissions/Retest/:submissionId',
         Element: SubmissionRetestPage,
     },
     {
