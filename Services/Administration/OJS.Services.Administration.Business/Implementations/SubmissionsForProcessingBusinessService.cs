@@ -1,9 +1,10 @@
-namespace OJS.Services.Administration.Business.Implementations;
+﻿namespace OJS.Services.Administration.Business.Implementations;
 
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
@@ -46,33 +47,36 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
         }
     }
 
-    public int EnqueuePendingSubmissions()
+    public async Task<int> EnqueuePendingSubmissions()
     {
-        var submissionsForProcessing = this.submissionsForProcessingData
+        var submissionsForProcessing = (await this.submissionsForProcessingData
             .GetAllPending()
-            .ToList()
-            .Where(sfp => Math.Abs(sfp!.CreatedOn.Subtract(DateTime.UtcNow).TotalMinutes) >= 1);
+            .ToListAsync())
+            .Where(sfp => Math.Abs(sfp!.CreatedOn.Subtract(DateTime.UtcNow).TotalMinutes) >= 1)
+            .ToList();
 
         if (!submissionsForProcessing.Any())
         {
             return 0;
         }
 
-        var submissions = this.submissionsData
+        var submissions = await this.submissionsData
             .GetByIds(submissionsForProcessing
                 .Select(sp => sp!.SubmissionId))
             .MapCollection<SubmissionServiceModel>()
-            .ToList();
+            .ToListAsync();
 
-        submissions
+        await submissions
             .ForEachSequential((submission) =>
                 this.submissionsCommonBusinessService
-                    .PublishSubmissionForProcessing(submission))
-            .GetAwaiter()
-            .GetResult();
+                    .PublishSubmissionForProcessing(submission));
 
         return submissions.Count;
     }
 
-    public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();
+    public async Task DeleteProcessedSubmissions()
+    {
+        this.submissionsForProcessingData.Delete(sfp => sfp.Processed && !sfp.Processing);
+        await this.submissionsForProcessingData.SaveChanges();
+    }
 }

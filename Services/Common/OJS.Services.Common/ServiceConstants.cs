@@ -95,22 +95,5 @@
                 public const string PlainText = "plaintext";
             }
         }
-
-        public static class BackgroundJobs
-        {
-            public static class JobNames
-            {
-                public const string EnqueuePendingSubmissionsJobName = "EnqueuePendingSubmissionsForProcessing";
-
-                public const string DeleteOldSubmissionsJobName = "DeleteSubmissionForProcessingOlderThanADay";
-            }
-
-            public static class JobCrons
-            {
-                public const string EnqueuePendingSubmissionsJobCron = "*/3 * * * *";
-
-                public const string DeleteOldSubmissionsJobCron = "0 2 * * *";
-            }
-        }
     }
 }

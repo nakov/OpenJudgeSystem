@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
-using SoftUni.Services.Infrastructure;
 using Models.Submissions;
 
-public interface ISubmissionsForProcessingCommonDataService : IService
+public interface ISubmissionsForProcessingCommonDataService : IDataService<SubmissionForProcessing>
 {
     IQueryable<SubmissionForProcessing?> GetAllPending();
 
@@ -32,6 +31,4 @@ public interface ISubmissionsForProcessingCommonDataService : IService
     Task MarkMultipleForProcessing(ICollection<int> submissionsIds);
 
     Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
-
-    Task CleanProcessedSubmissions();
 }
