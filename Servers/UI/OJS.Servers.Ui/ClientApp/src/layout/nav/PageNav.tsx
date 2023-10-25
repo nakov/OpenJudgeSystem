@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
+import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import { useAuth } from '../../hooks/use-auth';
 
@@ -35,11 +35,15 @@ const PageNav = () => {
 
     const itemFunc = ({ name, link, isPrimary, id }: IRouteType) => {
         const type = isPrimary
-            ? LinkButtonType.primary
-            : LinkButtonType.secondary;
+            ? ButtonType.primary
+            : ButtonType.secondary;
+
+        const handleButtonClick = () => {
+            window.location.href = link;
+        };
 
         return (
-            <LinkButton to={link} id={id} text={name} type={type} className={styles.btn} />
+            <Button onClick={handleButtonClick} id={id} text={name} type={type} className={styles.btn} />
         );
     };
 
