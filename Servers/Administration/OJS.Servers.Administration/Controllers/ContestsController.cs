@@ -30,7 +30,6 @@ namespace OJS.Servers.Administration.Controllers
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestsBusinessService contestsBusinessService;
-        private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
 
         public ContestsController(
@@ -38,7 +37,6 @@ namespace OJS.Servers.Administration.Controllers
             IParticipantsDataService participantsData,
             ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
-            IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper,
             IContestsBusinessService contestsBusinessService)
         {
@@ -46,7 +44,6 @@ namespace OJS.Servers.Administration.Controllers
             this.participantsData = participantsData;
             this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
             this.contestValidatorsFactory = contestValidatorsFactory;
-            this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
             this.contestsBusinessService = contestsBusinessService;
         }
