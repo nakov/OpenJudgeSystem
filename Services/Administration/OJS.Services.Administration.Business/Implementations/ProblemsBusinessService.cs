@@ -134,7 +134,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 throw new BusinessServiceException("Problem cannot be null");
             }
 
-            return await this.contestsBusiness.UserHasContestPermissions(problem.ProblemGroup.Contest, userId, isUserAdmin);
+            return await this.contestsBusiness.UserHasContestPermissions(problem.ProblemGroup.Contest.Id, userId, isUserAdmin);
         }
 
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
