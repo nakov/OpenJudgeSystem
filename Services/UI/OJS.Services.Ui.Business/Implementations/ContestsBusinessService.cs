@@ -243,6 +243,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
             var isOfficialOnlineContest = participationModel.ContestIsCompete && contest.IsOnlineExam;
+            participationModel.Contest.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {
@@ -276,7 +277,8 @@ namespace OJS.Services.Ui.Business.Implementations
             var modelResult = new ContestSearchServiceResultModel();
 
             var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
-                .Where(c => c.Name!.Contains(model.SearchTerm!));
+                .Where(c => (c.Name != null && c.Name.Contains(model.SearchTerm ?? string.Empty)) &&
+                            (c.Category != null && c.Category.IsVisible));
 
             var searchContests = await allContestsQueryable
                 .MapCollection<ContestSearchServiceModel>()
