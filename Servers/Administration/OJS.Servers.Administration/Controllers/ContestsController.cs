@@ -139,10 +139,9 @@ namespace OJS.Servers.Administration.Controllers
 
             if (actionContext.Action != EntityAction.Create)
             {
-                var userHasPermissions = await this.contestsValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.Id);
-
-                userHasPermissions.VerifyResult();
+                await this.contestsValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.Id)
+                    .VerifyResult();
             }
 
             if (!entity.IsOnlineExam && entity.Duration != null)
