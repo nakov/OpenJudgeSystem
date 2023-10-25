@@ -20,6 +20,10 @@ public class ProcessedSubmissionPubSubModel : IMapExplicitly
 
     public ExecutionResultServiceModel? ExecutionResult { get; set; }
 
+    public DateTime? StartedExecutionOn { get; set; }
+
+    public DateTime? CompletedExecutionOn { get; set; }
+
     public void SetExecutionResult(ExecutionResultServiceModel executionResultModel)
     {
         this.ExecutionResult = executionResultModel;
@@ -30,6 +34,12 @@ public class ProcessedSubmissionPubSubModel : IMapExplicitly
     {
         this.Exception = new ExceptionModel(exception, includeStackTrace);
         this.ExecutionResult = null;
+    }
+
+    public void SetStartedAndCompletedExecutionOn(DateTime startedExecutionOn, DateTime completedExecutionOn)
+    {
+        this.StartedExecutionOn = startedExecutionOn;
+        this.CompletedExecutionOn = completedExecutionOn;
     }
 
     public void RegisterMappings(IProfileExpression configuration)

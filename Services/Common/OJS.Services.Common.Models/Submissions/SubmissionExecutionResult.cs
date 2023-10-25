@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Common.Models.Submissions
 {
     using OJS.Workers.SubmissionProcessors.Models;
+    using System;
 
     public class SubmissionExecutionResult
     {
@@ -9,5 +10,9 @@
         public ExceptionModel? Exception { get; set; }
 
         public ExecutionResultServiceModel? ExecutionResult { get; set; }
+
+        public DateTime? StartedExecutionOn { get; set; }
+
+        public DateTime? CompletedExecutionOn { get; set; }
     }
 }
