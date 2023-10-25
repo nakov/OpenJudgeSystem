@@ -288,13 +288,6 @@ const SubmissionDetails = () => {
         [ currentSubmission ],
     );
 
-    useEffect(
-        () => () => {
-            setSubmissionResultsUrlParams(null);
-        },
-        [ setSubmissionResultsUrlParams ],
-    );
-
     const { pagesCount } = pagesInfo;
     const refreshableSubmissionsList = useCallback(
         () => (

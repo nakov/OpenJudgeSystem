@@ -23,7 +23,6 @@ import {
     ISubmissionType,
     ITestRunType,
 } from './types';
-import { useProblemSubmissions } from './use-problem-submissions';
 
 interface ISubmissionsDetailsContext {
     state: {
@@ -80,7 +79,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
         setSubmissionResultsUrlParams,
     ] = useState<IGetSubmissionDetailsByIdUrlParams | null>();
 
-    const { state: { problemSubmissionsPage } } = useProblemSubmissions();
     const { populatePageInformation } = usePages();
 
     const {
@@ -249,17 +247,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             })();
         },
         [ currentSubmissionId, getDetails ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(currentSubmissionId) || Number.isNaN(currentSubmissionId) || !isNil(submissionResultsUrlParams)) {
-                return;
-            }
-
-            getResults(currentSubmissionId, problemSubmissionsPage);
-        },
-        [ currentSubmissionId, getResults, problemSubmissionsPage, submissionResultsUrlParams ],
     );
 
     const value = useMemo(
