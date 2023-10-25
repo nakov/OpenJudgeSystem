@@ -6,7 +6,8 @@ import {
     ITestRunDetailsCollapsed,
     ITestRunDetailsType,
 } from '../../../../hooks/submissions/types';
-import Button, { ButtonType } from '../../../guidelines/buttons/Button';
+import { getAdministrationTestEditInternalUrl } from '../../../../utils/urls';
+import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import TestRunDiffView from '../../test-run-diff-view/TestRunDiffView';
 
 import styles from './SubmissionResultsDetails.module.scss';
@@ -74,12 +75,14 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                 #
                 {testRun.id}
             </span>
-            <br />
-            <span className={styles.testIdColor}>
-                Test
-                #
-                {testRun.testId}
-            </span>
+            <LinkButton
+              type={LinkButtonType.plain}
+              size={ButtonSize.medium}
+              to={getAdministrationTestEditInternalUrl(testRun.testId.toString())}
+              text={`Test# ${testRun.testId}`}
+              className={styles.testIdColor}
+              isToExternal
+            />
         </div>
     );
 
