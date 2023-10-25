@@ -35,6 +35,7 @@ using static Constants.PublicSubmissions;
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
     private readonly ISubmissionsDataService submissionsData;
+    private readonly ISubmissionsCommonDataService submissionsCommonData;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
@@ -59,6 +60,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
+        ISubmissionsCommonDataService submissionsCommonData,
         IUsersBusinessService usersBusiness,
         IProblemsDataService problemsDataService,
         IParticipantsBusinessService participantsBusinessService,
@@ -78,6 +80,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ILogger<SubmissionsBusinessService> logger)
     {
         this.submissionsData = submissionsData;
+        this.submissionsCommonData = submissionsCommonData;
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
         this.participantsBusinessService = participantsBusinessService;
@@ -556,26 +559,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
-    {
-        var submissionsForProcessing =
-            await this.submissionsForProcessingData
-                .GetAllProcessing<SubmissionForProcessingServiceModel>();
-
-        if (submissionsForProcessing.IsEmpty())
-        {
-            return new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-        }
-
-        var submissions = this.submissionsData
-            .GetAllByIdsQuery(
-                submissionsForProcessing
-                    .Select(sp => sp.SubmissionId));
-
-        return submissions
+        => await this.submissionsCommonData
+            .GetAllProcessing()
             .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResult(DefaultSubmissionsPerPage, page);
-    }
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
     {
@@ -590,26 +578,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
-    {
-        var pendingSubmissions = await this.submissionsForProcessingData
+        => await this.submissionsCommonData
             .GetAllPending()
-            .ToListAsync();
-
-        if (pendingSubmissions.IsEmpty())
-        {
-            return new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-        }
-
-        var submissions = this.submissionsData
-            .GetAllByIdsQuery(
-                pendingSubmissions
-                    .Select(sp => sp!.SubmissionId));
-
-        return submissions
             .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResult(DefaultSubmissionsPerPage, page);
-    }
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
 
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();

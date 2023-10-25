@@ -5,9 +5,14 @@ using SoftUni.Services.Infrastructure;
 
 public interface ISubmissionsForProcessingBusinessService : IService
 {
-    Task ResetAllProcessingSubmissions();
+    /// <summary>
+    /// Enqueues all submissions that are pending (not added in the queue, nor processing).
+    /// </summary>
+    /// <returns>The count of submissions enqueued.</returns>
+    Task<int> EnqueuePendingSubmissions();
 
-    int EnqueuePendingSubmissions();
-
-    void DeleteProcessedSubmissions();
+    /// <summary>
+    /// Deletes all processed (and not processing) submissions from the SubmissionsForProcessing table.
+    /// </summary>
+    Task DeleteProcessedSubmissions();
 }
