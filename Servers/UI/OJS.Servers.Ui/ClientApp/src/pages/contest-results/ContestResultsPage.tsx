@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, getGridNumericOperators, getGridStringOperators, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
@@ -7,7 +7,12 @@ import { contestParticipationType } from '../../common/contest-helpers';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { IContestResultsParticipationProblemType, IContestResultsParticipationType, IContestResultsType } from '../../hooks/contests/types';
+import {
+    IContestResultsParticipationProblemType,
+    IContestResultsParticipationType,
+    IContestResultsProblemType,
+    IContestResultsType,
+} from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { useAuth } from '../../hooks/use-auth';
 import { usePageTitles } from '../../hooks/use-page-titles';
@@ -16,6 +21,25 @@ import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestResultPage.module.scss';
 
+interface IContestResultsTypeWithRowNumber extends IContestResultsParticipationType {
+    rowNumber?: number;
+}
+
+const getBestSubmission = (
+    params: GridRenderCellParams<number>,
+    problem : IContestResultsProblemType,
+) => {
+    const problemResult = params.row.problemResults
+        .find((pr: IContestResultsParticipationProblemType) => pr.problemId ===
+        problem.id) as IContestResultsParticipationProblemType;
+    const bestSubmission = problemResult?.bestSubmission;
+
+    return bestSubmission ?? null;
+};
+
+const stringFilterOperators = getGridStringOperators().filter(({ value }) => [ 'equals', 'contains' ].includes(value));
+const numericFilterOperators = getGridNumericOperators().filter(({ value }) => [ '=', '!=', '>', '<' ].includes(value));
+
 const participantNamesColumns: GridColDef[] = [
     {
         field: 'participantUsername',
@@ -23,9 +47,11 @@ const participantNamesColumns: GridColDef[] = [
         minWidth: 160,
         flex: 1,
         sortable: true,
+        filterOperators: stringFilterOperators,
         headerClassName: styles.headerContent,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (params) => params.value.trim(),
         renderCell: (params) => (
             <div className={styles.columnContent}>
                 {params.value}
@@ -39,9 +65,12 @@ const participantNamesColumns: GridColDef[] = [
         minWidth: 100,
         flex: 1,
         sortable: false,
+        filterable: true,
+        filterOperators: stringFilterOperators,
         headerClassName: styles.headerContent,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (params) => params.value.trim(),
         renderCell: (params) => (
             <div className={styles.columnContent}>
                 {params.value}
@@ -59,6 +88,7 @@ const rowNumberColumn: GridColDef = {
     headerAlign: 'center',
     headerClassName: styles.headerContent,
     align: 'center',
+    filterOperators: numericFilterOperators,
 };
 
 const totalResultColumn: GridColDef = {
@@ -68,14 +98,11 @@ const totalResultColumn: GridColDef = {
     minWidth: 70,
     flex: 1,
     sortable: true,
+    filterOperators: numericFilterOperators,
     headerAlign: 'center',
     headerClassName: styles.headerContent,
     align: 'center',
 };
-
-interface IContestResultsTypeWithRowNumber extends IContestResultsParticipationType {
-    rowNumber?: number;
-}
 
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
@@ -113,6 +140,12 @@ const ContestResultsPage = () => {
         minWidth: 50,
         flex: 1,
         sortable: true,
+        valueGetter: (parameters: GridRenderCellParams<number>) => {
+            const bestSubmission = getBestSubmission(parameters, p);
+            return bestSubmission?.points ?? -1;
+        },
+        sortComparator: (v1: number, v2: number) => v1 - v2,
+        filterable: false,
         headerAlign: 'center',
         headerClassName: styles.headerContent,
         align: 'center',

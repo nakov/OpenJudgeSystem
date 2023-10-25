@@ -16,8 +16,4 @@ public class ExecutionResultResponseModel : IMapFrom<ExecutionResultServiceModel
     public OutputResultResponseModel? OutputResult { get; set; }
 
     public TaskResultResponseModel? TaskResult { get; set; }
-
-    public DateTime? StartedExecutionOn { get; set; }
-
-    public DateTime? CompletedExecutionOn { get; set; }
 }
