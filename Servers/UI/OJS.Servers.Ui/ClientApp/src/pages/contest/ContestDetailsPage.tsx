@@ -313,7 +313,7 @@ const ContestDetailsPage = () => {
             return (
                 <div className={styles.container}>
                     <ContestBreadcrumb
-                      withContest
+                      withContestName
                       contestName={contestDetails?.name}
                       categoryId={contestDetails?.categoryId.toString()}
                     />

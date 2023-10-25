@@ -193,7 +193,7 @@ const ContestsPage = () => {
                     horizontal={AlertHorizontalOrientation.Right}
                   />
               )}
-            <ContestBreadcrumb withContest={false} />
+            <ContestBreadcrumb />
             <div className={styles.container}>
                 <ContestFilters onFilterClick={handleFilterClick} />
                 <div className={styles.mainHeader}>

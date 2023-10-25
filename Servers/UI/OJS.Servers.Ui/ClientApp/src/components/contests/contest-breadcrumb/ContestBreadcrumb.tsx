@@ -14,12 +14,16 @@ import { Button, ButtonType } from '../../guidelines/buttons/Button';
 import styles from './ContestBreadcrumb.module.scss';
 
 interface IContestBreadcrumbProps {
-    withContest: boolean;
+    withContestName?: boolean;
     contestName?: string;
     categoryId?: string;
 }
 
-const ContestBreadcrumb = ({ withContest, contestName, categoryId }: IContestBreadcrumbProps) => {
+const ContestBreadcrumb = ({
+    withContestName = false,
+    contestName,
+    categoryId,
+}: IContestBreadcrumbProps) => {
     const { state: { possibleFilters }, actions: { toggleParam } } = useContests();
     const navigate = useNavigate();
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -32,7 +36,7 @@ const ContestBreadcrumb = ({ withContest, contestName, categoryId }: IContestBre
                 return;
             }
 
-            if (withContest) {
+            if (withContestName) {
                 const filter = possibleFilters.find((x) => x.value.toString() === categoryId) as IFilter;
                 if (isNil(filter)) {
                     return;
@@ -44,14 +48,14 @@ const ContestBreadcrumb = ({ withContest, contestName, categoryId }: IContestBre
             updateBreadcrumb(category, categoriesFlat);
             navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
         },
-        [ categoriesFlat, navigate, updateBreadcrumb, toggleParam, categoryId, possibleFilters, withContest ],
+        [ categoriesFlat, navigate, updateBreadcrumb, toggleParam, categoryId, possibleFilters, withContestName ],
     );
 
     const renderCategoriesBreadcrumbItem = useCallback(
         (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
             const { value, isLast } = categoryBreadcrumbItem;
 
-            const classNames = withContest
+            const classNames = withContestName
                 ? styles.breadcrumbBtn
                 : concatClassNames(styles.breadcrumbBtnWithoutContestName, isLast
                     ? styles.breadcrumbBtnLast
@@ -66,13 +70,13 @@ const ContestBreadcrumb = ({ withContest, contestName, categoryId }: IContestBre
                 />
             );
         },
-        [ updateBreadcrumbAndNavigateToCategory, withContest ],
+        [ updateBreadcrumbAndNavigateToCategory, withContestName ],
     );
 
     return (
         <div className={styles.breadCrumbContainer}>
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
-            {withContest && (
+            {withContestName && (
             <span className={styles.breadcrumbContestName}>
                 <span>/</span>
                 <span>{contestName}</span>

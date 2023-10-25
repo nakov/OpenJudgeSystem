@@ -236,7 +236,7 @@ const Contest = () => {
                         : (
                             <>
                                 <ContestBreadcrumb
-                                  withContest
+                                  withContestName
                                   contestName={contest?.name}
                                   categoryId={contest?.categoryId.toString()}
                                 />
