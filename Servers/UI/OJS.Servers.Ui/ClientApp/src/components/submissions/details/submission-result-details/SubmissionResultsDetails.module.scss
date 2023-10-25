@@ -60,7 +60,11 @@
     gap: 20px;
     
     .testIdColor {
-      color: colors.$primary-green
+      color: colors.$primary-green;
+      
+      &:hover {
+        text-decoration: underline;
+      }
     }
     
     .testRunIdColor {
