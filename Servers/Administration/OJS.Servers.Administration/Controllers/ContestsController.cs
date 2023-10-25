@@ -29,6 +29,7 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IParticipantsDataService participantsData;
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
+        private readonly IContestsBusinessService contestsBusinessService;
         private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
 
@@ -38,7 +39,8 @@ namespace OJS.Servers.Administration.Controllers
             ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper contestCategoriesValidationHelper,
-            IContestsValidationHelper contestsValidationHelper)
+            IContestsValidationHelper contestsValidationHelper,
+            IContestsBusinessService contestsBusinessService)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
@@ -46,6 +48,7 @@ namespace OJS.Servers.Administration.Controllers
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
+            this.contestsBusinessService = contestsBusinessService;
         }
 
         protected override Expression<Func<Contest, bool>>? MasterGridFilter
@@ -124,42 +127,22 @@ namespace OJS.Servers.Administration.Controllers
                 return;
             }
 
-            var userHasContestRightsValidationResult = await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(entity.Id);
-
-            var userHasContestRights = userHasContestRightsValidationResult.IsValid;
-
-            var userHasCategoryRightsValidationResult = await this.contestCategoriesValidationHelper
-                .ValidatePermissionsOfCurrentUser(entity.CategoryId!.Value);
-
-            var userHasCategoryRights = userHasCategoryRightsValidationResult.IsValid;
-
-            if (userHasContestRights || userHasCategoryRights)
-            {
-                return;
-            }
-
-            userHasContestRightsValidationResult.VerifyResult();
-            userHasCategoryRightsValidationResult.VerifyResult();
+            await this.contestsBusinessService.UserHasContestPermissions(
+                entity,
+                this.User.GetId(),
+                this.User.IsAdmin());
         }
 
         protected override async Task BeforeEntitySaveAsync(Contest entity, AdminActionContext actionContext)
         {
             await base.BeforeEntitySaveAsync(entity, actionContext);
 
-            if (entity.CategoryId.HasValue)
-            {
-                await this.contestCategoriesValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.CategoryId.Value)
-                    .VerifyResult();
-            }
+            var userHasPermissions = await this.contestsValidationHelper
+                .ValidatePermissionsOfCurrentUser(
+                    entity.Id,
+                    entity.CategoryId);
 
-            if (actionContext.Action != EntityAction.Create)
-            {
-                await this.contestsValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.Id)
-                    .VerifyResult();
-            }
+            userHasPermissions.VerifyResult();
 
             if (!entity.IsOnlineExam && entity.Duration != null)
             {

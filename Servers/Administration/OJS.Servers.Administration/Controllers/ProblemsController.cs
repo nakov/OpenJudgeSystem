@@ -159,9 +159,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         var userId = this.User.GetId();
         var userIsAdmin = this.User.IsAdmin();
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, userIsAdmin))
+        var userHasContestPermissionsValidationResult =
+            await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(problem.ContestId);
+
+        try
         {
-            this.TempData.AddDangerMessage(GeneralResource.NoPrivilegesMessage);
+            userHasContestPermissionsValidationResult.VerifyResult();
+        }
+        catch (BusinessServiceException e)
+        {
+            this.TempData.AddDangerMessage(e.Message);
             return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, problem.ContestId);
         }
 
@@ -178,12 +185,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        var userId = this.User.GetId();
-        var userIsAdmin = this.User.IsAdmin();
+        var userHasContestPermissionsValidationResult =
+            await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(model.ContestId);
 
-        if (!await this.contestsBusiness.UserHasContestPermissions(model.ContestId, userId, userIsAdmin))
+        try
         {
-            this.TempData.AddDangerMessage(GeneralResource.NoPrivilegesMessage);
+            userHasContestPermissionsValidationResult.VerifyResult();
+        }
+        catch (BusinessServiceException e)
+        {
+            this.TempData.AddDangerMessage(e.Message);
             return this.RedirectToAction("Index", "Problems");
         }
 

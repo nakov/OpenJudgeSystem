@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 public interface IContestsValidationHelper : IService
 {
+    Task<ValidationResult> ValidatePermissionsOfCurrentUser(int? contestId, int? categoryId);
+
     Task<ValidationResult> ValidatePermissionsOfCurrentUser(int? contestId);
 }
