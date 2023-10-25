@@ -37,10 +37,9 @@ public class ResultsController : BaseAdminViewController
     [HttpPost]
     public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
     {
-        var userHasContestPermissionsValidationResult = await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(model.Id);
-
-        userHasContestPermissionsValidationResult.VerifyResult();
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(model.Id)
+            .VerifyResult();
 
         var contest = await this.contestsData.GetByIdWithProblems(model.Id);
 

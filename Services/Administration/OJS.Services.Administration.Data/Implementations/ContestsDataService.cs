@@ -125,10 +125,6 @@ namespace OJS.Services.Administration.Data.Implementations
                     c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
 
-        public Task<bool> IsUserLecturerInByContestAndUser(Contest contest, string? userId)
-            => Task.FromResult(contest.LecturersInContests.Any(l => l.LecturerId == userId) ||
-                               contest.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
-
         public Task<bool> IsUserParticipantInByContestAndUser(int id, string? userId)
             => this.DbSet
                 .AnyAsync(c =>

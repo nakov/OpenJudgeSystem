@@ -127,14 +127,14 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin)
         {
-            var problem = await this.problemsData.OneById(problemId);
+            var problem = await this.problemsData.OneByIdTo<ProblemShortDetailsServiceModel>(problemId);
 
             if (problem == null)
             {
                 throw new BusinessServiceException("Problem cannot be null");
             }
 
-            return await this.contestsBusiness.UserHasContestPermissions(problem.ProblemGroup.Contest.Id, userId, isUserAdmin);
+            return await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, isUserAdmin);
         }
 
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)

@@ -24,21 +24,8 @@ public class ContestsBusinessService : IContestsBusinessService
         int contestId,
         string? userId,
         bool isUserAdmin)
-    {
-        if (!string.IsNullOrWhiteSpace(userId) && isUserAdmin)
-        {
-            return true;
-        }
-
-        var userIsLecturerInContest = await this.contestsData.IsUserLecturerInByContestAndUser(contestId, userId);
-
-        if (userIsLecturerInContest)
-        {
-            return true;
-        }
-
-        return false;
-    }
+        => !string.IsNullOrWhiteSpace(userId) &&
+            (isUserAdmin || await this.contestsData.IsUserLecturerInByContestAndUser(contestId, userId));
 
     public async Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>()
         where TServiceModel : class

@@ -156,15 +156,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        var userId = this.User.GetId();
-        var userIsAdmin = this.User.IsAdmin();
-
-        var userHasContestPermissionsValidationResult =
-            await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(problem.ContestId);
-
         try
         {
-            userHasContestPermissionsValidationResult.VerifyResult();
+            await this.contestsValidationHelper
+                .ValidatePermissionsOfCurrentUser(problem.ContestId)
+                .VerifyResult();
         }
         catch (BusinessServiceException e)
         {
@@ -185,12 +181,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        var userHasContestPermissionsValidationResult =
-            await this.contestsValidationHelper.ValidatePermissionsOfCurrentUser(model.ContestId);
-
         try
         {
-            userHasContestPermissionsValidationResult.VerifyResult();
+            await this.contestsValidationHelper
+                .ValidatePermissionsOfCurrentUser(model.ContestId)
+                .VerifyResult();
         }
         catch (BusinessServiceException e)
         {
