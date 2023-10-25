@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import { IContestDetailsProblemType, IProblemResourceType } from '../../common/types';
+import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import { ButtonState, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List from '../../components/guidelines/lists/List';
@@ -311,6 +312,11 @@ const ContestDetailsPage = () => {
 
             return (
                 <div className={styles.container}>
+                    <ContestBreadcrumb
+                      withContest
+                      contestName={contestDetails?.name}
+                      categoryId={contestDetails?.categoryId.toString()}
+                    />
                     <div className={styles.headingContest}>{contestDetails?.name}</div>
                     <div className={styles.contestDetailsAndTasks}>
                         <div className={styles.detailsContainer}>

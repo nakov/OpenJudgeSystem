@@ -1,0 +1,35 @@
+﻿@use 'src/styles/colors';
+
+.breadcrumbBtn {
+  color: colors.$light-blue-color;
+}
+
+.breadcrumbBtnWithoutContestName {
+  color: colors.$text-light-gray-color;
+
+  &:hover {
+    color: colors.$text-dark-gray-color;
+  }
+}
+
+.breadcrumbBtnLast {
+  color: colors.$text-dark-gray-color;
+}
+
+.breadCrumbContainer {
+  justify-content: center;
+  display: flex;
+  gap: 6px;
+}
+
+.breadcrumbContestName {
+  align-items: center;
+  color: colors.$text-light-gray-color;
+  display: flex;
+  gap: 6px;
+  font-size: 1rem;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.00938em;
+  line-height: 1.5;
+}
