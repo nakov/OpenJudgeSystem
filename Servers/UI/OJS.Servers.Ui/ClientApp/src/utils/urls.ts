@@ -80,18 +80,6 @@ ${administrationBaseUrl}/Problems/Edit?PK=${id}`;
 const administrationDeleteProblem = (id : number) => `
 ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
-const getAdministrationParticipants = (id : number) => `
-${administrationBaseUrl}/Participants?ContestId-equals=${id}`;
-
-const getAdministrationTestsByProblem = (id : number) => `
-${administrationBaseUrl}/Tests?ProblemId-equals=${id}`;
-
-const administrationEditProblem = (id : number) => `
-${administrationBaseUrl}/Problems/Edit?PK=${id}`;
-
-const administrationDeleteProblem = (id : number) => `
-${administrationBaseUrl}/Problems/Delete?PK=${id}`;
-
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
