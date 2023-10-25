@@ -51,6 +51,7 @@ const participantNamesColumns: GridColDef[] = [
         headerClassName: styles.headerContent,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (params) => params.value.trim(),
         renderCell: (params) => (
             <div className={styles.columnContent}>
                 {params.value}
@@ -69,6 +70,7 @@ const participantNamesColumns: GridColDef[] = [
         headerClassName: styles.headerContent,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (params) => params.value.trim(),
         renderCell: (params) => (
             <div className={styles.columnContent}>
                 {params.value}
