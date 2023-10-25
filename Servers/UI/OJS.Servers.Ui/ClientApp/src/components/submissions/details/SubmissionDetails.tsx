@@ -39,7 +39,6 @@ const SubmissionDetails = () => {
             downloadErrorMessage,
         },
         actions: {
-            getResults,
             downloadProblemSubmissionFile,
             setDownloadErrorMessage,
             setCurrentSubmission,
@@ -172,12 +171,8 @@ const SubmissionDetails = () => {
     const handlePageChange = useCallback(
         (page: number) => {
             changeProblemSubmissionsPage(page);
-
-            const { id } = currentSubmission!;
-
-            getResults(id, page);
         },
-        [ changeProblemSubmissionsPage, currentSubmission, getResults ],
+        [ changeProblemSubmissionsPage ],
     );
 
     const renderRetestButton = useCallback(
