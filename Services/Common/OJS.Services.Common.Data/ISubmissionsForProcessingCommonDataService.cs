@@ -12,10 +12,6 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     IQueryable<SubmissionForProcessing> GetAllUnprocessed();
 
-    Task<int> GetAllUnprocessedCount();
-
-    Task<IEnumerable<int>> GetIdsOfAllProcessing();
-
     IQueryable<SubmissionForProcessing> GetAllProcessing();
 
     Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails);
@@ -23,8 +19,6 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
     Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
 
     Task RemoveBySubmission(int submissionId);
-
-    Task ResetProcessingStatusById(int id);
 
     Task MarkProcessing(int submissionId);
 

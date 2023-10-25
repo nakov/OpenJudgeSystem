@@ -31,17 +31,6 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         => this.DbSet
             .Where(sfp => !sfp.Processed);
 
-    public async Task<int> GetAllUnprocessedCount()
-        => await this
-            .GetAllUnprocessed()
-            .CountAsync();
-
-    public async Task<IEnumerable<int>> GetIdsOfAllProcessing()
-        => await this.DbSet
-            .Where(sfp => sfp.Processing && !sfp.Processed)
-            .Select(sfp => sfp.Id)
-            .ToListAsync();
-
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
         => this.DbSet
             .Where(sfp => !sfp.Processed && sfp.Processing);
@@ -78,17 +67,6 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         if (submissionForProcessing != null)
         {
             await this.DeleteById(submissionForProcessing.Id);
-            await this.SaveChanges();
-        }
-    }
-
-    public async Task ResetProcessingStatusById(int id)
-    {
-        var submissionForProcessing = await this.OneById(id);
-        if (submissionForProcessing != null)
-        {
-            submissionForProcessing.Processing = false;
-            submissionForProcessing.Processed = false;
             await this.SaveChanges();
         }
     }

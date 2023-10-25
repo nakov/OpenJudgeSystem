@@ -5,8 +5,6 @@ using SoftUni.Services.Infrastructure;
 
 public interface ISubmissionsForProcessingBusinessService : IService
 {
-    Task ResetAllProcessingSubmissions();
-
     /// <summary>
     /// Enqueues all submissions that are pending (not added in the queue, nor processing).
     /// </summary>
