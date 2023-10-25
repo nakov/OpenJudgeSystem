@@ -1,9 +1,10 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
+using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
-using System.Threading.Tasks;
 
 public class ContestsValidationHelper : IContestsValidationHelper
 {
@@ -49,6 +50,16 @@ public class ContestsValidationHelper : IContestsValidationHelper
         return GetValidationResult(await this.contestsBusiness.UserHasContestPermissions(
             contestId!.Value,
             null,
+            user.Id,
+            user.IsAdmin));
+    }
+
+    public async Task<ValidationResult> ValidatePermissionsOfCurrentUser(Contest contest)
+    {
+        var user = this.userProvider.GetCurrentUser();
+
+        return GetValidationResult(await this.contestsBusiness.UserHasContestPermissions(
+            contest,
             user.Id,
             user.IsAdmin));
     }

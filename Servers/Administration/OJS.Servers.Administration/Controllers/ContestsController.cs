@@ -19,6 +19,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Business.Validation.Helpers;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Common.Validation.Helpers;
     using OJS.Services.Infrastructure.Extensions;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
@@ -31,6 +32,7 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestsBusinessService contestsBusinessService;
         private readonly IContestsValidationHelper contestsValidationHelper;
+        private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
 
         public ContestsController(
             IIpsDataService ipsData,
@@ -38,7 +40,8 @@ namespace OJS.Servers.Administration.Controllers
             ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestsValidationHelper contestsValidationHelper,
-            IContestsBusinessService contestsBusinessService)
+            IContestsBusinessService contestsBusinessService,
+            INotDefaultValueValidationHelper notDefaultValueValidationHelper)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
@@ -46,6 +49,7 @@ namespace OJS.Servers.Administration.Controllers
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestsValidationHelper = contestsValidationHelper;
             this.contestsBusinessService = contestsBusinessService;
+            this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
         }
 
         protected override Expression<Func<Contest, bool>>? MasterGridFilter
@@ -124,27 +128,33 @@ namespace OJS.Servers.Administration.Controllers
                 return;
             }
 
-            await this.contestsBusinessService.UserHasContestPermissions(
-                entity,
-                this.User.GetId(),
-                this.User.IsAdmin());
+            await this.contestsValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity)
+                .VerifyResult();
         }
 
         protected override async Task BeforeEntitySaveAsync(Contest entity, AdminActionContext actionContext)
         {
             await base.BeforeEntitySaveAsync(entity, actionContext);
 
-            var userHasPermissions = await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(
-                    entity.Id,
-                    entity.CategoryId);
+            if (actionContext.Action != EntityAction.Create)
+            {
+                var userHasPermissions = await this.contestsValidationHelper
+                    .ValidatePermissionsOfCurrentUser(
+                        entity.Id,
+                        entity.CategoryId);
 
-            userHasPermissions.VerifyResult();
+                userHasPermissions.VerifyResult();
+            }
 
             if (!entity.IsOnlineExam && entity.Duration != null)
             {
                 entity.Duration = null;
             }
+
+            this.notDefaultValueValidationHelper
+                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
+                .VerifyResult();
         }
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
