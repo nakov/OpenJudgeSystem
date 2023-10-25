@@ -8,15 +8,15 @@ using Models.Submissions;
 
 public interface ISubmissionsForProcessingCommonDataService : IDataService<SubmissionForProcessing>
 {
-    IQueryable<SubmissionForProcessing?> GetAllPending();
+    IQueryable<SubmissionForProcessing> GetAllPending();
 
-    IQueryable<SubmissionForProcessing?> GetAllUnprocessed();
+    IQueryable<SubmissionForProcessing> GetAllUnprocessed();
 
     Task<int> GetAllUnprocessedCount();
 
     Task<IEnumerable<int>> GetIdsOfAllProcessing();
 
-    Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>();
+    IQueryable<SubmissionForProcessing> GetAllProcessing();
 
     Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails);
 

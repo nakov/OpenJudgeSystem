@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using FluentExtensions.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common;
 using OJS.Common.Helpers;
 using Models.Submissions;
@@ -43,11 +42,9 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             .Select(sfp => sfp.Id)
             .ToListAsync();
 
-    public async Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>()
-        => await this.DbSet
-            .Where(sfp => !sfp.Processed && sfp.Processing)
-            .MapCollection<TServiceModel>()
-            .ToListAsync();
+    public IQueryable<SubmissionForProcessing> GetAllProcessing()
+        => this.DbSet
+            .Where(sfp => !sfp.Processed && sfp.Processing);
 
     public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
     {

@@ -1,11 +1,9 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations;
 
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
@@ -15,15 +13,15 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
 {
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
-    private readonly ISubmissionsDataService submissionsData;
+    private readonly ISubmissionsCommonDataService submissionsCommonData;
 
     public SubmissionsForProcessingBusinessService(
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
-        ISubmissionsDataService submissionsData,
+        ISubmissionsCommonDataService submissionsCommonData,
         ISubmissionsCommonBusinessService submissionsCommonBusinessService)
     {
         this.submissionsForProcessingData = submissionsForProcessingData;
-        this.submissionsData = submissionsData;
+        this.submissionsCommonData = submissionsCommonData;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
     }
 
@@ -49,29 +47,19 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
 
     public async Task<int> EnqueuePendingSubmissions()
     {
-        var submissionsForProcessing = (await this.submissionsForProcessingData
+        var pendingSubmissions = await this.submissionsCommonData
             .GetAllPending()
-            .ToListAsync())
-            .Where(sfp => Math.Abs(sfp!.CreatedOn.Subtract(DateTime.UtcNow).TotalMinutes) >= 1)
-            .ToList();
+            .MapCollection<SubmissionServiceModel>()
+            .ToListAsync();
 
-        if (!submissionsForProcessing.Any())
+        if (pendingSubmissions.IsEmpty())
         {
             return 0;
         }
 
-        var submissions = await this.submissionsData
-            .GetByIds(submissionsForProcessing
-                .Select(sp => sp!.SubmissionId))
-            .MapCollection<SubmissionServiceModel>()
-            .ToListAsync();
+        await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(pendingSubmissions);
 
-        await submissions
-            .ForEachSequential((submission) =>
-                this.submissionsCommonBusinessService
-                    .PublishSubmissionForProcessing(submission));
-
-        return submissions.Count;
+        return pendingSubmissions.Count;
     }
 
     public async Task DeleteProcessedSubmissions()
