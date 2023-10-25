@@ -18,10 +18,6 @@
 
         public OutputResult? OutputResult { get; set; }
 
-        public DateTime? StartedExecutionOn { get; set; }
-
-        public DateTime? CompletedExecutionOn { get; set; }
-
         public void RegisterMappings(IProfileExpression configuration)
             => configuration
                 .CreateMap(typeof(ExecutionResult<TestResult>), typeof(ExecutionResultServiceModel))
