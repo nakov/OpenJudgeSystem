@@ -1,10 +1,7 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
 using System.Threading.Tasks;
-using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
-using OJS.Services.Common.Validation.Helpers;
-using OJS.Services.Infrastructure.Extensions;
 
 public class ContestsValidationHelper : IContestsValidationHelper
 {
