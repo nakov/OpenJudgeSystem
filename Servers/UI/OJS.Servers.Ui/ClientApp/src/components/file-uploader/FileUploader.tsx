@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { FileValidationError } from '../../common/constants';
 import { useSubmissions } from '../../hooks/submissions/use-submissions';
+import { IErrorDataType } from '../../hooks/use-http';
 import Button, { ButtonSize, ButtonType } from '../guidelines/buttons/Button';
 
 import styles from './FileUploader.module.scss';
@@ -11,7 +12,7 @@ interface IFileUploaderProps {
     file?: File | null;
     problemId?: number;
     allowedFileExtensions: string[];
-    onInvalidFileExtension: (error: string | null) => void;
+    onInvalidFileExtension: (error: IErrorDataType) => void;
 }
 
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension }: IFileUploaderProps) => {
@@ -19,6 +20,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
     const { actions: { updateSubmissionCode } } = useSubmissions();
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>(null);
+    const { actions: { closeErrorMessage } } = useSubmissions();
     const handleClick = () => {
         hiddenFileInput.current?.click();
     };
@@ -49,9 +51,12 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             const extension = uploadedFile.name.split('.').pop();
 
             if (allowedFileExtensions && !allowedFileExtensions.includes(extension)) {
-                onInvalidFileExtension(FileValidationError);
+                onInvalidFileExtension({
+                    detail: FileValidationError,
+                    extensions: { Data: JSON.stringify({ ProblemId: problemId }) },
+                } as unknown as IErrorDataType);
             } else {
-                onInvalidFileExtension(null);
+                closeErrorMessage(problemId.toString());
             }
 
             updateSubmissionCode(eventTarget[0]);
@@ -61,7 +66,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             // eslint-disable-next-line no-param-reassign
             event.target.value = null;
         },
-        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension ],
+        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension, closeErrorMessage ],
     );
 
     return (

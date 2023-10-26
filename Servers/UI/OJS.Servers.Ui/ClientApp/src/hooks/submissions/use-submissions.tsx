@@ -29,6 +29,7 @@ interface ISubmissionsContext {
         selectSubmissionTypeById: (id: number) => void;
         removeProblemSubmissionCode: (id: number) => void;
         closeErrorMessage: (value: string) => void;
+        setProblemSubmissionError: (error: IErrorDataType) => void;
     };
 }
 
@@ -314,6 +315,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 submit,
                 removeProblemSubmissionCode,
                 closeErrorMessage,
+                setProblemSubmissionError,
             },
         }),
         [
@@ -327,6 +329,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             problemSubmissionErrors,
             isLoading,
             alertBoxErrorIsClosed,
+            setProblemSubmissionError,
         ],
     );
 

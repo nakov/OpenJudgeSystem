@@ -8,10 +8,11 @@ import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToTwoDigitValues } from '../../../utils/dates';
+import { administrationDeleteProblem, administrationEditProblem, getAdministrationParticipants, getAdministrationTestsByProblem } from '../../../utils/urls';
 import CodeEditor from '../../code-editor/CodeEditor';
 import FileUploader from '../../file-uploader/FileUploader';
 import AlertBox, { AlertBoxType } from '../../guidelines/alert-box/AlertBox';
-import { Button, ButtonState } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { ICountdownRemainingType, Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List, { Orientation } from '../../guidelines/lists/List';
@@ -21,7 +22,6 @@ import styles from './SubmissionBox.module.scss';
 
 const SubmissionBox = () => {
     const [ submitLimit, setSubmitLimit ] = useState<number>(0);
-    const [ invalidExtensionError, setInvalidExtensionError ] = useState<string | null>(null);
     const {
         state: {
             contest,
@@ -42,6 +42,7 @@ const SubmissionBox = () => {
             selectSubmissionTypeById,
             removeProblemSubmissionCode,
             closeErrorMessage,
+            setProblemSubmissionError,
         },
     } = useSubmissions();
 
@@ -201,7 +202,12 @@ const SubmissionBox = () => {
     );
 
     const renderSubmitBtn = useCallback(() => {
-        const state = !isSubmitAllowed || showSubmissionLimitTimer || invalidExtensionError
+        const { id: problemId } = currentProblem || {};
+        if (isNil(problemId)) {
+            return null;
+        }
+
+        const state = !isSubmitAllowed || showSubmissionLimitTimer || problemSubmissionErrors[problemId]
             ? ButtonState.disabled
             : ButtonState.enabled;
 
@@ -212,7 +218,7 @@ const SubmissionBox = () => {
               onClick={handleOnSubmit}
             />
         );
-    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed, invalidExtensionError ]);
+    }, [ handleOnSubmit, showSubmissionLimitTimer, isSubmitAllowed, currentProblem, problemSubmissionErrors ]);
 
     const renderAlertBox = useCallback(
         (messageText : string, problemId : number) => (
@@ -232,10 +238,6 @@ const SubmissionBox = () => {
                 return null;
             }
 
-            if (invalidExtensionError) {
-                return renderAlertBox(invalidExtensionError, problemId);
-            }
-
             const { [problemId.toString()]: error } = problemSubmissionErrors;
 
             if (isNil(error)) {
@@ -246,7 +248,7 @@ const SubmissionBox = () => {
 
             return renderAlertBox(detail, problemId);
         },
-        [ currentProblem, problemSubmissionErrors, invalidExtensionError, renderAlertBox ],
+        [ currentProblem, problemSubmissionErrors, renderAlertBox ],
     );
 
     useEffect(
@@ -295,7 +297,7 @@ const SubmissionBox = () => {
                               : submissionCode as File}
                           problemId={problemId}
                           allowedFileExtensions={allowedFileExtensions}
-                          onInvalidFileExtension={setInvalidExtensionError}
+                          onInvalidFileExtension={setProblemSubmissionError}
                         />
                         <p className={styles.fileSubmissionDetailsParagraph}>
                             Allowed file extensions:
@@ -316,8 +318,12 @@ const SubmissionBox = () => {
                 />
             );
         },
-        [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem, setInvalidExtensionError ],
+        [ handleCodeChanged, selectedSubmissionType, submissionCode, currentProblem, setProblemSubmissionError ],
     );
+
+    const redirectToAdministration = (url: string) => {
+        window.location.href = url;
+    };
 
     const renderSubmissionBox = useCallback(
         () => (
@@ -330,6 +336,36 @@ const SubmissionBox = () => {
                     <span className={styles.taskName}>
                         {currentProblem?.name}
                     </span>
+                    {
+                    contest?.userIsAdminOrLecturerInContest && (
+                    <div className={styles.navigationalButtonsWrapper}>
+                        <Button
+                          onClick={() => redirectToAdministration(getAdministrationParticipants(Number(contest.id)))}
+                          text="Participants"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                        <Button
+                          onClick={() => redirectToAdministration(getAdministrationTestsByProblem(Number(currentProblem?.id)))}
+                          text="Tests"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                        <Button
+                          onClick={() => redirectToAdministration(administrationEditProblem(Number(currentProblem?.id)))}
+                          text="Change"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                        <Button
+                          onClick={() => redirectToAdministration(administrationDeleteProblem(Number(currentProblem?.id)))}
+                          text="Delete"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                        />
+                    </div>
+                    )
+                    }
                 </Heading>
                 {currentProblem?.isExcludedFromHomework && (
                     <Heading
@@ -367,6 +403,9 @@ const SubmissionBox = () => {
             renderSubmissionTypesSelectorsList,
             renderSubmitBtn,
             renderSubmitMessage,
+            contest?.id,
+            contest?.userIsAdminOrLecturerInContest,
+            currentProblem?.id,
         ],
     );
 

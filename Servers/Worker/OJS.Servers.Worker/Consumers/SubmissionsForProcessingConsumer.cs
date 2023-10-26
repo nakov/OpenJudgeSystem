@@ -30,6 +30,7 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
         var submission = message.Map<SubmissionServiceModel>();
 
         var result = new ProcessedSubmissionPubSubModel(message.Id);
+        var startedExecutionOn = DateTime.UtcNow;
 
         try
         {
@@ -40,6 +41,10 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
         catch (Exception ex)
         {
             result.SetException(ex, true);
+        }
+        finally
+        {
+            result.SetStartedAndCompletedExecutionOn(startedExecutionOn, completedExecutionOn: DateTime.UtcNow);
         }
 
         return this.publisher.Publish(result);

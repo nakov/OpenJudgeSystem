@@ -57,7 +57,7 @@ const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contest
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
-const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
+const getAdministrationRetestSubmissionInternalUrl = ({ id }: IRetestSubmissionUrlParams) => `/Submissions/Retest/${id}`;
 const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
 ${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
 const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
@@ -66,6 +66,18 @@ ${administrationBaseUrl}/Contests/Edit?PK=${id}`;
 const getAdministrationContestProblemsInternalUrl = (id: string) => `/Contest/Problems/${id}`;
 
 const getAdministrationContestEditInternalUrl = (id: string) => `/Contest/Edit/${id}`;
+
+const getAdministrationParticipants = (id : number) => `
+${administrationBaseUrl}/Participants?ContestId-equals=${id}`;
+
+const getAdministrationTestsByProblem = (id : number) => `
+${administrationBaseUrl}/Tests?ProblemId-equals=${id}`;
+
+const administrationEditProblem = (id : number) => `
+${administrationBaseUrl}/Problems/Edit?PK=${id}`;
+
+const administrationDeleteProblem = (id : number) => `
+${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -290,5 +302,9 @@ export {
     getAdministrationContestEditUrl,
     getAdministrationContestEditInternalUrl,
     getAdministrationContestProblemsInternalUrl,
+    administrationEditProblem,
+    administrationDeleteProblem,
+    getAdministrationTestsByProblem,
+    getAdministrationParticipants,
     getContestsByStrategyUrl,
 };
