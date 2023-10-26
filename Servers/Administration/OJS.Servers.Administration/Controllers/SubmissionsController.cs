@@ -238,7 +238,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             filterByKeyExpression = x => x.Id == submissionId;
         }
 
-        return filterByLecturerRightsExpression.CombineOrElse(filterByKeyExpression);
+        return filterByLecturerRightsExpression.CombineAndAlso(filterByKeyExpression);
     }
 
     private IActionResult RedirectToSubmissionById(int id)
