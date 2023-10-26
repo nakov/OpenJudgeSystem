@@ -6,7 +6,8 @@ using OJS.Workers.Common.Models;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-using OJS.Workers.Checkers;
+using OJS.Common.Constants;
+
 using ValidationResult = OJS.Services.Common.Models.ValidationResult;
 using static ValidationConstants;
 
@@ -59,7 +60,9 @@ public class SubmissionsValidationService : ISubmissionsValidationService
             : ValidationResult.Valid();
 
     private static ValidationResult IsCheckerTypeValid(string checkerType)
-        => CheckerConstants.TypeNames.All.Contains(checkerType)
+        => ServiceConstants.CheckerTypes
+            .All
+            .Contains(checkerType)
             ? ValidationResult.Valid()
             : ValidationResult.Invalid(string.Format(CheckerTypeNotValidTemplate, checkerType));
 }

@@ -1,14 +1,13 @@
 ﻿namespace OJS.Servers.Worker.Infrastructure.Extensions
 {
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using OJS.Common.Utils;
     using OJS.Data;
-    using OJS.Servers.Infrastructure.Checks;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Worker.Models.Configuration;
     using OJS.Workers.Common;
     using OJS.Workers.SubmissionProcessors;
@@ -20,8 +19,7 @@
 
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
-            IConfiguration configuration)
-        {
+            IConfiguration configuration) =>
             services.AddWebServer<TProgram>()
                 .AddScoped<DbContext, OjsDbContext>()
                 .AddSubmissionExecutor()
@@ -32,17 +30,13 @@
                 .AddConfiguration(configuration)
                 .AddControllers();
 
-            services.AddHttpContextAccessor();
-            services.AddHealthChecks().AddCheck<HealthCheck>(nameof(HealthCheck));
-        }
-
         public static WebApplication ConfigureWebApplication(this WebApplication app)
         {
             app.UseCustomExceptionHandling();
             app.UseAutoMapper();
             app.MapControllers();
 
-            app.UseHealthChecks("/health");
+            app.UseHealthMonitoring();
             return app;
         }
 
@@ -56,6 +50,7 @@
             this IServiceCollection services,
             IConfiguration configuration)
             => services
-                .Configure<SubmissionExecutionConfig>(configuration.GetSection(nameof(SubmissionExecutionConfig)));
+                .Configure<SubmissionExecutionConfig>(configuration.GetSection(nameof(SubmissionExecutionConfig)))
+                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }

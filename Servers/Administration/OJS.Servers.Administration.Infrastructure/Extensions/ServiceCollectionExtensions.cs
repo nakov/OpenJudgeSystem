@@ -7,7 +7,6 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Users;
-    using OJS.Servers.Infrastructure.Checks;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common.Models.Configurations;
     using SoftUni.Data.Infrastructure.Enumerations;
@@ -24,8 +23,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
 
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
-            IConfiguration configuration)
-        {
+            IConfiguration configuration) =>
             services
                 .AddWebServer<TProgram>()
                 .AddHttpContextServices()
@@ -41,14 +39,11 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
 
-            services.AddHttpContextAccessor();
-            services.AddHealthChecks().AddCheck<HealthCheck>(nameof(HealthCheck));
-        }
-
         private static IServiceCollection ConfigureSettings(
             this IServiceCollection services,
             IConfiguration configuration)
             => services
-                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)));
+                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)))
+                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }

@@ -13,7 +13,6 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             this WebApplication app,
             string apiVersion)
         {
-            app.UseHealthChecks("/health");
             app
                 .UseDefaults()
                 .MapDefaultRoutes()
@@ -23,6 +22,9 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             {
                 app.UseSwaggerDocs(apiVersion.ToApiName());
             }
+
+            //Added here, because if it is added in the end immediately after the 200 response (Healthy) the FE redirects to 404 page.
+            app.UseHealthMonitoring();
 
             app.UseEndpoints(endpoints =>
             {
