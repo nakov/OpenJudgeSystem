@@ -70,9 +70,14 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const renderDetailsBtn = useCallback(
         () => {
-            const { user: { username: loggedInUsername, permissions: { canAccessAdministration } } } = loggedInUser;
+            const {
+                user: {
+                    username: loggedInUsername,
+                    isAdmin,
+                },
+            } = loggedInUser;
 
-            if (username === loggedInUsername || canAccessAdministration) {
+            if (username === loggedInUsername || isAdmin) {
                 return (
                     <Button
                       text="Details"
