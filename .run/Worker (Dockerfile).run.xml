@@ -28,6 +28,14 @@
               <option name="value" value="https://localhost:44305" />
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
+              <option name="name" value="HealthCheckConfig__Key" />
+              <option name="value" value="Key" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="HealthCheckConfig__Password" />
+              <option name="value" value="Password" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
               <option name="name" value="LOGGER_FILES_FOLDER_PATH" />
               <option name="value" value="../Logs" />
             </DockerEnvVarImpl>
