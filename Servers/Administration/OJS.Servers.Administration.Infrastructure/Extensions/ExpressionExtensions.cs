@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 public static class ExpressionExtensions
 {
-    public static Expression<Func<T, bool>> CombineOrElse<T>(
+    public static Expression<Func<T, bool>> CombineAndAlso<T>(
         this Expression<Func<T, bool>> a,
         Expression<Func<T, bool>>? b)
     {
@@ -15,11 +15,11 @@ public static class ExpressionExtensions
             return a;
         }
 
-        var orElse = Expression.OrElse(
+        var andAlso = Expression.AndAlso(
             Expression.Invoke(a, parameter),
             Expression.Invoke(b, parameter));
 
-        var combinedExpression = Expression.Lambda<Func<T, bool>>(orElse, parameter);
+        var combinedExpression = Expression.Lambda<Func<T, bool>>(andAlso, parameter);
 
         return combinedExpression;
     }
