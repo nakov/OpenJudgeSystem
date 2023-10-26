@@ -398,7 +398,6 @@
 
 function setDefaultWorkerType(e) {
     var defaultWorkerType = @Html.Raw(Json.Encode(Model.DefaultWorkerType));
-    console.log(defaultWorkerType);
     if (@Html.Raw(Json.Encode(isEditForm))) {
         $("#@Html.IdFor(m => m.DefaultWorkerType)").data("kendoDropDownList").value(defaultWorkerType);
     }
