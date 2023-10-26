@@ -26,6 +26,5 @@
         public const string SubmissionTypesDropDownList = "SubmissionTypesDropDownList";
         public const string ParticipantDropDownList = "ParticipantDropDownList";
         public const string ContestQuestionType = "ContestQuestionType";
-        public static string WorkerTypeDropDownList = "WorkerTypeDropdownList";
     }
 }
