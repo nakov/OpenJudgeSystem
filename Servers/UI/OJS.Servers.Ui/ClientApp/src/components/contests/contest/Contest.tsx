@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import ITreeItemType from '../../../common/tree-types';
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
@@ -91,7 +90,7 @@ const Contest = () => {
     useEffect(
         () => {
             if (!isNil(contest) && !isEmpty(categoriesFlat)) {
-                const category = categoriesFlat.find(({ id }) => id.toString() === contest.categoryId.toString()) as ITreeItemType;
+                const category = categoriesFlat.find(({ id }) => id.toString() === contest.categoryId.toString());
                 updateBreadcrumb(category, categoriesFlat);
             }
         },
