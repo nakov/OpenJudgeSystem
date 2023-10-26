@@ -36,7 +36,7 @@ const SubmissionsPage = () => {
                 await loadTotalUnprocessedSubmissionsCount();
             })();
         },
-        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin, user.isInRole ],
+        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin ],
     );
 
     return (
