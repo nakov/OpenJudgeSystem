@@ -111,7 +111,7 @@ const SubmissionsGrid = () => {
 
     useEffect(
         () => {
-            if (!user.isInRole) {
+            if (!user.isAdmin) {
                 return;
             }
 
@@ -123,7 +123,7 @@ const SubmissionsGrid = () => {
                 await loadTotalUnprocessedSubmissionsCount();
             })();
         },
-        [ loadTotalUnprocessedSubmissionsCount, user.isInRole, activeToggleElement ],
+        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin, activeToggleElement ],
     );
 
     useEffect(() => {

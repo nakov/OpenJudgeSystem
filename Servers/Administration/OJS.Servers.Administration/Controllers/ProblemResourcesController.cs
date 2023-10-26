@@ -253,6 +253,6 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
             ? x => x.ProblemId == problemId
             : base.MasterGridFilter;
 
-        return filterByLecturerRightsExpression.CombineOrElse(filter);
+        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }
