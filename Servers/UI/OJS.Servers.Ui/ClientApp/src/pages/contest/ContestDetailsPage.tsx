@@ -12,6 +12,8 @@ import List from '../../components/guidelines/lists/List';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../components/problems/problem-resource/ProblemResource';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
+import { useContestCategories } from '../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -53,14 +55,34 @@ const ContestDetailsPage = () => {
     } = useCurrentContest();
     const { actions: { setPageTitle } } = usePageTitles();
     const navigate = useNavigate();
+    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
 
     useEffect(
         () => {
             if (contestDetails) {
                 setPageTitle(contestDetails.name);
             }
+
+            if (!isEmpty(categoriesFlat)) {
+                return;
+            }
+
+            (async () => {
+                await loadCategories();
+            })();
         },
-        [ contestDetails, setPageTitle ],
+        [ contestDetails, setPageTitle, loadCategories, categoriesFlat ],
+    );
+
+    useEffect(
+        () => {
+            if (!isNil(contestDetails) && !isEmpty(categoriesFlat)) {
+                const category = categoriesFlat.find(({ id }) => id.toString() === contestDetails.categoryId.toString());
+                updateBreadcrumb(category, categoriesFlat);
+            }
+        },
+        [ categoriesFlat, contestDetails, updateBreadcrumb ],
     );
 
     const { contestId } = params;

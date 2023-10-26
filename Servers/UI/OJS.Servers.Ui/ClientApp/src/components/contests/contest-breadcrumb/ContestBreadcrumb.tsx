@@ -73,8 +73,12 @@ const ContestBreadcrumb = ({
         [ updateBreadcrumbAndNavigateToCategory, withContestName ],
     );
 
+    const breadCrumbContainerClassName = withContestName
+        ? styles.breadCrumbContainer
+        : concatClassNames(styles.breadCrumbContainer, styles.breadCrumbContainerWithoutContestName);
+
     return (
-        <div className={styles.breadCrumbContainer}>
+        <div className={breadCrumbContainerClassName}>
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
             {withContestName && (
             <span className={styles.breadcrumbContestName}>
