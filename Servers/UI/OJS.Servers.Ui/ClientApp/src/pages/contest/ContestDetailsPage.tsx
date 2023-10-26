@@ -21,7 +21,6 @@ import {
     getContestsByStrategyUrl,
     getParticipateInContestUrl,
 } from '../../utils/urls';
-import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
@@ -399,4 +398,4 @@ const ContestDetailsPage = () => {
     return renderContestDetailsPage();
 };
 
-export default makePrivate(setLayout(ContestDetailsPage, false));
+export default setLayout(ContestDetailsPage, false);
