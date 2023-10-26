@@ -1,7 +1,8 @@
 import { ContestStatus, FilterType, SortType } from './contest-types';
 
-const DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE = 4;
 const FileValidationError = 'Invalid file extension.';
+const PAGE_SIBLING_COUNT = 2;
+const PAGE_BOUNDARY_COUNT = 0;
 
 const ExcludedFromHomeWorkTaskHeadingAddition = '(not included in final score)';
 const { Status: DEFAULT_FILTER_TYPE } = FilterType;
@@ -33,7 +34,6 @@ enum FileType {
 
 export {
     ExcludedFromHomeWorkTaskHeadingAddition,
-    DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
     DEFAULT_FILTER_TYPE,
     DEFAULT_STATUS_FILTER_TYPE,
     DEFAULT_SORT_FILTER_TYPE,
@@ -43,4 +43,6 @@ export {
     ContestResultType,
     FileType,
     FileValidationError,
+    PAGE_SIBLING_COUNT,
+    PAGE_BOUNDARY_COUNT,
 };

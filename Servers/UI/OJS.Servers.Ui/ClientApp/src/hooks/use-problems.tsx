@@ -10,6 +10,7 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getDownloadProblemResourceUrl } from '../utils/urls';
 
 import { useHashUrlParams } from './common/use-hash-url-params';
+import { useProblemSubmissions } from './submissions/use-problem-submissions';
 import { useCurrentContest } from './use-current-contest';
 import { useHttp } from './use-http';
 
@@ -50,17 +51,24 @@ const ProblemsContext = createContext<IProblemsContext>(defaultState as IProblem
 
 const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
     const { state: { contest } } = useCurrentContest();
-    const {
-        state: { hashParam },
-        actions: { setHash },
-    } = useHashUrlParams();
+    const { actions: { setHash } } = useHashUrlParams();
     const [ isLoading, setIsLoading ] = useState(false);
     const [ problems, setProblems ] = useState(defaultState.state.problems);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemType | null>(defaultState.state.currentProblem);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>();
     const [ problemResourceIdToDownload, setProblemResourceIdToDownload ] = useState<number | null>(null);
 
+    const {
+        state: { problemSubmissionsPage },
+        actions:
+        {
+            loadSubmissions,
+            changePreviousProblemSubmissionsPage,
+            clearProblemSubmissionsPage,
+        },
+    } = useProblemSubmissions();
     const navigate = useNavigate();
+    const { state: { hashParam } } = useHashUrlParams();
 
     const {
         get: downloadProblemResource,
@@ -83,29 +91,18 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
             const { orderBy } = newProblem;
             setHash(orderBy.toString(), isDefaultHashParam);
         },
-        [ setHash, problems ],
-    );
-
-    const problemFromHash = useMemo(
-        () => {
-            const hashIndex = Number(hashParam) - 1;
-            return problems[hashIndex];
-        },
-        [ hashParam, problems ],
-    );
-
-    const isLoadedFromHash = useMemo(
-        () => !isNil(problemFromHash),
-        [ problemFromHash ],
+        [ problems, setHash ],
     );
 
     const selectCurrentProblem = useCallback(
         (problemId: number) => {
+            changePreviousProblemSubmissionsPage(0);
             selectProblemById(problemId);
 
+            clearProblemSubmissionsPage();
             setInternalProblemId(null);
         },
-        [ selectProblemById ],
+        [ clearProblemSubmissionsPage, changePreviousProblemSubmissionsPage, selectProblemById ],
     );
 
     const removeCurrentProblems = useCallback(
@@ -136,13 +133,34 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
 
             if (!isNil(internalProblemId)) {
                 selectProblemById(internalProblemId, true);
-            } else if (isLoadedFromHash) {
-                setCurrentProblem(problemFromHash);
+            } else if (!isEmpty(hashParam)) {
+                const hashIndex = Number(hashParam) - 1;
+
+                setCurrentProblem(problems[hashIndex]);
             } else {
                 selectProblemById(id, true);
             }
+
+            setInternalProblemId(null);
         },
-        [ internalProblemId, isLoadedFromHash, problems, problemFromHash, selectProblemById ],
+        [ internalProblemId, problems, selectProblemById, hashParam ],
+    );
+
+    useEffect(
+        () => {
+            const hashIndex = Number(hashParam) - 1;
+
+            const { [hashIndex]: problem } = problems;
+
+            if (isNil(problem)) {
+                return;
+            }
+
+            const { id } = problem;
+
+            loadSubmissions(id, problemSubmissionsPage);
+        },
+        [ problemSubmissionsPage, loadSubmissions, problems, hashParam ],
     );
 
     useEffect(
@@ -211,8 +229,8 @@ const ProblemsProvider = ({ children }: IProblemsProviderProps) => {
                 removeCurrentProblems,
             },
         }),
-        [ problems, currentProblem, isLoading, selectCurrentProblem, downloadProblemResourceFile, changeCurrentHash,
-            initiateRedirectionToProblem, removeCurrentProblem, removeCurrentProblems ],
+        [ problems, currentProblem, isLoading, selectCurrentProblem, downloadProblemResourceFile,
+            changeCurrentHash, removeCurrentProblem, initiateRedirectionToProblem, removeCurrentProblems ],
     );
 
     return (

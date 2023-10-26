@@ -7,7 +7,10 @@ import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-import { getParticipateInContestUrl, getSubmissionDetailsUrl } from '../../../utils/urls';
+import {
+    getParticipateInContestUrl,
+    getSubmissionDetailsRedirectionUrl,
+} from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import ExecutionResult from '../execution-result/ExecutionResult';
@@ -49,7 +52,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const handleDetailsButtonSubmit = useCallback(
         () => {
-            const submissionDetailsUrl = getSubmissionDetailsUrl({ id: submissionId });
+            const submissionDetailsUrl = getSubmissionDetailsRedirectionUrl({ submissionId });
 
             initiateRedirectionToProblem(problemId, submissionDetailsUrl);
         },
