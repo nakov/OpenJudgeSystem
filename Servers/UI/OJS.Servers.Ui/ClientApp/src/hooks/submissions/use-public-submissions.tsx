@@ -2,19 +2,21 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { IKeyValuePair } from '../../common/common-types';
 import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
 import { IGetSubmissionsByContestIdParams, IGetSubmissionsUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import {
+    getAllParticipationsForUserUrl,
     getPendingSubmissionsUrl,
     getPublicSubmissionsUrl,
     getSubmissionsByContestIdUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl, getUnprocessedSubmissionsUrl, getUserSubmissionsUrl,
 } from '../../utils/urls';
-import { useUrlParams } from '../common/use-url-params';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
+import { IParticipationType } from '../use-participations';
 
 enum PublicSubmissionState {
     Ready = 1,
@@ -34,6 +36,7 @@ interface IPublicSubmissionsContext {
         userByContestSubmissions: ISubmissionResponseModel[];
         userSubmissionUrlParams?: IPage;
         submissionsByContestParams?: IGetSubmissionsByContestIdParams;
+        menuItems: IKeyValuePair<string>[];
     };
     actions : {
         loadTotalSubmissionsCount: () => Promise<void>;
@@ -42,7 +45,8 @@ interface IPublicSubmissionsContext {
         initiateUnprocessedSubmissionsQuery: () => void;
         initiatePendingSubmissionsQuery: () => void;
         initiateUserSubmissionsQuery: () => void;
-        initiateSubmissionsByContestQuery: () => void;
+        initiateSubmissionsByContestQuery: (contestId: string) => void;
+        clearPageValues: () => void;
     };
 }
 
@@ -51,8 +55,8 @@ const defaultState = {
         publicSubmissions: [] as ISubmissionResponseModel[],
         userSubmissions: [] as ISubmissionResponseModel[],
         userByContestSubmissions: [] as ISubmissionResponseModel[],
-        userSubmissionUrlParams: { page: 1 },
         submissionsByContestParams: { page: 1, contestId: '' },
+        menuItems: [] as IKeyValuePair<string>[],
     },
 };
 
@@ -61,7 +65,6 @@ const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaul
 type IPublicSubmissionsProviderProps = IHaveChildrenProps
 
 const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps) => {
-    const { state: { params: urlParams } } = useUrlParams();
     const [ getPublicSubmissionsUrlParams, setPublicSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [ getUnprocessedSubmissionsUrlParams, setUnprocessedSubmissionsUrlParams ] = useState<IGetSubmissionsUrlParams | null>();
     const [
@@ -77,7 +80,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [
         getUserSubmissionsUrlParams,
         setUserSubmissionsUrlParams,
-    ] = useState<IGetSubmissionsUrlParams | null>(defaultState.state.userSubmissionUrlParams);
+    ] = useState<IGetSubmissionsUrlParams | null>(null);
     const [
         getSubmissionsByContestIdParams,
         setGetSubmissionsByContestIdParams,
@@ -87,10 +90,12 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [ pendingSubmissions, setPendingSubmissions ] =
         useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ previousPage, setPreviousPage ] = useState(0);
+    const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
 
     const {
         state: { currentPage },
         populatePageInformation,
+        clearPageValue,
     } = usePages();
 
     const {
@@ -145,6 +150,11 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         });
 
     const {
+        get: getUserParticipations,
+        data: userParticipationsData,
+    } = useHttp<null, IParticipationType[]>({ url: getAllParticipationsForUserUrl });
+
+    const {
         get: getTotalSubmissionsCount,
         data: apiTotalSubmissionsCount,
     } = useHttp({ url: getSubmissionsTotalCountUrl });
@@ -160,7 +170,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     } = useHttp({ url: getSubmissionsUnprocessedTotalCountUrl });
 
     const totalUnprocessedSubmissionsCount = useMemo(
-        () => (apiTotalUnprocessedSubmissionsCount || 0) as number,
+        () => (apiTotalUnprocessedSubmissionsCount || 0) as number ?? null,
         [ apiTotalUnprocessedSubmissionsCount ],
     );
 
@@ -194,113 +204,147 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
 
     const initiatePublicSubmissionsQuery = useCallback(
         () => {
-            if (currentPage === previousPage && currentPage !== 1) {
+            if (currentPage === previousPage) {
                 return;
             }
 
             setPublicSubmissionsUrlParams({ page: currentPage });
+            setPreviousPage(currentPage);
         },
         [ currentPage, previousPage ],
     );
 
     const initiateUserSubmissionsQuery = useCallback(
         () => {
-            if (currentPage === previousPage && currentPage !== 1) {
+            if (currentPage === previousPage) {
                 return;
             }
 
             setUserSubmissionsUrlParams({ page: currentPage });
+            setPreviousPage(currentPage);
         },
         [ currentPage, previousPage ],
     );
 
-    const initiateSubmissionsByContestQuery = useCallback(() => {
-        const contestIdParam = urlParams.find((urlParam) => urlParam.key === 'contestid')?.value;
-        const queryParams = {
-            contestId: contestIdParam,
-            page: currentPage,
-        };
-        if (!contestIdParam) {
-            return;
-        }
+    const initiateSubmissionsByContestQuery = useCallback(
+        (contestId: string) => {
+            if (currentPage === previousPage) {
+                return;
+            }
 
-        setGetSubmissionsByContestIdParams(queryParams);
-    }, [ currentPage, urlParams ]);
+            const queryParams = {
+                contestId,
+                page: currentPage,
+            };
+
+            setGetSubmissionsByContestIdParams(queryParams);
+            setPreviousPage(currentPage);
+        },
+        [ currentPage, previousPage ],
+    );
 
     const initiateUnprocessedSubmissionsQuery = useCallback(
         () => {
-            if (currentPage === previousPage && currentPage !== 1) {
+            if (currentPage === previousPage) {
                 return;
             }
 
             setUnprocessedSubmissionsUrlParams({ page: currentPage });
+            setPreviousPage(currentPage);
         },
         [ currentPage, previousPage ],
     );
 
     const initiatePendingSubmissionsQuery = useCallback(
         () => {
-            if (currentPage === previousPage && currentPage !== 1) {
+            if (currentPage === previousPage) {
                 return;
             }
 
             setPendingSubmissionsUrlParams({ page: currentPage });
+            setPreviousPage(currentPage);
         },
         [ currentPage, previousPage ],
     );
 
-    const proccessSubmissionsQueryResult = useCallback((
-        queryResult: IPagedResultType<ISubmissionResponseModel>,
-        handleSetData: (submissions: ISubmissionResponseModel[]) => void,
-    ) => {
-        const newSubmissionsData = queryResult.items as ISubmissionResponseModel[];
-        const {
-            pageNumber,
-            itemsPerPage,
-            pagesCount,
-            totalItemsCount,
-        } = queryResult;
+    const processSubmissionsQueryResult = useCallback(
+        (
+            queryResult: IPagedResultType<ISubmissionResponseModel>,
+            handleSetData: (submissions: ISubmissionResponseModel[]) => void,
+        ) => {
+            const newSubmissionsData = queryResult.items as ISubmissionResponseModel[];
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = queryResult;
 
-        const newPagesInfo = {
-            pageNumber,
-            itemsPerPage,
-            pagesCount,
-            totalItemsCount,
-        };
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
 
-        setPreviousPage(pageNumber);
+            handleSetData(newSubmissionsData);
+            populatePageInformation(newPagesInfo);
+        },
+        [ populatePageInformation ],
+    );
 
-        handleSetData(newSubmissionsData);
-        populatePageInformation(newPagesInfo);
-    }, [ populatePageInformation ]);
+    useEffect(() => {
+        const mappedMenuItems = (userParticipationsData ||
+            []).map((item: IParticipationType) => ({
+            key: item.id.toString(),
+            value: item.contestName,
+        }));
 
-    // Proccess results
+        setSelectMenuItems(mappedMenuItems);
+    }, [ userParticipationsData ]);
+
+    // Process results
+    useEffect(
+        () => {
+            (async () => {
+                await getUserParticipations();
+            })();
+        },
+        [ getUserParticipations ],
+    );
+
     useEffect(
         () => {
             if (isNil(publicSubmissionsData) || isEmpty(publicSubmissionsData)) {
                 return;
             }
 
-            proccessSubmissionsQueryResult(publicSubmissionsData, setPublicSubmissions);
+            processSubmissionsQueryResult(publicSubmissionsData, setPublicSubmissions);
         },
-        [ populatePageInformation, proccessSubmissionsQueryResult, publicSubmissionsData ],
+        [ populatePageInformation, processSubmissionsQueryResult, publicSubmissionsData ],
     );
 
-    useEffect(() => {
-        if (isNil(userSubmissionsData) || isEmpty(userSubmissionsData)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(userSubmissionsData) || isEmpty(userSubmissionsData)) {
+                return;
+            }
 
-        proccessSubmissionsQueryResult(userSubmissionsData, setUserSubmissions);
-    }, [ proccessSubmissionsQueryResult, userSubmissionsData ]);
+            processSubmissionsQueryResult(userSubmissionsData, setUserSubmissions);
+        },
+        [ processSubmissionsQueryResult, userSubmissionsData ],
+    );
 
-    useEffect(() => {
-        if (isNil(userByContestSubmissionsData) || isEmpty(userByContestSubmissionsData)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(userByContestSubmissionsData) || isEmpty(userByContestSubmissionsData)) {
+                return;
+            }
 
-        proccessSubmissionsQueryResult(userByContestSubmissionsData, setUserByContestSubmissions);
-    }, [ userByContestSubmissionsData, setUserByContestSubmissions, proccessSubmissionsQueryResult ]);
+            processSubmissionsQueryResult(userByContestSubmissionsData, setUserByContestSubmissions);
+        },
+        [ userByContestSubmissionsData, setUserByContestSubmissions, processSubmissionsQueryResult ],
+    );
 
     useEffect(
         () => {
@@ -308,9 +352,9 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 return;
             }
 
-            proccessSubmissionsQueryResult(unprocessedSubmissionsData, setUnprocessedSubmissions);
+            processSubmissionsQueryResult(unprocessedSubmissionsData, setUnprocessedSubmissions);
         },
-        [ populatePageInformation, proccessSubmissionsQueryResult, unprocessedSubmissionsData ],
+        [ populatePageInformation, processSubmissionsQueryResult, unprocessedSubmissionsData ],
     );
 
     useEffect(
@@ -319,9 +363,9 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 return;
             }
 
-            proccessSubmissionsQueryResult(pendingSubmissionsData, setPendingSubmissions);
+            processSubmissionsQueryResult(pendingSubmissionsData, setPendingSubmissions);
         },
-        [ pendingSubmissionsData, populatePageInformation, proccessSubmissionsQueryResult ],
+        [ pendingSubmissionsData, populatePageInformation, processSubmissionsQueryResult ],
     );
 
     // Make requests
@@ -338,31 +382,37 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ getPublicSubmissionsUrlParams, getSubmissions ],
     );
 
-    useEffect(() => {
-        if (isNil(getUserSubmissionsUrlParams)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(getUserSubmissionsUrlParams)) {
+                return;
+            }
 
-        (async () => {
-            await getUserSubmissions();
-        })();
-    }, [ getUserSubmissions, getUserSubmissionsUrlParams ]);
+            (async () => {
+                await getUserSubmissions();
+            })();
+        },
+        [ getUserSubmissions, getUserSubmissionsUrlParams ],
+    );
 
-    useEffect(() => {
-        if (isNil(getSubmissionsByContestIdParams)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(getSubmissionsByContestIdParams)) {
+                return;
+            }
 
-        const { contestId } = getSubmissionsByContestIdParams;
+            const { contestId } = getSubmissionsByContestIdParams;
 
-        if (isNil(contestId) || isEmpty(contestId)) {
-            return;
-        }
+            if (isNil(contestId) || isEmpty(contestId)) {
+                return;
+            }
 
-        (async () => {
-            await getUserByContestSubmissions();
-        })();
-    }, [ getSubmissionsByContestIdParams, getUserByContestSubmissions ]);
+            (async () => {
+                await getUserByContestSubmissions();
+            })();
+        },
+        [ getSubmissionsByContestIdParams, getUserByContestSubmissions ],
+    );
 
     useEffect(
         () => {
@@ -390,6 +440,14 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ getPendingSubmissionsUrlParams, loadPendingSubmissions ],
     );
 
+    const clearPageValues = useCallback(
+        () => {
+            setPreviousPage(0);
+            clearPageValue();
+        },
+        [ clearPageValue ],
+    );
+
     const value = useMemo(
         () => ({
             state: {
@@ -401,6 +459,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 pendingSubmissions,
                 totalSubmissionsCount,
                 totalUnprocessedSubmissionsCount,
+                menuItems: selectMenuItems,
             },
             actions: {
                 loadTotalSubmissionsCount,
@@ -410,6 +469,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 initiatePendingSubmissionsQuery,
                 initiateUserSubmissionsQuery,
                 initiateSubmissionsByContestQuery,
+                clearPageValues,
             },
         }),
         [
@@ -428,6 +488,8 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             initiatePendingSubmissionsQuery,
             initiateUserSubmissionsQuery,
             initiateSubmissionsByContestQuery,
+            clearPageValues,
+            selectMenuItems,
         ],
     );
 

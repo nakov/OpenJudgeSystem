@@ -480,8 +480,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
         }
 
-        submission.StartedExecutionOn = submissionExecutionResult.ExecutionResult?.StartedExecutionOn;
-        submission.CompletedExecutionOn = submissionExecutionResult.ExecutionResult?.CompletedExecutionOn;
+        submission.StartedExecutionOn = submissionExecutionResult.StartedExecutionOn;
+        submission.CompletedExecutionOn = submissionExecutionResult.CompletedExecutionOn;
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
@@ -583,6 +583,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     .Select(sp => sp.SubmissionId));
 
         return submissions
+            .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }
@@ -616,6 +617,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     .Select(sp => sp!.SubmissionId));
 
         return submissions
+            .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
             .ToPagedResult(DefaultSubmissionsPerPage, page);
     }

@@ -48,8 +48,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public ExecutionResultServiceModel ExecuteSubmission(SubmissionServiceModel submission)
     {
-        submission.StartedExecutionOn = DateTime.UtcNow;
-
         this.submissionsValidation
             .GetValidationResult(submission)
             .VerifyResult();
@@ -74,9 +72,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (submission.TestsExecutionDetails != null && submission.ExecutionOptions.EscapeLineEndings)
         {
             submission.TestsExecutionDetails.Tests = submission.TestsExecutionDetails.Tests
-                .Mutate(x => x.Input = x.Input
-                    .Replace("\r\n", "\n")
-                    .Replace("\\r\\n", "\\n"))
+                .Mutate(tc =>
+                {
+                    tc.Input = tc.Input
+                        .Replace("\r\n", "\n")
+                        .Replace("\\r\\n", "\\n");
+                    tc.Output = tc.Output
+                        .Replace("\r\n", "\n")
+                        .Replace("\\r\\n", "\\n");
+                })
                 .ToList();
         }
     }
@@ -151,8 +155,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var executionResult = this.mapper.Map<ExecutionResultServiceModel>(ojsWorkerExecutionResult);
 
-        executionResult.StartedExecutionOn = submission.StartedExecutionOn;
-
         var taskMaxPoints = submission.TestsExecutionDetails?.MaxPoints ?? TaskDefaultMaxPoints;
 
         if (executionResult.TaskResult == null)
@@ -163,8 +165,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             this.ProcessTaskResult(submission, executionResult, taskMaxPoints);
         }
-
-        executionResult.CompletedExecutionOn = DateTime.UtcNow;
 
         return executionResult;
     }

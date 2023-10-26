@@ -19,6 +19,7 @@ interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
     defaultSelected: string;
     setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
+    shouldReset: boolean;
 }
 
 interface IFilterProps {
@@ -37,6 +38,7 @@ const ContestCategories = ({
     onCategoryClick,
     defaultSelected,
     setStrategyFilters,
+    shouldReset,
 }: IContestCategoriesProps) => {
     const { state: { categories, categoriesFlat } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
@@ -226,6 +228,15 @@ const ContestCategories = ({
         [ categoriesFlat, currentCategoryId, getCategoryByValue, handleTreeLabelClick ],
     );
 
+    useEffect(() => {
+        console.log('clear category');
+        setOpenedCategoryFilters(defaultState.state.openedCategoryFilters);
+        setOpenedCategoryFilter(defaultState.state.openedCategoryFilter);
+        selectCurrentCategoryId('');
+        setPrevCategoryId('');
+        clearBreadcrumb();
+    }, [ shouldReset, clearBreadcrumb ]);
+
     useEffect(
         () => {
             if (isEmpty(openedCategoryFilters)) {
@@ -261,6 +272,7 @@ const ContestCategories = ({
               defaultSelected={getCategoryById(defaultSelected)}
               defaultExpanded={defaultExpanded}
               treeItemHasTooltip
+              shouldReset={shouldReset}
             />
         </div>
     );

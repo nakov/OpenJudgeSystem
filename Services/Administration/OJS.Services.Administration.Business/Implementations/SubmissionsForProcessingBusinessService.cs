@@ -64,12 +64,9 @@
                 .MapCollection<SubmissionServiceModel>()
                 .ToList();
 
-            submissions
-                .ForEachSequential((submission) =>
-                    this.submissionsCommonBusinessService
-                        .PublishSubmissionForProcessing(submission))
-                .GetAwaiter()
-                .GetResult();
+            this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions)
+                                                  .GetAwaiter()
+                                                  .GetResult();
         }
 
         public void DeleteProcessedSubmissions() => this.submissionsForProcessingData.CleanProcessedSubmissions();

@@ -107,9 +107,11 @@ const SubmissionDetails = () => {
 
     useEffect(
         () => {
-            setPageTitle(`Submission №${currentSubmission?.id}`);
+            if (currentSubmission) {
+                setPageTitle(`Submission №${currentSubmission.id}`);
+            }
         },
-        [ setPageTitle, currentSubmission ],
+        [ currentSubmission, setPageTitle ],
     );
 
     const problemNameHeadingText = useMemo(
@@ -161,7 +163,7 @@ const SubmissionDetails = () => {
 
     const renderRetestButton = useCallback(
         () => {
-            if (!canAccessAdministration) {
+            if (!canAccessAdministration || isNil(currentSubmission)) {
                 return null;
             }
 
@@ -169,13 +171,14 @@ const SubmissionDetails = () => {
                 <LinkButton
                   type={LinkButtonType.secondary}
                   size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl()}
+                  to={getAdministrationRetestSubmissionInternalUrl({ id: currentSubmission.id })}
                   text="Retest"
                   className={styles.retestButton}
+                  isToExternal
                 />
             );
         },
-        [ canAccessAdministration ],
+        [ canAccessAdministration, currentSubmission ],
     );
     const renderButtonsSection = useCallback(() => (
         <div className={styles.buttonsSection}>

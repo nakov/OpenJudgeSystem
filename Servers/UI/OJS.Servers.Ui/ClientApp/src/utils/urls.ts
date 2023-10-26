@@ -47,23 +47,38 @@ const getHomePageUrl = () => '/';
 const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
 
+const getLoginPageUrl = () => `${baseUrl}/login`;
+
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
-const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register`;
+const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
 
 // admin
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 const getAdministrationNavigation = () => '/administration';
 const getAdministrationRetestSubmission = ({ id }: IRetestSubmissionUrlParams) => `
 ${administrationBaseUrl}/Submissions/Retest?PK=${id}`;
-const getAdministrationRetestSubmissionInternalUrl = () => '/Submissions/Retest';
+const getAdministrationRetestSubmissionInternalUrl = ({ id }: IRetestSubmissionUrlParams) => `/Submissions/Retest/${id}`;
 const getAdministrationProblems = ({ id }: IContestProblemsUrlParams) => `
 ${administrationBaseUrl}/Problems?ContestId-equals=${id}`;
 const getAdministrationContestEditUrl = ({ id }: IContestEditUrlParams) => `
 ${administrationBaseUrl}/Contests/Edit?PK=${id}`;
+const getAdministrationTestEditUrl = (id: string) => `${administrationBaseUrl}/Tests/Edit?PK=${id}`;
 
 const getAdministrationContestProblemsInternalUrl = (id: string) => `/Contest/Problems/${id}`;
-
 const getAdministrationContestEditInternalUrl = (id: string) => `/Contest/Edit/${id}`;
+const getAdministrationTestEditInternalUrl = (id: string) => `/Tests/Edit/${id}`;
+
+const getAdministrationParticipants = (id : number) => `
+${administrationBaseUrl}/Participants?ContestId-equals=${id}`;
+
+const getAdministrationTestsByProblem = (id : number) => `
+${administrationBaseUrl}/Tests?ProblemId-equals=${id}`;
+
+const administrationEditProblem = (id : number) => `
+${administrationBaseUrl}/Problems/Edit?PK=${id}`;
+
+const administrationDeleteProblem = (id : number) => `
+${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
 // profile
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
@@ -91,13 +106,15 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
     return `${baseApiUrl}/Contests/GetAll?${filtersQuery}&${sortingQuery}&${pageQuery}`;
 };
 
+const getContestsByStrategyUrl = (id: number) => `${baseUrl}/Contests?strategy=${id}&page=1`;
+
 const getParticipateInContestUrl = ({
     id,
     participationType,
 }: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
 
 const getContestDetailsUrl =
-    ({ id, isOfficial }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}?official=${isOfficial}`;
+    ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
 
 const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
@@ -286,4 +303,11 @@ export {
     getAdministrationContestEditUrl,
     getAdministrationContestEditInternalUrl,
     getAdministrationContestProblemsInternalUrl,
+    administrationEditProblem,
+    administrationDeleteProblem,
+    getAdministrationTestsByProblem,
+    getAdministrationParticipants,
+    getContestsByStrategyUrl,
+    getAdministrationTestEditUrl,
+    getAdministrationTestEditInternalUrl,
 };

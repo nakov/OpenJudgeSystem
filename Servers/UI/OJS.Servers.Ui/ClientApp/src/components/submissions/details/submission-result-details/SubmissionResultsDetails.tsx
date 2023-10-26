@@ -6,7 +6,8 @@ import {
     ITestRunDetailsCollapsed,
     ITestRunDetailsType,
 } from '../../../../hooks/submissions/types';
-import Button, { ButtonType } from '../../../guidelines/buttons/Button';
+import { getAdministrationTestEditInternalUrl } from '../../../../utils/urls';
+import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import TestRunDiffView from '../../test-run-diff-view/TestRunDiffView';
 
 import styles from './SubmissionResultsDetails.module.scss';
@@ -66,6 +67,24 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
             </h2>
         );
     };
+
+    const renderTestIds = (testRun: ITestCaseRun) => (
+        <div className={styles.testIds}>
+            <span className={styles.testRunIdColor}>
+                Run
+                #
+                {testRun.id}
+            </span>
+            <LinkButton
+              type={LinkButtonType.plain}
+              size={ButtonSize.medium}
+              to={getAdministrationTestEditInternalUrl(testRun.testId.toString())}
+              text={`Test# ${testRun.testId}`}
+              className={styles.testIdColor}
+              isToExternal
+            />
+        </div>
+    );
 
     const renderShowInputButton = useCallback((id: number, isExpanded: boolean) => (
         <Button
@@ -161,7 +180,10 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
         <div className={styles.submissionResultDetailsWrapper}>
             {testRuns?.map((test: ITestCaseRun, idx: number) => (
                 <div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
-                    {renderTestHeading(test, idx)}
+                    <div className={styles.testHeadingAndIds}>
+                        {renderTestHeading(test, idx)}
+                        {renderTestIds(test)}
+                    </div>
                     {renderTestData(test)}
                 </div>
             ))}
