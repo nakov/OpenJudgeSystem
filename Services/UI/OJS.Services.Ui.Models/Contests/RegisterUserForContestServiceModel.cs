@@ -22,6 +22,8 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
 
     public bool IsOnlineExam { get; set; }
 
+    public int? CategoryId { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()
             .ForMember(
