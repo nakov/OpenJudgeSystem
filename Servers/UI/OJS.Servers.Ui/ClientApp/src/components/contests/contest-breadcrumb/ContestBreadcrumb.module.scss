@@ -23,6 +23,10 @@
   gap: 6px;
 }
 
+.breadCrumbContainerWithoutContestName {
+  justify-content: start;
+}
+
 .breadcrumbContestName {
   align-items: center;
   color: colors.$text-light-gray-color;
