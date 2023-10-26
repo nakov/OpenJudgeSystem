@@ -11,7 +11,6 @@ import { useAuth } from '../../hooks/use-auth';
 type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
-    const allowedAnonymousPageRegexes = [ /^\/contests\/\d+$/ ];
     const {
         state: {
             isLoggedIn,
@@ -19,8 +18,6 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
         },
     } = useAuth();
     const location = useLocation();
-
-    const pathAllowsAnonymous = allowedAnonymousPageRegexes.some((regex) => regex.test(window.location.pathname));
 
     const renderPageOrRedirectToLogin = useCallback(() => {
         // Do not render if has not attempted to load user
@@ -38,11 +35,6 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
     }, [ hasCompletedGetAuthInfo, location, isLoggedIn, children ]);
-
-    if (pathAllowsAnonymous) {
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        return <>{children}</>;
-    }
 
     return renderPageOrRedirectToLogin();
 };
