@@ -1,8 +1,8 @@
 import { ContestStatus, FilterType, SortType } from './contest-types';
 
 const FileValidationError = 'Invalid file extension.';
-const PAGESIBLINGCOUNT = 2;
-const PAGEBOUNDARYCOUNT = 0;
+const PAGE_SIBLING_COUNT = 2;
+const PAGE_BOUNDARY_COUNT = 0;
 
 const ExcludedFromHomeWorkTaskHeadingAddition = '(not included in final score)';
 const { Status: DEFAULT_FILTER_TYPE } = FilterType;
@@ -43,6 +43,6 @@ export {
     ContestResultType,
     FileType,
     FileValidationError,
-    PAGESIBLINGCOUNT,
-    PAGEBOUNDARYCOUNT,
+    PAGE_SIBLING_COUNT,
+    PAGE_BOUNDARY_COUNT,
 };

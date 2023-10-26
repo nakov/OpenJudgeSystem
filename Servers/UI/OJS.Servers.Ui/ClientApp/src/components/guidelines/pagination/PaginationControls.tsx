@@ -1,7 +1,7 @@
 import React from 'react';
 import Pagination from '@mui/material/Pagination';
 
-import { PAGEBOUNDARYCOUNT, PAGESIBLINGCOUNT } from '../../../common/constants';
+import { PAGE_BOUNDARY_COUNT, PAGE_SIBLING_COUNT } from '../../../common/constants';
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
 
@@ -24,8 +24,8 @@ const PaginationControls = ({
     return (
         <Pagination
           count={count}
-          siblingCount={PAGESIBLINGCOUNT}
-          boundaryCount={PAGEBOUNDARYCOUNT}
+          siblingCount={PAGE_SIBLING_COUNT}
+          boundaryCount={PAGE_BOUNDARY_COUNT}
           onChange={(ev, value) => onChange(value)}
           page={page}
           className={paginationClassNames}
