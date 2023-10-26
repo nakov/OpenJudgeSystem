@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import ITreeItemType from '../../../common/tree-types';
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
@@ -51,6 +52,7 @@ const Contest = () => {
             removeCurrentProblems,
         },
     } = useProblems();
+    const { actions: { changePreviousProblemSubmissionsPage } } = useProblemSubmissions();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -193,8 +195,9 @@ const Contest = () => {
             removeCurrentProblem();
             removeCurrentContest();
             removeCurrentProblems();
+            changePreviousProblemSubmissionsPage(0);
         },
-        [ removeCurrentContest, removeCurrentProblem, removeCurrentProblems ],
+        [ removeCurrentContest, removeCurrentProblem, removeCurrentProblems, changePreviousProblemSubmissionsPage ],
     );
 
     const renderErrorHeading = useCallback(
