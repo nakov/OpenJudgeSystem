@@ -119,14 +119,20 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             : !isNil(authInfoResponse?.roles
                 .find((role) => role.name.toLowerCase() === UserRoles.Administrator.toLowerCase()));
 
+        const isLecturer = isEmpty(authInfoResponse.roles)
+            ? false
+            : !isNil(authInfoResponse?.roles
+                .find((role) => role.name.toLowerCase() === 'lecturer'));
+
         const isInRole = !isEmpty(authInfoResponse.roles);
 
         return {
             id: authInfoResponse.id,
             username: authInfoResponse.userName,
             email: authInfoResponse.email,
-            permissions: { canAccessAdministration: isAdmin } as IUserPermissionsType,
+            permissions: { canAccessAdministration: isAdmin || isLecturer } as IUserPermissionsType,
             isInRole,
+            isLecturer,
             isAdmin,
         } as IUserType;
     }, []);
