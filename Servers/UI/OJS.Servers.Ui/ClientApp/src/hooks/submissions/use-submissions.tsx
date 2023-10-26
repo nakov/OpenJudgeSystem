@@ -29,6 +29,7 @@ interface ISubmissionsContext {
         selectSubmissionTypeById: (id: number) => void;
         removeProblemSubmissionCode: (id: number) => void;
         closeErrorMessage: (value: string) => void;
+        setProblemSubmissionError: (error: IErrorDataType) => void;
     };
 }
 
@@ -63,8 +64,9 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
     const [ alertBoxErrorIsClosed, setAlertBoxErrorIsClosed ] = useState<boolean>(defaultState.state.alertBoxErrorIsClosed);
 
     const { state: { currentProblem } } = useProblems();
-    const { actions: { loadSubmissions } } = useProblemSubmissions();
     const { state: { isOfficial } } = useCurrentContest();
+    const { actions: { loadSubmissions, changeProblemSubmissionsPage } } = useProblemSubmissions();
+    const { actions: { loadParticipantScores } } = useCurrentContest();
 
     const submitCodeParams = useMemo(() => {
         const { id: problemId } = currentProblem || {};
@@ -171,6 +173,13 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             setIsLoading(false);
             setAlertBoxErrorIsClosed(false);
             resetProblemSubmissionError();
+
+            if (!isNil(currentProblem)) {
+                const { id } = currentProblem;
+                loadSubmissions(id, 1);
+                loadParticipantScores();
+                changeProblemSubmissionsPage(1);
+            }
         },
         [
             selectedSubmissionType,
@@ -179,6 +188,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             submitCode,
             submitCodeParams,
             resetProblemSubmissionError,
+            currentProblem,
+            loadSubmissions,
+            loadParticipantScores,
+            changeProblemSubmissionsPage,
         ],
     );
 
@@ -278,22 +291,10 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             if (!isNil(errorSubmitFile)) {
                 setProblemSubmissionError(errorSubmitFile);
             }
-
-            const { id: problemId } = currentProblem || {};
-
-            if (isNil(problemId)) {
-                return;
-            }
-
-            (async () => {
-                await loadSubmissions(problemId);
-            })();
         },
         [
-            loadSubmissions,
             errorSubmitCode,
             errorSubmitFile,
-            currentProblem,
             setProblemSubmissionError,
             problemSubmissionErrors,
         ],
@@ -314,6 +315,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
                 submit,
                 removeProblemSubmissionCode,
                 closeErrorMessage,
+                setProblemSubmissionError,
             },
         }),
         [
@@ -327,6 +329,7 @@ const SubmissionsProvider = ({ children }: ISubmissionsProviderProps) => {
             problemSubmissionErrors,
             isLoading,
             alertBoxErrorIsClosed,
+            setProblemSubmissionError,
         ],
     );
 

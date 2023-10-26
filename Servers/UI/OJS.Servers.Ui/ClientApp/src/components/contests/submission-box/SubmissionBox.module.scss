@@ -65,3 +65,12 @@
   font-size: variables.$f-size-16;
   padding: 10px;
 }
+
+.navigationalButtonsWrapper {
+  display: flex;
+  align-self: center;
+  justify-content: space-between;
+  width: 50%;
+  margin-top: 5px;
+  padding: 8px;
+}

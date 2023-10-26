@@ -48,8 +48,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public ExecutionResultServiceModel ExecuteSubmission(SubmissionServiceModel submission)
     {
-        submission.StartedExecutionOn = DateTime.UtcNow;
-
         this.submissionsValidation
             .GetValidationResult(submission)
             .VerifyResult();
@@ -169,8 +167,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             this.ProcessTaskResult(submission, executionResult, taskMaxPoints);
         }
-
-        executionResult.CompletedExecutionOn = DateTime.UtcNow;
 
         return executionResult;
     }
