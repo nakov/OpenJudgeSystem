@@ -223,7 +223,7 @@ namespace OJS.Web.Areas.Administration.ViewModels.Contest
             model = model ?? new Contest();
 
             model.Type = (ContestType)this.Type;
-            
+
             return base.GetEntityModel(model);
         }
     }

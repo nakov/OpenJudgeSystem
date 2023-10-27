@@ -394,8 +394,7 @@
     <br />
 </fieldset>
 
-<script>  
-
+<script>
 function setDefaultWorkerType(e) {
     var defaultWorkerType = @Html.Raw(Json.Encode(Model.DefaultWorkerType));
     if (@Html.Raw(Json.Encode(isEditForm))) {
@@ -425,8 +424,8 @@ function setDefaultWorkerType(e) {
 
         if (@isEditFormOfActiveContest.ToString().ToLower()) {
             type.data("kendoDropDownList").enable(false);
-        }     
-         
+        }
+
         function toggleOnlineOnlyFields(contestType) {
             var problemGroupsCountHidden = $('#ProblemGroupsCount-hidden');
             var problemGroupsCount = $('#ProblemGroupsCount');
