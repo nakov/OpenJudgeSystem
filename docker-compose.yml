@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: ./Docker/Dockerfile.administration
     image: judge_administration
-    container_name: judge_administration_instance
+    container_name: administration_instance
     ports:
       - "5001:80"
     restart: on-failure
@@ -54,7 +54,7 @@ services:
     image: judge_worker
     ports:
       - "8003:80"
-    container_name: judge_worker_instance
+    container_name: worker_instance
     restart: on-failure
     env_file:
       - Docker/common/common.env
