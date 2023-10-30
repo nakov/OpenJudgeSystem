@@ -1,26 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import isNil from 'lodash/isNil';
 
 import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
 import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
-import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {
-    const { state: { params } } = useRouteUrlParams();
-    const { submissionId } = params;
-
-    const {
-        state: { currentSubmission },
-        actions: { getDetails },
-    } = useSubmissionsDetails();
-
-    useEffect(() => {
-        (async () => {
-            await getDetails(Number(submissionId));
-        })();
-    }, [ getDetails, submissionId ]);
+    const { state: { currentSubmission } } = useSubmissionsDetails();
 
     if (isNil(currentSubmission)) {
         return <>No details.</>;

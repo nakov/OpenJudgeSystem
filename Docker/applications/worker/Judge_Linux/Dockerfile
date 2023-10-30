@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-5.0 \
       openjdk-11-jdk \
       nodejs \
-      python3.6 \
+      python3.8 \
       python3-pip \
       golang-go \
       libgtk-3-0 \

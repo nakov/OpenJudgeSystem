@@ -72,6 +72,7 @@ const SubmissionsGrid = () => {
             initiateUserSubmissionsQuery,
             initiateSubmissionsByContestQuery,
             clearPageValues,
+            clearPageInformation,
         },
     } = usePublicSubmissions();
     const { state: { user } } = useAuth();
@@ -256,6 +257,13 @@ const SubmissionsGrid = () => {
             : getCurrentMySubmissions,
 
         [ activeToggleElement, getCurrentMySubmissions, getCurrentAllSubmissions ],
+    );
+
+    useEffect(
+        () => () => {
+            clearPageInformation();
+        },
+        [ clearPageInformation ],
     );
 
     const { pagesCount } = pagesInfo;
