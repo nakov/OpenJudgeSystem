@@ -92,17 +92,6 @@ const ContestDetailsPage = () => {
         [ contestId ],
     );
 
-    const isOfficial = useMemo(
-        () => {
-            if (isNil(contestDetails)) {
-                return null;
-            }
-
-            return contestDetails?.canBeCompeted;
-        },
-        [ contestDetails ],
-    );
-
     const {
         isAccessible: canAccessCompeteButton,
         isAccessibleForAdminOrLecturerInContest: competableOnlyForAdminAndLecturers,
@@ -193,24 +182,24 @@ const ContestDetailsPage = () => {
                 }
                 {
                     canAccessCompeteButton &&
-                        (
-                            <LinkButton
-                              id="button-card-compete"
-                              internalClassName={competableOnlyForAdminAndLecturers
-                                  ? styles.adminAccessibleButton
-                                  : ''}
-                              to={getParticipateInContestUrl({
-                                  id: contestIdToNumber,
-                                  participationType: ContestParticipationType.Compete,
-                              })}
-                              text="Compete"
-                              state={
-                                isOfficial
+                    (
+                        <LinkButton
+                          id="button-card-compete"
+                          internalClassName={competableOnlyForAdminAndLecturers
+                              ? styles.adminAccessibleButton
+                              : ''}
+                          to={getParticipateInContestUrl({
+                              id: contestIdToNumber,
+                              participationType: ContestParticipationType.Compete,
+                          })}
+                          text="Compete"
+                          state={
+                                contestDetails?.canBeCompeted
                                     ? ButtonState.enabled
                                     : ButtonState.disabled
                             }
-                            />
-                        )
+                        />
+                    )
                 }
                 {
                     canAccessPracticeButton &&
@@ -227,9 +216,9 @@ const ContestDetailsPage = () => {
                           text="Practice"
                           type={LinkButtonType.secondary}
                           state={
-                                isOfficial
-                                    ? ButtonState.disabled
-                                    : ButtonState.enabled
+                                contestDetails?.canBePracticed
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
                             }
                         />
                     )
@@ -244,9 +233,9 @@ const ContestDetailsPage = () => {
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
             contestDetails?.canViewResults,
-            contestDetails?.isAdminOrLecturerInContest,
-            isOfficial,
             contestDetails?.canBePracticed,
+            contestDetails?.canBeCompeted,
+            contestDetails?.isAdminOrLecturerInContest,
         ],
     );
 

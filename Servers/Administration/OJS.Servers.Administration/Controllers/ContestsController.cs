@@ -30,7 +30,7 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IParticipantsDataService participantsData;
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
-        private readonly IContestsBusinessService contestsBusinessService;
+        private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
         private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
 
@@ -40,7 +40,7 @@ namespace OJS.Servers.Administration.Controllers
             ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestsValidationHelper contestsValidationHelper,
-            IContestsBusinessService contestsBusinessService,
+            IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper)
         {
             this.ipsData = ipsData;
@@ -48,7 +48,7 @@ namespace OJS.Servers.Administration.Controllers
             this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestsValidationHelper = contestsValidationHelper;
-            this.contestsBusinessService = contestsBusinessService;
+            this.categoriesValidationHelper = categoriesValidationHelper;
             this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
         }
 
@@ -144,14 +144,18 @@ namespace OJS.Servers.Administration.Controllers
                     .VerifyResult();
             }
 
+            this.notDefaultValueValidationHelper
+                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
+                .VerifyResult();
+
+            await this.categoriesValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity.CategoryId)
+                .VerifyResult();
+
             if (!entity.IsOnlineExam && entity.Duration != null)
             {
                 entity.Duration = null;
             }
-
-            this.notDefaultValueValidationHelper
-                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
-                .VerifyResult();
         }
 
         protected override async Task BeforeEntitySaveOnCreateAsync(
@@ -206,7 +210,9 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
             Type autocompleteType)
         {
-            if (!this.User.IsAdmin() && this.User.IsLecturer())
+            var userIsLecturerOnly = !this.User.IsAdmin() && this.User.IsLecturer();
+
+            if (userIsLecturerOnly)
             {
                 // Lecturers should be able to create contests only for allowed categories
                 complexOptionFilters.Add(
@@ -214,7 +220,10 @@ namespace OJS.Servers.Administration.Controllers
                         nameof(entity.Category),
                         category => ((ContestCategory)category)
                             .LecturersInContestCategories
-                            .Any(lg => lg.LecturerId == this.User.GetId())));
+                            .Any(lg => lg.LecturerId == this.User.GetId()) ||
+                        ((ContestCategory)category)
+                        .Contests
+                        .Any(cc => !cc.IsDeleted && cc.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()))));
             }
 
             return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
