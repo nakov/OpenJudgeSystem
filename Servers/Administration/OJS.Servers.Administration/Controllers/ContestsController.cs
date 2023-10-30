@@ -30,7 +30,7 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IParticipantsDataService participantsData;
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
-        private readonly IContestsBusinessService contestsBusinessService;
+        private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
         private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
 
@@ -40,7 +40,7 @@ namespace OJS.Servers.Administration.Controllers
             ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestsValidationHelper contestsValidationHelper,
-            IContestsBusinessService contestsBusinessService,
+            IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper)
         {
             this.ipsData = ipsData;
@@ -48,7 +48,7 @@ namespace OJS.Servers.Administration.Controllers
             this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestsValidationHelper = contestsValidationHelper;
-            this.contestsBusinessService = contestsBusinessService;
+            this.categoriesValidationHelper = categoriesValidationHelper;
             this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
         }
 
@@ -144,14 +144,18 @@ namespace OJS.Servers.Administration.Controllers
                     .VerifyResult();
             }
 
+            this.notDefaultValueValidationHelper
+                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
+                .VerifyResult();
+
+            await this.categoriesValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity.CategoryId)
+                .VerifyResult();
+
             if (!entity.IsOnlineExam && entity.Duration != null)
             {
                 entity.Duration = null;
             }
-
-            this.notDefaultValueValidationHelper
-                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
-                .VerifyResult();
         }
 
         protected override async Task BeforeEntitySaveOnCreateAsync(

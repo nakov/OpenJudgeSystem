@@ -26,6 +26,16 @@ public class ContestsValidationHelper : IContestsValidationHelper
             user.IsAdmin));
     }
 
+    public async Task<ValidationResult> ValidateCategoryPermissions(int? categoryId)
+    {
+        var user = this.userProvider.GetCurrentUser();
+
+        return GetValidationResult(await this.contestsBusiness.UserHasContestPermissions(
+            categoryId!.Value,
+            user.Id,
+            user.IsAdmin));
+    }
+
     private static ValidationResult GetValidationResult(bool isValid)
         => isValid
             ? ValidationResult.Valid()
