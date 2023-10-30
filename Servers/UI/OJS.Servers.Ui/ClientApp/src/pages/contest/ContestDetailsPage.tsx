@@ -70,17 +70,6 @@ const ContestDetailsPage = () => {
         [ contestId ],
     );
 
-    const isOfficial = useMemo(
-        () => {
-            if (isNil(contestDetails)) {
-                return null;
-            }
-
-            return contestDetails?.canBeCompeted;
-        },
-        [ contestDetails ],
-    );
-
     const {
         isAccessible: canAccessCompeteButton,
         isAccessibleForAdminOrLecturerInContest: competableOnlyForAdminAndLecturers,
@@ -183,7 +172,7 @@ const ContestDetailsPage = () => {
                           })}
                           text="Compete"
                           state={
-                                isOfficial
+                                contestDetails?.canBeCompeted
                                     ? ButtonState.enabled
                                     : ButtonState.disabled
                             }
@@ -205,9 +194,9 @@ const ContestDetailsPage = () => {
                           text="Practice"
                           type={LinkButtonType.secondary}
                           state={
-                                isOfficial
-                                    ? ButtonState.disabled
-                                    : ButtonState.enabled
+                                contestDetails?.canBePracticed
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
                             }
                         />
                     )
@@ -222,9 +211,9 @@ const ContestDetailsPage = () => {
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
             contestDetails?.canViewResults,
-            contestDetails?.isAdminOrLecturerInContest,
-            isOfficial,
             contestDetails?.canBePracticed,
+            contestDetails?.canBeCompeted,
+            contestDetails?.isAdminOrLecturerInContest,
         ],
     );
 
