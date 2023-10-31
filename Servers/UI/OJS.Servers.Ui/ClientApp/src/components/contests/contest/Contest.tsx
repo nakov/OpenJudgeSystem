@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
@@ -47,6 +48,7 @@ const Contest = () => {
             removeCurrentProblems,
         },
     } = useProblems();
+    const { actions: { changePreviousProblemSubmissionsPage } } = useProblemSubmissions();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -169,8 +171,9 @@ const Contest = () => {
             removeCurrentProblem();
             removeCurrentContest();
             removeCurrentProblems();
+            changePreviousProblemSubmissionsPage(0);
         },
-        [ removeCurrentContest, removeCurrentProblem, removeCurrentProblems ],
+        [ removeCurrentContest, removeCurrentProblem, removeCurrentProblems, changePreviousProblemSubmissionsPage ],
     );
 
     const renderErrorHeading = useCallback(

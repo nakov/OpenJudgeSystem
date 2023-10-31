@@ -47,6 +47,7 @@ interface IPublicSubmissionsContext {
         initiateUserSubmissionsQuery: () => void;
         initiateSubmissionsByContestQuery: (contestId: string) => void;
         clearPageValues: () => void;
+        clearPageInformation: () => void;
     };
 }
 
@@ -293,6 +294,16 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ populatePageInformation ],
     );
 
+    const clearPageInformation = useCallback(
+        () => {
+            setPublicSubmissionsUrlParams(null);
+            setUserSubmissionsUrlParams(null);
+            setGetSubmissionsByContestIdParams(defaultState.state.submissionsByContestParams);
+            setPreviousPage(0);
+        },
+        [],
+    );
+
     useEffect(() => {
         const mappedMenuItems = (userParticipationsData ||
             []).map((item: IParticipationType) => ({
@@ -470,6 +481,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 initiateUserSubmissionsQuery,
                 initiateSubmissionsByContestQuery,
                 clearPageValues,
+                clearPageInformation,
             },
         }),
         [
@@ -489,6 +501,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             initiateUserSubmissionsQuery,
             initiateSubmissionsByContestQuery,
             clearPageValues,
+            clearPageInformation,
             selectMenuItems,
         ],
     );

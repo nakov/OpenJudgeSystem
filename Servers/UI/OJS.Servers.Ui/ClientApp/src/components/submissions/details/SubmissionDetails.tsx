@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE } from '../../../common/constants';
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
+import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useSubmissionsDetails } from '../../../hooks/submissions/use-submissions-details';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePageTitles } from '../../../hooks/use-page-titles';
+import { usePages } from '../../../hooks/use-pages';
+import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -20,6 +20,7 @@ import { Button, ButtonSize, ButtonState, ButtonType, LinkButton, LinkButtonType
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../guidelines/icons/LeftArrowIcon';
+import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
 import SubmissionsList from '../submissions-list/SubmissionsList';
@@ -33,24 +34,30 @@ const SubmissionDetails = () => {
         state: {
             isLoading,
             currentSubmission,
-            currentSubmissionDetailsResults,
+            currentSubmissionResults,
             validationErrors,
             downloadErrorMessage,
         },
         actions: {
+            getResults,
             downloadProblemSubmissionFile,
             setDownloadErrorMessage,
             setCurrentSubmission,
             selectSubmissionById,
-            setSubmissionDetailsResultsUrlParams,
+            setSubmissionResultsUrlParams,
+            getDetails,
         },
     } = useSubmissionsDetails();
+    const {
+        state: { problemSubmissionsPage },
+        actions: { changeProblemSubmissionsPage },
+    } = useProblemSubmissions();
+    const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { actions: { setPageTitle } } = usePageTitles();
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
 
     const { state: { user } } = useAuth();
-    const { state: { hashParam } } = useHashUrlParams();
-    const navigate = useNavigate();
+    const { state: { pagesInfo } } = usePages();
 
     const renderDownloadErrorMessage = useCallback(() => {
         if (isNil(downloadErrorMessage)) {
@@ -150,20 +157,32 @@ const SubmissionDetails = () => {
                 return;
             }
 
-            // eslint-disable-next-line prefer-destructuring
-            const submissionId = currentSubmission.id;
+            const { id: submissionId } = currentSubmission;
 
-            setSubmissionDetailsResultsUrlParams({
+            setSubmissionResultsUrlParams({
                 submissionId,
-                take: DEFAULT_PROBLEM_RESULTS_TAKE_CONTESTS_PAGE,
+                page: problemSubmissionsPage,
             });
+
+            getDetails(submissionId);
         },
-        [ currentSubmission, setSubmissionDetailsResultsUrlParams ],
+        [ problemSubmissionsPage, currentSubmission, setSubmissionResultsUrlParams, getDetails ],
+    );
+
+    const handlePageChange = useCallback(
+        (page: number) => {
+            changeProblemSubmissionsPage(page);
+
+            const { id } = currentSubmission!;
+
+            getResults(id, page);
+        },
+        [ changeProblemSubmissionsPage, getResults, currentSubmission ],
     );
 
     const renderRetestButton = useCallback(
         () => {
-            if (!canAccessAdministration) {
+            if (!canAccessAdministration || isNil(currentSubmission)) {
                 return null;
             }
 
@@ -171,13 +190,14 @@ const SubmissionDetails = () => {
                 <LinkButton
                   type={LinkButtonType.secondary}
                   size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl()}
+                  to={getAdministrationRetestSubmissionInternalUrl({ id: currentSubmission.id })}
                   text="Retest"
                   className={styles.retestButton}
+                  isToExternal
                 />
             );
         },
-        [ canAccessAdministration ],
+        [ canAccessAdministration, currentSubmission ],
     );
     const renderButtonsSection = useCallback(() => (
         <div className={styles.buttonsSection}>
@@ -269,6 +289,7 @@ const SubmissionDetails = () => {
         [ currentSubmission ],
     );
 
+    const { pagesCount } = pagesInfo;
     const refreshableSubmissionsList = useCallback(
         () => (
             <div className={styles.navigation}>
@@ -276,30 +297,40 @@ const SubmissionDetails = () => {
                     <Heading type={HeadingType.secondary}>Submissions</Heading>
                 </div>
                 <SubmissionsList
-                  items={currentSubmissionDetailsResults}
+                  items={currentSubmissionResults}
                   selectedSubmission={currentSubmission}
                   className={styles.submissionsList}
+                />
+                <PaginationControls
+                  count={pagesCount}
+                  page={problemSubmissionsPage}
+                  onChange={handlePageChange}
                 />
                 { renderButtonsSection() }
                 { renderSubmissionInfo() }
             </div>
         ),
-        [ currentSubmissionDetailsResults, currentSubmission, renderButtonsSection, renderSubmissionInfo ],
+        [ currentSubmissionResults, currentSubmission, pagesCount,
+            problemSubmissionsPage, handlePageChange, renderButtonsSection, renderSubmissionInfo ],
     );
 
     const setSubmissionAndStartParticipation = useCallback(
         (contestId: number) => {
-            // eslint-disable-next-line prefer-destructuring
             const participationType = contestParticipationType(currentSubmission!.isOfficial);
-            navigate({
-                pathname: getParticipateInContestUrl({ id: contestId, participationType }),
-                hash: hashParam,
+
+            const participateInContestUrl = getParticipateInContestUrl({
+                id: contestId,
+                participationType,
             });
+
+            const { problem: { id: problemId } } = currentSubmission!;
+
+            initiateRedirectionToProblem(problemId, participateInContestUrl);
 
             setCurrentSubmission(null);
             selectSubmissionById(null);
         },
-        [ currentSubmission, hashParam, navigate, selectSubmissionById, setCurrentSubmission ],
+        [ currentSubmission, selectSubmissionById, setCurrentSubmission, initiateRedirectionToProblem ],
     );
 
     const codeEditor = useCallback(
