@@ -52,6 +52,7 @@ public class BackgroundJobsController : BaseAdminViewController
         return this.Redirect("/");
     }
 
+    [HttpGet]
     public ActionResult? RegisterJobForUpdatingParticipantTotalScoreSnapshot()
     {
         this.hangfireBackgroundJobsService.AddOrUpdateRecurringJob<IParticipantsBusinessService>(
@@ -62,6 +63,7 @@ public class BackgroundJobsController : BaseAdminViewController
         return null;
     }
 
+    [HttpGet]
     public ActionResult? RegisterJobForRemovingMultipleParticipantScoresForProblem()
     {
         this.hangfireBackgroundJobsService.AddOrUpdateRecurringJob<IParticipantsBusinessService>(
