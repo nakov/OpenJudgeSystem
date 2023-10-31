@@ -1,3 +1,5 @@
+using OJS.Common.Utils;
+
 namespace OJS.Servers.Infrastructure.Extensions
 {
     using System;
@@ -77,11 +79,14 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static void UseHealthMonitoring(this WebApplication app)
         {
-            var heathCheckConfig = app.Configuration.GetSection(nameof(HealthCheckConfig)).Get<HealthCheckConfig>();
+            string healthCheckKey = "HealthCheckConfig__Key";
+            string healthCheckPassword = "HealthCheckConfig__Password";
+            var key = EnvironmentUtils.GetRequiredByKey(healthCheckKey);
+            var password = EnvironmentUtils.GetRequiredByKey(healthCheckPassword);
 
             Func<HttpContext, bool> healthMonitoringPredicate =
-                httpContext => httpContext.Request.Query.ContainsKey(heathCheckConfig.Key) &&
-                               httpContext.Request.Query[heathCheckConfig.Key] == heathCheckConfig.Password;
+                httpContext => httpContext.Request.Query.ContainsKey(key) &&
+                               httpContext.Request.Query[key] == password;
 
             app.MapWhen(healthMonitoringPredicate, appBuilder => appBuilder.UseHealthChecks("/health"));
         }
