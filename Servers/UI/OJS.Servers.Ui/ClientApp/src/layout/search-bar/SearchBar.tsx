@@ -44,8 +44,9 @@ const SearchBar = () => {
     const handleOnChangeUpdateSearch = useCallback(
         (searchInput?: IFormControlOnChangeValueType | ChangeEvent<HTMLInputElement>) => {
             setSearchParam(searchInput as string);
+            console.log(searchParam);
         },
-        [],
+        [ searchParam ],
     );
 
     const handleSubmit = useCallback(
@@ -61,14 +62,8 @@ const SearchBar = () => {
                 pathname: '/search',
                 search: `?${createSearchParams(params)}`,
             });
-
-            setSearchParam('');
-
-            setSelectedTerms(defaultState.state.selectedTerms);
-
-            toggleVisibility();
         },
-        [ navigate, searchParam, selectedTerms, toggleVisibility ],
+        [ navigate, searchParam, selectedTerms ],
     );
 
     const handleSelectedCheckboxValue = useCallback(
@@ -118,7 +113,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={CheckboxSearchValues.contests}
-                              checked
+                              checked={selectedTerms.includes(CheckboxSearchValues.contests)}
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>
@@ -129,7 +124,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={CheckboxSearchValues.problems}
-                              checked
+                              checked={selectedTerms.includes(CheckboxSearchValues.problems)}
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>
@@ -140,7 +135,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={CheckboxSearchValues.users}
-                              checked
+                              checked={selectedTerms.includes(CheckboxSearchValues.users)}
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>
