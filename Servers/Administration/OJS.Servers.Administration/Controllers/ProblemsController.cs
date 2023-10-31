@@ -226,7 +226,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
     {
-        var validationModel = new ContestDeleteProblemsValidationServiceModel()
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
         {
             Id = model.Id, IsActive = await this.contestsActivity.IsContestActive(model.Id),
         };
