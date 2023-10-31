@@ -39,7 +39,6 @@ namespace OJS.Services.Common.Data.Implementations
         public virtual async Task DeleteById(object id)
         {
             var entity = await this.DbSet.FindAsync(id);
-
             this.Delete(entity!);
         }
 
@@ -152,5 +151,22 @@ namespace OJS.Services.Common.Data.Implementations
 
             return query;
         }
+
+        public async Task ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds)
+        {
+            var originalTimeout = this.db.Database.GetCommandTimeout();
+            try
+            {
+                this.db.Database.SetCommandTimeout(timeoutInSeconds);
+                await this.DbExecuteSqlCommand(query);
+            }
+            finally
+            {
+                this.db.Database.SetCommandTimeout(originalTimeout);
+            }
+        }
+
+        private async Task DbExecuteSqlCommand(string query) =>
+           await this.db.Database.ExecuteSqlRawAsync(query);
     }
 }

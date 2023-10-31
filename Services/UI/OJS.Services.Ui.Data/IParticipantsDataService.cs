@@ -42,5 +42,7 @@ namespace OJS.Services.Ui.Data
         Task Delete(IEnumerable<Participant> participants);
 
         Task InvalidateByContestAndIsOfficial(int contestId, bool isOfficial);
+
+        Task UpdateTotalScoreSnapshot();
     }
 }

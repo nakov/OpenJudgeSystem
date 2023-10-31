@@ -18,7 +18,9 @@ namespace OJS.Data.Infrastructure.Extensions
             // For migrations
             // var connectionString = "Server=.;Database=OpenJudgeSystem;Integrated Security=True;";
             // var connectionString = "Server=.;Database=OpenJudgeSystem;User Id=sa;Password=1234;";
-            var connectionString = EnvironmentUtils.GetApplicationConnectionString(applicationName);
+            //var connectionString = EnvironmentUtils.GetApplicationConnectionString(applicationName);
+
+            var connectionString = "Server=.;Database=OpenJudgeSystem;Integrated Security=True;User Id=sa;Password=1234;";
 
             options.UseSqlServer(connectionString!);
 

@@ -22,17 +22,20 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
     private readonly IDatesService datesService;
+    private readonly IParticipantScoresDataService scoresDataService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         ISubmissionsDataService submissionsData,
         IContestsDataService contestsData,
-        IDatesService datesService)
+        IDatesService datesService,
+        IParticipantScoresDataService scoresDataService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
         this.datesService = datesService;
+        this.scoresDataService = scoresDataService;
     }
 
     public Task<int> GetPracticeParticipantsCount(int contestId)
@@ -40,6 +43,28 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
     public Task<int> GetCompeteParticipantsCount(int contestId)
         => this.participantsData.GetAllByContestAndIsOfficial(contestId, true).CountAsync();
+
+    public async Task UpdateTotalScoreSnapshotOfParticipants() =>
+       await this.participantsData.UpdateTotalScoreSnapshot();
+
+    public async Task RemoveParticipantMultipleScores()
+    {
+        var participantScores =
+            this.scoresDataService.GetAll()
+                .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
+                .Where(ps => ps.Count() > 1)
+                .ToList();
+
+        var participantScoresToRemove = new List<ParticipantScore>();
+        foreach (var participantScoreGroup in participantScores)
+        {
+            participantScoresToRemove
+                .AddRange(participantScoreGroup.OrderByDescending(ps => ps.Points).Skip(1)
+                    .ToList());
+        }
+
+        await this.scoresDataService.Delete(participantScoresToRemove);
+    }
 
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
         Contest contest,

@@ -69,7 +69,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participant = this.participantsData
                 .GetByIdQuery(submission.ParticipantId.Value)
-                .Select(p => new { p.IsOfficial, p.User.UserName })
+                .Select(p => new { p.IsOfficial, p.User.UserName, Participant = p })
                 .FirstOrDefault();
 
             if (participant == null)
@@ -87,7 +87,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 await this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                     submission,
                     participant.UserName,
-                    participant.IsOfficial);
+                    participant.IsOfficial,
+                    participant.Participant);
 
                 return;
             }
@@ -98,7 +99,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 await this.participantScoresData.UpdateBySubmissionAndPoints(
                     existingScore,
                     submission.Id,
-                    submission.Points);
+                    submission.Points,
+                    participant.Participant);
             }
         }
 
@@ -182,12 +184,13 @@ namespace OJS.Services.Ui.Business.Implementations
         private async Task NormalizeParticipantScorePoints()
             => await (await this.participantScoresData
                     .GetAllHavingPointsExceedingLimit()
-                    .Select(ps => new { ParticipantScore = ps, ProblemMaxPoints = ps.Problem.MaximumPoints, })
+                    .Select(ps => new { ParticipantScore = ps, ProblemMaxPoints = ps.Problem.MaximumPoints, Participant=ps.Participant })
                     .ToListAsync())
                 .ForEachSequential(async x =>
                     await this.participantScoresData.UpdateBySubmissionAndPoints(
                         x.ParticipantScore,
                         x.ParticipantScore.SubmissionId,
-                        x.ProblemMaxPoints));
+                        x.ProblemMaxPoints,
+                        x.Participant));
     }
 }
