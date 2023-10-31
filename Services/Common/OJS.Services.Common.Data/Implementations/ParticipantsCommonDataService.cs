@@ -1,7 +1,8 @@
-namespace OJS.Services.Administration.Data.Implementations;
+namespace OJS.Services.Common.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Participants;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;
 
@@ -19,4 +20,8 @@ public class ParticipantsCommonDataService : DataService<Participant>, IParticip
     public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
         => this.GetAllByContest(contestId)
             .Where(p => p.IsOfficial == isOfficial);
+
+    public IQueryable<Participant> GetAllByUserAndContest(string userId, int contestId)
+        => this.DbSet
+            .Where(p => p.UserId == userId && p.ContestId == contestId);
 }

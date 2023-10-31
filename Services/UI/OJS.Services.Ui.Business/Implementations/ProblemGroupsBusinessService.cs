@@ -44,38 +44,6 @@ namespace OJS.Services.Ui.Business.Implementations
             return ServiceResult.Success;
         }
 
-        public async Task<ServiceResult> CopyAllToContestBySourceAndDestinationContest(
-            int sourceContestId,
-            int destinationContestId)
-        {
-            if (sourceContestId == destinationContestId)
-            {
-                return new ServiceResult(Resource.CannotCopyProblemGroupsIntoSameContest);
-            }
-
-            if (!await this.contestsData.ExistsById(destinationContestId))
-            {
-                return new ServiceResult(SharedResource.ContestNotFound);
-            }
-
-            if (await this.contestsData.IsActiveById(destinationContestId))
-            {
-                return new ServiceResult(Resource.CannotCopyProblemGroupsIntoActiveContest);
-            }
-
-            var sourceContestProblemGroups = await this.problemGroupsData
-                .GetAllByContest(sourceContestId)
-                .AsNoTracking()
-                .Include(pg => pg.Problems.Select(p => p.Tests))
-                .Include(pg => pg.Problems.Select(p => p.Resources))
-                .ToListAsync();
-
-            await sourceContestProblemGroups
-                .ForEachSequential(async pg => await this.CopyProblemGroupToContest(pg, destinationContestId));
-
-            return ServiceResult.Success;
-        }
-
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
             problemGroup.Contest = null!;
