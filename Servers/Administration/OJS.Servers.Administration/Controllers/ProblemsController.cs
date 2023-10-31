@@ -582,7 +582,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
     {
-        var validationModel = new ContestDeleteProblemsValidationServiceModel()
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
         {
             Id = entity.ProblemGroup.ContestId, IsActive = await this.contestsActivity.IsContestActive(entity.ProblemGroup.ContestId),
         };
