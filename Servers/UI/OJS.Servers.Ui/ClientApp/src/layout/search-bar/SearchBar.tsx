@@ -38,15 +38,14 @@ const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
-    const { state: { isVisible }, actions: { toggleVisibility } } = useSearch();
+    const { state: { isVisible } } = useSearch();
     const navigate = useNavigate();
 
     const handleOnChangeUpdateSearch = useCallback(
         (searchInput?: IFormControlOnChangeValueType | ChangeEvent<HTMLInputElement>) => {
             setSearchParam(searchInput as string);
-            console.log(searchParam);
         },
-        [ searchParam ],
+        [ ],
     );
 
     const handleSubmit = useCallback(
