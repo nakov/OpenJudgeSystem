@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { useHashUrlParams } from '../../../hooks/common/use-hash-url-params';
-import { ISubmissionDetails, ISubmissionDetailsType } from '../../../hooks/submissions/types';
+import { ISubmissionDetailsType, ISubmissionResults } from '../../../hooks/submissions/types';
+import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
 import { formatDate } from '../../../utils/dates';
 import { getProblemSubmissionDetailsUrl } from '../../../utils/urls';
@@ -17,7 +17,7 @@ import SubmissionResultPointsLabel from '../submission-result-points-label/Submi
 import styles from './SubmissionsList.module.scss';
 
 interface ISubmissionsListProps extends IHaveOptionalClassName {
-    items: ISubmissionDetails[];
+    items: ISubmissionResults[];
     selectedSubmission: ISubmissionDetailsType | null;
 }
 
@@ -26,7 +26,7 @@ const SubmissionsList = ({
     selectedSubmission,
     className = '',
 }: ISubmissionsListProps) => {
-    const { state: { hashParam } } = useHashUrlParams();
+    const { state: { isOfficial } } = useCurrentContest();
 
     const containerClassName = useMemo(
         () => concatClassNames(styles.submissionsScroll, className),
@@ -50,7 +50,7 @@ const SubmissionsList = ({
     const submissionsTypeLabelClassName = concatClassNames(styles.submissionTypeLabel);
 
     const renderSubmissionListItem = useCallback(
-        (submission: ISubmissionDetails) => {
+        (submission: ISubmissionResults) => {
             const { id: selectedSubmissionId } = selectedSubmission || {};
             const {
                 id,
@@ -59,7 +59,6 @@ const SubmissionsList = ({
                 isProcessed,
                 createdOn,
                 submissionType,
-                isOfficial,
                 testRunsCount,
             } = submission;
             const isSelectedSubmission = id === selectedSubmissionId;
@@ -104,10 +103,7 @@ const SubmissionsList = ({
                             <Label type={LabelType.plain} text={typeLabelText} className={submissionsTypeLabelClassName} />
                             <LinkButton
                               size={ButtonSize.small}
-                              to={getProblemSubmissionDetailsUrl({
-                                  submissionId: id,
-                                  hashParam,
-                              })}
+                              to={getProblemSubmissionDetailsUrl({ submissionId: id })}
                               className={submissionBtnClass}
                               type={LinkButtonType.secondary}
                               text="Details"
@@ -125,7 +121,7 @@ const SubmissionsList = ({
                 </div>
             );
         },
-        [ hashParam, selectedSubmission, submissionsTypeLabelClassName ],
+        [ selectedSubmission, submissionsTypeLabelClassName, isOfficial ],
     );
 
     return (
