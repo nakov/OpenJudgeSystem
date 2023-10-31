@@ -29,6 +29,7 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
+        private readonly IContestsDataService contestsDataService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
@@ -41,7 +42,8 @@ namespace OJS.Servers.Administration.Controllers
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestsValidationHelper contestsValidationHelper,
             IContestCategoriesValidationHelper categoriesValidationHelper,
-            INotDefaultValueValidationHelper notDefaultValueValidationHelper)
+            INotDefaultValueValidationHelper notDefaultValueValidationHelper,
+            IContestsDataService contestsDataService)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
@@ -50,6 +52,7 @@ namespace OJS.Servers.Administration.Controllers
             this.contestsValidationHelper = contestsValidationHelper;
             this.categoriesValidationHelper = categoriesValidationHelper;
             this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
+            this.contestsDataService = contestsDataService;
         }
 
         protected override Expression<Func<Contest, bool>>? MasterGridFilter
@@ -148,9 +151,19 @@ namespace OJS.Servers.Administration.Controllers
                 .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
                 .VerifyResult();
 
-            await this.categoriesValidationHelper
-                .ValidatePermissionsOfCurrentUser(entity.CategoryId)
-                .VerifyResult();
+            var oldContest = await this.contestsDataService
+                .OneById(entity.Id);
+
+            if (oldContest!.CategoryId != entity.CategoryId)
+            {
+                // If a lecturer tries to update the category of a contest
+                // he should be able to do it only for categories he has lecturer rights for.
+                // Otherwise if the category is not changed, even though the lecturer does not have rights for it,
+                // no error should be thrown.
+                await this.categoriesValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.CategoryId)
+                    .VerifyResult();
+            }
 
             if (!entity.IsOnlineExam && entity.Duration != null)
             {
