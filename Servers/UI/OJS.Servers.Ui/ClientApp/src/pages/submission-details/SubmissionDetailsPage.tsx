@@ -10,12 +10,7 @@ import { setLayout } from '../shared/set-layout';
 const SubmissionDetailsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { submissionId } = params;
-    const {
-        actions: {
-            getDetails,
-            selectSubmissionById,
-        },
-    } = useSubmissionsDetails();
+    const { actions: { selectSubmissionById, getResults } } = useSubmissionsDetails();
 
     useEffect(
         () => {
@@ -24,8 +19,9 @@ const SubmissionDetailsPage = () => {
             }
 
             selectSubmissionById(submissionId);
+            getResults(submissionId, 1);
         },
-        [ getDetails, selectSubmissionById, submissionId ],
+        [ selectSubmissionById, submissionId, getResults ],
     );
 
     return (
