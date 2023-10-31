@@ -204,7 +204,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
 
-        var validationModel = new ContestDeleteProblemsValidationServiceModel()
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
         {
             Id = contestId.Value, IsActive = await this.contestsActivity.IsContestActive(contestId.Value),
         };
