@@ -29,5 +29,5 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
                 this.DbSet,
                 sfp => sfp.SubmissionId,
                 submission => submission.Id,
-                (sfp, submission) => submission);
+                (_, submission) => submission);
 }
