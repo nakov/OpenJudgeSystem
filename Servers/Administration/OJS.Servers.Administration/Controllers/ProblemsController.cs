@@ -452,11 +452,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         }
         else
         {
-            var problemGroupField = formControls.FirstOrDefault(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
-            if (problemGroupField != null)
-            {
-                problemGroupField.IsHidden = true;
-            }
+            var problemGroupField = formControls.First(x => x.Name == nameof(Data.Models.Problems.Problem.ProblemGroup));
+
+            problemGroupField.IsHidden = true;
         }
 
         formControls.Add(new FormControlViewModel
@@ -547,13 +545,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        if (newEntity.ProblemGroup != null)
+        newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
+
+        if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
         {
-            newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
-            if (originalEntity.ProblemGroup != null && !originalEntity.ProblemGroup.Contest.IsOnlineExam)
-            {
-                newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
-            }
+            newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
 
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
@@ -572,13 +568,11 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             throw new Exception($"A valid ContestId must be provided to be able to {action} a Problem.");
         }
 
-        var problemGroupInput = formControls.FirstOrDefault(fc => fc.Name == nameof(ProblemGroup));
-        if (problemGroupInput != null)
-        {
-            var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
-                .OrderBy(pg => pg.OrderBy);
-            problemGroupInput.Options = orderedProblemGroupsQuery;
-        }
+        var problemGroupInput = formControls.First(fc => fc.Name == nameof(ProblemGroup));
+
+        var orderedProblemGroupsQuery = this.problemGroupsData.GetAllByContestId(contestId)
+            .OrderBy(pg => pg.OrderBy);
+        problemGroupInput.Options = orderedProblemGroupsQuery;
 
         return base.ModifyFormControls(formControls, entity, action, entityDict);
     }
