@@ -3,14 +3,16 @@ namespace OJS.Services.Ui.Business.Implementations;
 using OJS.Services.Ui.Data;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 public class ContestResultsAggregatorService : IContestResultsAggregatorService
 {
     private readonly IParticipantsCommonDataService participantsCommonData;
 
-    public ContestResultsAggregatorService(IParticipantsCommonDataService participantsCommonData)
-        => this.participantsCommonData = participantsCommonData;
+    public ContestResultsAggregatorService(
+        IParticipantsCommonDataService participantsCommonData) =>
+        this.participantsCommonData = participantsCommonData;
 
     public ContestResultsViewModel GetContestResults(
             Contest contest,
@@ -38,7 +40,10 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             };
 
             var participants = this.participantsCommonData
-                .GetAllByContestAndIsOfficial(contest.Id, official);
+                .GetAllByContestAndIsOfficial(contest.Id, official)
+                .AsNoTracking()
+                .OrderByDescending(p => p.TotalScoreSnapshot)
+                .ThenBy(p => p.TotalScoreSnapshotModifiedOn);
 
             var participantResults = participants
                 .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
