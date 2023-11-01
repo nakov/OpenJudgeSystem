@@ -18,7 +18,7 @@ public interface ILecturerContestPrivilegesBusinessService : IService
         string? userId,
         bool isUserAdmin);
 
-    public Expression<Func<Problem, bool>> GetProblemsUserPrivilegesExpression(
+    Expression<Func<Problem, bool>> GetProblemsUserPrivilegesExpression(
         string? userId,
         bool isUserAdmin);
 
