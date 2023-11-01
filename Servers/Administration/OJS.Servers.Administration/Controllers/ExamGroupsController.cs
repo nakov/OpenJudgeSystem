@@ -7,7 +7,7 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Models.ExamGroups;
-using OJS.Services.Administration.Business;
+using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -75,9 +75,7 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 
         var validationModel = entity.Map<ExamGroupDeleteValidationServiceModel>();
 
-        var contest = await this.contestsActivity.GetContestActivity(entity.ContestId.Value);
-
-        validationModel.ContestIsActive = contest.IsActive;
+        validationModel.ContestIsActive = await this.contestsActivity.IsContestActive(entity.ContestId.Value);
 
         this.examGroupsDeleteValidation
             .GetValidationResult(validationModel)
