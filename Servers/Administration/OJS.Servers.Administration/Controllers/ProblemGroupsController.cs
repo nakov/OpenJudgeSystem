@@ -13,6 +13,7 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemGroups;
 using OJS.Services.Administration.Business;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
@@ -125,7 +126,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
         var validationModel = new ProblemGroupCreateValidationServiceModel
         {
-            ContestIsActive = await this.contestsActivity.IsActive(contest!),
+            ContestIsActive = await this.contestsActivity.IsContestActive(contest!),
             ContestIsOnline = contest!.IsOnline,
         };
 
@@ -153,11 +154,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(ProblemGroup entity, AdminActionContext actionContext)
     {
-        var contest = await this.contestsActivity.GetContestActivity(entity.ContestId);
-
         var validationModel = new ProblemGroupDeleteValidationServiceModel
         {
-            ContestIsActive = contest.IsActive,
+            ContestIsActive = await this.contestsActivity.IsContestActive(entity.ContestId),
         };
 
         this.problemGroupsDeleteValidation

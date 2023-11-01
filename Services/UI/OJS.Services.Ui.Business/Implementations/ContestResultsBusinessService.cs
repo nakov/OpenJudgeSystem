@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Data;
 using Infrastructure.Exceptions;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 

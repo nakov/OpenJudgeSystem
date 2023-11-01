@@ -1,4 +1,4 @@
-namespace OJS.Services.Ui.Business.Implementations;
+namespace OJS.Services.Common.Implementations;
 
 using OJS.Services.Common.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Extensions;

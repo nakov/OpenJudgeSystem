@@ -30,6 +30,7 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -210,14 +211,17 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
 
-        var validationModel = contest.Map<ContestDeleteProblemsValidationServiceModel>();
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
+        {
+            Id = contestId.Value, IsActive = await this.contestsActivity.IsContestActive(contestId.Value),
+        };
 
         this.contestDeleteProblemsValidation
             .GetValidationResult(validationModel)
             .VerifyResult();
 
         await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(contest.Id)
+            .ValidatePermissionsOfCurrentUser(validationModel.Id)
             .VerifyResult();
 
         var modelResult = contest.Map<DeleteAllProblemsInContestViewModel>();
@@ -229,19 +233,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
     {
-        var contest = await this.contestsActivity.GetContestActivity(model.Id);
-
-        var validationModel = contest.Map<ContestDeleteProblemsValidationServiceModel>();
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
+        {
+            Id = model.Id, IsActive = await this.contestsActivity.IsContestActive(model.Id),
+        };
 
         this.contestDeleteProblemsValidation
             .GetValidationResult(validationModel)
             .VerifyResult();
 
         await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(contest.Id)
+            .ValidatePermissionsOfCurrentUser(validationModel.Id)
             .VerifyResult();
 
-        await this.problemsBusiness.DeleteByContest(contest.Id);
+        await this.problemsBusiness.DeleteByContest(validationModel.Id);
 
         this.TempData.AddSuccessMessage(GlobalResource.ProblemsDeleted);
         return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, model.Id);
@@ -584,10 +589,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     protected override async Task BeforeEntitySaveOnDeleteAsync(Problem entity, AdminActionContext actionContext)
     {
-        var contest = await this.contestsActivity.GetContestActivity(entity.ProblemGroup.ContestId);
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
+        {
+            Id = entity.ProblemGroup.ContestId, IsActive = await this.contestsActivity.IsContestActive(entity.ProblemGroup.ContestId),
+        };
 
         this.contestDeleteProblemsValidation
-            .GetValidationResult(contest.Map<ContestDeleteProblemsValidationServiceModel>())
+            .GetValidationResult(validationModel)
             .VerifyResult();
     }
 
