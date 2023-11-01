@@ -89,6 +89,7 @@ const Countdown = ({
     }), []);
 
     const [ remainingInSeconds, setRemainingInSeconds ] = useState(0);
+    const [ hasTimedOut, setHasTimedOut ] = useState(false);
 
     useEffect(() => {
         setRemainingInSeconds(duration * metricsToSecondsDelta[metric]);
@@ -102,6 +103,10 @@ const Countdown = ({
     useEffect(() => {
         if (remainingInSeconds < 0) {
             handleOnCountdownEnd();
+            setHasTimedOut(true);
+            setRemainingInSeconds(0);
+
+            return () => null;
         }
 
         const timer = setTimeout(decreaseRemainingTime, 1000);
@@ -113,11 +118,9 @@ const Countdown = ({
         handleOnCountdownChange(remainingInSeconds);
     }, [ handleOnCountdownChange, remainingInSeconds ]);
 
-    return (
-        <>
-            {renderRemainingTime(secondsToFullTime(remainingInSeconds))}
-        </>
-    );
+    return !hasTimedOut
+        ? renderRemainingTime(secondsToFullTime(remainingInSeconds))
+        : null;
 };
 
 export default Countdown;

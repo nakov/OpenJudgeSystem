@@ -2,6 +2,7 @@ namespace OJS.Services.Ui.Business.Implementations;
 
 using Data;
 using Infrastructure.Exceptions;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests.Results;
 using System.Threading.Tasks;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;

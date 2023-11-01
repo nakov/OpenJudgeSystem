@@ -17,49 +17,13 @@ public class ContestValidatorsFactory : IValidatorsFactory<Contest>
     public IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> GetValidators()
         => new Func<Contest, Contest, AdminActionContext, ValidatorResult>[]
         {
-            ValidateContestStartTime, ValidateContestPracticeStartTime, ValidateOnlineContestDuration,
-            ValidateOnlineContestDuration, ValidateActiveContestCannotEditDurationTypeOnEdit,
-            ValidateContestIsNotActiveOnDelete,
+            ValidateContestStartTime, ValidateContestPracticeStartTime,
+            ValidateOnlineContestDuration, ValidateOnlineContestDuration,
             ValidateCategoryIsSet,
         };
 
     public IEnumerable<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>> GetAsyncValidators()
         => Enumerable.Empty<Func<Contest, Contest, AdminActionContext, Task<ValidatorResult>>>();
-
-    private static ValidatorResult ValidateActiveContestCannotEditDurationTypeOnEdit(
-        Contest existingContest,
-        Contest newContest,
-        AdminActionContext actionContext)
-    {
-        if (actionContext.Action != EntityAction.Edit)
-        {
-            return ValidatorResult.Success();
-        }
-
-        if (existingContest.IsOnlineExam &&
-            existingContest.IsActive &&
-            (existingContest.Duration != newContest.Duration || existingContest.Type != newContest.Type))
-        {
-            return ValidatorResult.Error(Resource.ActiveContestCannotEditDurationType);
-        }
-
-        return ValidatorResult.Success();
-    }
-
-    private static ValidatorResult ValidateContestIsNotActiveOnDelete(Contest contest, Contest oldContest, AdminActionContext actionContext)
-    {
-        if (actionContext.Action != EntityAction.Delete)
-        {
-            return ValidatorResult.Success();
-        }
-
-        if (contest.IsActive)
-        {
-            return ValidatorResult.Error(Resource.ActiveContestForbiddenForDeletion);
-        }
-
-        return ValidatorResult.Success();
-    }
 
     private static ValidatorResult ValidateContestStartTime(Contest oldContest, Contest newContest, AdminActionContext adminActionContext)
         => newContest.StartTime >= newContest.EndTime
