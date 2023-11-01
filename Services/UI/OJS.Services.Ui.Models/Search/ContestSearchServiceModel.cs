@@ -4,8 +4,9 @@ using System;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models.Contests;
 
-public class ContestSearchServiceModel : IMapExplicitly
+public class ContestSearchServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
 {
     public int Id { get; set; }
 
@@ -29,5 +30,7 @@ public class ContestSearchServiceModel : IMapExplicitly
         => configuration.CreateMap<Contest, ContestSearchServiceModel>()
             .ForMember(
                 dest => dest.Category,
-                opt => opt.MapFrom(src => src.Category!.Name));
+                opt => opt.MapFrom(src => src.Category!.Name))
+            .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
+            .ForMember(d => d.CanBePracticed, opt => opt.Ignore());
 }
