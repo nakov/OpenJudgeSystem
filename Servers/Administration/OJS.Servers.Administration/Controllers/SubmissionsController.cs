@@ -14,6 +14,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -204,26 +205,41 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         });
     }
 
-    private Expression<Func<Submission, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<Submission, bool>>? GetMasterGridFilter()
     {
+        var filterExpressions = new List<Expression<Func<Submission, bool>>>();
+
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
-            return x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId;
+            filterExpressions.Add(x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId);
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
         {
-            return x => x.ProblemId == problemId;
+            filterExpressions.Add(x => x.ProblemId == problemId);
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var participantId))
         {
-            return x => x.ParticipantId == participantId;
+            filterExpressions.Add(x => x.ParticipantId == participantId);
         }
 
-        if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var submissionId))
+        if (this.TryGetEntityIdForNumberColumnFilter(SubmissionIdKey, out var submissionId))
         {
-            return x => x.Id == submissionId;
+            filterExpressions.Add(x => x.Id == submissionId);
+        }
+
+        if (filterExpressions.Count > 0)
+        {
+            Expression<Func<Submission, bool>> combinedFilterExpression = filterExpressions
+                .Aggregate((current, next) =>
+                    Expression.Lambda<Func<Submission, bool>>(
+                        Expression.AndAlso(
+                            current.Body,
+                            Expression.Invoke(next, current.Parameters)),
+                        current.Parameters));
+
+            return combinedFilterExpression;
         }
 
         return base.MasterGridFilter;
