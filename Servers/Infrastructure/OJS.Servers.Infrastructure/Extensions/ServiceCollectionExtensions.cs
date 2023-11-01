@@ -134,7 +134,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.AddHangfireServer(options =>
             {
                 options.ServerName = app.ToString();
-                options.Queues = new[] { app.ToString().ToLowerInvariant() };
+                options.Queues = new[] { "default", app.ToString().ToLowerInvariant() };
             });
 
             services.AddHostedService<BackgroundJobsHostedService>();
