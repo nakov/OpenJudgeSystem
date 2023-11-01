@@ -1,4 +1,4 @@
-namespace OJS.Services.Ui.Business.Implementations;
+﻿namespace OJS.Services.Ui.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Data;
