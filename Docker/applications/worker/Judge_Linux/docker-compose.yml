@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: judge_worker_base

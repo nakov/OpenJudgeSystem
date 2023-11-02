@@ -44,7 +44,7 @@ services:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.worker
-    image: ghcr.io/softuni-internal/judge_worker:v2-latest
+    image: worker
     ports:
       - "8003:80"
     container_name: judge_worker_instance
