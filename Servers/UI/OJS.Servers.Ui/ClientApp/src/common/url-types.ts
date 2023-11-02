@@ -90,11 +90,18 @@ interface IGetSearchResultsUrlParams {
     selectedTerms: [];
 }
 
+interface IGetSearchResultsParams {
+    searchTerm: string;
+    page: number;
+    searchCategory: string;
+}
+
 export type {
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,
     IAllContestsUrlParams,
+    IGetSearchResultsParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,

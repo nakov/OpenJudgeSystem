@@ -48,7 +48,7 @@
                 .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
             modelResult.Users = searchUsers;
-            modelResult.TotalUsers = allUsersQueryable.Count();
+            modelResult.TotalUsersCount = allUsersQueryable.Count();
 
             return modelResult;
         }

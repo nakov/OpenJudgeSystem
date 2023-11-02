@@ -1,7 +1,9 @@
+import React from 'react';
+
 import { ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 
-import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
+import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
     id: number;
@@ -220,10 +222,32 @@ interface ISearchResponseModel {
     users: IUserSearchType[];
 }
 
+interface IUsersSearchResponseModel {
+    users: IUserSearchType[];
+}
+
+interface ISearchProps {
+    searchTerm : string;
+}
+
+interface IGenericSearchProps<T> {
+    searchTerm : string;
+    searchCategory : SearchCategory;
+    renderItem: (item: T) => React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+}
+
+interface IGenericSearchResponseModel<T> {
+    items: T[];
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
+    IGenericSearchProps,
+    ISearchProps,
+    IUsersSearchResponseModel,
     IGetContestsForIndexResponseType,
+    IGenericSearchResponseModel,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
     IContestType,
