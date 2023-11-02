@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
+import { toLowerCase } from '../../utils/string-utils';
 import NotFoundPage from '../not-found/NotFoundPage';
 
 const routes = [
@@ -21,15 +22,15 @@ const routes = [
     '/contests/:id/practice/results/simple',
     '/contests/:id/compete/results/simple',
     '/administration',
-    '/Submissions/Retest/:id',
-    '/Contest/Problems/:id',
-    '/Contest/Edit/:id',
-    '/Tests/Edit/:id',
+    '/submissions/retest/:id',
+    '/contest/problems/:id',
+    '/contest/edit/:id',
+    '/tests/edit/:id',
     '/search',
 ];
 
 const isPathInAllowedRoutes = (pathname: string) => {
-    const exactPathname = pathname.split('?')[0];
+    const exactPathname = toLowerCase(pathname.split('?')[0]);
     const matchingRoute = routes.find((route) => {
         const regexPattern = route.replace(/:id/g, '([1-9]\\d{0,8}|0|2147483647)');
         return new RegExp(`^${regexPattern}$`).test(exactPathname);
