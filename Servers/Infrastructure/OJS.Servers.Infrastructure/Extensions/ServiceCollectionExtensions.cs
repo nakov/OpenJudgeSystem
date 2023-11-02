@@ -112,7 +112,9 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        public static IServiceCollection AddHangfireServer(this IServiceCollection services, ApplicationName app)
+        public static IServiceCollection AddHangfireServer(
+            this IServiceCollection services,
+            ApplicationName app)
         {
             var connectionString = EnvironmentUtils.GetApplicationConnectionString(app);
 
@@ -129,7 +131,13 @@ namespace OJS.Servers.Infrastructure.Extensions
                     DisableGlobalLocks = true,
                 }));
 
-            services.AddHangfireServer(options => options.ServerName = app.ToString());
+            services.AddHangfireServer(options =>
+            {
+                options.ServerName = app.ToString();
+                options.Queues = new[] { app.ToString().ToLowerInvariant() };
+            });
+
+            services.AddHostedService<BackgroundJobsHostedService>();
 
             return services;
         }
