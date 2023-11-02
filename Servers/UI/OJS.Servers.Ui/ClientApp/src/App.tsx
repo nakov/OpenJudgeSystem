@@ -1,4 +1,5 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
@@ -30,6 +31,7 @@ import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
 import PageHeader from './layout/header/PageHeader';
 import SearchBar from './layout/search-bar/SearchBar';
+import store from './redux/store';
 
 import './styles/global.scss';
 
@@ -62,14 +64,16 @@ const App = () => {
     ] as ProviderType[];
 
     return (
-        <Router>
-            <InitProviders providers={providers}>
-                <PageHeader />
-                <SearchBar />
-                <PageContent />
-                <PageFooter />
-            </InitProviders>
-        </Router>
+        <Provider store={store}>
+            <Router>
+                <InitProviders providers={providers}>
+                    <PageHeader />
+                    <SearchBar />
+                    <PageContent />
+                    <PageFooter />
+                </InitProviders>
+            </Router>
+        </Provider>
     );
 };
 

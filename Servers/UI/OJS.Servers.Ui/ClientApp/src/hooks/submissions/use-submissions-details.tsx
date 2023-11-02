@@ -10,7 +10,6 @@ import {
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import {
-    getSubmissionDetailsUrl,
     getSubmissionFileDownloadUrl,
     getSubmissionResultsUrl,
 } from '../../utils/urls';
@@ -57,7 +56,7 @@ type ISubmissionsDetailsProviderProps = IHaveChildrenProps
 const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ currentSubmissionId, selectSubmissionById ] = useState<number | null>();
-    const [ validationErrors, setValidationErrors ] = useState<IErrorDataType[]>(defaultState.state.validationErrors);
+    const [ validationErrors ] = useState<IErrorDataType[]>(defaultState.state.validationErrors);
     const [
         currentSubmission,
         setCurrentSubmission,
@@ -81,20 +80,7 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
     const { populatePageInformation } = usePages();
 
-    const {
-        isLoading: submissionDetailsLoading,
-        get: getSubmissionDetailsRequest,
-        data: apiSubmissionDetailsData,
-        error: submissionDetailsError,
-    } = useHttp<ISubmissionDetailsUrlParams, ISubmissionDetailsType>({
-        url: getSubmissionDetailsUrl,
-        parameters: submissionDetailsUrlParams,
-    });
-
-    const {
-        get: getSubmissionsResultsRequest,
-        data: apiSubmissionsResultsData,
-    } = useHttp<IGetSubmissionDetailsByIdUrlParams, IPagedResultType<ISubmissionResults>>({
+    const { data: apiSubmissionsResultsData } = useHttp<IGetSubmissionDetailsByIdUrlParams, IPagedResultType<ISubmissionResults>>({
         url: getSubmissionResultsUrl,
         parameters: submissionResultsUrlParams,
     });
@@ -154,11 +140,11 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
 
             (async () => {
                 setIsLoading(true);
-                await getSubmissionDetailsRequest();
+                // await getSubmissionDetailsRequest();
                 setIsLoading(false);
             })();
         },
-        [ getSubmissionDetailsRequest, submissionDetailsUrlParams ],
+        [ submissionDetailsUrlParams ],
     );
 
     useEffect(
@@ -168,26 +154,10 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             }
 
             (async () => {
-                await getSubmissionsResultsRequest();
+                // await getSubmissionsResultsRequest();
             })();
         },
-        [ getSubmissionsResultsRequest, submissionResultsUrlParams ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(apiSubmissionDetailsData)) {
-                return;
-            }
-
-            if (!isNil(submissionDetailsError)) {
-                setValidationErrors((validationErrorsArray) => [ ...validationErrorsArray, submissionDetailsError ]);
-                return;
-            }
-
-            setCurrentSubmission(apiSubmissionDetailsData);
-        },
-        [ apiSubmissionDetailsData, apiSubmissionsResultsData, submissionDetailsError ],
+        [ submissionResultsUrlParams ],
     );
 
     useEffect(
@@ -254,7 +224,6 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
             state: {
                 currentSubmission,
                 currentSubmissionResults,
-                submissionDetailsLoading,
                 validationErrors,
                 downloadErrorMessage,
                 isLoading,
@@ -269,20 +238,8 @@ const SubmissionsDetailsProvider = ({ children }: ISubmissionsDetailsProviderPro
                 getDetails,
             },
         }),
-        [
-            currentSubmissionResults,
-            currentSubmission,
-            getResults,
-            validationErrors,
-            downloadProblemSubmissionFile,
-            downloadErrorMessage,
-            setDownloadErrorMessage,
-            setCurrentSubmission,
-            isLoading,
-            submissionDetailsLoading,
-            setSubmissionResultsUrlParams,
-            getDetails,
-        ],
+        // eslint-disable-next-line max-len
+        [ currentSubmissionResults, currentSubmission, getResults, validationErrors, downloadProblemSubmissionFile, downloadErrorMessage, setDownloadErrorMessage, setCurrentSubmission, isLoading, setSubmissionResultsUrlParams, getDetails ],
     );
 
     return (

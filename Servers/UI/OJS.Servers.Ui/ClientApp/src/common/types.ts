@@ -1,5 +1,6 @@
-import { ITestRunType } from '../hooks/submissions/types';
+import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
+import { IErrorDataType } from '../hooks/use-http';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
 
@@ -19,6 +20,13 @@ interface IPublicSubmissionContest {
 interface IPublicSubmissionUser {
     id: string;
     username: string;
+}
+
+interface ISubmissionDetailsState {
+    currentSubmission: ISubmissionDetailsType | null;
+    currentSubmissionResults: ISubmissionResults[];
+    validationErrors: IErrorDataType[];
+    downloadErrorMessage: string | null;
 }
 
 interface IPublicSubmissionProblem {
@@ -240,4 +248,5 @@ export type {
     IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
+    ISubmissionDetailsState,
 };
