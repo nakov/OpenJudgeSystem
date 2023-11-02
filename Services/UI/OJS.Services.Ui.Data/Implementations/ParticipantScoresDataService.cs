@@ -70,7 +70,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 {
                     p.IsOfficial,
                     p.User.UserName,
-                    Participant=p,
+                    Participant = p,
                 })
                 .FirstOrDefaultAsync();
 

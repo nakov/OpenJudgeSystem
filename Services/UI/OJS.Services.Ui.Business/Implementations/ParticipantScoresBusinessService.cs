@@ -184,7 +184,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private async Task NormalizeParticipantScorePoints()
             => await (await this.participantScoresData
                     .GetAllHavingPointsExceedingLimit()
-                    .Select(ps => new { ParticipantScore = ps, ProblemMaxPoints = ps.Problem.MaximumPoints, Participant=ps.Participant })
+                    .Select(ps => new { ParticipantScore = ps, ProblemMaxPoints = ps.Problem.MaximumPoints, Participant = ps.Participant })
                     .ToListAsync())
                 .ForEachSequential(async x =>
                     await this.participantScoresData.UpdateBySubmissionAndPoints(

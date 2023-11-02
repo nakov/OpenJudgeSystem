@@ -152,6 +152,7 @@ namespace OJS.Services.Common.Data.Implementations
             return query;
         }
 
+        //// In case that the timeout is set to 0, this means that there is no timeout.
         public async Task ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds)
         {
             var originalTimeout = this.db.Database.GetCommandTimeout();

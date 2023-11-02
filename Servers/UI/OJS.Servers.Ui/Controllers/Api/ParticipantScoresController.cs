@@ -13,8 +13,8 @@ public class ParticipantScoresController : BaseApiController
 {
     private IParticipantScoresBusinessService participantScoresBusinessService;
 
-    public ParticipantScoresController(IParticipantScoresBusinessService participantScoresBusinessService) =>
-        this.participantScoresBusinessService = participantScoresBusinessService;
+    public ParticipantScoresController(IParticipantScoresBusinessService participantScoresBusinessService)
+        => this.participantScoresBusinessService = participantScoresBusinessService;
 
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<ParticipationForProblemMaxScoreServiceModel>), Status200OK)]
