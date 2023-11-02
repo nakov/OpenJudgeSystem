@@ -2,6 +2,7 @@
 
 using System.Linq;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common;
 using OJS.Services.Ui.Data;
 
 public class LecturersInContestsBusinessService : ILecturersInContestsBusinessService
