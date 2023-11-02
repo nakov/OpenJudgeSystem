@@ -47,20 +47,24 @@ const ContestsPage = () => {
     const { state: { strategies } } = useContestStrategyFilters();
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
     const [ showAlert, setShowAlert ] = useState<boolean>(false);
+
     useEffect(
         () => {
-            initiateGetAllContestsQuery();
-            if (!isEmpty(categoriesFlat)) {
-                return;
+            if (isEmpty(categoriesFlat)) {
+                (async () => {
+                    await loadCategories();
+                })();
             }
-
-            (async () => {
-                await loadCategories();
-                await loadStrategies();
-            })();
+            if (isEmpty(strategies)) {
+                (async () => {
+                    await loadStrategies();
+                })();
+            }
         },
-        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, loadStrategies ],
+        [ categoriesFlat, loadCategories, loadStrategies, strategies ],
     );
+
+    useEffect(() => { initiateGetAllContestsQuery(); }, [ initiateGetAllContestsQuery ]);
 
     const filtersArray = useMemo(
         () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, PageParams.page, FilterType.Sort ],
