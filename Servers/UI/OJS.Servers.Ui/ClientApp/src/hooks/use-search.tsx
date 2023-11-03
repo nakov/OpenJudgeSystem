@@ -1,25 +1,16 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import first from 'lodash/first';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import isArray from 'lodash/isArray';
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
 
-import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchParams } from '../common/search-types';
-import { IPagedResultType, ISearchResponseModel } from '../common/types';
+import { SearchParams } from '../common/search-types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getSearchResults } from '../utils/urls';
 
 import { useUrlParams } from './common/use-url-params';
-import { IErrorDataType, useHttp } from './use-http';
-import { usePages } from './use-pages';
+import { IErrorDataType } from './use-http';
 
 interface ISearchContext {
     state: {
-        contests: IContestSearchType[];
-        problems: IProblemSearchType[];
-        users: IUserSearchType[];
-        isLoaded: boolean;
+        getSearchResultsUrlParams: IGetSearchResultsUrlParams | null | undefined;
         searchValue: string;
         isVisible: boolean;
         searchError: IErrorDataType | null;
@@ -28,27 +19,17 @@ interface ISearchContext {
         clearSearchValue: () => void;
         initiateSearchResultsUrlQuery: () => void;
         toggleVisibility: () => void;
+        setSearchingError: (error: IErrorDataType | null) => void;
     };
 }
 
 type ISearchProviderProps = IHaveChildrenProps
 
-const defaultState = {
-    state: {
-        contests: [] as IContestSearchType[],
-        problems: [] as IProblemSearchType[],
-        users: [] as IUserSearchType[],
-        isVisible: false,
-    },
-};
+const defaultState = { state: { isVisible: false } };
 
 const SearchContext = createContext<ISearchContext>(defaultState as ISearchContext);
 
 const SearchProvider = ({ children }: ISearchProviderProps) => {
-    const [ isLoading, setIsLoading ] = useState(false);
-    const [ contests, setSearchedContests ] = useState(defaultState.state.contests);
-    const [ problems, setSearchedProblems ] = useState(defaultState.state.problems);
-    const [ users, setSearchedUsers ] = useState(defaultState.state.users);
     const [ searchError, setSearchError ] = useState<IErrorDataType | null>(null);
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
     const [ isVisible, setIsVisible ] = useState<boolean>(defaultState.state.isVisible);
@@ -57,22 +38,10 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         state: { params },
         actions: { unsetParam },
     } = useUrlParams();
-    const {
-        state: { currentPage },
-        populatePageInformation,
-    } = usePages();
 
-    const {
-        get,
-        data,
-        error: getSearchResultError,
-        isSuccess,
-    } = useHttp<
-        IGetSearchResultsUrlParams,
-        IPagedResultType<ISearchResponseModel>>({
-            url: getSearchResults,
-            parameters: getSearchResultsUrlParams,
-        });
+    const setSearchingError = useCallback((error: IErrorDataType | null) => {
+        setSearchError(error);
+    }, []);
 
     const urlParam = useMemo(
         () => {
@@ -100,82 +69,14 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         [ params ],
     );
 
-    useEffect(
-        () => {
-            if (isNil(data) || isEmpty(data)) {
-                return;
-            }
-
-            if (!isNil(getSearchResultError)) {
-                setSearchError(getSearchResultError);
-
-                return;
-            }
-
-            const searchResult = data as IPagedResultType<ISearchResponseModel>;
-            const { items: searchResponseData } = searchResult;
-            const {
-                contests: searchedContests,
-                problems: searchedProblems,
-                users: searchedUsers,
-            } = first(searchResponseData) as ISearchResponseModel;
-
-            const {
-                pageNumber,
-                itemsPerPage,
-                pagesCount,
-                totalItemsCount,
-            } = searchResult || {};
-
-            const newPagesInfo = {
-                pageNumber,
-                itemsPerPage,
-                pagesCount,
-                totalItemsCount,
-            };
-
-            setSearchedContests(searchedContests);
-            setSearchedProblems(searchedProblems);
-            setSearchedUsers(searchedUsers);
-
-            populatePageInformation(newPagesInfo);
-
-            setSearchError(null);
-        },
-        [ data, getSearchResultError, populatePageInformation, searchError ],
-    );
-
     const initiateSearchResultsUrlQuery = useCallback(
         () => {
             setGetSearchResultsUrlParams({
                 searchTerm: encodeUrlToUTF8,
-                page: currentPage,
                 selectedTerms: urlTerms,
             });
         },
-        [ currentPage, encodeUrlToUTF8, urlTerms ],
-    );
-
-    const load = useCallback(
-        async () => {
-            setIsLoading(true);
-            await get();
-            setIsLoading(false);
-        },
-        [ get ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(getSearchResultsUrlParams)) {
-                return;
-            }
-
-            (async () => {
-                await load();
-            })();
-        },
-        [ getSearchResultsUrlParams, load ],
+        [ encodeUrlToUTF8, urlTerms ],
     );
 
     const toggleVisibility = useCallback(
@@ -193,33 +94,27 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const value = useMemo(
         () => ({
             state: {
-                contests,
-                problems,
-                users,
                 searchError,
-                isLoaded: isSuccess,
                 searchValue: urlParam,
                 isVisible,
-                isLoading,
+                getSearchResultsUrlParams,
             },
             actions: {
                 clearSearchValue,
                 initiateSearchResultsUrlQuery,
                 toggleVisibility,
+                setSearchingError,
             },
         }),
         [
-            contests,
-            problems,
-            users,
+            getSearchResultsUrlParams,
             searchError,
-            isSuccess,
             urlParam,
             isVisible,
             clearSearchValue,
             initiateSearchResultsUrlQuery,
+            setSearchingError,
             toggleVisibility,
-            isLoading,
         ],
     );
 
