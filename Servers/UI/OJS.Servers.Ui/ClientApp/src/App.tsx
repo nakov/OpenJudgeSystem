@@ -35,13 +35,13 @@ import './styles/global.scss';
 
 const App = () => {
     const providers = [
+        HashUrlParamProvider,
         UrlParamsProvider,
         RouteUrlParamsProvider,
         ServicesProvider,
         PageProvider,
         NotificationsProvider,
         PageWithTitleProvider,
-        HashUrlParamProvider,
         AuthProvider,
         UsersProvider,
         ContestCategoriesProvider,
@@ -52,8 +52,8 @@ const App = () => {
         ParticipationsProvider,
         CurrentContestsProvider,
         CurrentContestResultsProvider,
-        ProblemsProvider,
         ProblemSubmissionsProvider,
+        ProblemsProvider,
         SubmissionsProvider,
         SubmissionsDetailsProvider,
         HomeStatisticsProvider,

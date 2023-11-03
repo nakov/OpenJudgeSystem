@@ -1,5 +1,6 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
+using OJS.Services.Common;
 using OJS.Servers.Ui.Models;
 using OJS.Services.Ui.Business.Cache;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ using OJS.Services.Common.Models.Submissions;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Submissions.Profile;
 using OJS.Servers.Ui.Models.Submissions.Details;
-using OJS.Servers.Ui.Models.Submissions.Results;
 using Microsoft.AspNetCore.Authorization;
 using OJS.Servers.Infrastructure.Controllers;
 using static OJS.Common.GlobalConstants.Roles;
@@ -33,19 +33,6 @@ public class SubmissionsController : BaseApiController
         this.submissionsForProcessingBusiness = submissionsForProcessingBusiness;
         this.submissionCache = submissionCache;
     }
-
-    /// <summary>
-    /// Gets submission details by provided submission id.
-    /// </summary>
-    /// <param name="id">The id of the submission.</param>
-    /// <returns>Submission details model.</returns>
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(SubmissionDetailsResponseModel), Status200OK)]
-    public async Task<IActionResult> Details(int id)
-        => await this.submissionsBusiness
-            .GetDetailsById(id)
-            .Map<SubmissionDetailsResponseModel>()
-            .ToOkResult();
 
     /// <summary>
     /// Gets all user submissions. Prepared for the user's profile page.
@@ -74,37 +61,50 @@ public class SubmissionsController : BaseApiController
     }
 
     /// <summary>
-    /// Gets a subset of submissions by specific problem and given take count.
+    /// Gets a subset of submissions by specific problem.
     /// </summary>
     /// <param name="id">The id of the problem.</param>
     /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
-    /// <param name="take">Number of submissions to return.</param>
+    /// <param name="page">Current submissions page.</param>
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionResultsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionResultsByProblem(
         int id,
         [FromQuery] bool isOfficial,
-        [FromQuery] int take)
+        [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetSubmissionResultsByProblem(id, isOfficial, take)
-            .MapCollection<SubmissionViewInResultsResponseModel>()
+            .GetSubmissionResultsByProblem(id, isOfficial, page)
+            .Map<PagedResultResponse<SubmissionResultsResponseModel>>()
             .ToOkResult();
 
     /// <summary>
-    /// Gets a subset of submission results and details  for the selected user by specific problem and given take count.
+    /// Gets a subset of submission results for the selected user by specific problem in details page.
     /// </summary>
     /// <param name="submissionId">The id of the submission.</param>
-    /// <param name="take">Number of submissions to return.</param>
+    /// <param name="page">Current submissions page.</param>
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{submissionId:int}")]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionResultsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissionDetailsWithResults(
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionResultsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionResults(
         int submissionId,
-        [FromQuery] int take)
+        [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetSubmissionDetailsWithResults(submissionId, take)
-            .Map<SubmissionDetailsWIthResultsResponseModel>()
+            .GetSubmissionResults(submissionId, page)
+            .Map<PagedResultResponse<SubmissionResultsResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets submission details by provided submission id.
+    /// </summary>
+    /// <param name="id">The id of the submission.</param>
+    /// <returns>Submission details model.</returns>
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(SubmissionDetailsResponseModel), Status200OK)]
+    public async Task<IActionResult> Details(int id)
+        => await this.submissionsBusiness
+            .GetDetailsById(id)
+            .Map<SubmissionDetailsResponseModel>()
             .ToOkResult();
 
     /// <summary>

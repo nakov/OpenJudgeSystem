@@ -9,10 +9,6 @@ interface IProblemType {
     contestId:number;
 }
 
-interface ISubmissionDetailsWithResults {
-    submissionDetails: ISubmissionDetailsType;
-    submissionResults:ISubmissionDetails[];
-}
 interface ITestRunType {
     id: number;
     timeUsed: number;
@@ -61,17 +57,17 @@ interface ISubmissionDetailsType extends ISubmissionType {
     totalTests : number;
 }
 
-interface ISubmissionDetails {
+interface ISubmissionResults {
     id: number;
     problemId: number;
-    createdOn: Date;
-    content: string;
+    submissionType: string;
     points: number;
     maximumPoints: number;
+    createdOn: Date;
+    content: string;
     isProcessed: boolean;
     isCompiledSuccessfully: boolean;
     isOfficial: boolean;
-    submissionType: string;
     compilerComment: string;
     testRuns: ITestRunDetailsType[];
     maxMemoryUsed: number;
@@ -125,11 +121,10 @@ export type {
     ISubmissionType,
     ITestRunDetailsType,
     ISubmissionDetailsType,
-    ISubmissionDetails,
+    ISubmissionResults,
     ITestRunDetailsCollapsed,
     ISubmissionResultsDetails,
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
-    ISubmissionDetailsWithResults,
 };

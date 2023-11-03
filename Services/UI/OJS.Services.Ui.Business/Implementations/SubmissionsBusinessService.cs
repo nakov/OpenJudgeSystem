@@ -9,7 +9,6 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Models.Users;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using Infrastructure.Exceptions;
 using Data;
@@ -36,6 +35,7 @@ using static Constants.PublicSubmissions;
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
     private readonly ISubmissionsDataService submissionsData;
+    private readonly ISubmissionsCommonDataService submissionsCommonData;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
@@ -60,6 +60,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
+        ISubmissionsCommonDataService submissionsCommonData,
         IUsersBusinessService usersBusiness,
         IProblemsDataService problemsDataService,
         IParticipantsBusinessService participantsBusinessService,
@@ -79,6 +80,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ILogger<SubmissionsBusinessService> logger)
     {
         this.submissionsData = submissionsData;
+        this.submissionsCommonData = submissionsCommonData;
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
         this.participantsBusinessService = participantsBusinessService;
@@ -187,18 +189,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submissionDetailsServiceModel.Id,
                 submissionDetailsServiceModel.FileExtension),
         };
-    }
-
-    public async Task<SubmissionDetailsWithResultsModel> GetSubmissionDetailsWithResults(int submissionId, int take)
-    {
-        var responseModel = new SubmissionDetailsWithResultsModel();
-        responseModel.SubmissionDetails = await this.GetDetailsById(submissionId);
-        responseModel.SubmissionResults = await this.GetSubmissionDetailsResults(
-                submissionId,
-                responseModel.SubmissionDetails.IsOfficial,
-                take)
-            .ToListAsync();
-        return responseModel;
     }
 
     public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -339,10 +329,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return data;
     }
 
-    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionResultsByProblem(
+    public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
         int problemId,
         bool isOfficial,
-        int take = 0)
+        int page)
     {
         var problem =
             await this.problemsDataService.GetWithProblemGroupById(problemId)
@@ -354,26 +344,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                     problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantSubmissionResultsServiceModel>();
 
-        this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
+        var validationResult =
+            this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
 
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
-    }
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
-    public async Task<IEnumerable<SubmissionViewInResultsPageModel>> GetSubmissionDetailsResults(
-        int submissionId,
-        bool isOfficial,
-        int take = 0)
-    {
-        var problem =
-            await this.submissionsData.GetProblemBySubmission<ProblemForSubmissionDetailsServiceModel>(submissionId);
-        var user = this.userProviderService.GetCurrentUser();
-
-        var participant =
-            await this.submissionsData.GetParticipantBySubmission<ParticipantSubmissionResultsServiceModel>(
-                submissionId);
-
-        this.ValidateCanViewSubmissionResults(isOfficial, user, problem, participant);
-        return await this.GetUserSubmissions<SubmissionViewInResultsPageModel>(problem.Id, participant, take);
+        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problem.Id, participant.Id, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -480,8 +459,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
         }
 
-        submission.StartedExecutionOn = submissionExecutionResult.ExecutionResult?.StartedExecutionOn;
-        submission.CompletedExecutionOn = submissionExecutionResult.ExecutionResult?.CompletedExecutionOn;
+        submission.StartedExecutionOn = submissionExecutionResult.StartedExecutionOn;
+        submission.CompletedExecutionOn = submissionExecutionResult.CompletedExecutionOn;
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
@@ -520,6 +499,21 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         scope.Complete();
         scope.Dispose();
+    }
+
+    public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page)
+    {
+        var problemId = await this.submissionsData.GetProblemIdBySubmission(submissionId);
+
+        var participantId =
+            await this.submissionsData.GetParticipantIdBySubmission(submissionId);
+
+        if (problemId == 0 || participantId == 0)
+        {
+            return new PagedResult<SubmissionResultsServiceModel>();
+        }
+
+        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
@@ -567,26 +561,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
-    {
-        var submissionsForProcessing =
-            await this.submissionsForProcessingData
-                .GetAllProcessing<SubmissionForProcessingServiceModel>();
-
-        if (submissionsForProcessing.IsEmpty())
-        {
-            return new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-        }
-
-        var submissions = this.submissionsData
-            .GetAllByIdsQuery(
-                submissionsForProcessing
-                    .Select(sp => sp.SubmissionId));
-
-        return submissions
+        => await this.submissionsCommonData
+            .GetAllProcessing()
             .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResult(DefaultSubmissionsPerPage, page);
-    }
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
     {
@@ -601,26 +580,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
-    {
-        var pendingSubmissions = await this.submissionsForProcessingData
+        => await this.submissionsCommonData
             .GetAllPending()
-            .ToListAsync();
-
-        if (pendingSubmissions.IsEmpty())
-        {
-            return new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-        }
-
-        var submissions = this.submissionsData
-            .GetAllByIdsQuery(
-                pendingSubmissions
-                    .Select(sp => sp!.SubmissionId));
-
-        return submissions
             .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResult(DefaultSubmissionsPerPage, page);
-    }
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
 
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
@@ -703,32 +667,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task<IEnumerable<T>> GetUserSubmissions<T>(
+    private async Task<PagedResult<T>> GetUserSubmissions<T>(
         int problemId,
-        ParticipantSubmissionResultsServiceModel? participant,
-        int take)
+        int participantId,
+        int page)
     {
         var userSubmissions = this.submissionsData
-            .GetAllByProblemAndParticipant(problemId, participant!.Id)
-            .Take(take);
+            .GetAllByProblemAndParticipant(problemId, participantId);
 
         return await userSubmissions
             .MapCollection<T>()
-            .ToListAsync();
-    }
-
-    private void ValidateCanViewSubmissionResults(
-        bool isOfficial,
-        UserInfoModel user,
-        ProblemForSubmissionDetailsServiceModel? problem,
-        ParticipantSubmissionResultsServiceModel? participant)
-    {
-        var validationResult =
-            this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
-
-        if (!validationResult.IsValid)
-        {
-            throw new BusinessServiceException(validationResult.Message);
-        }
+            .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
     }
 }

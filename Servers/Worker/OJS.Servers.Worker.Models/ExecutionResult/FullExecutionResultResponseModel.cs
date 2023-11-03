@@ -9,6 +9,10 @@ public class FullExecutionResultResponseModel
 
     public ExecutionResultResponseModel? ExecutionResult { get; set; }
 
+    public DateTime? StartedExecutionOn { get; set; }
+
+    public DateTime? CompletedExecutionOn { get; set; }
+
     public void SetExecutionResult(ExecutionResultResponseModel executionResult)
     {
         this.ExecutionResult = executionResult;
@@ -19,5 +23,11 @@ public class FullExecutionResultResponseModel
     {
         this.Exception = new ExceptionModel(exception, includeStackTrace);
         this.ExecutionResult = null;
+    }
+
+    public void SetStartedAndCompletedExecutionOn(DateTime startedExecutionOn, DateTime completedExecutionOn)
+    {
+        this.StartedExecutionOn = startedExecutionOn;
+        this.CompletedExecutionOn = completedExecutionOn;
     }
 }

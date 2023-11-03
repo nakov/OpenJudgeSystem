@@ -67,8 +67,8 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public IQueryable<Submission> GetAllByProblem(int problemId)
         => this.DbSet.Where(s => s.ProblemId == problemId);
 
-    public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId) =>
-        this.GetQuery(
+    public IQueryable<Submission> GetAllByProblemAndParticipant(int problemId, int participantId)
+        => this.GetQuery(
             filter: s => s.ParticipantId == participantId && s.ProblemId == problemId,
             orderBy: q => q.CreatedOn,
             descending: true);
@@ -153,11 +153,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
-    public async Task<TServiceModel> GetProblemBySubmission<TServiceModel>(int submissionId)
-        => (await this.GetByIdQuery(submissionId)
-            .Select(p => p.Problem)
-            .MapCollection<TServiceModel>()
-            .FirstOrDefaultAsync()) !;
+    public async Task<int> GetProblemIdBySubmission(int submissionId)
+        => await this.GetByIdQuery(submissionId)
+            .Select(p => p.Problem.Id)
+            .FirstOrDefaultAsync();
 
     public async Task<int> GetSubmissionsPerDayCount()
         => await this.DbSet.AnyAsync()
@@ -167,11 +166,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .ToInt()
             : 0;
 
-    public async Task<TServiceModel> GetParticipantBySubmission<TServiceModel>(int submissionId)
-        => (await this.GetByIdQuery(submissionId)
-            .Select(p => p.Participant)
-            .MapCollection<TServiceModel>()
-            .FirstOrDefaultAsync()) !;
+    public async Task<int> GetParticipantIdBySubmission(int submissionId)
+        => await this.GetByIdQuery(submissionId)
+            .Select(p => p.Participant!.Id)
+            .FirstOrDefaultAsync();
 
     private IQueryable<Submission> GetByIdQuery(int id) =>
         this.DbSet
