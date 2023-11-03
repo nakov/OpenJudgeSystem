@@ -29,28 +29,6 @@ public class SearchBusinessService : ISearchBusinessService
         this.searchValidationService = searchValidationService;
     }
 
-    public async Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(
-        SearchServiceModel model)
-    {
-        NormalizeSearchModel(model);
-
-        var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
-
-        if (!validationResult.IsValid)
-        {
-            throw new BusinessServiceException(validationResult.Message);
-        }
-
-        var searchListingModel = new SearchForListingServiceModel();
-
-        await this.PopulateSelectedConditionValues(model, searchListingModel);
-
-        var modelResult = model.Map<PagedResult<SearchForListingServiceModel>>();
-        modelResult.Items = new[] { searchListingModel, };
-
-        return modelResult;
-    }
-
     public async Task<PagedResult<ContestSearchForListingServiceModel>> GetContestSearchResults(
         SearchServiceModel model)
     {
@@ -128,21 +106,21 @@ public class SearchBusinessService : ISearchBusinessService
         {
             var contestsResult = await this.contestsBusinessService.GetSearchContestsByName(model);
             contestListingModel.Contests = contestsResult.Contests;
-            model.TotalItemsCount = contestListingModel.Contests.Count();
+            model.TotalItemsCount = contestsResult.TotalContestsCount;
         }
 
         if (searchListingModel is ProblemSearchForListingServiceModel problemListingModel)
         {
             var problemsResult = await this.problemsBusinessService.GetSearchProblemsByName(model);
             problemListingModel.Problems = problemsResult.Problems;
-            model.TotalItemsCount = problemListingModel.Problems.Count();
+            model.TotalItemsCount = problemsResult.TotalProblemsCount;
         }
 
         if (searchListingModel is UserSearchForListingServiceModel userListingModel)
         {
             var usersResult = await this.usersBusinessService.GetSearchUsersByUsername(model);
             userListingModel.Users = usersResult.Users;
-            model.TotalItemsCount = userListingModel.Users.Count();
+            model.TotalItemsCount = usersResult.TotalUsersCount;
         }
     }
 }
