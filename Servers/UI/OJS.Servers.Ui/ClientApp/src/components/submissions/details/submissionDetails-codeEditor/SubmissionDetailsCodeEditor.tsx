@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
-import { useSubmissionsDetails } from '../../../../hooks/submissions/use-submissions-details';
 import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
@@ -23,26 +22,48 @@ interface ISubmissionDetailsCodeEditorProps {
 }
 const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsCodeEditorProps) => {
     const [ submissionId, setSubmissionId ] = useState<number | null>(null);
-    const { actions: { selectSubmissionById } } = useSubmissionsDetails();
+    const [ shouldFetch, setShouldFetch ] = useState<boolean>(true);
     const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { state: { user } } = useAuth();
     const { currentSubmission, downloadErrorMessage } =
     useSelector((state: any) => state.submissionDetails);
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
-    const { error } = useSaveAttachmentQuery({ id: submissionId }, { skip: true });
+    const { data, error } = useSaveAttachmentQuery({ id: submissionId }, { skip: shouldFetch });
 
     useEffect(() => {
-        if (error) {
-            dispatch(setDownloadErrorMessage(error));
+        if (error && 'error' in error) {
+            dispatch(setDownloadErrorMessage(error.error));
         }
-    }, [ currentSubmission, dispatch, error, setSubmissionId ]);
+    }, [ dispatch, error ]);
+
+    const downloadFile = (blob:Blob, filename:string) => {
+        const blobUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style.display = 'none';
+        a.href = blobUrl;
+        // eslint-disable-next-line prefer-destructuring
+        a.download = filename;
+
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+    };
+
+    useEffect(() => {
+        if (data?.blob) {
+            downloadFile(data.blob, data.filename);
+        }
+    }, [ data ]);
+
     const handleDownloadSubmissionFile = useCallback(
         async () => {
             if (!isNil(downloadErrorMessage)) {
                 return;
             }
-            console.log(Number(currentSubmission.id));
+            setShouldFetch(false);
             setSubmissionId(Number(currentSubmission.id));
         },
         [ currentSubmission.id, downloadErrorMessage ],
@@ -132,9 +153,8 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
             initiateRedirectionToProblem(problemId, participateInContestUrl);
 
             dispatch(setSubmission(null));
-            selectSubmissionById(null);
         },
-        [ currentSubmission, selectSubmissionById, initiateRedirectionToProblem, dispatch ],
+        [ currentSubmission, initiateRedirectionToProblem, dispatch ],
     );
 
     return (

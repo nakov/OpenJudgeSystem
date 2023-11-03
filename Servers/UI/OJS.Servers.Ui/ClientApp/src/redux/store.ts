@@ -8,7 +8,10 @@ const store = configureStore({
         [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
         submissionDetails: submissionDetailsReducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(submissionDetailsService.middleware),
+
+    /* Serialized check is turned off because for cases like blobs it gives exception.
+    Even when it is not serializable we want to receive the response. */
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat(submissionDetailsService.middleware),
 });
 
 export default store;

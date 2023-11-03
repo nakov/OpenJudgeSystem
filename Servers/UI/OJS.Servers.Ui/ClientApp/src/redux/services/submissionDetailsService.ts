@@ -13,6 +13,22 @@ const submissionDetailsService = createApi({
             headers.set('Content-Type', 'application/json');
             return headers;
         },
+        responseHandler: async (response: Response) => {
+            const contentType = response.headers.get('Content-Type');
+            if (contentType?.includes('application/octet-stream')) {
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'submission.zip';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
+                    if (match) {
+                        filename = decodeURIComponent(match[1]);
+                    }
+                }
+                const blob = await response.blob();
+                return { blob, filename };
+            }
+            return response.json();
+        },
     }),
     endpoints: (builder) => ({
         // eslint-disable-next-line max-len
@@ -22,10 +38,9 @@ const submissionDetailsService = createApi({
                 url: `/api/Submissions/GetSubmissionResults/${submissionId}`,
                 params: { page },
             }),
-            keepUnusedDataFor: 0,
         }),
         // eslint-disable-next-line max-len
-        saveAttachment: builder.query<Blob, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/api/Submissions/Download/${id}` }) }),
+        saveAttachment: builder.query<{ blob: Blob; filename: string }, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/api/Submissions/Download/${id}` }) }),
     }),
 });
 
