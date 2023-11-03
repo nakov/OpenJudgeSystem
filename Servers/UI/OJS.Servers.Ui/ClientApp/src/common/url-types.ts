@@ -84,9 +84,14 @@ interface IContestEditUrlParams {
     id: number;
 }
 
+interface ITerm {
+    key: string;
+    value: string;
+}
+
 interface IGetSearchResultsUrlParams {
     searchTerm: string;
-    selectedTerms: [];
+    selectedTerms: ITerm[];
 }
 
 interface IGetSearchResultsParams {

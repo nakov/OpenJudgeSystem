@@ -1,5 +1,5 @@
-import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
-import { createSearchParams, useNavigate } from 'react-router-dom';
+import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Form from '../../components/guidelines/forms/Form';
@@ -38,8 +38,9 @@ const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
-    const { state: { isVisible } } = useSearch();
+    const { state: { isVisible, getSearchResultsUrlParams }, actions: { toggleVisibility } } = useSearch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleOnChangeUpdateSearch = useCallback(
         (searchInput?: IFormControlOnChangeValueType | ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +48,17 @@ const SearchBar = () => {
         },
         [ ],
     );
+
+    useEffect(() => {
+        if ((searchParam === defaultState.state.searchValue && selectedTerms === defaultState.state.selectedTerms) &&
+            location.pathname === '/search' && getSearchResultsUrlParams) {
+            setSearchParam(getSearchResultsUrlParams.searchTerm);
+            setSelectedTerms(getSearchResultsUrlParams.selectedTerms.map((termObj) => termObj.key));
+            if (!isVisible) {
+                toggleVisibility();
+            }
+        }
+    }, [ location, getSearchResultsUrlParams, selectedTerms, searchParam, isVisible, toggleVisibility ]);
 
     const handleSubmit = useCallback(
         () => {
@@ -79,6 +91,8 @@ const SearchBar = () => {
         },
         [ selectedTerms ],
     );
+
+    useEffect(() => () => console.log('unmount'), []);
 
     return (
         isVisible
