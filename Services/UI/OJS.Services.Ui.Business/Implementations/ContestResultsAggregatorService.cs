@@ -41,7 +41,6 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
 
             var participants = this.participantsCommonData
                 .GetAllByContestAndIsOfficial(contest.Id, official)
-                .AsNoTracking()
                 .OrderByDescending(p => p.TotalScoreSnapshot)
                 .ThenBy(p => p.TotalScoreSnapshotModifiedOn);
 
