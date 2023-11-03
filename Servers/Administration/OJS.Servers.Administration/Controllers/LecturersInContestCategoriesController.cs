@@ -17,10 +17,15 @@ using System.Linq.Expressions;
 [Authorize(Roles = Administrator)]
 public class LecturersInContestCategoriesController : BaseAutoCrudAdminController<LecturerInContestCategory>
 {
+    private const string CategoryName = nameof(LecturerInContestCategory.ContestCategory);
+    private const string Lecturer = nameof(LecturerInContestCategory.Lecturer);
+
     private readonly IUsersDataService usersDataService;
 
     public LecturersInContestCategoriesController(IUsersDataService usersDataService) => this.usersDataService = usersDataService;
 
+    protected override Expression<Func<LecturerInContestCategory, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         LecturerInContestCategory entity,
         EntityAction action,
@@ -44,5 +49,35 @@ public class LecturersInContestCategoriesController : BaseAutoCrudAdminControlle
         formControls.Remove(formControlToRemove);
 
         return formControls;
+    }
+
+    protected override Expression<Func<LecturerInContestCategory, bool>>? GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<LecturerInContestCategory, bool>>>();
+
+        if (this.TryGetEntityIdForStringColumnFilter(CategoryName, out var categoryName))
+        {
+            filterExpressions.Add(lic => lic.ContestCategory.Name == categoryName);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(Lecturer, out var lecturerName))
+        {
+            filterExpressions.Add(lic => lic.Lecturer.UserName == lecturerName);
+        }
+
+        if (filterExpressions.Count > 0)
+        {
+            Expression<Func<LecturerInContestCategory, bool>> combinedFilterExpression = filterExpressions
+                .Aggregate((current, next) =>
+                    Expression.Lambda<Func<LecturerInContestCategory, bool>>(
+                        Expression.AndAlso(
+                            current.Body,
+                            Expression.Invoke(next, current.Parameters)),
+                        current.Parameters));
+
+            return combinedFilterExpression;
+        }
+
+        return base.MasterGridFilter;
     }
 }

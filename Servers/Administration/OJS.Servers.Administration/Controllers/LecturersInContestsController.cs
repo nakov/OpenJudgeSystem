@@ -17,9 +17,14 @@ using static Common.GlobalConstants.Roles;
 [Authorize(Roles = Administrator)]
 public class LecturersInContestsController : BaseAutoCrudAdminController<LecturerInContest>
 {
+    private const string ContestName = nameof(LecturerInContest.Contest);
+
     private readonly IUsersDataService usersDataService;
 
     public LecturersInContestsController(IUsersDataService usersDataService) => this.usersDataService = usersDataService;
+
+    protected override Expression<Func<LecturerInContest, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         LecturerInContest entity,
@@ -44,5 +49,15 @@ public class LecturersInContestsController : BaseAutoCrudAdminController<Lecture
         formControls.Remove(formControlToRemove);
 
         return formControls;
+    }
+
+    protected override Expression<Func<LecturerInContest, bool>>? GetMasterGridFilter()
+    {
+        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        {
+            return lc => lc.Contest.Name == contestName;
+        }
+
+        return base.MasterGridFilter;
     }
 }

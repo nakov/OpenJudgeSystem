@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers
 {
     using System;
+    using AutoCrudAdmin.Extensions;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -23,6 +24,8 @@ namespace OJS.Servers.Administration.Controllers
 
     public class ContestsController : BaseAutoCrudAdminController<Contest>
     {
+        private const string ContestCategoryName = nameof(Contest.Category);
+
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
@@ -42,6 +45,9 @@ namespace OJS.Servers.Administration.Controllers
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
         }
+
+        protected override Expression<Func<Contest, bool>>? MasterGridFilter
+            => this.GetMasterGridFilter();
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestValidatorsFactory.GetValidators();
@@ -211,6 +217,16 @@ namespace OJS.Servers.Administration.Controllers
                         Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
                     },
                 });
+
+        protected override Expression<Func<Contest, bool>>? GetMasterGridFilter()
+        {
+            if (this.TryGetEntityIdForStringColumnFilter(ContestCategoryName, out var categoryName))
+            {
+                return c => c.Category != null && c.Category.Name == categoryName;
+            }
+
+            return base.MasterGridFilter;
+        }
 
         private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {

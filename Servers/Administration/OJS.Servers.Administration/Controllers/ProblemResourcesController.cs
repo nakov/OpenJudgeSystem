@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
     public const string ProblemIdKey = nameof(ProblemResource.ProblemId);
+    private const string ProblemName = nameof(ProblemResource.Problem);
 
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
@@ -52,9 +53,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? x => x.ProblemId == problemId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
@@ -72,14 +71,14 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     protected override IEnumerable<GridAction> CustomActions
         => new[] { new GridAction { Action = nameof(this.Download) }, };
 
-    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile file)
         => this.PostCreate(entityDict, new FormFilesContainer(file));
 
-    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
@@ -200,6 +199,36 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
                                                             .ToListAsync();
 
         await this.problemResourcesOrderableService.ReevaluateOrder(problemResources);
+    }
+
+    protected override Expression<Func<ProblemResource, bool>>? GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<ProblemResource, bool>>>();
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
+        {
+            filterExpressions.Add(ps => ps.ProblemId == problemId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ProblemName, out var problemName))
+        {
+            filterExpressions.Add(pr => pr.Problem.Name == problemName);
+        }
+
+        if (filterExpressions.Count > 0)
+        {
+            Expression<Func<ProblemResource, bool>> combinedFilterExpression = filterExpressions
+                .Aggregate((current, next) =>
+                    Expression.Lambda<Func<ProblemResource, bool>>(
+                        Expression.AndAlso(
+                            current.Body,
+                            Expression.Invoke(next, current.Parameters)),
+                        current.Parameters));
+
+            return combinedFilterExpression;
+        }
+
+        return base.MasterGridFilter;
     }
 
     private static IEnumerable<FormControlViewModel> GetAdditionalFormControls()

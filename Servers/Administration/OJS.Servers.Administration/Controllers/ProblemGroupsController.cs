@@ -3,6 +3,8 @@ namespace OJS.Servers.Administration.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using AutoCrudAdmin.Extensions;
+using OJS.Data.Models.Contests;
 using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
@@ -23,6 +25,8 @@ using System.Threading.Tasks;
 
 public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 {
+    private const string ContestName = nameof(Contest);
+
     private readonly IValidatorsFactory<ProblemGroup> problemGroupValidatorsFactory;
     private readonly IValidationService<ProblemGroupDeleteValidationServiceModel> problemGroupsDeleteValidation;
     private readonly IValidationService<ProblemGroupEditValidationServiceModel> problemGroupsEditValidation;
@@ -51,6 +55,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsValidationHelper = contestsValidationHelper;
         this.problemGroupsBusiness = problemGroupsBusiness;
     }
+
+    protected override Expression<Func<ProblemGroup, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
         EntityValidators
@@ -159,4 +166,14 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
     protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
         => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(entity.ContestId, entity);
+
+    protected override Expression<Func<ProblemGroup, bool>>? GetMasterGridFilter()
+    {
+        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        {
+            return pg => pg.Contest.Name == contestName;
+        }
+
+        return base.MasterGridFilter;
+    }
 }

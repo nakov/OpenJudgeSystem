@@ -24,7 +24,6 @@ using OJS.Data.Models.Users;
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
     public const string ExamGroupIdKey = nameof(UserInExamGroup.ExamGroupId);
-    private const string UserId = nameof(UserInExamGroup.UserId);
     private const string ExamGroupName = nameof(UserInExamGroup.ExamGroup);
     private const string ExamGroupUsername = nameof(UserInExamGroup.User);
 
@@ -122,11 +121,6 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         if (this.TryGetEntityIdForNumberColumnFilter(ExamGroupIdKey, out var examGroupId))
         {
             filterExpressions.Add(ueg => ueg.ExamGroupId == examGroupId);
-        }
-
-        if (this.TryGetEntityIdForStringColumnFilter(UserId, out var userId))
-        {
-            filterExpressions.Add(ueg => ueg.UserId == userId);
         }
 
         if (this.TryGetEntityIdForStringColumnFilter(ExamGroupName, out var examGroupName))

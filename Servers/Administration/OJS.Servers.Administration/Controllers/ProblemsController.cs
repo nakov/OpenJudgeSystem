@@ -42,6 +42,7 @@ using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
     public const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
+    private const string CheckerName = nameof(Data.Models.Problems.Problem.Checker);
 
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
@@ -88,9 +89,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
-            ? t => t.ProblemGroup.ContestId == contestId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var problemId)
@@ -112,14 +111,14 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override IEnumerable<Func<Problem, Problem, AdminActionContext, ValidatorResult>> EntityValidators
         => this.problemValidatorsFactory.GetValidators();
 
-    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile tests, IFormFile additionalFiles)
         => this.PostCreate(entityDict, new FormFilesContainer(tests, additionalFiles));
 
-    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
@@ -590,6 +589,36 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.contestDeleteProblemsValidation
             .GetValidationResult(validationModel)
             .VerifyResult();
+    }
+
+    protected override Expression<Func<Problem, bool>>? GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<Problem, bool>>>();
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
+        {
+            filterExpressions.Add(p => p.ProblemGroup.ContestId == contestId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(CheckerName, out var checkerName))
+        {
+            filterExpressions.Add(p => p.Checker != null && p.Checker.Name == checkerName);
+        }
+
+        if (filterExpressions.Count > 0)
+        {
+            Expression<Func<Problem, bool>> combinedFilterExpression = filterExpressions
+                .Aggregate((current, next) =>
+                    Expression.Lambda<Func<Problem, bool>>(
+                        Expression.AndAlso(
+                            current.Body,
+                            Expression.Invoke(next, current.Parameters)),
+                        current.Parameters));
+
+            return combinedFilterExpression;
+        }
+
+        return base.MasterGridFilter;
     }
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)

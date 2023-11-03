@@ -21,6 +21,8 @@ using System.Linq.Expressions;
 public class ParticipantsController : BaseAutoCrudAdminController<Participant>
 {
     public const string ContestIdKey = nameof(Participant.ContestId);
+    private const string ContestName = nameof(Participant.Contest);
+    private const string ParticipantUser = nameof(Participant.User);
 
     private readonly IValidatorsFactory<Participant> participantValidatorsFactory;
     private readonly IContestsValidationHelper contestsValidationHelper;
@@ -35,6 +37,9 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
         this.contestsValidationHelper = contestsValidationHelper;
         this.usersDataService = usersDataService;
     }
+
+    protected override Expression<Func<Participant, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
@@ -97,6 +102,36 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
     {
         await base.BeforeEntitySaveAsync(entity, actionContext);
         await this.ValidateContestPermissions(entity);
+    }
+
+    protected override Expression<Func<Participant, bool>>? GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<Participant, bool>>>();
+
+        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        {
+            filterExpressions.Add(cc => cc.Contest.Name == contestName);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ParticipantUser, out var userName))
+        {
+            filterExpressions.Add(cc => cc.User.UserName == userName);
+        }
+
+        if (filterExpressions.Count > 0)
+        {
+            Expression<Func<Participant, bool>> combinedFilterExpression = filterExpressions
+                .Aggregate((current, next) =>
+                    Expression.Lambda<Func<Participant, bool>>(
+                        Expression.AndAlso(
+                            current.Body,
+                            Expression.Invoke(next, current.Parameters)),
+                        current.Parameters));
+
+            return combinedFilterExpression;
+        }
+
+        return base.MasterGridFilter;
     }
 
     private Task ValidateContestPermissions(Participant entity)

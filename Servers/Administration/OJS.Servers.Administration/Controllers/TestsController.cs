@@ -1,5 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
-
+using OJS.Workers.Common.Extensions;
 using OJS.Common.Utils;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
@@ -36,6 +36,7 @@ using Resource = OJS.Common.Resources.TestsControllers;
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
     public const string ProblemIdKey = nameof(Test.ProblemId);
+    private const string ProblemName = nameof(Test.Problem);
 
     private const int TestInputMaxLengthInGrid = 20;
 
@@ -72,9 +73,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     }
 
     protected override Expression<Func<Test, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? t => t.ProblemId == problemId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
@@ -329,6 +328,36 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         await base.BeforeEntitySaveAsync(entity, actionContext);
         UpdateInputAndOutput(entity, actionContext);
         UpdateType(entity, actionContext);
+    }
+
+    protected override Expression<Func<Test, bool>>? GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<Test, bool>>>();
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
+        {
+            filterExpressions.Add(t => t.ProblemId == problemId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ProblemName, out var problemName))
+        {
+            filterExpressions.Add(t => t.Problem.Name == problemName);
+        }
+
+        if (filterExpressions.Count > 0)
+        {
+            Expression<Func<Test, bool>> combinedFilterExpression = filterExpressions
+                .Aggregate((current, next) =>
+                    Expression.Lambda<Func<Test, bool>>(
+                        Expression.AndAlso(
+                            current.Body,
+                            Expression.Invoke(next, current.Parameters)),
+                        current.Parameters));
+
+            return combinedFilterExpression;
+        }
+
+        return base.MasterGridFilter;
     }
 
     private static void UpdateType(Test entity, AdminActionContext actionContext)
