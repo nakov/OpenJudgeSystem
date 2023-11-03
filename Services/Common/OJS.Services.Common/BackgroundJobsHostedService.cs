@@ -18,6 +18,8 @@ public class BackgroundJobsHostedService : IHostedService
 {
     private const string EnqueuePendingSubmissionsCronExpression = "*/3 * * * *";
     private readonly string deleteProcessedSubmissionsCronExpression = Cron.Daily(2);
+    private readonly string updatingParticipantTotalScoreSnapshotCronExpression = Cron.Daily(4);
+    private readonly string removingMultipleParticipantScoresForProblemCronExpression = Cron.Daily(3);
     private readonly string administrationQueueName = ApplicationName.Administration.ToString();
 
     private readonly IHangfireBackgroundJobsService hangfireBackgroundJobs;
@@ -72,5 +74,23 @@ public class BackgroundJobsHostedService : IHostedService
                 this.administrationQueueName);
 
         this.logger.LogInformation("Job for deleting processed submissions is added or updated");
+
+        this.hangfireBackgroundJobs
+            .AddOrUpdateRecurringJob<IParticipantsBackgroundJobsBusinessService>(
+                nameof(IParticipantsBackgroundJobsBusinessService.UpdateTotalScoreSnapshotOfParticipants),
+                m => m.UpdateTotalScoreSnapshotOfParticipants(),
+                this.updatingParticipantTotalScoreSnapshotCronExpression,
+                this.administrationQueueName);
+
+        this.logger.LogInformation("Job for updating total score snapshot of participants is added or updated");
+
+        this.hangfireBackgroundJobs
+            .AddOrUpdateRecurringJob<IParticipantsBackgroundJobsBusinessService>(
+                nameof(IParticipantsBackgroundJobsBusinessService.RemoveParticipantMultipleScores),
+                m => m.RemoveParticipantMultipleScores(),
+                this.removingMultipleParticipantScoresForProblemCronExpression,
+                this.administrationQueueName);
+
+        this.logger.LogInformation("Job for removing participant multiple scores is added or updated");
     }
 }

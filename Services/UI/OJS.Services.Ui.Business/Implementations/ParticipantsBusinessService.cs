@@ -44,30 +44,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     public Task<int> GetCompeteParticipantsCount(int contestId)
         => this.participantsData.GetAllByContestAndIsOfficial(contestId, true).CountAsync();
 
-    public async Task UpdateTotalScoreSnapshotOfParticipants()
-        => await this.participantsData.UpdateTotalScoreSnapshot();
-
-    public async Task RemoveParticipantMultipleScores()
-    {
-        var participantScores =
-            this.scoresDataService.GetAll()
-                .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
-                .Where(ps => ps.Count() > 1)
-                .ToList();
-
-        var participantScoresToRemove = new List<ParticipantScore>();
-        participantScores.ForEach(participantScoreGroup =>
-        {
-            participantScoresToRemove
-                .AddRange(participantScoreGroup
-                    .OrderByDescending(ps => ps.Points)
-                    .Skip(1)
-                    .ToList());
-        });
-
-        await this.scoresDataService.Delete(participantScoresToRemove);
-    }
-
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
         Contest contest,
         string userId,
