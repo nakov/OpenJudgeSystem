@@ -48,7 +48,9 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             };
 
         var participants = this.participantsCommonData
-                .GetAllByContestAndIsOfficial(contest.Id, official);
+                .GetAllByContestAndIsOfficial(contest.Id, official)
+                .OrderByDescending(p => p.TotalScoreSnapshot)
+                .ThenBy(p => p.TotalScoreSnapshotModifiedOn);
 
         var participantResults = participants
                 .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
@@ -57,20 +59,20 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Sum(pr => pr.BestSubmission.Points));
 
         if (isFullResults)
-            {
-                participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
-                    .OrderByDescending(parRes => parRes.ProblemResults
-                        .Sum(pr => pr.BestSubmission.Points));
-            }
-            else if (isExportResults)
-            {
-                participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
-                    .OrderByDescending(parRes => parRes.ProblemResults
-                        .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
-                        .Sum(pr => pr.BestSubmission.Points));
-            }
+        {
+            participantResults = participants
+                .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
+                .OrderByDescending(parRes => parRes.ProblemResults
+                    .Sum(pr => pr.BestSubmission.Points));
+        }
+        else if (isExportResults)
+        {
+            participantResults = participants
+                .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
+                .OrderByDescending(parRes => parRes.ProblemResults
+                    .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
+                    .Sum(pr => pr.BestSubmission.Points));
+        }
 
         contestResults.Results = participantResults
                 .ThenBy(parResult => parResult.ProblemResults
