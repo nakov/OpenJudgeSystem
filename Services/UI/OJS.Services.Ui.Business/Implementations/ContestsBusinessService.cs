@@ -111,8 +111,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
             var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || userIsAdminOrLecturerInContest;
+            var canShowProblemsForAnonymous = user.Id != null || !contestActivityEntity.CanBeCompeted;
 
-            if (!canShowProblemsInPractice && !canShowProblemsInCompete)
+            if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
