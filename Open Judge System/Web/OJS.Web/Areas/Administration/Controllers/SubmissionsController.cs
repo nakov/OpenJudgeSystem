@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OJS.Web.Common.Helpers;
 using OJS.Workers.Common.Models;
 
 namespace OJS.Web.Areas.Administration.Controllers
@@ -177,7 +178,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             }
 
             this.ViewBag.SubmissionAction = "Update";
-            this.ViewBag.WorkersType = this.FillWorkersType();
+            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypesWithExcluded();
             return this.View(submission);
         }
 
@@ -269,7 +270,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             }
 
             this.ViewBag.SubmissionAction = "Update";
-            this.ViewBag.WorkersType = this.FillWorkersType();
+            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypesWithExcluded();
             return this.View(model);
         }
 
@@ -642,16 +643,6 @@ namespace OJS.Web.Areas.Administration.Controllers
             var submissionForProcessing = this.submissionsForProcessingData.GetBySubmission(submission.Id);
 
             return submissionForProcessing != null && !submissionForProcessing.Processed;
-        }
-
-        private IEnumerable<SelectListItem> FillWorkersType()
-        {
-           return Enum.GetValues(typeof(WorkerType)).Cast<WorkerType>()
-                .Select(e => new SelectListItem
-                {
-                    Text = e.ToString(),
-                    Value = ((int)e).ToString()
-                }).ToList();
         }
     }
 }

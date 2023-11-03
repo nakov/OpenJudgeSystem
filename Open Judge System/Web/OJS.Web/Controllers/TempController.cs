@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.Controllers
+﻿using OJS.Workers.Common.Models;
+
+namespace OJS.Web.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -514,6 +516,19 @@
                 Cron.Daily(3));
             
             return null;
+        }
+
+        public ActionResult SetDefaultWorkerForCotnests()
+        {
+            var contests = this.Data.Contests.AllWithDeleted();
+            foreach (var contest in contests)
+            {
+                contest.DefaultWorkerType = WorkerType.Legacy;
+                this.Data.Contests.Update(contest);
+            }
+
+            this.Data.SaveChanges();
+            return this.Content($"Updated worker types for {contests.Count()} contests");
         }
 
         private async Task LoadContestCategoryAndAssignCheckerAndSubmissionTypes(

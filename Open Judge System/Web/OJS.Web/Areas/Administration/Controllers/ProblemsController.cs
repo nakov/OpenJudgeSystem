@@ -318,7 +318,8 @@
                 .GetAll()
                 .Select(SubmissionTypeViewModel.ViewModel)
                 .ForEach(SubmissionTypeViewModel.ApplySelectedTo(selectedProblem));
-
+            
+            this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypesWithExcluded();
             return this.View(selectedProblem);
         }
 
@@ -1017,6 +1018,7 @@
                             currentSubmissionDetails.TimeLimit = s.TimeLimit;
                             currentSubmissionDetails.SolutionSkeleton = solutionSekeltonData;
                             currentSubmissionDetails.MemoryLimit = s.MemoryLimit;
+                            currentSubmissionDetails.WorkerType = s.WorkerType;
                         }
                         else
                         {
@@ -1028,6 +1030,7 @@
                                     SolutionSkeleton = solutionSekeltonData,
                                     TimeLimit = s.TimeLimit,
                                     MemoryLimit = s.MemoryLimit,
+                                    WorkerType = s.WorkerType,
                                 });
                         }
                     });

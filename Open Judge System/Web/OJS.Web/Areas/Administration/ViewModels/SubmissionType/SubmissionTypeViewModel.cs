@@ -40,6 +40,8 @@
 
         [Range(1, int.MaxValue)]
         public int? MemoryLimit { get; set; }
+        
+        public WorkerType WorkerType { get; set; }
 
         public ExecutionStrategyType ExecutionStrategyType { get; set; }
         
@@ -69,6 +71,7 @@
                     SolutionSkeleton = problem
                         .ProblemSubmissionTypesSkeletons
                         .FirstOrDefault(x => x.SubmissionTypeId == st.Id)?.SolutionSkeleton,
+                    WorkerType = st.WorkerType,
                 };
 
                 var selectedSubmission = problem.SelectedSubmissionTypes.FirstOrDefault(s => s.Id == st.Id);
@@ -83,6 +86,8 @@
 
                     submissionViewModel.MemoryLimit = problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)?
                         .MemoryLimit;
+                    submissionViewModel.WorkerType = problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)
+                        .WorkerType;
                 }
 
                 problem.SubmissionTypes.Add(submissionViewModel);
