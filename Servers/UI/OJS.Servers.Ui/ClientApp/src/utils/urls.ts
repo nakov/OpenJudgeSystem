@@ -18,7 +18,7 @@ import {
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
-    IGetSearchResultsUrlParams,
+    IGetSearchResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsByContestIdParams,
@@ -237,22 +237,18 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
-const getSearchResults = ({ searchTerm, page, selectedTerms }: IGetSearchResultsUrlParams) => {
+const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchResultsParams) => {
     const searchQuery = `${SearchParams.search}=${searchTerm}`;
 
     const pageQuery = `page=${page}`;
 
-    const selectedTermQuery = `&${selectedTerms
-        .map(({ key, value }) => `${key}=${value}`)
-        .join('&')
-    }`;
-
-    return `${baseApiUrl}/Search/GetSearchResults?${searchQuery}${selectedTermQuery}&${pageQuery}`;
+    return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
 };
 
 export {
     getLoginSubmitUrl,
     getLogoutUrl,
+    getSearchResultsUrl,
     getUserAuthInfoUrl,
     getPlatformRegisterUrl,
     getAdministrationContestsGridUrl,
@@ -295,7 +291,6 @@ export {
     getAllContestStrategyFiltersUrl,
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
-    getSearchResults,
     getContestDetailsUrl,
     getContestDetailsAppUrl,
     getAdministrationProblems,

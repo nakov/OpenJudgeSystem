@@ -86,7 +86,6 @@ interface IContestEditUrlParams {
 
 interface IGetSearchResultsUrlParams {
     searchTerm: string;
-    page: number;
     selectedTerms: [];
 }
 
