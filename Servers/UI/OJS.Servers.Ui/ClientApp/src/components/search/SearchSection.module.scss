@@ -3,10 +3,10 @@
 @use 'src/styles/global';
 
 .heading {
-  padding: 30px 10px;
   border-bottom: 1px solid;
   border-bottom-color: colors.$bottom-border-color;
   margin-bottom: 10px;
+  padding: 30px 10px;
 }
 
 .searchHeading {
