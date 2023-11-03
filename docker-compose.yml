@@ -1,12 +1,12 @@
-version: '3.3'
+version: '3.8'
 
 services:
   ui:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.ui
-    image: ghcr.io/softuni-internal/judge_web_ui:dev-2022-08-01
-    container_name: ui_instance
+    image: judge_web_ui
+    container_name: web_ui_instance
     ports:
       - "5002:80"
     restart: on-failure
@@ -18,14 +18,17 @@ services:
       - Docker/applications/ui/ui.env
     extra_hosts:
       - "db:host-gateway"
-      - "mq:host-gateway"
-      - "localhost:host-gateway"
-      - "redis:host-gateway"
+    links:
+      - mq
+      - redis
+    depends_on:
+      - mq
+      - redis
   administration:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.administration
-    image: administration
+    image: judge_administration
     container_name: administration_instance
     ports:
       - "5001:80"
@@ -38,16 +41,20 @@ services:
       - Docker/applications/administration/administration.env
     extra_hosts:
       - "db:host-gateway"
-      - "mq:host-gateway"
-      - "localhost:host-gateway"
+    links:
+      - mq
+      - redis
+    depends_on:
+      - mq
+      - redis
   worker:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.worker
-    image: ghcr.io/softuni-internal/judge_worker:v2-latest
+    image: judge_worker
     ports:
       - "8003:80"
-    container_name: judge_worker_instance
+    container_name: worker_instance
     restart: on-failure
     env_file:
       - Docker/common/common.env
@@ -56,10 +63,18 @@ services:
       - ./Logs:/Logs
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
       - /var/run/docker.sock:/var/run/docker.sock
-    extra_hosts:
-      - "mq:host-gateway"
-      - "localhost:host-gateway"
-      - "host.docker.internal:host-gateway"
+    links:
+      - mq
+      - sql_server
+      - mysql
+      - postgres
+    depends_on:
+      - mq
+      - sql_server
+      - mysql
+      - postgres
+
+# External services
   mq:
     image: rabbitmq:3.12-management
     ports:
@@ -79,6 +94,30 @@ services:
     container_name: redis_instance
     hostname: "judge-rd"
     command: "redis-server --requirepass redisPass123"
+## Worker dependencies
+  sql_server:
+      image: mcr.microsoft.com/mssql/server:2017-CU8-ubuntu
+      restart: always
+      environment:
+        ACCEPT_EULA: Y
+        SA_PASSWORD: 1123QwER
+  mysql:
+    image: mysql/mysql-server:8.0.19
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1123QwER
+      MYSQL_ROOT_HOST: '%'
+  postgres:
+      image: postgres:15
+      restart: always
+      ports:
+        - "5432:5432"
+      environment:
+        POSTGRES_PASSWORD: 1123QwER
+        POSTGRES_USER: postgres
     
 volumes:
   rabbitmq_data:

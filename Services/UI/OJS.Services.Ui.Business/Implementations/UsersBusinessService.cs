@@ -6,6 +6,7 @@
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Users;
+    using OJS.Services.Common;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
