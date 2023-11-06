@@ -1,5 +1,3 @@
-using OJS.Common.Utils;
-
 namespace OJS.Servers.Infrastructure.Extensions
 {
     using System;
@@ -8,6 +6,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
+    using OJS.Common.Utils;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Common.Models.Configurations;

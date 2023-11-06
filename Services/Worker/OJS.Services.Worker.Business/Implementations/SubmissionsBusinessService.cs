@@ -89,13 +89,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     // as the OJS worker does not return output on correct answers
     // this method can be safely discarded after https://github.com/SoftUni-Internal/suls-issues/issues/5811
     // has been closed.
-    private static void FillForCorrectAnswers(IList<TestResult> testResults, IList<TestContext> testContexts)
+    private static void FillForCorrectAnswers(List<TestResultServiceModel> testResultsServiceModel, IList<TestContext> testContexts)
     {
-        if (testContexts.Count != testResults.Count)
+        if (testContexts.Count != testResultsServiceModel.Count)
         {
             return;
         }
 
+        var testResults = testResultsServiceModel.MapCollection<TestResult>();
         testResults.ForEach((index, testResult) =>
         {
             var isResultCorrectAnswerAndTrialTest =
@@ -106,7 +107,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             {
                 var output = testContexts[index].Output;
 
-                testResult.CheckerDetails =
+                testResultsServiceModel[index].CheckerDetails =
                     new CheckerDetails
                     {
                         UserOutputFragment = output,
@@ -183,7 +184,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (submission.ExecutionOptions.KeepCheckerFragmentsForCorrectAnswers)
         {
             FillForCorrectAnswers(
-                Enumerable.ToList<TestResult>(executionResult.TaskResult!.TestResults.MapCollection<TestResult>()),
+                executionResult.TaskResult!.TestResults.ToList(),
                 Enumerable.ToList<TestContext>(submission.TestsExecutionDetails.Tests));
         }
 

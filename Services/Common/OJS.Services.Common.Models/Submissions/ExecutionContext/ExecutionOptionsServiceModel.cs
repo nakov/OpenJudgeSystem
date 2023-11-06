@@ -8,6 +8,6 @@
 
         public bool EscapeLineEndings { get; set; } = true;
 
-        public bool KeepCheckerFragmentsForCorrectAnswers { get; set; }
+        public bool KeepCheckerFragmentsForCorrectAnswers { get; set; } = true;
     }
 }

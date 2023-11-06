@@ -65,6 +65,14 @@
                     opt => opt.MapFrom(s => s.MemoryUsed))
                 .ForMember(d => d.ExecutionComment, opt => opt.MapFrom(s => s.ExecutionComment))
                 .ForAllOtherMembers(opt => opt.Ignore());
+
+            configuration.CreateMap<TestResultServiceModel, TestResult>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ResultType, opt => opt.MapFrom(src => src.ResultType.ToString()))
+                .ForMember(dest => dest.CheckerDetails, opt => opt.MapFrom(src => src.CheckerDetails))
+                .ForMember(dest => dest.IsTrialTest, opt => opt.MapFrom(src => src.IsTrialTest))
+                .ForMember(dest => dest.ExecutionComment, opt => opt.MapFrom(src => src.ExecutionComment))
+                .ForAllOtherMembers(opt => opt.Ignore());
         }
     }
 }
