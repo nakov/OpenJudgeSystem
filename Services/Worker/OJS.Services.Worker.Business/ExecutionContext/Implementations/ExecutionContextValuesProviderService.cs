@@ -33,9 +33,11 @@ public class ExecutionContextValuesProviderService : IExecutionContextValuesProv
             case ExecutionStrategyType.DotNetCore6UnitTestsExecutionStrategy:
                 return CompilerType.DotNetCompiler;
             case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
+            case ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck:
                 return CompilerType.Java;
             case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
             case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
+            case ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck:
                 return CompilerType.JavaZip;
             case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
                 return CompilerType.JavaInPlaceCompiler;
