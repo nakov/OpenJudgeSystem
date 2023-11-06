@@ -13,8 +13,6 @@ namespace OJS.Services.Ui.Business
 
         Task DeleteByContest(int contestId);
 
-        Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId);
-
         Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model);
 
         void ValidateProblemForParticipant(

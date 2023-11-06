@@ -18,5 +18,7 @@ public class ProblemContestSearchServiceModel : IMapExplicitly
         => configuration.CreateMap<Contest, ProblemContestSearchServiceModel>()
             .ForMember(
                 dest => dest.Category,
-                opt => opt.MapFrom(src => src.Category!.Name));
+                opt => opt.MapFrom(src => src.Category!.Name))
+            .ForMember(dest => dest.CanBeCompeted, opt => opt.Ignore())
+            .ForMember(dest => dest.CanBePracticed, opt => opt.Ignore());
 }

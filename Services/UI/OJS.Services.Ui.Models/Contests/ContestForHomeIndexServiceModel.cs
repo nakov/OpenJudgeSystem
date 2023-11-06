@@ -3,9 +3,10 @@ namespace OJS.Services.Ui.Models.Contests
     using System;
     using AutoMapper;
     using OJS.Data.Models.Contests;
+    using OJS.Services.Common.Models.Contests;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
-    public class ContestForHomeIndexServiceModel : IMapExplicitly
+    public class ContestForHomeIndexServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
     {
         public int Id { get; set; }
 
@@ -33,6 +34,8 @@ namespace OJS.Services.Ui.Models.Contests
             => configuration.CreateMap<Contest, ContestForHomeIndexServiceModel>()
                 .ForMember(
                     dest => dest.Category,
-                    opt => opt.MapFrom(src => src.Category!.Name));
+                    opt => opt.MapFrom(src => src.Category!.Name))
+                .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
+                .ForMember(d => d.CanBeCompeted, opt => opt.Ignore());
     }
 }
