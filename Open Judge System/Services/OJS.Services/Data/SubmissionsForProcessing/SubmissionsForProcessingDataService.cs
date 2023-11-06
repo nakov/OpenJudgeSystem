@@ -1,4 +1,5 @@
 ﻿using OJS.Common.Models;
+using OJS.Workers.Common.Models;
 
 namespace OJS.Services.Data.SubmissionsForProcessing
 {
@@ -53,11 +54,14 @@ namespace OJS.Services.Data.SubmissionsForProcessing
 
             using (var scope = TransactionsHelper.CreateTransactionScope())
             {
+                newSubmissionsForProcessing.ForEach(sfp => this.AssignWorkerType(sfp));
+
                 submissionIds
                     .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
                     .ForEach(chunk => this.submissionsForProcessing
                         .Delete(sfp => chunk.Contains(sfp.SubmissionId)));
 
+                
                 this.submissionsForProcessing.Add(newSubmissionsForProcessing);
 
                 scope.Complete();
@@ -72,16 +76,15 @@ namespace OJS.Services.Data.SubmissionsForProcessing
             {
                 submissionForProcessing.Processing = false;
                 submissionForProcessing.Processed = false;
+                this.AssignWorkerType(submissionForProcessing);
             }
             else
             {
-                var submission = this.submissions.GetById(submissionId);
                 submissionForProcessing = new SubmissionForProcessing
                 {
                     SubmissionId = submissionId,
-                    WorkerType = submission.WorkerType,
                 };
-
+                this.AssignWorkerType(submissionForProcessing);
                 this.submissionsForProcessing.Add(submissionForProcessing);
                 this.submissionsForProcessing.SaveChanges();
             }
@@ -116,6 +119,23 @@ namespace OJS.Services.Data.SubmissionsForProcessing
         {
             this.submissionsForProcessing.Update(submissionForProcessing);
             this.submissionsForProcessing.SaveChanges();
+        }
+
+        private SubmissionForProcessing AssignWorkerType(SubmissionForProcessing submissionForProcessing)
+        {
+            var submission = this.submissions.GetById(submissionForProcessing.SubmissionId);
+            submissionForProcessing.WorkerType = submission.WorkerType;
+
+            if (submissionForProcessing.WorkerType == WorkerType.None)
+            {
+                var strategyDetails = submission.Problem.ProblemSubmissionTypeExecutionDetails
+                    .FirstOrDefault(x => x.SubmissionTypeId == submission.SubmissionTypeId);
+
+                submissionForProcessing.WorkerType = strategyDetails?.WorkerType ??
+                                                     submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
+            }
+
+            return submissionForProcessing;
         }
     }
 }

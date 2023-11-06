@@ -108,6 +108,8 @@
                 this.submissionForProcessing.Processed = false;
                 this.submissionForProcessing.Processing = true;
 
+                this.AssignWorkerType();
+
                 this.submissionsForProcessingData.Update(this.submissionForProcessing);
             }
             catch (Exception ex)
@@ -172,6 +174,21 @@
             this.UpdateResults();
         }
 
+        private void AssignWorkerType()
+        {
+            var submission = this.submissionsData.GetById(this.submissionForProcessing.SubmissionId);
+            this.submissionForProcessing.WorkerType = submission.WorkerType;
+
+            if (this.submissionForProcessing.WorkerType == WorkerType.None)
+            {
+                var strategyDetails = submission.Problem.ProblemSubmissionTypeExecutionDetails
+                    .FirstOrDefault(x => x.SubmissionTypeId == submission.Id);
+
+                this.submissionForProcessing.WorkerType = strategyDetails?.WorkerType ??
+                                                          submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
+            }
+        }
+        
         private void UpdateResults()
         {
             this.CalculatePointsForSubmission();

@@ -86,8 +86,7 @@
 
                     submissionViewModel.MemoryLimit = problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)?
                         .MemoryLimit;
-                    submissionViewModel.WorkerType = problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x => x.SubmissionTypeId == selectedSubmission.Id)
-                        .WorkerType;
+                    submissionViewModel.WorkerType = submissionViewModel.WorkerType = problem.ProblemSubmissionTypesSkeletons.FirstOrDefault()?.WorkerType ?? WorkerType.None;
                 }
 
                 problem.SubmissionTypes.Add(submissionViewModel);

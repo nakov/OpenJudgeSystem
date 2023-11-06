@@ -487,7 +487,6 @@
                             contest.Visible &&
                             !contest.IsDeleted &&
                             problem.ShowResults,
-                WorkerType = contest.DefaultWorkerType,
             };
 
             this.Data.Submissions.Add(newSubmission);
