@@ -50,15 +50,22 @@ const SearchPage = () => {
             setIsSearchingProblems(false);
             setIsSearchingContests(false);
 
-            if (!isEmpty(getSearchResultsUrlParams?.selectedTerms.filter(({ key }) => key === 'Problems'))) {
+            const isProblemsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
+                .filter(({ key }) => key === 'Problems'));
+            const isContestsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
+                .filter(({ key }) => key === 'Contests'));
+            const isUsersCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
+                .filter(({ key }) => key === 'Users'));
+
+            if (isProblemsCategoryInUrl) {
                 setIsSearchingProblems(true);
             }
 
-            if (!isEmpty(getSearchResultsUrlParams?.selectedTerms.filter(({ key }) => key === 'Contests'))) {
+            if (isContestsCategoryInUrl) {
                 setIsSearchingContests(true);
             }
 
-            if (!isEmpty(getSearchResultsUrlParams?.selectedTerms.filter(({ key }) => key === 'Users'))) {
+            if (isUsersCategoryInUrl) {
                 setIsSearchingUsers(true);
             }
         },
@@ -99,7 +106,6 @@ const SearchPage = () => {
     );
 
     useEffect(() => () => {
-        console.log('unmount');
         toggleVisibility();
     }, [ toggleVisibility ]);
 

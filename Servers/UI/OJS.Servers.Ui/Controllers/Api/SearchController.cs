@@ -21,7 +21,7 @@ public class SearchController : BaseApiController
     /// <summary>
     /// Searches for all contests that match the search.
     /// </summary>
-    /// <param name="model">The required search criteria from the user and pagination options..</param>
+    /// <param name="model">The required search criteria from the user and pagination options.</param>
     /// <returns>A collections of contests based on the search results.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(ContestSearchResponseModel), Status200OK)]
@@ -34,7 +34,7 @@ public class SearchController : BaseApiController
     /// <summary>
     /// Searches for all problems that match the search.
     /// </summary>
-    /// <param name="model">The required search criteria from the user and pagination options..</param>
+    /// <param name="model">The required search criteria from the user and pagination options.</param>
     /// <returns>A collections of problems based on the search results.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(ProblemSearchResponseModel), Status200OK)]
@@ -47,7 +47,7 @@ public class SearchController : BaseApiController
     /// <summary>
     /// Searches for all users that match the search.
     /// </summary>
-    /// <param name="model">The required search criteria from the user and pagination options..</param>
+    /// <param name="model">The required search criteria from the user and pagination options.</param>
     /// <returns>A collections of users based on the search results.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(UserSearchResponseModel), Status200OK)]

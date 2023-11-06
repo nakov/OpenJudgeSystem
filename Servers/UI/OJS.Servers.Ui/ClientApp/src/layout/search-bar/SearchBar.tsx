@@ -9,6 +9,7 @@ import FormControl, {
 } from '../../components/guidelines/forms/FormControl';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
+import { getSearchPageURL } from '../../utils/urls';
 
 import styles from './SearchBar.module.scss';
 
@@ -38,7 +39,14 @@ const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
-    const { state: { isVisible, getSearchResultsUrlParams }, actions: { toggleVisibility } } = useSearch();
+    const {
+        state:
+        {
+            isVisible,
+            getSearchResultsUrlParams,
+        },
+        actions: { toggleVisibility },
+    } = useSearch();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -51,9 +59,10 @@ const SearchBar = () => {
 
     useEffect(() => {
         if ((searchParam === defaultState.state.searchValue && selectedTerms === defaultState.state.selectedTerms) &&
-            location.pathname === '/search' && getSearchResultsUrlParams) {
+            location.pathname === getSearchPageURL() && getSearchResultsUrlParams) {
             setSearchParam(getSearchResultsUrlParams.searchTerm);
-            setSelectedTerms(getSearchResultsUrlParams.selectedTerms.map((termObj) => termObj.key));
+            const selectedTermNames = getSearchResultsUrlParams.selectedTerms.map((termObj) => termObj.key);
+            setSelectedTerms(selectedTermNames);
             if (!isVisible) {
                 toggleVisibility();
             }
@@ -91,8 +100,6 @@ const SearchBar = () => {
         },
         [ selectedTerms ],
     );
-
-    useEffect(() => () => console.log('unmount'), []);
 
     return (
         isVisible
