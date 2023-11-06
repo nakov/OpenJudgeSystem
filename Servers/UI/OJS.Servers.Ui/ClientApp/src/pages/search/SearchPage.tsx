@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { NotSelectedSearchCategoryMessage } from '../../common/constants';
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchCategory } from '../../common/search-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
@@ -166,9 +167,12 @@ const SearchPage = () => {
 
     const renderPage = useCallback(
         () => isNil(searchError)
-            ? renderElements()
+            ? isEmpty(getSearchResultsUrlParams?.selectedTerms)
+                ? renderErrorHeading(NotSelectedSearchCategoryMessage)
+                : renderElements()
             : renderErrorMessage(),
-        [ renderElements, renderErrorMessage, searchError ],
+        [ getSearchResultsUrlParams?.selectedTerms, renderElements,
+            renderErrorHeading, renderErrorMessage, searchError ],
     );
 
     return (
