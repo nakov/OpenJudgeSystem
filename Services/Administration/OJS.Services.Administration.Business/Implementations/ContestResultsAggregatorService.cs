@@ -1,22 +1,31 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
+using OJS.Services.Ui.Data;
+using OJS.Data.Models.Participants;
+using X.PagedList;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
-using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests.Results;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
 public class ContestResultsAggregatorService : IContestResultsAggregatorService
 {
-    private readonly IParticipantsCommonDataService participantsCommonData;
     private readonly IContestsActivityService activityService;
+    private readonly IParticipantScoresDataService participantScoresDataService;
+    private readonly IParticipantsDataService participantsData;
 
-    public ContestResultsAggregatorService(IParticipantsCommonDataService participantsCommonData, IContestsActivityService activityService)
+    public ContestResultsAggregatorService(
+        IContestsActivityService activityService,
+        IParticipantScoresDataService participantScoresDataService,
+        IParticipantsDataService participantsData)
     {
-        this.participantsCommonData = participantsCommonData;
         this.activityService = activityService;
+        this.participantScoresDataService = participantScoresDataService;
+        this.participantsData = participantsData;
     }
 
     public ContestResultsViewModel GetContestResults(
@@ -24,7 +33,10 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             bool official,
             bool isUserAdminOrLecturer,
             bool isFullResults,
-            bool isExportResults = false)
+            bool isExportResults = false,
+            int? totalResultsCount = null,
+            int page = 1,
+            int itemsInPage = int.MaxValue)
     {
         var contestActivityEntity = this.activityService
             .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
@@ -47,39 +59,62 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Select(ContestProblemListViewModel.FromProblem),
             };
 
-        var participants = this.participantsCommonData
-                .GetAllByContestAndIsOfficial(contest.Id, official)
-                .OrderByDescending(p => p.TotalScoreSnapshot)
-                .ThenBy(p => p.TotalScoreSnapshotModifiedOn);
+        var totalParticipantsCount = totalResultsCount
+                                     ?? this.participantsData
+                                         .GetAllByContestAndIsOfficial(contest.Id, official)
+                                         .Count();
 
-        var participantResults = participants
-                .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
-                .OrderByDescending(parRes => parRes.ProblemResults
-                    .Where(pr => pr.ShowResult)
-                    .Sum(pr => pr.BestSubmission.Points));
+        // Get the requested participants without their problem results.
+        // Splitting the queries improves performance and avoids unexpected results from joins with Scores.
+        var participants = this.GetParticipantsPage(contest, official, page, itemsInPage)
+                .Select(ParticipantResultViewModel.FromParticipant)
+                .ToList();
+
+        // Get the ParticipantScores with another query and map problem results for each participant.
+        var participantScores = this.participantScoresDataService
+            .GetAllByParticipants(participants.Select(p => p.Id))
+            .AsNoTracking();
+
+        IEnumerable<ProblemResultPairViewModel> problemResults;
 
         if (isFullResults)
         {
-            participantResults = participants
-                .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
-                .OrderByDescending(parRes => parRes.ProblemResults
-                    .Sum(pr => pr.BestSubmission.Points));
+            problemResults = participantScores
+                .Select(ProblemResultPairViewModel.FromParticipantScoreAsFullResult)
+                .ToList();
         }
         else if (isExportResults)
         {
-            participantResults = participants
-                .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
-                .OrderByDescending(parRes => parRes.ProblemResults
-                    .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
-                    .Sum(pr => pr.BestSubmission.Points));
+            problemResults = participantScores
+                .Select(ProblemResultPairViewModel.FromParticipantScoreAsExportResult)
+                .ToList();
+        }
+        else
+        {
+            problemResults = participantScores
+                .Select(ProblemResultPairViewModel.FromParticipantScoreAsSimpleResult)
+                .ToList();
         }
 
-        contestResults.Results = participantResults
-                .ThenBy(parResult => parResult.ProblemResults
-                    .OrderByDescending(pr => pr.BestSubmission.Id)
-                    .Select(pr => pr.BestSubmission.Id)
-                    .FirstOrDefault());
+        participants.ForEach(p =>
+            p.ProblemResults = problemResults.Where(pr => pr.ParticipantId == p.Id));
+
+        var results = new StaticPagedList<ParticipantResultViewModel>(participants, page, itemsInPage, totalParticipantsCount);
+
+        contestResults.Results = results;
 
         return contestResults;
     }
+
+    /// <summary>
+    /// Gets IQueryable results with one page of participants, ordered by top score.
+    /// </summary>
+    private IQueryable<Participant> GetParticipantsPage(Contest contest, bool official, int page, int itemsInPage) =>
+        this.participantsData
+            .GetAllByContestAndIsOfficial(contest.Id, official)
+            .AsNoTracking()
+            .OrderByDescending(p => p.TotalScoreSnapshot)
+            .ThenBy(p => p.TotalScoreSnapshotModifiedOn)
+            .Skip((page - 1) * itemsInPage)
+            .Take(itemsInPage);
 }
