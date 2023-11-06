@@ -1,5 +1,7 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { SearchParams } from '../common/search-types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
@@ -14,6 +16,9 @@ interface ISearchContext {
         searchValue: string;
         isVisible: boolean;
         searchError: IErrorDataType | null;
+        isSearchingContests: boolean;
+        isSearchingProblems: boolean;
+        isSearchingUsers: boolean;
     };
     actions: {
         clearSearchValue: () => void;
@@ -33,6 +38,9 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
     const [ searchError, setSearchError ] = useState<IErrorDataType | null>(null);
     const [ getSearchResultsUrlParams, setGetSearchResultsUrlParams ] = useState<IGetSearchResultsUrlParams | null>();
     const [ isVisible, setIsVisible ] = useState<boolean>(defaultState.state.isVisible);
+    const [ isSearchingContests, setIsSearchingContests ] = useState(false);
+    const [ isSearchingProblems, setIsSearchingProblems ] = useState(false);
+    const [ isSearchingUsers, setIsSearchingUsers ] = useState(false);
 
     const {
         state: { params },
@@ -79,6 +87,38 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
         [ encodeUrlToUTF8, urlTerms ],
     );
 
+    useEffect(
+        () => {
+            if (isNil(getSearchResultsUrlParams)) {
+                return;
+            }
+
+            setIsSearchingUsers(false);
+            setIsSearchingProblems(false);
+            setIsSearchingContests(false);
+
+            const isProblemsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
+                .filter(({ key }) => key === 'Problems'));
+            const isContestsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
+                .filter(({ key }) => key === 'Contests'));
+            const isUsersCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
+                .filter(({ key }) => key === 'Users'));
+
+            if (isProblemsCategoryInUrl) {
+                setIsSearchingProblems(true);
+            }
+
+            if (isContestsCategoryInUrl) {
+                setIsSearchingContests(true);
+            }
+
+            if (isUsersCategoryInUrl) {
+                setIsSearchingUsers(true);
+            }
+        },
+        [ getSearchResultsUrlParams, initiateSearchResultsUrlQuery, urlTerms ],
+    );
+
     const toggleVisibility = useCallback(
         () => {
             setIsVisible(!isVisible);
@@ -98,6 +138,9 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
                 searchValue: urlParam,
                 isVisible,
                 getSearchResultsUrlParams,
+                isSearchingUsers,
+                isSearchingProblems,
+                isSearchingContests,
             },
             actions: {
                 clearSearchValue,
@@ -115,6 +158,9 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             initiateSearchResultsUrlQuery,
             setSearchingError,
             toggleVisibility,
+            isSearchingUsers,
+            isSearchingProblems,
+            isSearchingContests,
         ],
     );
 

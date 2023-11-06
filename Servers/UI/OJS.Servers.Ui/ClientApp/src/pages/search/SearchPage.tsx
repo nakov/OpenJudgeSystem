@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -21,6 +21,9 @@ const SearchPage = () => {
             searchError,
             searchValue,
             getSearchResultsUrlParams,
+            isSearchingUsers,
+            isSearchingProblems,
+            isSearchingContests,
         },
         actions: {
             initiateSearchResultsUrlQuery,
@@ -29,9 +32,6 @@ const SearchPage = () => {
         },
     } = useSearch();
     const { actions: { setPageTitle } } = usePageTitles();
-    const [ isSearchingContests, setIsSearchingContests ] = useState(false);
-    const [ isSearchingProblems, setIsSearchingProblems ] = useState(false);
-    const [ isSearchingUsers, setIsSearchingUsers ] = useState(false);
 
     useEffect(
         () => {
@@ -39,38 +39,6 @@ const SearchPage = () => {
             initiateSearchResultsUrlQuery();
         },
         [ getSearchResultsUrlParams?.searchTerm, initiateSearchResultsUrlQuery, setSearchingError ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(getSearchResultsUrlParams)) {
-                return;
-            }
-
-            setIsSearchingUsers(false);
-            setIsSearchingProblems(false);
-            setIsSearchingContests(false);
-
-            const isProblemsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
-                .filter(({ key }) => key === 'Problems'));
-            const isContestsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
-                .filter(({ key }) => key === 'Contests'));
-            const isUsersCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
-                .filter(({ key }) => key === 'Users'));
-
-            if (isProblemsCategoryInUrl) {
-                setIsSearchingProblems(true);
-            }
-
-            if (isContestsCategoryInUrl) {
-                setIsSearchingContests(true);
-            }
-
-            if (isUsersCategoryInUrl) {
-                setIsSearchingUsers(true);
-            }
-        },
-        [ getSearchResultsUrlParams, isSearchingUsers, initiateSearchResultsUrlQuery ],
     );
 
     useEffect(
