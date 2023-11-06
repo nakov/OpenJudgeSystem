@@ -3,10 +3,11 @@ namespace OJS.Services.Ui.Models.Contests;
 using AutoMapper;
 using System.Linq;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 
-public class ContestForListingServiceModel : IMapExplicitly
+public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
 {
     public int Id { get; set; }
 
@@ -45,5 +46,7 @@ public class ContestForListingServiceModel : IMapExplicitly
             .ForMember(
                 d => d.Duration,
                 opt => opt.MapFrom(src =>
-                    src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue) ? (src.EndTime - src.StartTime) : null)));
+                    src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue) ? (src.EndTime - src.StartTime) : null)))
+            .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
+            .ForMember(d => d.CanBePracticed, opt => opt.Ignore());
 }

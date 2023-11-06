@@ -1,7 +1,6 @@
-namespace OJS.Services.Administration.Data;
+namespace OJS.Services.Common.Data;
 
 using OJS.Data.Models.Participants;
-using OJS.Services.Common.Data;
 using System.Linq;
 
 public interface IParticipantsCommonDataService : IDataService<Participant>
@@ -9,4 +8,6 @@ public interface IParticipantsCommonDataService : IDataService<Participant>
     IQueryable<Participant> GetAllByContest(int contestId);
 
     IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial);
+
+    IQueryable<Participant> GetAllByUserAndContest(string userId, int contestId);
 }
