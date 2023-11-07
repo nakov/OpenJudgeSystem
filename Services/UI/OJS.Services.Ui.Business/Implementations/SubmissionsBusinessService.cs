@@ -516,25 +516,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
-        SubmissionForPublicSubmissionsServiceModel model)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        if (user.IsAdminOrLecturer)
-        {
-            return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                DefaultSubmissionsPerPage, model.PageNumber);
-        }
-
-        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-
-        modelResult.Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-            DefaultSubmissionsPerPage);
-
-        return modelResult;
-    }
-
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
         bool? isOfficial,
         int page)
@@ -560,13 +541,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
-        => await this.submissionsCommonData
-            .GetAllProcessing()
-            .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
     {
         var user = this.userProviderService.GetCurrentUser();
@@ -579,15 +553,20 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
-        => await this.submissionsCommonData
-            .GetAllPending()
-            .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
+
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(string type, int page)
+        => type.ToLower() switch
+            {
+                "public" => await this.GetPublicSubmissions(new SubmissionForPublicSubmissionsServiceModel
+                {
+                    PageNumber = page,
+                }),
+                "processing" => await this.GetProcessingSubmissions(page),
+                "pending" => await this.GetPendingSubmissions(page),
+                _ => null!
+            };
 
     private static void ProcessTestsExecutionResult(
         Submission submission,
@@ -679,4 +658,37 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<T>()
             .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
     }
+
+    private async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
+        SubmissionForPublicSubmissionsServiceModel model)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        if (user.IsAdminOrLecturer)
+        {
+            return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                DefaultSubmissionsPerPage, model.PageNumber);
+        }
+
+        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
+
+        modelResult.Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+            DefaultSubmissionsPerPage);
+
+        return modelResult;
+    }
+
+    private async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
+        => await this.submissionsCommonData
+            .GetAllPending()
+            .OrderByDescending(s => s.Id)
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+
+    private async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
+        => await this.submissionsCommonData
+            .GetAllProcessing()
+            .OrderByDescending(s => s.Id)
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
 }

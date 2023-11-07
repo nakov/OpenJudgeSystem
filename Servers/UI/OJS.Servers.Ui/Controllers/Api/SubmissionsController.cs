@@ -128,22 +128,6 @@ public class SubmissionsController : BaseApiController
     }
 
     /// <summary>
-    /// Gets latest submissions (default number of submissions).
-    /// </summary>
-    /// <param name="page">The current page number.</param>
-    /// <returns>A page with submissions containing information about their score and user.</returns>
-    [HttpGet]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> Public([FromQuery]int page)
-        => await this.submissionsBusiness
-            .GetPublicSubmissions(new SubmissionForPublicSubmissionsServiceModel
-            {
-                PageNumber = page,
-            })
-            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
-            .ToOkResult();
-
-    /// <summary>
     /// Gets user latest submissions (default number of submissions) by participation mode.
     /// </summary>
     /// <param name="isOfficial">Nullable oolean indicating submission participation mode (practice/compete).
@@ -175,34 +159,6 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Gets all unprocessed submissions.
-    /// </summary>
-    /// <param name="page">The current page number.</param>
-    /// <returns>A page with unprocessed submissions.</returns>
-    [HttpGet]
-    [Authorize(Roles = Administrator)]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetProcessingSubmissions([FromQuery]int page)
-        => await this.submissionsBusiness
-            .GetProcessingSubmissions(page)
-            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
-            .ToOkResult();
-
-    /// <summary>
-    /// Gets all pending submissions.
-    /// </summary>
-    /// <param name="page">The current page number.</param>
-    /// <returns>A page with pending submissions.</returns>
-    [HttpGet]
-    [Authorize(Roles = Administrator)]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetPendingSubmissions([FromQuery]int page)
-        => await this.submissionsBusiness
-            .GetPendingSubmissions(page)
-            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
-            .ToOkResult();
-
-    /// <summary>
     /// Gets the count of all submissions.
     /// </summary>
     [HttpGet]
@@ -221,5 +177,13 @@ public class SubmissionsController : BaseApiController
     public async Task<IActionResult> UnprocessedTotalCount()
         => await this.submissionsForProcessingBusiness
             .GetUnprocessedTotalCount()
+            .ToOkResult();
+
+    //// Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
+    [HttpGet("{type}")]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissions(string type, [FromQuery] int page)
+        => await this.submissionsBusiness.GetSubmissions(type, page)
+            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
             .ToOkResult();
 }
