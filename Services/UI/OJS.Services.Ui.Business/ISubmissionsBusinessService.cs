@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
@@ -37,7 +38,7 @@
 
         Task<int> GetTotalCount();
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(string type, int page);
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionEnumType type, int page);
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
     }

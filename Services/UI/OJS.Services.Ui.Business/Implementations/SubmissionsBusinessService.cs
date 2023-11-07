@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System.Globalization;
+using OJS.Common.Enumerations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -557,17 +557,47 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(string type, int page)
-        => type.ToLower(CultureInfo.InvariantCulture) switch
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionEnumType type, int page)
+    {
+        if (type == SubmissionEnumType.Public)
+        {
+            var user = this.userProviderService.GetCurrentUser();
+
+            if (user.IsAdminOrLecturer)
             {
-                "public" => await this.GetPublicSubmissions(new SubmissionForPublicSubmissionsServiceModel
-                {
-                    PageNumber = page,
-                }),
-                "processing" => await this.GetProcessingSubmissions(page),
-                "pending" => await this.GetPendingSubmissions(page),
-                _ => null!
-            };
+                return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                    DefaultSubmissionsPerPage, page);
+            }
+
+            var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
+
+            modelResult.Items =
+                await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                    DefaultSubmissionsPerPage);
+
+            return modelResult;
+        }
+
+        if (type == SubmissionEnumType.Processing)
+        {
+            return await this.submissionsCommonData
+                .GetAllProcessing()
+                .OrderByDescending(s => s.Id)
+                .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+                .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+        }
+
+        if (type == SubmissionEnumType.Pending)
+        {
+            return await this.submissionsCommonData
+                .GetAllPending()
+                .OrderByDescending(s => s.Id)
+                .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+                .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+        }
+
+        return null!;
+    }
 
     private static void ProcessTestsExecutionResult(
         Submission submission,

@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
-using OJS.Services.Common;
 using OJS.Servers.Ui.Models;
+using OJS.Common.Enumerations;
 using OJS.Services.Ui.Business.Cache;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -182,7 +182,7 @@ public class SubmissionsController : BaseApiController
     //// Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
     [HttpGet("{type}")]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissions(string type, [FromQuery] int page)
+    public async Task<IActionResult> GetSubmissions(SubmissionEnumType type, [FromQuery] int page)
         => await this.submissionsBusiness.GetSubmissions(type, page)
             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
             .ToOkResult();
