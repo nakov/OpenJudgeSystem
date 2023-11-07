@@ -2,7 +2,9 @@
 @using SharedResource = Resources.Areas.Administration.Problems.Views.Partials.ProblemsPartials;
 
 @model OJS.Web.Areas.Administration.ViewModels.SubmissionType.SubmissionTypeViewModel
+@{
 
+}
 <div class="row">
     <div class="editor-label col-xs-3">
         <div class="pull-right">
@@ -49,8 +51,7 @@
         <div class="editor-field col-xs-1">
             @(Html.Kendo()
                 .DropDownListFor(m => m.WorkerType)
-                .Events(e=>e.Open("setDefaultWorkerForCheckedSubmissionTypes"))
-                .HtmlAttributes(new { @class = "pull-right" })
+                .HtmlAttributes(new { @class = "pull-right", id = $"Dropdown{Model.Id}" })
                 .BindTo(ViewBag.WorkerTypes))
         </div>
         <div class="editor-field col-xs-5">
@@ -67,13 +68,12 @@
 }
 
 <script>
-    function setDefaultWorkerForCheckedSubmissionTypes ()
-    {
-        var defaultWorkerType = @Html.Raw(Json.Encode(Model.WorkerType));
-        console.log(defaultWorkerType);
-        // var currentId = @Html.Raw(Json.Encode(@ViewData.TemplateInfo.HtmlFieldPrefix).Replace("[", "_").Replace("]", "__"));
-        // var data = $(`#${currentId}WorkerType`).data();
-        // data.value = defaultWorkerType;
-    }
+$( document ).ready(function() {
+       var a = @Html.Raw(Json.Encode(Model));
+       if (a.IsChecked) {
+           var dropDown = $("#@Html.IdFor(m => m.WorkerType)")
+           dropDown.selectedIndex = a.WorkerType;
+       }
+})
     window.workerTypesData = @Html.Raw(Json.Encode(ViewBag.WorkerTypes));
 </script>

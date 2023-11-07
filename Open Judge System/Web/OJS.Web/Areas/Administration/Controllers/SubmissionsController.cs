@@ -492,6 +492,9 @@ namespace OJS.Web.Areas.Administration.Controllers
                 using (var scope = TransactionsHelper.CreateTransactionScope())
                 {
                     submission.Processed = false;
+                    submission.WorkerEndpoint = null;
+                    submission.StartedExecutionOn = null;
+                    submission.CompletedExecutionOn = null;
 
                     this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id);
 

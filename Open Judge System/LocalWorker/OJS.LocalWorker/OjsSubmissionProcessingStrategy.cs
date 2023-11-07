@@ -181,11 +181,17 @@
 
             if (this.submissionForProcessing.WorkerType == WorkerType.None)
             {
-                var strategyDetails = submission.Problem.ProblemSubmissionTypeExecutionDetails
-                    .FirstOrDefault(x => x.SubmissionTypeId == submission.Id);
+                var contestWorkerType = submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
+                var strategyDetailsWorkerType = submission.Problem
+                    .ProblemSubmissionTypeExecutionDetails
+                    .FirstOrDefault(x => x.SubmissionTypeId == submission.Id)?
+                    .WorkerType;
 
-                this.submissionForProcessing.WorkerType = strategyDetails?.WorkerType ??
-                                                          submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
+                this.submissionForProcessing.WorkerType = strategyDetailsWorkerType != WorkerType.None
+                    ? strategyDetailsWorkerType.Value
+                    : contestWorkerType != WorkerType.None
+                        ? contestWorkerType
+                        : WorkerType.Legacy;
             }
         }
         

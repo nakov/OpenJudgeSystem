@@ -124,16 +124,22 @@ namespace OJS.Services.Data.SubmissionsForProcessing
         private SubmissionForProcessing AssignWorkerType(SubmissionForProcessing submissionForProcessing)
         {
             var submission = this.submissions.GetById(submissionForProcessing.SubmissionId);
-            submissionForProcessing.WorkerType = submission.WorkerType;
+           submissionForProcessing.WorkerType = submission.WorkerType;
 
-            if (submissionForProcessing.WorkerType == WorkerType.None)
-            {
-                var strategyDetails = submission.Problem.ProblemSubmissionTypeExecutionDetails
-                    .FirstOrDefault(x => x.SubmissionTypeId == submission.SubmissionTypeId);
+           if (submissionForProcessing.WorkerType == WorkerType.None)
+           {
+               var contestWorkerType = submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
+               var strategyDetailsWorkerType = submission.Problem
+                   .ProblemSubmissionTypeExecutionDetails
+                   .FirstOrDefault(x => x.SubmissionTypeId == submission.Id)?
+                   .WorkerType;
 
-                submissionForProcessing.WorkerType = strategyDetails?.WorkerType ??
-                                                     submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
-            }
+               submissionForProcessing.WorkerType = strategyDetailsWorkerType != WorkerType.None
+                   ? strategyDetailsWorkerType.Value
+                   : contestWorkerType != WorkerType.None
+                       ? contestWorkerType
+                       : WorkerType.Legacy;
+           }
 
             return submissionForProcessing;
         }
