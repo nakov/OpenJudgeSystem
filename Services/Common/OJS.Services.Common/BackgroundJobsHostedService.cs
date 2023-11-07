@@ -76,8 +76,8 @@ public class BackgroundJobsHostedService : IHostedService
         this.logger.LogInformation("Job for deleting processed submissions is added or updated");
 
         this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<IParticipantsBackgroundJobsBusinessService>(
-                nameof(IParticipantsBackgroundJobsBusinessService.UpdateTotalScoreSnapshotOfParticipants),
+            .AddOrUpdateRecurringJob<IRecurringBackgroundJobsBusinessService>(
+                nameof(IRecurringBackgroundJobsBusinessService.UpdateTotalScoreSnapshotOfParticipants),
                 m => m.UpdateTotalScoreSnapshotOfParticipants(),
                 this.updatingParticipantTotalScoreSnapshotCronExpression,
                 this.administrationQueueName);
@@ -85,8 +85,8 @@ public class BackgroundJobsHostedService : IHostedService
         this.logger.LogInformation("Job for updating total score snapshot of participants is added or updated");
 
         this.hangfireBackgroundJobs
-            .AddOrUpdateRecurringJob<IParticipantsBackgroundJobsBusinessService>(
-                nameof(IParticipantsBackgroundJobsBusinessService.RemoveParticipantMultipleScores),
+            .AddOrUpdateRecurringJob<IRecurringBackgroundJobsBusinessService>(
+                nameof(IRecurringBackgroundJobsBusinessService.RemoveParticipantMultipleScores),
                 m => m.RemoveParticipantMultipleScores(),
                 this.removingMultipleParticipantScoresForProblemCronExpression,
                 this.administrationQueueName);

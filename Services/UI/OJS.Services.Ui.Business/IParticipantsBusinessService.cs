@@ -40,5 +40,9 @@ namespace OJS.Services.Ui.Business
         Task<int> GetPracticeParticipantsCount(int contestId);
 
         Task<int> GetCompeteParticipantsCount(int contestId);
+
+        Task UpdateTotalScoreSnapshotOfParticipants();
+
+        Task RemoveParticipantMultipleScores();
     }
 }
