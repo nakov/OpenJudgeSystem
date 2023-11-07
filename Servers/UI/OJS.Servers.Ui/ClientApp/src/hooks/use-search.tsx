@@ -3,7 +3,7 @@ import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { SearchParams } from '../common/search-types';
+import { SearchCategory, SearchParams } from '../common/search-types';
 import { IGetSearchResultsUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 
@@ -69,7 +69,7 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
 
     const urlTerms = useMemo(
         () => {
-            const selectedTerms = [ 'Contests', 'Problems', 'Users' ];
+            const selectedTerms = [ SearchCategory.Contest.valueOf(), SearchCategory.Problem.valueOf(), SearchCategory.User.valueOf() ];
 
             return params.filter(({ key, value }) => selectedTerms.includes(key) &&
                 value === 'true') as [];
@@ -98,11 +98,11 @@ const SearchProvider = ({ children }: ISearchProviderProps) => {
             setIsSearchingContests(false);
 
             const isProblemsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
-                .filter(({ key }) => key === 'Problems'));
+                .filter(({ key }) => key === SearchCategory.Problem));
             const isContestsCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
-                .filter(({ key }) => key === 'Contests'));
+                .filter(({ key }) => key === SearchCategory.Contest));
             const isUsersCategoryInUrl = !isEmpty(getSearchResultsUrlParams?.selectedTerms
-                .filter(({ key }) => key === 'Users'));
+                .filter(({ key }) => key === SearchCategory.User));
 
             if (isProblemsCategoryInUrl) {
                 setIsSearchingProblems(true);
