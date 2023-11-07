@@ -55,6 +55,7 @@ public class ResultsController : BaseAdminViewController
             official,
             isUserAdminOrLecturer: true,
             isFullResults: false,
+            totalResultsCount: null,
             isExportResults: true);
 
         // Suggested file name in the "Save as" dialog which will be displayed to the end user

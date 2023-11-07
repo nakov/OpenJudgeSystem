@@ -11,8 +11,8 @@ public interface IContestResultsAggregatorService : IService
         bool official,
         bool isUserAdminOrLecturer,
         bool isFullResults,
+        int? totalResultsCount,
         bool isExportResults = false,
-        int? totalResultsCount = null,
         int page = 1,
         int itemsInPage = int.MaxValue);
 }
