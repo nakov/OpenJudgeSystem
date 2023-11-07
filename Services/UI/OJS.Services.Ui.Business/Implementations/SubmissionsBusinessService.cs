@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
+using System.Globalization;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -557,7 +558,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         => this.submissionsData.GetTotalSubmissionsCount();
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(string type, int page)
-        => type.ToLower() switch
+        => type.ToLower(CultureInfo.InvariantCulture) switch
             {
                 "public" => await this.GetPublicSubmissions(new SubmissionForPublicSubmissionsServiceModel
                 {
