@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from '../../common/search-types';
 import {
     IGenericSearchProps,
-    IGenericSearchResponseModel,
     IPagedResultType,
 } from '../../common/types';
 import { IGetSearchResultsParams } from '../../common/url-types';
@@ -45,7 +43,7 @@ const SearchSection = <T extends ISearchTypes>({
         get: getItemSearchResults,
         data: itemSearchResultsData,
         error: getItemSearchResultsError,
-    } = useHttp<IGetSearchResultsParams, IPagedResultType<IGenericSearchResponseModel<T>>>({
+    } = useHttp<IGetSearchResultsParams, IPagedResultType<T>>({
         url: getSearchResultsUrl,
         parameters: getSearchResultsParams,
     });
@@ -88,23 +86,21 @@ const SearchSection = <T extends ISearchTypes>({
             return;
         }
 
-        const searchResult = itemSearchResultsData as IPagedResultType<IGenericSearchResponseModel<T>>;
+        const searchResult = itemSearchResultsData as IPagedResultType<T>;
 
         const { items: searchResponseData } = searchResult;
         if (isNil(searchResponseData) || isEmpty(searchResponseData)) {
             return;
         }
 
-        const foundItems = Object.values(first(searchResponseData) as IGenericSearchResponseModel<T>);
-
-        setSearchedItems(foundItems[0] as T[]);
+        setSearchedItems(searchResponseData);
         setItemsSearchError(null);
         setSearchingError(null);
         setSearchResults(searchResult);
     }, [ getItemSearchResultsError, itemSearchResultsData, searchCategory, searchResults,
         searchedItems, setSearchingError ]);
 
-    const handlePageChange = useCallback((newPage : number) => {
+    const handlePageChange = useCallback((newPage: number) => {
         setCurrentItemsPage(newPage);
     }, []);
 

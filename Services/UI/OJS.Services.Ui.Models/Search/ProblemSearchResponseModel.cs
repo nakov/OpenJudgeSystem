@@ -1,11 +1,14 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
-using System.Collections.Generic;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System.Linq;
 
-public class ProblemSearchResponseModel : IMapFrom<ProblemSearchForListingServiceModel>
+public class ProblemSearchResponseModel : IMapFrom<ProblemSearchServiceModel>
 {
-    public IEnumerable<ProblemSearchServiceModel> Problems { get; set; }
-        = Enumerable.Empty<ProblemSearchServiceModel>();
+    public int Id { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public double OrderBy { get; set; }
+
+    public ProblemContestSearchServiceModel? Contest { get; set; }
 }

@@ -106,27 +106,30 @@ const SearchPage = () => {
                         {`"${searchValue}"`}
                     </Heading>
                 </div>
-                {isSearchingContests && (
+                {isSearchingContests &&
+                    (
                     <SearchSection<IContestSearchType>
                       searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
                       searchCategory={SearchCategory.Contest}
                       renderItem={renderContest}
                     />
-                )}
-                {isSearchingProblems && (
-                <SearchSection<IProblemSearchType>
-                  searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
-                  searchCategory={SearchCategory.Problem}
-                  renderItem={renderProblem}
-                />
-                )}
-                {isSearchingUsers && (
+                    )}
+                {isSearchingProblems &&
+                    (
+                    <SearchSection<IProblemSearchType>
+                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
+                      searchCategory={SearchCategory.Problem}
+                      renderItem={renderProblem}
+                    />
+                    )}
+                {isSearchingUsers &&
+                    (
                     <SearchSection<IUserSearchType>
                       searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
                       searchCategory={SearchCategory.User}
                       renderItem={renderUser}
                     />
-                )}
+                    )}
             </>
         ),
         [ searchValue, isSearchingContests, getSearchResultsUrlParams?.searchTerm, renderContest,

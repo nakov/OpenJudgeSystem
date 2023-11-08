@@ -1,11 +1,10 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
-using System.Collections.Generic;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System.Linq;
 
-public class UserSearchResponseModel : IMapFrom<UserSearchForListingServiceModel>
+public class UserSearchResponseModel : IMapFrom<UserSearchServiceModel>
 {
-     public IEnumerable<UserSearchServiceModel> Users { get; set; }
-            = Enumerable.Empty<UserSearchServiceModel>();
+    public string Id { get; set; } = null!;
+
+    public string Name { get; set; } = null!;
 }

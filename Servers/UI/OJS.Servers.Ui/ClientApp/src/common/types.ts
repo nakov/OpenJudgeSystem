@@ -236,10 +236,6 @@ interface IGenericSearchProps<T> {
     renderItem: (item: T) => React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
 
-interface IGenericSearchResponseModel<T> {
-    items: T[];
-}
-
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -247,7 +243,6 @@ export type {
     ISearchProps,
     IUsersSearchResponseModel,
     IGetContestsForIndexResponseType,
-    IGenericSearchResponseModel,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
     IContestType,

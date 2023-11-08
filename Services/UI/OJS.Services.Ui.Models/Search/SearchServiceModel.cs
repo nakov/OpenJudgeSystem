@@ -25,13 +25,13 @@ public class SearchServiceModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<SearchServiceModel, PagedResult<ContestSearchForListingServiceModel>>()
+        configuration.CreateMap<SearchServiceModel, PagedResult<ContestSearchServiceModel>>()
             .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
 
-        configuration.CreateMap<SearchServiceModel, PagedResult<ProblemSearchForListingServiceModel>>()
+        configuration.CreateMap<SearchServiceModel, PagedResult<ProblemSearchServiceModel>>()
             .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
 
-        configuration.CreateMap<SearchServiceModel, PagedResult<UserSearchForListingServiceModel>>()
+        configuration.CreateMap<SearchServiceModel, PagedResult<UserSearchServiceModel>>()
             .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
     }
 

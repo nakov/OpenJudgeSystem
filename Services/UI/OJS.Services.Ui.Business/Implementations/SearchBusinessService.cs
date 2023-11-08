@@ -29,7 +29,7 @@ public class SearchBusinessService : ISearchBusinessService
         this.searchValidationService = searchValidationService;
     }
 
-    public async Task<PagedResult<ContestSearchForListingServiceModel>> GetContestSearchResults(
+    public async Task<PagedResult<ContestSearchServiceModel>> GetContestSearchResults(
         SearchServiceModel model)
     {
         NormalizeSearchModel(model);
@@ -44,13 +44,13 @@ public class SearchBusinessService : ISearchBusinessService
         var contestSearchListingModel = new ContestSearchForListingServiceModel();
         await this.PopulateSelectedConditionValues(model, contestSearchListingModel);
 
-        var modelResult = model.Map<PagedResult<ContestSearchForListingServiceModel>>();
-        modelResult.Items = new[] { contestSearchListingModel, };
+        var modelResult = model.Map<PagedResult<ContestSearchServiceModel>>();
+        modelResult.Items = contestSearchListingModel.Contests;
 
         return modelResult;
     }
 
-    public async Task<PagedResult<ProblemSearchForListingServiceModel>> GetProblemSearchResults(
+    public async Task<PagedResult<ProblemSearchServiceModel>> GetProblemSearchResults(
         SearchServiceModel model)
     {
         NormalizeSearchModel(model);
@@ -65,13 +65,13 @@ public class SearchBusinessService : ISearchBusinessService
         var problemsSearchListingModel = new ProblemSearchForListingServiceModel();
         await this.PopulateSelectedConditionValues(model, problemsSearchListingModel);
 
-        var modelResult = model.Map<PagedResult<ProblemSearchForListingServiceModel>>();
-        modelResult.Items = new[] { problemsSearchListingModel, };
+        var modelResult = model.Map<PagedResult<ProblemSearchServiceModel>>();
+        modelResult.Items = problemsSearchListingModel.Problems;
 
         return modelResult;
     }
 
-    public async Task<PagedResult<UserSearchForListingServiceModel>> GetUserSearchResults(
+    public async Task<PagedResult<UserSearchServiceModel>> GetUserSearchResults(
         SearchServiceModel model)
     {
         NormalizeSearchModel(model);
@@ -86,8 +86,8 @@ public class SearchBusinessService : ISearchBusinessService
         var usersSearchListingModel = new UserSearchForListingServiceModel();
         await this.PopulateSelectedConditionValues(model, usersSearchListingModel);
 
-        var modelResult = model.Map<PagedResult<UserSearchForListingServiceModel>>();
-        modelResult.Items = new[] { usersSearchListingModel, };
+        var modelResult = model.Map<PagedResult<UserSearchServiceModel>>();
+        modelResult.Items = usersSearchListingModel.Users;
 
         return modelResult;
     }
