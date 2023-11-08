@@ -2,9 +2,7 @@
 @using SharedResource = Resources.Areas.Administration.Problems.Views.Partials.ProblemsPartials;
 
 @model OJS.Web.Areas.Administration.ViewModels.SubmissionType.SubmissionTypeViewModel
-@{
 
-}
 <div class="row">
     <div class="editor-label col-xs-3">
         <div class="pull-right">
@@ -51,8 +49,10 @@
         <div class="editor-field col-xs-1">
             @(Html.Kendo()
                 .DropDownListFor(m => m.WorkerType)
-                .HtmlAttributes(new { @class = "pull-right", id = $"Dropdown{Model.Id}" })
+                .HtmlAttributes(new { id = "workerTypeDropdown_" + Model.Id, @class = "pull-right"})
+                .SelectedIndex((int)Model.WorkerType)
                 .BindTo(ViewBag.WorkerTypes))
+               
         </div>
         <div class="editor-field col-xs-5">
             <span class="glyphicon glyphicon-question-sign text-primary" title="@SharedResource.Enter_solution_details" data-tooltip="true"></span>
@@ -69,11 +69,8 @@
 
 <script>
 $( document ).ready(function() {
-       var a = @Html.Raw(Json.Encode(Model));
-       if (a.IsChecked) {
-           var dropDown = $("#@Html.IdFor(m => m.WorkerType)")
-           dropDown.selectedIndex = a.WorkerType;
-       }
-})
+    var model = @Html.Raw(Json.Encode(Model))
+    console.log(model);
     window.workerTypesData = @Html.Raw(Json.Encode(ViewBag.WorkerTypes));
+});
 </script>

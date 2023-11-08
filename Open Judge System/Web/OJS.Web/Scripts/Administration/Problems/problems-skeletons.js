@@ -46,7 +46,7 @@
              <label for="SubmissionTypes_${index}__WorkerType">Worker Type</label>
         </div>
         <div class="editor-field col-xs-1">
-                <select id="SubmissionTypes_${index}__WorkerType" class="pull-right"></select>
+                <select id="SubmissionTypes_${index}__WorkerType" class="pull-right" name="SubmissionTypes[${index}].WorkerType"></select>
         </div>
         <div class="editor-field col-xs-5">
             <span class="glyphicon glyphicon-question-sign text-primary" title="Enter solution details" data-tooltip="true"></span>

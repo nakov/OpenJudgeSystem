@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.Areas.Administration.Controllers
+﻿using OJS.Workers.Common.Models;
+
+namespace OJS.Web.Areas.Administration.Controllers
 {
     using System;
     using System.Collections;
@@ -149,6 +151,7 @@
             }
 
             var problem = this.PrepareProblemViewModelForCreate(contest);
+            this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypesWithExcluded();
             return this.View(problem);
         }
 
@@ -218,16 +221,13 @@
                 var submission = this.submissionTypesData.GetById(s.Id.Value);
                 newProblem.SubmissionTypes.Add(submission);
 
-                if (s.SolutionSkeletonData.IsNullOrEmpty() && (s.TimeLimit is null || s.TimeLimit.Value <= 0))
-                {
-                    return;
-                }
                 var problemSubmissionExectuionDetails = new ProblemSubmissionTypeExecutionDetails()
                 {
                     ProblemId = problem.Id,
                     SubmissionTypeId = submission.Id,
                     TimeLimit = s.TimeLimit,
                     MemoryLimit = s.MemoryLimit,
+                    WorkerType = s.WorkerType,
                 };
 
                 if (!s.SolutionSkeletonData.IsNullOrEmpty())
@@ -318,6 +318,12 @@
                 .GetAll()
                 .Select(SubmissionTypeViewModel.ViewModel)
                 .ForEach(SubmissionTypeViewModel.ApplySelectedTo(selectedProblem));
+            
+            selectedProblem.SubmissionTypes
+                .Where(st => st.IsChecked)
+                .ForEach(st => 
+                    st.WorkerType = selectedProblem.ProblemSubmissionTypesSkeletons
+                        .First(x => x.SubmissionTypeId == st.Id).WorkerType);
             
             this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypesWithExcluded();
             return this.View(selectedProblem);
@@ -907,6 +913,8 @@
                 contest.ProblemGroups.Count,
                 contest.IsOnline);
 
+            problem.SelectedSubmissionTypes.ForEach(sst => sst.WorkerType = 
+                problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x=> x.SubmissionTypeId == sst.Id.Value).WorkerType);
             return problem;
         }
 
