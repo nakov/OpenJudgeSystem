@@ -82,6 +82,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public Task<Contest?> GetByIdWithProblems(int id)
         => this.DbSet
+            .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
             .ThenInclude(pg => pg.Problems)
             .FirstOrDefaultAsync(c => c.Id == id);
