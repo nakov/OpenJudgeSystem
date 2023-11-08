@@ -5,6 +5,7 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
@@ -29,7 +30,7 @@ const SubmissionDetails = () => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, validationErrors, currentPage } =
-    useSelector((state: any) => state.submissionDetails);
+    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const { submissionId } = useParams();
     const { data: currentSubmissionData, isFetching, refetch } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
     const { data, isFetching: isLoadingResults, refetch: refetchResults } =
@@ -89,7 +90,6 @@ const SubmissionDetails = () => {
         [ canAccessAdministration, currentSubmission ],
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const submissionResults = useCallback(
         () => (isFetching
             ? (

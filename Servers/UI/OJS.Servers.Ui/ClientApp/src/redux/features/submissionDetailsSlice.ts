@@ -1,43 +1,42 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ISubmissionDetailsType, ISubmissionResults } from '../../hooks/submissions/types';
-import { IErrorDataType } from '../../hooks/use-http';
+import { submissionDetailsSliceName } from '../../common/reduxNames';
+import { ISubmissionDetailsReduxState } from '../../common/types';
 
-interface ISubmissionDetailsState {
-    currentSubmission: ISubmissionDetailsType | null;
-    currentSubmissionResults: ISubmissionResults[];
-    validationErrors: IErrorDataType[];
-    downloadErrorMessage: string | null;
-    currentPage: number;
-}
-const initialState: ISubmissionDetailsState = {
+const initialState: ISubmissionDetailsReduxState = {
     currentSubmission: null,
-    currentSubmissionResults: [],
+    currentSubmissionResults: {
+        items: [],
+        totalItemsCount: 0,
+        itemsPerPage: 0,
+        pagesCount: 0,
+        pageNumber: 0,
+    },
     validationErrors: [],
     downloadErrorMessage: null,
     currentPage: 1,
 };
 
 const submissionDetailsSlice = createSlice({
-    name: 'submissionDetails',
+    name: submissionDetailsSliceName,
     initialState,
     reducers: {
-        setSubmission: (state:ISubmissionDetailsState, action) => {
+        setSubmission: (state:ISubmissionDetailsReduxState, action) => {
             // refer to https://eslint.org/docs/latest/rules/no-param-reassign section When Not To Use It
             // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentSubmission = action.payload;
         },
-        setCurrentSubmissionResults: (state:ISubmissionDetailsState, action) => {
+        setCurrentSubmissionResults: (state:ISubmissionDetailsReduxState, action) => {
             // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
             // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentSubmissionResults = action.payload;
         },
-        setDownloadErrorMessage: (state:ISubmissionDetailsState, action) => {
+        setDownloadErrorMessage: (state:ISubmissionDetailsReduxState, action) => {
             // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
             // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.downloadErrorMessage = action.payload;
         },
-        setCurrentPage: (state:ISubmissionDetailsState, action) => {
+        setCurrentPage: (state:ISubmissionDetailsReduxState, action) => {
             // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
             // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentPage = action.payload;

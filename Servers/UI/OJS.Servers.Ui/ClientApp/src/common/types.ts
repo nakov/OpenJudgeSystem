@@ -24,9 +24,12 @@ interface IPublicSubmissionUser {
 
 interface ISubmissionDetailsState {
     currentSubmission: ISubmissionDetailsType | null;
-    currentSubmissionResults: ISubmissionResults[];
+    currentSubmissionResults:IPagedResultType<ISubmissionResults>;
     validationErrors: IErrorDataType[];
     downloadErrorMessage: string | null;
+}
+interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
+    currentPage: number;
 }
 
 interface IPublicSubmissionProblem {
@@ -249,4 +252,5 @@ export type {
     IContestDetailsResponseType,
     IContestDetailsProblemType,
     ISubmissionDetailsState,
+    ISubmissionDetailsReduxState,
 };

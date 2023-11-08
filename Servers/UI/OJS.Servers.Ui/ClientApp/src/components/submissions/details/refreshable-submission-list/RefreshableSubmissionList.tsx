@@ -2,6 +2,7 @@ import React, { ReactNode, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
@@ -21,7 +22,7 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, currentSubmissionResults } =
-    useSelector((state: any) => state.submissionDetails);
+    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const handlePageChange = useCallback(
         (page: number) => {
             dispatch(setCurrentPage(page));
@@ -98,18 +99,22 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
             <div style={{ marginBottom: '24px' }}>
                 <Heading type={HeadingType.secondary}>Submissions</Heading>
             </div>
-            <SubmissionsList
-              items={currentSubmissionResults.items}
-              selectedSubmission={currentSubmission}
-              className={styles.submissionsList}
-            />
-            <PaginationControls
-              count={currentSubmissionResults.pagesCount}
-              page={currentSubmissionResults.pageNumber}
-              onChange={handlePageChange}
-            />
-            { renderButtonsSection() }
-            { renderSubmissionInfo() }
+            {currentSubmissionResults && (
+                <>
+                    <SubmissionsList
+                      items={currentSubmissionResults.items ?? []}
+                      selectedSubmission={currentSubmission}
+                      className={styles.submissionsList}
+                    />
+                    <PaginationControls
+                      count={currentSubmissionResults.pagesCount}
+                      page={currentSubmissionResults.pageNumber}
+                      onChange={handlePageChange}
+                    />
+                    { renderButtonsSection() }
+                    { renderSubmissionInfo() }
+                </>
+            )}
         </div>
     );
 };

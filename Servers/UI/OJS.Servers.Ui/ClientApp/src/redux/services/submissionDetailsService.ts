@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { ISubmissionDetailsUrlParams } from '../../common/app-url-types';
+import { defaultPathIdentifier } from '../../common/constants';
+import { submissionDetailsPageServiceName } from '../../common/reduxNames';
 import { IPagedResultType } from '../../common/types';
 import { IDownloadSubmissionFileUrlParams, IGetSubmissionDetailsByIdUrlParams } from '../../common/url-types';
 import { ISubmissionDetailsType, ISubmissionResults } from '../../hooks/submissions/types';
 
 const submissionDetailsService = createApi({
-    reducerPath: 'submissionDetailsPage',
+    reducerPath: submissionDetailsPageServiceName,
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.REACT_APP_API_URL,
         prepareHeaders: (headers) => {
@@ -32,15 +34,15 @@ const submissionDetailsService = createApi({
     }),
     endpoints: (builder) => ({
         // eslint-disable-next-line max-len
-        getCurrentSubmission: builder.query<ISubmissionDetailsType, ISubmissionDetailsUrlParams>({ query: ({ submissionId }) => ({ url: `/api/Submissions/Details/${submissionId}` }) }),
+        getCurrentSubmission: builder.query<ISubmissionDetailsType, ISubmissionDetailsUrlParams>({ query: ({ submissionId }) => ({ url: `/${defaultPathIdentifier}/Submissions/Details/${submissionId}` }) }),
         getSubmissionResults: builder.query<IPagedResultType<ISubmissionResults>, IGetSubmissionDetailsByIdUrlParams>({
             query: ({ submissionId, page }) => ({
-                url: `/api/Submissions/GetSubmissionResults/${submissionId}`,
+                url: `/${defaultPathIdentifier}/Submissions/GetSubmissionResults/${submissionId}`,
                 params: { page },
             }),
         }),
         // eslint-disable-next-line max-len
-        saveAttachment: builder.query<{ blob: Blob; filename: string }, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/api/Submissions/Download/${id}` }) }),
+        saveAttachment: builder.query<{ blob: Blob; filename: string }, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/${defaultPathIdentifier}/Submissions/Download/${id}` }) }),
     }),
 });
 

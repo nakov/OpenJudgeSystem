@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
+import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
@@ -26,7 +27,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
     const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { state: { user } } = useAuth();
     const { currentSubmission, downloadErrorMessage } =
-    useSelector((state: any) => state.submissionDetails);
+    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { data, error } = useSaveAttachmentQuery({ id: submissionId }, { skip: shouldFetch });
@@ -64,9 +65,9 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                 return;
             }
             setShouldFetch(false);
-            setSubmissionId(Number(currentSubmission.id));
+            setSubmissionId(Number(currentSubmission!.id));
         },
-        [ currentSubmission.id, downloadErrorMessage ],
+        [ currentSubmission, downloadErrorMessage ],
     );
 
     const renderResourceLink = useCallback(
