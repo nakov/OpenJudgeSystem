@@ -323,7 +323,10 @@ namespace OJS.Web.Areas.Administration.Controllers
                 .Where(st => st.IsChecked)
                 .ForEach(st => 
                     st.WorkerType = selectedProblem.ProblemSubmissionTypesSkeletons
-                        .First(x => x.SubmissionTypeId == st.Id).WorkerType);
+                        .Where(x => x.SubmissionTypeId == st.Id)
+                        .Select(x => x.WorkerType)
+                        .DefaultIfEmpty(WorkerType.None)
+                        .FirstOrDefault());
             
             this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypesWithExcluded();
             return this.View(selectedProblem);
@@ -372,6 +375,15 @@ namespace OJS.Web.Areas.Administration.Controllers
                     .Select(SubmissionTypeViewModel.ViewModel)
                     .ForEach(SubmissionTypeViewModel.ApplySelectedTo(problem));
 
+                problem.SubmissionTypes
+                    .Where(st => st.IsChecked)
+                    .ForEach(st => 
+                        st.WorkerType = problem.ProblemSubmissionTypesSkeletons
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.WorkerType)
+                            .DefaultIfEmpty(WorkerType.None)
+                            .FirstOrDefault());
+                
                 return this.View(problem);
             }
 

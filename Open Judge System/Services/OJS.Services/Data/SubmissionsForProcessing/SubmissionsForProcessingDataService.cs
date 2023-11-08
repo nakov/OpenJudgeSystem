@@ -131,11 +131,13 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                var contestWorkerType = submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
                var strategyDetailsWorkerType = submission.Problem
                    .ProblemSubmissionTypeExecutionDetails
-                   .FirstOrDefault(x => x.SubmissionTypeId == submission.Id)?
-                   .WorkerType;
+                   .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                   .Select(x => x.WorkerType)
+                   .DefaultIfEmpty(WorkerType.None)
+                   .FirstOrDefault();
 
                submissionForProcessing.WorkerType = strategyDetailsWorkerType != WorkerType.None
-                   ? strategyDetailsWorkerType.Value
+                   ? strategyDetailsWorkerType
                    : contestWorkerType != WorkerType.None
                        ? contestWorkerType
                        : WorkerType.Legacy;
