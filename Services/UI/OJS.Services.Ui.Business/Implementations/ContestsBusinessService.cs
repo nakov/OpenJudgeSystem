@@ -75,11 +75,12 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
+            var isLecturerOrAdmin = contest != null && this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
                 id,
-                user) !);
+                isLecturerOrAdmin) !);
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);
