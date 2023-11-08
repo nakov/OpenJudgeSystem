@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
+using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Data;
 using OJS.Data.Models.Participants;
 using X.PagedList;
@@ -28,29 +29,21 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
         this.participantsData = participantsData;
     }
 
-    public ContestResultsViewModel GetContestResults(
-            Contest contest,
-            bool official,
-            bool isUserAdminOrLecturer,
-            bool isFullResults,
-            int? totalResultsCount,
-            bool isExportResults = false,
-            int page = 1,
-            int itemsInPage = int.MaxValue)
+    public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel)
     {
         var contestActivityEntity = this.activityService
-            .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
+            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
 
         var contestResults = new ContestResultsViewModel
             {
-                Id = contest.Id,
-                Name = contest.Name,
-                IsCompete = official,
+                Id = contestResultsModel.Contest.Id,
+                Name = contestResultsModel.Contest.Name,
+                IsCompete = contestResultsModel.Official,
                 ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
                 ContestCanBePracticed = contestActivityEntity.CanBePracticed,
-                UserHasContestRights = isUserAdminOrLecturer,
-                ContestType = contest.Type,
-                Problems = contest.ProblemGroups
+                UserHasContestRights = contestResultsModel.IsUserAdminOrLecturer,
+                ContestType = contestResultsModel.Contest.Type,
+                Problems = contestResultsModel.Contest.ProblemGroups
                     .SelectMany(pg => pg.Problems)
                     .AsQueryable()
                     .Where(p => !p.IsDeleted)
@@ -59,31 +52,36 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Select(ContestProblemListViewModel.FromProblem),
             };
 
-        var totalParticipantsCount = totalResultsCount
+        var totalParticipantsCount = contestResultsModel.TotalResultsCount
                                      ?? this.participantsData
-                                         .GetAllByContestAndIsOfficial(contest.Id, official)
+                                         .GetAllByContestAndIsOfficial(
+                                             contestResultsModel.Contest.Id,
+                                             contestResultsModel.Official)
                                          .Count();
 
         // Get the requested participants without their problem results.
         // Splitting the queries improves performance and avoids unexpected results from joins with Scores.
-        var participants = this.GetParticipantsPage(contest, official, page, itemsInPage)
+        var participants = this.GetParticipantsPage(
+                contestResultsModel.Contest,
+                contestResultsModel.Official,
+                contestResultsModel.Page,
+                contestResultsModel.ItemsInPage)
                 .Select(ParticipantResultViewModel.FromParticipant)
                 .ToList();
 
         // Get the ParticipantScores with another query and map problem results for each participant.
         var participantScores = this.participantScoresDataService
-            .GetAllByParticipants(participants.Select(p => p.Id))
-            .AsNoTracking();
+            .GetAllByParticipants(participants.Select(p => p.Id));
 
         IEnumerable<ProblemResultPairViewModel> problemResults;
 
-        if (isFullResults)
+        if (contestResultsModel.IsFullResults)
         {
             problemResults = participantScores
                 .Select(ProblemResultPairViewModel.FromParticipantScoreAsFullResult)
                 .ToList();
         }
-        else if (isExportResults)
+        else if (contestResultsModel.IsExportResults)
         {
             problemResults = participantScores
                 .Select(ProblemResultPairViewModel.FromParticipantScoreAsExportResult)
@@ -99,7 +97,11 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
         participants.ForEach(p =>
             p.ProblemResults = problemResults.Where(pr => pr.ParticipantId == p.Id));
 
-        var results = new StaticPagedList<ParticipantResultViewModel>(participants, page, itemsInPage, totalParticipantsCount);
+        var results = new StaticPagedList<ParticipantResultViewModel>(
+            participants,
+            contestResultsModel.Page,
+            contestResultsModel.ItemsInPage,
+            totalParticipantsCount);
 
         contestResults.Results = results;
 
