@@ -6,20 +6,23 @@ namespace OJS.Services.Infrastructure.BackgroundJobs.Implementations
 
     public class HangfireBackgroundJobsService : IHangfireBackgroundJobsService
     {
-        public object AddFireAndForgetJob<T>(Expression<Action<T>> methodCall)
+        public object AddFireAndForgetJob<T>(
+            Expression<Action<T>> methodCall)
             => BackgroundJob.Enqueue(methodCall);
 
         public void AddOrUpdateRecurringJob(
             object recurringJobId,
             Expression<Action> methodCall,
-            string cronExpression)
-            => RecurringJob.AddOrUpdate((string)recurringJobId, methodCall, cronExpression);
+            string cronExpression,
+            string queue)
+            => RecurringJob.AddOrUpdate((string)recurringJobId, methodCall, cronExpression, queue: queue.ToLowerInvariant());
 
         public void AddOrUpdateRecurringJob<T>(
             object recurringJobId,
             Expression<Action<T>> methodCall,
-            string cronExpression)
-            => RecurringJob.AddOrUpdate((string)recurringJobId, methodCall, cronExpression);
+            string cronExpression,
+            string queue)
+            => RecurringJob.AddOrUpdate((string)recurringJobId, methodCall, cronExpression, queue: queue.ToLowerInvariant());
 
         public void OnSucceededStateContinueWith<T>(
             string parentJobId,

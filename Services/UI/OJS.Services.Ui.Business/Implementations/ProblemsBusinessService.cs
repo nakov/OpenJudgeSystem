@@ -104,35 +104,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .ToList()
                 .ForEachSequential(async id => await this.DeleteById(id));
 
-        public async Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId)
-        {
-            var problem = await this.problemsData
-                .GetByIdQuery(id)
-                .AsNoTracking()
-                .Include(p => p.Tests)
-                .Include(p => p.Resources)
-                .SingleOrDefaultAsync();
-
-            if (problem?.ProblemGroup.ContestId == contestId)
-            {
-                return new ServiceResult(Resource.CannotCopyProblemsIntoSameContest);
-            }
-
-            if (!await this.contestsData.ExistsById(contestId))
-            {
-                return new ServiceResult(SharedResource.ContestNotFound);
-            }
-
-            if (await this.contestsData.IsActiveById(contestId))
-            {
-                return new ServiceResult(Resource.CannotCopyProblemsIntoActiveContest);
-            }
-
-            await this.CopyProblemToContest(problem, contestId, problemGroupId);
-
-            return ServiceResult.Success;
-        }
-
         public async Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model)
         {
             var modelResult = new ProblemSearchServiceResultModel();
