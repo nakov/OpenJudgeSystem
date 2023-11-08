@@ -15,7 +15,6 @@ import SpinningLoader from '../../components/guidelines/spinning-loader/Spinning
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useContestCategories } from '../../hooks/use-contest-categories';
-import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
@@ -41,11 +40,9 @@ const ContestsPage = () => {
         state: { currentPage, pagesInfo },
         changePage,
     } = usePages();
-    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const { state: params, actions: { clearParams } } = useUrlParams();
-    const { state: { strategies } } = useContestStrategyFilters();
-    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
+    const { state: { strategies }, actions: { load: loadStrategies } } = useContestStrategyFilters();
     const [ showAlert, setShowAlert ] = useState<boolean>(false);
 
     useEffect(
@@ -55,6 +52,7 @@ const ContestsPage = () => {
                     await loadCategories();
                 })();
             }
+
             if (isEmpty(strategies)) {
                 (async () => {
                     await loadStrategies();
@@ -173,14 +171,7 @@ const ContestsPage = () => {
                 clearParams();
             }
         },
-        [
-            areQueryParamsValid,
-            isLoaded,
-            clearParams,
-            breadcrumbItems,
-            handleFilterClick,
-            renderContests,
-        ],
+        [ areQueryParamsValid, isLoaded, clearParams ],
     );
 
     return (

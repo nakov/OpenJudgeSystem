@@ -54,7 +54,6 @@ const ContestBreadcrumb = ({
     const renderCategoriesBreadcrumbItem = useCallback(
         (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
             const { value, isLast } = categoryBreadcrumbItem;
-
             const classNames = withContestName
                 ? styles.breadcrumbBtn
                 : concatClassNames(styles.breadcrumbBtnWithoutContestName, isLast
@@ -62,15 +61,25 @@ const ContestBreadcrumb = ({
                     : '');
 
             return (
-                <Button
-                  type={ButtonType.plain}
-                  className={classNames}
-                  onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
-                  text={value}
-                />
+                <>
+                    <Button
+                      type={ButtonType.plain}
+                      className={classNames}
+                      onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
+                      text={value}
+                    />
+                    {isLast && withContestName && (
+                        <span className={styles.breadcrumbContestName}>
+                            {' '}
+                            /
+                            {' '}
+                            {contestName}
+                        </span>
+                    )}
+                </>
             );
         },
-        [ updateBreadcrumbAndNavigateToCategory, withContestName ],
+        [ updateBreadcrumbAndNavigateToCategory, withContestName, contestName ],
     );
 
     const breadCrumbContainerClassName = withContestName
@@ -80,12 +89,6 @@ const ContestBreadcrumb = ({
     return (
         <div className={breadCrumbContainerClassName}>
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
-            {withContestName && (
-            <span className={styles.breadcrumbContestName}>
-                <span>/</span>
-                <span>{contestName}</span>
-            </span>
-            )}
         </div>
     );
 };
