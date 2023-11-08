@@ -29,12 +29,14 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         },
         [ dispatch ],
     );
+
     const handleReloadClick = useCallback(
         async () => {
             reload();
         },
         [ reload ],
     );
+
     const renderButtonsSection = useCallback(() => (
         <div className={styles.buttonsSection}>
             <Button

@@ -38,7 +38,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
         }
     }, [ dispatch, error ]);
 
-    const downloadFile = (blob:Blob, filename:string) => {
+    const downloadFile = (blob:Blob, filename: string) => {
         const blobUrl = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
@@ -78,6 +78,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
 
             const { submissionType: { allowBinaryFilesUpload }, user: { userName: submissionUserName } } = currentSubmission;
             const { username: loggedInUserName } = user;
+
             if ((!canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
                 return null;
             }
