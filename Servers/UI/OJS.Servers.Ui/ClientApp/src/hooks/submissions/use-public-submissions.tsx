@@ -317,11 +317,15 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     // Process results
     useEffect(
         () => {
+            if (isNil(userSubmissionsData) || isEmpty(userSubmissionsData)) {
+                return;
+            }
+
             (async () => {
                 await getUserParticipations();
             })();
         },
-        [ getUserParticipations ],
+        [ getUserParticipations, userSubmissionsData ],
     );
 
     useEffect(
