@@ -57,12 +57,20 @@ const SearchBar = () => {
         [ ],
     );
 
+    // Effect helps manage SearchBar's state and value on SearchPage refresh
+    // Checks if the Bar's state has been reset to default
+    // but the user is in the search page and there are query params in the URL
+    // Result: Syncs the SearchBar values with the url params and ensures the SearchBar is visible.
     useEffect(() => {
-        if ((searchParam === defaultState.state.searchValue && selectedTerms === defaultState.state.selectedTerms) &&
+        const isDefaultBarState = () => searchParam === defaultState.state.searchValue &&
+            selectedTerms === defaultState.state.selectedTerms;
+
+        if (isDefaultBarState() &&
             location.pathname === getSearchPageURL() && getSearchResultsUrlParams) {
             setSearchParam(getSearchResultsUrlParams.searchTerm);
             const selectedTermNames = getSearchResultsUrlParams.selectedTerms.map((termObj) => termObj.key);
             setSelectedTerms(selectedTermNames);
+
             if (!isVisible) {
                 toggleVisibility();
             }

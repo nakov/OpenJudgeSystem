@@ -105,21 +105,27 @@ public class SearchBusinessService : ISearchBusinessService
         if (searchListingModel is ContestSearchForListingServiceModel contestListingModel)
         {
             var contestsResult = await this.contestsBusinessService.GetSearchContestsByName(model);
+
             contestListingModel.Contests = contestsResult.Contests;
+
             model.TotalItemsCount = contestsResult.TotalContestsCount;
         }
 
         if (searchListingModel is ProblemSearchForListingServiceModel problemListingModel)
         {
             var problemsResult = await this.problemsBusinessService.GetSearchProblemsByName(model);
+
             problemListingModel.Problems = problemsResult.Problems;
+
             model.TotalItemsCount = problemsResult.TotalProblemsCount;
         }
 
         if (searchListingModel is UserSearchForListingServiceModel userListingModel)
         {
             var usersResult = await this.usersBusinessService.GetSearchUsersByUsername(model);
+
             userListingModel.Users = usersResult.Users;
+
             model.TotalItemsCount = usersResult.TotalUsersCount;
         }
     }
