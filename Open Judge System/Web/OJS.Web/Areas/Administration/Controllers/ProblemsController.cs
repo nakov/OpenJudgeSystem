@@ -924,9 +924,6 @@ namespace OJS.Web.Areas.Administration.Controllers
                 problem,
                 contest.ProblemGroups.Count,
                 contest.IsOnline);
-
-            problem.SelectedSubmissionTypes.ForEach(sst => sst.WorkerType = 
-                problem.ProblemSubmissionTypesSkeletons.FirstOrDefault(x=> x.SubmissionTypeId == sst.Id.Value).WorkerType);
             return problem;
         }
 
