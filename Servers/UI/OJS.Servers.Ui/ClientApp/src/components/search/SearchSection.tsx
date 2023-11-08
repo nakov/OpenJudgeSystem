@@ -12,6 +12,7 @@ import {
 import { IGetSearchResultsParams } from '../../common/url-types';
 import { IErrorDataType, useHttp } from '../../hooks/use-http';
 import { useSearch } from '../../hooks/use-search';
+import isNilOrEmpty from '../../utils/check-utils';
 import { getSearchResultsUrl } from '../../utils/urls';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import List, { Orientation } from '../guidelines/lists/List';
@@ -76,7 +77,7 @@ const SearchSection = <T extends ISearchTypes>({
     }, [ getSearchResultsParams, getItemSearchResults ]);
 
     useEffect(() => {
-        if (isNil(itemSearchResultsData) || isEmpty(itemSearchResultsData)) {
+        if (isNilOrEmpty(itemSearchResultsData)) {
             return;
         }
 
