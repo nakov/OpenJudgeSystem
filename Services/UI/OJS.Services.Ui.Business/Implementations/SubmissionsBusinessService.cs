@@ -689,37 +689,4 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<T>()
             .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
     }
-
-    private async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
-        SubmissionForPublicSubmissionsServiceModel model)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        if (user.IsAdminOrLecturer)
-        {
-            return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                DefaultSubmissionsPerPage, model.PageNumber);
-        }
-
-        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-
-        modelResult.Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-            DefaultSubmissionsPerPage);
-
-        return modelResult;
-    }
-
-    private async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
-        => await this.submissionsCommonData
-            .GetAllPending()
-            .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-
-    private async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
-        => await this.submissionsCommonData
-            .GetAllProcessing()
-            .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
 }
