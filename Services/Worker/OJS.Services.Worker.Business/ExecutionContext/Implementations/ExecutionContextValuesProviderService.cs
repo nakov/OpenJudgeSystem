@@ -38,8 +38,10 @@ public class ExecutionContextValuesProviderService : IExecutionContextValuesProv
             case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
             case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
             case ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck:
+            case ExecutionStrategyType.Java17SpringAndHibernateProjectExecution:
                 return CompilerType.JavaZip;
             case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
+            case ExecutionStrategyType.Java17UnitTestsExecutionStrategy:
                 return CompilerType.JavaInPlaceCompiler;
             case ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy:
                 return CompilerType.CPlusPlusGcc;
