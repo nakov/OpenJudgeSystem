@@ -34,7 +34,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public IQueryable<Participant> GetAllByUser(string? userId)
             => this.DbSet
-                .Where(p => p.UserId == userId);
+                .Where(p => p.UserId == userId)
+                .Include(p => p.Contest);
 
         public IQueryable<Participant> GetAllByContest(int contestId)
             => this.DbSet
