@@ -84,7 +84,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
     }
 
 #nullable disable
-    protected override IGridColumnsOf<TEntity> BuildGridColumns(IGridColumnsOf<TEntity> columns, int stringMaxLength)
+    protected override IGridColumnsOf<TEntity> BuildGridColumns(IGridColumnsOf<TEntity> columns, int? stringMaxLength)
     {
         var gridColumns = base.BuildGridColumns(columns, stringMaxLength);
 
