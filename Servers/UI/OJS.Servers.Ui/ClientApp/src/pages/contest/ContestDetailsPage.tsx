@@ -14,6 +14,7 @@ import ProblemResource from '../../components/problems/problem-resource/ProblemR
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -57,6 +58,7 @@ const ContestDetailsPage = () => {
     const navigate = useNavigate();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { strategies }, actions: { load: loadStrategies } } = useContestStrategyFilters();
 
     useEffect(
         () => {
@@ -64,15 +66,19 @@ const ContestDetailsPage = () => {
                 setPageTitle(contestDetails.name);
             }
 
-            if (!isEmpty(categoriesFlat)) {
-                return;
+            if (isEmpty(categoriesFlat)) {
+                (async () => {
+                    await loadCategories();
+                })();
             }
 
-            (async () => {
-                await loadCategories();
-            })();
+            if (isEmpty(strategies)) {
+                (async () => {
+                    await loadStrategies();
+                })();
+            }
         },
-        [ contestDetails, setPageTitle, loadCategories, categoriesFlat ],
+        [ contestDetails, setPageTitle, loadCategories, categoriesFlat, strategies, loadStrategies ],
     );
 
     useEffect(

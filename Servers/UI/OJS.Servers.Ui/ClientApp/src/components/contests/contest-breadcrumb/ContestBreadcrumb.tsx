@@ -24,6 +24,8 @@ const ContestBreadcrumb = ({
     contestName,
     categoryId,
 }: IContestBreadcrumbProps) => {
+    const breadcrumbListItemClassName = 'MuiBreadcrumbs-li';
+    const breadcrumbOrderedListClassName = 'MuiBreadcrumbs-ol';
     const { state: { possibleFilters }, actions: { toggleParam } } = useContests();
     const navigate = useNavigate();
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -51,10 +53,28 @@ const ContestBreadcrumb = ({
         [ categoriesFlat, navigate, updateBreadcrumb, toggleParam, categoryId, possibleFilters, withContestName ],
     );
 
+    const breadcrumbsSpanMoreThanARow = useCallback(
+        () => {
+            const breadcrumbListItems = document.getElementsByClassName(breadcrumbListItemClassName);
+            const breadcrumbOrderedList = document.getElementsByClassName(breadcrumbOrderedListClassName)[0];
+            if (isNil(breadcrumbOrderedList)) {
+                return false;
+            }
+            const { clientWidth: orderedListWidth } = breadcrumbOrderedList;
+            let totalChildWidth = 0;
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < breadcrumbListItems.length; i++) {
+                totalChildWidth += breadcrumbListItems[i].clientWidth;
+            }
+
+            return totalChildWidth > orderedListWidth;
+        },
+        [],
+    );
+
     const renderCategoriesBreadcrumbItem = useCallback(
         (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
             const { value, isLast } = categoryBreadcrumbItem;
-
             const classNames = withContestName
                 ? styles.breadcrumbBtn
                 : concatClassNames(styles.breadcrumbBtnWithoutContestName, isLast
@@ -62,30 +82,36 @@ const ContestBreadcrumb = ({
                     : '');
 
             return (
-                <Button
-                  type={ButtonType.plain}
-                  className={classNames}
-                  onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
-                  text={value}
-                />
+                <>
+                    <Button
+                      type={ButtonType.plain}
+                      className={classNames}
+                      onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
+                      text={value}
+                    />
+                    {isLast && withContestName && (
+                        <span className={styles.breadcrumbContestName}>
+                            {' '}
+                            /
+                            {' '}
+                            {contestName}
+                        </span>
+                    )}
+                </>
             );
         },
-        [ updateBreadcrumbAndNavigateToCategory, withContestName ],
+        [ updateBreadcrumbAndNavigateToCategory, withContestName, contestName ],
     );
 
     const breadCrumbContainerClassName = withContestName
-        ? styles.breadCrumbContainer
+        ? breadcrumbsSpanMoreThanARow()
+            ? concatClassNames(styles.breadCrumbContainer, styles.breadcrumbMultirow)
+            : styles.breadCrumbContainer
         : concatClassNames(styles.breadCrumbContainer, styles.breadCrumbContainerWithoutContestName);
 
     return (
         <div className={breadCrumbContainerClassName}>
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
-            {withContestName && (
-            <span className={styles.breadcrumbContestName}>
-                <span>/</span>
-                <span>{contestName}</span>
-            </span>
-            )}
         </div>
     );
 };
