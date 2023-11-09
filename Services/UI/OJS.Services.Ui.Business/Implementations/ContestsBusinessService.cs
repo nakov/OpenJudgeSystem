@@ -7,7 +7,9 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Common;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
+    using OJS.Services.Common;
     using OJS.Services.Common.Models;
+    using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Business.Cache;
@@ -26,6 +28,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
+        private readonly IContestsActivityService activityService;
         private readonly IExamGroupsDataService examGroupsData;
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantsBusinessService participantsBusiness;
@@ -40,6 +43,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
+            IContestsActivityService activityService,
             IExamGroupsDataService examGroupsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
@@ -53,6 +57,7 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
+            this.activityService = activityService;
             this.examGroupsData = examGroupsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
@@ -80,33 +85,40 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
+            var contestActivityEntity = this.activityService
+                .GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
+
             var participant = await this.participantsData
                 .GetWithContestByContestByUserAndIsOfficial(
                     id,
                     user.Id,
-                    contest!.CanBeCompeted);
+                    contestActivityEntity.CanBeCompeted);
 
-            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!);
 
-            var contestDetailsServiceModel = contest.Map<ContestDetailsServiceModel>();
+            var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
+
+            // set CanBeCompeted and CanBePracticed properties in contest
+            this.activityService.SetCanBeCompetedAndPracticed(contestDetailsServiceModel);
 
             contestDetailsServiceModel.IsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
-            if (!userIsAdminOrLecturerInContest && participant != null && contest.CanBeCompeted)
+            if (!userIsAdminOrLecturerInContest && participant != null && contestActivityEntity.CanBeCompeted)
             {
                 var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInPractice = (!contest.HasPracticePassword && contest.CanBePracticed) || userIsAdminOrLecturerInContest;
-            var canShowProblemsInCompete = (contest is { HasContestPassword: false, IsActive: false } && !contest.IsOnlineExam && contest.CanBeCompeted) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || userIsAdminOrLecturerInContest;
+            var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || userIsAdminOrLecturerInContest;
+            var canShowProblemsForAnonymous = user.Id != null || !contestActivityEntity.CanBeCompeted;
 
-            if (!canShowProblemsInPractice && !canShowProblemsInCompete)
+            if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
                 contestDetailsServiceModel.Problems = new List<ContestProblemServiceModel>();
             }
 
-            if (userIsAdminOrLecturerInContest || (contest.IsActive && participant != null && contest.CanBeCompeted) || (!contest.CanBeCompeted && participant != null))
+            if (userIsAdminOrLecturerInContest || participant != null)
             {
                 contestDetailsServiceModel.CanViewResults = true;
             }
@@ -296,33 +308,6 @@ namespace OJS.Services.Ui.Business.Implementations
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
-        public async Task ValidateContest(Contest contest, string userId, bool isUserAdmin, bool official)
-        {
-            var isUserLecturerInContest = this.lecturersInContestsBusiness.IsUserLecturerInContest(contest);
-
-            if (contest == null ||
-                contest.IsDeleted ||
-                (!contest.IsVisible && !isUserLecturerInContest))
-            {
-                throw new BusinessServiceException("Contest not found");
-            }
-
-            if (official &&
-                !await this.CanUserCompeteByContestByUserAndIsAdmin(
-                    contest,
-                    userId,
-                    isUserAdmin,
-                    allowToAdminAlways: true))
-            {
-                throw new BusinessServiceException($"Contest cannot be competed");
-            }
-
-            if (!official && !contest.CanBePracticed && !isUserLecturerInContest)
-            {
-                throw new BusinessServiceException($"Contest cannot be practiced");
-            }
-        }
-
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
             ContestFiltersServiceModel? model)
         {
@@ -339,15 +324,26 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
-            return await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
+            var pagedContests =
+                await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
+
+            //set CanBeCompeted and CanBePracticed properties in each contest for the page
+            pagedContests.Items.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+
+            return pagedContests;
         }
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
         {
             var active = await this.GetAllCompetable()
                 .ToListAsync();
+            //set CanBeCompeted and CanBePracticed properties in each active contest
+            active.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+
             var past = await this.GetAllPastContests()
                 .ToListAsync();
+            //set CanBeCompeted and CanBePracticed properties in each active contest
+            past.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
 
             return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
         }
@@ -363,117 +359,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetAllExpired<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.EndTime)
                 .TakeAsync(DefaultContestsToTake);
-
-        public async Task<bool> CanUserCompeteByContestByUserAndIsAdmin(
-            Contest contest,
-            string userId,
-            bool isAdmin,
-            bool allowToAdminAlways = false)
-        {
-            var isUserAdminOrLecturerInContest = isAdmin || await this.contestsData
-                .IsUserLecturerInByContestAndUser(contest.Id, userId);
-
-            if (contest.CanBeCompeted || (isUserAdminOrLecturerInContest && allowToAdminAlways))
-            {
-                return true;
-            }
-
-            if (isUserAdminOrLecturerInContest && contest.IsActive)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        // TODO: Extract different logic blocks in separate services
-        public async Task<ServiceResult> TransferParticipantsToPracticeById(int contestId)
-        {
-            var contest = await this.contestsData.GetByIdWithParticipants(contestId);
-
-            if (contest == null)
-            {
-                return new ServiceResult("Contest cannot be found");
-            }
-
-            if (contest.IsActive)
-            {
-                return new ServiceResult("The Contest is active and participants cannot be transferred");
-            }
-
-            var competeOnlyParticipants = contest.Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
-                .Select(gr => gr.FirstOrDefault());
-
-            foreach (var participant in competeOnlyParticipants)
-            {
-                if (participant == null)
-                {
-                    continue;
-                }
-
-                foreach (var participantScore in participant.Scores)
-                {
-                    participantScore.IsOfficial = false;
-                }
-
-                participant.IsOfficial = false;
-            }
-
-            var competeAndPracticeParticipants = contest.Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 2)
-                .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
-
-            var participantsForDeletion = new List<Participant>();
-
-            foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
-            {
-                var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
-                var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
-                participantsForDeletion.Add(officialParticipant);
-
-                foreach (var officialParticipantSubmission in officialParticipant.Submissions)
-                {
-                    officialParticipantSubmission.Participant = unofficialParticipant;
-                }
-
-                var scoresForDeletion = new List<ParticipantScore>();
-
-                foreach (var officialParticipantScore in officialParticipant.Scores)
-                {
-                    var unofficialParticipantScore = unofficialParticipant
-                        .Scores
-                        .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
-
-                    if (unofficialParticipantScore != null)
-                    {
-                        if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
-                            (unofficialParticipantScore.Points == officialParticipantScore.Points &&
-                             unofficialParticipantScore.Id < officialParticipantScore.Id))
-                        {
-                            unofficialParticipantScore = officialParticipantScore;
-                            unofficialParticipantScore.IsOfficial = false;
-                            unofficialParticipantScore.Participant = unofficialParticipant;
-                        }
-
-                        scoresForDeletion.Add(officialParticipantScore);
-                    }
-                    else
-                    {
-                        officialParticipantScore.IsOfficial = false;
-                        officialParticipantScore.Participant = unofficialParticipant;
-                    }
-                }
-
-                await this.participantScoresData.Delete(scoresForDeletion);
-            }
-
-            await this.participantsData.Delete(participantsForDeletion);
-
-            return ServiceResult.Success;
-        }
 
         public async Task DeleteById(int id)
         {
