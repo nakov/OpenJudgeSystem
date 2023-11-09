@@ -8,6 +8,7 @@ import { useProblems } from '../../../hooks/use-problems';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import {
+    getContestDetailsAppUrl,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
 } from '../../../utils/urls';
@@ -140,15 +141,15 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                     />
                     in
                     <LinkButton
-                      text={contestName}
-                      to={getParticipateInContestUrl({ id: contestId, participationType })}
                       type={LinkButtonType.plain}
+                      to={getContestDetailsAppUrl(contestId)}
+                      text={contestName}
                       className={styles.link}
                     />
                 </div>
             );
         },
-        [ contestId, contestName, handleParticipateInContestSubmit, participationType, problemId, problemName ],
+        [ contestId, contestName, handleParticipateInContestSubmit, problemId, problemName ],
     );
 
     return (
