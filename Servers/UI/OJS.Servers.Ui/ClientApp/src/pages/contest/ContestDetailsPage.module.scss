@@ -27,6 +27,18 @@
   color: colors.$light-blue-color;
 }
 
+.breadcrumbContainer {
+  align-self: center;
+}
+
+.breadcrumbBtn {
+  color: colors.$light-blue-color;
+
+  &:hover {
+    color: colors.$text-dark-gray-color;
+  }
+}
+
 .buttonsContainer {
   column-gap: 1%;
   display: flex;
