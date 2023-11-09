@@ -76,6 +76,7 @@ const SearchSection = <T extends ISearchTypes>({
 
     useEffect(() => {
         if (isNilOrEmpty(itemSearchResultsData)) {
+            setSearchedItems([]);
             return;
         }
 
@@ -156,13 +157,11 @@ const SearchSection = <T extends ISearchTypes>({
     );
 
     return (
-        <div>
-            { isNil(itemsSearchError) && !isLoading
-                ? isEmpty(searchedItems)
-                    ? renderNoResultsFound()
-                    : renderItems(searchedItems)
-                : null}
-        </div>
+        isNil(itemsSearchError) && !isLoading
+            ? isEmpty(searchedItems)
+                ? renderNoResultsFound()
+                : renderItems(searchedItems)
+            : null
     );
 };
 
