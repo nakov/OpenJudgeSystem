@@ -121,7 +121,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
             this.submissionsForProcessing.SaveChanges();
         }
 
-        private SubmissionForProcessing AssignWorkerType(SubmissionForProcessing submissionForProcessing)
+        private void AssignWorkerType(SubmissionForProcessing submissionForProcessing)
         {
             var submission = this.submissions.GetById(submissionForProcessing.SubmissionId);
            submissionForProcessing.WorkerType = submission.WorkerType;
@@ -142,8 +142,6 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                        ? contestWorkerType
                        : WorkerType.Legacy;
            }
-
-            return submissionForProcessing;
         }
     }
 }

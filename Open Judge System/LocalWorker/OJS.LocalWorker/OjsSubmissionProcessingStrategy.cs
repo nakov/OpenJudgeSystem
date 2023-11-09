@@ -176,19 +176,21 @@
 
         private void AssignWorkerType()
         {
-            var submission = this.submissionsData.GetById(this.submissionForProcessing.SubmissionId);
-            this.submissionForProcessing.WorkerType = submission.WorkerType;
+            var currentSubmission = this.submissionsData.GetById(this.submissionForProcessing.SubmissionId);
+            this.submissionForProcessing.WorkerType = currentSubmission.WorkerType;
 
             if (this.submissionForProcessing.WorkerType == WorkerType.None)
             {
-                var contestWorkerType = submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
-                var strategyDetailsWorkerType = submission.Problem
+                var contestWorkerType = currentSubmission.Problem.ProblemGroup.Contest.DefaultWorkerType;
+                var strategyDetailsWorkerType = currentSubmission.Problem
                     .ProblemSubmissionTypeExecutionDetails
-                    .FirstOrDefault(x => x.SubmissionTypeId == submission.Id)?
-                    .WorkerType;
+                    .Where(x => x.SubmissionTypeId == currentSubmission.SubmissionTypeId)
+                    .Select(x => x.WorkerType)
+                    .DefaultIfEmpty(WorkerType.None)
+                    .FirstOrDefault();
 
                 this.submissionForProcessing.WorkerType = strategyDetailsWorkerType != WorkerType.None
-                    ? strategyDetailsWorkerType.Value
+                    ? strategyDetailsWorkerType
                     : contestWorkerType != WorkerType.None
                         ? contestWorkerType
                         : WorkerType.Legacy;
