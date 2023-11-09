@@ -19,6 +19,7 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
         this.participantsDataService = participantsDataService;
         this.contestsDataService = contestsDataService;
         this.userProviderService = userProviderService;
+        this.participantsDataService.DisableLazyLoading();
     }
 
     public bool IsUserAdminOrLecturerInContest(Contest contest)

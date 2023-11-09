@@ -24,6 +24,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         this.contestsData = contestsData;
         this.contestResultsValidation = contestResultsValidation;
         this.userProvider = userProvider;
+        this.contestsData.DisableLazyLoading();
     }
 
     public async Task<ContestResultsViewModel> GetContestResults(int contestId, bool official, bool full)

@@ -69,6 +69,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestParticipantsCacheService = contestParticipantsCacheService;
             this.lecturersInContestsBusiness = lecturersInContestsBusiness;
             this.contestDetailsValidationService = contestDetailsValidationService;
+            this.contestsData.DisableLazyLoading();
         }
 
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
@@ -239,7 +240,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participationModel = participant!.Map<ContestParticipationServiceModel>();
 
             participationModel.Contest.AllowedSubmissionTypes =
-                participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
+                    participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
             participationModel.ParticipantId = participant!.Id;
             participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(

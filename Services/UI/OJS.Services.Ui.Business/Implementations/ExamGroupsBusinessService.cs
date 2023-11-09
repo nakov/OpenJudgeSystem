@@ -34,6 +34,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.usersProfileData = usersProfileData;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
             this.backgroundJobs = backgroundJobs;
+            this.examGroupsData.DisableLazyLoading();
         }
 
         public async Task AddUsersByIdAndUserIds(int id, IEnumerable<string> userIds)

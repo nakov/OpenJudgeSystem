@@ -57,6 +57,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+            this.problemsData.DisableLazyLoading();
         }
 
         public async Task DeleteById(int id)

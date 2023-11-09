@@ -27,6 +27,9 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
     {
         this.submissionTypesData = submissionTypesData;
         this.submissionsData = submissionsData;
+
+        this.submissionTypesData.DisableLazyLoading();
+        this.submissionsData.DisableLazyLoading();
     }
 
     public Task<SubmissionTypeServiceModel> GetById(int id)

@@ -12,7 +12,10 @@
         private IParticipantsDataService participantsData;
 
         public ParticipationsBusinessService(IParticipantsDataService participantsData)
-            => this.participantsData = participantsData;
+        {
+            this.participantsData = participantsData;
+            this.participantsData.DisableLazyLoading();
+        }
 
         public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId)
             => await this.participantsData
