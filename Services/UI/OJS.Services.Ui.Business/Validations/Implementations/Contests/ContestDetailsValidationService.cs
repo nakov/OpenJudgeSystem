@@ -10,8 +10,6 @@ public class ContestDetailsValidationService : IContestDetailsValidationService
     {
         var (contest, contestId, isUserAdminOrLecturerInContest) = item;
 
-        var isUserLecturerInContest = contest != null && isUserAdminOrLecturerInContest;
-
         if (contest == null ||
             contest.IsDeleted ||
             ((!contest.Category!.IsVisible || !contest.IsVisible) && !isUserAdminOrLecturerInContest))
