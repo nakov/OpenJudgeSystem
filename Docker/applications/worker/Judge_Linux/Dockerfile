@@ -70,7 +70,8 @@ COPY ./java/gradle ./gradle
 RUN ./gradlew
 
 COPY ./java/build.gradle ./build.gradle
-RUN ./gradlew getDeps
+RUN ./gradlew getDeps11
+RUN ./gradlew getDeps17
 
 # JS and JS SPA
 COPY ./js /judge-resources/js
@@ -83,6 +84,7 @@ RUN npm install && \
     bash /judge-resources/js/chromium-scripts/update-and-run.sh
 
 ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
+ENV JAVA17_LIBS_DIR=/judge-resources/java17Libs/
 ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
 
 # Python 11 with Django support
