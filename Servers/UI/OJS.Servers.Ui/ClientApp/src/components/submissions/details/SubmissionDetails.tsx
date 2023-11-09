@@ -9,7 +9,7 @@ import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
-import { setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
+import { setCurrentPage, setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
 import { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -33,13 +33,18 @@ const SubmissionDetails = () => {
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const { submissionId } = useParams();
     const { data: currentSubmissionData, isFetching, refetch } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
-    const { data, isFetching: isLoadingResults, refetch: refetchResults } =
+    const { data: allSubmissionsData, isFetching: isLoadingResults, refetch: refetchResults } =
     useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
+
+    useEffect(() => () => {
+        dispatch(setCurrentPage(1));
+    }, [ dispatch ]);
 
     useEffect(() => {
         dispatch(setSubmission(currentSubmissionData));
-        dispatch(setCurrentSubmissionResults(data));
-    }, [ currentSubmissionData, data, dispatch ]);
+        dispatch(setCurrentSubmissionResults(allSubmissionsData));
+    }, [ currentSubmissionData, allSubmissionsData, dispatch ]);
+
     useEffect(
         () => {
             if (currentSubmission) {
