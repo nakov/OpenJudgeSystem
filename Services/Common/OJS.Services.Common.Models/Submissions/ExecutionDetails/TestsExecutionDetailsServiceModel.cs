@@ -1,12 +1,13 @@
 ﻿namespace OJS.Services.Common.Models.Submissions.ExecutionDetails
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using AutoMapper;
     using OJS.Data.Models.Problems;
+    using OJS.Services.Common.Models.Mappings;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class TestsExecutionDetailsServiceModel
         : BaseExecutionDetailsServiceModel,
@@ -27,7 +28,7 @@
             configuration.CreateMap<Problem, TestsExecutionDetailsServiceModel>()
                 .ForMember(
                     d => d.CheckerType,
-                    opt => opt.MapFrom(s => s.Checker!.ClassName))
+                    opt => opt.MapFrom(s => s.Checker!.Name.ToLower()))
                 .ForMember(
                     d => d.CheckerParameter,
                     opt => opt.MapFrom(s => s.Checker!.Parameter))
@@ -58,11 +59,11 @@
                     m => m.CheckerParameter,
                     opt => opt.MapFrom(y => y.CheckerParameter))
                 .ForMember(
-                    m => m.CheckerTypeName,
-                    opt => opt.MapFrom(y => y.CheckerType))
-                .ForMember(
                     m => m.TaskSkeleton,
                     opt => opt.MapFrom<TaskSkeletonValueResolver<TestsExecutionDetailsServiceModel>>())
+                .ForMember(
+                    m => m.CheckerTypeName,
+                    opt => opt.MapFrom<CheckerTypeNameValueResolver>())
                 .ForAllOtherMembers(opt => opt.Ignore());
         }
     }

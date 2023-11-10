@@ -1,27 +1,33 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
-    using OJS.Data;
-    using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Problems;
-    using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Infrastructure;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Enumerations;
+    using OJS.Data;
+    using OJS.Data.Models.Contests;
+    using OJS.Data.Models.Problems;
+    using OJS.Services.Common;
+    using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Models.Contests;
+    using OJS.Services.Infrastructure;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class ContestsDataService : DataService<Contest>, IContestsDataService
     {
         private readonly IDatesService dates;
+        private readonly IContestsActivityService activityService;
 
-        public ContestsDataService(OjsDbContext db, IDatesService dates)
+        public ContestsDataService(OjsDbContext db, IDatesService dates, IContestsActivityService activityService)
             : base(db)
-            => this.dates = dates;
+        {
+            this.dates = dates;
+            this.activityService = activityService;
+        }
 
         public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()
             where TServiceModel : IMapFrom<Contest>
@@ -111,7 +117,13 @@ namespace OJS.Services.Administration.Data.Implementations
         public async Task<bool> IsActiveById(int id)
         {
             var contest = await this.OneById(id);
-            return contest != null && contest.IsActive;
+
+            if (contest == null)
+            {
+                return false;
+            }
+
+            return await this.activityService.IsContestActive(contest.Map<ContestForActivityServiceModel>());
         }
 
         public async Task<bool> IsOnlineById(int id)

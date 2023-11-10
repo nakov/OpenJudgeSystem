@@ -7,9 +7,5 @@ namespace OJS.Services.Ui.Business
     public interface IProblemGroupsBusinessService : IService
     {
         Task<ServiceResult> DeleteById(int id);
-
-        Task<ServiceResult> CopyAllToContestBySourceAndDestinationContest(
-            int sourceContestId,
-            int destinationContestId);
     }
 }

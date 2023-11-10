@@ -23,8 +23,8 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
 
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
-            IConfiguration configuration)
-            => services
+            IConfiguration configuration) =>
+            services
                 .AddWebServer<TProgram>()
                 .AddHttpContextServices()
                 .AddHangfireServer(AppName)
@@ -43,6 +43,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             this IServiceCollection services,
             IConfiguration configuration)
             => services
-                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)));
+                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)))
+                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }

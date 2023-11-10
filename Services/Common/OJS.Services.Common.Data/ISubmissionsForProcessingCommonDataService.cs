@@ -4,20 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
-using SoftUni.Services.Infrastructure;
 using Models.Submissions;
 
-public interface ISubmissionsForProcessingCommonDataService : IService
+public interface ISubmissionsForProcessingCommonDataService : IDataService<SubmissionForProcessing>
 {
-    IQueryable<SubmissionForProcessing?> GetAllPending();
+    IQueryable<SubmissionForProcessing> GetAllPending();
 
-    IQueryable<SubmissionForProcessing?> GetAllUnprocessed();
+    IQueryable<SubmissionForProcessing> GetAllUnprocessed();
 
-    Task<int> GetAllUnprocessedCount();
-
-    Task<IEnumerable<int>> GetIdsOfAllProcessing();
-
-    Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>();
+    IQueryable<SubmissionForProcessing> GetAllProcessing();
 
     Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails);
 
@@ -25,13 +20,9 @@ public interface ISubmissionsForProcessingCommonDataService : IService
 
     Task RemoveBySubmission(int submissionId);
 
-    Task ResetProcessingStatusById(int id);
-
     Task MarkProcessing(int submissionId);
 
     Task MarkMultipleForProcessing(ICollection<int> submissionsIds);
 
     Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
-
-    Task CleanProcessedSubmissions();
 }

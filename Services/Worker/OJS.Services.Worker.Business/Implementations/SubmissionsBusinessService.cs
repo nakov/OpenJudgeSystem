@@ -19,7 +19,7 @@ using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using static OJS.Services.Common.ServiceConstants.CodeExecutionContext;
+using OJS.Common.Constants;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -155,7 +155,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var executionResult = this.mapper.Map<ExecutionResultServiceModel>(ojsWorkerExecutionResult);
 
-        var taskMaxPoints = submission.TestsExecutionDetails?.MaxPoints ?? TaskDefaultMaxPoints;
+        var taskMaxPoints = submission.TestsExecutionDetails?.MaxPoints ?? ServiceConstants.CodeExecutionContext.TaskDefaultMaxPoints;
 
         if (executionResult.TaskResult == null)
         {
