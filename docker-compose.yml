@@ -101,7 +101,6 @@ services:
       environment:
         ACCEPT_EULA: Y
         SA_PASSWORD: 1123QwER
-        DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE: false
   mysql:
     image: mysql/mysql-server:8.0.19
     command: --default-authentication-plugin=mysql_native_password
