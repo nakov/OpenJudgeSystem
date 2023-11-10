@@ -619,7 +619,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString() !),
-                SolutionSkeleton = x.Expand != null && x.Expand != null
+                SolutionSkeleton = x.Expand != null
                     ? x.Expand!.ToString() !.Compress()
                     : Array.Empty<byte>(),
             });
