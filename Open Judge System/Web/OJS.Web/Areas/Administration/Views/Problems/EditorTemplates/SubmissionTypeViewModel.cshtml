@@ -68,9 +68,5 @@
 }
 
 <script>
-$( document ).ready(function() {
-    var model = @Html.Raw(Json.Encode(Model))
-    console.log(model);
     window.workerTypesData = @Html.Raw(Json.Encode(ViewBag.WorkerTypes));
-});
 </script>

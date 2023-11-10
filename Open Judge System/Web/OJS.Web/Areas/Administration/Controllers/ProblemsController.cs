@@ -151,7 +151,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             }
 
             var problem = this.PrepareProblemViewModelForCreate(contest);
-            this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypesWithExcluded();
+            this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypes();
             return this.View(problem);
         }
 
@@ -221,6 +221,10 @@ namespace OJS.Web.Areas.Administration.Controllers
                 var submission = this.submissionTypesData.GetById(s.Id.Value);
                 newProblem.SubmissionTypes.Add(submission);
 
+                if (!s.ShouldCreateDbRecord())
+                {
+                    return;
+                }
                 var problemSubmissionExectuionDetails = new ProblemSubmissionTypeExecutionDetails()
                 {
                     ProblemId = problem.Id,
@@ -325,10 +329,10 @@ namespace OJS.Web.Areas.Administration.Controllers
                     st.WorkerType = selectedProblem.ProblemSubmissionTypesSkeletons
                         .Where(x => x.SubmissionTypeId == st.Id)
                         .Select(x => x.WorkerType)
-                        .DefaultIfEmpty(WorkerType.None)
+                        .DefaultIfEmpty(WorkerType.Default)
                         .FirstOrDefault());
             
-            this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypesWithExcluded();
+            this.ViewBag.WorkerTypes = WorkerTypesHelper.GetWorkerTypes();
             return this.View(selectedProblem);
         }
 
@@ -381,7 +385,7 @@ namespace OJS.Web.Areas.Administration.Controllers
                         st.WorkerType = problem.ProblemSubmissionTypesSkeletons
                             .Where(x => x.SubmissionTypeId == st.Id)
                             .Select(x => x.WorkerType)
-                            .DefaultIfEmpty(WorkerType.None)
+                            .DefaultIfEmpty(WorkerType.Default)
                             .FirstOrDefault());
                 
                 return this.View(problem);

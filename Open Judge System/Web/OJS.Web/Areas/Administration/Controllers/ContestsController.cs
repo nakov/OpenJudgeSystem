@@ -647,7 +647,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             this.ViewBag.TypeData = DropdownViewModel.GetEnumValues<ContestType>();
             this.ViewBag.SubmissionExportTypes = DropdownViewModel.GetEnumValues<SubmissionExportType>();
 
-            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypes(new List<WorkerType> { WorkerType.None });
+            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypes();
 
             if (contestId.HasValue)
             {

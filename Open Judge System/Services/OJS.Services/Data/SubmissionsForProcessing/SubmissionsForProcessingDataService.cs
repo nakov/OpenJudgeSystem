@@ -1,4 +1,6 @@
-﻿using OJS.Common.Models;
+﻿using System;
+using OJS.Common.Models;
+using OJS.Workers.Common.Helpers;
 using OJS.Workers.Common.Models;
 
 namespace OJS.Services.Data.SubmissionsForProcessing
@@ -19,12 +21,14 @@ namespace OJS.Services.Data.SubmissionsForProcessing
         private readonly IEfGenericRepository<SubmissionForProcessing> submissionsForProcessing;
         private readonly IEfGenericRepository<Submission> submissions;
 
+        private readonly WorkerType defaultWorkerType;
         public SubmissionsForProcessingDataService(
             IEfGenericRepository<SubmissionForProcessing> submissionsForProcessing,
             IEfGenericRepository<Submission> submissions)
         {
             this.submissionsForProcessing = submissionsForProcessing;
             this.submissions = submissions;
+            this.defaultWorkerType = (WorkerType)Enum.Parse(typeof(WorkerType), SettingsHelper.GetSetting("DefaultWorkerType"));
         }
 
         public SubmissionForProcessing GetBySubmission(int submissionId) =>
@@ -54,7 +58,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
 
             using (var scope = TransactionsHelper.CreateTransactionScope())
             {
-                newSubmissionsForProcessing.ForEach(sfp => this.AssignWorkerType(sfp));
+                newSubmissionsForProcessing.ForEach(this.AssignWorkerType);
 
                 submissionIds
                     .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
@@ -126,22 +130,28 @@ namespace OJS.Services.Data.SubmissionsForProcessing
             var submission = this.submissions.GetById(submissionForProcessing.SubmissionId);
            submissionForProcessing.WorkerType = submission.WorkerType;
 
-           if (submissionForProcessing.WorkerType == WorkerType.None)
-           {
-               var contestWorkerType = submission.Problem.ProblemGroup.Contest.DefaultWorkerType;
-               var strategyDetailsWorkerType = submission.Problem
-                   .ProblemSubmissionTypeExecutionDetails
-                   .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
-                   .Select(x => x.WorkerType)
-                   .DefaultIfEmpty(WorkerType.None)
-                   .FirstOrDefault();
+               if (submissionForProcessing.WorkerType == WorkerType.Default)
+               {
+                   var problem = submission.Problem;
+                   var strategyDetailsWorkerType = problem
+                       .ProblemSubmissionTypeExecutionDetails
+                       .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
+                       .Select(x => x.WorkerType)
+                       .DefaultIfEmpty(WorkerType.Default)
+                       .FirstOrDefault();
 
-               submissionForProcessing.WorkerType = strategyDetailsWorkerType != WorkerType.None
-                   ? strategyDetailsWorkerType
-                   : contestWorkerType != WorkerType.None
-                       ? contestWorkerType
-                       : WorkerType.Legacy;
-           }
+                   if (strategyDetailsWorkerType == WorkerType.Default)
+                   {
+                       var contestWorkerType = problem.ProblemGroup.Contest.DefaultWorkerType;
+                       submissionForProcessing.WorkerType = contestWorkerType != WorkerType.Default
+                           ? contestWorkerType
+                           : this.defaultWorkerType;
+                    
+                       return;
+                   }
+
+                   submissionForProcessing.WorkerType = strategyDetailsWorkerType;
+               }
         }
     }
 }

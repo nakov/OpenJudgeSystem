@@ -1,4 +1,6 @@
-﻿namespace OJS.LocalWorker
+﻿using OJS.Workers.Common.Helpers;
+
+namespace OJS.LocalWorker
 {
     using System;
     using System.Linq;
@@ -23,7 +25,8 @@
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
-
+        private readonly WorkerType defaultWorkerType;
+        
         private Submission submission;
         private SubmissionForProcessing submissionForProcessing;
 
@@ -39,6 +42,7 @@
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
             this.submissionsForProcessingData = submissionsForProcessingData;
+            this.defaultWorkerType = (WorkerType)Enum.Parse(typeof(WorkerType), SettingsHelper.GetSetting("DefaultWorkerType"));
         }
 
         public override IOjsSubmission RetrieveSubmission(WorkerType workerType)
@@ -176,24 +180,29 @@
 
         private void AssignWorkerType()
         {
-            var currentSubmission = this.submissionsData.GetById(this.submissionForProcessing.SubmissionId);
-            this.submissionForProcessing.WorkerType = currentSubmission.WorkerType;
+            this.submissionForProcessing.WorkerType = this.submission.WorkerType;
 
-            if (this.submissionForProcessing.WorkerType == WorkerType.None)
+            if (this.submissionForProcessing.WorkerType == WorkerType.Default)
             {
-                var contestWorkerType = currentSubmission.Problem.ProblemGroup.Contest.DefaultWorkerType;
-                var strategyDetailsWorkerType = currentSubmission.Problem
+                var problem = this.submission.Problem;
+                var strategyDetailsWorkerType = problem
                     .ProblemSubmissionTypeExecutionDetails
-                    .Where(x => x.SubmissionTypeId == currentSubmission.SubmissionTypeId)
+                    .Where(x => x.SubmissionTypeId == this.submission.SubmissionTypeId)
                     .Select(x => x.WorkerType)
-                    .DefaultIfEmpty(WorkerType.None)
+                    .DefaultIfEmpty(WorkerType.Default)
                     .FirstOrDefault();
 
-                this.submissionForProcessing.WorkerType = strategyDetailsWorkerType != WorkerType.None
-                    ? strategyDetailsWorkerType
-                    : contestWorkerType != WorkerType.None
+                if (strategyDetailsWorkerType == WorkerType.Default)
+                {
+                    var contestWorkerType = problem.ProblemGroup.Contest.DefaultWorkerType;
+                    this.submissionForProcessing.WorkerType = contestWorkerType != WorkerType.Default
                         ? contestWorkerType
-                        : WorkerType.Legacy;
+                        : this.defaultWorkerType;
+                    
+                    return;
+                }
+
+                this.submissionForProcessing.WorkerType = strategyDetailsWorkerType;
             }
         }
         
