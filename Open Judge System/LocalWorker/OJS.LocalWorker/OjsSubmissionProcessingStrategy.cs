@@ -112,8 +112,6 @@ namespace OJS.LocalWorker
                 this.submissionForProcessing.Processed = false;
                 this.submissionForProcessing.Processing = true;
 
-                this.AssignWorkerType();
-
                 this.submissionsForProcessingData.Update(this.submissionForProcessing);
             }
             catch (Exception ex)
@@ -178,34 +176,6 @@ namespace OJS.LocalWorker
             this.UpdateResults();
         }
 
-        private void AssignWorkerType()
-        {
-            this.submissionForProcessing.WorkerType = this.submission.WorkerType;
-
-            if (this.submissionForProcessing.WorkerType == WorkerType.Default)
-            {
-                var problem = this.submission.Problem;
-                var strategyDetailsWorkerType = problem
-                    .ProblemSubmissionTypeExecutionDetails
-                    .Where(x => x.SubmissionTypeId == this.submission.SubmissionTypeId)
-                    .Select(x => x.WorkerType)
-                    .DefaultIfEmpty(WorkerType.Default)
-                    .FirstOrDefault();
-
-                if (strategyDetailsWorkerType == WorkerType.Default)
-                {
-                    var contestWorkerType = problem.ProblemGroup.Contest.DefaultWorkerType;
-                    this.submissionForProcessing.WorkerType = contestWorkerType != WorkerType.Default
-                        ? contestWorkerType
-                        : this.defaultWorkerType;
-                    
-                    return;
-                }
-
-                this.submissionForProcessing.WorkerType = strategyDetailsWorkerType;
-            }
-        }
-        
         private void UpdateResults()
         {
             this.CalculatePointsForSubmission();
