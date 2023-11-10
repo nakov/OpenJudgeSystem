@@ -14,7 +14,6 @@ using OJS.Services.Common.Models;
 using OJS.Common.Extensions;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
-using OJS.Services.Common.Models.Cache;
 
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {
@@ -22,20 +21,17 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
     private readonly IDatesService datesService;
-    private readonly IParticipantScoresDataService scoresDataService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         ISubmissionsDataService submissionsData,
         IContestsDataService contestsData,
-        IDatesService datesService,
-        IParticipantScoresDataService scoresDataService)
+        IDatesService datesService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
         this.datesService = datesService;
-        this.scoresDataService = scoresDataService;
     }
 
     public Task<int> GetPracticeParticipantsCount(int contestId)
@@ -168,30 +164,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
                 .ToTask()
             : Task.FromResult(0);
-    public async Task UpdateTotalScoreSnapshotOfParticipants()
-        => await this.participantsData.UpdateTotalScoreSnapshot();
-
-    public async Task RemoveParticipantMultipleScores()
-    {
-        var participantScores =
-            this.scoresDataService
-                .GetAll()
-                .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
-                .Where(ps => ps.Count() > 1)
-                .ToList();
-
-        var participantScoresToRemove = new List<ParticipantScore>();
-        participantScores.ForEach(participantScoreGroup =>
-        {
-            participantScoresToRemove
-                .AddRange(participantScoreGroup
-                    .OrderByDescending(ps => ps.Points)
-                    .Skip(1)
-                    .ToList());
-        });
-
-        await this.scoresDataService.Delete(participantScoresToRemove);
-    }
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {

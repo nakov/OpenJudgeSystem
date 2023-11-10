@@ -6,11 +6,11 @@
     public class RecurringBackgroundJobsBusinessService : IRecurringBackgroundJobsBusinessService
     {
         private readonly ISubmissionsForProcessingBusinessService submissionsForProcessing;
-        private readonly OJS.Services.Ui.Business.IParticipantsBusinessService participantsBusinessService;
+        private readonly IParticipantsBusinessService participantsBusinessService;
 
         public RecurringBackgroundJobsBusinessService(
             ISubmissionsForProcessingBusinessService submissionsForProcessing,
-            OJS.Services.Ui.Business.IParticipantsBusinessService participantsBusinessService)
+            IParticipantsBusinessService participantsBusinessService)
         {
             this.submissionsForProcessing = submissionsForProcessing;
             this.participantsBusinessService = participantsBusinessService;
