@@ -557,28 +557,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionEnumType type, int page)
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(
+        SubmissionStatus type,
+        int page)
     {
-        if (type == SubmissionEnumType.Public)
-        {
-            var user = this.userProviderService.GetCurrentUser();
-
-            if (user.IsAdminOrLecturer)
-            {
-                return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                    DefaultSubmissionsPerPage, page);
-            }
-
-            var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-
-            modelResult.Items =
-                await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                    DefaultSubmissionsPerPage);
-
-            return modelResult;
-        }
-
-        if (type == SubmissionEnumType.Processing)
+        if (type == SubmissionStatus.Processing)
         {
             return await this.submissionsCommonData
                 .GetAllProcessing()
@@ -587,7 +570,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
         }
 
-        if (type == SubmissionEnumType.Pending)
+        if (type == SubmissionStatus.Pending)
         {
             return await this.submissionsCommonData
                 .GetAllPending()
@@ -596,7 +579,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
         }
 
-        return null!;
+        var user = this.userProviderService.GetCurrentUser();
+
+        if (user.IsAdminOrLecturer)
+        {
+            return await this.submissionsData
+                .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                    DefaultSubmissionsPerPage, page);
+        }
+
+        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
+        {
+            Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+            DefaultSubmissionsPerPage),
+        };
+
+        return modelResult;
     }
 
     private static void ProcessTestsExecutionResult(

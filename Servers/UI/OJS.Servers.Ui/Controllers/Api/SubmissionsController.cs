@@ -182,7 +182,7 @@ public class SubmissionsController : BaseApiController
     //// Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
     [HttpGet("{type}")]
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissions(SubmissionEnumType type, [FromQuery] int page)
+    public async Task<IActionResult> GetSubmissions(SubmissionStatus type, [FromQuery] int page)
         => await this.submissionsBusiness.GetSubmissions(type, page)
             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
             .ToOkResult();

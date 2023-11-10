@@ -38,7 +38,7 @@
 
         Task<int> GetTotalCount();
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionEnumType type, int page);
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionStatus type, int page);
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
     }

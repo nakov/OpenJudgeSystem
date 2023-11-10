@@ -1,8 +1,8 @@
 ﻿namespace OJS.Common.Enumerations
 {
-    public enum SubmissionEnumType
+    public enum SubmissionStatus
     {
-        Public = 0,
+        All = 0,
         Processing = 1,
         Pending = 2,
     }
