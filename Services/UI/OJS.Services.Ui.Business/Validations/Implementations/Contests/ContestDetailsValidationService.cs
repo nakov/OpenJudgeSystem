@@ -6,15 +6,16 @@ using OJS.Services.Common.Models.Users;
 
 public class ContestDetailsValidationService : IContestDetailsValidationService
 {
-    public ValidationResult GetValidationResult((Contest, int?, UserInfoModel) item)
+    public ValidationResult GetValidationResult((Contest, int?, UserInfoModel?) item)
     {
         var (contest, contestId, user) = item;
 
-        var isUserLecturerInContest = contest != null && user.IsLecturer;
+        var isUserLecturerInContest = contest != null && user != null && user.IsLecturer;
 
         if (contest == null ||
+            user == null ||
             contest.IsDeleted ||
-            ((!contest.Category!.IsVisible || !contest.IsVisible) && !isUserLecturerInContest && !user.IsAdmin))
+            (!contest.IsVisible && !isUserLecturerInContest && !user.IsAdmin))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }

@@ -21,7 +21,7 @@ public class ContestResultsViewModel
 
     public bool ContestCanBePracticed { get; set; }
 
-    public bool UserIsInRoleForContest { get; set; }
+    public bool UserHasContestRights { get; set; }
 
     public ContestType ContestType { get; set; }
 

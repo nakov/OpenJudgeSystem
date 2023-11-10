@@ -88,6 +88,7 @@ const List = <TValue, >({
             if (isNil(values) || isEmpty(values)) {
                 return null;
             }
+
             return values.map((value) => (
                 <li key={keyFunc(value)} className={itemClassNameCombined}>
                     {itemFunc(value)}

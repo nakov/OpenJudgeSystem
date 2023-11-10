@@ -5,17 +5,14 @@ import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
-import { useContestCategories } from '../../../hooks/use-contest-categories';
-import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { getContestCategoryBreadcrumbItemPath, getContestDetailsAppUrl } from '../../../utils/urls';
-import Breadcrumb from '../../guidelines/breadcrumb/Breadcrumb';
-import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { getContestDetailsAppUrl } from '../../../utils/urls';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
@@ -55,8 +52,6 @@ const Contest = () => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
@@ -75,26 +70,8 @@ const Contest = () => {
     useEffect(
         () => {
             setPageTitle(contestTitle);
-
-            if (!isEmpty(categoriesFlat)) {
-                return;
-            }
-
-            (async () => {
-                await loadCategories();
-            })();
         },
-        [ contestTitle, setPageTitle, categoriesFlat, loadCategories ],
-    );
-
-    useEffect(
-        () => {
-            if (!isNil(contest) && !isEmpty(categoriesFlat)) {
-                const category = categoriesFlat.find(({ id }) => id.toString() === contest.categoryId.toString());
-                updateBreadcrumb(category, categoriesFlat);
-            }
-        },
-        [ categoriesFlat, contest, updateBreadcrumb ],
+        [ contestTitle, setPageTitle ],
     );
 
     const scoreText = useMemo(
@@ -225,28 +202,6 @@ const Contest = () => {
         [ renderErrorHeading, contestError ],
     );
 
-    const updateBreadcrumbAndNavigateToCategory = useCallback(
-        (breadcrumb: ICategoriesBreadcrumbItem) => {
-            const category = categoriesFlat.find(({ id }) => id.toString() === breadcrumb.id.toString());
-
-            updateBreadcrumb(category, categoriesFlat);
-            navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
-        },
-        [ categoriesFlat, navigate, updateBreadcrumb ],
-    );
-
-    const renderCategoriesBreadcrumbItem = useCallback(
-        (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => (
-            <Button
-              type={ButtonType.plain}
-              className={styles.breadcrumbBtn}
-              onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
-              text={categoryBreadcrumbItem.value}
-            />
-        ),
-        [ updateBreadcrumbAndNavigateToCategory ],
-    );
-
     const renderContest = useCallback(
         () => (
             <div>
@@ -259,12 +214,6 @@ const Contest = () => {
                         )
                         : (
                             <>
-                                <div className={styles.breadcrumbContainer}>
-                                    <Breadcrumb
-                                      items={breadcrumbItems}
-                                      itemFunc={renderCategoriesBreadcrumbItem}
-                                    />
-                                </div>
                                 <div className={styles.headingContest}>
                                     <Heading
                                       type={HeadingType.primary}
@@ -325,8 +274,6 @@ const Contest = () => {
             renderParticipants,
             contestIsLoading,
             contest,
-            breadcrumbItems,
-            renderCategoriesBreadcrumbItem,
         ],
     );
 

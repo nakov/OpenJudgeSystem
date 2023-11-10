@@ -9,6 +9,7 @@ public interface IContestResultsAggregatorService : IService
     ContestResultsViewModel GetContestResults(
         Contest contest,
         bool official,
+        bool isUserAdminOrLecturer,
         bool isFullResults,
         bool isExportResults = false);
 }

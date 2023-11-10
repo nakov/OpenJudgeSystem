@@ -30,8 +30,6 @@ public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPract
 
     public int PracticeParticipantsCount { get; set; }
 
-    public int? CategoryId { get; set; }
-
     public ICollection<ContestDetailsSubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } =
         new HashSet<ContestDetailsSubmissionTypeServiceModel>();
 

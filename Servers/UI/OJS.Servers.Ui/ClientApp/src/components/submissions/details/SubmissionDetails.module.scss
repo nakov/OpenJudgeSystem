@@ -4,6 +4,28 @@
 @use 'src/styles/variables';
 @use 'src/styles/colors';
 
+.backBtn {
+  border: 0;
+  margin-left: -30px;
+  margin-right: -30px;
+}
+
+.btnContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.code {
+  @extend %navigation;
+
+  border-left: 0;
+  flex: 7;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    flex: 3;
+  }
+}
+
 .contestHeading {
   border: 0;
   margin-bottom: 30px;
@@ -22,8 +44,54 @@
   @extend %contentSize;
 }
 
+.leftArrow {
+  color: colors.$light-blue-color;
+  margin-bottom: -5px;
+}
+
+.navigation,
+%navigation {
+  align-content: center;
+  flex: 3;
+}
+
+.resourceWrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  min-height: 50px;
+}
+
+.resourceLinkButton {
+  text-decoration: none;
+}
+
 .retestButton {
   margin: 0 0 0 24px;
+}
+
+.submissionsList {
+  height: 465px;
+
+  ul {
+    @extend %customScroll;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+.submissionInfo {
+  font-family: fonts.$font-family-lato-regular;
+  margin-top: 15px;
+}
+
+.submissionInfoParagraph {
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  margin-bottom: 10px;
 }
 
 .submissionDetails {
@@ -35,8 +103,59 @@
   }
 }
 
-.navigation,
-%navigation {
-  align-content: center;
-  flex: 3;
+.taskHeading {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  > div {
+    > div {
+      pointer-events: none;
+    }
+
+    button {
+      margin-right: 30px;
+    }
+  }
+}
+
+.buttonsSection {
+  margin-top: 20px;
+}
+
+.alertBox {
+  margin-bottom: 20px;
+}
+
+.submissionReloadBtn {
+  margin-right: 20px;
+  margin-top: 10px;
+}
+
+.testChangesWrapper {
+  align-items: center;
+  background-color: colors.$warning-color;
+  border: 2px solid colors.$warning-color;
+  border-radius: 12px;
+  color: colors.$white-color;
+  display: flex;
+  font-family: fonts.$font-family-lato;
+  font-size: 16px;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+@media only screen and (max-width: 1430px) {
+  .buttonsSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    a {
+      margin-left: 0;
+      margin-right: 20px;
+      margin-top: 10px;
+    }
+  }
 }

@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 import { ContestParticipationType } from './constants';
 
 interface IParticipateInContestTypeUrlParams {

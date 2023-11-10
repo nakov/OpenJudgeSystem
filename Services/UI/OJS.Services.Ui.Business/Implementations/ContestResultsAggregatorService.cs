@@ -22,6 +22,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
     public ContestResultsViewModel GetContestResults(
             Contest contest,
             bool official,
+            bool isUserAdminOrLecturer,
             bool isFullResults,
             bool isExportResults = false)
     {
@@ -35,6 +36,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                 IsCompete = official,
                 ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
                 ContestCanBePracticed = contestActivityEntity.CanBePracticed,
+                UserHasContestRights = isUserAdminOrLecturer,
                 ContestType = contest.Type,
                 Problems = contest.ProblemGroups
                     .SelectMany(pg => pg.Problems)

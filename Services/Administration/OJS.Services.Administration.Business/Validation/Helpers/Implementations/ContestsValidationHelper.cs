@@ -6,6 +6,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common.Validation.Helpers;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ContestsControllers;
 
@@ -30,12 +31,15 @@ public class ContestsValidationHelper : IContestsValidationHelper
 
     public async Task<ValidationResult> ValidatePermissionsOfCurrentUser(int? contestId)
     {
+        this.notDefaultValueValidationHelper
+            .ValidateValueIsNotDefault(contestId, nameof(contestId))
+            .VerifyResult();
+
         var user = this.userProvider.GetCurrentUser();
 
-        return GetValidationResult(await this.contestsBusiness.UserHasContestPermissions(
-            contestId!.Value,
-            user.Id,
-            user.IsAdmin));
+        return await this.contestsBusiness.UserHasContestPermissions(contestId!.Value, user.Id, user.IsAdmin)
+            ? ValidationResult.Valid()
+            : ValidationResult.Invalid("You don't not have permissions for this contest");
     }
 
     public async Task<ValidationResult> ValidateActiveContestCannotEditDurationTypeOnEdit(
@@ -65,19 +69,4 @@ public class ContestsValidationHelper : IContestsValidationHelper
 
         return ValidationResult.Valid();
     }
-
-    public async Task<ValidationResult> ValidateCategoryPermissions(int? categoryId)
-    {
-        var user = this.userProvider.GetCurrentUser();
-
-        return GetValidationResult(await this.contestsBusiness.UserHasContestPermissions(
-            categoryId!.Value,
-            user.Id,
-            user.IsAdmin));
-    }
-
-    private static ValidationResult GetValidationResult(bool isValid)
-        => isValid
-            ? ValidationResult.Valid()
-            : ValidationResult.Invalid("You don't not have permissions for this contest");
 }

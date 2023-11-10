@@ -12,6 +12,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Common.Models.Configurations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using static OJS.Common.GlobalConstants.Urls;
+
     public static class WebApplicationExtensions
     {
         public static WebApplication UseDefaults(this WebApplication app)

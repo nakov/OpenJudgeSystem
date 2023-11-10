@@ -112,7 +112,7 @@ const SubmissionsGrid = () => {
 
     useEffect(
         () => {
-            if (!user.isAdmin) {
+            if (!user.isInRole) {
                 return;
             }
 
@@ -124,7 +124,7 @@ const SubmissionsGrid = () => {
                 await loadTotalUnprocessedSubmissionsCount();
             })();
         },
-        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin, activeToggleElement ],
+        [ loadTotalUnprocessedSubmissionsCount, user.isInRole, activeToggleElement ],
     );
 
     useEffect(() => {
@@ -269,14 +269,11 @@ const SubmissionsGrid = () => {
     const { pagesCount } = pagesInfo;
     const renderPrivilegedComponent = useCallback(
         () => {
-            const { isAdmin } = user;
-            const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
-                ? publicSubmissions
-                : userSubmissions;
+            const { isInRole } = user;
 
             return (
                 <>
-                    { (isAdmin && activeToggleElement === toggleValues.allSubmissions) && (
+                    { (isInRole && activeToggleElement === toggleValues.allSubmissions) && (
                         <Heading type={HeadingType.secondary}>
                             Submissions awaiting execution:
                             {' '}
@@ -306,7 +303,7 @@ const SubmissionsGrid = () => {
                             )
                         </Heading>
                     )}
-                    { ((isAdmin || activeToggleElement === toggleValues.mySubmissions) && toggleSubmissions?.length > 0) && (
+                    { ((isInRole || activeToggleElement === toggleValues.mySubmissions) && currentSubmissions.length > 0) && (
                     <PaginationControls
                       count={pagesCount}
                       page={currentPage}
@@ -318,15 +315,14 @@ const SubmissionsGrid = () => {
         },
         [
             user,
-            activeToggleElement,
-            publicSubmissions,
-            userSubmissions,
             totalUnprocessedSubmissionsCount,
             selectedActive,
             handleSelectSubmissionType,
             pagesCount,
             currentPage,
             handlePageChange,
+            activeToggleElement,
+            currentSubmissions.length,
         ],
     );
 

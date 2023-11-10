@@ -1,11 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
@@ -35,6 +29,12 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 using Resource = OJS.Common.Resources.ProblemGroupsControllers;
@@ -45,7 +45,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
-    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusiness;
     private readonly IContestsDataService contestsData;
     private readonly IProblemsDataService problemsData;
     private readonly IZippedTestsParserService zippedTestsParser;
@@ -61,7 +60,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
         IContestsBusinessService contestsBusiness,
-        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusiness,
         IContestsDataService contestsData,
         IProblemsDataService problemsData,
         IZippedTestsParserService zippedTestsParser,
@@ -76,7 +74,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
-        this.lecturerContestPrivilegesBusiness = lecturerContestPrivilegesBusiness;
         this.contestsData = contestsData;
         this.problemsData = problemsData;
         this.zippedTestsParser = zippedTestsParser;
@@ -91,7 +88,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
-        => this.GetMasterGridFilter();
+        => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
+            ? t => t.ProblemGroup.ContestId == contestId
+            : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var problemId)
@@ -157,15 +156,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        try
+        var userId = this.User.GetId();
+        var userIsAdmin = this.User.IsAdmin();
+
+        if (!await this.contestsBusiness.UserHasContestPermissions(problem.ContestId, userId, userIsAdmin))
         {
-            await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(problem.ContestId)
-                .VerifyResult();
-        }
-        catch (BusinessServiceException e)
-        {
-            this.TempData.AddDangerMessage(e.Message);
+            this.TempData.AddDangerMessage(GeneralResource.NoPrivilegesMessage);
             return this.RedirectToActionWithNumberFilter(nameof(ProblemsController), ContestIdKey, problem.ContestId);
         }
 
@@ -182,15 +178,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             return this.RedirectToAction("Index", "Problems");
         }
 
-        try
+        var userId = this.User.GetId();
+        var userIsAdmin = this.User.IsAdmin();
+
+        if (!await this.contestsBusiness.UserHasContestPermissions(model.ContestId, userId, userIsAdmin))
         {
-            await this.contestsValidationHelper
-                .ValidatePermissionsOfCurrentUser(model.ContestId)
-                .VerifyResult();
-        }
-        catch (BusinessServiceException e)
-        {
-            this.TempData.AddDangerMessage(e.Message);
+            this.TempData.AddDangerMessage(GeneralResource.NoPrivilegesMessage);
             return this.RedirectToAction("Index", "Problems");
         }
 
@@ -211,7 +204,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
 
-        var validationModel = new ContestDeleteProblemsValidationServiceModel()
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
         {
             Id = contestId.Value, IsActive = await this.contestsActivity.IsContestActive(contestId.Value),
         };
@@ -233,7 +226,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAll(DeleteAllProblemsInContestViewModel model)
     {
-        var validationModel = new ContestDeleteProblemsValidationServiceModel()
+        var validationModel = new ContestDeleteProblemsValidationServiceModel
         {
             Id = model.Id, IsActive = await this.contestsActivity.IsContestActive(model.Id),
         };
@@ -626,7 +619,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString() !),
-                SolutionSkeleton = x.Expand != null
+                SolutionSkeleton = x.Expand != null && x.Expand != null
                     ? x.Expand!.ToString() !.Compress()
                     : Array.Empty<byte>(),
             });
@@ -701,19 +694,5 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new () { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
             new () { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
         };
-    }
-
-    private Expression<Func<Problem, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<Problem, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusiness.GetProblemsUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
-            ? x => x.ProblemGroup.ContestId == contestId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

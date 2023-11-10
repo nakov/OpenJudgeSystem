@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
-import { ISubmissionDetailsReduxState } from '../../../../common/types';
+import { useSubmissionsDetails } from '../../../../hooks/submissions/use-submissions-details';
 import Heading from '../../../guidelines/headings/Heading';
 
 const SubmissionDetailsHeading = () => {
-    const { currentSubmission } =
-    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
+    const { state: { currentSubmission } } = useSubmissionsDetails();
 
     const getHeaderText = useMemo(
         () => `Solution #${currentSubmission?.id} for problem ${currentSubmission?.problem.name}`,

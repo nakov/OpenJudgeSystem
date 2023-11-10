@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -52,25 +52,20 @@ const ContestsPage = () => {
     const { state: { strategies } } = useContestStrategyFilters();
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
     const [ showAlert, setShowAlert ] = useState<boolean>(false);
-
     useEffect(
         () => {
-            if (isEmpty(categoriesFlat)) {
-                (async () => {
-                    await loadCategories();
-                })();
+            initiateGetAllContestsQuery();
+            if (!isEmpty(categoriesFlat)) {
+                return;
             }
 
-            if (isEmpty(strategies)) {
-                (async () => {
-                    await loadStrategies();
-                })();
-            }
+            (async () => {
+                await loadCategories();
+                await loadStrategies();
+            })();
         },
-        [ categoriesFlat, loadCategories, loadStrategies, strategies ],
+        [ initiateGetAllContestsQuery, categoriesFlat, loadCategories, loadStrategies ],
     );
-
-    useEffect(() => { initiateGetAllContestsQuery(); }, [ initiateGetAllContestsQuery ]);
 
     const filtersArray = useMemo(
         () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, PageParams.page, FilterType.Sort ],
@@ -223,16 +218,16 @@ const ContestsPage = () => {
         <>
             {contestsAreLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
             {showAlert &&
-                (
-                    <Alert
-                      message="The category you requested was not valid, all contests were loaded."
-                      severity={AlertSeverity.Error}
-                      variant={AlertVariant.Filled}
-                      autoHideDuration={3000}
-                      vertical={AlertVerticalOrientation.Bottom}
-                      horizontal={AlertHorizontalOrientation.Right}
-                    />
-                )}
+              (
+                  <Alert
+                    message="The category you requested was not valid, all contests were loaded."
+                    severity={AlertSeverity.Error}
+                    variant={AlertVariant.Filled}
+                    autoHideDuration={3000}
+                    vertical={AlertVerticalOrientation.Bottom}
+                    horizontal={AlertHorizontalOrientation.Right}
+                  />
+              )}
             <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
             <div className={styles.container}>
                 <ContestFilters onFilterClick={handleFilterClick} />

@@ -1,6 +1,5 @@
-import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
+import { ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
-import { IErrorDataType } from '../hooks/use-http';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
 
@@ -20,16 +19,6 @@ interface IPublicSubmissionContest {
 interface IPublicSubmissionUser {
     id: string;
     username: string;
-}
-
-interface ISubmissionDetailsState {
-    currentSubmission: ISubmissionDetailsType | null;
-    currentSubmissionResults:IPagedResultType<ISubmissionResults>;
-    validationErrors: IErrorDataType[];
-    downloadErrorMessage: string | null;
-}
-interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
-    currentPage: number;
 }
 
 interface IPublicSubmissionProblem {
@@ -107,7 +96,6 @@ interface IContestDetailsResponseType {
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
     competeParticipantsCount: number;
     practiceParticipantsCount: number;
-    categoryId: number;
 }
 
 interface IContestType {
@@ -178,7 +166,6 @@ interface IRegisterForContestResponseType {
     isOnlineExam: boolean;
     duration: number;
     numberOfProblems: number;
-    categoryId: number;
 }
 
 interface IStartParticipationResponseType {
@@ -209,7 +196,6 @@ interface IUserType {
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;
-    isAdmin: boolean;
 }
 
 interface IUserRoleType {
@@ -254,6 +240,4 @@ export type {
     IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
-    ISubmissionDetailsState,
-    ISubmissionDetailsReduxState,
 };

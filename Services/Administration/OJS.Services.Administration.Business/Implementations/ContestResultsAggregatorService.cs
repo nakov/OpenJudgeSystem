@@ -36,7 +36,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                 IsCompete = official,
                 ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
                 ContestCanBePracticed = contestActivityEntity.CanBePracticed,
-                UserIsInRoleForContest = isUserAdminOrLecturer,
+                UserHasContestRights = isUserAdminOrLecturer,
                 ContestType = contest.Type,
                 Problems = contest.ProblemGroups
                     .SelectMany(pg => pg.Problems)

@@ -1,10 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -23,14 +18,16 @@ using OJS.Services.Administration.Models.ProblemResources;
 using OJS.Services.Administration.Business;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
-using OJS.Common.Extensions;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
     public const string ProblemIdKey = nameof(ProblemResource.ProblemId);
 
-    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
     private readonly IProblemResourcesDataService problemResourcesData;
     private readonly IOrderableService<ProblemResource> problemResourcesOrderableService;
@@ -44,8 +41,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation,
         IContentTypesService contentTypes,
         IProblemsValidationHelper problemsValidationHelper,
-        IOrderableService<ProblemResource> problemResourcesOrderableService,
-        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService)
+        IOrderableService<ProblemResource> problemResourcesOrderableService)
     {
         this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
         this.problemResourcesData = problemResourcesData;
@@ -53,11 +49,12 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         this.contentTypes = contentTypes;
         this.problemsValidationHelper = problemsValidationHelper;
         this.problemResourcesOrderableService = problemResourcesOrderableService;
-        this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
     }
 
     protected override Expression<Func<ProblemResource, bool>>? MasterGridFilter
-        => this.GetMasterGridFilter();
+        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
+            ? x => x.ProblemId == problemId
+            : base.MasterGridFilter;
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
@@ -241,19 +238,5 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         {
             new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
         };
-    }
-
-    private Expression<Func<ProblemResource, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<ProblemResource, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusinessService.GetProblemResourcesUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? x => x.ProblemId == problemId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

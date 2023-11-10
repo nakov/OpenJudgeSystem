@@ -2,7 +2,6 @@ $font-family-lato: lato, montserrat, serif;
 $font-family-lato-regular: lato-regular, serif;
 $font-family-montserrat: montserrat, serif;
 $font-family-montserrat-medium: montserrat-medium, serif;
-$font-family-roboto: roboto, serif;
 $font-style-normal: normal;
 
 %font-style-normal {
@@ -31,10 +30,4 @@ $font-style-normal: normal;
   @extend %font-style-normal;
 
   font-family: $font-family-montserrat-medium;
-}
-
-%font-family-roboto {
-  @extend %font-style-normal;
-
-  font-family: $font-family-roboto;
 }

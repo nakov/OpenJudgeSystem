@@ -2,6 +2,7 @@ import React from 'react';
 
 import { LinkButton } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import image from './page-not-found.png';
@@ -27,4 +28,4 @@ const NotFoundPage = () => (
     </div>
 );
 
-export default setLayout(NotFoundPage);
+export default makePrivate(setLayout(NotFoundPage));

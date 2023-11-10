@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IContestStrategyFilter } from '../common/contest-types';
@@ -31,16 +30,13 @@ const ContestStrategyFiltersProvider = ({ children }: IContestStrategyFiltersPro
         get,
         data,
         isSuccess,
-        isLoading,
     } = useHttp<null, IContestStrategyFilter[]>({ url: getAllContestStrategyFiltersUrl });
 
     const load = useCallback(
         async () => {
-            if (isEmpty(data) && !isLoading) {
-                await get();
-            }
+            await get();
         },
-        [ get, data, isLoading ],
+        [ get ],
     );
 
     useEffect(

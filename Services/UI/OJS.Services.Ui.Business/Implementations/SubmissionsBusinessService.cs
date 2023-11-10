@@ -133,15 +133,17 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             {
                 var currentTestRunTest = submissionDetailsServiceModel.Tests.FirstOrDefault(t => t.Id == tr.TestId);
 
-                var displayShowInput = !currentTestRunTest!.HideInput
-                                       && ((currentTestRunTest.IsTrialTest
-                                            || currentTestRunTest!.IsOpenTest)
-                                            || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+                var displayShowInput = currentTestRunTest != null
+                                       && (!currentTestRunTest.HideInput
+                                           && ((currentTestRunTest.IsTrialTest
+                                                || currentTestRunTest.IsOpenTest)
+                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
 
-                var showExecutionComment = !string.IsNullOrEmpty(tr.ExecutionComment)
-                                           && (currentTestRunTest!.IsOpenTest
-                                               || currentTestRunTest!.IsTrialTest
-                                               || submissionDetailsServiceModel.Problem.ShowDetailedFeedback);
+                var showExecutionComment = currentTestRunTest != null
+                                           && (!string.IsNullOrEmpty(tr.ExecutionComment)
+                                               && (currentTestRunTest.IsOpenTest
+                                                   || currentTestRunTest.IsTrialTest
+                                                   || submissionDetailsServiceModel.Problem.ShowDetailedFeedback));
 
                 if (!showExecutionComment)
                 {
