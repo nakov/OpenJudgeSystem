@@ -26,10 +26,6 @@ public class StatisticsPreviewBusinessService : IStatisticsPreviewBusinessServic
         this.submissionTypesData = submissionTypesData;
 
         this.contestsData.DisableLazyLoading();
-        this.usersProfileData.DisableLazyLoading();
-        this.problemsData.DisableLazyLoading();
-        this.submissionsData.DisableLazyLoading();
-        this.submissionTypesData.DisableLazyLoading();
     }
 
     public async Task<HomeStatisticsServiceModel> GetForHome()

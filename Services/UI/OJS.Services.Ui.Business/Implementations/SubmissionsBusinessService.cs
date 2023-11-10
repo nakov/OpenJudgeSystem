@@ -100,7 +100,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
 
         this.submissionsData.DisableLazyLoading();
-        this.submissionsCommonData.DisableLazyLoading();
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)

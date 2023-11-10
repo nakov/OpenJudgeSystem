@@ -84,13 +84,16 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.DbSet
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
-            .ThenInclude(pg => pg.Problems)
+             .ThenInclude(pg => pg.Problems)
             .FirstOrDefaultAsync(c => c.Id == id);
 
     public Task<Contest?> GetByIdWithProblemsAndSubmissionTypes(int id)
         => this.DbSet
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
+                        .ThenInclude(p => p.Resources)
+            .Include(c => c.ProblemGroups)
+                 .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
             .Include(c => c.Category)

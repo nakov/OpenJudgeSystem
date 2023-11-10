@@ -10,7 +10,10 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
 
     public SubmissionsForProcessingBusinessService(
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData)
-        => this.submissionsForProcessingData = submissionsForProcessingData;
+    {
+       this.submissionsForProcessingData = submissionsForProcessingData;
+       this.submissionsForProcessingData.DisableLazyLoading();
+    }
 
     public Task<int> GetUnprocessedTotalCount()
         => this.submissionsForProcessingData.GetAllUnprocessed().CountAsync();
