@@ -1,10 +1,15 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using System;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
+    using OJS.Common.Utils;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
+    using OJS.Services.Common.Models.Configurations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using static OJS.Common.GlobalConstants.Urls;
 
@@ -69,6 +74,20 @@ namespace OJS.Servers.Infrastructure.Extensions
             }
 
             return app;
+        }
+
+        public static void UseHealthMonitoring(this WebApplication app)
+        {
+            string healthCheckKey = "HealthCheckConfig__Key";
+            string healthCheckPassword = "HealthCheckConfig__Password";
+            var key = EnvironmentUtils.GetRequiredByKey(healthCheckKey);
+            var password = EnvironmentUtils.GetRequiredByKey(healthCheckPassword);
+
+            Func<HttpContext, bool> healthMonitoringPredicate =
+                httpContext => httpContext.Request.Query.ContainsKey(key) &&
+                               httpContext.Request.Query[key] == password;
+
+            app.MapWhen(healthMonitoringPredicate, appBuilder => appBuilder.UseHealthChecks("/health"));
         }
     }
 }

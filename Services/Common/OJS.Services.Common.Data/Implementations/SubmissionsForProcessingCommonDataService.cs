@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
 using FluentExtensions.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common;
 using OJS.Common.Helpers;
 using Models.Submissions;
@@ -32,22 +31,9 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         => this.DbSet
             .Where(sfp => !sfp.Processed);
 
-    public async Task<int> GetAllUnprocessedCount()
-        => await this
-            .GetAllUnprocessed()
-            .CountAsync();
-
-    public async Task<IEnumerable<int>> GetIdsOfAllProcessing()
-        => await this.DbSet
-            .Where(sfp => sfp.Processing && !sfp.Processed)
-            .Select(sfp => sfp.Id)
-            .ToListAsync();
-
-    public async Task<IEnumerable<TServiceModel>> GetAllProcessing<TServiceModel>()
-        => await this.DbSet
-            .Where(sfp => !sfp.Processed && sfp.Processing)
-            .MapCollection<TServiceModel>()
-            .ToListAsync();
+    public IQueryable<SubmissionForProcessing> GetAllProcessing()
+        => this.DbSet
+            .Where(sfp => !sfp.Processed && sfp.Processing);
 
     public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
     {
@@ -83,23 +69,6 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
             await this.DeleteById(submissionForProcessing.Id);
             await this.SaveChanges();
         }
-    }
-
-    public async Task ResetProcessingStatusById(int id)
-    {
-        var submissionForProcessing = await this.OneById(id);
-        if (submissionForProcessing != null)
-        {
-            submissionForProcessing.Processing = false;
-            submissionForProcessing.Processed = false;
-            await this.SaveChanges();
-        }
-    }
-
-    public async Task CleanProcessedSubmissions()
-    {
-        this.DbSet.RemoveRange(this.DbSet.Where(sfp => sfp.Processed && !sfp.Processing));
-        await this.SaveChanges();
     }
 
     public new async Task Update(SubmissionForProcessing submissionForProcessing)
