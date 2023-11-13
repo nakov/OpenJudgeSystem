@@ -232,9 +232,11 @@ namespace OJS.Services.Ui.Business.Implementations
                     userProfile!.Id,
                     model.IsOfficial);
 
+            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!.Id, user);
+
             if (participant == null)
             {
-                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id, user.IsAdmin);
+                participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id, userIsAdminOrLecturerInContest);
             }
 
             var participationModel = participant!.Map<ContestParticipationServiceModel>();
@@ -254,7 +256,6 @@ namespace OJS.Services.Ui.Business.Implementations
                     participationModel.Contest.Problems.Select(x => x.Id),
                     participantsList);
 
-            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
             var isOfficialOnlineContest = participationModel.ContestIsCompete && contest.IsOnlineExam;
             participationModel.Contest.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
@@ -383,44 +384,42 @@ namespace OJS.Services.Ui.Business.Implementations
             Contest contest,
             bool official,
             string userId,
-            bool isUserAdmin)
+            bool isUserAdminOrLecturerInContest)
         {
             if (contest.IsOnlineExam &&
                 official &&
-                !isUserAdmin &&
-                !this.lecturersInContestsBusiness.IsUserLecturerInContest(contest) &&
+                !isUserAdminOrLecturerInContest &&
                 !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
             {
                 throw new BusinessServiceException(ValidationMessages.Participant.NotRegisteredForExam);
             }
 
-            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
                 contest,
                 userId,
                 official,
-                isUserAdmin);
+                isUserAdminOrLecturerInContest);
         }
 
         private async Task<Participant> AddNewParticipantToContest(
             Contest contest,
             bool official,
             string userId,
-            bool isUserAdmin)
+            bool isUserAdminOrLecturer)
         {
             if (contest.IsExam &&
                 official &&
-                !isUserAdmin &&
-                !this.lecturersInContestsBusiness.IsUserLecturerInContest(contest) &&
+                !isUserAdminOrLecturer &&
                 !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
             {
                 throw new BusinessServiceException("You are not registered for this exam!");
             }
 
-            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdmin(
+            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
                 contest,
                 userId,
                 official,
-                isUserAdmin);
+                isUserAdminOrLecturer);
         }
     }
 }

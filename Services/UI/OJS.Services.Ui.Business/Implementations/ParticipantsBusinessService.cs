@@ -42,11 +42,11 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     public Task<int> GetCompeteParticipantsCount(int contestId)
         => this.participantsData.GetAllByContestAndIsOfficial(contestId, true).CountAsync();
 
-    public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
+    public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
         Contest contest,
         string userId,
         bool isOfficial,
-        bool isAdmin)
+        bool isAdminOrLecturerInContest)
     {
         var participant = new Participant(contest.Id, userId, isOfficial) { Contest = contest };
 
@@ -56,10 +56,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
             participant.ParticipationStartTime = utcNow;
             participant.ParticipationEndTime = utcNow + contest.Duration;
 
-            var isUserLecturerInByContestAndUser =
-                await this.contestsData.IsUserLecturerInByContestAndUser(contest.Id, userId);
-
-            if (!isAdmin && !isUserLecturerInByContestAndUser)
+            if (!isAdminOrLecturerInContest)
             {
                 AssignRandomProblemsToParticipant(participant, contest);
             }

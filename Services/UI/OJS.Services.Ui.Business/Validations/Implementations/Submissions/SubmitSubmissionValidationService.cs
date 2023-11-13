@@ -12,6 +12,10 @@ using System.Text;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
+    private ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+    public SubmitSubmissionValidationService(ILecturersInContestsBusinessService lecturersInContestsBusinessService) =>
+        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+
     public ValidationResult GetValidationResult(
         (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)
             validationInput)
@@ -52,11 +56,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return contestValidationResult;
         }
 
-        var result = IsUserAdminOrLecturerInContest(participant!.Contest, user);
+        var isAdminOrLecturer = this.lecturersInContestsBusinessService
+            .IsUserAdminOrLecturerInContest(participant!.Contest.Id, user);
 
         if (submitSubmissionServiceModel.Official &&
             participant!.Contest.IsOnlineExam &&
-            !IsUserAdminOrLecturerInContest(participant.Contest, user) &&
+            !isAdminOrLecturer &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemId);
