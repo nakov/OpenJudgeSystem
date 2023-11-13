@@ -561,40 +561,39 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         SubmissionStatus type,
         int page)
     {
-        if (type == SubmissionStatus.Processing)
+        IQueryable<Submission> query;
+
+        switch (type)
         {
-            return await this.submissionsCommonData
-                .GetAllProcessing()
-                .OrderByDescending(s => s.Id)
-                .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-                .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+            case SubmissionStatus.Processing:
+                query = this.submissionsCommonData.GetAllProcessing();
+                break;
+            case SubmissionStatus.Pending:
+                query = this.submissionsCommonData.GetAllPending();
+                break;
+            default:
+                var user = this.userProviderService.GetCurrentUser();
+
+                if (user.IsAdminOrLecturer)
+                {
+                    return await this.submissionsData
+                        .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                            DefaultSubmissionsPerPage, page);
+                }
+
+                var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
+                {
+                    Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                        DefaultSubmissionsPerPage),
+                };
+
+                return modelResult;
         }
 
-        if (type == SubmissionStatus.Pending)
-        {
-            return await this.submissionsCommonData
-                .GetAllPending()
-                .OrderByDescending(s => s.Id)
-                .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-                .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-        }
-
-        var user = this.userProviderService.GetCurrentUser();
-
-        if (user.IsAdminOrLecturer)
-        {
-            return await this.submissionsData
-                .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                    DefaultSubmissionsPerPage, page);
-        }
-
-        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
-        {
-            Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-            DefaultSubmissionsPerPage),
-        };
-
-        return modelResult;
+        return await query
+            .OrderByDescending(s => s.Id)
+            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
     private static void ProcessTestsExecutionResult(
