@@ -83,6 +83,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     public Task<Contest?> GetByIdWithProblems(int id)
         => this.DbSet
             .Include(c => c.Category)
+            .Include(c => c.LecturersInContests)
             .Include(c => c.ProblemGroups)
              .ThenInclude(pg => pg.Problems)
             .FirstOrDefaultAsync(c => c.Id == id);
@@ -97,6 +98,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
             .Include(c => c.Category)
+            .Include(c => c.LecturersInContests)
             .FirstOrDefaultAsync(c => c.Id == id);
 
     public Task<Contest?> GetByIdWithParticipants(int id)
@@ -160,6 +162,8 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public Task<bool> IsUserLecturerInByContestAndUser(int id, string userId)
         => this.GetByIdQuery(id)
+            .Include(c => c.LecturersInContests)
+            .Include(c => c.Category)
             .AnyAsync(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));

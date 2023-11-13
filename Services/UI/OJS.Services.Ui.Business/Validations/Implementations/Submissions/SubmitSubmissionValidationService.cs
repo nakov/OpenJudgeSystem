@@ -52,6 +52,8 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return contestValidationResult;
         }
 
+        var result = IsUserAdminOrLecturerInContest(participant!.Contest, user);
+
         if (submitSubmissionServiceModel.Official &&
             participant!.Contest.IsOnlineExam &&
             !IsUserAdminOrLecturerInContest(participant.Contest, user) &&
