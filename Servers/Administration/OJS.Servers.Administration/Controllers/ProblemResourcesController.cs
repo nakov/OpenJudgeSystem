@@ -72,14 +72,14 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     protected override IEnumerable<GridAction> CustomActions
         => new[] { new GridAction { Action = nameof(this.Download) }, };
 
-    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Create(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Create(complexId, nameof(this.Create));
 
     [HttpPost]
     public Task<IActionResult> Create(IDictionary<string, string> entityDict, IFormFile file)
         => this.PostCreate(entityDict, new FormFilesContainer(file));
 
-    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string postEndpointName)
+    public override Task<IActionResult> Edit(IDictionary<string, string> complexId, string? postEndpointName)
         => base.Edit(complexId, nameof(this.Edit));
 
     [HttpPost]
@@ -121,9 +121,10 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         ProblemResource entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type? autocompleteType)
     {
-        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters, autocompleteType)
             .ToListAsync();
         await this.ModifyFormControls(formControls, entity, action, entityDict);
         formControls.AddRange(GetAdditionalFormControls());
