@@ -1,8 +1,10 @@
 ﻿namespace OJS.Services.Ui.Models.Contests;
 
+using AutoMapper;
+using SoftUni.AutoMapper.Infrastructure.Models;
 using OJS.Data.Models.Contests;
 
-public class ContestResultsModel
+public class ContestResultsModel : IMapExplicitly
 {
     public Contest Contest { get; set; } = new Contest();
 
@@ -19,4 +21,5 @@ public class ContestResultsModel
     public int Page { get; set; } = 1;
 
     public int ItemsInPage { get; set; } = int.MaxValue;
+    public void RegisterMappings(IProfileExpression configuration) => throw new System.NotImplementedException();
 }
