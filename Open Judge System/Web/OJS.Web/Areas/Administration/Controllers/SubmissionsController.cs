@@ -142,7 +142,7 @@ namespace OJS.Web.Areas.Administration.Controllers
                     using (var scope = TransactionsHelper.CreateTransactionScope())
                     {
                         this.BaseCreate(entity);
-                        this.submissionsForProcessingData.AddOrUpdateBySubmission(model.Id.Value);
+                        this.submissionsForProcessingData.AddOrUpdateBySubmission(entity);
 
                         scope.Complete();
                     }
@@ -241,7 +241,7 @@ namespace OJS.Web.Areas.Administration.Controllers
                         {
                             submission.Processed = false;
 
-                            this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id);
+                            this.submissionsForProcessingData.AddOrUpdateBySubmission(submission);
 
                             var submissionIsBestSubmission = this.IsBestSubmission(
                                 submissionProblemId,
@@ -496,7 +496,7 @@ namespace OJS.Web.Areas.Administration.Controllers
                     submission.StartedExecutionOn = null;
                     submission.CompletedExecutionOn = null;
 
-                    this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id);
+                    this.submissionsForProcessingData.AddOrUpdateBySubmission(submission);
 
                     var submissionIsBestSubmission = this.IsBestSubmission(
                         submissionProblemId,

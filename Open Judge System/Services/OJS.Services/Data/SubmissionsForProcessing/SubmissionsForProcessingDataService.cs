@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using OJS.Common.Models;
+using OJS.Services.Data.Submissions;
 using OJS.Workers.Common.Helpers;
 using OJS.Workers.Common.Models;
 
@@ -29,7 +30,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
         {
             this.submissionsForProcessing = submissionsForProcessing;
             this.submissions = submissions;
-            this.defaultWorkerType = (WorkerType)Enum.Parse(typeof(WorkerType), SettingsHelper.GetSetting("DefaultWorkerType"));
+            this.defaultWorkerType = (WorkerType)Enum.Parse(typeof(WorkerType), Workers.Common.Settings.DefaultWorkerType);
         }
 
         public SubmissionForProcessing GetBySubmission(int submissionId) =>
@@ -82,10 +83,9 @@ namespace OJS.Services.Data.SubmissionsForProcessing
             }
         }
 
-        public void AddOrUpdateBySubmission(int submissionId)
+        public void AddOrUpdateBySubmission(Submission submission)
         {
-            var submissionForProcessing = this.GetBySubmission(submissionId);
-            var submission = this.submissions.GetById(submissionId);
+            var submissionForProcessing = this.GetBySubmission(submission.Id);
             if (submissionForProcessing != null)
             {
                 submissionForProcessing.Processing = false;
@@ -96,7 +96,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
             {
                 submissionForProcessing = new SubmissionForProcessing
                 {
-                    SubmissionId = submissionId,
+                    SubmissionId = submission.Id,
                 };
                 this.AssignWorkerType(submissionForProcessing, submission);
                 this.submissionsForProcessing.Add(submissionForProcessing);
