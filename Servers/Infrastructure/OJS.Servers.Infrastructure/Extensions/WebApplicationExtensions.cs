@@ -1,12 +1,11 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using System;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using OJS.Common.Utils;
+    using Microsoft.Extensions.Options;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Common.Models.Configurations;
@@ -78,16 +77,15 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static void UseHealthMonitoring(this WebApplication app)
         {
-            string healthCheckKey = "HealthCheckConfig__Key";
-            string healthCheckPassword = "HealthCheckConfig__Password";
-            var key = EnvironmentUtils.GetRequiredByKey(healthCheckKey);
-            var password = EnvironmentUtils.GetRequiredByKey(healthCheckPassword);
+            var healthCheckOptions = app.Services.GetRequiredService<IOptions<HealthCheckConfig>>();
+            var healthCheckConfig = healthCheckOptions.Value;
 
-            Func<HttpContext, bool> healthMonitoringPredicate =
-                httpContext => httpContext.Request.Query.ContainsKey(key) &&
-                               httpContext.Request.Query[key] == password;
+            app.MapWhen(HealthMonitoringPredicate, appBuilder => appBuilder.UseHealthChecks("/health"));
+            return;
 
-            app.MapWhen(healthMonitoringPredicate, appBuilder => appBuilder.UseHealthChecks("/health"));
+            bool HealthMonitoringPredicate(HttpContext httpContext)
+                => httpContext.Request.Query.ContainsKey(healthCheckConfig.Key) &&
+                   httpContext.Request.Query[healthCheckConfig.Key] == healthCheckConfig.Password;
         }
     }
 }

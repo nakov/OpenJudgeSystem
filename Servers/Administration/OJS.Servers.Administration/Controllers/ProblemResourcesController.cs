@@ -7,6 +7,7 @@ using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Extensions;
@@ -41,7 +42,9 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         IValidationService<ProblemResourceDownloadServiceModel> problemResourcesDownloadValidation,
         IContentTypesService contentTypes,
         IProblemsValidationHelper problemsValidationHelper,
-        IOrderableService<ProblemResource> problemResourcesOrderableService)
+        IOrderableService<ProblemResource> problemResourcesOrderableService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
         this.problemResourcesData = problemResourcesData;

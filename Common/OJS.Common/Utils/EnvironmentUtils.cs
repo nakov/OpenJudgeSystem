@@ -1,49 +1,19 @@
 namespace OJS.Common.Utils
 {
     using OJS.Common.Enumerations;
-    using OJS.Common.Extensions;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Text.RegularExpressions;
     using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.RegexPatterns;
 
     public static class EnvironmentUtils
     {
-        private const string EnvironmentVariableMustBeSetMessageFormat
-            = "Environment variable \"{0}\" must be set.";
-
-        public static string? GetByKey(string key)
-            => Environment.GetEnvironmentVariable(key);
-
-        public static string GetRequiredByKey(string key)
-        {
-            var value = GetByKey(key);
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException(string.Format(EnvironmentVariableMustBeSetMessageFormat, key));
-            }
-
-            return value;
-        }
-
         public static string? GetApplicationConnectionString(
             ApplicationName appName,
             bool appUsesMultipleDatabases = false)
             => IsProduction() || IsDocker()
                 ? BuildAndGetConnectionString(appName, appUsesMultipleDatabases)
                 : Environment.GetEnvironmentVariable(GetConnectionStringName(appName, appUsesMultipleDatabases));
-
-        public static string? GetApplicationUrl(ApplicationName appName)
-            => Environment.GetEnvironmentVariable(GetApplicationUrlEnvironmentName(appName));
-
-        public static string GetLoggerFilePath<TProjectStartUp>()
-            => $"{Environment.GetEnvironmentVariable(LoggerFilesFolderPath)}/{typeof(TProjectStartUp).GetProjectName()}";
-
-        public static void ValidateEnvironmentVariableExists(
-            IEnumerable<string> configurationValues)
-            => ValidateEnvironmentVariableExists(configurationValues, GetByKey);
 
         public static bool IsProduction()
             => Environment.GetEnvironmentVariable(EnvironmentKey) == ProductionValue;
@@ -52,21 +22,6 @@ namespace OJS.Common.Utils
             => appUsesMultipleDatabases
                 ? $"{appName}DbContext"
                 : "DbContext";
-
-        private static void ValidateEnvironmentVariableExists<T>(
-            IEnumerable<T> configurationValues,
-            Func<T, string?> valueFunc)
-        {
-            var invalidConfigurationMessages = configurationValues
-                .Where(cf => string.IsNullOrWhiteSpace(valueFunc(cf)))
-                .Select(x => string.Format(EnvironmentVariableMustBeSetMessageFormat, x))
-                .ToList();
-
-            if (invalidConfigurationMessages.Any())
-            {
-                throw new ArgumentException(string.Join("\n", invalidConfigurationMessages));
-            }
-        }
 
         private static string BuildAndGetConnectionString(ApplicationName appName, bool appUsesMultipleDatabases)
         {
@@ -108,9 +63,6 @@ namespace OJS.Common.Utils
 
             return Environment.GetEnvironmentVariable(key);
         }
-
-        private static string GetApplicationUrlEnvironmentName(ApplicationName appName)
-            => $"{GetApplicationEnvironmentPrefix(appName)}_URL";
 
         private static string GetApplicationEnvironmentPrefix(ApplicationName appName)
             => string.Join("_", Regex.Split(appName.ToString(), UpperCaseGroupsRegex)).ToUpper();

@@ -7,6 +7,7 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
@@ -58,7 +59,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         ITestsDataService testsData,
         ITestRunsDataService testRunsData,
         IProblemsBusinessService problemsBusiness,
-        IProblemsValidationHelper problemsValidationHelper)
+        IProblemsValidationHelper problemsValidationHelper,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;

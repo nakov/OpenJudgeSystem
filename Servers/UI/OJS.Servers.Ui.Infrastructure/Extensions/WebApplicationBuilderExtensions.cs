@@ -1,6 +1,7 @@
 namespace OJS.Servers.Ui.Infrastructure.Extensions;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using OJS.Servers.Infrastructure.Extensions;
 
 public static class WebApplicationBuilderExtensions

@@ -26,6 +26,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
+    using OJS.Common.Helpers;
     using OJS.Common.Utils;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
@@ -43,7 +44,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using static OJS.Common.GlobalConstants;
-    using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.FileExtensions;
 
     public static class ServiceCollectionExtensions
@@ -51,12 +51,15 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
             => services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices<TStartup>();
+                .AddWebServerServices<TStartup>()
+                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
+                .AddOptionsWithValidation<HealthCheckConfig>(nameof(HealthCheckConfig));
 
         /// <summary>
         /// Adds identity database and authentication services to the service collection.
         /// </summary>
         /// <param name="services">The service collection.</param>
+        /// <param name="configuration">The configuration.</param>
         /// <param name="globalQueryFilterTypes">
         /// The global query filter types to add to the context.
         /// <br/> If null, adds all default global query filters,
@@ -69,6 +72,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
             TIdentityUserRole>(
             this IServiceCollection services,
+            IConfiguration configuration,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext, IDataProtectionKeyContext
             where TIdentityUser : IdentityUser
@@ -93,10 +97,14 @@ namespace OJS.Servers.Infrastructure.Extensions
                     IdentityUserToken<string>,
                     IdentityRoleClaim<string>>>();
 
+            var sharedAuthCookieDomain = configuration
+                .GetSection(nameof(ApplicationConfig))
+                .GetValue<string>(nameof(ApplicationConfig.SharedAuthCookieDomain));
+
             services
                 .ConfigureApplicationCookie(opt =>
                 {
-                    opt.Cookie.Domain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
+                    opt.Cookie.Domain = sharedAuthCookieDomain;
                     opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
                     opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
                 });
@@ -163,13 +171,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 });
 
         public static IServiceCollection AddDistributedCaching(
-            this IServiceCollection services)
-            => services.AddRedis(ApplicationFullName);
+            this IServiceCollection services,
+            IConfiguration configuration)
+            => services.AddRedis(configuration, ApplicationFullName);
 
         public static IServiceCollection AddDistributedCaching(
             this IServiceCollection services,
+            IConfiguration configuration,
             string instanceName)
-            => services.AddRedis(instanceName);
+            => services.AddRedis(configuration, instanceName);
 
         public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
@@ -183,6 +193,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .ToList();
 
             var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
+            SettingsHelper.ValidateSettings(nameof(MessageQueueConfig), messageQueueConfig);
 
             services.AddMassTransit(config =>
             {
@@ -236,6 +247,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddTransient(s =>
                     s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
 
+        public static IServiceCollection AddOptionsWithValidation<T>(this IServiceCollection services, string settingName)
+            where T : class
+            => services
+                .AddOptions<T>()
+                .BindConfiguration(settingName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart()
+                .Services;
+
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services
@@ -248,20 +268,19 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddRedis(this IServiceCollection services, string instanceName)
+        private static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration, string instanceName)
         {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { RedisConnectionString });
+            var redisConfig = configuration.GetSection(nameof(RedisConfig)).Get<RedisConfig>();
+            SettingsHelper.ValidateSettings(nameof(RedisConfig), redisConfig);
 
-            var redisConnectionString = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
-            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+            var redisConnection = ConnectionMultiplexer.Connect(redisConfig.ConnectionString);
 
             services.AddSingleton<IConnectionMultiplexer>(redisConnection);
             services.AddSingleton<ICacheService, CacheService>();
 
             return services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = redisConnectionString;
+                options.Configuration = redisConfig.ConnectionString;
                 options.InstanceName = $"{instanceName}:";
             });
         }

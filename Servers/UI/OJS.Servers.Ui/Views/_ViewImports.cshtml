@@ -1,6 +1,7 @@
-﻿@using OJS.Services.Common
+﻿@using Microsoft.Extensions.Options
+@using OJS.Services.Common
+@using OJS.Services.Ui.Models
 @namespace OJS.Servers.Ui.Views
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@inject IApplicationUrlsService applicationUrls
-@inject IEnvironmentConfigurationService environmentVariables
+@inject IOptions<ApplicationConfig> appConfig

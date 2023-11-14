@@ -1,7 +1,7 @@
 @using OJS.Common.Extensions
 
 @{
-    var uiUrl = this.applicationUrls.GetUiUrlOrDefault();
+    var uiUrl = this.appConfig.Value.UiUrl;
 }
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">

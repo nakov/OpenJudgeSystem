@@ -3,6 +3,7 @@ namespace OJS.Servers.Administration.Controllers;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
@@ -11,6 +12,7 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemGroups;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Models;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
@@ -40,7 +42,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         IContestsActivityService contestsActivity,
         IContestsDataService contestsData,
         IContestsValidationHelper contestsValidationHelper,
-        IProblemGroupsBusinessService problemGroupsBusiness)
+        IProblemGroupsBusinessService problemGroupsBusiness,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemGroupValidatorsFactory = problemGroupValidatorsFactory;
         this.problemGroupsDeleteValidation = problemGroupsDeleteValidation;

@@ -8,9 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Common;
 using Infrastructure.Extensions;
+using Microsoft.Extensions.Options;
+using OJS.Services.Administration.Models;
 
 public class SubmissionsForProcessingController : BaseAutoCrudAdminController<SubmissionForProcessing>
 {
+    public SubmissionsForProcessingController(IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
+    {
+    }
+
     protected override IEnumerable<GridAction> CustomActions
         => new[] { new GridAction { Action = nameof(this.Details) } };
 

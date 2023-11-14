@@ -8,6 +8,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common.Models.Configurations;
     using static OJS.Common.GlobalConstants;
+    using ApplicationConfig = OJS.Services.Ui.Models.ApplicationConfig;
 
     public static class ServiceCollectionExtensions
     {
@@ -32,21 +33,14 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(AppName)
                 .AddMessageQueue<TProgram>(configuration)
-                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>()
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddMemoryCache()
                 .AddSoftUniJudgeCommonServices()
-                .AddDistributedCaching()
+                .AddDistributedCaching(configuration)
                 .AddLogging()
-                .ConfigureSettings(configuration)
+                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
+                .AddOptionsWithValidation<EmailServiceConfig>(nameof(EmailServiceConfig))
                 .AddControllersWithViews();
         }
-
-        private static IServiceCollection ConfigureSettings(
-            this IServiceCollection services,
-            IConfiguration configuration)
-            => services
-                .ValidateLaunchSettings()
-                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)))
-                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }

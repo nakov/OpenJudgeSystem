@@ -13,8 +13,17 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
+        "RUNS_IN_DOCKER": "false",
+        "ApplicationConfig_SubmissionsProcessorIdentifierNumber": "1",
+        "RedisConfig__ConnectionString": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
+        "MessageQueueConfig__Host": "localhost",
+        "MessageQueueConfig__VirtualHost": "ojs",
+        "MessageQueueConfig__User": "ojsuser",
+        "MessageQueueConfig__Password": "myS3cretPass2",
+        "MessageQueueConfig__PrefetchCount": "1",
+        "HealthCheckConfig__Key": "Key",
+        "HealthCheckConfig__Password": "password"
       }
     },
     "OJS.Servers.Worker": {
@@ -25,10 +34,9 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
-        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "RUNS_IN_DOCKER": "false",
-        "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1",
+        "ApplicationConfig_SubmissionsProcessorIdentifierNumber": "1",
+        "RedisConfig__ConnectionString": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "MessageQueueConfig__Host": "localhost",
         "MessageQueueConfig__VirtualHost": "ojs",
         "MessageQueueConfig__User": "ojsuser",

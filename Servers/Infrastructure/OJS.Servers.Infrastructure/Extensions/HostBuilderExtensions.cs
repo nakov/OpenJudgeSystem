@@ -1,21 +1,22 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using OJS.Common.Utils;
+using OJS.Common.Extensions;
+using OJS.Services.Common.Models.Configurations;
 using Serilog;
-using System.Collections.Generic;
 using System.IO;
-using static OJS.Common.GlobalConstants.EnvironmentVariables;
 
 public static class HostBuilderExtensions
 {
     public static IHostBuilder UseFileLogger<TStartup>(this IHostBuilder builder)
-    {
-        EnvironmentUtils.ValidateEnvironmentVariableExists(new List<string> { LoggerFilesFolderPath });
-
-        return builder.UseSerilog((hostingContext, configuration) =>
+        => builder.UseSerilog((hostingContext, configuration) =>
         {
-            var filePath = Path.Combine(EnvironmentUtils.GetLoggerFilePath<TStartup>(), "log.txt");
+            var loggerFilePath = hostingContext.Configuration
+                .GetSection(nameof(ApplicationConfig))
+                .GetValue<string>(nameof(ApplicationConfig.LoggerFilesFolderPath));
+
+            var filePath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName(), "log.txt");
 
             configuration
                 .ReadFrom
@@ -31,5 +32,4 @@ public static class HostBuilderExtensions
                     rollOnFileSizeLimit: true,
                     retainedFileCountLimit: null);
         });
-    }
 }

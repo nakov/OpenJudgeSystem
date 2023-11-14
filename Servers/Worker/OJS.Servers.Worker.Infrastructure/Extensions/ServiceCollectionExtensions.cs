@@ -4,30 +4,30 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using OJS.Common.Utils;
+    using OJS.Common.Helpers;
     using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
-    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Worker.Models.Configuration;
     using OJS.Workers.Common;
     using OJS.Workers.SubmissionProcessors;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using ApplicationConfig = OJS.Services.Worker.Models.Configuration.ApplicationConfig;
+
     public static class ServiceCollectionExtensions
     {
-        private const string SubmissionsProcessorIdentifierNumberEnvVariableName =
-            "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER";
-
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
-            IConfiguration configuration) =>
-            services.AddWebServer<TProgram>()
+            IConfiguration configuration)
+            => services
+                .AddWebServer<TProgram>()
                 .AddScoped<DbContext, OjsDbContext>()
-                .AddSubmissionExecutor()
+                .AddSubmissionExecutor(configuration)
                 .AddMemoryCache()
                 .AddMessageQueue<TProgram>(configuration)
                 .AddLogging()
                 .AddSoftUniJudgeCommonServices()
-                .AddConfiguration(configuration)
+                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
+                .AddOptionsWithValidation<SubmissionExecutionConfig>(nameof(SubmissionExecutionConfig))
                 .AddControllers();
 
         public static WebApplication ConfigureWebApplication(this WebApplication app)
@@ -41,16 +41,15 @@
         }
 
         public static IServiceCollection AddSubmissionExecutor(
-            this IServiceCollection services)
-            => services
-                .AddTransient<ISubmissionExecutor>(sp => new SubmissionExecutor(
-                    EnvironmentUtils.GetRequiredByKey(SubmissionsProcessorIdentifierNumberEnvVariableName)));
-
-        public static IServiceCollection AddConfiguration(
             this IServiceCollection services,
             IConfiguration configuration)
-            => services
-                .Configure<SubmissionExecutionConfig>(configuration.GetSection(nameof(SubmissionExecutionConfig)))
-                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
+        {
+            var appConfig = configuration.GetSection(nameof(ApplicationConfig)).Get<ApplicationConfig>();
+            SettingsHelper.ValidateSettings(nameof(ApplicationConfig), appConfig);
+
+            return services
+                .AddTransient<ISubmissionExecutor>(sp => new SubmissionExecutor(
+                    appConfig.SubmissionsProcessorIdentifierNumber.ToString()));
+        }
     }
 }
