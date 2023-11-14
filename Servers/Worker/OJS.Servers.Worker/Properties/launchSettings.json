@@ -13,8 +13,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
         "RUNS_IN_DOCKER": "false",
+        "ApplicationConfig__LoggerFilesFolderPath": "../../../Logs",
         "ApplicationConfig_SubmissionsProcessorIdentifierNumber": "1",
         "RedisConfig__ConnectionString": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "MessageQueueConfig__Host": "localhost",
@@ -33,8 +33,8 @@
       "applicationUrl": "http://localhost:8003",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
         "RUNS_IN_DOCKER": "false",
+        "ApplicationConfig__LoggerFilesFolderPath": "../../../Logs",
         "ApplicationConfig_SubmissionsProcessorIdentifierNumber": "1",
         "RedisConfig__ConnectionString": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "MessageQueueConfig__Host": "localhost",
