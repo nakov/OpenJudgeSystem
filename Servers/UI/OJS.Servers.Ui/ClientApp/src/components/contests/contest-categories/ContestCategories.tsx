@@ -229,7 +229,6 @@ const ContestCategories = ({
     );
 
     useEffect(() => {
-        console.log('clear category');
         setOpenedCategoryFilters(defaultState.state.openedCategoryFilters);
         setOpenedCategoryFilter(defaultState.state.openedCategoryFilter);
         selectCurrentCategoryId('');

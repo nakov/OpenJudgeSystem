@@ -46,6 +46,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             IConfiguration configuration)
             => services
                 .ValidateLaunchSettings()
-                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)));
+                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)))
+                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }
