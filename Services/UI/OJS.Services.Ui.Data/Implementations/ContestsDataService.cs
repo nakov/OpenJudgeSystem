@@ -36,6 +36,8 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
         => await this.DbSet
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
             .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
@@ -163,6 +165,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.GetByIdQuery(id)
             .Include(c => c.LecturersInContests)
             .Include(c => c.Category)
+                .ThenInclude(cc => cc!.LecturersInContestCategories)
             .AnyAsync(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
@@ -260,6 +263,9 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
         => this.GetAllVisibleQuery()
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.SubmissionTypesInProblems)
             .Where(c => c.CategoryId.HasValue && categoryIds.Contains(c.CategoryId.Value));
 
     private IQueryable<Contest> GetAllCompetableQuery()
