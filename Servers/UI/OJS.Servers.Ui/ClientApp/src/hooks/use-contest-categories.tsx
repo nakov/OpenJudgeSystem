@@ -33,13 +33,16 @@ const ContestCategoriesProvider = ({ children }: IContestCategoriesProviderProps
         get,
         data,
         isSuccess,
+        isLoading,
     } = useHttp<null, ITreeItemType[]>({ url: getCategoriesTreeUrl });
 
     const load = useCallback(
         async () => {
-            await get();
+            if (isEmpty(data) && !isLoading) {
+                await get();
+            }
         },
-        [ get ],
+        [ get, data, isLoading ],
     );
 
     useEffect(
