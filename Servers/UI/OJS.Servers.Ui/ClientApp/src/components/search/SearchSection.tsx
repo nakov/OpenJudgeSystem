@@ -26,7 +26,7 @@ const SearchSection = <T extends ISearchTypes>({
     renderItem,
 } : IGenericSearchProps<T>) => {
     const { actions: { setSearchingError } } = useSearch();
-    const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(true);
     const [ searchedItems, setSearchedItems ] = useState([] as T[] || null);
     const [ searchResults, setSearchResults ] = useState({
         pageNumber: 1,
@@ -68,15 +68,19 @@ const SearchSection = <T extends ISearchTypes>({
             return;
         }
 
-        setIsLoading(true);
+        setIsLoading(false);
         setItemsSearchError(null);
         getItemSearchResults();
-        setIsLoading(false);
     }, [ getSearchResultsParams, getItemSearchResults ]);
 
     useEffect(() => {
+        if (!isNilOrEmpty(itemSearchResultsData)) {
+            setIsLoading(false);
+        }
+    }, [ itemSearchResultsData ]);
+
+    useEffect(() => {
         if (isNilOrEmpty(itemSearchResultsData)) {
-            setSearchedItems([]);
             return;
         }
 
@@ -90,7 +94,9 @@ const SearchSection = <T extends ISearchTypes>({
         const searchResult = itemSearchResultsData as IPagedResultType<T>;
 
         const { items: searchResponseData } = searchResult;
+
         if (isNil(searchResponseData) || isEmpty(searchResponseData)) {
+            setSearchedItems([]);
             return;
         }
 
