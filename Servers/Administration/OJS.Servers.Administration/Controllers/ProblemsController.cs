@@ -402,7 +402,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         EntityAction action,
         IDictionary<string, string> entityDict,
         IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
-        Type? autocomplete)
+        Type? autocompleteType)
     {
         var contestId = GetContestId(entityDict, entity);
 
@@ -423,18 +423,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 nameof(entity.ProblemGroup),
                 pg => ((ProblemGroup)pg).ContestId == contestId));
 
-        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters, autocomplete)
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters, autocompleteType)
             .ToListAsync();
 
         await this.ModifyFormControls(formControls, entity, action, entityDict).ConfigureAwait(false);
-
-        formControls.Add(new FormControlViewModel
-        {
-            Name = nameof(Data.Models.Problems.Problem.ProblemGroupId),
-            Value = entity.ProblemGroupId,
-            Type = typeof(int),
-            IsHidden = true,
-        });
 
         formControls.Add(new FormControlViewModel
         {
