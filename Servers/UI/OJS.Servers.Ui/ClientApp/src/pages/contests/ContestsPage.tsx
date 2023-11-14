@@ -1,15 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestStatus, FilterType, IFilter, SortType } from '../../common/contest-types';
 import { PageParams } from '../../common/pages-types';
 import { IIndexContestsType } from '../../common/types';
+import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../components/guidelines/alert/Alert';
-import Breadcrumb from '../../components/guidelines/breadcrumb/Breadcrumb';
-import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
@@ -17,14 +15,12 @@ import SpinningLoader from '../../components/guidelines/spinning-loader/Spinning
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useContestCategories } from '../../hooks/use-contest-categories';
-import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
 import { useContests } from '../../hooks/use-contests';
 import { usePages } from '../../hooks/use-pages';
-import concatClassNames from '../../utils/class-names';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { toLowerCase } from '../../utils/string-utils';
-import { getContestCategoryBreadcrumbItemPath } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
@@ -45,9 +41,8 @@ const ContestsPage = () => {
         state: { currentPage, pagesInfo },
         changePage,
     } = usePages();
-    const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
-    const navigate = useNavigate();
     const { state: params, actions: { clearParams } } = useUrlParams();
     const { state: { strategies } } = useContestStrategyFilters();
     const { actions: { load: loadStrategies } } = useContestStrategyFilters();
@@ -172,35 +167,6 @@ const ContestsPage = () => {
         [ contests, currentPage, handlePageChange, isLoaded, pagesInfo, renderContest ],
     );
 
-    const updateBreadcrumbAndNavigateToCategory = useCallback(
-        (breadcrumb: ICategoriesBreadcrumbItem) => {
-            const category = categoriesFlat.find(({ id }) => id.toString() === breadcrumb.id.toString());
-
-            updateBreadcrumb(category, categoriesFlat);
-            navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
-        },
-        [ categoriesFlat, navigate, updateBreadcrumb ],
-    );
-
-    const renderCategoriesBreadcrumbItem = useCallback(
-        (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => {
-            const { value, isLast } = categoryBreadcrumbItem;
-            const classNames = concatClassNames(styles.breadcrumbBtn, isLast
-                ? styles.breadcrumbBtnLast
-                : '');
-
-            return (
-                <Button
-                  type={ButtonType.plain}
-                  className={classNames}
-                  onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
-                  text={value}
-                />
-            );
-        },
-        [ updateBreadcrumbAndNavigateToCategory ],
-    );
-
     useEffect(
         () => {
             if (!areQueryParamsValid() && isLoaded) {
@@ -214,7 +180,6 @@ const ContestsPage = () => {
             clearParams,
             breadcrumbItems,
             handleFilterClick,
-            renderCategoriesBreadcrumbItem,
             renderContests,
         ],
     );
@@ -233,7 +198,7 @@ const ContestsPage = () => {
                       horizontal={AlertHorizontalOrientation.Right}
                     />
                 )}
-            <Breadcrumb items={breadcrumbItems} itemFunc={renderCategoriesBreadcrumbItem} />
+            <ContestBreadcrumb isLastBreadcrumbGrey />
             <div className={styles.container}>
                 <ContestFilters onFilterClick={handleFilterClick} />
                 <div className={styles.mainHeader}>

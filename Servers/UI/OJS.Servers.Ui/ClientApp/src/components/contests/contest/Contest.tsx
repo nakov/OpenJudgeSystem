@@ -6,20 +6,20 @@ import isNil from 'lodash/isNil';
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
-import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { getContestCategoryBreadcrumbItemPath, getContestDetailsAppUrl } from '../../../utils/urls';
-import Breadcrumb from '../../guidelines/breadcrumb/Breadcrumb';
-import { Button, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { getContestDetailsAppUrl } from '../../../utils/urls';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import Text, { TextType } from '../../guidelines/text/Text';
+import ContestBreadcrumb from '../contest-breadcrumb/ContestBreadcrumb';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
@@ -55,7 +55,7 @@ const Contest = () => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
 
     const navigationContestClass = 'navigationContest';
@@ -225,28 +225,6 @@ const Contest = () => {
         [ renderErrorHeading, contestError ],
     );
 
-    const updateBreadcrumbAndNavigateToCategory = useCallback(
-        (breadcrumb: ICategoriesBreadcrumbItem) => {
-            const category = categoriesFlat.find(({ id }) => id.toString() === breadcrumb.id.toString());
-
-            updateBreadcrumb(category, categoriesFlat);
-            navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
-        },
-        [ categoriesFlat, navigate, updateBreadcrumb ],
-    );
-
-    const renderCategoriesBreadcrumbItem = useCallback(
-        (categoryBreadcrumbItem: ICategoriesBreadcrumbItem) => (
-            <Button
-              type={ButtonType.plain}
-              className={styles.breadcrumbBtn}
-              onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
-              text={categoryBreadcrumbItem.value}
-            />
-        ),
-        [ updateBreadcrumbAndNavigateToCategory ],
-    );
-
     const renderContest = useCallback(
         () => (
             <div>
@@ -260,10 +238,7 @@ const Contest = () => {
                         : (
                             <>
                                 <div className={styles.breadcrumbContainer}>
-                                    <Breadcrumb
-                                      items={breadcrumbItems}
-                                      itemFunc={renderCategoriesBreadcrumbItem}
-                                    />
+                                    <ContestBreadcrumb />
                                 </div>
                                 <div className={styles.headingContest}>
                                     <Heading
@@ -325,8 +300,6 @@ const Contest = () => {
             renderParticipants,
             contestIsLoading,
             contest,
-            breadcrumbItems,
-            renderCategoriesBreadcrumbItem,
         ],
     );
 

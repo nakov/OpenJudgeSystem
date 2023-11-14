@@ -3,14 +3,6 @@
 @use 'src/styles/global';
 @use 'src/styles/variables';
 
-.breadcrumbBtn {
-  color: colors.$light-blue-color;
-
-  &:hover {
-    color: colors.$text-dark-gray-color;
-  }
-}
-
 .breadcrumbContainer {
   display: flex;
   justify-content: center;
