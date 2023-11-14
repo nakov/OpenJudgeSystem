@@ -10,11 +10,12 @@ import { ISubmissionDetailsType, ISubmissionResults } from '../../hooks/submissi
 const submissionDetailsService = createApi({
     reducerPath: submissionDetailsPageServiceName,
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.REACT_APP_API_URL,
+        baseUrl: 'http://localhost:5002',
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
+        credentials: 'include',
         responseHandler: async (response: Response) => {
             const contentType = response.headers.get('Content-Type');
             if (contentType?.includes('application/octet-stream')) {

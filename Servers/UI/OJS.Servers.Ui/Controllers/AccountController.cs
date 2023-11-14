@@ -48,7 +48,7 @@ namespace OJS.Servers.Ui.Controllers
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToAction("Index", "Home");
+                return this.BadRequest();
             }
 
             ExternalUserInfoModel? externalUser;
@@ -98,13 +98,13 @@ namespace OJS.Servers.Ui.Controllers
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
 
-            return this.RedirectToAction("Index", "Home");
+            return this.Ok();
         }
 
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            return this.RedirectToAction("Index", "Home");
+            return this.Ok();
         }
     }
 }

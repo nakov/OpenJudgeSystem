@@ -2,7 +2,7 @@
   "name": "judge.servers.ui",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://localhost:5002",
+  "homepage": "https://localhost:5173",
   "resolutions": {
     "react-error-overlay": "6.0.9"
   },
@@ -51,6 +51,7 @@
     "react-router-dom": "^6.3.0",
     "react-slick": "^0.29.0",
     "react-youtube": "^10.0.0",
+    "sass": "^1.69.5",
     "slick-carousel": "^1.8.1",
     "svgo": "2.8.0",
     "types": "^0.1.1",

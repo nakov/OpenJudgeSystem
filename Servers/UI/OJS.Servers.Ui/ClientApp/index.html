@@ -1,7 +1,4 @@
-﻿@using OJS.Common.Enumerations;
-@using OJS.Common;
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -38,10 +35,9 @@
     <!--      }-->
     <!--    </style>-->
     <script>
-        window.isLoggedIn = Boolean(@Model?.IsAuthenticated.ToString().ToLower());
         window.URLS = {
-            UI_URL: '@applicationUrls.GetUrl(ApplicationName.Ui)',
-            ADMINISTRATION_URL: '@applicationUrls.GetUrl(ApplicationName.Administration)',
+            UI_URL: 'http://localhost:5002',
+            ADMINISTRATION_URL: 'http://localhost:5001',
         }
         window.Keys = {
             YOUTUBE_VIDEO_ID: '@environmentVariables.GetValue(GlobalConstants.EnvironmentVariables.UiHomeYouTubeVideoId)',
@@ -53,6 +49,7 @@
     You need to enable JavaScript to run this app.
 </noscript>
 <div id="root"></div>
+<script type="module" src="/src/index.tsx"></script>
 <!--
 This HTML file is a template.
 If you open it directly in the browser, you will see an empty page.
@@ -64,5 +61,4 @@ To begin the development, run `npm start` or `yarn start`.
 To create a production bundle, use `npm run build` or `yarn build`.
 -->
 </body>
-<script type="module" src="/src/index.tsx"></script>
 </html>

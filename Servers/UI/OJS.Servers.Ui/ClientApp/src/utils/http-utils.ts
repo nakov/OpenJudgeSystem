@@ -37,6 +37,7 @@ const makeHttpCall = async ({
         url,
         data: body,
         responseType: responseType as ResponseType,
+        withCredentials: true,
         headers,
     });
 
