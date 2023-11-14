@@ -5,7 +5,7 @@ using SoftUni.Services.Infrastructure;
 
 public interface ILecturersInContestsBusinessService : IService
 {
-    bool IsUserAdminOrLecturerInContest(Contest contest);
+    bool IsUserAdminOrLecturerInContest(Contest? contest);
 
     bool IsUserLecturerInContest(Contest contest);
 }
