@@ -56,7 +56,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
             .ToList();
 
         directSubcategories
-            .ForEach(c => this.GetWithChildren(c, c.Children, allCategories, result));
+            .ForEach(c => GetWithChildren(c, c.Children, allCategories, result));
 
         return result;
     }
@@ -88,7 +88,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
                 category.Children = categoriesList.Where(x => x.ParentId == category.Id));
     }
 
-    private void GetWithChildren(
+    private static void GetWithChildren(
         ContestCategoryTreeViewModel category,
         IEnumerable<ContestCategoryTreeViewModel> children,
         ICollection<ContestCategoryTreeViewModel> allCategories,
@@ -106,7 +106,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 
                 result.AddRange(grandChildren);
 
-                this.GetWithChildren(childNode, grandChildren, allCategories, result);
+                GetWithChildren(childNode, grandChildren, allCategories, result);
             });
     }
 

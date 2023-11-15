@@ -25,6 +25,7 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.DbSet
                 .Where(ps => ps.ParticipantId == participantId)
                 .Include(ps => ps.Submission)
+                    .ThenInclude(s => s!.TestRuns)
                 .ToEnumerableAsync();
 
         public Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId) =>

@@ -32,6 +32,9 @@ namespace OJS.Services.Ui.Data.Implementations
                         .ThenInclude(pg => pg.Problems)
                             .ThenInclude(p => p.SubmissionTypesInProblems)
                                 .ThenInclude(sp => sp.SubmissionType)
+                .Include(p => p.Submissions)
+                .Include(p => p.Scores)
+                .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetAllByUser(string? userId)

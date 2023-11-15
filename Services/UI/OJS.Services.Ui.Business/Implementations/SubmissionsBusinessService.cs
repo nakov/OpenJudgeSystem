@@ -453,6 +453,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submission = await this.submissionsData
             .GetByIdQuery(submissionExecutionResult.SubmissionId)
             .Include(s => s.Problem!.Tests)
+            .Include(s => s.TestRuns)
             .FirstOrDefaultAsync();
 
         if (submission == null)
