@@ -80,6 +80,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
             services
+                .AddScoped<DbContext, TDbContext>()
                 .AddDbContext<TDbContext>(options =>
                 {
                     options.UseSqlServer(configuration.GetConnectionString(DefaultDbConnectionName));
