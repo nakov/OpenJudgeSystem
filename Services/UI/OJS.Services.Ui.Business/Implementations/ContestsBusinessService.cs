@@ -8,7 +8,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common;
-    using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
@@ -69,7 +68,6 @@ namespace OJS.Services.Ui.Business.Implementations
             this.contestParticipantsCacheService = contestParticipantsCacheService;
             this.lecturersInContestsBusiness = lecturersInContestsBusiness;
             this.contestDetailsValidationService = contestDetailsValidationService;
-            this.contestsData.DisableLazyLoading();
         }
 
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)

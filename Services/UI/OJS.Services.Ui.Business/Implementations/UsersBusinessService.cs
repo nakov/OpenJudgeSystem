@@ -24,7 +24,6 @@
         {
             this.usersProfileData = usersProfileData;
             this.userProvider = userProvider;
-            this.usersProfileData.DisableLazyLoading();
         }
 
         public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)

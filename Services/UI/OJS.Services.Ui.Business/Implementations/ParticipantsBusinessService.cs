@@ -33,7 +33,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
         this.datesService = datesService;
-        this.participantsData.DisableLazyLoading();
     }
 
     public Task<int> GetPracticeParticipantsCount(int contestId)
