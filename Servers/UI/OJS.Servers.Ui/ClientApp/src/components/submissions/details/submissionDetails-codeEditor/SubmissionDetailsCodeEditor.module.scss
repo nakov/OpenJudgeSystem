@@ -4,6 +4,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/colors';
 
+
 .resourceWrapper {
     align-items: center;
     display: flex;
@@ -36,7 +37,7 @@
     flex: 7;
 }
 
-@media (min-width: 1px) and (max-width: variables.$r-large-desktop-max) {
+@media (width >= 1px) and (width <= 1920px) {
     .code {
         flex: 3;
     }
