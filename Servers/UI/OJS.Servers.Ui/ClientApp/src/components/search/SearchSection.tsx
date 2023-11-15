@@ -4,8 +4,8 @@ import isNil from 'lodash/isNil';
 
 import { IContestSearchType, IProblemSearchType, IUserSearchType } from '../../common/search-types';
 import {
-    IGenericSearchProps,
     IPagedResultType,
+    ISearchProps,
 } from '../../common/types';
 import { IGetSearchResultsParams } from '../../common/url-types';
 import { IErrorDataType, useHttp } from '../../hooks/use-http';
@@ -24,9 +24,9 @@ const SearchSection = <T extends ISearchTypes>({
     searchTerm,
     searchCategory,
     renderItem,
-} : IGenericSearchProps<T>) => {
+} : ISearchProps<T>) => {
     const { actions: { setSearchingError } } = useSearch();
-    const [ isLoading, setIsLoading ] = useState(true);
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ searchedItems, setSearchedItems ] = useState([] as T[] || null);
     const [ searchResults, setSearchResults ] = useState({
         pageNumber: 1,
@@ -68,7 +68,7 @@ const SearchSection = <T extends ISearchTypes>({
             return;
         }
 
-        setIsLoading(false);
+        setIsLoading(true);
         setItemsSearchError(null);
         getItemSearchResults();
     }, [ getSearchResultsParams, getItemSearchResults ]);

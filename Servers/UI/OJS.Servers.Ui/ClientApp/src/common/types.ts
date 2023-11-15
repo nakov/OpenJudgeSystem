@@ -218,21 +218,7 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
-interface ISearchResponseModel {
-    contests: IContestSearchType[];
-    problems: IProblemSearchType[];
-    users: IUserSearchType[];
-}
-
-interface IUsersSearchResponseModel {
-    users: IUserSearchType[];
-}
-
-interface ISearchProps {
-    searchTerm : string;
-}
-
-interface IGenericSearchProps<T> {
+interface ISearchProps<T> {
     searchTerm : string;
     searchCategory : SearchCategory;
     renderItem: (item: T) => React.ReactElement<any, string | React.JSXElementConstructor<any>>;
@@ -241,9 +227,7 @@ interface IGenericSearchProps<T> {
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
-    IGenericSearchProps,
     ISearchProps,
-    IUsersSearchResponseModel,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
@@ -257,7 +241,6 @@ export type {
     IPage,
     IUserResponseType,
     IUserPermissionsType,
-    ISearchResponseModel,
     IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
