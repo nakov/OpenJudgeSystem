@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -11,10 +11,12 @@ import { IGetSearchResultsParams } from '../../common/url-types';
 import { IErrorDataType, useHttp } from '../../hooks/use-http';
 import { useSearch } from '../../hooks/use-search';
 import isNilOrEmpty from '../../utils/check-utils';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { getSearchResultsUrl } from '../../utils/urls';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import List, { Orientation } from '../guidelines/lists/List';
 import PaginationControls from '../guidelines/pagination/PaginationControls';
+import SpinningLoader from '../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './SearchSection.module.scss';
 
@@ -64,6 +66,10 @@ const SearchSection = <T extends ISearchTypes>({
     }, [ setQueryParams, searchTerm, currentItemsPage ]);
 
     useEffect(() => {
+        setCurrentItemsPage(1);
+    }, [ searchTerm ]);
+
+    useEffect(() => {
         if (isNil(getSearchResultsParams)) {
             return;
         }
@@ -104,8 +110,8 @@ const SearchSection = <T extends ISearchTypes>({
         setItemsSearchError(null);
         setSearchingError(null);
         setSearchResults(searchResult);
-    }, [ getItemSearchResultsError, itemSearchResultsData, searchCategory, searchResults,
-        searchedItems, setSearchingError ]);
+    }, [ getItemSearchResultsError, itemSearchResultsData,
+        searchCategory, searchResults, setSearchingError ]);
 
     const handlePageChange = useCallback((newPage: number) => {
         setCurrentItemsPage(newPage);
@@ -134,39 +140,54 @@ const SearchSection = <T extends ISearchTypes>({
         [ searchCategory ],
     );
 
+    const renderLoadingSpinner = useMemo(
+        () => (
+            <div style={{ ...flexCenterObjectStyles }}>
+                <SpinningLoader />
+            </div>
+        ),
+        [ ],
+    );
+
     const renderItems = useCallback(
         (items: T[]) => (
-            <>
-                <Heading
-                  type={HeadingType.secondary}
-                  className={styles.heading}
-                >
-                    {searchCategory}
-                    :
-                </Heading>
-                <List
-                  values={items}
-                  itemFunc={renderItem}
-                  className={styles.items}
-                  itemClassName={styles.contestItem}
-                  orientation={Orientation.horizontal}
-                  wrap
-                />
-                <PaginationControls
-                  count={searchResults.pagesCount}
-                  page={currentItemsPage}
-                  onChange={handlePageChange}
-                />
-            </>
+            isNilOrEmpty(items)
+                ? null
+                : (
+                    <>
+                        <Heading
+                          type={HeadingType.secondary}
+                          className={styles.heading}
+                        >
+                            {searchCategory}
+                            :
+                        </Heading>
+                        <List
+                          values={items}
+                          itemFunc={renderItem}
+                          className={styles.items}
+                          itemClassName={styles.contestItem}
+                          orientation={Orientation.horizontal}
+                          wrap
+                        />
+                        <PaginationControls
+                          count={searchResults.pagesCount}
+                          page={currentItemsPage}
+                          onChange={handlePageChange}
+                        />
+                    </>
+                )
         ),
         [ searchResults, currentItemsPage, handlePageChange, renderItem, searchCategory ],
     );
 
     return (
-        isNil(itemsSearchError) && !isLoading
-            ? isEmpty(searchedItems)
-                ? renderNoResultsFound()
-                : renderItems(searchedItems)
+        isNil(itemsSearchError)
+            ? isLoading && isEmpty(searchedItems)
+                ? renderLoadingSpinner
+                : isEmpty(searchedItems)
+                    ? renderNoResultsFound()
+                    : renderItems(searchedItems)
             : null
     );
 };
