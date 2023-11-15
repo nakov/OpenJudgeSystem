@@ -95,7 +95,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     user.Id,
                     contestActivityEntity.CanBeCompeted);
 
-            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!);
+            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!.Id, user);
 
             var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
 

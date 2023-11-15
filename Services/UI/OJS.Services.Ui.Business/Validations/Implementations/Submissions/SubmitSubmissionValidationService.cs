@@ -126,9 +126,4 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         return ValidationResult.Valid();
     }
-
-    private static bool IsUserAdminOrLecturerInContest(Contest contest, UserInfoModel currentUser)
-        => currentUser.IsAdmin ||
-           contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
-           contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
 }
