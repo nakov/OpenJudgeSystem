@@ -13,28 +13,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
-        "ApplicationConfig__SulsPlatformBaseUrl": "https://localhost:44304",
-        "ApplicationConfig__SulsPlatformApiKey": "1234",
-        "ApplicationConfig__LoggerFilesFolderPath": "../../../Logs",
-        "ApplicationConfig__SharedAuthCookieDomain": "localhost",
-        "ApplicationConfig__UiUrl": "http://localhost:5002",
-        "ApplicationConfig__AdministrationUrl": "http://localhost:5001",
-        "ApplicationConfig__UiHomeYouTubeVideoId": "IwLET8SDBE4",
-        "RedisConfig__ConnectionString": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
-        "MessageQueueConfig__Host": "localhost",
-        "MessageQueueConfig__VirtualHost": "ojs",
-        "MessageQueueConfig__User": "ojsuser",
-        "MessageQueueConfig__Password": "myS3cretPass2",
-        "EmailServiceConfig__ServerHost": "YOUR_HOST",
-        "EmailServiceConfig__ServerPort": "587",
-        "EmailServiceConfig__ServerUsername": "YOUR_Username",
-        "EmailServiceConfig__ServerPassword": "YOUR_Password",
-        "EmailServiceConfig__SenderEmail": "Test@softuni.bg",
-        "EmailServiceConfig__SenderDisplayValue": "YOUR_DISPLAY_NAME",
-        "EmailServiceConfig__DevEmail": "test@softuni.bg",
-        "HealthCheckConfig__Key": "Key",
-        "HealthCheckConfig__Password": "password"
+        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;"
       }
     },
     "OJS.Servers.Ui": {
@@ -44,28 +23,7 @@
       "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
-        "ApplicationConfig__SulsPlatformBaseUrl": "https://localhost:44304",
-        "ApplicationConfig__SulsPlatformApiKey": "1234",
-        "ApplicationConfig__LoggerFilesFolderPath": "../../../Logs",
-        "ApplicationConfig__SharedAuthCookieDomain": "localhost",
-        "ApplicationConfig__UiUrl": "http://localhost:5002",
-        "ApplicationConfig__AdministrationUrl": "http://localhost:5001",
-        "ApplicationConfig__UiHomeYouTubeVideoId": "IwLET8SDBE4",
-        "RedisConfig__ConnectionString": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
-        "MessageQueueConfig__Host": "localhost",
-        "MessageQueueConfig__VirtualHost": "ojs",
-        "MessageQueueConfig__User": "ojsuser",
-        "MessageQueueConfig__Password": "myS3cretPass2",
-        "EmailServiceConfig__ServerHost": "YOUR_HOST",
-        "EmailServiceConfig__ServerPort": "587",
-        "EmailServiceConfig__ServerUsername": "YOUR_Username",
-        "EmailServiceConfig__ServerPassword": "YOUR_Password",
-        "EmailServiceConfig__SenderEmail": "Test@softuni.bg",
-        "EmailServiceConfig__SenderDisplayValue": "YOUR_DISPLAY_NAME",
-        "EmailServiceConfig__DevEmail": "test@softuni.bg",
-        "HealthCheckConfig__Key": "Key",
-        "HealthCheckConfig__Password": "password"
+        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;"
       }
     }
   }

@@ -20,5 +20,6 @@ public class MessageQueueConfig
         public int RetryCount { get; set; } = 5;
 
         public int RetryInterval { get; set; } = 200;
+
         public int? PrefetchCount { get; set; }
 }
