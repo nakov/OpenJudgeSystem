@@ -3,7 +3,7 @@ import React from 'react';
 import { ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 
-import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchCategory } from './search-types';
+import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
     id: number;
