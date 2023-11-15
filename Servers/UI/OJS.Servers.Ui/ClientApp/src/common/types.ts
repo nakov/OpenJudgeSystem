@@ -98,6 +98,7 @@ interface IContestDetailsResponseType {
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
     competeParticipantsCount: number;
     practiceParticipantsCount: number;
+    categoryId: number;
 }
 
 interface IContestType {
@@ -168,6 +169,7 @@ interface IRegisterForContestResponseType {
     isOnlineExam: boolean;
     duration: number;
     numberOfProblems: number;
+    categoryId: number;
 }
 
 interface IStartParticipationResponseType {
