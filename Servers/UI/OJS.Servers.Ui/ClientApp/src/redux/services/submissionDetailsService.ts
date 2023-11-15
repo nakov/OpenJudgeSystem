@@ -10,8 +10,8 @@ import { ISubmissionDetailsType, ISubmissionResults } from '../../hooks/submissi
 const submissionDetailsService = createApi({
     reducerPath: submissionDetailsPageServiceName,
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:5002',
-        prepareHeaders: (headers) => {
+        baseUrl: import.meta.env.VITE_UI_SERVER_URL,
+        prepareHeaders: (headers: any) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },

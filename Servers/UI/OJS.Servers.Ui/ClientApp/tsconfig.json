@@ -23,5 +23,7 @@
   "include": [
     "src",
     "typings.d.ts",
+    "env.d.ts",
+    "client.d.ts",
   ]
 }

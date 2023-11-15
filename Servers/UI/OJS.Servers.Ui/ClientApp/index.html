@@ -34,10 +34,10 @@
     <!--        font-family: 'Roboto', sans-serif;-->
     <!--      }-->
     <!--    </style>-->
-    <script>
+    <script type="module">
         window.URLS = {
-            UI_URL: 'http://localhost:5002',
-            ADMINISTRATION_URL: 'http://localhost:5001',
+            UI_URL: import.meta.env.VITE_UI_SERVER_URL,
+            ADMINISTRATION_URL: import.meta.env.VITE_ADMINISTRATION_URL,
         }
         window.Keys = {
             YOUTUBE_VIDEO_ID: '@environmentVariables.GetValue(GlobalConstants.EnvironmentVariables.UiHomeYouTubeVideoId)',
