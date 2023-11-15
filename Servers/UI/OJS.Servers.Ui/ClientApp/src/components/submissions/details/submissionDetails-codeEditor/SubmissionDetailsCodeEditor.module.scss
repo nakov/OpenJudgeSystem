@@ -34,9 +34,11 @@
     align-content: center;
     border-left: 0;
     flex: 7;
-  
-    @media only screen and (1px <= width <= variables.$r-large-desktop-max) {
-      flex: 3;
+}
+
+@media (min-width: 1px) and (max-width: variables.$r-large-desktop-max) {
+    .code {
+        flex: 3;
     }
 }
 
