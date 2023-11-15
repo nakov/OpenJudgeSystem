@@ -17,6 +17,8 @@ namespace OJS.Common
         public const string ZeroTestStandardSignature = ".000.";
         public const string OpenTestStandardSignature = ".open.";
 
+        //CORS
+        public const string CorsDefaultPolicyName = "AllowFrontEndRequests";
         // Other
         public const string NewLineUnix = "\n";
         public const string NewLineWin = "\r\n";

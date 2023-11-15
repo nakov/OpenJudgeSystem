@@ -29,7 +29,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
         "LOCAL_TIME_ZONE": "FLE Standard Time",
-        "UI_URL": "http://localhost:5002",
+        "UI_URL": "http://localhost:5010",
         "SULS_PLATFORM_BASE_URL": "https://localhost:44304",
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",

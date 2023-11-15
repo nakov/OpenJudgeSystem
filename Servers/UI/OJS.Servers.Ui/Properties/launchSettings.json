@@ -18,7 +18,7 @@
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
-        "UI_URL": "http://localhost:5002",
+        "UI_URL": "http://localhost:5010",
         "ADMINISTRATION_URL": "http://localhost:5001",
         "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
         "MessageQueueConfig__Host": "localhost",
@@ -31,7 +31,7 @@
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5002",
+      "applicationUrl": "http://localhost:5010",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;",
@@ -39,7 +39,7 @@
         "SULS_PLATFORM_API_KEY": "1234",
         "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
         "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
-        "UI_URL": "http://localhost:5002",
+        "UI_URL": "http://localhost:5010",
         "ADMINISTRATION_URL": "http://localhost:5001",
         "UI_HOME_YOUTUBE_VIDEO_ID": "IwLET8SDBE4",
         "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
@@ -53,7 +53,8 @@
         "EmailServiceConfig__ServerPassword": "YOUR_Password",
         "EmailServiceConfig__SenderEmail": "Test@softuni.bg",
         "EmailServiceConfig__SenderDisplayValue": "YOUR_DISPLAY_NAME",
-        "EmailServiceConfig__DevEmail": "test@softuni.bg"
+        "EmailServiceConfig__DevEmail": "test@softuni.bg",
+        "FRONTEND_URL": "http://localhost:5002"
       }
     }
   }

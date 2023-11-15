@@ -25,5 +25,6 @@
     "typings.d.ts",
     "env.d.ts",
     "client.d.ts",
+    "importMeta.d.ts",
   ]
 }

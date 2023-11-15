@@ -3,7 +3,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using OJS.Servers.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-
+using OJS.Common;
 public static class WebApplicationBuilderExtensions
 {
     public static WebApplicationBuilder ConfigureBuilder<TProgram>(
@@ -15,8 +15,8 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddCors(options =>
         {
             options.AddPolicy(
-                "AllowSpecificOrigin",
-                builder => builder.WithOrigins("http://localhost:5173")
+                GlobalConstants.CorsDefaultPolicyName,
+                config => config.WithOrigins(builder.Configuration.GetSection("FRONTEND_URL").Value)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

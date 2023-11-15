@@ -8,7 +8,7 @@ services:
     image: judge_web_ui
     container_name: web_ui_instance
     ports:
-      - "5002:80"
+      - "5010:80"
     restart: on-failure
     volumes:
       - ./Logs:/Logs
@@ -24,6 +24,24 @@ services:
     depends_on:
       - mq
       - redis
+  fe:
+    build:
+      context: .
+      dockerfile: ./Docker/Dockerfile.fe
+    image: judge_web_fe
+    container_name: web_ui_fe_instance
+    ports:
+      - "5002:80"
+    restart: on-failure
+    volumes:
+      - ./Logs:/Logs
+    env_file:
+      - Docker/common/common.env
+      - Docker/applications/ui/ui.env
+    links:
+      - ui
+    depends_on:
+      - ui
   administration:
     build:
       context: .

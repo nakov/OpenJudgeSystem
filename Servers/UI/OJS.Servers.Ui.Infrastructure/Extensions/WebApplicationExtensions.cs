@@ -5,6 +5,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
+    using OJS.Common;
     using OJS.Servers.Infrastructure.Extensions;
 
     public static class WebApplicationExtensions
@@ -13,10 +14,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             this WebApplication app,
             string apiVersion)
         {
-            app.UseCors(o => o.WithOrigins("http://localhost:5173")
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseCors(GlobalConstants.CorsDefaultPolicyName);
             app
                 .UseDefaults()
                 .MapDefaultRoutes();

@@ -1,0 +1,23 @@
+# Node.js build
+FROM node:18-alpine as node_build
+
+WORKDIR /app
+
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json /src/Servers/UI/OJS.Servers.Ui/ClientApp/package.json
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock /src/Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+RUN yarn install
+
+WORKDIR /src
+
+COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientApp
+
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+
+RUN yarn run lint
+RUN yarn build
+
+# Serve using Nginx
+FROM nginx:alpine
+COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/ClientApp/dist /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]
