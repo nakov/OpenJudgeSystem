@@ -26,7 +26,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
-    using OJS.Common.Utils;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
@@ -121,9 +120,10 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddHangfireServer(
             this IServiceCollection services,
+            IConfiguration configuration,
             ApplicationName app)
         {
-            var connectionString = EnvironmentUtils.GetApplicationConnectionString(app);
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

@@ -2,7 +2,7 @@ namespace OJS.Data
 {
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
+    using Microsoft.Extensions.Configuration;
     using OJS.Data.Infrastructure.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Checkers;
@@ -20,16 +20,19 @@ namespace OJS.Data
         IDataProtectionKeyContext
     {
         private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
+        private readonly IConfiguration configuration;
 
-        public OjsDbContext()
-        {
-        }
+        public OjsDbContext(IConfiguration configuration) => this.configuration = configuration;
 
         public OjsDbContext(
             DbContextOptions<OjsDbContext> options,
-            IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache)
+            IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache,
+            IConfiguration configuration)
             : base(options, globalQueryFilterTypesCache)
-            => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
+        {
+            this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
+            this.configuration = configuration;
+        }
 
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
@@ -164,7 +167,7 @@ namespace OJS.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options
-                .ConfigureDbOptions(ApplicationName.Ui);
+                .ConfigureDbOptions(this.configuration.GetConnectionString("DefaultConnection"));
 
         private static void FixMultipleCascadePaths(ModelBuilder builder)
         {

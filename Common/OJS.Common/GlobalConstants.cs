@@ -22,21 +22,6 @@ namespace OJS.Common
         public const string NewLineWin = "\r\n";
         public const string ClassDelimiterWin = $"~~!!!==#==!!!~~{NewLineWin}";
 
-        public static class RegexPatterns
-        {
-            public const string UpperCaseGroupsRegex = @"(?<!^)(?=[A-Z])";
-        }
-
-        public static class EnvironmentVariables
-        {
-            // Keys
-            public const string EnvironmentKey = "ASPNETCORE_ENVIRONMENT";
-
-            // Values
-            public const string DockerValue = "Docker";
-            public const string ProductionValue = "Production";
-        }
-
         public static class ApplicationDateFormats
         {
             public const string GlobalShortDatePatternFormat = "dd/MM/yyyy";

@@ -22,7 +22,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             services
                 .AddWebServer<TProgram>()
                 .AddHttpContextServices()
-                .AddHangfireServer(AppName)
+                .AddHangfireServer(configuration, AppName)
                 .AddMessageQueue<TProgram>(configuration)
                 .ConfigureGlobalDateFormat()
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(

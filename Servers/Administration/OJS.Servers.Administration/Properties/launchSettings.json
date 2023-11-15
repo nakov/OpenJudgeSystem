@@ -12,8 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "OJS.Servers.Administration": {
@@ -22,8 +21,7 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5001",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DbContext": "Server=.;Database=OpenJudgeSystem;Integrated Security=True;"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

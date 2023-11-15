@@ -1,6 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using OJS.Common.Extensions;
 using OJS.Services.Common.Models.Configurations;
