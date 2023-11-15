@@ -18,7 +18,7 @@ public class ContestResultsModel : IMapExplicitly
 
     public int? TotalResultsCount { get; set; }
 
-    public bool IsExportResults { get; set; } = false;
+    public bool IsExportResults { get; set; }
 
     public int Page { get; set; } = 1;
 
