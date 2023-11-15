@@ -20,6 +20,7 @@
             IConfiguration configuration)
             => services
                 .AddWebServer<TProgram>()
+                .AddHttpContextServices()
                 .AddScoped<DbContext, OjsDbContext>()
                 .AddSubmissionExecutor(configuration)
                 .AddMemoryCache()
