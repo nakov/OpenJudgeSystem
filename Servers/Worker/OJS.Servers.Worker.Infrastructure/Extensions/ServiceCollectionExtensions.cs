@@ -27,8 +27,8 @@
                 .AddMessageQueue<TProgram>(configuration)
                 .AddLogging()
                 .AddSoftUniJudgeCommonServices()
-                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
-                .AddOptionsWithValidation<SubmissionExecutionConfig>(nameof(SubmissionExecutionConfig))
+                .AddOptionsWithValidation<ApplicationConfig>()
+                .AddOptionsWithValidation<SubmissionExecutionConfig>()
                 .AddControllers();
 
         public static WebApplication ConfigureWebApplication(this WebApplication app)
@@ -44,13 +44,9 @@
         public static IServiceCollection AddSubmissionExecutor(
             this IServiceCollection services,
             IConfiguration configuration)
-        {
-            var appConfig = configuration.GetSection(nameof(ApplicationConfig)).Get<ApplicationConfig>();
-            SettingsHelper.ValidateSettings(nameof(ApplicationConfig), appConfig);
-
-            return services
+            => services
                 .AddTransient<ISubmissionExecutor>(sp => new SubmissionExecutor(
-                    appConfig.SubmissionsProcessorIdentifierNumber.ToString()));
-        }
+                    configuration.GetSectionWithValidation<ApplicationConfig>()
+                        .SubmissionsProcessorIdentifierNumber.ToString()));
     }
 }

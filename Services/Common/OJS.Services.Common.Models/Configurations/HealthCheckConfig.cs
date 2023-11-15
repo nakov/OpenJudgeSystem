@@ -2,8 +2,10 @@
 
 using System.ComponentModel.DataAnnotations;
 
-public class HealthCheckConfig
+public class HealthCheckConfig : BaseConfig
 {
+    public override string SectionName => "HealthCheck";
+
     [Required]
     public string Key { get; set; } = string.Empty;
 

@@ -2,8 +2,10 @@
 
 using System.ComponentModel.DataAnnotations;
 
-public class EmailServiceConfig
+public class EmailServiceConfig : BaseConfig
 {
+    public override string SectionName => "Emails";
+
     [Required]
     public string ServerHost { get; set; } = string.Empty;
 

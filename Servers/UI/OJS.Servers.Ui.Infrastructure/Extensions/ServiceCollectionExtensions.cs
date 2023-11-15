@@ -38,8 +38,9 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .AddSoftUniJudgeCommonServices()
                 .AddDistributedCaching(configuration)
                 .AddLogging()
-                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
-                .AddOptionsWithValidation<EmailServiceConfig>(nameof(EmailServiceConfig))
+                .AddOptionsWithValidation<ApplicationConfig>()
+                .AddOptionsWithValidation<ApplicationUrlsConfig>()
+                .AddOptionsWithValidation<EmailServiceConfig>()
                 .AddControllersWithViews();
         }
     }

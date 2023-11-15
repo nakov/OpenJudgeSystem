@@ -37,9 +37,9 @@
     <script>
         window.isLoggedIn = Boolean(@Model?.IsAuthenticated.ToString().ToLower());
         window.URLS = {
-            UI_URL: '@appConfig.Value.UiUrl',
-            ADMINISTRATION_URL: '@appConfig.Value.AdministrationUrl',
-            PLATFORM_URL: '@appConfig.Value.SulsPlatformApiKey',
+            UI_URL: '@appUrls.Value.UiUrl',
+            ADMINISTRATION_URL: '@appUrls.Value.AdministrationUrl',
+            PLATFORM_URL: '@appUrls.Value.SulsPlatformApiKey',
         }
         window.Keys = {
             YOUTUBE_VIDEO_ID: '@appConfig.Value.UiHomeYouTubeVideoId',

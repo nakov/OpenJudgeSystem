@@ -11,11 +11,11 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
         public SulsPlatformHttpClientService(
             HttpClient client,
             ILogger<HttpClientService> logger,
-            IOptions<ApplicationConfig> appConfigOptions)
-            : base(client, logger, appConfigOptions.Value.SulsPlatformApiKey)
+            IOptions<ApplicationUrlsConfig> appUrlsOptions)
+            : base(client, logger, appUrlsOptions.Value.SulsPlatformApiKey)
         {
-            var appConfig = appConfigOptions.Value;
-            client.BaseAddress = new Uri(appConfig.SulsPlatformBaseUrl);
+            var appUrls = appUrlsOptions.Value;
+            client.BaseAddress = new Uri(appUrls.SulsPlatformBaseUrl);
         }
     }
 }

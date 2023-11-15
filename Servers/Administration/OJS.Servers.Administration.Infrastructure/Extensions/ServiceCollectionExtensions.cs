@@ -31,8 +31,9 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .AddMemoryCache()
                 .AddDistributedCaching(configuration)
                 .AddSoftUniJudgeCommonServices()
-                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
-                .AddOptionsWithValidation<EmailServiceConfig>(nameof(EmailServiceConfig))
+                .AddOptionsWithValidation<ApplicationConfig>()
+                .AddOptionsWithValidation<ApplicationUrlsConfig>()
+                .AddOptionsWithValidation<EmailServiceConfig>()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
     }

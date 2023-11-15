@@ -26,7 +26,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
-    using OJS.Common.Helpers;
     using OJS.Common.Utils;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
@@ -52,8 +51,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             => services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
-                .AddOptionsWithValidation<ApplicationConfig>(nameof(ApplicationConfig))
-                .AddOptionsWithValidation<HealthCheckConfig>(nameof(HealthCheckConfig));
+                .AddOptionsWithValidation<ApplicationConfig>()
+                .AddOptionsWithValidation<HealthCheckConfig>();
 
         /// <summary>
         /// Adds identity database and authentication services to the service collection.
@@ -98,8 +97,8 @@ namespace OJS.Servers.Infrastructure.Extensions
                     IdentityRoleClaim<string>>>();
 
             var sharedAuthCookieDomain = configuration
-                .GetSection(nameof(ApplicationConfig))
-                .GetValue<string>(nameof(ApplicationConfig.SharedAuthCookieDomain));
+                .GetSectionValueWithValidation<ApplicationConfig, string>(
+                    nameof(ApplicationConfig.SharedAuthCookieDomain));
 
             services
                 .ConfigureApplicationCookie(opt =>
@@ -192,8 +191,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .Where(t => typeof(IConsumer).IsAssignableFrom(t))
                 .ToList();
 
-            var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
-            SettingsHelper.ValidateSettings(nameof(MessageQueueConfig), messageQueueConfig);
+            var messageQueueConfig = configuration.GetSectionWithValidation<MessageQueueConfig>();
 
             services.AddMassTransit(config =>
             {
@@ -247,11 +245,11 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddTransient(s =>
                     s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
 
-        public static IServiceCollection AddOptionsWithValidation<T>(this IServiceCollection services, string settingName)
-            where T : class
+        public static IServiceCollection AddOptionsWithValidation<T>(this IServiceCollection services)
+            where T : BaseConfig
             => services
                 .AddOptions<T>()
-                .BindConfiguration(settingName)
+                .BindConfiguration(Activator.CreateInstance<T>().SectionName)
                 .ValidateDataAnnotations()
                 .ValidateOnStart()
                 .Services;
@@ -270,8 +268,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         private static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration, string instanceName)
         {
-            var redisConfig = configuration.GetSection(nameof(RedisConfig)).Get<RedisConfig>();
-            SettingsHelper.ValidateSettings(nameof(RedisConfig), redisConfig);
+            var redisConfig = configuration.GetSectionWithValidation<RedisConfig>();
 
             var redisConnection = ConnectionMultiplexer.Connect(redisConfig.ConnectionString);
 

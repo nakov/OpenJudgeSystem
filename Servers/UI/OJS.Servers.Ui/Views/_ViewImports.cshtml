@@ -1,7 +1,10 @@
 ﻿@using Microsoft.Extensions.Options
 @using OJS.Services.Common
+@using OJS.Services.Common.Models.Configurations
 @using OJS.Services.Ui.Models
+@using ApplicationConfig = OJS.Services.Ui.Models.ApplicationConfig
 @namespace OJS.Servers.Ui.Views
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+@inject IOptions<ApplicationUrlsConfig> appUrls
 @inject IOptions<ApplicationConfig> appConfig

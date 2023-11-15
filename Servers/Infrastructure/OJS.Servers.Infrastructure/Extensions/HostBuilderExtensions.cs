@@ -13,8 +13,8 @@ public static class HostBuilderExtensions
         => builder.UseSerilog((hostingContext, configuration) =>
         {
             var loggerFilePath = hostingContext.Configuration
-                .GetSection(nameof(ApplicationConfig))
-                .GetValue<string>(nameof(ApplicationConfig.LoggerFilesFolderPath));
+                .GetSectionValueWithValidation<ApplicationConfig, string>(
+                    nameof(ApplicationConfig.LoggerFilesFolderPath));
 
             var filePath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName(), "log.txt");
 
