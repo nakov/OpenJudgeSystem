@@ -3,6 +3,8 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using AutoCrudAdmin;
     using AutoCrudAdmin.Extensions;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.Extensions.Hosting;
+    using OJS.Data;
     using OJS.Servers.Administration.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Extensions;
 
@@ -13,6 +15,11 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             app
                 .UseDefaults()
                 .UseStaticFiles();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.MigrateDatabase<OjsDbContext>();
+            }
 
             app.UseHealthMonitoring();
 

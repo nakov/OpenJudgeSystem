@@ -78,7 +78,15 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
             services
-                .AddSqlDatabase<TDbContext>(globalQueryFilterTypes);
+                .AddScoped<DbContext, TDbContext>()
+                .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
+                .AddDbContext<TDbContext>(options =>
+                {
+                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                    // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
+                    options.UseLazyLoadingProxies();
+                })
+                .AddTransactionsProvider<TDbContext>();
 
             services
                 .AddIdentity<TIdentityUser, TIdentityRole>()

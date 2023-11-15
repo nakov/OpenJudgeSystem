@@ -3,6 +3,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
@@ -86,6 +87,17 @@ namespace OJS.Servers.Infrastructure.Extensions
             bool HealthMonitoringPredicate(HttpContext httpContext)
                 => httpContext.Request.Query.ContainsKey(healthCheckConfig.Key) &&
                    httpContext.Request.Query[healthCheckConfig.Key] == healthCheckConfig.Password;
+        }
+
+        public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
+            where TDbContext : DbContext
+        {
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+
+            dbContext.Database.Migrate();
+
+            return app;
         }
     }
 }

@@ -5,6 +5,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
+    using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
 
     public static class WebApplicationExtensions
@@ -21,6 +22,7 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwaggerDocs(apiVersion.ToApiName());
+                app.MigrateDatabase<OjsDbContext>();
             }
 
             //Added here, because if it is added in the end immediately after the 200 response (Healthy) the FE redirects to 404 page.
