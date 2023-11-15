@@ -46,6 +46,8 @@ namespace OJS.Servers.Infrastructure.Extensions
 
     public static class ServiceCollectionExtensions
     {
+        private const string DefaultDbConnectionName = "DefaultConnection";
+
         public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
             => services
                 .AddAutoMapperConfigurations<TStartup>()
@@ -78,14 +80,13 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
             services
-                .AddScoped<DbContext, TDbContext>()
-                .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
                 .AddDbContext<TDbContext>(options =>
                 {
-                    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                    options.UseSqlServer(configuration.GetConnectionString(DefaultDbConnectionName));
                     // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
                     options.UseLazyLoadingProxies();
                 })
+                .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
                 .AddTransactionsProvider<TDbContext>();
 
             services
@@ -131,9 +132,9 @@ namespace OJS.Servers.Infrastructure.Extensions
             IConfiguration configuration,
             ApplicationName app)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
 
-            services.AddHangfire(configuration => configuration
+            services.AddHangfire(cfg => cfg
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
