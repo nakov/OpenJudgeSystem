@@ -34,23 +34,28 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
         var contestActivityEntity = this.activityService
             .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
 
-        var contestResults = new ContestResultsViewModel
-            {
-                Id = contestResultsModel.Contest.Id,
-                Name = contestResultsModel.Contest.Name,
-                IsCompete = contestResultsModel.Official,
-                ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
-                ContestCanBePracticed = contestActivityEntity.CanBePracticed,
-                UserHasContestRights = contestResultsModel.IsUserAdminOrLecturer,
-                ContestType = contestResultsModel.Contest.Type,
-                Problems = contestResultsModel.Contest.ProblemGroups
-                    .SelectMany(pg => pg.Problems)
-                    .AsQueryable()
-                    .Where(p => !p.IsDeleted)
-                    .OrderBy(p => p.OrderBy)
-                    .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem),
-            };
+        var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
+
+        contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
+        contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
+
+        // var contestResults = new ContestResultsViewModel
+        //     {
+        //         Id = contestResultsModel.Contest.Id,
+        //         Name = contestResultsModel.Contest.Name,
+        //         IsCompete = contestResultsModel.Official,
+        //         ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
+        //         ContestCanBePracticed = contestActivityEntity.CanBePracticed,
+        //         UserHasContestRights = contestResultsModel.IsUserAdminOrLecturer,
+        //         ContestType = contestResultsModel.Contest.Type,
+        //         Problems = contestResultsModel.Contest.ProblemGroups
+        //             .SelectMany(pg => pg.Problems)
+        //             .AsQueryable()
+        //             .Where(p => !p.IsDeleted)
+        //             .OrderBy(p => p.OrderBy)
+        //             .ThenBy(p => p.Name)
+        //             .Select(ContestProblemListViewModel.FromProblem),
+        //     };
 
         var totalParticipantsCount = contestResultsModel.TotalResultsCount
                                      ?? this.participantsData
