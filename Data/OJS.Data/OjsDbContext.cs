@@ -19,10 +19,6 @@ namespace OJS.Data
     {
         private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
 
-        public OjsDbContext()
-        {
-        }
-
         public OjsDbContext(
             DbContextOptions<OjsDbContext> options,
             IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache)

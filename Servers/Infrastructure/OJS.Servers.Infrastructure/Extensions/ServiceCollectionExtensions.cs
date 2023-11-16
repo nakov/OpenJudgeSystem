@@ -21,6 +21,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Proxies;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
@@ -80,13 +81,14 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
             services
-                .AddScoped<DbContext, TDbContext>()
                 .AddDbContext<TDbContext>(options =>
                 {
-                    options.UseSqlServer(configuration.GetConnectionString(DefaultDbConnectionName));
+                    var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
+                    options.UseSqlServer(connectionString);
                     // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
                     options.UseLazyLoadingProxies();
                 })
+                .AddScoped<DbContext, TDbContext>()
                 .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
                 .AddTransactionsProvider<TDbContext>();
 
