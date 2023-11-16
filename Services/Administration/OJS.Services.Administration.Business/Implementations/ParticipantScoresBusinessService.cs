@@ -24,6 +24,7 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         this.submissionsData = submissionsData;
     }
 
+    //TODO: ResetBySubmission
     public async Task RecalculateForParticipantByProblem(int participantId, int problemId)
     {
         var submission = this.submissionsData.GetBestForParticipantByProblem(participantId, problemId);

@@ -46,7 +46,9 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task<ServiceResult> DeleteById(int id)
         {
-            var problemGroup = await this.problemGroupsData.OneById(id);
+            var problemGroup = await this.problemGroupsData.GetByIdQuery(id)
+                .Include(p => p.Problems)
+                .FirstOrDefaultAsync();
 
             if (problemGroup != null && !problemGroup.IsDeleted)
             {
@@ -84,9 +86,9 @@ namespace OJS.Services.Administration.Business.Implementations
             var sourceContestProblemGroups = await this.problemGroupsData
                 .GetAllByContestId(sourceContestId)
                 .Include(pg => pg.Problems)
-                .ThenInclude(p => p.Tests)
+                    .ThenInclude(p => p.Tests)
                 .Include(pg => pg.Problems)
-                .ThenInclude(p => p.Resources)
+                    .ThenInclude(p => p.Resources)
                 .ToListAsync();
 
             await sourceContestProblemGroups

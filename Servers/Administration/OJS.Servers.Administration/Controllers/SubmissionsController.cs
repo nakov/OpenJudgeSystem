@@ -120,7 +120,9 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     {
         var submissionId = this.GetEntityIdFromQuery<int>(complexId);
 
-        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+        var submission = await this.submissionsData.GetByIdQuery(submissionId)
+            .Include(s => s.SubmissionType)
+            .FirstOrDefaultAsync();
 
         if (submission is null || !submission.ParticipantId.HasValue)
         {

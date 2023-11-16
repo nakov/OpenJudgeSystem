@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using Microsoft.EntityFrameworkCore;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
@@ -576,6 +577,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
         var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        if (entity.ProblemGroup == default)
+        {
+            var problemGroup = await this.problemGroupsData.GetAllByContestId(contestId)
+                .Where(group => group.Problems.Any(problem => problem.Id == entity.Id))
+                .FirstOrDefaultAsync();
+
+            entity.ProblemGroup = problemGroup!;
+        }
 
         await this.problemsBusiness.ReevaluateProblemsOrder(contestId, entity);
     }
