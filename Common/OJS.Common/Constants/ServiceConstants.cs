@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Common
+﻿namespace OJS.Common.Constants
 {
     public static class ServiceConstants
     {

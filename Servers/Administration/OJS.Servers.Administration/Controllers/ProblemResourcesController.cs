@@ -120,9 +120,10 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         ProblemResource entity,
         EntityAction action,
         IDictionary<string, string> entityDict,
-        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters)
+        IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
+        Type? autocompleteType)
     {
-        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters)
+        var formControls = await base.GenerateFormControlsAsync(entity, action, entityDict, complexOptionFilters, autocompleteType)
             .ToListAsync();
         await this.ModifyFormControls(formControls, entity, action, entityDict);
         formControls.AddRange(GetAdditionalFormControls());
