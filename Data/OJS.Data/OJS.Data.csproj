@@ -5,7 +5,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Infrastructure\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj" />
       <ProjectReference Include="..\OJS.Data.Models\OJS.Data.Models.csproj" />
     </ItemGroup>
 

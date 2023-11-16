@@ -21,7 +21,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Proxies;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
