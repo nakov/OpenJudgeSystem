@@ -11,7 +11,7 @@ const submissionDetailsService = createApi({
     reducerPath: submissionDetailsPageServiceName,
     baseQuery: fetchBaseQuery({
         baseUrl: window.URLS.UI_URL,
-        prepareHeaders: (headers: any) => {
+        prepareHeaders: (headers: Headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
