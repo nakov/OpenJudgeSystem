@@ -20,4 +20,7 @@ RUN yarn build
 # Serve using Nginx
 FROM nginx:alpine
 COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/ClientApp/dist /usr/share/nginx/html
+
+# Handle client side routing
+COPY Docker/applications/fe/default.config /etc/nginx/conf.d/default.conf
 CMD ["nginx", "-g", "daemon off;"]

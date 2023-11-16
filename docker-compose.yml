@@ -35,9 +35,11 @@ services:
     restart: on-failure
     volumes:
       - ./Logs:/Logs
+      - .:/app
+      - /app/node_modules
     env_file:
       - Docker/common/common.env
-      - Docker/applications/ui/ui.env
+      - Docker/applications/fe/fe.env
     links:
       - ui
     depends_on:
