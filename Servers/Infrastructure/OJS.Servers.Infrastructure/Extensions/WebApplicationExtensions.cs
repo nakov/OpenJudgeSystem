@@ -78,15 +78,13 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static void UseHealthMonitoring(this WebApplication app)
         {
-            var healthCheckOptions = app.Services.GetRequiredService<IOptions<HealthCheckConfig>>();
-            var healthCheckConfig = healthCheckOptions.Value;
+            var healthCheckConfig = app.Services.GetRequiredService<IOptions<HealthCheckConfig>>().Value;
 
-            app.MapWhen(HealthMonitoringPredicate, appBuilder => appBuilder.UseHealthChecks("/health"));
-            return;
-
-            bool HealthMonitoringPredicate(HttpContext httpContext)
-                => httpContext.Request.Query.ContainsKey(healthCheckConfig.Key) &&
-                   httpContext.Request.Query[healthCheckConfig.Key] == healthCheckConfig.Password;
+            app.MapWhen(
+                httpContext =>
+                    httpContext.Request.Query.TryGetValue(healthCheckConfig.Key, out var healthPassword)
+                    && healthPassword == healthCheckConfig.Password,
+                appBuilder => appBuilder.UseHealthChecks("/health"));
         }
 
         public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
