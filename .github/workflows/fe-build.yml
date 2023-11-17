@@ -10,7 +10,7 @@ on:
     branches:
       - "*"
 jobs:
-  build-and-push-ui:
+  build-and-push-fe:
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_ui_fe
