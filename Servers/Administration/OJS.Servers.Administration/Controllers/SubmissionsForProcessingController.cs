@@ -7,7 +7,7 @@ using OJS.Data.Models.Submissions;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Common;
-using Infrastructure.Extensions;
+using Extensions;
 using Microsoft.Extensions.Options;
 using OJS.Services.Administration.Models;
 

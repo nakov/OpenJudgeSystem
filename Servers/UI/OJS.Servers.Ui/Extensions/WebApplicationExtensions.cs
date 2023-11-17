@@ -1,4 +1,4 @@
-namespace OJS.Servers.Ui.Infrastructure.Extensions
+namespace OJS.Servers.Ui.Extensions
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
@@ -7,8 +7,9 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
     using Microsoft.Extensions.Hosting;
     using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
+    using System.IO;
 
-    public static class WebApplicationExtensions
+    internal static class WebApplicationExtensions
     {
         public static WebApplication ConfigureWebApplication(
             this WebApplication app,

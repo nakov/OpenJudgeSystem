@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Common;
 using OJS.Services.Administration.Models;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
