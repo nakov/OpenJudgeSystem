@@ -2,6 +2,12 @@ enum SearchParams {
     search = 'searchTerm',
 }
 
+enum SearchCategory {
+    User = 'Users',
+    Contest = 'Contests',
+    Problem = 'Problems'
+}
+
 interface IContestSearchType{
     id: number;
     name: string;
@@ -39,6 +45,7 @@ interface IUserSearchType {
 
 export {
     SearchParams,
+    SearchCategory,
 };
 
 export type {
