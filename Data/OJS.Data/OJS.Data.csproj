@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="6.0.16" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.25" />
     </ItemGroup>
 
 </Project>
