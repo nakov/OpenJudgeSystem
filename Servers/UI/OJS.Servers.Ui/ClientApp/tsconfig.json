@@ -23,8 +23,10 @@
   "include": [
     "src",
     "typings.d.ts",
-    "env.d.ts",
     "client.d.ts",
     "importMeta.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
   ]
 }
