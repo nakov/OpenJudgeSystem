@@ -5,12 +5,16 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../common/constants';
 import { IContestDetailsProblemType, IProblemResourceType } from '../../common/types';
+import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import { ButtonState, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List from '../../components/guidelines/lists/List';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../components/problems/problem-resource/ProblemResource';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
+import { useContestCategories } from '../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -49,14 +53,39 @@ const ContestDetailsPage = () => {
     } = useCurrentContest();
     const { actions: { setPageTitle } } = usePageTitles();
     const navigate = useNavigate();
+    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
+    const { state: { strategies }, actions: { load: loadStrategies } } = useContestStrategyFilters();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
 
     useEffect(
         () => {
             if (contestDetails) {
                 setPageTitle(contestDetails.name);
             }
+
+            if (isEmpty(categoriesFlat)) {
+                (async () => {
+                    await loadCategories();
+                })();
+            }
+
+            if (isEmpty(strategies)) {
+                (async () => {
+                    await loadStrategies();
+                })();
+            }
         },
-        [ contestDetails, setPageTitle ],
+        [ contestDetails, setPageTitle, loadCategories, categoriesFlat, strategies, loadStrategies ],
+    );
+
+    useEffect(
+        () => {
+            if (!isNil(contestDetails) && !isEmpty(categoriesFlat)) {
+                const category = categoriesFlat.find(({ id }) => id.toString() === contestDetails.categoryId.toString());
+                updateBreadcrumb(category, categoriesFlat);
+            }
+        },
+        [ categoriesFlat, contestDetails, updateBreadcrumb ],
     );
 
     const { contestId } = params;
@@ -310,6 +339,9 @@ const ContestDetailsPage = () => {
 
             return (
                 <div className={styles.container}>
+                    <div className={styles.breadcrumbContainer}>
+                        <ContestBreadcrumb />
+                    </div>
                     <div className={styles.headingContest}>{contestDetails?.name}</div>
                     <div className={styles.contestDetailsAndTasks}>
                         <div className={styles.detailsContainer}>
@@ -345,7 +377,12 @@ const ContestDetailsPage = () => {
                 </div>
             );
         },
-        [ renderTasksList, contestDetails, renderContestButtons, renderAllowedSubmissionTypes ],
+        [
+            renderTasksList,
+            contestDetails,
+            renderContestButtons,
+            renderAllowedSubmissionTypes,
+        ],
     );
 
     const renderErrorHeading = useCallback(

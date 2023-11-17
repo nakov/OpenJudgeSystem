@@ -33,7 +33,9 @@
         "MessageQueueConfig__VirtualHost": "ojs",
         "MessageQueueConfig__User": "ojsuser",
         "MessageQueueConfig__Password": "myS3cretPass2",
-        "MessageQueueConfig__PrefetchCount": "1"
+        "MessageQueueConfig__PrefetchCount": "1",
+        "HealthCheckConfig__Key": "Key",
+        "HealthCheckConfig__Password": "password"
       }
     }
   }
