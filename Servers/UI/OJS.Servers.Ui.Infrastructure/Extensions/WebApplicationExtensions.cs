@@ -19,10 +19,11 @@ namespace OJS.Servers.Ui.Infrastructure.Extensions
                 .MapDefaultRoutes()
                 .UseReactStaticFiles();
 
+            app.MigrateDatabase<OjsDbContext>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwaggerDocs(apiVersion.ToApiName());
-                app.MigrateDatabase<OjsDbContext>();
             }
 
             //Added here, because if it is added in the end immediately after the 200 response (Healthy) the FE redirects to 404 page.

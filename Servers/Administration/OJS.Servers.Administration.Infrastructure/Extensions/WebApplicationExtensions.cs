@@ -16,10 +16,7 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
                 .UseDefaults()
                 .UseStaticFiles();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.MigrateDatabase<OjsDbContext>();
-            }
+            app.MigrateDatabase<OjsDbContext>();
 
             app.UseHealthMonitoring();
 
