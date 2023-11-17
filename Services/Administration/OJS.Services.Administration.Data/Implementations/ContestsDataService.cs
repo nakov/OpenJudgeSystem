@@ -49,7 +49,7 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
                 .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(pg => pg.Problems)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
         public Task<Contest?> GetByIdWithParticipants(int id)
@@ -93,6 +93,9 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public IQueryable<Contest> GetAllByLecturer(string? lecturerId)
             => this.DbSet
+                .Include(c => c.LecturersInContests)
+                .Include(c => c.Category)
+                    .ThenInclude(c => c!.LecturersInContestCategories)
                 .Where(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
@@ -133,6 +136,9 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId)
             => this.GetByIdQuery(id)
+                .Include(c => c.LecturersInContests)
+                .Include(c => c.Category)
+                    .ThenInclude(c => c!.LecturersInContestCategories)
                 .AnyAsync(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
@@ -145,6 +151,8 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public Task<bool> IsUserInExamGroupByContestAndUser(int id, string? userId)
             => this.DbSet
+                .Include(c => c.ExamGroups)
+                    .ThenInclude(eg => eg.UsersInExamGroups)
                 .AnyAsync(c =>
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));

@@ -37,6 +37,9 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId)
             => this.GetAllVisible()
+                .Include(cc => cc.LecturersInContestCategories)
+                .Include(cc => cc.Contests)
+                    .ThenInclude(c => c.LecturersInContests)
                 .Where(cc =>
                     cc.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId) ||
                     cc.Contests.Any(c => c.LecturersInContests.Any(l => l.LecturerId == lecturerId)));

@@ -51,6 +51,8 @@
             DateTime createdBeforeDate,
             DateTime nonBestCreatedBeforeDate)
             => this.DbSet
+                .Include(s => s.Participant)
+                    .ThenInclude(p => p!.Scores)
                 .Where(s => s.CreatedOn < createdBeforeDate ||
                             (s.CreatedOn < nonBestCreatedBeforeDate &&
                              s.Participant!.Scores.All(ps => ps.SubmissionId != s.Id)));
