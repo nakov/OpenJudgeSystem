@@ -19,15 +19,41 @@ public class SearchController : BaseApiController
         => this.searchBusinessService = searchBusinessService;
 
     /// <summary>
-    /// Searches for all contests, problems and users that match the search.
+    /// Searches for all contests that match the search.
     /// </summary>
-    /// <param name="model">The required search from the user and page options..</param>
-    /// <returns>A page with contests, problems and users based on the search.</returns>
+    /// <param name="model">The required search criteria from the user and pagination options.</param>
+    /// <returns>A collections of contests based on the search results.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(SearchResponseModel), Status200OK)]
-    public async Task<IActionResult> GetSearchResults([FromQuery] SearchRequestModel model)
+    [ProducesResponseType(typeof(ContestSearchResponseModel), Status200OK)]
+    public async Task<IActionResult> GetContestsSearchResults([FromQuery] SearchRequestModel model)
         => await this.searchBusinessService
-            .GetSearchResults(model.Map<SearchServiceModel>())
-            .Map<PagedResultResponse<SearchResponseModel>>()
+            .GetContestSearchResults(model.Map<SearchServiceModel>())
+            .Map<PagedResultResponse<ContestSearchResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Searches for all problems that match the search.
+    /// </summary>
+    /// <param name="model">The required search criteria from the user and pagination options.</param>
+    /// <returns>A collections of problems based on the search results.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(ProblemSearchResponseModel), Status200OK)]
+    public async Task<IActionResult> GetProblemsSearchResults([FromQuery] SearchRequestModel model)
+        => await this.searchBusinessService
+            .GetProblemSearchResults(model.Map<SearchServiceModel>())
+            .Map<PagedResultResponse<ProblemSearchResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Searches for all users that match the search.
+    /// </summary>
+    /// <param name="model">The required search criteria from the user and pagination options.</param>
+    /// <returns>A collections of users based on the search results.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(UserSearchResponseModel), Status200OK)]
+    public async Task<IActionResult> GetUsersSearchResults([FromQuery] SearchRequestModel model)
+        => await this.searchBusinessService
+            .GetUserSearchResults(model.Map<SearchServiceModel>())
+            .Map<PagedResultResponse<UserSearchResponseModel>>()
             .ToOkResult();
 }

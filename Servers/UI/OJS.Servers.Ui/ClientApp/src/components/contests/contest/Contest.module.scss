@@ -3,6 +3,11 @@
 @use 'src/styles/global';
 @use 'src/styles/variables';
 
+.breadcrumbContainer {
+  display: flex;
+  justify-content: center;
+}
+
 .contestWrapper {
   @extend %wrapper;
   @extend %columnsThree;
