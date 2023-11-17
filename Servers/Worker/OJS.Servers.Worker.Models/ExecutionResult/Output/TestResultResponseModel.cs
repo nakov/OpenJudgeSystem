@@ -28,5 +28,8 @@ public class TestResultResponseModel : IMapExplicitly
                 opt => opt.MapFrom(src => src.ResultType.ToString()))
             .ForMember(
                 m => m.Output,
-                opt => opt.MapFrom(src => src.CheckerDetails.UserOutputFragment));
+                opt => opt.MapFrom(src => src.CheckerDetails.UserOutputFragment))
+            .ForMember(
+                m => m.CheckerDetails,
+                opt => opt.MapFrom(src => src.CheckerDetails));
 }

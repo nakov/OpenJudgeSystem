@@ -7,11 +7,11 @@
     using OJS.Common.Utils;
     using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Worker.Models.Configuration;
     using OJS.Workers.Common;
     using OJS.Workers.SubmissionProcessors;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-
     public static class ServiceCollectionExtensions
     {
         private const string SubmissionsProcessorIdentifierNumberEnvVariableName =
@@ -19,9 +19,8 @@
 
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
-            IConfiguration configuration)
-            => services
-                .AddWebServer<TProgram>()
+            IConfiguration configuration) =>
+            services.AddWebServer<TProgram>()
                 .AddScoped<DbContext, OjsDbContext>()
                 .AddSubmissionExecutor()
                 .AddMemoryCache()
@@ -37,6 +36,7 @@
             app.UseAutoMapper();
             app.MapControllers();
 
+            app.UseHealthMonitoring();
             return app;
         }
 
@@ -50,6 +50,7 @@
             this IServiceCollection services,
             IConfiguration configuration)
             => services
-                .Configure<SubmissionExecutionConfig>(configuration.GetSection(nameof(SubmissionExecutionConfig)));
+                .Configure<SubmissionExecutionConfig>(configuration.GetSection(nameof(SubmissionExecutionConfig)))
+                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }

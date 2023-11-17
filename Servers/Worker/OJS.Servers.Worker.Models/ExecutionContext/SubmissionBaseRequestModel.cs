@@ -4,6 +4,7 @@
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
+    using OJS.Services.Common.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -37,8 +38,13 @@
             var mapping = configuration
                 .CreateMap<TSubmissionRequestModel, SubmissionServiceModel>()
                 .ForMember(
+                    m => m.ExecutionType,
+                    opt => opt.MapFrom<ExecutionTypeMemberValueResolver, string>(src =>
+                        src.ExecutionType ?? string.Empty))
+                .ForMember(
                     m => m.ExecutionStrategy,
-                    opt => opt.MapFrom(src => src.ExecutionStrategy))
+                    opt => opt.MapFrom<ExecutionStrategyValueResolver, string>(src
+                        => src.ExecutionStrategy ?? string.Empty))
                 .ForMember(
                     m => m.SimpleExecutionDetails,
                     opt => opt.MapFrom(src =>
