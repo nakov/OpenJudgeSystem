@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Data;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
@@ -47,8 +48,16 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                     .Select(ContestProblemListViewModel.FromProblem),
             };
 
+        //TODO double check with valid submission > Check proper loading of scores
+
         var participants = this.participantsCommonData
                 .GetAllByContestAndIsOfficial(contest.Id, official);
+
+        // var participants = this.participantsCommonData
+        //     .GetAllByContestAndIsOfficial(contest.Id, official)
+        //     .Include(p => p.Scores)
+        //         .ThenInclude(s => s.Problem)
+        //             .ThenInclude(p => p.ProblemGroup);
 
         var participantResults = participants
                 .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
