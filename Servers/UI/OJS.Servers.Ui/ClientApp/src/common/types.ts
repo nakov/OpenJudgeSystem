@@ -1,7 +1,9 @@
+import React from 'react';
+
 import { ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 
-import { IContestSearchType, IProblemSearchType, IUserSearchType } from './search-types';
+import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
     id: number;
@@ -96,6 +98,7 @@ interface IContestDetailsResponseType {
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
     competeParticipantsCount: number;
     practiceParticipantsCount: number;
+    categoryId: number;
 }
 
 interface IContestType {
@@ -166,6 +169,7 @@ interface IRegisterForContestResponseType {
     isOnlineExam: boolean;
     duration: number;
     numberOfProblems: number;
+    categoryId: number;
 }
 
 interface IStartParticipationResponseType {
@@ -214,15 +218,16 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
-interface ISearchResponseModel {
-    contests: IContestSearchType[];
-    problems: IProblemSearchType[];
-    users: IUserSearchType[];
+interface ISearchProps<T> {
+    searchTerm : string;
+    searchCategory : SearchCategory;
+    renderItem: (item: T) => React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
+    ISearchProps,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,
@@ -236,7 +241,6 @@ export type {
     IPage,
     IUserResponseType,
     IUserPermissionsType,
-    ISearchResponseModel,
     IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,

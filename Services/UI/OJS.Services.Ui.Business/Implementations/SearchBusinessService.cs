@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
-using System;
 using System.Threading.Tasks;
+using System.Linq;
 using Models.Search;
 using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -29,10 +29,10 @@ public class SearchBusinessService : ISearchBusinessService
         this.searchValidationService = searchValidationService;
     }
 
-    public async Task<PagedResult<SearchForListingServiceModel>> GetSearchResults(
+    public async Task<PagedResult<ContestSearchServiceModel>> GetContestSearchResults(
         SearchServiceModel model)
     {
-        model.SearchTerm = model.SearchTerm?.Trim();
+        NormalizeSearchModel(model);
 
         var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
 
@@ -41,52 +41,92 @@ public class SearchBusinessService : ISearchBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var searchListingModel = new SearchForListingServiceModel();
-        model.ItemsPerPage = DefaultItemsPerPage;
+        var contestSearchListingModel = new ContestSearchForListingServiceModel();
+        await this.PopulateSelectedConditionValues(model, contestSearchListingModel);
 
-        await this.PopulateSelectedConditionValues(model, searchListingModel);
-
-        var modelResult = model.Map<PagedResult<SearchForListingServiceModel>>();
-        modelResult.Items = new[] { searchListingModel, };
+        var modelResult = model.Map<PagedResult<ContestSearchServiceModel>>();
+        modelResult.Items = contestSearchListingModel.Contests;
 
         return modelResult;
     }
 
-    private static int CalculateMaxItemsCount(int usersCount, int contestsCount, int problemsCount)
-        => Math.Max(Math.Max(usersCount, contestsCount), problemsCount);
+    public async Task<PagedResult<ProblemSearchServiceModel>> GetProblemSearchResults(
+        SearchServiceModel model)
+    {
+        NormalizeSearchModel(model);
+
+        var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        var problemsSearchListingModel = new ProblemSearchForListingServiceModel();
+        await this.PopulateSelectedConditionValues(model, problemsSearchListingModel);
+
+        var modelResult = model.Map<PagedResult<ProblemSearchServiceModel>>();
+        modelResult.Items = problemsSearchListingModel.Problems;
+
+        return modelResult;
+    }
+
+    public async Task<PagedResult<UserSearchServiceModel>> GetUserSearchResults(
+        SearchServiceModel model)
+    {
+        NormalizeSearchModel(model);
+
+        var validationResult = this.searchValidationService.GetValidationResult(model.SearchTerm);
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        var usersSearchListingModel = new UserSearchForListingServiceModel();
+        await this.PopulateSelectedConditionValues(model, usersSearchListingModel);
+
+        var modelResult = model.Map<PagedResult<UserSearchServiceModel>>();
+        modelResult.Items = usersSearchListingModel.Users;
+
+        return modelResult;
+    }
+
+    private static void NormalizeSearchModel(SearchServiceModel model)
+    {
+        model.SearchTerm = model.SearchTerm?.Trim();
+        model.ItemsPerPage = DefaultItemsPerPage;
+    }
 
     private async Task PopulateSelectedConditionValues(
         SearchServiceModel model,
-        SearchForListingServiceModel searchListingModel)
+        object searchListingModel)
     {
-        ContestSearchServiceResultModel contestsResult = new ();
-        ProblemSearchServiceResultModel problemsResult = new ();
-        UserSearchServiceResultModel usersResult = new ();
-
-        if (model.Contests)
+        if (searchListingModel is ContestSearchForListingServiceModel contestListingModel)
         {
-            contestsResult = await this.contestsBusinessService.GetSearchContestsByName(model);
+            var contestsResult = await this.contestsBusinessService.GetSearchContestsByName(model);
 
-            searchListingModel.Contests = contestsResult.Contests;
+            contestListingModel.Contests = contestsResult.Contests;
+
+            model.TotalItemsCount = contestsResult.TotalContestsCount;
         }
 
-        if (model.Problems)
+        if (searchListingModel is ProblemSearchForListingServiceModel problemListingModel)
         {
-            problemsResult = await this.problemsBusinessService.GetSearchProblemsByName(model);
+            var problemsResult = await this.problemsBusinessService.GetSearchProblemsByName(model);
 
-            searchListingModel.Problems = problemsResult.Problems;
+            problemListingModel.Problems = problemsResult.Problems;
+
+            model.TotalItemsCount = problemsResult.TotalProblemsCount;
         }
 
-        if (model.Users)
+        if (searchListingModel is UserSearchForListingServiceModel userListingModel)
         {
-            usersResult = await this.usersBusinessService.GetSearchUsersByUsername(model);
+            var usersResult = await this.usersBusinessService.GetSearchUsersByUsername(model);
 
-            searchListingModel.Users = usersResult.Users;
+            userListingModel.Users = usersResult.Users;
+
+            model.TotalItemsCount = usersResult.TotalUsersCount;
         }
-
-        model.TotalItemsCount = CalculateMaxItemsCount(
-            usersResult.TotalUsers,
-            contestsResult.TotalContestsCount,
-            problemsResult.TotalProblemsCount);
     }
 }

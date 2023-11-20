@@ -21,8 +21,13 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
         this.userProviderService = userProviderService;
     }
 
-    public bool IsUserAdminOrLecturerInContest(Contest contest)
+    public bool IsUserAdminOrLecturerInContest(Contest? contest)
     {
+        if (contest == null)
+        {
+            return false;
+        }
+
         var isAdmin = this.userProviderService.GetCurrentUser().IsAdmin;
 
         var isUserLecturerInContest = this.IsUserLecturerInContest(contest);
