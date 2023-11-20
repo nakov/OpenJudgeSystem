@@ -6,5 +6,5 @@ public class UserSearchServiceResultModel
 {
     public IPagedList<UserSearchServiceModel> Users { get; set; } = null!;
 
-    public int TotalUsers { get; set; }
+    public int TotalUsersCount { get; set; }
 }

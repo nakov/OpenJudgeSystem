@@ -4,6 +4,7 @@ using System;
 using AutoMapper;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using SoftUni.Common.Models;
+
 public class SearchServiceModel : IMapExplicitly
 {
     public string? SearchTerm { get; set; }
@@ -23,29 +24,38 @@ public class SearchServiceModel : IMapExplicitly
     public int PagesCount { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<SearchServiceModel, PagedResult<SearchForListingServiceModel>>()
-            .ForMember(
-                dest => dest.PageNumber,
-                opt => opt.MapFrom(
-                    src => src.PageNumber))
-            .ForMember(
-                dest => dest.TotalItemsCount,
-                opt => opt.MapFrom(
-                    src => src.TotalItemsCount))
-            .ForMember(
-                dest => dest.ItemsPerPage,
-                opt => opt.MapFrom(
-                    src => src.ItemsPerPage))
-            .ForMember(
-                dest => dest.PagesCount,
-                opt => opt.MapFrom(
-                    src => src.PagesCount))
-            .ForMember(
-                dest => dest.PagesCount,
-                opt => opt.MapFrom(
-                    src => src.TotalItemsCount <= src.ItemsPerPage
-                        ? 1
-                        : (int)Math.Ceiling(src.TotalItemsCount / (double)src.ItemsPerPage)))
-            .ForAllOtherMembers(
-                dest => dest.Ignore());
+    {
+        configuration.CreateMap<SearchServiceModel, PagedResult<ContestSearchServiceModel>>()
+            .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
+
+        configuration.CreateMap<SearchServiceModel, PagedResult<ProblemSearchServiceModel>>()
+            .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
+
+        configuration.CreateMap<SearchServiceModel, PagedResult<UserSearchServiceModel>>()
+            .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
+    }
+
+    private static void ConfigurePagedResultCommon<T>(IMemberConfigurationExpression<SearchServiceModel, PagedResult<T>, object> opts)
+    {
+        switch (opts.DestinationMember.Name)
+        {
+            case "PageNumber":
+                opts.MapFrom(src => src.PageNumber);
+                break;
+            case "TotalItemsCount":
+                opts.MapFrom(src => src.TotalItemsCount);
+                break;
+            case "ItemsPerPage":
+                opts.MapFrom(src => src.ItemsPerPage);
+                break;
+            case "PagesCount":
+                opts.MapFrom(src => src.TotalItemsCount <= src.ItemsPerPage
+                    ? 1
+                    : (int)Math.Ceiling(src.TotalItemsCount / (double)src.ItemsPerPage));
+                break;
+            default:
+                opts.Ignore();
+                break;
+        }
+    }
 }
