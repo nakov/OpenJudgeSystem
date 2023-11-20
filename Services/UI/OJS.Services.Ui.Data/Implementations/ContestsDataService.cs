@@ -165,9 +165,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public Task<bool> IsUserLecturerInByContestAndUser(int id, string userId)
         => this.GetByIdQuery(id)
-            .Include(c => c.LecturersInContests)
-            .Include(c => c.Category)
-                .ThenInclude(cc => cc!.LecturersInContestCategories)
             .AnyAsync(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));

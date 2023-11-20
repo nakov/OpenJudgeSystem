@@ -148,8 +148,6 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public Task<bool> IsUserInExamGroupByContestAndUser(int id, string? userId)
             => this.DbSet
-                .Include(c => c.ExamGroups)
-                    .ThenInclude(eg => eg.UsersInExamGroups)
                 .AnyAsync(c =>
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
