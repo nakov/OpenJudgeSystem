@@ -64,7 +64,7 @@ dependencies {
     java17 group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.1'
 
     java17 group: 'org.apache.maven.plugins', name: 'maven-assembly-plugin', version: '3.6.0'
-    java17 group: 'org.slf4j', name: 'log4j-over-slf4js', version: '1.7.25'
+    java17 group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.25'
     java17 group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
     java17 group: 'jakarta.el', name: 'jakarta.el-api', version: '5.0.0'
     java17 group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.1'
