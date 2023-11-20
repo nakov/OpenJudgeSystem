@@ -20,7 +20,9 @@ const SearchProblemTooltip = ({ problem }: ISearchProblem) => {
     return (
         <div className={searchProblemCardHeaderClassName}>
             <div className={styles.tooltip}>
-                <span className={styles.tooltipText}>{name}</span>
+                <span className={styles.tooltipText}>
+                    {name}
+                </span>
             </div>
             <span
               className={searchProblemClassName}
