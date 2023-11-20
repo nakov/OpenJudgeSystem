@@ -52,7 +52,7 @@ public class ContestsExportController : BaseAdminViewController
         var exportType = model.SubmissionExportType;
 
         var userHasAccessToContest = this.User.IsAdmin() ||
-            await this.contestsData.IsUserLecturerInByContestAndUser(id, this.User.GetId());
+            await this.contestsData.IsUserLecturerInContestByContestAndUser(id, this.User.GetId());
 
         if (!userHasAccessToContest)
         {

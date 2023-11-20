@@ -134,11 +134,8 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Select(c => c.Type)
                 .FirstOrDefaultAsync() == ContestType.OnlinePracticalExam;
 
-        public Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId)
+        public Task<bool> IsUserLecturerInContestByContestAndUser(int id, string? userId)
             => this.GetByIdQuery(id)
-                .Include(c => c.LecturersInContests)
-                .Include(c => c.Category)
-                    .ThenInclude(c => c!.LecturersInContestCategories)
                 .AnyAsync(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == userId) ||
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
