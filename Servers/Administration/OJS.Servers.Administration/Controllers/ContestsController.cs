@@ -13,6 +13,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
+    using OJS.Servers.Administration.Infrastructure.Extensions;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
@@ -256,12 +257,20 @@ namespace OJS.Servers.Administration.Controllers
 
         protected override Expression<Func<Contest, bool>>? GetMasterGridFilter()
         {
+            var filterExpressions = new List<Expression<Func<Contest, bool>>>();
+
+            var filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+            filterExpressions.Add(filterByLecturerRightsExpression);
+
             if (this.TryGetEntityIdForStringColumnFilter(ContestCategoryName, out var categoryName))
             {
-                return c => c.Category != null && c.Category.Name == categoryName;
+                filterExpressions.Add(c => c.Category != null && c.Category.Name == categoryName);
             }
 
-            return base.MasterGridFilter;
+            return filterExpressions.CombineMultiple();
         }
 
         private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
@@ -306,10 +315,5 @@ namespace OJS.Servers.Administration.Controllers
                 await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
             }
         }
-
-        private Expression<Func<Contest, bool>>? GetMasterGridFilter()
-            => this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
     }
 }

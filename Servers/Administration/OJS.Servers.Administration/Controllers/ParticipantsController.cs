@@ -4,6 +4,7 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
+using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
@@ -118,20 +119,7 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
             filterExpressions.Add(cc => cc.User.UserName == userName);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<Participant, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<Participant, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return base.MasterGridFilter;
+        return filterExpressions.CombineMultiple();
     }
 
     private Task ValidateContestPermissions(Participant entity)

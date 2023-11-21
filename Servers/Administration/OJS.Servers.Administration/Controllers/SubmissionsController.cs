@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
@@ -18,7 +19,6 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
@@ -213,16 +213,16 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         });
     }
 
-    protected override Expression<Func<Submission, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<Submission, bool>> GetMasterGridFilter()
     {
         var filterExpressions = new List<Expression<Func<Submission, bool>>>();
 
-        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
+        var filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
             .GetSubmissionsUserPrivilegesExpression(
                 this.User.GetId(),
                 this.User.IsAdmin());
 
-        Expression<Func<Submission, bool>> filterByKeyExpression = null!;
+        filterExpressions.Add(filterByLecturerRightsExpression);
 
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
@@ -254,20 +254,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             filterExpressions.Add(s => s.Participant != null && s.Participant.UserId == participant);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<Submission, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<Submission, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filterByKeyExpression);
+        return filterExpressions.CombineMultiple();
     }
 
     private IActionResult RedirectToSubmissionById(int id)

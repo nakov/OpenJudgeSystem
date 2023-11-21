@@ -6,6 +6,7 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Common;
 using OJS.Data.Models;
+using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
@@ -114,7 +115,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
             .VerifyResult();
     }
 
-    protected override Expression<Func<UserInExamGroup, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<UserInExamGroup, bool>> GetMasterGridFilter()
     {
         var filterExpressions = new List<Expression<Func<UserInExamGroup, bool>>>();
 
@@ -133,20 +134,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
             filterExpressions.Add(ueg => ueg.User.UserName == examGroupUsername);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<UserInExamGroup, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<UserInExamGroup, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return base.MasterGridFilter;
+        return filterExpressions.CombineMultiple();
     }
 
     private static void LockExamGroupId(IEnumerable<FormControlViewModel> formControls, int examGroupId)

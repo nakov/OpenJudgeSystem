@@ -604,9 +604,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .VerifyResult();
     }
 
-    protected override Expression<Func<Problem, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<Problem, bool>> GetMasterGridFilter()
     {
         var filterExpressions = new List<Expression<Func<Problem, bool>>>();
+
+        var filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusiness.GetProblemsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        filterExpressions.Add(filterByLecturerRightsExpression);
 
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
@@ -618,20 +625,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             filterExpressions.Add(p => p.Checker != null && p.Checker.Name == checkerName);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<Problem, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<Problem, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return base.MasterGridFilter;
+        return filterExpressions.CombineMultiple();
     }
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
@@ -732,19 +726,5 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new () { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
             new () { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
         };
-    }
-
-    private Expression<Func<Problem, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<Problem, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusiness.GetProblemsUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
-            ? x => x.ProblemGroup.ContestId == contestId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

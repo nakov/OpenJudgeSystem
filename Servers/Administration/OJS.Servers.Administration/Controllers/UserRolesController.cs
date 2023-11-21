@@ -6,6 +6,7 @@ using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Common;
 using OJS.Data.Models.Users;
+using OJS.Servers.Administration.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -56,7 +57,7 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
         return formControls;
     }
 
-    protected override Expression<Func<UserInRole, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<UserInRole, bool>> GetMasterGridFilter()
     {
         var filterExpressions = new List<Expression<Func<UserInRole, bool>>>();
 
@@ -75,19 +76,6 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
             filterExpressions.Add(ur => ur.Role.Name == roleName);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<UserInRole, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<UserInRole, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return base.MasterGridFilter;
+        return filterExpressions.CombineMultiple();
     }
 }

@@ -6,6 +6,7 @@ using static OJS.Common.GlobalConstants.Roles;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
+using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Common;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
@@ -26,6 +27,7 @@ public class LecturersInContestCategoriesController : BaseAutoCrudAdminControlle
 
     protected override Expression<Func<LecturerInContestCategory, bool>>? MasterGridFilter
         => this.GetMasterGridFilter();
+
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         LecturerInContestCategory entity,
         EntityAction action,
@@ -65,19 +67,6 @@ public class LecturersInContestCategoriesController : BaseAutoCrudAdminControlle
             filterExpressions.Add(lic => lic.Lecturer.UserName == lecturerName);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<LecturerInContestCategory, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<LecturerInContestCategory, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return base.MasterGridFilter;
+        return filterExpressions.CombineMultiple();
     }
 }

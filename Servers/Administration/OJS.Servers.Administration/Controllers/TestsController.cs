@@ -334,9 +334,16 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         UpdateType(entity, actionContext);
     }
 
-    protected override Expression<Func<Test, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<Test, bool>> GetMasterGridFilter()
     {
         var filterExpressions = new List<Expression<Func<Test, bool>>>();
+
+        var filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusinessService.GetTestsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        filterExpressions.Add(filterByLecturerRightsExpression);
 
         if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
         {
@@ -348,20 +355,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             filterExpressions.Add(t => t.Problem.Name == problemName);
         }
 
-        if (filterExpressions.Count > 0)
-        {
-            Expression<Func<Test, bool>> combinedFilterExpression = filterExpressions
-                .Aggregate((current, next) =>
-                    Expression.Lambda<Func<Test, bool>>(
-                        Expression.AndAlso(
-                            current.Body,
-                            Expression.Invoke(next, current.Parameters)),
-                        current.Parameters));
-
-            return combinedFilterExpression;
-        }
-
-        return base.MasterGridFilter;
+        return filterExpressions.CombineMultiple();
     }
 
     private static void UpdateType(Test entity, AdminActionContext actionContext)
@@ -425,19 +419,5 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 FormControls = GetFormControlsForImportTests(problemId),
             },
         };
-    }
-
-    private Expression<Func<Test, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<Test, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusinessService.GetTestsUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? t => t.ProblemId == problemId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }
