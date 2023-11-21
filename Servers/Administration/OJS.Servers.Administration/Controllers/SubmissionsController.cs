@@ -1,6 +1,10 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using OJS.Data.Models.Contests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -14,15 +18,12 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
-using System;
 using System.Linq;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Servers.Administration.Infrastructure.Extensions;
 using OJS.Common;
+using OJS.Common.Extensions;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
@@ -39,6 +40,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
+    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
@@ -52,7 +54,8 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ITestRunsDataService testRunsData,
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
-        ISubmissionsBusinessService submissionsBusinessService)
+        ISubmissionsBusinessService submissionsBusinessService,
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresBusiness = participantScoresBusiness;
@@ -62,6 +65,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         this.transactions = transactions;
         this.submissionValidatorsFactory = submissionValidatorsFactory;
         this.submissionsBusinessService = submissionsBusinessService;
+        this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
@@ -213,6 +217,13 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     {
         var filterExpressions = new List<Expression<Func<Submission, bool>>>();
 
+        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
+            .GetSubmissionsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        Expression<Func<Submission, bool>> filterByKeyExpression = null!;
+
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
             filterExpressions.Add(s => s.Problem.ProblemGroup.ContestId == contestId);
@@ -256,7 +267,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             return combinedFilterExpression;
         }
 
-        return base.MasterGridFilter;
+        return filterByLecturerRightsExpression.CombineAndAlso(filterByKeyExpression);
     }
 
     private IActionResult RedirectToSubmissionById(int id)
