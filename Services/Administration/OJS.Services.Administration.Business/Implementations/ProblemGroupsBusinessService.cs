@@ -89,6 +89,10 @@ namespace OJS.Services.Administration.Business.Implementations
                     .ThenInclude(p => p.Tests)
                 .Include(pg => pg.Problems)
                     .ThenInclude(p => p.Resources)
+                .Include(pr => pr.Problems)
+                    .ThenInclude(p => p.Checker)
+                .Include(pr => pr.Problems)
+                    .ThenInclude(p => p.TagsInProblems)
                 .ToListAsync();
 
             await sourceContestProblemGroups
