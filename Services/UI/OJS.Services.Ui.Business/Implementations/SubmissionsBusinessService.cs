@@ -365,7 +365,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var currentUser = this.userProviderService.GetCurrentUser();
         var participant = await this.participantsDataService
-            .GetWithContestByContestByUserAndIsOfficial(
+            .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                 problem.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
@@ -543,7 +543,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var user = this.userProviderService.GetCurrentUser();
 
         var userParticipantsIdsQuery = this.participantsDataService
-            .GetAllByUser(user.Id);
+            .GetAllWithContestAndProblemsByUser(user.Id);
 
         if (isOfficial.HasValue)
         {

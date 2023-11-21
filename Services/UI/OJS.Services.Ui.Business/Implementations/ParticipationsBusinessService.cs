@@ -16,7 +16,7 @@
 
         public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId)
             => await this.participantsData
-                .GetAllByUser(userId)
+                .GetAllWithContestAndProblemsByUser(userId)
                 .ToList()
                 .GroupBy(x => x.Contest)
                 .Select(c => new ParticipationServiceModel

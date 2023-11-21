@@ -89,7 +89,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
 
             var participant = await this.participantsData
-                .GetWithContestByContestByUserAndIsOfficial(
+                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                     id,
                     user.Id,
                     contestActivityEntity.CanBeCompeted);
@@ -142,7 +142,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
             var participant = await this.participantsData
-                .GetWithContestByContestByUserAndIsOfficial(
+                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                     id,
                     userProfile!.Id,
                     official);
@@ -224,7 +224,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
 
             var participant = await this.participantsData
-                .GetWithContestByContestByUserAndIsOfficial(
+                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                     model.ContestId,
                     userProfile!.Id,
                     model.IsOfficial);
