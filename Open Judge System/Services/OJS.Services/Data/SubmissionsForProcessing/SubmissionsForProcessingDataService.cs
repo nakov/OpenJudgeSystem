@@ -147,15 +147,14 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                 .DefaultIfEmpty(WorkerType.Default)
                 .FirstOrDefault();
 
-            if (strategyDetailsWorkerType == WorkerType.Default)
+            if (submissionForProcessing.WorkerType != WorkerType.Default)
             {
-                var contestWorkerType = problem.ProblemGroup.Contest.DefaultWorkerType;
-                submissionForProcessing.WorkerType = contestWorkerType;
-
+                submissionForProcessing.WorkerType = strategyDetailsWorkerType;
                 return;
             }
-
-            submissionForProcessing.WorkerType = strategyDetailsWorkerType;
+            
+            var contestWorkerType = problem.ProblemGroup.Contest.DefaultWorkerType;
+            submissionForProcessing.WorkerType = contestWorkerType;
         }
     }
 }
