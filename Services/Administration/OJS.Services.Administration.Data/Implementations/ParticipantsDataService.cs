@@ -4,6 +4,7 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Participants;
+    using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
     using System;
@@ -92,6 +93,41 @@ namespace OJS.Services.Administration.Data.Implementations
                 {
                     IsInvalidated = true,
                 });
+
+        public async Task UpdateTotalScoreSnapshot()
+        {
+            var totalScoreSnapshot = nameof(Participant.TotalScoreSnapshot);
+            var problemId = nameof(ParticipantScore.ProblemId);
+            var points = nameof(ParticipantScore.Points);
+            var participantId = nameof(Participant.Id);
+
+            var command = $@"DECLARE @BatchSize INT = 5000;
+               DECLARE @MaxId INT = (SELECT MAX(Id) FROM Participants);
+               DECLARE @Offset INT = 0;
+
+               WHILE @Offset <= @MaxId
+               BEGIN
+                   WITH OrderedParticipants AS (
+                   SELECT TOP (@BatchSize) {participantId}
+               FROM Participants
+               WHERE {participantId} > @Offset
+               ORDER BY {participantId}
+                   )
+               UPDATE p
+               SET {totalScoreSnapshot} = ISNULL((
+                   SELECT SUM(ps.{points})
+               FROM ParticipantScores ps
+                   JOIN Problems pr ON ps.{problemId} = pr.{nameof(ParticipantScore.Id)} AND pr.{nameof(Problem.IsDeleted)} = 0
+               WHERE ps.{nameof(ParticipantScore.ParticipantId)} = p.{participantId}
+                   ), 0)
+               FROM OrderedParticipants op
+                   JOIN Participants p ON op.{participantId} = p.{participantId};
+
+               SET @Offset = @Offset + @BatchSize;
+               END;";
+
+            await this.ExecuteSqlCommandWithTimeout(command, 0);
+        }
 
         private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
             this.participantsCommonData

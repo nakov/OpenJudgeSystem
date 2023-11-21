@@ -14,7 +14,6 @@ using OJS.Services.Common.Models;
 using OJS.Common.Extensions;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
-using OJS.Services.Common.Models.Cache;
 
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {

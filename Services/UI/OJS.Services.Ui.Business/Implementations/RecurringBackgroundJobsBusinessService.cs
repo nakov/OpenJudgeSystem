@@ -10,4 +10,10 @@ public class RecurringBackgroundJobsBusinessService : IRecurringBackgroundJobsBu
 
     // Method is executed by administration implementation
     public Task<object> DeleteProcessedSubmissions() => throw new System.NotImplementedException();
+
+    // Method is executed by administration implementation
+    public Task<object> UpdateTotalScoreSnapshotOfParticipants() => throw new System.NotImplementedException();
+
+    // Method is executed by administration implementation
+    public Task<object> RemoveParticipantMultipleScores() => throw new System.NotImplementedException();
 }
