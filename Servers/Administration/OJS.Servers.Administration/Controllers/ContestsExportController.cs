@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Extensions;
 using OJS.Common.Extensions.Strings;
@@ -224,6 +225,7 @@ public class ContestsExportController : BaseAdminViewController
             .Where(submission => submission.ParticipantId == participantId && submission.ProblemId == problemId)
             .OrderByDescending(submission => submission.Points)
             .ThenByDescending(submission => submission.CreatedOn)
+            .Include(s => s.SubmissionType)
             .FirstOrDefault();
 
     private Submission? GetLastSubmission(int participantId, int problemId) =>
@@ -231,6 +233,7 @@ public class ContestsExportController : BaseAdminViewController
             .GetQuery()
             .Where(submission => submission.ParticipantId == participantId && submission.ProblemId == problemId)
             .OrderByDescending(submission => submission.CreatedOn)
+            .Include(s => s.SubmissionType)
             .FirstOrDefault();
 
     private IEnumerable<Submission> GetAllSubmissions(int participantId, int problemId) =>
@@ -238,5 +241,6 @@ public class ContestsExportController : BaseAdminViewController
             .GetQuery()
             .Where(submission => submission.ParticipantId == participantId && submission.ProblemId == problemId)
             .OrderByDescending(submission => submission.CreatedOn)
+            .Include(s => s.SubmissionType)
             .ToList();
 }
