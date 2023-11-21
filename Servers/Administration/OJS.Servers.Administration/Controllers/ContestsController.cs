@@ -28,19 +28,22 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
+        private readonly IProblemGroupsDataService problemGroupsData;
 
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper contestCategoriesValidationHelper,
-            IContestsValidationHelper contestsValidationHelper)
+            IContestsValidationHelper contestsValidationHelper,
+            IProblemGroupsDataService problemGroupsData)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
             this.contestValidatorsFactory = contestValidatorsFactory;
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
+            this.problemGroupsData = problemGroupsData;
         }
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
@@ -163,6 +166,10 @@ namespace OJS.Servers.Administration.Controllers
             Contest newContest,
             AdminActionContext actionContext)
         {
+            newContest.ProblemGroups = this.problemGroupsData
+                .GetAllByContest(newContest.Id)
+                .ToList();
+
             await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
                 existingContest, newContest).VerifyResult();
 

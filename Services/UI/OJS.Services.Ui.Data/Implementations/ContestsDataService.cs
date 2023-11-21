@@ -66,7 +66,8 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     {
         var contests = model.CategoryIds.Any()
             ? this.GetAllVisibleByCategories(model.CategoryIds)
-            : this.GetAllVisibleQuery();
+            : this.GetAllVisibleQuery()
+                .Include(c => c.Category);
 
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
         contests = Sort(contests, model.SortType, model.CategoryIds.Count());
@@ -264,6 +265,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
         => this.GetAllVisibleQuery()
+            .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)

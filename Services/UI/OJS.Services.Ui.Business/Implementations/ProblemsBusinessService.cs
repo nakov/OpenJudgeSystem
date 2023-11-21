@@ -110,6 +110,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var allProblemsQueryable = this.problemsData
                 .GetAllNonDeletedProblems()
+                .Include(p => p.ProblemGroup)
+                    .ThenInclude(pg => pg.Contest)
+                    .ThenInclude(c => c.Category)
                 .Where(p => p.Name.Contains(model.SearchTerm ?? string.Empty) &&
                             p.ProblemGroup.Contest.IsVisible &&
                             (p.ProblemGroup.Contest.Category != null &&

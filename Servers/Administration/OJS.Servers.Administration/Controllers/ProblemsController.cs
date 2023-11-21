@@ -506,12 +506,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem entity,
         EntityAction action,
         IDictionary<string, string> entityDict)
-        => await this.contestsValidationHelper
+    {
+        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
+        await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(GetContestId(entity, entityDict))
             .VerifyResult();
+    }
 
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
+        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
+        entity.SubmissionTypesInProblems = (await this.problemsData.GetByIdQuery(entity.Id)
+            .Select(p => p.SubmissionTypesInProblems)
+            .FirstOrDefaultAsync()) !;
+
         await base.BeforeEntitySaveAsync(entity, actionContext);
 
         var contestId = GetContestId(entity, actionContext.EntityDict);
@@ -546,6 +554,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
+        originalEntity.ProblemGroup = this.problemGroupsData.GetByProblem(originalEntity.Id) !;
         newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
 
         if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)

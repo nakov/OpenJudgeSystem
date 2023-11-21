@@ -4,6 +4,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
+    using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
@@ -288,6 +289,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var modelResult = new ContestSearchServiceResultModel();
 
             var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
+                .Include(c => c.Category)
                 .Where(c => (c.Name != null && c.Name.Contains(model.SearchTerm ?? string.Empty)) &&
                             (c.Category != null && c.Category.IsVisible));
 
