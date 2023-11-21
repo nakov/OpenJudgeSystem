@@ -643,8 +643,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     : Array.Empty<byte>(),
             });
 
-        problem.SubmissionTypesInProblems.Clear();
-        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+        problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);
     }
 
     private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
