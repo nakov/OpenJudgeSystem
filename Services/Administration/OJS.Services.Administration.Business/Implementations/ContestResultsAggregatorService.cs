@@ -53,7 +53,10 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             .Include(p => p.ProblemsForParticipants)
             .Include(p => p.Scores)
                 .ThenInclude(s => s.Problem)
-                    .ThenInclude(p => p.ProblemGroup);
+                    .ThenInclude(p => p.ProblemGroup)
+            .Include(p => p.Scores)
+                .ThenInclude(s => s.Submission)
+                    .ThenInclude(s => s!.SubmissionType);
 
         var participantResults = participants
                 .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
