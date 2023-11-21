@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business.Validation.Helpers.Implementations;
 
+using OJS.Common;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models;
 using System.Threading.Tasks;
@@ -18,12 +19,17 @@ public class ContestCategoriesValidationHelper : IContestCategoriesValidationHel
         this.userProvider = userProvider;
     }
 
-    public async Task<ValidationResult> ValidatePermissionsOfCurrentUser(int contestCategoryId)
+    public async Task<ValidationResult> ValidatePermissionsOfCurrentUser(int? contestCategoryId)
     {
         var user = this.userProvider.GetCurrentUser();
 
+        if (!contestCategoryId.HasValue)
+        {
+            return ValidationResult.Invalid(Resources.ContestsControllers.CategoryNotSelected);
+        }
+
         var userHasPermissionsForCategory = await this.contestCategoriesData
-            .UserHasContestCategoryPermissions(contestCategoryId, user.Id, user.IsAdmin);
+            .UserHasContestCategoryPermissions(contestCategoryId.Value, user.Id, user.IsAdmin);
 
         return userHasPermissionsForCategory
             ? ValidationResult.Valid()
