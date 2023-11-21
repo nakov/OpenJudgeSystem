@@ -17,9 +17,8 @@ public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetails
         { ServiceConstants.CheckerTypes.CaseInsensitive, CheckerConstants.TypeNames.CaseInsensitive },
         { ServiceConstants.CheckerTypes.Sort, CheckerConstants.TypeNames.Sort },
         { ServiceConstants.CheckerTypes.ExactMatch, CheckerConstants.TypeNames.ExactMatch },
-        // This is needed as we have different C# code checkers based on environment:
-        // Local workers use CSharpCodeChecker, while interactive uses CSharpCoreCodeChecker
         { ServiceConstants.CheckerTypes.CSharpCode, CheckerConstants.TypeNames.CSharpCoreCode },
+        { ServiceConstants.CheckerTypes.CSharpCoreCode, CheckerConstants.TypeNames.CSharpCode },
     };
 
     private readonly string defaultValue = string.Empty;

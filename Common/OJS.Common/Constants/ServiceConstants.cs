@@ -4,13 +4,14 @@
     {
         public static class CheckerTypes
         {
-            public const string ExactMatch = "exact-match";
-            public const string CaseInsensitive = "case-insensitive";
+            public const string ExactMatch = "exact";
+            public const string CaseInsensitive = "caseinsensitive";
             public const string Precision = "precision";
             public const string Sort = "sort";
             public const string Trim = "trim";
-            public const string TrimEnd = "trim-end";
+            public const string TrimEnd = "trimend";
             public const string CSharpCode = "csharp-code";
+            public const string CSharpCoreCode = "csharpcode";
 
             public static string[] All => new[]
             {
