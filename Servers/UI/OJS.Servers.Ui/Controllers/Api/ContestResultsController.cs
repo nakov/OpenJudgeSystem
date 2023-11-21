@@ -1,20 +1,19 @@
 namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Contests.Results;
-using OJS.Services.Ui.Business.Cache;
+using OJS.Services.Ui.Business;
 using System.Threading.Tasks;
 using OJS.Servers.Infrastructure.Controllers;
+using OJS.Servers.Infrastructure.Extensions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ContestResultsController : BaseApiController
 {
-    private readonly IContestResultsCacheService contestResultsCache;
+    private readonly IContestResultsBusinessService contestResultsBusiness;
 
-    public ContestResultsController(
-        IContestResultsCacheService contestResultsCache)
-        => this.contestResultsCache = contestResultsCache;
+    public ContestResultsController(IContestResultsBusinessService contestResultsBusiness)
+        => this.contestResultsBusiness = contestResultsBusiness;
 
     /// <summary>
     /// Gets the results of all the participants in a given contest.
@@ -26,7 +25,7 @@ public class ContestResultsController : BaseApiController
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestResultsViewModel), Status200OK)]
     public async Task<IActionResult> GetResults(int id, bool official, bool full)
-        => await this.contestResultsCache
+        => await this.contestResultsBusiness
             .GetContestResults(id, official, full)
             .ToOkResult();
 }

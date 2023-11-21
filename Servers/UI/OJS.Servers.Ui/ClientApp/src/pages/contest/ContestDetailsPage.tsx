@@ -31,7 +31,10 @@ import styles from './ContestDetailsPage.module.scss';
 
 const compareByOrderBy = (p1: IContestDetailsProblemType, p2: IContestDetailsProblemType) => p1.orderBy - p2.orderBy;
 
-const getButtonAccessibility = (canParticipate: boolean | undefined, isAdminOrLecturer: boolean | undefined) => {
+const getButtonAccessibility = (
+    canParticipate: boolean | undefined,
+    isAdminOrLecturer: boolean | undefined,
+) => {
     const isAccessible = canParticipate || isAdminOrLecturer;
     const isAccessibleForAdminOrLecturerInContest = !canParticipate && isAdminOrLecturer;
     return { isAccessible, isAccessibleForAdminOrLecturerInContest };
@@ -93,17 +96,6 @@ const ContestDetailsPage = () => {
     const contestIdToNumber = useMemo(
         () => Number(contestId),
         [ contestId ],
-    );
-
-    const isOfficial = useMemo(
-        () => {
-            if (isNil(contestDetails)) {
-                return null;
-            }
-
-            return contestDetails?.canBeCompeted;
-        },
-        [ contestDetails ],
     );
 
     const {
@@ -208,7 +200,7 @@ const ContestDetailsPage = () => {
                           })}
                           text="Compete"
                           state={
-                                isOfficial
+                                contestDetails?.canBeCompeted
                                     ? ButtonState.enabled
                                     : ButtonState.disabled
                             }
@@ -230,9 +222,9 @@ const ContestDetailsPage = () => {
                           text="Practice"
                           type={LinkButtonType.secondary}
                           state={
-                                isOfficial
-                                    ? ButtonState.disabled
-                                    : ButtonState.enabled
+                                contestDetails?.canBePracticed
+                                    ? ButtonState.enabled
+                                    : ButtonState.disabled
                             }
                         />
                     )
@@ -247,9 +239,9 @@ const ContestDetailsPage = () => {
             competableOnlyForAdminAndLecturers,
             canAccessCompeteButton,
             contestDetails?.canViewResults,
-            contestDetails?.isAdminOrLecturerInContest,
-            isOfficial,
             contestDetails?.canBePracticed,
+            contestDetails?.canBeCompeted,
+            contestDetails?.isAdminOrLecturerInContest,
         ],
     );
 

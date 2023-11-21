@@ -84,10 +84,20 @@ interface IContestEditUrlParams {
     id: number;
 }
 
+interface ITerm {
+    key: string;
+    value: string;
+}
+
 interface IGetSearchResultsUrlParams {
     searchTerm: string;
+    selectedTerms: ITerm[];
+}
+
+interface IGetSearchResultsParams {
+    searchTerm: string;
     page: number;
-    selectedTerms: [];
+    searchCategory: string;
 }
 
 export type {
@@ -95,6 +105,7 @@ export type {
     ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,
     IAllContestsUrlParams,
+    IGetSearchResultsParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
