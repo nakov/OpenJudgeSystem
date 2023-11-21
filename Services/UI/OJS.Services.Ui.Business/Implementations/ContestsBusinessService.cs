@@ -206,7 +206,7 @@ namespace OJS.Services.Ui.Business.Implementations
             StartContestParticipationServiceModel model)
         {
             var contest = await this.contestsData
-                .GetByIdWithProblemsAndSubmissionTypes(model.ContestId);
+                .GetByIdWithProblemsDetailsAndCategories(model.ContestId);
 
             var user = this.userProviderService.GetCurrentUser();
 

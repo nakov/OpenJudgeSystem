@@ -155,7 +155,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetAllForParticipant(
             int participantId)
         {
-            var participantScores = await this.participantScoresData.GetByParticipantId(participantId);
+            var participantScores = await this.participantScoresData.GetWithSubmissionsAndTestsByParticipantId(participantId);
 
             return participantScores
                 .GroupBy(r => r.ProblemId)

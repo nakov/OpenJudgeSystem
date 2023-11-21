@@ -20,7 +20,7 @@ namespace OJS.Services.Ui.Data
 
         Task<Contest?> GetByIdWithProblems(int id);
 
-        Task<Contest?> GetByIdWithProblemsAndSubmissionTypes(int id);
+        Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id);
 
         Task<Contest?> GetByIdWithParticipants(int id);
 
