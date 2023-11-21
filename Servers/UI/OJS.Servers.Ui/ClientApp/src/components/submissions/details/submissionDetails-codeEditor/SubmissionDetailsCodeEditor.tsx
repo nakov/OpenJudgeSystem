@@ -190,10 +190,10 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                 !currentSubmission?.isProcessed
                     ? (
                         <AlertBox
-                            className={styles.alertBox}
-                            message="The submission is in queue and will be processed shortly. Please wait."
-                            type={AlertBoxType.info}
-                            isClosable={false}
+                          className={styles.alertBox}
+                          message="The submission is in queue and will be processed shortly. Please wait."
+                          type={AlertBoxType.info}
+                          isClosable={false}
                         />
                     )
                     : null
