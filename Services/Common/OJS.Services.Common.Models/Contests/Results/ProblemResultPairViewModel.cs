@@ -46,6 +46,8 @@ public class ProblemResultPairViewModel
             BestSubmission = new BestSubmissionViewModel { Id = score.SubmissionId, Points = score.Points },
         };
 
+    public int ParticipantId { get; set; }
+
     public int ProblemId { get; set; }
 
     public bool ShowResult { get; set; }

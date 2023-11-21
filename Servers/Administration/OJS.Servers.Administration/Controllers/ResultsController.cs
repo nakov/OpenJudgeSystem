@@ -5,6 +5,7 @@ using ClosedXML.Excel;
 using OJS.Common;
 using OJS.Common.Extensions;
 using OJS.Servers.Administration.Models.Contests;
+using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Contests.Results;
@@ -50,12 +51,17 @@ public class ResultsController : BaseAdminViewController
 
         var official = model.Type == ContestExportResultType.Compete;
 
-        var contestResults = this.contestResultsAggregator.GetContestResults(
-            contest,
-            official,
-            isUserAdminOrLecturer: true,
-            isFullResults: false,
-            isExportResults: true);
+        var contestResultsModel = new ContestResultsModel
+        {
+            Contest = contest,
+            Official = official,
+            IsUserAdminOrLecturer = true,
+            IsFullResults = false,
+            TotalResultsCount = null,
+            IsExportResults = true,
+        };
+
+        var contestResults = this.contestResultsAggregator.GetContestResults(contestResultsModel);
 
         // Suggested file name in the "Save as" dialog which will be displayed to the end user
         var fileName = string.Format(

@@ -1,83 +1,109 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
+using OJS.Services.Ui.Models.Contests;
+using OJS.Services.Ui.Data;
+using OJS.Data.Models.Participants;
+using X.PagedList;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
-using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests.Results;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
 public class ContestResultsAggregatorService : IContestResultsAggregatorService
 {
-    private readonly IParticipantsCommonDataService participantsCommonData;
     private readonly IContestsActivityService activityService;
+    private readonly IParticipantScoresDataService participantScoresDataService;
+    private readonly IParticipantsDataService participantsData;
 
-    public ContestResultsAggregatorService(IParticipantsCommonDataService participantsCommonData, IContestsActivityService activityService)
+    public ContestResultsAggregatorService(
+        IContestsActivityService activityService,
+        IParticipantScoresDataService participantScoresDataService,
+        IParticipantsDataService participantsData)
     {
-        this.participantsCommonData = participantsCommonData;
         this.activityService = activityService;
+        this.participantScoresDataService = participantScoresDataService;
+        this.participantsData = participantsData;
     }
 
-    public ContestResultsViewModel GetContestResults(
-            Contest contest,
-            bool official,
-            bool isUserAdminOrLecturer,
-            bool isFullResults,
-            bool isExportResults = false)
+    public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel)
     {
         var contestActivityEntity = this.activityService
-            .GetContestActivity(contest.Map<ContestForActivityServiceModel>());
+            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
 
-        var contestResults = new ContestResultsViewModel
-            {
-                Id = contest.Id,
-                Name = contest.Name,
-                IsCompete = official,
-                ContestCanBeCompeted = contestActivityEntity.CanBeCompeted,
-                ContestCanBePracticed = contestActivityEntity.CanBePracticed,
-                UserHasContestRights = isUserAdminOrLecturer,
-                ContestType = contest.Type,
-                Problems = contest.ProblemGroups
-                    .SelectMany(pg => pg.Problems)
-                    .AsQueryable()
-                    .Where(p => !p.IsDeleted)
-                    .OrderBy(p => p.OrderBy)
-                    .ThenBy(p => p.Name)
-                    .Select(ContestProblemListViewModel.FromProblem),
-            };
+        var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
 
-        var participants = this.participantsCommonData
-                .GetAllByContestAndIsOfficial(contest.Id, official);
+        contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
+        contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
 
-        var participantResults = participants
-                .Select(ParticipantResultViewModel.FromParticipantAsSimpleResultByContest(contest.Id))
-                .OrderByDescending(parRes => parRes.ProblemResults
-                    .Where(pr => pr.ShowResult)
-                    .Sum(pr => pr.BestSubmission.Points));
+        var totalParticipantsCount = contestResultsModel.TotalResultsCount
+                                     ?? this.participantsData
+                                         .GetAllByContestAndIsOfficial(
+                                             contestResultsModel.Contest.Id,
+                                             contestResultsModel.Official)
+                                         .Count();
 
-        if (isFullResults)
-            {
-                participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsFullResultByContest(contest.Id))
-                    .OrderByDescending(parRes => parRes.ProblemResults
-                        .Sum(pr => pr.BestSubmission.Points));
-            }
-            else if (isExportResults)
-            {
-                participantResults = participants
-                    .Select(ParticipantResultViewModel.FromParticipantAsExportResultByContest(contest.Id))
-                    .OrderByDescending(parRes => parRes.ProblemResults
-                        .Where(pr => pr.ShowResult && !pr.IsExcludedFromHomework)
-                        .Sum(pr => pr.BestSubmission.Points));
-            }
+        // Get the requested participants without their problem results.
+        // Splitting the queries improves performance and avoids unexpected results from joins with Scores.
+        var participants = this.GetParticipantsPage(
+                contestResultsModel.Contest,
+                contestResultsModel.Official,
+                contestResultsModel.Page,
+                contestResultsModel.ItemsInPage)
+                .Select(ParticipantResultViewModel.FromParticipant)
+                .ToList();
 
-        contestResults.Results = participantResults
-                .ThenBy(parResult => parResult.ProblemResults
-                    .OrderByDescending(pr => pr.BestSubmission.Id)
-                    .Select(pr => pr.BestSubmission.Id)
-                    .FirstOrDefault());
+        // Get the ParticipantScores with another query and map problem results for each participant.
+        var participantScores = this.participantScoresDataService
+            .GetAllByParticipants(participants.Select(p => p.Id));
+
+        IEnumerable<ProblemResultPairViewModel> problemResults;
+
+        if (contestResultsModel.IsFullResults)
+        {
+            problemResults = participantScores
+                .Select(ProblemResultPairViewModel.FromParticipantScoreAsFullResult)
+                .ToList();
+        }
+        else if (contestResultsModel.IsExportResults)
+        {
+            problemResults = participantScores
+                .Select(ProblemResultPairViewModel.FromParticipantScoreAsExportResult)
+                .ToList();
+        }
+        else
+        {
+            problemResults = participantScores
+                .Select(ProblemResultPairViewModel.FromParticipantScoreAsSimpleResult)
+                .ToList();
+        }
+
+        participants.ForEach(p =>
+            p.ProblemResults = problemResults.Where(pr => pr.ParticipantId == p.Id));
+
+        var results = new StaticPagedList<ParticipantResultViewModel>(
+            participants,
+            contestResultsModel.Page,
+            contestResultsModel.ItemsInPage,
+            totalParticipantsCount);
+
+        contestResults.Results = results;
 
         return contestResults;
     }
+
+    /// <summary>
+    /// Gets IQueryable results with one page of participants, ordered by top score.
+    /// </summary>
+    private IQueryable<Participant> GetParticipantsPage(Contest contest, bool official, int page, int itemsInPage) =>
+        this.participantsData
+            .GetAllByContestAndIsOfficial(contest.Id, official)
+            .AsNoTracking()
+            .OrderByDescending(p => p.TotalScoreSnapshot)
+            .ThenBy(p => p.TotalScoreSnapshotModifiedOn)
+            .Skip((page - 1) * itemsInPage)
+            .Take(itemsInPage);
 }
