@@ -93,9 +93,6 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public IQueryable<Contest> GetAllByLecturer(string? lecturerId)
             => this.DbSet
-                .Include(c => c.LecturersInContests)
-                .Include(c => c.Category)
-                    .ThenInclude(c => c!.LecturersInContestCategories)
                 .Where(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
