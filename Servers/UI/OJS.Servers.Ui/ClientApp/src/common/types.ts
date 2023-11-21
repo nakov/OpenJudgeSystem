@@ -212,6 +212,7 @@ interface IUserType {
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;
+    isAdmin: boolean;
 }
 
 interface IUserRoleType {
