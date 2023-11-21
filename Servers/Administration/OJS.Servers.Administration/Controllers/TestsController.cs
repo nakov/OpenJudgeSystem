@@ -185,7 +185,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
     public async Task<IActionResult> ExportZip(int problemId)
     {
-        var problem = await this.problemsData.OneById(problemId);
+        var problem = this.problemsData.GetWithTestsAndProblemGroupById(problemId);
 
         await this.problemsValidationHelper
             .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())

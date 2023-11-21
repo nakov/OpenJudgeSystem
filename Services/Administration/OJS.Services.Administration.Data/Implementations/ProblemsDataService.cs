@@ -19,6 +19,12 @@
                 .Include(p => p.ProblemGroup)
                 .FirstOrDefault(p => p.Id == id);
 
+        public Problem? GetWithTestsAndProblemGroupById(int id) =>
+            this.DbSet
+                .Include(p => p.Tests)
+                .Include(p => p.ProblemGroup)
+                .FirstOrDefault(p => p.Id == id);
+
         public Problem? GetWithContestById(int id) =>
             this.DbSet
                 .Include(p => p.ProblemGroup.Contest)

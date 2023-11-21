@@ -9,6 +9,8 @@
     {
         Problem? GetWithProblemGroupById(int id);
 
+        Problem? GetWithTestsAndProblemGroupById(int id);
+
         Problem? GetWithContestById(int id);
 
         IQueryable<Problem> GetAllByContest(int contestId);
