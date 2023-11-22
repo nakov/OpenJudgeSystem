@@ -14,8 +14,8 @@ import {
     getSubmissionsByContestIdUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
-    getUserSubmissionsUrl,
     getSubmissionsUrl,
+    getUserSubmissionsUrl,
 } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
