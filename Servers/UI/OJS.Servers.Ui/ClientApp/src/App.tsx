@@ -1,4 +1,5 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
@@ -9,7 +10,6 @@ import CurrentContestResultsProvider from './hooks/contests/use-current-contest-
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
-import SubmissionsDetailsProvider from './hooks/submissions/use-submissions-details';
 import AuthProvider from './hooks/use-auth';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
@@ -30,6 +30,7 @@ import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
 import PageHeader from './layout/header/PageHeader';
 import SearchBar from './layout/search-bar/SearchBar';
+import store from './redux/store';
 
 import './styles/global.scss';
 
@@ -55,21 +56,22 @@ const App = () => {
         ProblemSubmissionsProvider,
         ProblemsProvider,
         SubmissionsProvider,
-        SubmissionsDetailsProvider,
         HomeStatisticsProvider,
         PublicSubmissionsProvider,
         SearchProvider,
     ] as ProviderType[];
 
     return (
-        <Router>
-            <InitProviders providers={providers}>
-                <PageHeader />
-                <SearchBar />
-                <PageContent />
-                <PageFooter />
-            </InitProviders>
-        </Router>
+        <Provider store={store}>
+            <Router>
+                <InitProviders providers={providers}>
+                    <PageHeader />
+                    <SearchBar />
+                    <PageContent />
+                    <PageFooter />
+                </InitProviders>
+            </Router>
+        </Provider>
     );
 };
 
