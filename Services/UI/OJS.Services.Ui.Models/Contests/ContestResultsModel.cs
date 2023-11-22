@@ -33,9 +33,6 @@ public class ContestResultsModel : IMapExplicitly
             d => d.Contest.Name,
             opt => opt.MapFrom(s => s.Name))
         .ForMember(
-            d => d.IsUserAdminOrLecturer,
-            opt => opt.MapFrom(s => s.UserHasContestRights))
-        .ForMember(
             d => d.Contest.Type,
             opt => opt.MapFrom(s => s.ContestType))
         .ForMember(
