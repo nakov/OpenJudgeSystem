@@ -188,8 +188,8 @@ const getSubmissionDetailsRedirectionUrl = ({ submissionId }:ISubmissionDetailsU
 const getSubmissionsUrl = ({ status, page }: IGetSubmissionsUrlParams) => {
     const params = { status, page };
     const query = Object.entries(params)
-        .filter(( [ value] ) => !isNil(value))
-        .map(( [ key, value] ) => `${key}=${value}`)
+        .filter(([ value ]) => !isNil(value))
+        .map(([ key, value ]) => `${key}=${value}`)
         .join('&');
 
     return `${baseApiUrl}/Submissions/GetSubmissions?${query}`;
