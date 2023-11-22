@@ -1,13 +1,15 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
+import { ISubmissionDetailsReduxState } from '../../common/types';
 import SubmissionResults from '../../components/submissions/submission-results/SubmissionResults';
 import SubmissionDetailsHeading from '../../components/submissions/test-runs/test-run-heading/SubmissionDetailsHeading';
-import { useSubmissionsDetails } from '../../hooks/submissions/use-submissions-details';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionPage = () => {
-    const { state: { currentSubmission } } = useSubmissionsDetails();
+    const { currentSubmission } =
+    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
 
     if (isNil(currentSubmission)) {
         return <>No details.</>;
