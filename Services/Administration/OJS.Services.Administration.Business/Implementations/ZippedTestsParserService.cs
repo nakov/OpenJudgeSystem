@@ -48,8 +48,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
 
         var lastTrialTest = problem.Tests
             .Where(x => x.IsTrialTest)
-            .OrderByDescending(x => x.OrderBy)
-            .FirstOrDefault();
+            .MaxBy(x => x.OrderBy);
 
         var zeroTestsOrder = 1.0;
 
@@ -62,8 +61,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
 
         var lastTest = problem.Tests
             .Where(x => !x.IsTrialTest)
-            .OrderByDescending(x => x.OrderBy)
-            .FirstOrDefault();
+            .MaxBy(x => x.OrderBy);
 
         var orderBy = 1.0;
 
