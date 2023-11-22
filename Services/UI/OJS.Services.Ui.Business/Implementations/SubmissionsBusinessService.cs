@@ -558,12 +558,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         => this.submissionsData.GetTotalSubmissionsCount();
 
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(
-        SubmissionStatus type,
+        SubmissionStatus status,
         int page)
     {
         IQueryable<Submission> query;
 
-        switch (type)
+        switch (status)
         {
             case SubmissionStatus.Processing:
                 query = this.submissionsCommonData.GetAllProcessing();

@@ -2,8 +2,8 @@
 {
     public enum SubmissionStatus
     {
-        All = 0,
-        Processing = 1,
-        Pending = 2,
+        All = 1,
+        Processing = 2,
+        Pending = 3,
     }
 }

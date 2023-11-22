@@ -179,11 +179,10 @@ public class SubmissionsController : BaseApiController
             .GetUnprocessedTotalCount()
             .ToOkResult();
 
-    //// Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
-    [HttpGet("{type}")]
+    // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
     [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissions(SubmissionStatus type, [FromQuery] int page)
-        => await this.submissionsBusiness.GetSubmissions(type, page)
-            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
-            .ToOkResult();
+    public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
+         => await this.submissionsBusiness.GetSubmissions(status, page)
+             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+             .ToOkResult();
 }

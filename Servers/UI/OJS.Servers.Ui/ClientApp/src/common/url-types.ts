@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { IFilter, ISort } from './contest-types';
+import { SubmissionStatus } from "../hooks/submissions/use-public-submissions";
 
 interface IContestDetailsUrlParams {
     id: number;
@@ -47,6 +48,11 @@ interface IDownloadSubmissionFileUrlParams {
 }
 
 interface IGetSubmissionsUrlParams {
+    status: SubmissionStatus;
+    page: number;
+}
+
+interface IGetUserSubmissionsUrlParams {
     page: number;
 }
 
@@ -111,6 +117,7 @@ export type {
     IGetContestParticipationScoresForParticipantUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionsUrlParams,
+    IGetUserSubmissionsUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
