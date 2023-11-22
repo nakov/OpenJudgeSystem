@@ -21,6 +21,8 @@
 
         public UserProfileResponseModel User { get; set; } = null!;
 
+        public bool UserIsInRoleForContest { get; set; }
+
         public SubmissionTypeForSubmissionDetailsResponseModel SubmissionType { get; set; } = null!;
 
         public double MaxUsedTime { get; set; }

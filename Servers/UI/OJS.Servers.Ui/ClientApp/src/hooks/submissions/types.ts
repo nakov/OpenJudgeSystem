@@ -54,6 +54,7 @@ interface ITestRunDetailsType extends ITestRunType {
 interface ISubmissionDetailsType extends ISubmissionType {
     testRuns: ITestRunDetailsType[];
     user: IUserProfileType;
+    userIsInRoleForContest: boolean;
     totalTests : number;
 }
 

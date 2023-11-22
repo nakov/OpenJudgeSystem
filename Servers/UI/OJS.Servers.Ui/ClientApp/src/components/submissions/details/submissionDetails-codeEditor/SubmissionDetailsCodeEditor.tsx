@@ -110,6 +110,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
     );
 
     const { submissionType } = currentSubmission || {};
+
     const renderTestsChangeMessage = useCallback(() => (
         currentSubmission?.testRuns.length === 0 &&
         currentSubmission.isCompiledSuccessfully &&

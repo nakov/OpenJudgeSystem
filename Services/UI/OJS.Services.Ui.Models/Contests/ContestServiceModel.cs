@@ -1,13 +1,13 @@
 ﻿namespace OJS.Services.Ui.Models.Contests;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public class ContestServiceModel : IMapExplicitly
 {
@@ -58,6 +58,8 @@ public class ContestServiceModel : IMapExplicitly
     public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
     public ICollection<ContestProblemServiceModel> Problems { get; set; } = null!;
+
+    public ICollection<LecturerInContestServiceModel> LecturersInContests { get; set; } = null!;
 
     public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
         Enumerable.Empty<ContestCategoryListViewModel>();
@@ -190,6 +192,7 @@ public class ContestServiceModel : IMapExplicitly
                         .SelectMany(pg => pg.Problems)
                         .OrderBy(p => p.ProblemGroup.OrderBy)
                         .ThenBy(p => p.OrderBy)))
+            .ForMember(d => d.LecturersInContests, opt => opt.MapFrom(s => s.LecturersInContests))
             .ForMember(d => d.ParentCategories, opt => opt.Ignore())
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.UserCanCompete, opt => opt.Ignore())

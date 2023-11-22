@@ -124,8 +124,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         var contest = await this.contestsDataService
-            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
+            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id)
+            .Map<Contest>();
+
         var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+        submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
 
         if (!userIsAdminOrLecturerInContest)
         {

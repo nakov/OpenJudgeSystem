@@ -27,7 +27,7 @@ import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { state: { user } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, validationErrors, currentPage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
@@ -77,7 +77,12 @@ const SubmissionDetails = () => {
 
     const renderRetestButton = useCallback(
         () => {
-            if (!canAccessAdministration || isNil(currentSubmission)) {
+            console.log(user.username === currentSubmission?.user.userName);
+
+            if (isNil(currentSubmission) ||
+                // Regular user
+                (!currentSubmission.userIsInRoleForContest &&
+                user.username !== currentSubmission?.user.userName)) {
                 return null;
             }
 
@@ -92,7 +97,7 @@ const SubmissionDetails = () => {
                 />
             );
         },
-        [ canAccessAdministration, currentSubmission ],
+        [ user, currentSubmission ],
     );
 
     const submissionResults = useCallback(
