@@ -81,9 +81,15 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
     protected override Task BeforeEntitySaveOnDeleteAsync(
         ContestCategory entity,
         AdminActionContext actionContext)
-        => Task.WhenAll(
+    {
+        entity.Children = this.contestCategoriesData
+            .GetByIdQuery(entity.Id)
+            .SelectMany(c => c.Children).ToList();
+
+        return Task.WhenAll(
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
+    }
 
     protected override async Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,
@@ -112,7 +118,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
 
     private async Task CascadeDeleteCategories(ContestCategory contestCategory)
     {
-        foreach (var children in contestCategory.Children.ToList())
+        foreach (var children in contestCategory.Children)
         {
             await this.CascadeDeleteCategories(children);
         }
