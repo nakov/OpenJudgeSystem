@@ -14,6 +14,7 @@ import {
     IContestResultsType,
 } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
+import { useAuth } from '../../hooks/use-auth';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -103,42 +104,9 @@ const totalResultColumn: GridColDef = {
     align: 'center',
 };
 
-const getProblemResultColumns = (results: IContestResultsType) => results.problems?.map((p) => ({
-    field: `${p.id}`,
-    headerName: p.name,
-    description: p.name,
-    type: 'number',
-    minWidth: 50,
-    flex: 1,
-    sortable: true,
-    valueGetter: (params: GridRenderCellParams<number>) => {
-        const bestSubmission = getBestSubmission(params, p);
-        return bestSubmission?.points ?? -1;
-    },
-    sortComparator: (v1: number, v2: number) => v1 - v2,
-    filterable: false,
-    headerAlign: 'center',
-    headerClassName: styles.headerContent,
-    align: 'center',
-    renderCell: (params: GridRenderCellParams<number>) => {
-        const bestSubmission = getBestSubmission(params, p);
-
-        return results.userHasContestRights && !isNil(bestSubmission)
-            ? (
-                <LinkButton
-                  className={styles.pointsResult}
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.small}
-                  text={`${bestSubmission.points}`}
-                  to={`/submissions/${bestSubmission.id}/details`}
-                />
-            )
-            : <p>{bestSubmission?.points || '-'}</p>;
-    },
-} as GridColDef));
-
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
+    const { state: { user } } = useAuth();
     const { contestId, participationType: participationUrlType, resultType } = params;
 
     const official = participationUrlType === ContestParticipationType.Compete;
@@ -164,6 +132,43 @@ const ContestResultsPage = () => {
         [ contestResults ],
     );
 
+    const getProblemResultColumns = useCallback((results: IContestResultsType) => results.problems?.map((p) => ({
+        field: `${p.id}`,
+        headerName: p.name,
+        description: p.name,
+        type: 'number',
+        minWidth: 50,
+        flex: 1,
+        sortable: true,
+        valueGetter: (parameters: GridRenderCellParams<number>) => {
+            const bestSubmission = getBestSubmission(parameters, p);
+            return bestSubmission?.points ?? -1;
+        },
+        sortComparator: (v1: number, v2: number) => v1 - v2,
+        filterable: false,
+        headerAlign: 'center',
+        headerClassName: styles.headerContent,
+        align: 'center',
+        renderCell: (cellParams: GridRenderCellParams<number>) => {
+            const problemResult = cellParams.row.problemResults
+                .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
+            const bestSubmission = problemResult?.bestSubmission;
+
+            // User is admin or lecturer for contest or is the participant of the submission
+            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.username) && !isNil(bestSubmission)
+                ? (
+                    <LinkButton
+                      className={styles.pointsResult}
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.small}
+                      text={`${bestSubmission.points}`}
+                      to={`/submissions/${bestSubmission.id}/details`}
+                    />
+                )
+                : <p>{bestSubmission?.points || '-'}</p>;
+        },
+    } as GridColDef)), [ user ]);
+
     useEffect(
         () => setNumberedRows(contestResults?.results.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
 
@@ -186,7 +191,7 @@ const ContestResultsPage = () => {
                 .concat(problemResultColumns)
                 .concat(totalResultColumn);
         },
-        [],
+        [ getProblemResultColumns ],
     );
 
     useEffect(

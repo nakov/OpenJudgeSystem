@@ -1,11 +1,16 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ClosedXML.Excel;
 using OJS.Common;
 using OJS.Common.Extensions;
 using OJS.Servers.Administration.Models.Contests;
 using OJS.Services.Ui.Models.Contests;
+using OJS.Services.Administration.Business.Validation.Helpers;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Contests.Results;
@@ -19,28 +24,27 @@ public class ResultsController : BaseAdminViewController
 {
     private readonly IContestsDataService contestsData;
     private readonly IContestsBusinessService contestsBusiness;
+    private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IContestResultsAggregatorService contestResultsAggregator;
 
     public ResultsController(
         IContestsDataService contestsData,
         IContestsBusinessService contestsBusiness,
-        IContestResultsAggregatorService contestResultsAggregator)
+        IContestResultsAggregatorService contestResultsAggregator,
+        IContestsValidationHelper contestsValidationHelper)
     {
         this.contestsData = contestsData;
         this.contestsBusiness = contestsBusiness;
         this.contestResultsAggregator = contestResultsAggregator;
+        this.contestsValidationHelper = contestsValidationHelper;
     }
 
     [HttpPost]
     public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
     {
-        var userHasContestPermissions = await this.contestsBusiness
-            .UserHasContestPermissions(model.Id, this.User.GetId(), this.User.IsAdmin());
-
-        if (!userHasContestPermissions)
-        {
-            throw new BusinessServiceException(Resource.ContestResultsNotAvailable);
-        }
+        await this.contestsValidationHelper
+            .ValidatePermissionsOfCurrentUser(model.Id)
+            .VerifyResult();
 
         var contest = await this.contestsData.GetByIdWithProblems(model.Id);
 
