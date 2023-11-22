@@ -468,7 +468,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
-        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
+        var submissionTypesInProblem = await this.problemsData.GetByIdQuery(entity.Id)
+            .SelectMany(p => p.SubmissionTypesInProblems)
+            .ToListAsync();
 
         formControls.Add(new FormControlViewModel
         {
@@ -516,9 +518,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
         entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
-        entity.SubmissionTypesInProblems = (await this.problemsData.GetByIdQuery(entity.Id)
-            .Select(p => p.SubmissionTypesInProblems)
-            .FirstOrDefaultAsync()) !;
+        entity.SubmissionTypesInProblems = await this.problemsData.GetByIdQuery(entity.Id)
+            .SelectMany(p => p.SubmissionTypesInProblems)
+            .ToListAsync();
 
         await base.BeforeEntitySaveAsync(entity, actionContext);
 
