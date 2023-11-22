@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
+import { ISort, IFilter } from './contest-types';
 import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
-import { IFilter, ISort } from './contest-types';
 
 interface IContestDetailsUrlParams {
     id: number;

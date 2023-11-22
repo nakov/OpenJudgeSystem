@@ -562,32 +562,32 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int page)
     {
         IQueryable<Submission> query;
+        var user = this.userProviderService.GetCurrentUser();
 
-        switch (status)
+        if (status == SubmissionStatus.Processing && user.IsAdmin)
         {
-            case SubmissionStatus.Processing:
-                query = this.submissionsCommonData.GetAllProcessing();
-                break;
-            case SubmissionStatus.Pending:
-                query = this.submissionsCommonData.GetAllPending();
-                break;
-            default:
-                var user = this.userProviderService.GetCurrentUser();
+            query = this.submissionsCommonData.GetAllProcessing();
+        }
+        else if (status == SubmissionStatus.Pending && user.IsAdmin)
+        {
+            query = this.submissionsCommonData.GetAllPending();
+        }
+        else
+        {
+            if (user.IsAdminOrLecturer)
+            {
+                return await this.submissionsData
+                    .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                        DefaultSubmissionsPerPage, page);
+            }
 
-                if (user.IsAdminOrLecturer)
-                {
-                    return await this.submissionsData
-                        .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                            DefaultSubmissionsPerPage, page);
-                }
+            var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
+            {
+                Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                    DefaultSubmissionsPerPage),
+            };
 
-                var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
-                {
-                    Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                        DefaultSubmissionsPerPage),
-                };
-
-                return modelResult;
+            return modelResult;
         }
 
         return await query
