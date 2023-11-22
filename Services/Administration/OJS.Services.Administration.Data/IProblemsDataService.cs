@@ -11,6 +11,8 @@
 
         Problem? GetWithTestsAndProblemGroupById(int id);
 
+        Problem? GetWithTestsSubmissionTypesAndProblemGroupById(int id);
+
         Problem? GetWithContestById(int id);
 
         IQueryable<Problem> GetAllByContest(int contestId);
