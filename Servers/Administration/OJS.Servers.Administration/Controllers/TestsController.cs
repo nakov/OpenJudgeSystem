@@ -101,11 +101,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Import(TestsImportRequestModel model)
     {
-        var problem = await this.problemsData.GetByIdQuery(model.ProblemId)
-            .Include(p => p.Tests)
-            .Include(p => p.SubmissionTypesInProblems)
-                .ThenInclude(stp => stp.SubmissionType)
-            .FirstOrDefaultAsync();
+        var problem = this.problemsData.GetWithTestsAndProblemGroupById(model.ProblemId);
 
         await this.problemsValidationHelper
             .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())
