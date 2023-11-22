@@ -1,16 +1,15 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
-using OJS.Services.Ui.Models.Contests;
-using OJS.Services.Ui.Data;
+using Microsoft.EntityFrameworkCore;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Administration.Data;
 using OJS.Data.Models.Participants;
 using X.PagedList;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
 public class ContestResultsAggregatorService : IContestResultsAggregatorService

@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations;
 
-using OJS.Services.Ui.Data;
+using OJS.Services.Administration.Data;
 using OJS.Services.Common;
 using OJS.Data.Models.Participants;
 using System.Collections.Generic;

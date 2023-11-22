@@ -1,8 +1,7 @@
-﻿namespace OJS.Services.Ui.Models.Contests;
+﻿namespace OJS.Services.Common.Models.Contests.Results;
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
-using OJS.Services.Common.Models.Contests.Results;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Linq;
 

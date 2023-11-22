@@ -46,10 +46,17 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var results = this.contestResultsAggregator.GetContestResults(
-            contest,
-            official,
-            full);
+        var contestResultsModel = new ContestResultsModel
+        {
+            Contest = contest,
+            Official = official,
+            IsUserAdminOrLecturer = true,
+            IsFullResults = full,
+            TotalResultsCount = null,
+            IsExportResults = true,
+        };
+
+        var results = this.contestResultsAggregator.GetContestResults(contestResultsModel);
 
         results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
 

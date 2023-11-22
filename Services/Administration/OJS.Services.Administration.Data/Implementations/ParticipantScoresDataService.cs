@@ -142,5 +142,9 @@ namespace OJS.Services.Administration.Data.Implementations
                     {
                         SubmissionId = null,
                     });
+
+        public IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds) =>
+            this.GetAll()
+                .Where(ps => !ps.Problem.IsDeleted && participantIds.Contains(ps.ParticipantId));
     }
 }

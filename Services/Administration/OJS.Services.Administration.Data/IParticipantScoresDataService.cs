@@ -35,5 +35,7 @@ namespace OJS.Services.Administration.Data
             int submissionPoints);
 
         Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
+
+        IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds);
     }
 }

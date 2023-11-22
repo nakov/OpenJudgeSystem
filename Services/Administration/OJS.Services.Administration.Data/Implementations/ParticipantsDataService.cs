@@ -129,6 +129,14 @@ namespace OJS.Services.Administration.Data.Implementations
             await this.ExecuteSqlCommandWithTimeout(command, 0);
         }
 
+        public IQueryable<Participant> GetAllByContest(int contestId)
+            => this.DbSet
+                .Where(p => p.ContestId == contestId);
+
+        public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
+            => this.GetAllByContest(contestId)
+                .Where(p => p.IsOfficial == isOfficial);
+
         private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
             this.participantsCommonData
                 .GetAllByContest(contestId)

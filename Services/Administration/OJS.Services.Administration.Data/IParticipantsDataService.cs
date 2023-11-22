@@ -40,5 +40,9 @@ namespace OJS.Services.Administration.Data
         Task InvalidateByContestAndIsOfficial(int contestId, bool isOfficial);
 
         Task UpdateTotalScoreSnapshot();
+
+        IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial);
+
+        IQueryable<Participant> GetAllByContest(int contestId);
     }
 }

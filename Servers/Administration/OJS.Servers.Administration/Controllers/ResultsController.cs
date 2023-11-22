@@ -8,7 +8,6 @@ using ClosedXML.Excel;
 using OJS.Common;
 using OJS.Common.Extensions;
 using OJS.Servers.Administration.Models.Contests;
-using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
