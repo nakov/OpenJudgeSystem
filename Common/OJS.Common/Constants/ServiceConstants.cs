@@ -10,8 +10,8 @@
             public const string Sort = "sort";
             public const string Trim = "trim";
             public const string TrimEnd = "trimend";
-            public const string CSharpCode = "csharp-code";
-            public const string CSharpCoreCode = "csharpcode";
+            public const string CSharpCode = "csharpcode";
+            public const string CSharpCoreCode = "csharpcorecode";
 
             public static string[] All => new[]
             {
@@ -22,6 +22,7 @@
                 Trim,
                 TrimEnd,
                 CSharpCode,
+                CSharpCoreCode,
             };
         }
 

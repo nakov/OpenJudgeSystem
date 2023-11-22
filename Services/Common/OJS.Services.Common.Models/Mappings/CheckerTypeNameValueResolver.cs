@@ -17,8 +17,8 @@ public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetails
         { ServiceConstants.CheckerTypes.CaseInsensitive, CheckerConstants.TypeNames.CaseInsensitive },
         { ServiceConstants.CheckerTypes.Sort, CheckerConstants.TypeNames.Sort },
         { ServiceConstants.CheckerTypes.ExactMatch, CheckerConstants.TypeNames.ExactMatch },
-        { ServiceConstants.CheckerTypes.CSharpCode, CheckerConstants.TypeNames.CSharpCoreCode },
-        { ServiceConstants.CheckerTypes.CSharpCoreCode, CheckerConstants.TypeNames.CSharpCode },
+        { ServiceConstants.CheckerTypes.CSharpCode, CheckerConstants.TypeNames.CSharpCode },
+        { ServiceConstants.CheckerTypes.CSharpCoreCode, CheckerConstants.TypeNames.CSharpCoreCode },
     };
 
     private readonly string defaultValue = string.Empty;
