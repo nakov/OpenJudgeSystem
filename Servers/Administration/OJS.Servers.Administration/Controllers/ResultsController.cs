@@ -15,9 +15,6 @@ using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Exceptions;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ContestsGeneral;
 
 public class ResultsController : BaseAdminViewController
