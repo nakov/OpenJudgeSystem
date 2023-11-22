@@ -9,15 +9,18 @@ namespace OJS.Servers.Administration.Controllers
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
+    using OJS.Common.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
     using OJS.Servers.Administration.Models.Contests;
+    using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
     using OJS.Services.Administration.Business.Validation.Factories;
     using OJS.Services.Administration.Business.Validation.Helpers;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Common.Validation.Helpers;
     using OJS.Services.Infrastructure.Extensions;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
@@ -26,25 +29,37 @@ namespace OJS.Servers.Administration.Controllers
     {
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
+        private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
+        private readonly IContestsDataService contestsDataService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
-        private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
+        private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
+        private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
 
         public ContestsController(
             IIpsDataService ipsData,
             IParticipantsDataService participantsData,
+            ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
-            IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper,
+            IContestCategoriesValidationHelper categoriesValidationHelper,
+            INotDefaultValueValidationHelper notDefaultValueValidationHelper,
+            IContestsDataService contestsDataService,
             IOptions<ApplicationConfig> appConfigOptions)
             : base(appConfigOptions)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
+            this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
             this.contestValidatorsFactory = contestValidatorsFactory;
-            this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
+            this.categoriesValidationHelper = categoriesValidationHelper;
+            this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
+            this.contestsDataService = contestsDataService;
         }
+
+        protected override Expression<Func<Contest, bool>>? MasterGridFilter
+            => this.GetMasterGridFilter();
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
             => this.contestValidatorsFactory.GetValidators();
@@ -114,36 +129,42 @@ namespace OJS.Servers.Administration.Controllers
             EntityAction action,
             IDictionary<string, string> entityDict)
         {
-            if (entity.CategoryId.HasValue)
+            if (action == EntityAction.Create)
             {
-                await this.contestCategoriesValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.CategoryId.Value)
-                    .VerifyResult();
+                return;
             }
 
-            if (action != EntityAction.Create)
-            {
-                await this.contestsValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.Id)
-                    .VerifyResult();
-            }
+            await this.contestsValidationHelper
+                .ValidatePermissionsOfCurrentUser(entity.Id)
+                .VerifyResult();
         }
 
         protected override async Task BeforeEntitySaveAsync(Contest entity, AdminActionContext actionContext)
         {
             await base.BeforeEntitySaveAsync(entity, actionContext);
 
-            if (entity.CategoryId.HasValue)
-            {
-                await this.contestCategoriesValidationHelper
-                    .ValidatePermissionsOfCurrentUser(entity.CategoryId.Value)
-                    .VerifyResult();
-            }
-
             if (actionContext.Action != EntityAction.Create)
             {
                 await this.contestsValidationHelper
                     .ValidatePermissionsOfCurrentUser(entity.Id)
+                    .VerifyResult();
+            }
+
+            this.notDefaultValueValidationHelper
+                .ValidateValueIsNotDefault(entity.CategoryId, nameof(entity.CategoryId))
+                .VerifyResult();
+
+            var oldContest = await this.contestsDataService
+                .OneById(entity.Id);
+
+            if (oldContest!.CategoryId != entity.CategoryId)
+            {
+                // If a lecturer tries to update the category of a contest
+                // he should be able to do it only for categories he has lecturer rights for.
+                // Otherwise if the category is not changed, even though the lecturer does not have rights for it,
+                // no error should be thrown.
+                await this.categoriesValidationHelper
+                    .ValidatePermissionsOfCurrentUser(entity.CategoryId)
                     .VerifyResult();
             }
 
@@ -204,7 +225,24 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, string> entityDict,
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
             Type autocompleteType)
-            => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
+        {
+            var userIsLecturerOnly = !this.User.IsAdmin() && this.User.IsLecturer();
+
+            if (userIsLecturerOnly)
+            {
+                // Lecturers should be able to create contests only for allowed categories
+                complexOptionFilters.Add(
+                    new KeyValuePair<string, Expression<Func<object, bool>>>(
+                        nameof(entity.Category),
+                        category => ((ContestCategory)category)
+                            .LecturersInContestCategories
+                            .Any(lg => lg.LecturerId == this.User.GetId()) ||
+                        ((ContestCategory)category)
+                        .Contests
+                        .Any(cc => !cc.IsDeleted && cc.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()))));
+            }
+
+            return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
                 .Concat(new[]
                 {
                     new FormControlViewModel
@@ -214,6 +252,7 @@ namespace OJS.Servers.Administration.Controllers
                         Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
                     },
                 });
+        }
 
         private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {
@@ -257,5 +296,10 @@ namespace OJS.Servers.Administration.Controllers
                 await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
             }
         }
+
+        private Expression<Func<Contest, bool>>? GetMasterGridFilter()
+            => this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
     }
 }

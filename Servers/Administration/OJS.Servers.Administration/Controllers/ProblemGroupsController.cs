@@ -4,6 +4,11 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
@@ -17,11 +22,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+using OJS.Common.Extensions;
 
 public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 {
@@ -30,6 +31,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     private readonly IValidationService<ProblemGroupEditValidationServiceModel> problemGroupsEditValidation;
     private readonly IValidationService<ProblemGroupCreateValidationServiceModel> problemGroupsCreateValidation;
     private readonly IContestsActivityService contestsActivity;
+    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly IContestsDataService contestsData;
     private readonly IProblemGroupsBusinessService problemGroupsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
@@ -43,6 +45,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         IContestsDataService contestsData,
         IContestsValidationHelper contestsValidationHelper,
         IProblemGroupsBusinessService problemGroupsBusiness,
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
         IOptions<ApplicationConfig> appConfigOptions)
         : base(appConfigOptions)
     {
@@ -54,6 +57,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.contestsData = contestsData;
         this.contestsValidationHelper = contestsValidationHelper;
         this.problemGroupsBusiness = problemGroupsBusiness;
+        this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
     }
 
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
@@ -69,6 +73,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         {
             new () { Action = nameof(this.Problems) },
         };
+
+    protected override Expression<Func<ProblemGroup, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
@@ -163,4 +170,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 
     protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
         => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(entity.ContestId, entity);
+
+    private Expression<Func<ProblemGroup, bool>> GetMasterGridFilter()
+        => this.lecturerContestPrivilegesBusinessService.GetProblemGroupsUserPrivilegesExpression(
+            this.User.GetId(),
+            this.User.IsAdmin());
 }

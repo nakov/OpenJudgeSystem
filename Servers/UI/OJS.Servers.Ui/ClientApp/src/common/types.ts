@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { ITestRunType } from '../hooks/submissions/types';
+import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
+import { IErrorDataType } from '../hooks/use-http';
 
 import { SearchCategory } from './search-types';
 
@@ -21,6 +22,16 @@ interface IPublicSubmissionContest {
 interface IPublicSubmissionUser {
     id: string;
     username: string;
+}
+
+interface ISubmissionDetailsState {
+    currentSubmission: ISubmissionDetailsType | null;
+    currentSubmissionResults:IPagedResultType<ISubmissionResults>;
+    validationErrors: IErrorDataType[];
+    downloadErrorMessage: string | null;
+}
+interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
+    currentPage: number;
 }
 
 interface IPublicSubmissionProblem {
@@ -200,6 +211,7 @@ interface IUserType {
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;
+    isAdmin: boolean;
 }
 
 interface IUserRoleType {
@@ -244,4 +256,6 @@ export type {
     IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
+    ISubmissionDetailsState,
+    ISubmissionDetailsReduxState,
 };
