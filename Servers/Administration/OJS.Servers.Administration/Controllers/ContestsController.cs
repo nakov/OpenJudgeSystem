@@ -189,8 +189,7 @@ namespace OJS.Servers.Administration.Controllers
                 newContest.Duration = null;
             }
 
-            var ipsInContests = this.contestsDataService
-                .GetContestWithIps(existingContest.Id).SelectMany(c => c.IpsInContests);
+            var ipsInContests = this.GetContestIps(existingContest.Id);
 
             if (ipsInContests.Count() != 0)
             {
@@ -222,8 +221,7 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
             Type autocompleteType)
         {
-            var ipsInContests = this.contestsDataService
-                .GetContestWithIps(entity.Id).SelectMany(c => c.IpsInContests);
+            var ipsInContests = this.GetContestIps(entity.Id);
 
             if (ipsInContests.Count() != 0)
             {
@@ -266,6 +264,10 @@ namespace OJS.Servers.Administration.Controllers
                 }
             }
         }
+
+        private IEnumerable<IpInContest> GetContestIps(int id) =>
+            this.contestsDataService
+                .GetContestWithIps(id).SelectMany(c => c.IpsInContests);
 
         private async Task InvalidateParticipants(
             string? originalContestPassword,
