@@ -562,18 +562,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int page)
     {
         IQueryable<Submission> query;
-        var user = this.userProviderService.GetCurrentUser();
 
-        if (status == SubmissionStatus.Processing && user.IsAdmin)
+        if (status == SubmissionStatus.Processing)
         {
             query = this.submissionsCommonData.GetAllProcessing();
         }
-        else if (status == SubmissionStatus.Pending && user.IsAdmin)
+        else if (status == SubmissionStatus.Pending)
         {
             query = this.submissionsCommonData.GetAllPending();
         }
         else
         {
+            var user = this.userProviderService.GetCurrentUser();
             if (user.IsAdminOrLecturer)
             {
                 return await this.submissionsData
