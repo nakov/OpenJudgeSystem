@@ -33,7 +33,12 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
         var contestActivityEntity = this.activityService
             .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
 
-        contestResultsModel.Contest.ProblemGroups
+        var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
+
+        contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
+        contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
+
+        var problems = contestResultsModel.Contest.ProblemGroups
             .SelectMany(pg => pg.Problems)
             .AsQueryable()
             .Where(p => !p.IsDeleted)
@@ -41,11 +46,6 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             .ThenBy(p => p.Name)
             .Select(ContestProblemListViewModel.FromProblem)
             .ToList();
-
-        var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
-
-        contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
-        contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
 
         var totalParticipantsCount = contestResultsModel.TotalResultsCount
                                      ?? this.participantsData
@@ -66,7 +66,11 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
 
         // Get the ParticipantScores with another query and map problem results for each participant.
         var participantScores = this.participantScoresDataService
-            .GetAllByParticipants(participants.Select(p => p.Id));
+            .GetAllByParticipants(participants.Select(p => p.Id))
+            .Include(x => x.Participant)
+            .Include(x => x.Submission)
+            .Include(x => x.Problem)
+            .AsNoTracking();
 
         IEnumerable<ProblemResultPairViewModel> problemResults;
 
@@ -98,6 +102,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             contestResultsModel.ItemsInPage,
             totalParticipantsCount);
 
+        contestResults.Problems = problems;
         contestResults.Results = results;
 
         return contestResults;

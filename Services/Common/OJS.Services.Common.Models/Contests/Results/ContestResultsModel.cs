@@ -34,21 +34,13 @@ public class ContestResultsModel : IMapExplicitly
             .ForPath(
             d => d.Contest.Type,
             opt => opt.MapFrom(s => s.ContestType))
-            .ForMember(d => d.IsUserAdminOrLecturer, opt => opt.Ignore())
+            .ForPath(
+                d => d.IsUserAdminOrLecturer,
+                opt => opt.MapFrom(s => s.UserHasContestRights))
             .ForMember(d => d.IsFullResults, opt => opt.Ignore())
             .ForMember(d => d.TotalResultsCount, opt => opt.Ignore())
             .ForMember(d => d.IsExportResults, opt => opt.Ignore())
             .ForMember(d => d.Page, opt => opt.Ignore())
             .ForMember(d => d.ItemsInPage, opt => opt.Ignore())
-            // .ForPath(
-            // d => d.Contest.ProblemGroups
-            //     .SelectMany(pg => pg.Problems)
-            //     .AsQueryable()
-            //     .Where(p => !p.IsDeleted)
-            //     .OrderBy(p => p.OrderBy)
-            //     .ThenBy(p => p.Name)
-            //     .Select(ContestProblemListViewModel.FromProblem),
-            // opt =>
-            //     opt.MapFrom(s => s.Problems))
             .ReverseMap();
 }

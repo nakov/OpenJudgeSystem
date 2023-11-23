@@ -38,6 +38,15 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
         contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
         contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;
 
+        var problems = contestResultsModel.Contest.ProblemGroups
+            .SelectMany(pg => pg.Problems)
+            .AsQueryable()
+            .Where(p => !p.IsDeleted)
+            .OrderBy(p => p.OrderBy)
+            .ThenBy(p => p.Name)
+            .Select(ContestProblemListViewModel.FromProblem)
+            .ToList();
+
         var totalParticipantsCount = contestResultsModel.TotalResultsCount
                                      ?? this.participantsData
                                          .GetAllByContestAndIsOfficial(
@@ -57,7 +66,11 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
 
         // Get the ParticipantScores with another query and map problem results for each participant.
         var participantScores = this.participantScoresDataService
-            .GetAllByParticipants(participants.Select(p => p.Id));
+            .GetAllByParticipants(participants.Select(p => p.Id))
+            .Include(x => x.Participant)
+            .Include(x => x.Submission)
+            .Include(x => x.Problem)
+            .AsNoTracking();
 
         IEnumerable<ProblemResultPairViewModel> problemResults;
 
@@ -89,6 +102,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             contestResultsModel.ItemsInPage,
             totalParticipantsCount);
 
+        contestResults.Problems = problems;
         contestResults.Results = results;
 
         return contestResults;
