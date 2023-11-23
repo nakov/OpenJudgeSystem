@@ -2,15 +2,14 @@ import React, { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { IContestSearchType, IProblemSearchType, IUserSearchType } from '../../common/search-types';
+import { NotSelectedSearchCategoryMessage } from '../../common/constants';
+import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchCategory } from '../../common/search-types';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import List, { Orientation } from '../../components/guidelines/lists/List';
-import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import SearchProblem from '../../components/search/search-problems/SearchProblem';
 import SearchUser from '../../components/search/search-users/SearchUser';
+import SearchSection from '../../components/search/SearchSection';
 import { usePageTitles } from '../../hooks/use-page-titles';
-import { usePages } from '../../hooks/use-pages';
 import { useSearch } from '../../hooks/use-search';
 import { setLayout } from '../shared/set-layout';
 
@@ -19,43 +18,34 @@ import styles from './SearchPage.module.scss';
 const SearchPage = () => {
     const {
         state: {
-            contests,
-            problems,
-            users,
             searchError,
             searchValue,
-            isLoaded,
+            getSearchResultsUrlParams,
+            isSearchingUsers,
+            isSearchingProblems,
+            isSearchingContests,
         },
-        actions: { initiateSearchResultsUrlQuery },
+        actions: {
+            initiateSearchResultsUrlQuery,
+            setSearchingError,
+            toggleVisibility,
+        },
     } = useSearch();
-    const {
-        state: {
-            currentPage,
-            pagesInfo,
-        },
-        changePage,
-    } = usePages();
     const { actions: { setPageTitle } } = usePageTitles();
 
     useEffect(
         () => {
-            if (isLoaded) {
-                setPageTitle(`Search results for "${searchValue}"`);
-            }
+            setSearchingError(null);
+            initiateSearchResultsUrlQuery();
         },
-        [ isLoaded, searchValue, setPageTitle ],
+        [ getSearchResultsUrlParams?.searchTerm, initiateSearchResultsUrlQuery, setSearchingError ],
     );
 
     useEffect(
         () => {
-            initiateSearchResultsUrlQuery();
+            setPageTitle(`Search results for "${searchValue}"`);
         },
-        [ initiateSearchResultsUrlQuery ],
-    );
-
-    const handlePageChange = useCallback(
-        (page: number) => changePage(page),
-        [ changePage ],
+        [ searchValue, setPageTitle ],
     );
 
     const renderErrorHeading = useCallback(
@@ -84,33 +74,13 @@ const SearchPage = () => {
         [ renderErrorHeading, searchError ],
     );
 
+    useEffect(() => () => {
+        toggleVisibility();
+    }, [ toggleVisibility ]);
+
     const renderContest = useCallback(
         (contest: IContestSearchType) => <ContestCard contest={contest} />,
         [],
-    );
-
-    const renderContests = useCallback(
-        () => isEmpty(contests)
-            ? null
-            : (
-                <>
-                    <Heading
-                      type={HeadingType.secondary}
-                      className={styles.heading}
-                    >
-                        Contests:
-                    </Heading>
-                    <List
-                      values={contests}
-                      itemFunc={renderContest}
-                      className={styles.items}
-                      itemClassName={styles.contestItem}
-                      orientation={Orientation.horizontal}
-                      wrap
-                    />
-                </>
-            ),
-        [ contests, renderContest ],
     );
 
     const renderProblem = useCallback(
@@ -118,108 +88,62 @@ const SearchPage = () => {
         [],
     );
 
-    const renderProblems = useCallback(
-        () => isEmpty(problems)
-            ? null
-            : (
-                <>
-                    <Heading
-                      type={HeadingType.secondary}
-                      className={styles.heading}
-                    >
-                        Problems:
-                    </Heading>
-                    <List
-                      values={problems}
-                      itemFunc={renderProblem}
-                      className={styles.items}
-                      itemClassName={styles.contestItem}
-                      orientation={Orientation.horizontal}
-                      wrap
-                    />
-                </>
-            ),
-        [ problems, renderProblem ],
-    );
-
     const renderUser = useCallback(
         (user: IUserSearchType) => <SearchUser user={user} />,
         [],
     );
 
-    const renderUsers = useCallback(
-        () => isEmpty(users)
-            ? null
-            : (
-                <>
-                    <Heading
-                      type={HeadingType.secondary}
-                      className={styles.heading}
-                    >
-                        Users:
-                    </Heading>
-                    <List
-                      values={users}
-                      itemFunc={renderUser}
-                      className={styles.items}
-                      itemClassName={styles.contestItem}
-                      orientation={Orientation.horizontal}
-                      wrap
-                    />
-                </>
-            ),
-        [ renderUser, users ],
-    );
-
-    const renderNoResultsFound = useCallback(
-        () => (
-            <div className={styles.headingSearch}>
-                <Heading
-                  type={HeadingType.primary}
-                  className={styles.searchHeading}
-                >
-                    No results found
-                </Heading>
-            </div>
-        ),
-        [],
-    );
-
-    const { pagesCount } = pagesInfo;
     const renderElements = useCallback(
-        () => isEmpty(contests) && isEmpty(problems) && isEmpty(users)
-            ? renderNoResultsFound()
-            : (
-                <>
-                    <div className={styles.headingSearch}>
-                        <Heading
-                          type={HeadingType.primary}
-                          className={styles.searchHeading}
-                        >
-                            Search results for
-                            {' '}
-                            {`"${searchValue}"`}
-                        </Heading>
-                    </div>
-                    <PaginationControls
-                      count={pagesCount}
-                      page={currentPage}
-                      onChange={handlePageChange}
+        () => (
+            <>
+                <div className={styles.headingSearch}>
+                    <Heading
+                      type={HeadingType.primary}
+                      className={styles.searchHeading}
+                    >
+                        Search results for
+                        {' '}
+                        {`"${searchValue}"`}
+                    </Heading>
+                </div>
+                {isSearchingContests &&
+                    (
+                    <SearchSection<IContestSearchType>
+                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
+                      searchCategory={SearchCategory.Contest}
+                      renderItem={renderContest}
                     />
-                    {renderContests()}
-                    {renderProblems()}
-                    {renderUsers()}
-                </>
-            ),
-        [ contests, currentPage, handlePageChange, pagesCount, problems, renderContests,
-            renderNoResultsFound, renderProblems, renderUsers, searchValue, users ],
+                    )}
+                {isSearchingProblems &&
+                    (
+                    <SearchSection<IProblemSearchType>
+                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
+                      searchCategory={SearchCategory.Problem}
+                      renderItem={renderProblem}
+                    />
+                    )}
+                {isSearchingUsers &&
+                    (
+                    <SearchSection<IUserSearchType>
+                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
+                      searchCategory={SearchCategory.User}
+                      renderItem={renderUser}
+                    />
+                    )}
+            </>
+        ),
+        [ searchValue, isSearchingContests, getSearchResultsUrlParams?.searchTerm, renderContest,
+            isSearchingProblems, renderProblem, isSearchingUsers, renderUser ],
     );
 
     const renderPage = useCallback(
         () => isNil(searchError)
-            ? renderElements()
+            ? isEmpty(getSearchResultsUrlParams?.selectedTerms)
+                ? renderErrorHeading(NotSelectedSearchCategoryMessage)
+                : renderElements()
             : renderErrorMessage(),
-        [ renderElements, renderErrorMessage, searchError ],
+        [ getSearchResultsUrlParams?.selectedTerms, renderElements,
+            renderErrorHeading, renderErrorMessage, searchError ],
     );
 
     return (

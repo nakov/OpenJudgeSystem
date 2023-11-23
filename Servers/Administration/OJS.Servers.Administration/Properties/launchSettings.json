@@ -45,7 +45,9 @@
         "EmailServiceConfig__ServerPassword": "YOUR_Password",
         "EmailServiceConfig__SenderEmail": "Test@softuni.bg",
         "EmailServiceConfig__SenderDisplayValue": "YOUR_DISPLAY_NAME",
-        "EmailServiceConfig__DevEmail": "test@softuni.bg"
+        "EmailServiceConfig__DevEmail": "test@softuni.bg",
+        "HealthCheckConfig__Key": "Key",
+        "HealthCheckConfig__Password": "password"
       }
     }
   }
