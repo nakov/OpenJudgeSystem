@@ -22,7 +22,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     public async Task UpdateTotalScoreSnapshotOfParticipants()
         => await this.participantsData.UpdateTotalScoreSnapshot();
 
-    public async Task RemoveParticipantMultipleScores()
+    public async Task RemoveDuplicateParticipantScores()
     {
         var participantScores =
             this.scoresDataService

@@ -39,7 +39,7 @@
 
         public async Task<object> RemoveParticipantMultipleScores()
         {
-            await this.participantsBusinessService.RemoveParticipantMultipleScores();
+            await this.participantsBusinessService.RemoveDuplicateParticipantScores();
 
             return "Successfully removed participant multiple scores";
         }

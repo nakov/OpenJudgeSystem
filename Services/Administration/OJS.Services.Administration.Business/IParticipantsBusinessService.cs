@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 public interface IParticipantsBusinessService : IService
 {
     /// <summary>
-    /// This method updates the total score snapshot for all participants.
+    /// Updates the total score snapshot for all participants.
     /// </summary>
     Task UpdateTotalScoreSnapshotOfParticipants();
 
     /// <summary>
-    /// This method removes multiple scores associated with a participant
-    /// For each group, it keeps the score with the highest points and prepares to remove the rest.
+    /// For each group, it keeps the score with the highest points and remove multiple duplicate scores.
     /// </summary>
-    Task RemoveParticipantMultipleScores();
+    Task RemoveDuplicateParticipantScores();
 }
