@@ -13,6 +13,8 @@
     {
         Task Submit(SubmitSubmissionServiceModel model);
 
+        Task Retest(int id);
+
         Task<SubmissionDetailsServiceModel?> GetById(int submissionId);
 
         Task<SubmissionDetailsServiceModel> GetDetailsById(int submissionId);

@@ -39,9 +39,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-
     private readonly IParticipantsBusinessService participantsBusinessService;
-
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
 
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
@@ -55,6 +53,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
+    private readonly IRetestSubmissionValidationService retestSubmissionValidationService;
     private readonly ISubmissionPublisherService submissionPublisher;
     private readonly ILogger<SubmissionsBusinessService> logger;
 
@@ -74,6 +73,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
+        IRetestSubmissionValidationService retestSubmissionValidationService,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ISubmissionPublisherService submissionPublisher,
         IContestsDataService contestsDataService,
@@ -84,6 +84,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
         this.participantsBusinessService = participantsBusinessService;
+        this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
@@ -93,11 +94,40 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
+        this.retestSubmissionValidationService = retestSubmissionValidationService;
         this.submissionPublisher = submissionPublisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.contestsDataService = contestsDataService;
         this.logger = logger;
-        this.lecturersInContestsBusiness = lecturersInContestsBusiness;
+    }
+
+    public Task Retest(int id)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        var submission = this.submissionsData
+            .GetSubmissionById<SubmissionDetailsServiceModel>(id);
+
+        if (submission == null)
+        {
+            throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
+        }
+
+        var isUserInRoleForContest =
+            this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(submission.ContestId);
+
+        var validationResult =
+            this.retestSubmissionValidationService.GetValidationResult((
+                submission,
+                user,
+                isUserInRoleForContest));
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        return this.submissionPublisher.PublishRetest(submission.Id);
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)

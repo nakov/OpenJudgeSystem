@@ -77,12 +77,9 @@ const SubmissionDetails = () => {
 
     const renderRetestButton = useCallback(
         () => {
-            console.log(user.username === currentSubmission?.user.userName);
-
             if (isNil(currentSubmission) ||
-                // Regular user
-                (!currentSubmission.userIsInRoleForContest &&
-                user.username !== currentSubmission?.user.userName)) {
+                // User is not admin or lecturer and is not the participant of the submission
+                (!currentSubmission.userIsInRoleForContest && user.username !== currentSubmission?.user.userName)) {
                 return null;
             }
 

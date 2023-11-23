@@ -35,6 +35,15 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
         return isAdmin || isUserLecturerInContest;
     }
 
+    public bool IsUserAdminOrLecturerInContest(int contestId)
+    {
+        var contest = this.contestsDataService
+            .GetByIdQuery(contestId)
+            .FirstOrDefault();
+
+        return this.IsUserAdminOrLecturerInContest(contest);
+    }
+
     public bool IsUserLecturerInContest(Contest contest)
     {
         var currentUser = this.userProviderService.GetCurrentUser();

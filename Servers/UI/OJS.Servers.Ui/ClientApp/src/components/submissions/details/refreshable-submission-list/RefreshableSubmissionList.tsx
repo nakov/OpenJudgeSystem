@@ -45,9 +45,11 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            {renderRetestButton()}
+            {!isNil(currentSubmission) && currentSubmission.isProcessed
+                ? renderRetestButton()
+                : null}
         </div>
-    ), [ handleReloadClick, renderRetestButton ]);
+    ), [ currentSubmission, handleReloadClick, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {

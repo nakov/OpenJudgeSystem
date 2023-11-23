@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
+import { ISubmissionDetailsType } from '../../../../hooks/submissions/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
@@ -37,6 +38,16 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
             dispatch(setDownloadErrorMessage(error.error));
         }
     }, [ dispatch, error ]);
+
+    // Is processed, has tests and test runs are cleared, and has no errors
+    const shouldRenderRetestBox = useCallback(
+        (submission: ISubmissionDetailsType) => submission?.testRuns.length === 0 &&
+        submission.isCompiledSuccessfully &&
+        submission.totalTests > 0 &&
+        !submission.processingComment &&
+        submission.isProcessed,
+        [],
+    );
 
     const downloadFile = (blob:Blob, filename: string) => {
         const blobUrl = URL.createObjectURL(blob);
@@ -112,11 +123,8 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
     const { submissionType } = currentSubmission || {};
 
     const renderTestsChangeMessage = useCallback(() => (
-        currentSubmission?.testRuns.length === 0 &&
-        currentSubmission.isCompiledSuccessfully &&
-        currentSubmission.totalTests > 0 &&
-        !currentSubmission.processingComment &&
-        currentSubmission.isProcessed
+        !isNil(currentSubmission) &&
+        shouldRenderRetestBox(currentSubmission)
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -133,7 +141,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                 </div>
             )
             : ''
-    ), [ currentSubmission, renderRetestButton ]);
+    ), [ currentSubmission, renderRetestButton, shouldRenderRetestBox ]);
 
     const backButtonState = useMemo(
         () => isNil(currentSubmission?.contestId)

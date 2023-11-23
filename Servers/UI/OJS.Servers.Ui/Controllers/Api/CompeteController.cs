@@ -71,6 +71,20 @@ public class CompeteController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Triggers a retest of a user's submission by putting a message on a queue for background processing.
+    /// The retest permissions will be validated based on certain criteria:
+    /// For administrator users or lecturers in a contest, the submission will always be retested.
+    /// For regular users, if the user is the participant attached to the submission and if the tests have changed.
+    /// </summary>
+    /// <param name="id">The submission id to be retested.</param>
+    /// <returns>Success status code.</returns>
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> Retest(int id)
+        => await this.submissionsBusinessService
+            .Retest(id)
+            .ToOkResult();
+
+    /// <summary>
     /// Gets the best results for the given problem by all participants.
     /// </summary>
     /// <param name="id">The id of the problem.</param>
