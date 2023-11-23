@@ -25,24 +25,30 @@ public class ContestResultsModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<ContestResultsViewModel, ContestResultsModel>()
-        .ForMember(
+            .ForPath(
+                d => d.Contest.Name,
+                opt => opt.MapFrom(s => s.Name))
+            .ForPath(
             d => d.Official,
             opt => opt.MapFrom(s => s.IsCompete))
-        .ForMember(
-            d => d.Contest.Name,
-            opt => opt.MapFrom(s => s.Name))
-        .ForMember(
+            .ForPath(
             d => d.Contest.Type,
             opt => opt.MapFrom(s => s.ContestType))
-        .ForMember(
-            d => d.Contest.ProblemGroups
-                .SelectMany(pg => pg.Problems)
-                .AsQueryable()
-                .Where(p => !p.IsDeleted)
-                .OrderBy(p => p.OrderBy)
-                .ThenBy(p => p.Name)
-                .Select(ContestProblemListViewModel.FromProblem),
-            opt =>
-                opt.MapFrom(s => s.Problems))
-        .ReverseMap();
+            .ForMember(d => d.IsUserAdminOrLecturer, opt => opt.Ignore())
+            .ForMember(d => d.IsFullResults, opt => opt.Ignore())
+            .ForMember(d => d.TotalResultsCount, opt => opt.Ignore())
+            .ForMember(d => d.IsExportResults, opt => opt.Ignore())
+            .ForMember(d => d.Page, opt => opt.Ignore())
+            .ForMember(d => d.ItemsInPage, opt => opt.Ignore())
+            // .ForPath(
+            // d => d.Contest.ProblemGroups
+            //     .SelectMany(pg => pg.Problems)
+            //     .AsQueryable()
+            //     .Where(p => !p.IsDeleted)
+            //     .OrderBy(p => p.OrderBy)
+            //     .ThenBy(p => p.Name)
+            //     .Select(ContestProblemListViewModel.FromProblem),
+            // opt =>
+            //     opt.MapFrom(s => s.Problems))
+            .ReverseMap();
 }

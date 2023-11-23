@@ -33,6 +33,15 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
         var contestActivityEntity = this.activityService
             .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
 
+        contestResultsModel.Contest.ProblemGroups
+            .SelectMany(pg => pg.Problems)
+            .AsQueryable()
+            .Where(p => !p.IsDeleted)
+            .OrderBy(p => p.OrderBy)
+            .ThenBy(p => p.Name)
+            .Select(ContestProblemListViewModel.FromProblem)
+            .ToList();
+
         var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
 
         contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
