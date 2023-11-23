@@ -29,6 +29,8 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IContestCategoriesValidationHelper contestCategoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
         private readonly IProblemGroupsDataService problemGroupsData;
+        private readonly IContestsDataService contestsDataService;
+        private readonly IIpsDataService ipsDataService;
 
         public ContestsController(
             IIpsDataService ipsData,
@@ -36,7 +38,9 @@ namespace OJS.Servers.Administration.Controllers
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper,
-            IProblemGroupsDataService problemGroupsData)
+            IProblemGroupsDataService problemGroupsData,
+            IContestsDataService contestsDataService,
+            IIpsDataService ipsDataService)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
@@ -44,6 +48,8 @@ namespace OJS.Servers.Administration.Controllers
             this.contestCategoriesValidationHelper = contestCategoriesValidationHelper;
             this.contestsValidationHelper = contestsValidationHelper;
             this.problemGroupsData = problemGroupsData;
+            this.contestsDataService = contestsDataService;
+            this.ipsDataService = ipsDataService;
         }
 
         protected override IEnumerable<Func<Contest, Contest, AdminActionContext, ValidatorResult>> EntityValidators
@@ -183,7 +189,14 @@ namespace OJS.Servers.Administration.Controllers
                 newContest.Duration = null;
             }
 
-            newContest.IpsInContests.Clear();
+            var ipsInContests = this.contestsDataService
+                .GetContestWithIps(existingContest.Id).SelectMany(c => c.IpsInContests);
+
+            if (ipsInContests.Count() != 0)
+            {
+                await this.ipsDataService.DeleteIps(ipsInContests);
+            }
+
             await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
@@ -208,7 +221,16 @@ namespace OJS.Servers.Administration.Controllers
             IDictionary<string, string> entityDict,
             IDictionary<string, Expression<Func<object, bool>>> complexOptionFilters,
             Type autocompleteType)
-            => base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
+        {
+            var ipsInContests = this.contestsDataService
+                .GetContestWithIps(entity.Id).SelectMany(c => c.IpsInContests);
+
+            if (ipsInContests.Count() != 0)
+            {
+                entity.IpsInContests = ipsInContests.ToList();
+            }
+
+            return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
                 .Concat(new[]
                 {
                     new FormControlViewModel
@@ -218,6 +240,7 @@ namespace OJS.Servers.Administration.Controllers
                         Value = string.Join(", ", entity.IpsInContests.Select(x => x.Ip.Value)),
                     },
                 });
+        }
 
         private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {

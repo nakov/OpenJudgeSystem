@@ -27,6 +27,8 @@ namespace OJS.Services.Administration.Data
 
         IQueryable<Contest> GetAllVisible();
 
+        IQueryable<Contest> GetContestWithIps(int id);
+
         IQueryable<Contest> GetAllVisibleByCategory(int categoryId);
 
         IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId);

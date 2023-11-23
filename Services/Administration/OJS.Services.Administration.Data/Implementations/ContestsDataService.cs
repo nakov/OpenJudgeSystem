@@ -101,6 +101,11 @@ namespace OJS.Services.Administration.Data.Implementations
             => this.GetAllByLecturer(lecturerId)
                 .Where(c => c.CategoryId == categoryId);
 
+        public IQueryable<Contest> GetContestWithIps(int id)
+            => this.GetByIdQuery(id)
+                .Include(c => c.IpsInContests)
+                    .ThenInclude(ip => ip.Ip);
+
         public IQueryable<Contest> GetAllWithDeleted() => this.DbSet.IgnoreQueryFilters();
 
         public Task<int> GetMaxPointsById(int id)
