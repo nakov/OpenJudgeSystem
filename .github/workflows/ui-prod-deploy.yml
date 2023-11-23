@@ -34,6 +34,7 @@ jobs:
     with:
       docker_image_name: judge_web_ui
       dockerfile_name: Dockerfile.ui
+      build_command: build
       docker_tag: ${{ inputs.docker_image_tag }}
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV

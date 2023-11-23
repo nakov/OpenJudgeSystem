@@ -1,6 +1,7 @@
 # Node.js build
 FROM node:18-alpine as node_build
 
+ARG BUILD_COMMAND=build:local
 WORKDIR /app
 
 COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json /src/Servers/UI/OJS.Servers.Ui/ClientApp/package.json
@@ -15,7 +16,7 @@ COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientAp
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
 
 RUN yarn run lint
-RUN yarn build
+RUN yarn ${BUILD_COMMAND}
 
 # Serve using Nginx
 FROM nginx:alpine

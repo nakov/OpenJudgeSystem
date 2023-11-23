@@ -15,6 +15,7 @@ jobs:
     with:
       docker_image_name: judge_web_ui_fe
       dockerfile_name: Dockerfile.fe
+      build_command: build
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
         export NODE_OPTIONS=--max-old-space-size=8192

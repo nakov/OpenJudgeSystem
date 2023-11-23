@@ -28,6 +28,8 @@ services:
     build:
       context: .
       dockerfile: ./Docker/Dockerfile.fe
+      args:
+        - BUILD_COMMAND=build:local
     image: judge_web_fe
     container_name: web_ui_fe_instance
     ports:

@@ -103,6 +103,8 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
+    "build:local": "vite build --mode development.local",
     "eject": "react-scripts eject",
     "lint:eslint": "./node_modules/.bin/eslint ./src --ext .tsx --ext .ts",
     "lint:stylelint": "./node_modules/.bin/stylelint ./src/**/*.scss",

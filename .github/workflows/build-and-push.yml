@@ -18,6 +18,9 @@ on:
         additional_run_commands:
           required: false
           type: string
+        build_command:
+          required: false
+          type: string
 
 env:
     IMG: ${{ inputs.docker_image_name }}
@@ -36,6 +39,9 @@ jobs:
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         ${{ inputs.additional_run_commands }}
+    - name: Set Special Parameter for Specific Docker Image
+      if: inputs.docker_image_name == 'judge_web_ui_fe'
+      run: echo "BUILD_COMMAND=${{ inputs.build_command }}" >> $GITHUB_ENV
     - name: Get branch name (merge)
       if: github.event_name == 'push'
       shell: bash
@@ -88,6 +94,8 @@ jobs:
         registry: ghcr.io
         file: ${{ env.DOCKERFILE_PATH }}
         builder: ${{ steps.buildx.outputs.name }}
+        build-args: |
+          BUILD_COMMAND=${{ env.BUILD_COMMAND }}
         labels: |
           org.opencontainers.image.authors=${{ github.repository_owner }}
           org.opencontainers.image.created=${{ env.BUILD_DATE }}
