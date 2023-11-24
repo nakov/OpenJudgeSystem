@@ -5,7 +5,6 @@ import isNil from 'lodash/isNil';
 import { contestParticipationType } from '../../../../common/contest-helpers';
 import { isSubmissionEligibleForRetest } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { ISubmissionDetailsType } from '../../../../hooks/submissions/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
@@ -40,16 +39,6 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
             dispatch(setDownloadErrorMessage(error.error));
         }
     }, [ dispatch, error ]);
-
-    // Is processed, has tests and test runs are cleared, and has no errors
-    const shouldRenderRetestBox = useCallback(
-        (submission: ISubmissionDetailsType) => submission?.testRuns.length === 0 &&
-        submission.isCompiledSuccessfully &&
-        submission.totalTests > 0 &&
-        !submission.processingComment &&
-        submission.isProcessed,
-        [],
-    );
 
     const downloadFile = (blob:Blob, filename: string) => {
         const blobUrl = URL.createObjectURL(blob);
