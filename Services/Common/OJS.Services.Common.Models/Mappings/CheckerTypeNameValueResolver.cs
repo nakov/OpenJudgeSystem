@@ -13,11 +13,15 @@ public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetails
     {
         { ServiceConstants.CheckerTypes.Trim, CheckerConstants.TypeNames.Trim },
         { ServiceConstants.CheckerTypes.TrimEnd, CheckerConstants.TypeNames.TrimEnd },
+        { ServiceConstants.CheckerTypes.LegacyTrimEnd, CheckerConstants.TypeNames.TrimEnd },
         { ServiceConstants.CheckerTypes.Precision, CheckerConstants.TypeNames.Precision },
         { ServiceConstants.CheckerTypes.CaseInsensitive, CheckerConstants.TypeNames.CaseInsensitive },
+        { ServiceConstants.CheckerTypes.LegacyCaseInsensitive, CheckerConstants.TypeNames.CaseInsensitive },
         { ServiceConstants.CheckerTypes.Sort, CheckerConstants.TypeNames.Sort },
         { ServiceConstants.CheckerTypes.ExactMatch, CheckerConstants.TypeNames.ExactMatch },
+        { ServiceConstants.CheckerTypes.LegacyExactMatch, CheckerConstants.TypeNames.ExactMatch },
         { ServiceConstants.CheckerTypes.CSharpCode, CheckerConstants.TypeNames.CSharpCode },
+        { ServiceConstants.CheckerTypes.LegacyCSharpCode, CheckerConstants.TypeNames.CSharpCoreCode },
         { ServiceConstants.CheckerTypes.CSharpCoreCode, CheckerConstants.TypeNames.CSharpCoreCode },
     };
 
