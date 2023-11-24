@@ -10,14 +10,14 @@ using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 public class ContestResultsBusinessService : IContestResultsBusinessService
 {
-    private readonly IContestResultsAggregatorService contestResultsAggregator;
+    private readonly IContestResultsAggregatorCommonService contestResultsAggregator;
     private readonly IContestsDataService contestsData;
     private readonly IContestResultsValidationService contestResultsValidation;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
     private readonly IUserProviderService userProvider;
 
     public ContestResultsBusinessService(
-        IContestResultsAggregatorService contestResultsAggregator,
+        IContestResultsAggregatorCommonService contestResultsAggregator,
         IContestsDataService contestsData,
         IContestResultsValidationService contestResultsValidation,
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,

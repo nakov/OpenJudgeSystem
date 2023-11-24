@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using OJS.Services.Common;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,12 +22,12 @@ public class ResultsController : BaseAdminViewController
     private readonly IContestsDataService contestsData;
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
-    private readonly IContestResultsAggregatorService contestResultsAggregator;
+    private readonly IContestResultsAggregatorCommonService contestResultsAggregator;
 
     public ResultsController(
         IContestsDataService contestsData,
         IContestsBusinessService contestsBusiness,
-        IContestResultsAggregatorService contestResultsAggregator,
+        IContestResultsAggregatorCommonService contestResultsAggregator,
         IContestsValidationHelper contestsValidationHelper)
     {
         this.contestsData = contestsData;

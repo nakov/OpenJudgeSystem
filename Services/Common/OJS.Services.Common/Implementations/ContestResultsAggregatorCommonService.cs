@@ -1,31 +1,30 @@
-namespace OJS.Services.Ui.Business.Implementations;
+﻿namespace OJS.Services.Common.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Participants;
-using System.Collections.Generic;
-using X.PagedList;
-using OJS.Services.Ui.Data;
+using OJS.Services.Common.Data;
 using OJS.Data.Models.Contests;
-using OJS.Services.Common;
+using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Collections.Generic;
 using System.Linq;
+using X.PagedList;
 
-public class ContestResultsAggregatorService : IContestResultsAggregatorService
+public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCommonService
 {
     private readonly IContestsActivityService activityService;
-    private readonly IParticipantScoresDataService participantScoresDataService;
-    private readonly IParticipantsDataService participantsData;
+    private readonly IParticipantScoresCommonDataService participantScoresCommonDataService;
+    private readonly IParticipantsCommonDataService participantsCommonData;
 
-    public ContestResultsAggregatorService(
+    public ContestResultsAggregatorCommonService(
         IContestsActivityService activityService,
-        IParticipantScoresDataService participantScoresDataService,
-        IParticipantsDataService participantsData)
+        IParticipantScoresCommonDataService participantScoresCommonDataService,
+        IParticipantsCommonDataService participantsCommonData)
     {
         this.activityService = activityService;
-        this.participantScoresDataService = participantScoresDataService;
-        this.participantsData = participantsData;
+        this.participantScoresCommonDataService = participantScoresCommonDataService;
+        this.participantsCommonData = participantsCommonData;
     }
 
     public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel)
@@ -48,7 +47,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
             .ToList();
 
         var totalParticipantsCount = contestResultsModel.TotalResultsCount
-                                     ?? this.participantsData
+                                     ?? this.participantsCommonData
                                          .GetAllByContestAndIsOfficial(
                                              contestResultsModel.Contest.Id,
                                              contestResultsModel.Official)
@@ -61,11 +60,11 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
                 contestResultsModel.Official,
                 contestResultsModel.Page,
                 contestResultsModel.ItemsInPage)
-                .Select(ParticipantResultViewModel.FromParticipant)
-                .ToList();
+            .Select(ParticipantResultViewModel.FromParticipant)
+            .ToList();
 
         // Get the ParticipantScores with another query and map problem results for each participant.
-        var participantScores = this.participantScoresDataService
+        var participantScores = this.participantScoresCommonDataService
             .GetAllByParticipants(participants.Select(p => p.Id))
             .Include(x => x.Participant)
             .Include(x => x.Submission)
@@ -112,7 +111,7 @@ public class ContestResultsAggregatorService : IContestResultsAggregatorService
     /// Gets IQueryable results with one page of participants, ordered by top score.
     /// </summary>
     private IQueryable<Participant> GetParticipantsPage(Contest contest, bool official, int page, int itemsInPage) =>
-        this.participantsData
+        this.participantsCommonData
             .GetAllByContestAndIsOfficial(contest.Id, official)
             .AsNoTracking()
             .OrderByDescending(p => p.TotalScoreSnapshot)

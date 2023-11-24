@@ -188,10 +188,6 @@ namespace OJS.Services.Ui.Data.Implementations
                     })
                 .ToEnumerableAsync();
 
-        public IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds) =>
-            this.GetAll()
-            .Where(ps => !ps.Problem.IsDeleted && participantIds.Contains(ps.ParticipantId));
-
         private static void UpdateTotalScoreSnapshot(
             Participant participant,
             int previousPoints,

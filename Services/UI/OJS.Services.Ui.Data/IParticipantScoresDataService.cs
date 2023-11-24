@@ -45,7 +45,5 @@ namespace OJS.Services.Ui.Data
         Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByProblemIdsAndParticipation(
             IEnumerable<int> problemIds,
             IEnumerable<int> participantIds);
-
-        IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds);
     }
 }
