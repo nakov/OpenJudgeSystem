@@ -145,20 +145,20 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-        var validationResult =
-            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
-
-        if (!validationResult.IsValid)
-        {
-            throw new BusinessServiceException(validationResult.Message);
-        }
-
         var contest = await this.contestsDataService
             .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id)
             .Map<Contest>();
 
         var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
         submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
+
+        var validationResult =
+            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest) !);
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
 
         if (!userIsAdminOrLecturerInContest)
         {

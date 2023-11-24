@@ -17,9 +17,9 @@ public class RetestSubmissionValidationService : IRetestSubmissionValidationServ
     {
         var (detailsModel, user, isInRole) = item;
         // Checks if user is submissions participant or is admin
-        var permissionsValidationResult = this.submissionDetailsValidation.GetValidationResult((detailsModel, user));
+        var permissionsValidationResult = this.submissionDetailsValidation.GetValidationResult((detailsModel, user, isInRole));
 
-        if (!permissionsValidationResult.IsValid && !isInRole)
+        if (!permissionsValidationResult.IsValid)
         {
             permissionsValidationResult.Message = ValidationMessages.Submission.NoPrivilegesForThisSubmission;
 
