@@ -1,20 +1,28 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { isSubmissionEligibleForRetest, isUserInRoleForSubmission } from '../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
-import { setCurrentPage, setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
-import { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
+import {
+    setCurrentPage,
+    setCurrentSubmissionResults,
+    setSubmission,
+} from '../../../redux/features/submissionDetailsSlice';
+import {
+    useGetCurrentSubmissionQuery,
+    useGetSubmissionResultsQuery,
+    useRetestSubmissionQuery,
+} from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { getAdministrationRetestSubmissionInternalUrl } from '../../../utils/urls';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import { Button, ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
@@ -35,6 +43,14 @@ const SubmissionDetails = () => {
     const { data: currentSubmissionData, isFetching, refetch } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
     const { data: allSubmissionsData, isFetching: isLoadingResults, refetch: refetchResults } =
     useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
+    const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
+    const {
+        isFetching: retestIsFetching,
+        isSuccess: retestIsSuccess,
+    } = useRetestSubmissionQuery(
+        { id: Number(submissionId) },
+        { skip: shouldNotRetestOnLoad },
+    );
 
     useEffect(() => () => {
         dispatch(setCurrentPage(1));
@@ -53,6 +69,7 @@ const SubmissionDetails = () => {
         },
         [ currentSubmission, setPageTitle ],
     );
+
     const reloadPage = useCallback(() => {
         refetch();
         refetchResults();
@@ -78,27 +95,26 @@ const SubmissionDetails = () => {
     const renderRetestButton = useCallback(
         () => {
             if (isNil(currentSubmission) ||
-                // User is not admin or lecturer and is not the participant of the submission
-                (!currentSubmission.userIsInRoleForContest && user.username !== currentSubmission?.user.userName)) {
+                !isUserInRoleForSubmission(currentSubmission, user.username) ||
+                !isSubmissionEligibleForRetest(currentSubmission)) {
                 return null;
             }
 
             return (
-                <LinkButton
-                  type={LinkButtonType.secondary}
+                <Button
+                  type={ButtonType.secondary}
                   size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl({ id: currentSubmission.id })}
+                  onClick={() => setShouldNotRetestOnLoad(false)}
                   text="Retest"
                   className={styles.retestButton}
-                  isToExternal
                 />
             );
         },
-        [ user, currentSubmission ],
+        [ currentSubmission, user.username, setShouldNotRetestOnLoad ],
     );
 
     const submissionResults = useCallback(
-        () => (isFetching
+        () => (isFetching || retestIsFetching
             ? (
                 <div style={{ ...flexCenterObjectStyles }}>
                     <SpinningLoader />
@@ -118,7 +134,7 @@ const SubmissionDetails = () => {
                         )}
                 </div>
             )),
-        [ currentSubmission, detailsHeadingText, submissionDetailsClassName, isFetching ],
+        [ isFetching, retestIsFetching, submissionDetailsClassName, detailsHeadingText, currentSubmission ],
     );
 
     const renderErrorMessage = useCallback(
@@ -138,6 +154,16 @@ const SubmissionDetails = () => {
             return null;
         },
         [ validationErrors ],
+    );
+
+    useEffect(
+        () => {
+            if (retestIsSuccess) {
+                console.log(retestIsSuccess);
+                reloadPage();
+            }
+        },
+        [ reloadPage, retestIsSuccess ],
     );
 
     if (!isFetching && isNil(currentSubmission) && isEmpty(validationErrors)) {

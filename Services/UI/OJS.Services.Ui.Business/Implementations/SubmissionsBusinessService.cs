@@ -513,7 +513,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.SaveParticipantScore(submission);
 
             await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
-            await this.submissionsData.SaveChanges();
             CacheTestRuns(submission);
         }
         else

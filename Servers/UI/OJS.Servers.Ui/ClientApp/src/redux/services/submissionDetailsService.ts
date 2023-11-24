@@ -43,10 +43,26 @@ const submissionDetailsService = createApi({
         }),
         // eslint-disable-next-line max-len
         saveAttachment: builder.query<{ blob: Blob; filename: string }, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/${defaultPathIdentifier}/Submissions/Download/${id}` }) }),
+        retestSubmission: builder.query<
+            null,
+            IDownloadSubmissionFileUrlParams>({
+                query: ({ id }) => ({
+                    url: `/${defaultPathIdentifier}/Compete/Retest/${id}`,
+                    method: 'POST',
+                }),
+            }),
     }),
 });
 
-const { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery, useSaveAttachmentQuery } = submissionDetailsService;
+const {
+    useGetCurrentSubmissionQuery,
+    useGetSubmissionResultsQuery,
+    useSaveAttachmentQuery,
+    useRetestSubmissionQuery,
+} = submissionDetailsService;
 
-export { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery, useSaveAttachmentQuery };
+export { useGetCurrentSubmissionQuery,
+    useGetSubmissionResultsQuery,
+    useSaveAttachmentQuery,
+    useRetestSubmissionQuery };
 export default submissionDetailsService;

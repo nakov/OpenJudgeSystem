@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
+import { isSubmissionEligibleForRetest } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { ISubmissionDetailsType } from '../../../../hooks/submissions/types';
 import { useAuth } from '../../../../hooks/use-auth';
@@ -22,6 +23,7 @@ import styles from './SubmissionDetailsCodeEditor.module.scss';
 interface ISubmissionDetailsCodeEditorProps {
     renderRetestButton: () => ReactNode;
 }
+
 const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsCodeEditorProps) => {
     const [ submissionId, setSubmissionId ] = useState<number | null>(null);
     const [ shouldFetch, setShouldFetch ] = useState<boolean>(true);
@@ -124,7 +126,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
 
     const renderTestsChangeMessage = useCallback(() => (
         !isNil(currentSubmission) &&
-        shouldRenderRetestBox(currentSubmission)
+        isSubmissionEligibleForRetest(currentSubmission)
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -141,7 +143,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                 </div>
             )
             : ''
-    ), [ currentSubmission, renderRetestButton, shouldRenderRetestBox ]);
+    ), [ currentSubmission, renderRetestButton ]);
 
     const backButtonState = useMemo(
         () => isNil(currentSubmission?.contestId)
