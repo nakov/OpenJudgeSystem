@@ -44,7 +44,6 @@ namespace OJS.Servers.Administration.Controllers
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper,
-            IContestCategoriesValidationHelper contestCategoriesValidationHelper,
             IContestsValidationHelper contestsValidationHelper,
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsDataService,
