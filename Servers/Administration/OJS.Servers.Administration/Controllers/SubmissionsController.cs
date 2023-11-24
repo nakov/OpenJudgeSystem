@@ -122,6 +122,10 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 
         var submission = await this.submissionsData.GetByIdQuery(submissionId)
             .Include(s => s.SubmissionType)
+            .Include(x => x.Problem)
+                .ThenInclude(x => x.Checker)
+            .Include(x => x.Problem)
+                .ThenInclude(x => x.Tests)
             .FirstOrDefaultAsync();
 
         if (submission is null || !submission.ParticipantId.HasValue)
