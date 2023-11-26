@@ -12,8 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "RUNS_IN_DOCKER": "false"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "OJS.Servers.Worker": {
@@ -22,8 +21,7 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:8003",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "RUNS_IN_DOCKER": "false"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }
