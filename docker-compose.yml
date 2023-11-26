@@ -14,7 +14,6 @@ services:
       - ./Logs:/Logs
     env_file:
       - Docker/envs/common.env
-      - Docker/envs/ui.env
     extra_hosts:
       - "db:host-gateway"
     links:
@@ -36,7 +35,6 @@ services:
       - ./Logs:/Logs
     env_file:
       - Docker/envs/common.env
-      - Docker/envs/administration.env
     extra_hosts:
       - "db:host-gateway"
     links:
@@ -56,7 +54,6 @@ services:
     restart: on-failure
     env_file:
       - Docker/envs/common.env
-      - Docker/envs/worker.env
     volumes:
       - ./Logs:/Logs
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies
