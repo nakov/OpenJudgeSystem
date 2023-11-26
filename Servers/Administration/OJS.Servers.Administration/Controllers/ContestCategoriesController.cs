@@ -4,9 +4,11 @@ using AutoCrudAdmin.Extensions;
 using System;
 using System.Linq.Expressions;
 using AutoCrudAdmin.Models;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.Contests.Categories;
@@ -27,7 +29,9 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         IContestCategoriesDataService contestCategoriesData,
         IContestCategoriesCacheService contestCategoriesCache,
         IValidationService<ContestCategoriesValidationServiceModel> contestCategoriesValidationService,
-        IOrderableService<ContestCategory> contestCategoriesOrderableService)
+        IOrderableService<ContestCategory> contestCategoriesOrderableService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.contestCategoriesData = contestCategoriesData;
         this.contestCategoriesCache = contestCategoriesCache;

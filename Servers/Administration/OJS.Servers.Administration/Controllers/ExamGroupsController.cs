@@ -4,9 +4,11 @@ using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
+using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
@@ -31,7 +33,9 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
         IContestsValidationHelper contestsValidationHelper,
         IValidatorsFactory<ExamGroup> examGroupValidatorsFactory,
         IValidationService<ExamGroupDeleteValidationServiceModel> examGroupsDeleteValidation,
-        IContestsActivityService contestsActivity)
+        IContestsActivityService contestsActivity,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.contestsValidationHelper = contestsValidationHelper;
         this.examGroupValidatorsFactory = examGroupValidatorsFactory;

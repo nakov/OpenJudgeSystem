@@ -1,18 +1,27 @@
 namespace OJS.Services.Common.Models.Configurations;
 
-public class MessageQueueConfig
+using System.ComponentModel.DataAnnotations;
+
+public class MessageQueueConfig : BaseConfig
 {
-        public string Host { get; set; } = string.Empty;
+    public override string SectionName => "MessageQueue";
 
-        public string VirtualHost { get; set; } = string.Empty;
+    [Required]
+    public string Host { get; set; } = string.Empty;
 
-        public string User { get; set; } = string.Empty;
+    [Required]
+    public string VirtualHost { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
+    [Required]
+    public string User { get; set; } = string.Empty;
 
-        public int RetryCount { get; set; } = 5;
+    [Required]
+    [MinLength(8)]
+    public string Password { get; set; } = string.Empty;
 
-        public int RetryInterval { get; set; } = 200;
+    public int RetryCount { get; set; } = 5;
 
-        public int? PrefetchCount { get; set; }
+    public int RetryInterval { get; set; } = 200;
+
+    public int? PrefetchCount { get; set; }
 }

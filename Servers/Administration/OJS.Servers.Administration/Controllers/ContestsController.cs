@@ -9,11 +9,12 @@ namespace OJS.Servers.Administration.Controllers
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
     using OJS.Common.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
-    using OJS.Servers.Administration.Infrastructure.Extensions;
+    using OJS.Servers.Administration.Extensions;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
@@ -47,7 +48,9 @@ namespace OJS.Servers.Administration.Controllers
             IContestsValidationHelper contestsValidationHelper,
             IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper,
-            IContestsDataService contestsDataService)
+            IContestsDataService contestsDataService,
+            IOptions<ApplicationConfig> appConfigOptions)
+            : base(appConfigOptions)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;

@@ -17,17 +17,17 @@ const SubmissionResults = ({ testRuns, isCompiledSuccessfully, compilerComment }
         <TestRunDetails testRun={run} trialTestsCount={testRunsCount} />
     ), [ testRunsCount ]);
 
-    const compareByTestTypeAndOrderByAsc = (tr1: ITestRunDetailsType, tr2: ITestRunDetailsType) => tr1.isTrialTest === tr2.isTrialTest
-        ? tr1.orderBy - tr2.orderBy
-        : tr1.isTrialTest
-            ? -1
-            : 1;
-
+    // eslint-disable-next-line max-len
+    // const compareByTestTypeAndOrderByAsc = (tr1: ITestRunDetailsType, tr2: ITestRunDetailsType) => tr1.isTrialTest === tr2.isTrialTest
+    //     ? tr1.orderBy - tr2.orderBy
+    //     : tr1.isTrialTest
+    //         ? -1
+    //         : 1;
     return (
         <>
             <CompilerComment compilerComment={compilerComment} isCompiledSuccessfully={isCompiledSuccessfully} />
             <List
-              values={testRuns.sort(compareByTestTypeAndOrderByAsc)}
+              values={testRuns}
               itemClassName="testRunDetails"
               orientation={Orientation.vertical}
               itemFunc={renderTestRunsDetails}

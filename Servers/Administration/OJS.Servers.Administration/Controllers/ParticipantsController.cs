@@ -4,7 +4,7 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
@@ -14,9 +14,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
+using Microsoft.Extensions.Options;
 using OJS.Common;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using System.Linq.Expressions;
 
 public class ParticipantsController : BaseAutoCrudAdminController<Participant>
@@ -32,7 +34,9 @@ public class ParticipantsController : BaseAutoCrudAdminController<Participant>
     public ParticipantsController(
         IValidatorsFactory<Participant> participantValidatorsFactory,
         IContestsValidationHelper contestsValidationHelper,
-        IUsersDataService usersDataService)
+        IUsersDataService usersDataService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.participantValidatorsFactory = participantValidatorsFactory;
         this.contestsValidationHelper = contestsValidationHelper;

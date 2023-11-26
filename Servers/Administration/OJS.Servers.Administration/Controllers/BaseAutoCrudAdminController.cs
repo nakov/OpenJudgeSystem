@@ -5,6 +5,7 @@ using AutoCrudAdmin.Controllers;
 using AutoCrudAdmin.ViewModels;
 using AutoCrudAdmin.Models;
 using FluentExtensions.Extensions;
+using Microsoft.Extensions.Options;
 using NonFactors.Mvc.Grid;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.Data.Infrastructure.Models;
@@ -14,11 +15,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using static OJS.Services.Administration.Business.AdministrationConstants;
+using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
 
 public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEntity>
     where TEntity : class
 {
+    private readonly TimeZoneInfo localTimeZoneInfo;
+
+    public BaseAutoCrudAdminController(IOptions<ApplicationConfig> appConfigOptions)
+        => this.localTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(appConfigOptions.Value.LocalTimeZone);
+
     protected override IEnumerable<string> HiddenFormControlNames
         => new[]
         {
@@ -146,7 +152,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
             .ForEach(fc =>
             {
                 var dateTime = (DateTime)fc.Value!;
-                fc.Value = TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo);
+                fc.Value = TimeZoneInfo.ConvertTimeFromUtc(dateTime, this.localTimeZoneInfo);
             });
 
         return formControls;
@@ -187,7 +193,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
                 return;
             }
 
-            var dateTimeUtc = TimeZoneInfo.ConvertTimeToUtc((DateTime)dateTime, LocalTimeZoneInfo);
+            var dateTimeUtc = TimeZoneInfo.ConvertTimeToUtc((DateTime)dateTime, this.localTimeZoneInfo);
             p.SetValue(entity, dateTimeUtc);
         });
     }
@@ -231,7 +237,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         // Get the method TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo);
         var convertMethod = typeof(TimeZoneInfo)
             .GetMethod(nameof(TimeZoneInfo.ConvertTimeFromUtc), new[] { typeof(DateTime), typeof(TimeZoneInfo) }) !;
-        var localTimeZoneInfo = Expression.Constant(LocalTimeZoneInfo);
+        var localTimeZoneInfoExpression = Expression.Constant(this.localTimeZoneInfo);
 
         if (typeof(TProperty) == typeof(DateTime?))
         {
@@ -245,7 +251,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
                     Expression.Call(
                         convertMethod,
                         Expression.Convert(dateTimePropertyAccess, typeof(DateTime)), // When not null, convert to DateTime
-                        localTimeZoneInfo),
+                        localTimeZoneInfoExpression),
                     typeof(DateTime?))); // Cast to nullable DateTime, as the method returns DateTime
 
             // Build the full property access expression:
@@ -257,7 +263,7 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         {
             // Build the converting expression for non-nullable datetime:
             // TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo);
-            var convertCall = Expression.Call(convertMethod, dateTimePropertyAccess, localTimeZoneInfo);
+            var convertCall = Expression.Call(convertMethod, dateTimePropertyAccess, localTimeZoneInfoExpression);
 
             // Build the full property access expression:
             // model => TimeZoneInfo.ConvertTimeFromUtc(model.DateTimeProp, LocalTimeZoneInfo);

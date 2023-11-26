@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using OJS.Servers.Administration.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Extensions;
@@ -24,7 +26,6 @@ using OJS.Services.Administration.Business;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Common.Extensions;
-using OJS.Servers.Administration.Infrastructure.Extensions;
 
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
@@ -46,7 +47,9 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         IContentTypesService contentTypes,
         IProblemsValidationHelper problemsValidationHelper,
         IOrderableService<ProblemResource> problemResourcesOrderableService,
-        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService)
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemResourceValidatorsFactory = problemResourceValidatorsFactory;
         this.problemResourcesData = problemResourcesData;
