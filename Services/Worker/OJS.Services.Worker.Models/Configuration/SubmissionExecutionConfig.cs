@@ -1,7 +1,11 @@
 ﻿namespace OJS.Services.Worker.Models.Configuration
 {
-    public class SubmissionExecutionConfig
+    using OJS.Services.Common.Models.Configurations;
+
+    public class SubmissionExecutionConfig : BaseConfig
     {
+        public override string SectionName => "SubmissionExecution";
+
         public int OutputResultMaxLength { get; set; } = 1000;
 
         public TimeConfig TimeConfig { get; set; } = new TimeConfig();

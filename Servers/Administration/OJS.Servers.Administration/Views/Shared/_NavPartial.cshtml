@@ -1,7 +1,7 @@
 @using OJS.Common.Extensions
 
 @{
-    var uiUrl = this.applicationUrls.GetUiUrlOrDefault();
+    var uiUrl = this.appUrls.Value.UiUrl;
     var isAdmin = this.User.IsAdmin();
     var isLecturer = this.User.IsLecturer();
 }
