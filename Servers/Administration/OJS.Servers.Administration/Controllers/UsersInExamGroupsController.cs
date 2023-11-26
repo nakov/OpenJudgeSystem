@@ -5,6 +5,7 @@ using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Common;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
@@ -20,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OJS.Data.Models.Users;
+using OJS.Services.Administration.Models;
 
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
@@ -36,7 +38,9 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         IValidationService<UserInExamGroupCreateDeleteValidationServiceModel> usersInExamGroupsCreateDeleteValidation,
         IContestsValidationHelper contestsValidationHelper,
         IExamGroupsDataService examGroupsData,
-        IUsersDataService usersDataService)
+        IUsersDataService usersDataService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.userInExamGroupValidatorsFactory = userInExamGroupValidatorsFactory;
         this.usersInExamGroupsCreateDeleteValidation = usersInExamGroupsCreateDeleteValidation;
