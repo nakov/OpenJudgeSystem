@@ -2,8 +2,6 @@ namespace OJS.Data
 {
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
-    using OJS.Data.Infrastructure.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Checkers;
     using OJS.Data.Models.Contests;
@@ -21,13 +19,21 @@ namespace OJS.Data
     {
         private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
 
+        // Used by AutoCrudAdmin with Activator.CreateInstance for getting Metadata about the context.
+        // In OnConfiguring in memory database is used when DbContext is created from
+        // the parameterless constructor, as options have to be configured, to not throw exception.
         public OjsDbContext()
+        {
+        }
+
+        public OjsDbContext(DbContextOptions<OjsDbContext> options)
+            : base(options)
         {
         }
 
         public OjsDbContext(
             DbContextOptions<OjsDbContext> options,
-            IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache)
+            IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
             : base(options, globalQueryFilterTypesCache)
             => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
 
@@ -95,6 +101,21 @@ namespace OJS.Data
 
         public DbSet<TagInProblem> TagProblems { get; set; } = null!;
 
+        protected override void OnConfiguring(DbContextOptionsBuilder builder)
+        {
+            // Builder is configured in Service Collection registration.
+            if (builder.IsConfigured)
+            {
+                return;
+            }
+
+            // NOTE: This is used by AutoCrudAdmin to just get metadata
+            // about the db context via reflection and the parameterless constructor,
+            // where no real connection has to be made, but to only instantiate the context.
+            // Using the same name always, to not fill the memory with unused databases.
+            builder.UseInMemoryDatabase($"{nameof(OjsDbContext)}InMemoryDatabase");
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -161,10 +182,6 @@ namespace OJS.Data
 
             this.TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options
-                .ConfigureDbOptions(ApplicationName.Ui);
 
         private static void FixMultipleCascadePaths(ModelBuilder builder)
         {

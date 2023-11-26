@@ -1,15 +1,21 @@
-namespace OJS.Servers.Administration
-{
-    using Microsoft.AspNetCore.Builder;
-    using OJS.Servers.Administration.Infrastructure.Extensions;
+namespace OJS.Servers.Administration;
 
-    internal class Program
+using Microsoft.AspNetCore.Builder;
+using OJS.Servers.Administration.Extensions;
+using OJS.Servers.Infrastructure.Extensions;
+
+internal class Program
+{
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-            => WebApplication.CreateBuilder(args)
-                .ConfigureBuilder<Program>()
-                .Build()
-                .ConfigureWebApplication()
-                .Run();
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.ConfigureServices(builder.Configuration);
+        builder.Host.UseFileLogger<Program>();
+
+        var app = builder.Build();
+
+        app.ConfigureWebApplication();
+        app.Run();
     }
 }
