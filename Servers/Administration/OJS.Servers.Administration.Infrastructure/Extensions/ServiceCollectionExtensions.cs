@@ -10,16 +10,11 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Common.Models.Configurations;
     using SoftUni.Data.Infrastructure.Enumerations;
-    using static OJS.Common.GlobalConstants;
+    using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
 
     public static class ServiceCollectionExtensions
     {
         private const ApplicationName AppName = ApplicationName.Administration;
-
-        private static readonly string[] RequiredConfigValues =
-        {
-            EnvironmentVariables.LocalTimeZone,
-        };
 
         public static void ConfigureServices<TProgram>(
             this IServiceCollection services,
@@ -27,23 +22,19 @@ namespace OJS.Servers.Administration.Infrastructure.Extensions
             services
                 .AddWebServer<TProgram>()
                 .AddHttpContextServices()
-                .AddHangfireServer(AppName)
+                .AddHangfireServer(configuration, AppName)
                 .AddMessageQueue<TProgram>(configuration)
                 .ConfigureGlobalDateFormat()
-                .ValidateLaunchSettings(RequiredConfigValues)
-                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(Enumerable.Empty<GlobalQueryFilterType>())
+                .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(
+                    configuration,
+                    Enumerable.Empty<GlobalQueryFilterType>())
                 .AddMemoryCache()
-                .AddDistributedCaching()
+                .AddDistributedCaching(configuration)
                 .AddSoftUniJudgeCommonServices()
-                .ConfigureSettings(configuration)
+                .AddOptionsWithValidation<ApplicationConfig>()
+                .AddOptionsWithValidation<ApplicationUrlsConfig>()
+                .AddOptionsWithValidation<EmailServiceConfig>()
                 .UseAutoCrudAdmin()
                 .AddControllersWithViews();
-
-        private static IServiceCollection ConfigureSettings(
-            this IServiceCollection services,
-            IConfiguration configuration)
-            => services
-                .Configure<EmailServiceConfig>(configuration.GetSection(nameof(EmailServiceConfig)))
-                .Configure<HealthCheckConfig>(configuration.GetSection(nameof(HealthCheckConfig)));
     }
 }

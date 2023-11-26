@@ -2,27 +2,28 @@ namespace OJS.Servers.Administration.Controllers
 {
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
     using OJS.Data.Models.Users;
-    using OJS.Services.Common;
+    using OJS.Services.Common.Models.Configurations;
     using System.Threading.Tasks;
 
     public class AccountController : BaseAdminViewController
     {
         private readonly SignInManager<UserProfile> signInManager;
-        private readonly IApplicationUrlsService applicationUrls;
+        private readonly ApplicationUrlsConfig appUrls;
 
         public AccountController(
             SignInManager<UserProfile> signInManager,
-            IApplicationUrlsService applicationUrls)
+            IOptions<ApplicationUrlsConfig> appUrlsOptions)
         {
             this.signInManager = signInManager;
-            this.applicationUrls = applicationUrls;
+            this.appUrls = appUrlsOptions.Value;
         }
 
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            return this.Redirect(this.applicationUrls.GetUiUrlOrDefault());
+            return this.Redirect(this.appUrls.UiUrl);
         }
     }
 }

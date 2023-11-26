@@ -13,9 +13,7 @@ services:
     volumes:
       - ./Logs:/Logs
     env_file:
-      - Docker/common/common.env
-      - Docker/common/db.env
-      - Docker/applications/ui/ui.env
+      - Docker/envs/common.env
     extra_hosts:
       - "db:host-gateway"
     links:
@@ -36,9 +34,7 @@ services:
     volumes:
       - ./Logs:/Logs
     env_file:
-      - Docker/common/common.env
-      - Docker/common/db.env
-      - Docker/applications/administration/administration.env
+      - Docker/envs/common.env
     extra_hosts:
       - "db:host-gateway"
     links:
@@ -57,8 +53,7 @@ services:
     container_name: worker_instance
     restart: on-failure
     env_file:
-      - Docker/common/common.env
-      - Docker/applications/worker/worker.env
+      - Docker/envs/common.env
     volumes:
       - ./Logs:/Logs
       - /tmp/ExecutionStrategies:/tmp/ExecutionStrategies

@@ -12,9 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "LOGGER_FILES_FOLDER_PATH": "../../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "OJS.Servers.Worker": {
@@ -23,19 +21,7 @@
       "launchBrowser": false,
       "applicationUrl": "http://localhost:8003",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "LOGGER_FILES_FOLDER_PATH": "../../../Logs",
-        "SHARED_AUTH_COOKIE_DOMAIN": "localhost",
-        "REDIS_CONNECTION_STRING": "localhost,password=redisPass123,ConnectTimeout=10000,abortConnect=false",
-        "RUNS_IN_DOCKER": "false",
-        "SUBMISSIONS_PROCESSOR_IDENTIFIER_NUMBER": "1",
-        "MessageQueueConfig__Host": "localhost",
-        "MessageQueueConfig__VirtualHost": "ojs",
-        "MessageQueueConfig__User": "ojsuser",
-        "MessageQueueConfig__Password": "myS3cretPass2",
-        "MessageQueueConfig__PrefetchCount": "1",
-        "HealthCheckConfig__Key": "Key",
-        "HealthCheckConfig__Password": "password"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

@@ -1,17 +1,24 @@
 namespace OJS.Servers.Ui
 {
     using Microsoft.AspNetCore.Builder;
-    using OJS.Servers.Ui.Infrastructure.Extensions;
+    using OJS.Servers.Infrastructure.Extensions;
+    using OJS.Servers.Ui.Extensions;
 
     internal class Program
     {
         private const string ApiVersion = "v1";
 
         public static void Main(string[] args)
-            => WebApplication.CreateBuilder(args)
-                .ConfigureBuilder<Program>(ApiVersion)
-                .Build()
-                .ConfigureWebApplication(ApiVersion)
-                .Run();
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.ConfigureServices(builder.Configuration, builder.Environment, ApiVersion);
+            builder.Host.UseFileLogger<Program>();
+
+            var app = builder.Build();
+
+            app.ConfigureWebApplication(ApiVersion);
+            app.Run();
+        }
     }
 }
