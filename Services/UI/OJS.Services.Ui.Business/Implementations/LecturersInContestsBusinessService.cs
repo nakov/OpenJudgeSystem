@@ -23,7 +23,7 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
         this.userProviderService = userProviderService;
     }
 
-    public bool IsUserAdminOrLecturerInContest(Contest? contest)
+    public bool IsUserAdminOrLecturerInContest(Contest? contest, string userId)
     {
         if (contest == null)
         {
@@ -32,9 +32,7 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
 
         var isAdmin = this.userProviderService.GetCurrentUser().IsAdmin;
 
-        var isUserLecturerInContest = this.IsUserLecturerInContest(contest);
-
-        return isAdmin || isUserLecturerInContest;
+        return isAdmin || this.IsUserLecturerInContest(contest.Id, userId);
     }
 
     public bool IsUserLecturerInContest(Contest contest)

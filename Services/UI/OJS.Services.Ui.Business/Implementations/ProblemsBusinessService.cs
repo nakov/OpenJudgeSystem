@@ -132,7 +132,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             if (isOfficial &&
                 contest.IsExam &&
-                !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest) &&
+                !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest, participant.UserId) &&
                 participant.ProblemsForParticipants.All(p => p.ProblemId != problemId))
             {
                 throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotAssignedToUser);

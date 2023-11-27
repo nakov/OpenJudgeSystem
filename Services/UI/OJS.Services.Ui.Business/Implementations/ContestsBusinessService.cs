@@ -75,7 +75,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithProblems(id);
-            var isLecturerOrAdmin = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+            var isLecturerOrAdmin = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest, user.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,

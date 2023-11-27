@@ -125,7 +125,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var contest = await this.contestsDataService
             .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
-        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness
+            .IsUserAdminOrLecturerInContest(contest, currentUser.Id);
 
         if (!userIsAdminOrLecturerInContest)
         {
@@ -358,6 +359,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
+
         if (problem == null)
         {
             throw new BusinessServiceException(ValidationMessages.Problem.NotFound);

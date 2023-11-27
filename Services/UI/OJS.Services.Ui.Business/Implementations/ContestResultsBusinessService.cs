@@ -51,7 +51,9 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             official,
             full);
 
-        results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
+        var userModel = this.userProvider.GetCurrentUser();
+
+        results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest.Id, userModel);
 
         return results;
     }
