@@ -20,7 +20,7 @@ internal static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
         => services
-            .AddWebServer<Program>()
+            .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName)
             .AddMessageQueue<Program>(configuration)
