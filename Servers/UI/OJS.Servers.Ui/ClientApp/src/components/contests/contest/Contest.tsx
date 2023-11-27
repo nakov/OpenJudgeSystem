@@ -5,6 +5,8 @@ import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
 import { useAuth } from '../../../hooks/use-auth';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
@@ -17,6 +19,7 @@ import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import Text, { TextType } from '../../guidelines/text/Text';
+import ContestBreadcrumb from '../contest-breadcrumb/ContestBreadcrumb';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
@@ -52,6 +55,8 @@ const Contest = () => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
 
     const navigationContestClass = 'navigationContest';
     const navigationContestClassName = concatClassNames(styles.navigationContest, navigationContestClass);
@@ -70,8 +75,26 @@ const Contest = () => {
     useEffect(
         () => {
             setPageTitle(contestTitle);
+
+            if (!isEmpty(categoriesFlat)) {
+                return;
+            }
+
+            (async () => {
+                await loadCategories();
+            })();
         },
-        [ contestTitle, setPageTitle ],
+        [ contestTitle, setPageTitle, categoriesFlat, loadCategories ],
+    );
+
+    useEffect(
+        () => {
+            if (!isNil(contest) && !isEmpty(categoriesFlat)) {
+                const category = categoriesFlat.find(({ id }) => id.toString() === contest.categoryId.toString());
+                updateBreadcrumb(category, categoriesFlat);
+            }
+        },
+        [ categoriesFlat, contest, updateBreadcrumb ],
     );
 
     const scoreText = useMemo(
@@ -214,6 +237,9 @@ const Contest = () => {
                         )
                         : (
                             <>
+                                <div className={styles.breadcrumbContainer}>
+                                    <ContestBreadcrumb />
+                                </div>
                                 <div className={styles.headingContest}>
                                     <Heading
                                       type={HeadingType.primary}

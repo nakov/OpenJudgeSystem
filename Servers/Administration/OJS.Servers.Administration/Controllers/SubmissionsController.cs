@@ -1,5 +1,9 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
@@ -13,14 +17,13 @@ using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using Microsoft.Extensions.Options;
+using OJS.Servers.Administration.Extensions;
 using OJS.Common;
+using OJS.Services.Administration.Models;
+using OJS.Common.Extensions;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>
@@ -34,6 +37,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly ISubmissionsBusinessService submissionsBusinessService;
+    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly ITestRunsDataService testRunsData;
     private readonly ITransactionsProvider transactions;
@@ -47,7 +51,10 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ITestRunsDataService testRunsData,
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
-        ISubmissionsBusinessService submissionsBusinessService)
+        ISubmissionsBusinessService submissionsBusinessService,
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresBusiness = participantScoresBusiness;
@@ -57,6 +64,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         this.transactions = transactions;
         this.submissionValidatorsFactory = submissionValidatorsFactory;
         this.submissionsBusinessService = submissionsBusinessService;
+        this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
     }
 
     protected override Expression<Func<Submission, bool>>? MasterGridFilter
@@ -206,27 +214,34 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
 
     private Expression<Func<Submission, bool>>? GetMasterGridFilter()
     {
+        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
+            .GetSubmissionsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        Expression<Func<Submission, bool>> filterByKeyExpression = null!;
+
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
-            return x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId;
+            filterByKeyExpression = x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
         {
-            return x => x.ProblemId == problemId;
+            filterByKeyExpression = x => x.ProblemId == problemId;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var participantId))
         {
-            return x => x.ParticipantId == participantId;
+            filterByKeyExpression = x => x.ParticipantId == participantId;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var submissionId))
         {
-            return x => x.Id == submissionId;
+            filterByKeyExpression = x => x.Id == submissionId;
         }
 
-        return base.MasterGridFilter;
+        return filterByLecturerRightsExpression.CombineAndAlso(filterByKeyExpression);
     }
 
     private IActionResult RedirectToSubmissionById(int id)

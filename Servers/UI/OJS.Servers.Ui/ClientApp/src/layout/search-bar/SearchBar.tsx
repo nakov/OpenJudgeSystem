@@ -1,5 +1,5 @@
-import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
-import { createSearchParams, useNavigate } from 'react-router-dom';
+import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Form from '../../components/guidelines/forms/Form';
@@ -9,6 +9,7 @@ import FormControl, {
 } from '../../components/guidelines/forms/FormControl';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
+import { getSearchPageURL } from '../../utils/urls';
 
 import styles from './SearchBar.module.scss';
 
@@ -38,15 +39,43 @@ const SearchBar = () => {
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
-    const { state: { isVisible }, actions: { toggleVisibility } } = useSearch();
+    const {
+        state:
+        {
+            isVisible,
+            getSearchResultsUrlParams,
+        },
+        actions: { toggleVisibility },
+    } = useSearch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleOnChangeUpdateSearch = useCallback(
         (searchInput?: IFormControlOnChangeValueType | ChangeEvent<HTMLInputElement>) => {
             setSearchParam(searchInput as string);
         },
-        [],
+        [ ],
     );
+
+    // Effect helps manage SearchBar's state and value on SearchPage refresh
+    // Checks if the Bar's state has been reset to default
+    // but the user is in the search page and there are query params in the URL
+    // Result: Syncs the SearchBar values with the url params and ensures the SearchBar is visible.
+    useEffect(() => {
+        const isDefaultBarState = () => searchParam === defaultState.state.searchValue &&
+            selectedTerms === defaultState.state.selectedTerms;
+
+        if (isDefaultBarState() &&
+            location.pathname === getSearchPageURL() && getSearchResultsUrlParams) {
+            setSearchParam(getSearchResultsUrlParams.searchTerm);
+            const selectedTermNames = getSearchResultsUrlParams.selectedTerms.map((termObj) => termObj.key);
+            setSelectedTerms(selectedTermNames);
+
+            if (!isVisible) {
+                toggleVisibility();
+            }
+        }
+    }, [ location, getSearchResultsUrlParams, selectedTerms, searchParam, isVisible, toggleVisibility ]);
 
     const handleSubmit = useCallback(
         () => {
@@ -61,14 +90,8 @@ const SearchBar = () => {
                 pathname: '/search',
                 search: `?${createSearchParams(params)}`,
             });
-
-            setSearchParam('');
-
-            setSelectedTerms(defaultState.state.selectedTerms);
-
-            toggleVisibility();
         },
-        [ navigate, searchParam, selectedTerms, toggleVisibility ],
+        [ navigate, searchParam, selectedTerms ],
     );
 
     const handleSelectedCheckboxValue = useCallback(
@@ -118,7 +141,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={CheckboxSearchValues.contests}
-                              checked
+                              checked={selectedTerms.includes(CheckboxSearchValues.contests)}
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>
@@ -129,7 +152,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={CheckboxSearchValues.problems}
-                              checked
+                              checked={selectedTerms.includes(CheckboxSearchValues.problems)}
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>
@@ -140,7 +163,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={CheckboxSearchValues.users}
-                              checked
+                              checked={selectedTerms.includes(CheckboxSearchValues.users)}
                               onClick={handleSelectedCheckboxValue}
                             />
                             <span className={styles.checkboxText}>

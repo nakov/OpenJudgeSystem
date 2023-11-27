@@ -4,18 +4,6 @@
   display: flex;
 }
 
-.breadcrumbBtn {
-  color: colors.$text-light-gray-color;
-
-  &:hover {
-    color: colors.$text-dark-gray-color;
-  }
-}
-
-.breadcrumbBtnLast {
-  color: colors.$text-dark-gray-color;
-}
-
 .mainHeader {
   flex: 4;
   width: 100%;

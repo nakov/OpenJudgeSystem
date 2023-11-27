@@ -7,10 +7,11 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
@@ -20,6 +21,7 @@ using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
+using OJS.Common.Extensions;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -47,6 +49,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     private readonly ITestsDataService testsData;
     private readonly ITestRunsDataService testRunsData;
     private readonly IProblemsBusinessService problemsBusiness;
+    private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly IProblemsValidationHelper problemsValidationHelper;
 
     public TestsController(
@@ -58,7 +61,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         ITestsDataService testsData,
         ITestRunsDataService testRunsData,
         IProblemsBusinessService problemsBusiness,
-        IProblemsValidationHelper problemsValidationHelper)
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
+        IProblemsValidationHelper problemsValidationHelper,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;
@@ -68,13 +74,12 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         this.testsData = testsData;
         this.testRunsData = testRunsData;
         this.problemsBusiness = problemsBusiness;
+        this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
         this.problemsValidationHelper = problemsValidationHelper;
     }
 
     protected override Expression<Func<Test, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? t => t.ProblemId == problemId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
@@ -392,5 +397,19 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 FormControls = GetFormControlsForImportTests(problemId),
             },
         };
+    }
+
+    private Expression<Func<Test, bool>> GetMasterGridFilter()
+    {
+        Expression<Func<Test, bool>> filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusinessService.GetTestsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        var filter = this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
+            ? t => t.ProblemId == problemId
+            : base.MasterGridFilter;
+
+        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

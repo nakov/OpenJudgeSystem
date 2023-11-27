@@ -27,6 +27,10 @@
   color: colors.$light-blue-color;
 }
 
+.breadcrumbContainer {
+  align-self: center;
+}
+
 .buttonsContainer {
   column-gap: 1%;
   display: flex;
@@ -40,6 +44,7 @@
   display: flex;
   flex-direction: column;
   font-size: variables.$f-size-18;
+  gap: 5px;
 }
 
 .contestErrorHeading {
