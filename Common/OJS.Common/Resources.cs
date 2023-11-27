@@ -145,6 +145,8 @@ namespace OJS.Common
             public const string ResourcesNotComplete = "Resources must be fully entered.";
             public const string SelectOneSubmissionType = "Choose at least one submission type!";
             public const string TestsCannotBeImprorted = "The tests cannot be imported: {0}";
+            public const string MemoryLimitMustBePositive = "The field memory limit is required and must be positive for each problem and each selected strategy.";
+            public const string TimeLimitMustBePositive = "The field time limit is required and must be positive for each problem and each selected strategy.";
         }
 
         public static class ProblemsRetest

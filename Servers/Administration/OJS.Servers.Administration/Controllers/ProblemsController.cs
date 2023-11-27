@@ -58,6 +58,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private readonly IProblemGroupsDataService problemGroupsData;
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IContestsActivityService contestsActivity;
+    private readonly IValidationService<ProblemValidationServiceModel> problemValidationService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusiness,
@@ -74,7 +75,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemGroupsDataService problemGroupsData,
         IContestsValidationHelper contestsValidationHelper,
         IContestsActivityService contestsActivity,
-        IOptions<ApplicationConfig> appConfigOptions)
+        IOptions<ApplicationConfig> appConfigOptions,
+        IValidationService<ProblemValidationServiceModel> problemValidationService)
         : base(appConfigOptions)
     {
         this.problemsBusiness = problemsBusiness;
@@ -91,6 +93,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         this.problemGroupsData = problemGroupsData;
         this.contestsValidationHelper = contestsValidationHelper;
         this.contestsActivity = contestsActivity;
+        this.problemValidationService = problemValidationService;
     }
 
     protected override Expression<Func<Problem, bool>>? MasterGridFilter
@@ -567,6 +570,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             };
         }
 
+        var validationModel = new ProblemValidationServiceModel
+        {
+            TimeLimit = entity.TimeLimit,
+            MemoryLimit = entity.MemoryLimit,
+        };
+
+        this.problemValidationService
+            .GetValidationResult(validationModel)
+            .VerifyResult();
+
         await this.TryAddTestsToProblem(entity, actionContext);
     }
 
@@ -581,6 +594,16 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         {
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
+
+        var validationModel = new ProblemValidationServiceModel
+        {
+            TimeLimit = newEntity.TimeLimit,
+            MemoryLimit = newEntity.MemoryLimit,
+        };
+
+        this.problemValidationService
+            .GetValidationResult(validationModel)
+            .VerifyResult();
 
         await base.BeforeEntitySaveOnEditAsync(originalEntity, newEntity, actionContext);
     }
@@ -661,15 +684,23 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     : Array.Empty<byte>();
 
                 var timeLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.TimeLimit);
-                if (!string.IsNullOrEmpty(timeLimitValue))
+                if (!string.IsNullOrEmpty(timeLimitValue) && int.Parse(timeLimitValue) > 0)
                 {
                     submissionTypeDetails.TimeLimit = int.Parse(timeLimitValue);
                 }
+                else
+                {
+                    throw new Exception(GlobalResource.TimeLimitMustBePositive);
+                }
 
                 var memoryLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.MemoryLimit);
-                if (!string.IsNullOrEmpty(memoryLimitValue))
+                if (!string.IsNullOrEmpty(memoryLimitValue) && int.Parse(memoryLimitValue) > 0)
                 {
                     submissionTypeDetails.MemoryLimit = int.Parse(memoryLimitValue);
+                }
+                else
+                {
+                    throw new Exception(GlobalResource.MemoryLimitMustBePositive);
                 }
 
                 return submissionTypeDetails;
