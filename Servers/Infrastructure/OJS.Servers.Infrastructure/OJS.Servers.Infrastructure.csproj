@@ -6,7 +6,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
-      <ProjectReference Include="..\..\..\Data\Infrastructure\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj" />
       <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Data\OJS.Services.Common.Data.csproj" />
       <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
       <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
@@ -20,6 +19,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.25" />
       <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.6" />
       <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
       <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.5" />

@@ -1,12 +1,12 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using System;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Configuration;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using OJS.Common.Utils;
+    using Microsoft.Extensions.Options;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Common.Models.Configurations;
@@ -78,16 +78,24 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static void UseHealthMonitoring(this WebApplication app)
         {
-            string healthCheckKey = "HealthCheckConfig__Key";
-            string healthCheckPassword = "HealthCheckConfig__Password";
-            var key = EnvironmentUtils.GetRequiredByKey(healthCheckKey);
-            var password = EnvironmentUtils.GetRequiredByKey(healthCheckPassword);
+            var healthCheckConfig = app.Services.GetRequiredService<IOptions<HealthCheckConfig>>().Value;
 
-            Func<HttpContext, bool> healthMonitoringPredicate =
-                httpContext => httpContext.Request.Query.ContainsKey(key) &&
-                               httpContext.Request.Query[key] == password;
+            app.MapWhen(
+                httpContext =>
+                    httpContext.Request.Query.TryGetValue(healthCheckConfig.Key, out var healthPassword)
+                    && healthPassword == healthCheckConfig.Password,
+                appBuilder => appBuilder.UseHealthChecks("/health"));
+        }
 
-            app.MapWhen(healthMonitoringPredicate, appBuilder => appBuilder.UseHealthChecks("/health"));
+        public static WebApplication MigrateDatabase<TDbContext>(this WebApplication app)
+            where TDbContext : DbContext
+        {
+            using var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
+
+            dbContext.Database.Migrate();
+
+            return app;
         }
     }
 }

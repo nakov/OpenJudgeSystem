@@ -7,8 +7,6 @@ COPY Servers/Administration ./Servers/Administration
 COPY Servers/Infrastructure ./Servers/Infrastructure
 COPY Services/Administration ./Services/Administration
 
-COPY PubSub/OJS.PubSub.Worker.Models/OJS.PubSub.Worker.Models.csproj /src/PubSub/OJS.PubSub.Worker.Models/OJS.PubSub.Worker.Models.csproj
-
 COPY Directory.Build.props ./Directory.Build.props
 COPY Analyzers ./Analyzers
 COPY Common ./Common
@@ -16,7 +14,6 @@ COPY PubSub ./PubSub
 COPY Data ./Data
 COPY Services/Common ./Services/Common
 COPY Services/Infrastructure ./Services/Infrastructure
-COPY Directory.Build.props ./Directory.Build.props
 
 FROM build AS publish
 RUN dotnet publish Servers/Administration/OJS.Servers.Administration/OJS.Servers.Administration.csproj -c Release -o /app/publish
