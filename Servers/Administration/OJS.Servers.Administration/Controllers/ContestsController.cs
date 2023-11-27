@@ -160,7 +160,7 @@ namespace OJS.Servers.Administration.Controllers
             var oldContest = await this.contestsDataService
                 .OneById(entity.Id);
 
-            if (oldContest!.CategoryId != entity.CategoryId)
+            if (oldContest != null && oldContest!.CategoryId != entity.CategoryId)
             {
                 // If a lecturer tries to update the category of a contest
                 // he should be able to do it only for categories he has lecturer rights for.
