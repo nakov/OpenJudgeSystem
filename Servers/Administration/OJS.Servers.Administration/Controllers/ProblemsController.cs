@@ -690,7 +690,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 }
                 else
                 {
-                    throw new Exception(GlobalResource.TimeLimitMustBePositive);
+                    throw new ArgumentException(GlobalResource.TimeLimitMustBePositive);
                 }
 
                 var memoryLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.MemoryLimit);
@@ -700,7 +700,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                 }
                 else
                 {
-                    throw new Exception(GlobalResource.MemoryLimitMustBePositive);
+                    throw new ArgumentException(GlobalResource.MemoryLimitMustBePositive);
                 }
 
                 return submissionTypeDetails;
