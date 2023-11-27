@@ -6,10 +6,11 @@ using static OJS.Common.GlobalConstants.Roles;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using Microsoft.Extensions.Options;
 using OJS.Common;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,13 @@ using System.Linq.Expressions;
 [Authorize(Roles = Administrator)]
 public class LecturersInContestCategoriesController : BaseAutoCrudAdminController<LecturerInContestCategory>
 {
-    private const string CategoryName = nameof(LecturerInContestCategory.ContestCategory);
-    private const string Lecturer = nameof(LecturerInContestCategory.Lecturer);
-
     private readonly IUsersDataService usersDataService;
 
-    public LecturersInContestCategoriesController(IUsersDataService usersDataService) => this.usersDataService = usersDataService;
+    public LecturersInContestCategoriesController(
+        IUsersDataService usersDataService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
+        => this.usersDataService = usersDataService;
 
     protected override Expression<Func<LecturerInContestCategory, bool>>? MasterGridFilter
         => this.GetMasterGridFilter();

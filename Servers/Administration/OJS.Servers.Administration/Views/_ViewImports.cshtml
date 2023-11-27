@@ -1,8 +1,11 @@
-﻿@using OJS.Servers.Administration
+﻿@using Microsoft.Extensions.Options
+@using OJS.Servers.Administration
 @using OJS.Servers.Administration.Models
 @using OJS.Servers.Infrastructure
 @using OJS.Servers.Infrastructure.Extensions
+@using OJS.Services.Administration.Models
 @using OJS.Services.Common
+@using OJS.Services.Common.Models.Configurations
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-@inject IApplicationUrlsService applicationUrls
+@inject IOptions<ApplicationUrlsConfig> appUrls

@@ -9,9 +9,11 @@ using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Common;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using static Common.GlobalConstants.Roles;
 
 [Authorize(Roles = Administrator)]
@@ -21,7 +23,11 @@ public class LecturersInContestsController : BaseAutoCrudAdminController<Lecture
 
     private readonly IUsersDataService usersDataService;
 
-    public LecturersInContestsController(IUsersDataService usersDataService) => this.usersDataService = usersDataService;
+    public LecturersInContestsController(
+        IUsersDataService usersDataService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
+        => this.usersDataService = usersDataService;
 
     protected override Expression<Func<LecturerInContest, bool>>? MasterGridFilter
         => this.GetMasterGridFilter();
