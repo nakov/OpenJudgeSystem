@@ -1,7 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using OJS.Servers.Administration.Extensions;
-using X.PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
