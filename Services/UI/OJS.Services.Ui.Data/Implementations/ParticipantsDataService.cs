@@ -37,9 +37,14 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();
 
-        public IQueryable<Participant> GetAllWithContestAndProblemsByUser(string? userId)
+        public IQueryable<Participant> GetAllByUser(string? userId)
+            => this.DbSet
+                .Where(p => p.UserId == userId);
+
+        public IQueryable<Participant> GetAllWithContestSubmissionsAndProblemsByUser(string? userId)
             => this.DbSet
                 .Where(p => p.UserId == userId)
+                .Include(p => p.Submissions)
                 .Include(p => p.Contest)
                     .ThenInclude(c => c.ProblemGroups)
                         .ThenInclude(pg => pg.Problems);

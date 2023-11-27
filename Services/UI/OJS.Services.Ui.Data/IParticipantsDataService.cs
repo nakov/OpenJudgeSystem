@@ -14,7 +14,9 @@ namespace OJS.Services.Ui.Data
 
         Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
-        IQueryable<Participant> GetAllWithContestAndProblemsByUser(string? userId);
+        IQueryable<Participant> GetAllByUser(string? userId);
+
+        IQueryable<Participant> GetAllWithContestSubmissionsAndProblemsByUser(string? userId);
 
         IQueryable<Participant> GetAllByContest(int contestId);
 

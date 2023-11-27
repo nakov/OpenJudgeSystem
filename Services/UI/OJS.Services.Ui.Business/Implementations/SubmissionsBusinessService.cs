@@ -545,7 +545,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var user = this.userProviderService.GetCurrentUser();
 
         var userParticipantsIdsQuery = this.participantsDataService
-            .GetAllWithContestAndProblemsByUser(user.Id);
+            .GetAllByUser(user.Id);
 
         if (isOfficial.HasValue)
         {
