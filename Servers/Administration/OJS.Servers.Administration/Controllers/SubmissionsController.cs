@@ -20,8 +20,10 @@ using SoftUni.Data.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using Microsoft.Extensions.Options;
+using OJS.Servers.Administration.Extensions;
 using OJS.Common;
+using OJS.Services.Administration.Models;
 using OJS.Common.Extensions;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
@@ -51,7 +53,9 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         ITransactionsProvider transactions,
         IValidatorsFactory<Submission> submissionValidatorsFactory,
         ISubmissionsBusinessService submissionsBusinessService,
-        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService)
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemsValidationHelper = problemsValidationHelper;
         this.participantScoresBusiness = participantScoresBusiness;

@@ -5,12 +5,14 @@ using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Common;
+using Microsoft.Extensions.Options;
 using OJS.Data.Models.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using static Common.GlobalConstants.Roles;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using System.Linq;
 
 [Authorize(Roles = Administrator)]
@@ -20,7 +22,10 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 
     private readonly IUsersDataService usersDataService;
 
-    public UserRolesController(IUsersDataService usersDataService)
+    public UserRolesController(
+        IUsersDataService usersDataService,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
         => this.usersDataService = usersDataService;
 
     protected override Expression<Func<UserInRole, bool>>? MasterGridFilter
