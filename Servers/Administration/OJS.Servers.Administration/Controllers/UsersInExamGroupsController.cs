@@ -7,7 +7,7 @@ using AutoCrudAdmin.ViewModels;
 using Common;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
