@@ -689,7 +689,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     private async Task<SelectList> GetContestsToCopyToSelectList()
     {
         var contestsToCopyTo =
-            await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+            await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>(string.Empty);
 
         return new SelectList(contestsToCopyTo, nameof(Contest.Id), nameof(Contest.Name));
     }

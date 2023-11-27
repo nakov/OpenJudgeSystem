@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Extensions;
 
 using System.Linq;
+using AutoMapper;
 using AutoCrudAdmin.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

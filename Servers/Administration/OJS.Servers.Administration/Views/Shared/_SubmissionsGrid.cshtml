@@ -1,0 +1,51 @@
+@using SharedResource = OJS.Common.Resources.SubmissionSimilarity
+@model IEnumerable<IGrouping<string, OJS.Servers.Administration.Models.SubmissionSimilarityViewModel>>
+
+@if (Model.Any())
+{
+    var sortedResults = Model.OrderBy(m => m.Key);
+    foreach (var groupedReport in sortedResults)
+    {
+        var reports = groupedReport.OrderBy(p => p.Percentage);
+        <h3 class="text-white">@groupedReport.Key</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>@SharedResource.FirstParticipant</th>
+                <th>@SharedResource.SecondParticipant</th>
+                <th>@SharedResource.Points</th>
+                <th>@SharedResource.Differences</th>
+                <th>@SharedResource.Percentage</th>
+            </tr>
+            
+            @foreach (var report in reports)
+            {
+                <tr>
+                    <td>
+                        <a href="/Contests/Submissions/View/@report.FirstSubmissionId" target="_blank">
+                            @report.FirstParticipantName - @report.FirstSubmissionCreatedOn
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Contests/Submissions/View/@report.SecondSubmissionId" target="_blank">
+                            @report.SecondParticipantName - @report.SecondSubmissionCreatedOn
+                        </a>
+                    </td>
+                    <td>
+                        @report.Points
+                    </td>
+                    <td>
+                        @report.Differences
+                    </td>
+                    <td>
+                        @report.Percentage;
+                    </td>
+                </tr>
+            }
+        </table>
+        <br />
+    }
+}
+else
+{
+    <div class="text-center text-uppercase">No similarities found.</div>
+}

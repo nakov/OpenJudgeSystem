@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.ExecutionStrategies\OJS.Workers.ExecutionStrategies.csproj" />
     <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.SubmissionProcessors\OJS.Workers.SubmissionProcessors.csproj" />
     <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj" />
+    <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.Tools\OJS.Workers.Tools.csproj" />
     <ProjectReference Include="..\OJS.Services.Worker.Models\OJS.Services.Worker.Models.csproj" />
   </ItemGroup>
 

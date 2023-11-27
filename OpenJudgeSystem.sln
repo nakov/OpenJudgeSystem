@@ -106,6 +106,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Worker.Models"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Worker.Business", "Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj", "{369BD97D-9875-4461-AA84-F9CA0224D528}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Workers.Tools", "Services\Common\OJS.Workers\OJS.Workers.Tools\OJS.Workers.Tools.csproj", "{CD15763A-E200-4DBA-B6B3-1CA8F24E39CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,6 +158,7 @@ Global
 		{9D797DD8-3AB5-4895-B06B-2F175BBA143A} = {6CCF80EC-1721-4447-AC74-234B7519E5C8}
 		{4B984DF2-036A-432A-ACA5-1A403FC8824C} = {AAE8857F-14F9-4894-99CC-1335AA7EC400}
 		{369BD97D-9875-4461-AA84-F9CA0224D528} = {AAE8857F-14F9-4894-99CC-1335AA7EC400}
+		{CD15763A-E200-4DBA-B6B3-1CA8F24E39CD} = {6CCF80EC-1721-4447-AC74-234B7519E5C8}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CDBD0A16-E35C-43F7-A20E-A3878F26384E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -310,5 +313,9 @@ Global
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD15763A-E200-4DBA-B6B3-1CA8F24E39CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD15763A-E200-4DBA-B6B3-1CA8F24E39CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD15763A-E200-4DBA-B6B3-1CA8F24E39CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD15763A-E200-4DBA-B6B3-1CA8F24E39CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

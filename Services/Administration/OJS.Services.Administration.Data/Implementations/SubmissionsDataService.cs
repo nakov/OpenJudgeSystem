@@ -88,5 +88,7 @@
             => await this.GetAllByProblem(problemId)
                 .Select(s => s.Id)
                 .ToListAsync();
+
+        public IQueryable<Submission> GetAll() => this.DbSet;
     }
 }

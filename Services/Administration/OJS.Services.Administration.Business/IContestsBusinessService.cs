@@ -8,6 +8,6 @@ public interface IContestsBusinessService : IService
 {
     Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 
-    Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>()
+    Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string? term)
         where TServiceModel : class;
 }

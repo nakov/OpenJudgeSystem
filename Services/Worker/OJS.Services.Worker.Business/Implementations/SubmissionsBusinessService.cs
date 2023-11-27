@@ -20,6 +20,9 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common.Constants;
+using OJS.Common.Contracts;
+using OJS.Services.Worker.Models.Anti_Cheating;
+using OJS.Workers.Tools;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -29,6 +32,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionExecutor submissionExecutor;
     private readonly IMapper mapper;
     private readonly SubmissionExecutionConfig executionConfig;
+    private readonly ISimilarityFinder similarityFinder;
+    private readonly IPlagiarismDetectorFactory plagiarismDetectorFactory;
 
     public SubmissionsBusinessService(
         IRandomProvider random,
@@ -36,7 +41,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IExecutionContextBuilderService executionContextBuilder,
         ISubmissionsValidationService submissionsValidation,
         ISubmissionExecutor submissionExecutor,
-        IMapper mapper)
+        IMapper mapper,
+        ISimilarityFinder similarityFinder,
+        IPlagiarismDetectorFactory plagiarismDetectorFactory)
     {
         this.executionConfig = submissionExecutionConfigAccessor.Value;
         this.random = random;
@@ -44,6 +51,18 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionsValidation = submissionsValidation;
         this.submissionExecutor = submissionExecutor;
         this.mapper = mapper;
+        this.similarityFinder = similarityFinder;
+        this.plagiarismDetectorFactory = plagiarismDetectorFactory;
+    }
+
+    public IPlagiarismDetector GetPlagiarismDetector(PlagiarismDetectorType plagiarismDetectorType)
+    {
+        var plagiarismDetectorCreationContext =
+            this.CreatePlagiarismDetectorCreationContext(plagiarismDetectorType);
+        var plagiarismDetector =
+            this.plagiarismDetectorFactory.CreatePlagiarismDetector(plagiarismDetectorCreationContext);
+
+        return plagiarismDetector;
     }
 
     public ExecutionResultServiceModel ExecuteSubmission(SubmissionServiceModel submission)
@@ -193,6 +212,34 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             RemoveDetailsForHiddenTests(executionResult.TaskResult!);
         }
+    }
+
+    private PlagiarismDetectorCreationContext CreatePlagiarismDetectorCreationContext(PlagiarismDetectorType type)
+    {
+        var result = new PlagiarismDetectorCreationContext(type, this.similarityFinder);
+
+        switch (type)
+        {
+            case PlagiarismDetectorType.CSharpCompileDisassemble:
+                result.CompilerPath = Settings.CSharpCompilerPath;
+                result.DisassemblerPath = Settings.DotNetDisassemblerPath;
+                break;
+
+            case PlagiarismDetectorType.CSharpDotNetCoreCompileDisassemble:
+                result.CompilerPath = Settings.DotNetCompilerPath;
+                result.DisassemblerPath = Settings.DotNetDisassemblerPath;
+                break;
+
+            case PlagiarismDetectorType.JavaCompileDisassemble:
+                result.CompilerPath = Settings.JavaCompilerPath;
+                result.DisassemblerPath = Settings.JavaDisassemblerPath;
+                break;
+
+            case PlagiarismDetectorType.PlainText:
+                break;
+        }
+
+        return result;
     }
 
     private string BuildUniqueId(string prefix)

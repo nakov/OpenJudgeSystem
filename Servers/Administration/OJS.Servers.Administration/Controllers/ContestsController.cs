@@ -2,17 +2,23 @@ namespace OJS.Servers.Administration.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
+    using OJS.Common.Contracts;
     using OJS.Common.Extensions;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
+    using OJS.Data.Models.Submissions;
+    using OJS.Servers.Administration.Extensions;
+    using OJS.Servers.Administration.Models;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
@@ -20,8 +26,13 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Business.Validation.Helpers;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Administration.Models.Contests.Submissions;
     using OJS.Services.Common.Validation.Helpers;
     using OJS.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.HttpClients;
+    using OJS.Workers.Common.Extensions;
+    using OJS.Workers.Common.Models;
+    using OJS.Workers.Tools;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 
@@ -35,6 +46,9 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
         private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
+        private readonly IContestsBusinessService contestsBusinessService;
+        private readonly ISubmissionsDataService submissionsDataService;
+        private readonly IHttpClientService httpClientService;
 
         public ContestsController(
             IIpsDataService ipsData,
@@ -45,7 +59,10 @@ namespace OJS.Servers.Administration.Controllers
             IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper,
             IContestsDataService contestsDataService,
-            IOptions<ApplicationConfig> appConfigOptions)
+            IOptions<ApplicationConfig> appConfigOptions,
+            IContestsBusinessService contestsBusinessService,
+            ISubmissionsDataService submissionsDataService,
+            IHttpClientService httpClientService)
             : base(appConfigOptions)
         {
             this.ipsData = ipsData;
@@ -56,6 +73,9 @@ namespace OJS.Servers.Administration.Controllers
             this.categoriesValidationHelper = categoriesValidationHelper;
             this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
             this.contestsDataService = contestsDataService;
+            this.contestsBusinessService = contestsBusinessService;
+            this.submissionsDataService = submissionsDataService;
+            this.httpClientService = httpClientService;
         }
 
         protected override Expression<Func<Contest, bool>>? MasterGridFilter
@@ -89,6 +109,119 @@ namespace OJS.Servers.Administration.Controllers
             };
 
             return this.View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSubmissionsSimilarityAvailableContests([FromQuery]string? term)
+        {
+            var availableContests = await this.contestsBusinessService
+                .GetAllAvailableForCurrentUser<BySubmissionSimilarityServiceModel>(term);
+
+            return this.Json(availableContests);
+        }
+
+        [HttpGet]
+        public IActionResult BySubmissionSimilarity()
+        {
+            var model = new SubmissionSimilarityInputModel();
+            return this.View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> RenderSubmissionsSimilaritiesGrid(int[] contestIds, PlagiarismDetectorType plagiarismDetectorType)
+        {
+            var participantsSimilarSubmissionGroups =
+                this.GetSimilarSubmissions(contestIds, plagiarismDetectorType)
+                    .Select(s => new
+                    {
+                        s.Id,
+                        s.ProblemId,
+                        s.ParticipantId,
+                        s.Points,
+                        s.Content,
+                        s.CreatedOn,
+                        ParticipantName = s.Participant!.User.UserName,
+                        ProblemName = s.Problem.Name,
+                        TestRuns = s.TestRuns.OrderBy(t => t.TestId).Select(t => new { t.TestId, t.ResultType }),
+                    })
+                    .GroupBy(s => new { s.ProblemId, s.ParticipantId })
+                    .Select(g => g.OrderByDescending(s => s.Points).ThenByDescending(s => s.CreatedOn).FirstOrDefault())
+                    .GroupBy(s => new { s!.ProblemId, s.Points })
+                    .ToList();
+
+            var plagiarismDetectorByteArray = await this.httpClientService.Get($"http://localhost:8003/Submissions/GetPlagiarismDetector/{plagiarismDetectorType}");
+            IPlagiarismDetector plagiarismDetector;
+            using (MemoryStream stream = new MemoryStream(plagiarismDetectorByteArray))
+            {
+                plagiarismDetector = (await JsonSerializer.DeserializeAsync<IPlagiarismDetector>(stream)) !;
+            }
+
+            /*var plagiarismDetector = this.GetPlagiarismDetector(plagiarismDetectorType);*/
+
+            var similarities = new List<SubmissionSimilarityViewModel>();
+
+            for (var index = 0; index < participantsSimilarSubmissionGroups.Count; index++)
+            {
+                var groupOfSubmissions = participantsSimilarSubmissionGroups[index].ToList();
+                for (var i = 0; i < groupOfSubmissions.Count; i++)
+                {
+                    for (var j = i + 1; j < groupOfSubmissions.Count; j++)
+                    {
+                        var result = plagiarismDetector.DetectPlagiarism(
+                            groupOfSubmissions[i]!.Content.Decompress(),
+                            groupOfSubmissions[j]!.Content.Decompress(),
+                            new List<IDetectPlagiarismVisitor> { new SortAndTrimLinesVisitor() });
+
+                        var save = true;
+
+                        var firstTestRuns = groupOfSubmissions[i]!.TestRuns.ToList();
+                        var secondTestRuns = groupOfSubmissions[j]!.TestRuns.ToList();
+
+                        if (firstTestRuns.Count < secondTestRuns.Count)
+                        {
+                            secondTestRuns = secondTestRuns
+                                .Where(x => firstTestRuns.Any(y => y.TestId == x.TestId))
+                                .OrderBy(x => x.TestId)
+                                .ToList();
+                        }
+                        else if (firstTestRuns.Count > secondTestRuns.Count)
+                        {
+                            firstTestRuns = firstTestRuns
+                                .Where(x => secondTestRuns.Any(y => y.TestId == x.TestId))
+                                .OrderBy(x => x.TestId)
+                                .ToList();
+                        }
+
+                        for (var k = 0; k < firstTestRuns.Count; k++)
+                        {
+                            if (firstTestRuns[k].ResultType != secondTestRuns[k].ResultType)
+                            {
+                                save = false;
+                                break;
+                            }
+                        }
+
+                        if (save && result.SimilarityPercentage != 0)
+                        {
+                            similarities.Add(new SubmissionSimilarityViewModel
+                            {
+                                ProblemName = groupOfSubmissions[i]?.ProblemName,
+                                Points = groupOfSubmissions[i]?.Points,
+                                Differences = result.Differences?.Count,
+                                Percentage = result.SimilarityPercentage,
+                                FirstSubmissionId = groupOfSubmissions[i]?.Id,
+                                FirstParticipantName = groupOfSubmissions[i]?.ParticipantName,
+                                FirstSubmissionCreatedOn = groupOfSubmissions[i]?.CreatedOn,
+                                SecondSubmissionId = groupOfSubmissions[j]?.Id,
+                                SecondParticipantName = groupOfSubmissions[j]?.ParticipantName,
+                                SecondSubmissionCreatedOn = groupOfSubmissions[j]?.CreatedOn,
+                            });
+                        }
+                    }
+                }
+            }
+
+            return this.PartialView("_SubmissionsGrid", similarities.GroupBy(g => g.ProblemName));
         }
 
         [HttpGet]
@@ -277,6 +410,28 @@ namespace OJS.Servers.Administration.Controllers
                     contest.IpsInContests.Add(new IpInContest { Ip = ip, IsOriginallyAllowed = true });
                 }
             }
+        }
+
+        private IQueryable<Submission> GetSimilarSubmissions(
+            IEnumerable<int> contestIds,
+            PlagiarismDetectorType plagiarismDetectorType)
+        {
+            var orExpressionContestIds = ExpressionExtensions.BuildOrExpression<Submission, int>(
+                contestIds,
+                s => s.Participant!.ContestId);
+
+            var plagiarismDetectorTypeCompatibleCompilerTypes = plagiarismDetectorType.GetCompatibleCompilerTypes();
+            var orExpressionCompilerTypes = ExpressionExtensions.BuildOrExpression<Submission, CompilerType>(
+                plagiarismDetectorTypeCompatibleCompilerTypes,
+                s => s.SubmissionType!.CompilerType);
+
+            var result = this.submissionsDataService
+                .GetAll()
+                .Where(orExpressionContestIds)
+                .Where(orExpressionCompilerTypes)
+                .Where(s => s.Participant!.IsOfficial && s.Points >= 20);
+
+            return result;
         }
 
         private async Task InvalidateParticipants(

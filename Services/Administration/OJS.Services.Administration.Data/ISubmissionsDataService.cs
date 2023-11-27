@@ -42,5 +42,7 @@
         Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId);
 
         Task<IEnumerable<int>> GetIdsByProblemId(int problemId);
+
+        IQueryable<Submission> GetAll();
     }
 }

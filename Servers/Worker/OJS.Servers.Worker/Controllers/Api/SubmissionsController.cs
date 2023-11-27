@@ -12,6 +12,8 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
+using OJS.Common.Contracts;
+using OJS.Workers.Common.Models;
 
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
@@ -24,6 +26,13 @@ public class SubmissionsController : BaseApiController
         ISubmissionsBusinessService submissionsBusiness,
         ILogger<SubmissionsController> logger) =>
         this.submissionsBusiness = submissionsBusiness;
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IPlagiarismDetector), Status200OK)]
+    [Route("/" + nameof(GetPlagiarismDetector))]
+    public IPlagiarismDetector GetPlagiarismDetector(PlagiarismDetectorType plagiarismDetectorType)
+        => this.submissionsBusiness
+            .GetPlagiarismDetector(plagiarismDetectorType);
 
     [HttpPost]
     [ProducesResponseType(typeof(FullExecutionResultResponseModel), Status200OK)]

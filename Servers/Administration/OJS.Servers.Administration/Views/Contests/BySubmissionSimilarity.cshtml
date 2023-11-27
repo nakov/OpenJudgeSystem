@@ -1,0 +1,94 @@
+@model OJS.Servers.Administration.Models.SubmissionSimilarityInputModel
+@using SharedResource = OJS.Common.Resources.SubmissionSimilarity
+@using OJS.Workers.Common.Models
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewBag.Title = SharedResource.BySubmissionSimilarityPageTitle;
+}
+
+<style>
+    .ui-autocomplete {
+        cursor: pointer;
+    }
+    
+    .ui-helper-hidden-accessible {
+        display: none;
+        visibility: hidden;
+    }
+</style>
+
+<h2>@ViewBag.Title</h2>
+<div id="input-boxes">
+    <div class="row">
+        <div class="col-md-7">
+            @Html.LabelFor(m => m.ContestId)
+            <input type="text" id="ContestId" class="form-control" />
+            @Html.HiddenFor(m => m.ContestId)
+        </div>
+        <div class="col-md-3">
+                    @Html.LabelFor(m => m.PlagiarismDetectorType)
+                    <select id="PlagiarismDetectorType" class="form-control">
+                        @foreach (var detectorType in Enum.GetValues(typeof(PlagiarismDetectorType)))
+                        {
+                            <option value="@detectorType">@detectorType</option>
+                        }
+                    </select>
+                </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <button type="button" class="btn btn-primary" id="check-submission-similarities">Check for similarities</button>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div id="similarity-grid"></div>
+
+@section scripts{
+    <script>
+        function loadContestIdsAutocomplete() {
+            $('#ContestId').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '/Contests/GetSubmissionsSimilarityAvailableContests',
+                        method: 'GET',
+                        data: { term: request.term },
+                        success: function (data) {
+                            response(data);
+                            console.log(data);
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $('#ContestId').val(ui.item.label);
+                    $('#ContestId_Hidden').val(ui.item.value);
+                    return false;
+                }
+            });
+        }
+
+        $(function () {
+            loadContestIdsAutocomplete();
+
+            $('#check-submission-similarities').click(function () {
+                var contestId = $('#ContestId').val();
+                var plagiarismDetectorType = $('#PlagiarismDetectorType').val();
+
+                $('#similarity-grid').html('<h1 class="text-center">Loading...</h1>');
+
+                $.ajax({
+                    url: '/Contests/RenderSubmissionsSimilaritiesGrid',
+                    data: { contestIds: [contestId], plagiarismDetectorType: plagiarismDetectorType },
+                    type: 'POST',
+                    traditional: true,
+                    success: function (data) {
+                        $('#similarity-grid').html(data);
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -15,4 +15,8 @@
     <PackageReference Include="AutoMapper" Version="10.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Anti-Cheating" />
+  </ItemGroup>
+
 </Project>

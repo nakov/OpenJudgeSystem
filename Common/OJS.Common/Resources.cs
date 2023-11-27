@@ -221,5 +221,15 @@ namespace OJS.Common
             public const string SubmissionNotFound = "Submission was not found!";
             public const string SubmissionNotFileUpload = "The submission does not have an attachment!";
         }
+
+        public static class SubmissionSimilarity
+        {
+            public const string BySubmissionSimilarityPageTitle = "By submission similarity";
+            public const string FirstParticipant = "First Participant";
+            public const string SecondParticipant = "Second Participant";
+            public const string Points = "Points";
+            public const string Differences = "Differences";
+            public const string Percentage = "Percentage";
+        }
     }
 }
