@@ -2,6 +2,7 @@ import React, { ReactNode, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
+import { isRegularUserInRoleForSubmission } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
@@ -44,7 +45,8 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            { !isNil(currentSubmission) && currentSubmission.isProcessed && user.isAdmin
+            { !isNil(currentSubmission) && currentSubmission.isProcessed &&
+               (user.isAdmin || isRegularUserInRoleForSubmission(currentSubmission, user.username))
                 ? renderRetestButton()
                 : null }
         </div>
