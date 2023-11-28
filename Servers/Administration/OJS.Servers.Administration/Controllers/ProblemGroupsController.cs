@@ -13,7 +13,7 @@ using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Contests;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;

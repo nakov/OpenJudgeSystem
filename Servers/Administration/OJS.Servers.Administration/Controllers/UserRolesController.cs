@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Common;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models.Users;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
