@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import isNil from 'lodash/isNil';
 
 import { IHaveChildrenProps } from '../components/common/Props';
-import { getParticipationsForProfileUrl } from '../utils/urls';
+import { getAllParticipationsForUserUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 
@@ -37,7 +37,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const {
         get: getParticipationsForProfile,
         data: apiParticipationsForProfile,
-    } = useHttp<null, IParticipationType[]>({ url: getParticipationsForProfileUrl });
+    } = useHttp<null, IParticipationType[]>({ url: getAllParticipationsForUserUrl });
 
     const getUserParticipations = useCallback(async () => {
         setIsLoading(true);
