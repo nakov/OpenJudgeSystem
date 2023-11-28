@@ -45,13 +45,12 @@ namespace OJS.Servers.Administration.Controllers
             IValidatorsFactory<Contest> contestValidatorsFactory,
             IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper,
-            IContestsDataService contestsDataService,
-            IOptions<ApplicationConfig> appConfigOptions)
-            : base(appConfigOptions)
+            IOptions<ApplicationConfig> appConfigOptions,
             IContestsValidationHelper contestsValidationHelper,
             IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsDataService,
             IIpsDataService ipsDataService)
+            : base(appConfigOptions)
         {
             this.ipsData = ipsData;
             this.participantsData = participantsData;
