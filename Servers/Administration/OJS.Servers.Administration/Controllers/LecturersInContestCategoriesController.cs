@@ -7,7 +7,6 @@ using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.Extensions.Options;
-using OJS.Servers.Administration.Extensions;
 using OJS.Common;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
@@ -58,11 +57,9 @@ public class LecturersInContestCategoriesController : BaseAutoCrudAdminControlle
 
     protected override Expression<Func<LecturerInContestCategory, bool>>? GetMasterGridFilter()
     {
-        const string lecturerCategoryName = nameof(LecturerInContestCategory.ContestCategory);
-
         var filterExpressions = new List<Expression<Func<LecturerInContestCategory, bool>>>();
 
-        if (this.TryGetEntityIdForStringColumnFilter(lecturerCategoryName, out var categoryName))
+        if (this.TryGetEntityIdForStringColumnFilter(CategoryName, out var categoryName))
         {
             filterExpressions.Add(lic => lic.ContestCategory.Name == categoryName);
         }
