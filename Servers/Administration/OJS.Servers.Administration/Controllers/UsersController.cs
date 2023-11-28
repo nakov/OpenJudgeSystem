@@ -4,9 +4,16 @@ using OJS.Data.Models.Users;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.Extensions.Options;
+using OJS.Services.Administration.Models;
 
 public class UsersController : BaseAutoCrudAdminController<UserProfile>
 {
+    public UsersController(IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
+    {
+    }
+
     protected override IEnumerable<string> ShownColumnNames
         => new[]
         {

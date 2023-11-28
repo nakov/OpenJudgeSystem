@@ -4,11 +4,12 @@ namespace OJS.Servers.Ui.Controllers
     using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using OJS.Common;
-    using OJS.Common.Utils;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models;
@@ -26,19 +27,22 @@ namespace OJS.Servers.Ui.Controllers
         private readonly SignInManager<UserProfile> signInManager;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
         private readonly ILogger<AccountController> logger;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public AccountController(
             UserManager<UserProfile> userManager,
             IUsersBusinessService usersBusinessService,
             SignInManager<UserProfile> signInManager,
             ISulsPlatformHttpClientService sulsPlatformHttpClient,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            IWebHostEnvironment webHostEnvironment)
         {
             this.userManager = userManager;
             this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
             this.logger = logger;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         [HttpPost]
@@ -83,7 +87,7 @@ namespace OJS.Servers.Ui.Controllers
 
                 await this.usersBusinessService.AddOrUpdateUser(externalUser.Entity);
             }
-            else if (EnvironmentUtils.IsProduction())
+            else if (this.webHostEnvironment.IsProduction())
             {
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
