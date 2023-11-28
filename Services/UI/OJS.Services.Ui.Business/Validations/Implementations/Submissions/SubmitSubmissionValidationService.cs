@@ -12,7 +12,8 @@ using System.Text;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
-    private ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+    private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+
     public SubmitSubmissionValidationService(ILecturersInContestsBusinessService lecturersInContestsBusinessService) =>
         this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
 
