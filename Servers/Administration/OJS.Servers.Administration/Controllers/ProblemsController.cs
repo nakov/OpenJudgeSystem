@@ -11,6 +11,7 @@ using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using FluentExtensions.Extensions;
+using OJS.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -570,6 +571,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             };
         }
 
+        SetProblemTimeAndMemoryLimit(entity);
         var validationModel = new ProblemValidationServiceModel
         {
             TimeLimit = entity.TimeLimit,
@@ -595,6 +597,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             newEntity.ProblemGroup.OrderBy = newEntity.OrderBy;
         }
 
+        SetProblemTimeAndMemoryLimit(newEntity);
         var validationModel = new ProblemValidationServiceModel
         {
             TimeLimit = newEntity.TimeLimit,
@@ -649,6 +652,12 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .VerifyResult();
     }
 
+    private static void SetProblemTimeAndMemoryLimit(Problem problem)
+    {
+        problem.TimeLimit = problem.TimeLimit == default ? GlobalConstants.ProblemDefaultTimeLimit : problem.TimeLimit;
+        problem.MemoryLimit = problem.MemoryLimit == default ? GlobalConstants.ProblemDefaultMemoryLimit : problem.MemoryLimit;
+    }
+
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
@@ -663,6 +672,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         problem.AdditionalFiles = await additionalFiles.ToByteArray();
     }
+
+    private static string? GetSubmissionTypeDetailsFieldValue(
+        ExpandableMultiChoiceCheckBoxFormControlViewModel viewModel, AdditionalFormFields fieldName)
+        => viewModel.Expand!.First(y => y.Name == viewModel.Name + " " + fieldName).Value?.ToString();
+
+    private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
+        => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
 
     private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
     {
@@ -684,24 +700,10 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     : Array.Empty<byte>();
 
                 var timeLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.TimeLimit);
-                if (!string.IsNullOrEmpty(timeLimitValue) && int.Parse(timeLimitValue) > 0)
-                {
-                    submissionTypeDetails.TimeLimit = int.Parse(timeLimitValue);
-                }
-                else
-                {
-                    throw new ArgumentException(GlobalResource.TimeLimitMustBePositive);
-                }
+                submissionTypeDetails.TimeLimit = GetLimitValueAndValidate(timeLimitValue, problem.TimeLimit, GlobalConstants.ProblemDefaultTimeLimit, AdditionalFormFields.TimeLimit);
 
                 var memoryLimitValue = GetSubmissionTypeDetailsFieldValue(x, AdditionalFormFields.MemoryLimit);
-                if (!string.IsNullOrEmpty(memoryLimitValue) && int.Parse(memoryLimitValue) > 0)
-                {
-                    submissionTypeDetails.MemoryLimit = int.Parse(memoryLimitValue);
-                }
-                else
-                {
-                    throw new ArgumentException(GlobalResource.MemoryLimitMustBePositive);
-                }
+                submissionTypeDetails.MemoryLimit = GetLimitValueAndValidate(memoryLimitValue, problem.MemoryLimit, GlobalConstants.ProblemDefaultMemoryLimit, AdditionalFormFields.MemoryLimit);
 
                 return submissionTypeDetails;
             });
@@ -710,12 +712,27 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         problem.ProblemSubmissionTypeExecutionDetails.AddRange(newSubmissionTypes);
     }
 
-    private static string? GetSubmissionTypeDetailsFieldValue(
-        ExpandableMultiChoiceCheckBoxFormControlViewModel viewModel, AdditionalFormFields fieldName)
-        => viewModel.Expand!.First(y => y.Name == viewModel.Name + " " + fieldName).Value?.ToString();
+    private static int GetLimitValueAndValidate(string? value, int problemLimit, int defaultLimit, AdditionalFormFields formField)
+    {
+        int parsedValue;
+        var parseSuccess = int.TryParse(value, out parsedValue);
+        if (!string.IsNullOrEmpty(value) && parseSuccess && parsedValue > 0)
+        {
+            return parsedValue;
+        }
 
-    private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
-        => entityDict.GetEntityIdOrDefault<Contest>() ?? entity.ProblemGroup?.ContestId ?? default;
+        if ((string.IsNullOrEmpty(value) || !parseSuccess || parsedValue == default) && problemLimit > 0)
+        {
+            return problemLimit;
+        }
+
+        if ((string.IsNullOrEmpty(value) || !parseSuccess || parsedValue == default) && problemLimit == default)
+        {
+            return defaultLimit;
+        }
+
+        throw new ArgumentException(formField == AdditionalFormFields.TimeLimit ? GlobalResource.TimeLimitMustBePositive : GlobalResource.MemoryLimitMustBePositive);
+    }
 
     private async Task TryAddTestsToProblem(Problem problem, AdminActionContext actionContext)
     {

@@ -10,12 +10,12 @@ public class ProblemValidationService : IValidationService<ProblemValidationServ
 {
     public ValidationResult GetValidationResult(ProblemValidationServiceModel? model)
     {
-        if (model!.TimeLimit <= 0)
+        if (model!.TimeLimit < 0)
         {
             return ValidationResult.Invalid(GlobalResource.TimeLimitMustBePositive);
         }
 
-        if (model.MemoryLimit <= 0)
+        if (model.MemoryLimit < 0)
         {
             return ValidationResult.Invalid(GlobalResource.MemoryLimitMustBePositive);
         }

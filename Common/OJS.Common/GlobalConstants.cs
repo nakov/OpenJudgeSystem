@@ -6,6 +6,8 @@ namespace OJS.Common
         public const int BatchOperationsChunkSize = 3000;
         public const double ProblemDefaultOrderBy = 0;
         public const int NumberOfAutocompleteItemsShown = 20;
+        public const int ProblemDefaultTimeLimit = 100;
+        public const int ProblemDefaultMemoryLimit = 16 * 1024 * 1024;
 
         public const int BestSubmissionEligibleForArchiveAgeInYears = 2;
         public const int NonBestSubmissionEligibleForArchiveAgeInYears = 1;
