@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Extensions;
 using OJS.Common.Extensions.Strings;
 using OJS.Data.Models.Submissions;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Contests;
 using OJS.Servers.Administration.Models.Participants;
 using OJS.Servers.Administration.Models.Problems;

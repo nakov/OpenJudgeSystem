@@ -8,10 +8,11 @@ using AutoCrudAdmin.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
@@ -62,7 +63,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         ITestRunsDataService testRunsData,
         IProblemsBusinessService problemsBusiness,
         ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
-        IProblemsValidationHelper problemsValidationHelper)
+        IProblemsValidationHelper problemsValidationHelper,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemsData = problemsData;
         this.zipArchives = zipArchives;

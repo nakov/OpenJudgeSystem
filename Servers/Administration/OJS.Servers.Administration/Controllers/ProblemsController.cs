@@ -15,13 +15,14 @@ using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
-using OJS.Servers.Administration.Infrastructure.Extensions;
+using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
@@ -73,7 +74,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         IProblemGroupsBusinessService problemGroupsBusiness,
         IProblemGroupsDataService problemGroupsData,
         IContestsValidationHelper contestsValidationHelper,
-        IContestsActivityService contestsActivity)
+        IContestsActivityService contestsActivity,
+        IOptions<ApplicationConfig> appConfigOptions)
+        : base(appConfigOptions)
     {
         this.problemsBusiness = problemsBusiness;
         this.contestsBusiness = contestsBusiness;
