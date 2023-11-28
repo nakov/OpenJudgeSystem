@@ -18,7 +18,7 @@ interface IRefreshableSubmissionListProps {
     renderRetestButton: () => ReactNode;
 }
 const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableSubmissionListProps) => {
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { state: { user, user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, currentSubmissionResults } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
@@ -44,11 +44,11 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            { !isNil(currentSubmission) && currentSubmission.isProcessed && canAccessAdministration
+            { !isNil(currentSubmission) && currentSubmission.isProcessed && user.isAdmin
                 ? renderRetestButton()
                 : null }
         </div>
-    ), [ canAccessAdministration, currentSubmission, handleReloadClick, renderRetestButton ]);
+    ), [ user, currentSubmission, handleReloadClick, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {
