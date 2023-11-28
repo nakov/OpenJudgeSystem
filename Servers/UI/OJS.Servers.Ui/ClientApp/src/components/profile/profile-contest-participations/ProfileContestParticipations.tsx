@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
-import { useParticipations } from '../../../hooks/use-participations';
+import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
 import { formatDate } from '../../../utils/dates';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 const columns: GridColDef[] = [
     {
@@ -41,32 +42,48 @@ const columns: GridColDef[] = [
 ];
 
 const ProfileContestParticipations = () => {
+    const [ numberedRows, setNumberedRows ] =
+        useState<Array<IParticipationType>>([]);
+
     const {
         areUserParticipationsRetrieved,
         userParticipations,
         getUserParticipations,
     } = useParticipations();
 
-    useEffect(() => {
-        if (areUserParticipationsRetrieved) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (areUserParticipationsRetrieved) {
+                return;
+            }
 
-        (async () => {
-            await getUserParticipations();
-        })();
-    }, [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ]);
+            (async () => {
+                await getUserParticipations();
+            })();
+        },
+        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ],
+    );
+
+    useEffect(
+        () => setNumberedRows(userParticipations.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
+
+        [ userParticipations ],
+    );
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={userParticipations}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[ 5 ]}
-              disableSelectionOnClick
-            />
-        </div>
+        <>
+            <Heading type={HeadingType.secondary}>Participations:</Heading>
+            <div style={{ height: 400, width: '100%' }}>
+                <DataGrid
+                  getRowId={(row) => row.id}
+                  rows={numberedRows}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[ 5 ]}
+                  disableSelectionOnClick
+                />
+            </div>
+        </>
     );
 };
 

@@ -3,6 +3,8 @@ import React, { useCallback, useEffect } from 'react';
 import Heading from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
+import ProfileContestParticipations
+    from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
 import { useUsers } from '../../hooks/use-users';
 import isNilOrEmpty from '../../utils/check-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -53,6 +55,7 @@ const ProfilePage = () => {
         <>
             {renderUsernameHeading()}
             <ProfileAboutInfo value={profile} />
+            <ProfileContestParticipations />
             Tabs will be hidden for alpha version, as it is not production ready yet
             {/* <Tabs */}
             {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
