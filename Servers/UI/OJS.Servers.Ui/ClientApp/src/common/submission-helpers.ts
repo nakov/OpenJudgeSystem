@@ -8,10 +8,13 @@ const isSubmissionEligibleForRetest =
         !submission.processingComment &&
         submission.isProcessed;
 
-// User is not admin or lecturer and is not the participant of the submission
-const isUserInRoleForSubmission =
-    (submission: ISubmissionDetailsType, username: string) => submission?.testRuns.length === 0 &&
+// User is lecturer or is the participant of the submission
+const isRegularUserInRoleForSubmission =
+    (
+        submission: ISubmissionDetailsType,
+        username: string,
+    ) => submission?.testRuns.length === 0 &&
         (submission.userIsInRoleForContest || username === submission?.user.userName);
 
 // eslint-disable-next-line import/prefer-default-export
-export { isSubmissionEligibleForRetest, isUserInRoleForSubmission };
+export { isSubmissionEligibleForRetest, isRegularUserInRoleForSubmission };

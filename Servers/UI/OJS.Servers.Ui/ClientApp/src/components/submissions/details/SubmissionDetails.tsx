@@ -5,7 +5,7 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { isSubmissionEligibleForRetest, isUserInRoleForSubmission } from '../../../common/submission-helpers';
+import { isRegularUserInRoleForSubmission, isSubmissionEligibleForRetest } from '../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
@@ -40,8 +40,16 @@ const SubmissionDetails = () => {
     const { currentSubmission, validationErrors, currentPage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const { submissionId } = useParams();
-    const { data: currentSubmissionData, isFetching, refetch } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
-    const { data: allSubmissionsData, isFetching: isLoadingResults, refetch: refetchResults } =
+    const {
+        data: currentSubmissionData,
+        isFetching,
+        refetch: refetchCurrentSubmission,
+    } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
+    const {
+        data: allSubmissionsData,
+        isFetching: isLoadingResults,
+        refetch: refetchResults,
+    } =
     useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
     const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
     const {
@@ -71,9 +79,10 @@ const SubmissionDetails = () => {
     );
 
     const reloadPage = useCallback(() => {
-        refetch();
+        refetchCurrentSubmission();
         refetchResults();
-    }, [ refetch, refetchResults ]);
+        setShouldNotRetestOnLoad(true);
+    }, [ refetchCurrentSubmission, refetchResults ]);
 
     const detailsHeadingText = useMemo(
         () => (
@@ -92,14 +101,11 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    const renderRetestButton = useCallback(
-        () => {
-            if (isNil(currentSubmission) ||
-                !isUserInRoleForSubmission(currentSubmission, user.username) ||
-                !isSubmissionEligibleForRetest(currentSubmission)) {
-                return null;
-            }
-
+    const renderRetestButton = useCallback(() => {
+        if (user.isAdmin ||
+            (!isNil(currentSubmission) &&
+                isRegularUserInRoleForSubmission(currentSubmission, user.username) &&
+                isSubmissionEligibleForRetest(currentSubmission))) {
             return (
                 <Button
                   type={ButtonType.secondary}
@@ -109,9 +115,10 @@ const SubmissionDetails = () => {
                   className={styles.retestButton}
                 />
             );
-        },
-        [ currentSubmission, user.username, setShouldNotRetestOnLoad ],
-    );
+        }
+
+        return null;
+    }, [ user, currentSubmission ]);
 
     const submissionResults = useCallback(
         () => (isFetching || retestIsFetching
@@ -159,8 +166,9 @@ const SubmissionDetails = () => {
     useEffect(
         () => {
             if (retestIsSuccess) {
-                console.log(retestIsSuccess);
-                reloadPage();
+                // Minimal timeout so results query does
+                // not get fetched before test runs are cleared
+                setTimeout(() => { reloadPage(); }, 500);
             }
         },
         [ reloadPage, retestIsSuccess ],
