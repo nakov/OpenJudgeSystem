@@ -52,10 +52,7 @@ const SubmissionDetails = () => {
     } =
     useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
     const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
-    const {
-        isFetching: retestIsLoading,
-        isSuccess: retestIsSuccess,
-    } = useRetestSubmissionQuery(
+    const { isSuccess: retestIsSuccess } = useRetestSubmissionQuery(
         { id: Number(submissionId) },
         { skip: shouldNotRetestOnLoad },
     );
