@@ -62,11 +62,6 @@ namespace OJS.Services.Common.Data
 
         Task SaveChanges();
 
-        // TODO: Remove after lazy loading is disabled by default
-        void DisableLazyLoading();
-
-        void EnableLazyLoading();
-
         // TODO: Refactor services to not use the following methods as public and remove them from here
         IQueryable<TEntity> GetByIdQuery(object id);
 

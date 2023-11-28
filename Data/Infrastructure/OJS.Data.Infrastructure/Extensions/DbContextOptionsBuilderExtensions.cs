@@ -22,9 +22,6 @@ namespace OJS.Data.Infrastructure.Extensions
 
             options.UseSqlServer(connectionString!);
 
-            // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
-            // options.UseLazyLoadingProxies();
-
             return options;
         }
     }

@@ -152,9 +152,5 @@ namespace OJS.Services.Common.Data.Implementations
 
             return query;
         }
-
-        public void DisableLazyLoading() => this.db.ChangeTracker.LazyLoadingEnabled = false;
-
-        public void EnableLazyLoading() => this.db.ChangeTracker.LazyLoadingEnabled = true;
     }
 }
