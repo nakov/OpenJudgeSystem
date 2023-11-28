@@ -53,7 +53,7 @@ const SubmissionDetails = () => {
     useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
     const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
     const {
-        isFetching: retestIsFetching,
+        isFetching: retestIsLoading,
         isSuccess: retestIsSuccess,
     } = useRetestSubmissionQuery(
         { id: Number(submissionId) },
@@ -121,7 +121,7 @@ const SubmissionDetails = () => {
     }, [ user, currentSubmission ]);
 
     const submissionResults = useCallback(
-        () => (isFetching || retestIsFetching
+        () => (isFetching
             ? (
                 <div style={{ ...flexCenterObjectStyles }}>
                     <SpinningLoader />
@@ -141,7 +141,7 @@ const SubmissionDetails = () => {
                         )}
                 </div>
             )),
-        [ isFetching, retestIsFetching, submissionDetailsClassName, detailsHeadingText, currentSubmission ],
+        [ isFetching, submissionDetailsClassName, detailsHeadingText, currentSubmission ],
     );
 
     const renderErrorMessage = useCallback(
@@ -167,8 +167,8 @@ const SubmissionDetails = () => {
         () => {
             if (retestIsSuccess) {
                 // Minimal timeout so results query does
-                // not get fetched before test runs are cleared
-                setTimeout(() => { reloadPage(); }, 500);
+                // not get fetched before test runs are cleared in BE
+                setTimeout(() => { reloadPage(); }, 1000);
             }
         },
         [ reloadPage, retestIsSuccess ],

@@ -46,7 +46,7 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               className={styles.submissionReloadBtn}
             />
             { !isNil(currentSubmission) && currentSubmission.isProcessed &&
-               (user.isAdmin || isRegularUserInRoleForSubmission(currentSubmission, user.username))
+               (user.isAdmin || currentSubmission.userIsInRoleForContest)
                 ? renderRetestButton()
                 : null }
         </div>
