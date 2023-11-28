@@ -15,8 +15,7 @@ import styles from './RefreshableSubmissionList.module.scss';
 
 interface IRefreshableSubmissionListProps {
     reload: () => void;
-
- renderRetestButton: () => ReactNode;
+    renderRetestButton: () => ReactNode;
 }
 const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableSubmissionListProps) => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
@@ -45,11 +44,11 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            {!isNil(currentSubmission) && currentSubmission.isProcessed
+            { !isNil(currentSubmission) && currentSubmission.isProcessed && canAccessAdministration
                 ? renderRetestButton()
-                : null}
+                : null }
         </div>
-    ), [ currentSubmission, handleReloadClick, renderRetestButton ]);
+    ), [ canAccessAdministration, currentSubmission, handleReloadClick, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {

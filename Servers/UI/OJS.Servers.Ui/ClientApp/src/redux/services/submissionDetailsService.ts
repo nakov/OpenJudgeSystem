@@ -29,9 +29,16 @@ const submissionDetailsService = createApi({
                 const blob = await response.blob();
                 return { blob, filename };
             }
+
+            console.log(response.headers.get('Content-Length'));
+            if (response.headers.get('Content-Length')) {
+                return '';
+            }
+
             return response.json();
         },
     }),
+    keepUnusedDataFor: 0,
     endpoints: (builder) => ({
         // eslint-disable-next-line max-len
         getCurrentSubmission: builder.query<ISubmissionDetailsType, ISubmissionDetailsUrlParams>({ query: ({ submissionId }) => ({ url: `/${defaultPathIdentifier}/Submissions/Details/${submissionId}` }) }),
@@ -44,7 +51,7 @@ const submissionDetailsService = createApi({
         // eslint-disable-next-line max-len
         saveAttachment: builder.query<{ blob: Blob; filename: string }, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/${defaultPathIdentifier}/Submissions/Download/${id}` }) }),
         retestSubmission: builder.query<
-            null,
+            void,
             IDownloadSubmissionFileUrlParams>({
                 query: ({ id }) => ({
                     url: `/${defaultPathIdentifier}/Compete/Retest/${id}`,

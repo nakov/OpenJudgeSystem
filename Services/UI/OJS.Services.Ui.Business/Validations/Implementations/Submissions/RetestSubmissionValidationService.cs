@@ -26,9 +26,10 @@ public class RetestSubmissionValidationService : IRetestSubmissionValidationServ
             return permissionsValidationResult;
         }
 
-        if ((detailsModel.Tests.Any() && !detailsModel.TestRuns.Any()) &&
+        if (user.IsAdmin ||
+            ((detailsModel.Tests.Any() && !detailsModel.TestRuns.Any()) &&
             detailsModel.IsProcessed && detailsModel.IsCompiledSuccessfully &&
-            (detailsModel.ProcessingComment == null))
+            (detailsModel.ProcessingComment == null)))
         {
             return ValidationResult.Valid();
         }
