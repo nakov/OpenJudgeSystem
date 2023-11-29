@@ -634,6 +634,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.Problem = problem;
         submission.SubmissionType = submissionType;
 
+        var problemSubmissionTypeExecutionDetails =
+            problem.ProblemSubmissionTypeExecutionDetails.FirstOrDefault(x =>
+                x.SubmissionTypeId == submission.SubmissionTypeId);
+        if (problemSubmissionTypeExecutionDetails != null)
+        {
+            problem.TimeLimit = problemSubmissionTypeExecutionDetails.TimeLimit ?? problem.TimeLimit;
+            problem.MemoryLimit = problemSubmissionTypeExecutionDetails.MemoryLimit ?? problem.MemoryLimit;
+        }
+
         var serviceModel = submission.Map<SubmissionServiceModel>();
 
         serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.ProblemSubmissionTypeExecutionDetails
