@@ -69,8 +69,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             services.Configure<FormOptions>(x =>
             {
                 x.ValueLengthLimit = maxRequestLimit;
-                x.MultipartBodyLengthLimit = maxRequestLimit;
-                x.MultipartHeadersLengthLimit = maxRequestLimit;
             });
 
             return services;
