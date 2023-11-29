@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import { useSubmissions } from '../../../hooks/submissions/use-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import QuestionIcon from '../../guidelines/icons/QuestionIcon';
@@ -18,20 +19,28 @@ enum ProblemConstraintsTitles {
 
 const ProblemConstraints = () => {
     const { state: { currentProblem } } = useProblems();
+    const { state: { selectedSubmissionType } } = useSubmissions();
 
     const constraints = useMemo(() => {
-        if (isNil(currentProblem)) {
+        if (isNil(currentProblem) || isNil(selectedSubmissionType)) {
             return [];
         }
 
-        const { memoryLimit, fileSizeLimit, timeLimit, checkerName } = currentProblem;
+        const { fileSizeLimit, checkerName, problemSubmissionTypeExecutionDetails } = currentProblem;
+        const { id } = selectedSubmissionType;
+        const problemSubmissionTypeLimits = problemSubmissionTypeExecutionDetails.find((x) => x.submissionTypeId === id);
+        if (isNil(problemSubmissionTypeLimits)) {
+            return [];
+        }
+
+        const { timeLimit, memoryLimit } = problemSubmissionTypeLimits;
 
         return [
             !isNil(timeLimit)
-                ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toFixed(3).toString()} sec.`
+                ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toString()} ms`
                 : '',
             !isNil(memoryLimit)
-                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toFixed(2).toString()} MB`
+                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toString()} B`
                 : '',
             !isNil(fileSizeLimit)
                 ? `${ProblemConstraintsTitles.FileSizeLimit}: ${fileSizeLimit.toFixed(2).toString()} KB`
@@ -40,7 +49,7 @@ const ProblemConstraints = () => {
                 ? `${ProblemConstraintsTitles.Checker}: ${checkerName}`
                 : '',
         ].filter((item) => !isEmpty(item));
-    }, [ currentProblem ]);
+    }, [ currentProblem, selectedSubmissionType ]);
 
     const renderConstraint = useCallback((constraint: string) => {
         const { checkerDescription = '' } = currentProblem || {};

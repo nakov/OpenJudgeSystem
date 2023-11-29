@@ -1,12 +1,13 @@
 ﻿namespace OJS.Services.Ui.Models.Contests
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using AutoMapper;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Problems;
+    using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Ui.Models.SubmissionTypes;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class ContestProblemServiceModel : IMapExplicitly
     {
@@ -68,6 +69,8 @@
         public IEnumerable<ContestProblemResourceServiceModel> Resources { get; set; } = null!;
 
         public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
+
+        public IEnumerable<ProblemSubmissionTypeExecutionDetailsServiceModel> ProblemSubmissionTypeExecutionDetails { get; set; } = null!;
 
         public bool UserHasAdminRights { get; set; }
 
