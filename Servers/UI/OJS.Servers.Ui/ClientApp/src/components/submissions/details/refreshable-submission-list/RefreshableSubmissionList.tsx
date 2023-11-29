@@ -36,20 +36,24 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         [ reload ],
     );
 
-    const renderButtonsSection = useCallback(() => (
-        <div className={styles.buttonsSection}>
-            <Button
-              onClick={handleReloadClick}
-              text="Reload"
-              type={ButtonType.secondary}
-              className={styles.submissionReloadBtn}
-            />
-            { !isNil(currentSubmission) && currentSubmission.isProcessed &&
-               (user.isAdmin || currentSubmission.userIsInRoleForContest)
-                ? renderRetestButton()
-                : null }
-        </div>
-    ), [ user, currentSubmission, handleReloadClick, renderRetestButton ]);
+    const renderButtonsSection = useCallback(() => {
+        console.log(user.isAdmin);
+        console.log(currentSubmission?.userIsInRoleForContest);
+
+        return (
+            <div className={styles.buttonsSection}>
+                <Button
+                  onClick={handleReloadClick}
+                  text="Reload"
+                  type={ButtonType.secondary}
+                  className={styles.submissionReloadBtn}
+                />
+                { !isNil(currentSubmission) && currentSubmission.isProcessed && currentSubmission.userIsInRoleForContest
+                    ? renderRetestButton()
+                    : null }
+            </div>
+        );
+    }, [ user, currentSubmission, handleReloadClick, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {

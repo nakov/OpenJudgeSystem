@@ -99,7 +99,7 @@ const SubmissionDetails = () => {
     );
 
     const renderRetestButton = useCallback(() => {
-        if (user.isAdmin ||
+        if (currentSubmission?.userIsInRoleForContest ||
             (!isNil(currentSubmission) &&
                 isRegularUserInRoleForSubmission(currentSubmission, user.username) &&
                 isSubmissionEligibleForRetest(currentSubmission))) {
