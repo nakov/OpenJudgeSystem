@@ -1,8 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations;
 
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
-using OJS.Data.Models.Participants;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -24,22 +23,22 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
     public async Task RemoveDuplicateParticipantScores()
     {
-        var participantScores =
-            this.scoresDataService
-                .GetAll()
-                .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
-                .Where(ps => ps.Count() > 1)
-                .ToList();
-
-        var participantScoresToRemove = new List<ParticipantScore>();
-        participantScores.ForEach(participantScoreGroup =>
-        {
-            participantScoresToRemove
-                .AddRange(participantScoreGroup
+        var duplicateGroups = await this.scoresDataService
+            .GetAll()
+            .GroupBy(ps => new { ps.IsOfficial, ps.ProblemId, ps.ParticipantId })
+            .Where(psGroup => psGroup.Count() > 1)
+            .Select(psGroup => new
+            {
+                GroupKey = psGroup.Key,
+                ScoresToRemove = psGroup
                     .OrderByDescending(ps => ps.Points)
-                    .Skip(1)
-                    .ToList());
-        });
+                    .Skip(1),
+            })
+            .ToListAsync();
+
+        var participantScoresToRemove = duplicateGroups
+            .SelectMany(group => group.ScoresToRemove)
+            .ToList();
 
         await this.scoresDataService.Delete(participantScoresToRemove);
     }
