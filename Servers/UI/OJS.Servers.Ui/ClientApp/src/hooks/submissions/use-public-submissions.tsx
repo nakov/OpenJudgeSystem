@@ -41,8 +41,6 @@ interface IPublicSubmissionsContext {
         userSubmissions: ISubmissionResponseModel[];
         userSubmissionsLoading: boolean;
         publicSubmissions: ISubmissionResponseModel[];
-        unprocessedSubmissions: ISubmissionResponseModel[];
-        pendingSubmissions: ISubmissionResponseModel[];
         userByContestSubmissions: ISubmissionResponseModel[];
         userSubmissionUrlParams?: IPage;
         submissionsByContestParams?: IGetSubmissionsByContestIdParams;
@@ -91,10 +89,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         getSubmissionsByContestIdParams,
         setGetSubmissionsByContestIdParams,
     ] = useState<IGetSubmissionsByContestIdParams | null>(defaultState.state.submissionsByContestParams);
-    const [ unprocessedSubmissions, setUnprocessedSubmissions ] =
-        useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
-    const [ pendingSubmissions, setPendingSubmissions ] =
-        useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ previousPage, setPreviousPage ] = useState(0);
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
 
@@ -136,26 +130,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         });
 
     const {
-        get: getUnprocessedSubmissions,
-        data: unprocessedSubmissionsData,
-    } = useHttp<
-        IGetSubmissionsUrlParams,
-        IPagedResultType<ISubmissionResponseModel>>({
-            url: getSubmissionsUrl,
-            parameters: getSubmissionsUrlParams,
-        });
-
-    const {
-        get: getPendingSubmissions,
-        data: pendingSubmissionsData,
-    } = useHttp<
-        IGetSubmissionsUrlParams,
-        IPagedResultType<ISubmissionResponseModel>>({
-            url: getSubmissionsUrl,
-            parameters: getSubmissionsUrlParams,
-        });
-
-    const {
         get: getUserParticipations,
         data: userParticipationsData,
     } = useHttp<null, IParticipationType[]>({ url: getAllParticipationsForUserUrl });
@@ -178,20 +152,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const totalUnprocessedSubmissionsCount = useMemo(
         () => (apiTotalUnprocessedSubmissionsCount || 0) as number ?? null,
         [ apiTotalUnprocessedSubmissionsCount ],
-    );
-
-    const loadUnprocessedSubmissions = useCallback(
-        async () => {
-            await getUnprocessedSubmissions();
-        },
-        [ getUnprocessedSubmissions ],
-    );
-
-    const loadPendingSubmissions = useCallback(
-        async () => {
-            await getPendingSubmissions();
-        },
-        [ getPendingSubmissions ],
     );
 
     const loadTotalSubmissionsCount = useCallback(
@@ -366,28 +326,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ userByContestSubmissionsData, setUserByContestSubmissions, processSubmissionsQueryResult ],
     );
 
-    useEffect(
-        () => {
-            if (isNil(unprocessedSubmissionsData) || isEmpty(unprocessedSubmissionsData)) {
-                return;
-            }
-
-            processSubmissionsQueryResult(unprocessedSubmissionsData, setUnprocessedSubmissions);
-        },
-        [ populatePageInformation, processSubmissionsQueryResult, unprocessedSubmissionsData ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(pendingSubmissionsData) || isEmpty(pendingSubmissionsData)) {
-                return;
-            }
-
-            processSubmissionsQueryResult(pendingSubmissionsData, setPendingSubmissions);
-        },
-        [ pendingSubmissionsData, populatePageInformation, processSubmissionsQueryResult ],
-    );
-
     // Make requests
     useEffect(
         () => {
@@ -434,32 +372,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [ getSubmissionsByContestIdParams, getUserByContestSubmissions ],
     );
 
-    useEffect(
-        () => {
-            if (isNil(getSubmissionsUrlParams)) {
-                return;
-            }
-
-            (async () => {
-                await loadUnprocessedSubmissions();
-            })();
-        },
-        [ getSubmissionsUrlParams, loadUnprocessedSubmissions ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(getSubmissionsUrlParams)) {
-                return;
-            }
-
-            (async () => {
-                await loadPendingSubmissions();
-            })();
-        },
-        [ getSubmissionsUrlParams, loadPendingSubmissions ],
-    );
-
     const clearPageValues = useCallback(
         () => {
             setPreviousPage(0);
@@ -475,8 +387,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 userSubmissions,
                 userByContestSubmissions,
                 userSubmissionsLoading,
-                unprocessedSubmissions,
-                pendingSubmissions,
                 totalSubmissionsCount,
                 totalUnprocessedSubmissionsCount,
                 menuItems: selectMenuItems,
@@ -498,8 +408,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
             userByContestSubmissions,
             userSubmissionsLoading,
             publicSubmissions,
-            unprocessedSubmissions,
-            pendingSubmissions,
             totalSubmissionsCount,
             totalUnprocessedSubmissionsCount,
             loadTotalSubmissionsCount,
