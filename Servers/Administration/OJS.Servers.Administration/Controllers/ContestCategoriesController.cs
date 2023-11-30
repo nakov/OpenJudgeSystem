@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using FluentExtensions.Extensions;
 using AutoCrudAdmin.Models;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models.Contests;
@@ -88,7 +89,8 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
     {
         entity.Children = this.contestCategoriesData
             .GetByIdQuery(entity.Id)
-            .SelectMany(c => c.Children).ToList();
+            .SelectMany(c => c.Children)
+            .ToList();
 
         return Task.WhenAll(
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
@@ -122,10 +124,10 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
 
     private async Task CascadeDeleteCategories(ContestCategory contestCategory)
     {
-        foreach (var children in contestCategory.Children)
+        await contestCategory.Children.ForEachAsync(async children =>
         {
             await this.CascadeDeleteCategories(children);
-        }
+        });
 
         this.contestCategoriesData.Delete(contestCategory);
     }

@@ -14,8 +14,8 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
 
-    public SubmitSubmissionValidationService(ILecturersInContestsBusinessService lecturersInContestsBusinessService) =>
-        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+    public SubmitSubmissionValidationService(ILecturersInContestsBusinessService lecturersInContestsBusinessService)
+        => this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
 
     public ValidationResult GetValidationResult(
         (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)

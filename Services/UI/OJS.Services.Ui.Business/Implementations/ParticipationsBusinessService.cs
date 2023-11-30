@@ -11,8 +11,8 @@
     {
         private IParticipantsDataService participantsData;
 
-        public ParticipationsBusinessService(IParticipantsDataService participantsData) =>
-            this.participantsData = participantsData;
+        public ParticipationsBusinessService(IParticipantsDataService participantsData)
+            => this.participantsData = participantsData;
 
         public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId)
             => await this.participantsData

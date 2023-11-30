@@ -12,8 +12,8 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
 {
     private readonly IContestCategoriesDataService contestCategoriesData;
 
-    public ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData) =>
-        this.contestCategoriesData = contestCategoriesData;
+    public ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
+        => this.contestCategoriesData = contestCategoriesData;
 
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {

@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using System.Collections.Generic;
@@ -20,10 +21,10 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task DeleteIps(IEnumerable<IpInContest> ips)
         {
-            foreach (var ip in ips)
+            ips.ForEach(ip =>
             {
                 this.Delete(ip.Ip);
-            }
+            });
 
             await this.SaveChanges();
         }

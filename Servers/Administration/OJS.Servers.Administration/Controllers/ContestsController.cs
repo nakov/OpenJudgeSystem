@@ -212,7 +212,7 @@ namespace OJS.Servers.Administration.Controllers
 
             var ipsInContests = this.GetContestIps(existingContest.Id);
 
-            if (ipsInContests.Count() != 0)
+            if (ipsInContests.Any())
             {
                 await this.ipsDataService.DeleteIps(ipsInContests);
             }
@@ -260,7 +260,7 @@ namespace OJS.Servers.Administration.Controllers
 
             var ipsInContests = this.GetContestIps(entity.Id);
 
-            if (ipsInContests.Count() != 0)
+            if (ipsInContests.Any())
             {
                 entity.IpsInContests = ipsInContests.ToList();
             }
@@ -302,9 +302,10 @@ namespace OJS.Servers.Administration.Controllers
             }
         }
 
-        private IEnumerable<IpInContest> GetContestIps(int id) =>
-            this.contestsDataService
-                .GetContestWithIps(id).SelectMany(c => c.IpsInContests);
+        private IEnumerable<IpInContest> GetContestIps(int id)
+            => this.contestsDataService
+                .GetContestWithIps(id)
+                .SelectMany(c => c.IpsInContests);
 
         private async Task InvalidateParticipants(
             string? originalContestPassword,
