@@ -6,40 +6,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS dotnet_build
 
 WORKDIR /src
-
-COPY Common/OJS.Common/OJS.Common.csproj /src/Common/OJS.Common/OJS.Common.csproj
-COPY Services/Common/OJS.Services.Common.Models/OJS.Services.Common.Models.csproj /src/Services/Common/OJS.Services.Common.Models/OJS.Services.Common.Models.csproj
-COPY Services/Common/OJS.Services.Common.Data/OJS.Services.Common.Data.csproj /src/Services/Common/OJS.Services.Common.Data/OJS.Services.Common.Data.csproj
-COPY Services/Common/OJS.Services.Common/OJS.Services.Common.csproj /src/Services/Common/OJS.Services.Common/OJS.Services.Common.csproj
-
-COPY Services/Common/OJS.Workers/OJS.Workers.Common/OJS.Workers.Common.csproj /src/Services/Common/OJS.Workers.Common/OJS.Workers/OJS.Workers.Common.csproj
-COPY Services/Common/OJS.Workers/OJS.Workers.Checkers/OJS.Workers.Checkers.csproj /src/Services/Common//OJS.Workers.Checkers/OJS.Workers/OJS.Workers.Checkers.csproj
-COPY Services/Common/OJS.Workers/OJS.Workers.Compilers/OJS.Workers.Compilers.csproj /src/Services/Common/OJS.Workers/OJS.Workers.Compilers/OJS.Workers.Compilers.csproj
-COPY Services/Common/OJS.Workers/OJS.Workers.ExecutionStrategies/OJS.Workers.ExecutionStrategies.csproj /src/Services/Common/OJS.Workers/OJS.Workers.ExecutionStrategies/OJS.Workers.ExecutionStrategies.csproj
-COPY Services/Common/OJS.Workers/OJS.Workers.Executors/OJS.Workers.Executors.csproj /src/Services/Common/OJS.Workers/OJS.Workers.Executors/OJS.Workers.Executors.csproj
-COPY Services/Common/OJS.Workers/OJS.Workers.SubmissionProcessors/OJS.Workers.SubmissionProcessors.csproj /src/Services/Common/OJS.Workers/OJS.Workers.SubmissionProcessors/OJS.Workers.SubmissionProcessors.csproj
-
-COPY Services/UI/OJS.Services.Ui.Business/OJS.Services.Ui.Business.csproj /src/Services/UI/OJS.Services.Ui.Business/OJS.Services.Ui.Business.csproj
-COPY Services/UI/OJS.Services.Ui.Data/OJS.Services.Ui.Data.csproj /src/Services/UI/OJS.Services.Ui.Data/OJS.Services.Ui.Data.csproj
-COPY Services/UI/OJS.Services.Ui.Models/OJS.Services.Ui.Models.csproj /src/Services/UI/OJS.Services.Ui.Models/OJS.Services.Ui.Models.csproj
-COPY Servers/UI/OJS.Servers.Ui.Infrastructure/OJS.Servers.Ui.Infrastructure.csproj /src/Servers/UI/OJS.Servers.Ui.Infrastructure/OJS.Servers.Ui.Infrastructure.csproj
-COPY Servers/UI/OJS.Servers.Ui.Models/OJS.Servers.Ui.Models.csproj /src/Servers/UI/OJS.Servers.Ui.Models/OJS.Servers.Ui.Models.csproj
-
-COPY Services/Infrastructure/OJS.Services.Infrastructure/OJS.Services.Infrastructure.csproj /src/Services/Infrastructure/OJS.Services.Infrastructure/OJS.Services.Infrastructure.csproj
-
-COPY Data/OJS.Data/OJS.Data.csproj /src/Data/OJS.Data/OJS.Data.csproj
-COPY Data/OJS.Data.Models/OJS.Data.Models.csproj /src/Data/OJS.Data.Models/OJS.Data.Models.csproj
-COPY Data/OJS.Data.Validation/OJS.Data.Validation.csproj /src/Data/OJS.Data.Validation/OJS.Data.Validation.csproj
-COPY Data/Infrastructure/OJS.Data.Infrastructure/OJS.Data.Infrastructure.csproj /src/Data/Infrastructure/OJS.Data.Infrastructure/OJS.Data.Infrastructure.csproj
-
-COPY Servers/UI/OJS.Servers.Ui/OJS.Servers.Ui.csproj /src/Servers/UI/OJS.Servers.Ui/OJS.Servers.Ui.csproj
-COPY Servers/Infrastructure/OJS.Servers.Infrastructure/OJS.Servers.Infrastructure.csproj /src/Servers/Infrastructure/OJS.Servers.Infrastructure/OJS.Servers.Infrastructure.csproj
-
-COPY PubSub/OJS.PubSub.Worker.Models/OJS.PubSub.Worker.Models.csproj /src/PubSub/OJS.PubSub.Worker.Models/OJS.PubSub.Worker.Models.csproj
-
-RUN dotnet restore Servers/UI/OJS.Servers.Ui/OJS.Servers.Ui.csproj
-
-WORKDIR /src
 COPY Servers/UI ./Servers/UI
 COPY Servers/Infrastructure ./Servers/Infrastructure
 COPY Services/UI ./Services/UI
@@ -51,15 +17,12 @@ COPY Data ./Data
 COPY PubSub ./PubSub
 COPY Services/Common ./Services/Common
 COPY Services/Infrastructure ./Services/Infrastructure
-COPY Directory.Build.props ./Directory.Build.props
-
 
 # Dotnet Publish
 FROM dotnet_build AS publish
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui
 RUN dotnet publish OJS.Servers.Ui.csproj -c Release -o /app/publish
-
 
 # Dotnet Run
 FROM base AS final
