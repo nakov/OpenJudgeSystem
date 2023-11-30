@@ -147,7 +147,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                 .DefaultIfEmpty(WorkerType.Default)
                 .FirstOrDefault();
 
-            if (submissionForProcessing.WorkerType != WorkerType.Default)
+            if (strategyDetailsWorkerType != WorkerType.Default)
             {
                 submissionForProcessing.WorkerType = strategyDetailsWorkerType;
                 return;
