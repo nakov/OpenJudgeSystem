@@ -42,7 +42,7 @@ namespace OJS.Servers.Ui.Extensions
             });
 
             services
-                .AddWebServer<Program>()
+                .AddWebServer<Program>(configuration)
                 .AddHttpContextServices()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(configuration, AppName)
