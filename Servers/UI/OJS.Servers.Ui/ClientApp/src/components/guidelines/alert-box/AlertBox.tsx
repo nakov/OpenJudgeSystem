@@ -8,12 +8,14 @@ import styles from './AlertBox.module.scss';
 
 enum AlertBoxType {
     error = 1,
-    info = 2
+    info = 2,
+    success = 3
 }
 
 const alertBoxTypeToDefaultClassName = {
     [AlertBoxType.error]: styles.error,
     [AlertBoxType.info]: styles.info,
+    [AlertBoxType.success]: styles.success,
 };
 
 interface IAlertBoxProps extends IHaveOptionalClassName {

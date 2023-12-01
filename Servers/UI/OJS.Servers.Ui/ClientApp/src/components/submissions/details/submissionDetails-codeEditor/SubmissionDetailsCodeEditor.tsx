@@ -20,9 +20,10 @@ import styles from './SubmissionDetailsCodeEditor.module.scss';
 
 interface ISubmissionDetailsCodeEditorProps {
     renderRetestButton: () => ReactNode;
+    retestSuccess: boolean;
 }
 
-const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsCodeEditorProps) => {
+const SubmissionDetailsCodeEditor = ({ renderRetestButton, retestSuccess }: ISubmissionDetailsCodeEditorProps) => {
     const [ submissionId, setSubmissionId ] = useState<number | null>(null);
     const [ shouldFetch, setShouldFetch ] = useState<boolean>(true);
     const { actions: { initiateRedirectionToProblem } } = useProblems();
@@ -112,6 +113,13 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
 
     const { submissionType } = currentSubmission || {};
 
+    const renderRetestSuccessMessage = useCallback(
+        () => !isNil(retestSuccess) && retestSuccess
+            ? <AlertBox message="Submission retested successfully." type={AlertBoxType.success} />
+            : null,
+        [ retestSuccess ],
+    );
+
     const renderTestsChangeMessage = useCallback(() => (
         !isNil(currentSubmission) &&
         currentSubmission.isEligibleForRetest
@@ -182,7 +190,8 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                     {problemNameHeadingText}
                 </div>
             </Heading>
-            <div>
+            <div className={styles.messagesWrapper}>
+                {renderRetestSuccessMessage()}
                 {renderTestsChangeMessage()}
             </div>
             {

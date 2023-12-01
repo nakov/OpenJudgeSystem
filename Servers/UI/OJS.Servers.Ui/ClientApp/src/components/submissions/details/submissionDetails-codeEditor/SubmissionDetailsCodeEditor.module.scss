@@ -17,6 +17,12 @@
     text-decoration: none;
 }
 
+.messagesWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .testChangesWrapper {
     align-items: center;
     background-color: colors.$warning-color;

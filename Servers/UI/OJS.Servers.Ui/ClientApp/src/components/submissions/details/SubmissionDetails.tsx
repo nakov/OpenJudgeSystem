@@ -165,7 +165,7 @@ const SubmissionDetails = () => {
             if (retestIsSuccess) {
                 // Minimal timeout so results query does
                 // not get fetched before test runs are cleared in BE
-                setTimeout(() => { reloadPage(); }, 1000);
+                setTimeout(() => { reloadPage(); }, 3000);
             }
         },
         [ reloadPage, retestIsSuccess ],
@@ -194,7 +194,10 @@ const SubmissionDetails = () => {
                   renderRetestButton={renderRetestButton}
                   reload={reloadPage}
                 />
-                <SubmissionDetailsCodeEditor renderRetestButton={renderRetestButton} />
+                <SubmissionDetailsCodeEditor
+                  renderRetestButton={renderRetestButton}
+                  retestSuccess={retestIsSuccess}
+                />
                 {submissionResults()}
             </div>
             <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
