@@ -4,8 +4,9 @@ import isNil from 'lodash/isNil';
 
 import { IKeyValuePair } from '../../common/common-types';
 import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
-import { IGetSubmissionsByContestIdParams, IGetSubmissionsUrlParams } from '../../common/url-types';
+import { IGetSubmissionsByContestIdParams, IGetSubmissionsUrlParams, IUserInfoUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import isNilOrEmpty from '../../utils/check-utils';
 import {
     getAllParticipationsForUserUrl,
     getPendingSubmissionsUrl,
@@ -14,6 +15,7 @@ import {
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl, getUnprocessedSubmissionsUrl, getUserSubmissionsUrl,
 } from '../../utils/urls';
+import { useAuth } from '../use-auth';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
 import { IParticipationType } from '../use-participations';
@@ -92,7 +94,10 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ previousPage, setPreviousPage ] = useState(0);
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
+    const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrlParam ] =
+        useState<IUserInfoUrlParams | null>();
 
+    const { state: { user } } = useAuth();
     const {
         state: { currentPage },
         populatePageInformation,
@@ -153,7 +158,10 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const {
         get: getUserParticipations,
         data: userParticipationsData,
-    } = useHttp<null, IParticipationType[]>({ url: getAllParticipationsForUserUrl });
+    } = useHttp<IUserInfoUrlParams, IParticipationType[]>({
+        url: getAllParticipationsForUserUrl,
+        parameters: getParticipationsForProfileUrlParam,
+    });
 
     const {
         get: getTotalSubmissionsCount,
@@ -304,20 +312,35 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         [],
     );
 
-    useEffect(() => {
-        const mappedMenuItems = (userParticipationsData ||
+    useEffect(
+        () => {
+            const mappedMenuItems = (userParticipationsData ||
             []).map((item: IParticipationType) => ({
-            key: item.id.toString(),
-            value: item.contestName,
-        }));
+                key: item.id.toString(),
+                value: item.contestName,
+            }));
 
-        setSelectMenuItems(mappedMenuItems);
-    }, [ userParticipationsData ]);
+            setSelectMenuItems(mappedMenuItems);
+        },
+        [ userParticipationsData ],
+    );
 
     // Process results
     useEffect(
         () => {
-            if (isNil(userSubmissionsData) || isEmpty(userSubmissionsData)) {
+            if (isNilOrEmpty(userSubmissionsData) || !isEmpty(getParticipationsForProfileUrlParam)) {
+                return;
+            }
+
+            const { username } = user;
+            setParticipationsForProfileUrlParam({ username });
+        },
+        [ getUserParticipations, user, userSubmissionsData, getParticipationsForProfileUrlParam ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(getParticipationsForProfileUrlParam)) {
                 return;
             }
 
@@ -325,7 +348,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 await getUserParticipations();
             })();
         },
-        [ getUserParticipations, userSubmissionsData ],
+        [ getParticipationsForProfileUrlParam, getUserParticipations ],
     );
 
     useEffect(

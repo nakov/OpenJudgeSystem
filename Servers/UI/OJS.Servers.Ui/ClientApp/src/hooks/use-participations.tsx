@@ -1,26 +1,30 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import { IUserInfoUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { getAllParticipationsForUserUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 
 interface IParticipationType {
-    id: number;
-    contestId: number;
-    contestName: string;
-    competeResult?: number;
-    practiceResult?: number;
-    contestCompeteMaximumPoints?: number;
-    contestPracticeMaximumPoints?: number;
-    registrationTime: Date;
+        id: number;
+        contestId: number;
+        contestName: string;
+        competeResult?: number;
+        practiceResult?: number;
+        contestCompeteMaximumPoints?: number;
+        contestPracticeMaximumPoints?: number;
+        registrationTime: Date;
 }
 
 interface IParticipationsContext {
-    areUserParticipationsRetrieved: boolean;
-    userParticipations: IParticipationType[];
-    getUserParticipations: () => Promise<void>;
+    state: {
+        userParticipations: IParticipationType[];
+    };
+    actions: {
+        getUserParticipations: (username: string) => void;
+    };
 }
 
 const defaultState = {};
@@ -31,37 +35,62 @@ type IParticipationsProviderProps = IHaveChildrenProps
 
 const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ areUserParticipationsRetrieved, setAreUserParticipationsRetrieved ] = useState<boolean>(false);
     const [ userParticipations, setUserParticipations ] = useState<IParticipationType[]>([]);
+    const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrUrlParam ] =
+        useState<IUserInfoUrlParams | null>();
 
     const {
         get: getParticipationsForProfile,
         data: apiParticipationsForProfile,
-    } = useHttp<null, IParticipationType[]>({ url: getAllParticipationsForUserUrl });
+    } = useHttp<IUserInfoUrlParams, IParticipationType[]>({
+        url: getAllParticipationsForUserUrl,
+        parameters: getParticipationsForProfileUrlParam,
+    });
 
-    const getUserParticipations = useCallback(async () => {
-        setIsLoading(true);
-        await getParticipationsForProfile();
-        setIsLoading(false);
-    }, [ getParticipationsForProfile ]);
+    const getUserParticipations = useCallback(
+        (username: string) => {
+            setParticipationsForProfileUrUrlParam({ username });
+        },
+        [],
+    );
 
-    useEffect(() => {
-        if (isNil(apiParticipationsForProfile)) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (isNil(getParticipationsForProfileUrlParam)) {
+                return;
+            }
 
-        setUserParticipations(apiParticipationsForProfile);
-        setAreUserParticipationsRetrieved(true);
-    }, [ apiParticipationsForProfile ]);
+            (async () => {
+                setIsLoading(true);
+                await getParticipationsForProfile();
+                setIsLoading(false);
+            })();
+
+            setParticipationsForProfileUrUrlParam(null);
+        },
+        [ getParticipationsForProfileUrlParam, getParticipationsForProfile ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(apiParticipationsForProfile)) {
+                return;
+            }
+
+            setUserParticipations(apiParticipationsForProfile);
+        },
+        [ apiParticipationsForProfile ],
+    );
 
     const value = useMemo(
         () => ({
-            areUserParticipationsRetrieved,
-            userParticipations,
-            getUserParticipations,
-            isLoading,
+            state: {
+                userParticipations,
+                isLoading,
+            },
+            actions: { getUserParticipations },
         }),
-        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations, isLoading ],
+        [ getUserParticipations, userParticipations, isLoading ],
     );
 
     return (

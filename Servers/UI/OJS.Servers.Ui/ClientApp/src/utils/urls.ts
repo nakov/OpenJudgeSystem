@@ -26,6 +26,7 @@ import {
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
+    IUserInfoUrlParams,
 } from '../common/url-types';
 
 const
@@ -81,9 +82,12 @@ const administrationDeleteProblem = (id : number) => `
 ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
 // profile
-const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
+
+const getUserProfileInfoUrlByUsername = (username: string) => `/profile/${username}`;
+const getProfileInfoUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Users/GetProfileInfo?username=${username}`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
-const getAllParticipationsForUserUrl = () => `${baseApiUrl}/Participations/GetAllForUser`;
+// eslint-disable-next-line max-len
+const getAllParticipationsForUserUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Participations/GetAllForUser?username=${username}`;
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
@@ -263,6 +267,7 @@ export {
     getAdministrationContestsGridUrl,
     getAdministrationNavigation,
     getAdministrationRetestSubmission,
+    getUserProfileInfoUrlByUsername,
     getProfileInfoUrl,
     getParticipateInContestUrl,
     getContestCategoryBreadcrumbItemPath,

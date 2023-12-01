@@ -48,6 +48,10 @@ const routes = [
         title: 'My Profile',
     },
     {
+        path: '/profile/:username',
+        Element: ProfilePage,
+    },
+    {
         path: '/submissions',
         Element: SubmissionsPage,
         title: 'Submissions',

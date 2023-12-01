@@ -1,6 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import { IUserInfoUrlParams } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import { getProfileInfoUrl } from '../utils/urls';
 
@@ -17,12 +19,20 @@ interface IUserProfileType {
 }
 
 interface IUsersContext {
-    profile: IUserProfileType;
-    getProfile: () => Promise<void>;
-    isLoading: boolean;
+    state: {
+        myProfile: IUserProfileType;
+        isProfileInfoLoaded: boolean;
+        isProfileInfoLoading: boolean;
+        userProfileUsername: string;
+    };
+    actions: {
+        getProfile: (username: string) => void;
+        initiateRedirectionToUserProfile: (username: string, url: string) => void;
+        clearUserProfileInformation: () => void;
+    };
 }
 
-const defaultState = { profile: { userName: '' } as IUserProfileType };
+const defaultState = { state: { myProfile: { userName: '' } as IUserProfileType } };
 
 const UsersContext = createContext<IUsersContext>(defaultState as IUsersContext);
 
@@ -30,37 +40,90 @@ type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ profile, setProfile ] = useState(defaultState.profile);
+    const [ myProfile, setMyProfile ] = useState(defaultState.state.myProfile);
+    const [ userProfileUsername, setUserProfileUsername ] = useState('');
+    const [ getProfileInfoUrlUrlParam, setProfileInfoUrlParam ] =
+        useState<IUserInfoUrlParams | null>();
     const { showError } = useNotifications();
+    const navigate = useNavigate();
+
+    const initiateRedirectionToUserProfile = useCallback(
+        (profileUsername: string, url: string) => {
+            setUserProfileUsername(profileUsername);
+
+            navigate(url);
+        },
+        [ navigate ],
+    );
 
     const {
         get: getProfileInfo,
         data: profileData,
-    } = useHttp<null, IUserProfileType>({ url: getProfileInfoUrl });
+        isSuccess,
+    } = useHttp<IUserInfoUrlParams, IUserProfileType>({
+        url: getProfileInfoUrl,
+        parameters: getProfileInfoUrlUrlParam,
+    });
 
-    const getProfile = useCallback(async () => {
-        setIsLoading(true);
-        await getProfileInfo();
-        setIsLoading(false);
-    }, [ getProfileInfo ]);
+    const getProfile = useCallback(
+        (username: string) => {
+            setProfileInfoUrlParam({ username });
+        },
+        [],
+    );
 
-    useEffect(() => {
-        if (isNil(profileData)) {
-            return;
-        }
+    const clearUserProfileInformation = useCallback(
+        () => {
+            setMyProfile(defaultState.state.myProfile);
+        },
+        [],
+    );
 
-        setProfile(profileData);
+    useEffect(
+        () => {
+            if (isNil(getProfileInfoUrlUrlParam)) {
+                return;
+            }
 
-        // showError({ message: 'Could not retrieve profile info.' } as INotificationType);
-    }, [ profileData, showError ]);
+            (async () => {
+                setIsLoading(true);
+                await getProfileInfo();
+            })();
+
+            setProfileInfoUrlParam(null);
+        },
+        [ getProfileInfo, getProfileInfoUrlUrlParam ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(profileData)) {
+                return;
+            }
+
+            setIsLoading(false);
+            setMyProfile(profileData);
+
+            setProfileInfoUrlParam(null);
+        },
+        [ profileData, showError ],
+    );
 
     const value = useMemo(
         () => ({
-            profile,
-            getProfile,
-            isLoading,
+            state: {
+                myProfile,
+                isProfileInfoLoaded: isSuccess,
+                isProfileInfoLoading: isLoading,
+                userProfileUsername,
+            },
+            actions: {
+                getProfile,
+                initiateRedirectionToUserProfile,
+                clearUserProfileInformation,
+            },
         }),
-        [ getProfile, profile, isLoading ],
+        [ getProfile, myProfile, isSuccess, isLoading, userProfileUsername, initiateRedirectionToUserProfile, clearUserProfileInformation ],
     );
 
     return (

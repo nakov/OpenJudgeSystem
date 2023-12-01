@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import isNil from 'lodash/isNil';
 
+import { useAuth } from '../../../hooks/use-auth';
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
+import { useUsers } from '../../../hooks/use-users';
 import { formatDate } from '../../../utils/dates';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
@@ -44,24 +47,27 @@ const columns: GridColDef[] = [
 const ProfileContestParticipations = () => {
     const [ numberedRows, setNumberedRows ] =
         useState<Array<IParticipationType>>([]);
+    const { state: { user } } = useAuth();
 
     const {
-        areUserParticipationsRetrieved,
-        userParticipations,
-        getUserParticipations,
+        state: { userParticipations },
+        actions: { getUserParticipations },
     } = useParticipations();
+    const { state: { isProfileInfoLoaded, userProfileUsername } } = useUsers();
 
     useEffect(
         () => {
-            if (areUserParticipationsRetrieved) {
+            if (!isProfileInfoLoaded) {
                 return;
             }
 
-            (async () => {
-                await getUserParticipations();
-            })();
+            const usernameParam = isNil(userProfileUsername)
+                ? user.username
+                : userProfileUsername;
+
+            getUserParticipations(usernameParam);
         },
-        [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ],
+        [ isProfileInfoLoaded, getUserParticipations, user.username, userProfileUsername ],
     );
 
     useEffect(

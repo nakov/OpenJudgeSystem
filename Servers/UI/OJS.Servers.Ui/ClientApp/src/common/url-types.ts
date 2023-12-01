@@ -1,6 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 import { IFilter, ISort } from './contest-types';
 
+interface IUserInfoUrlParams {
+    username: string;
+}
+
 interface IContestDetailsUrlParams {
     id: number;
 }
@@ -101,6 +105,7 @@ interface IGetSearchResultsParams {
 }
 
 export type {
+    IUserInfoUrlParams,
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,
