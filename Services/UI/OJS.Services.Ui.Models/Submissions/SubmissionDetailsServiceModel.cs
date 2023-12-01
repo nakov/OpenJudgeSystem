@@ -36,6 +36,8 @@
 
         public bool IsProcessed { get; set; }
 
+        public bool IsEligibleForRetest { get; set; }
+
         public bool UserIsInRoleForContest { get; set; }
 
         public string CompilerComment { get; set; } = null!;
@@ -92,6 +94,7 @@
                     s.Problem != null
                         ? s.Problem.ProblemGroup.ContestId
                         : 0))
-                .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore());
+                .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
+                .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore());
     }
 }

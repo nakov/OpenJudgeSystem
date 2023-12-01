@@ -55,6 +55,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
     private readonly IRetestSubmissionValidationService retestSubmissionValidationService;
     private readonly ISubmissionPublisherService submissionPublisher;
+    private readonly ISubmissionsHelper submissionsHelper;
     private readonly ILogger<SubmissionsBusinessService> logger;
 
     public SubmissionsBusinessService(
@@ -77,6 +78,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ISubmissionPublisherService submissionPublisher,
         IContestsDataService contestsDataService,
+        ISubmissionsHelper submissionsHelper,
         ILogger<SubmissionsBusinessService> logger)
     {
         this.submissionsData = submissionsData;
@@ -98,6 +100,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submissionPublisher = submissionPublisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.contestsDataService = contestsDataService;
+        this.submissionsHelper = submissionsHelper;
         this.logger = logger;
     }
 
@@ -146,11 +149,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .FirstOrDefaultAsync();
 
         var contest = await this.contestsDataService
-            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id)
-            .Map<Contest>();
+            .GetWithCategoryByProblem<Contest>(submissionDetailsServiceModel!.Problem.Id);
 
         var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+
         submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
+        submissionDetailsServiceModel.IsEligibleForRetest =
+            this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
         var validationResult =
             this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest) !);

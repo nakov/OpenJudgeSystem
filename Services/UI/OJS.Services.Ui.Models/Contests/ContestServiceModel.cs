@@ -61,6 +61,8 @@ public class ContestServiceModel : IMapExplicitly
 
     public ICollection<LecturerInContestServiceModel> LecturersInContests { get; set; } = null!;
 
+    public ICollection<LecturerInContestCategoryServiceModel> LecturerInContestCategory { get; set; } = null!;
+
     public IEnumerable<ContestCategoryListViewModel> ParentCategories { get; set; } =
         Enumerable.Empty<ContestCategoryListViewModel>();
 
@@ -193,6 +195,7 @@ public class ContestServiceModel : IMapExplicitly
                         .OrderBy(p => p.ProblemGroup.OrderBy)
                         .ThenBy(p => p.OrderBy)))
             .ForMember(d => d.LecturersInContests, opt => opt.MapFrom(s => s.LecturersInContests))
+            .ForMember(d => d.LecturerInContestCategory, opt => opt.MapFrom(s => s.Category!.LecturersInContestCategories))
             .ForMember(d => d.ParentCategories, opt => opt.Ignore())
             .ForMember(d => d.UserIsAdminOrLecturerInContest, opt => opt.Ignore())
             .ForMember(d => d.UserCanCompete, opt => opt.Ignore())

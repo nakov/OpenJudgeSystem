@@ -9,14 +9,20 @@ using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 public class RetestSubmissionValidationService : IRetestSubmissionValidationService
 {
     private readonly ISubmissionDetailsValidationService submissionDetailsValidation;
+    private readonly ISubmissionsHelper submissionsHelper;
 
-    public RetestSubmissionValidationService(ISubmissionDetailsValidationService submissionDetailsValidation)
-        => this.submissionDetailsValidation = submissionDetailsValidation;
+    public RetestSubmissionValidationService(
+        ISubmissionDetailsValidationService submissionDetailsValidation,
+        ISubmissionsHelper submissionsHelper)
+    {
+        this.submissionDetailsValidation = submissionDetailsValidation;
+        this.submissionsHelper = submissionsHelper;
+    }
 
     public ValidationResult GetValidationResult((SubmissionDetailsServiceModel, UserInfoModel, bool) item)
     {
         var (detailsModel, user, isInRole) = item;
-        // Checks if user is submissions participant or is admin
+        // Checks if user is submissions participant or is admin/lecturer
         var permissionsValidationResult = this.submissionDetailsValidation.GetValidationResult((detailsModel, user, isInRole));
 
         if (!permissionsValidationResult.IsValid)
@@ -26,10 +32,7 @@ public class RetestSubmissionValidationService : IRetestSubmissionValidationServ
             return permissionsValidationResult;
         }
 
-        if (user.IsAdmin ||
-            ((detailsModel.Tests.Any() && !detailsModel.TestRuns.Any()) &&
-            detailsModel.IsProcessed && detailsModel.IsCompiledSuccessfully &&
-            (detailsModel.ProcessingComment == null)))
+        if (permissionsValidationResult.IsValid || this.submissionsHelper.IsEligibleForRetest(detailsModel))
         {
             return ValidationResult.Valid();
         }

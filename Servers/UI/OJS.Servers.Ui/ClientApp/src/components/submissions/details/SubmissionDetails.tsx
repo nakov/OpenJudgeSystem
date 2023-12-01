@@ -5,7 +5,7 @@ import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { isRegularUserInRoleForSubmission, isSubmissionEligibleForRetest } from '../../../common/submission-helpers';
+import { isRegularUserInRoleForSubmission } from '../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
@@ -102,7 +102,7 @@ const SubmissionDetails = () => {
         if (currentSubmission?.userIsInRoleForContest ||
             (!isNil(currentSubmission) &&
                 isRegularUserInRoleForSubmission(currentSubmission, user.username) &&
-                isSubmissionEligibleForRetest(currentSubmission))) {
+                currentSubmission.isEligibleForRetest)) {
             return (
                 <Button
                   type={ButtonType.secondary}

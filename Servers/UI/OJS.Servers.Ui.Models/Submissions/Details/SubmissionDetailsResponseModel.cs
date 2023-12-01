@@ -33,6 +33,8 @@
 
         public bool IsCompiledSuccessfully { get; set; }
 
+        public bool IsEligibleForRetest { get; set; }
+
         public string CompilerComment { get; set; } = null!;
 
         public bool IsProcessed { get; set; }

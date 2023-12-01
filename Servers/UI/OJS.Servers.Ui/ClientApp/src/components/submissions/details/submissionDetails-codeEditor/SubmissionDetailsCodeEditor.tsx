@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
-import { isSubmissionEligibleForRetest } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
@@ -115,7 +114,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
 
     const renderTestsChangeMessage = useCallback(() => (
         !isNil(currentSubmission) &&
-        isSubmissionEligibleForRetest(currentSubmission)
+        currentSubmission.isEligibleForRetest
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
