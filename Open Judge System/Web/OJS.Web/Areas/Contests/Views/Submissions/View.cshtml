@@ -90,12 +90,12 @@ else
         {
             <h2>@Resource.Execution_result:</h2>
             <pre>@Model.ProcessingComment</pre>
-            if (Model.UserHasAdminPermission)
-            {
-                <pre>@Resource.Exception_type: @Model.ExceptionType  
+        }
+        if (Model.UserHasAdminPermission)
+        {
+            <pre>@Resource.Exception_type: @Model.ExceptionType  
                      @Model.ExecutionComment
                 </pre>
-            }
         }
     }
     if (!Model.IsCompiledSuccessfully)

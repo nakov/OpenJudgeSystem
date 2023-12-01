@@ -101,6 +101,7 @@ namespace OJS.LocalWorker
             this.submission.StartedExecutionOn = submissionModel.StartedExecutionOn;
             this.submission.CompletedExecutionOn = submissionModel.CompletedExecutionOn;
             this.submission.WorkerEndpoint = submissionModel.WorkerEndpoint;
+            this.submission.CompilerComment = submissionModel.CompilerComment;
             this.UpdateResults();
         }
 
