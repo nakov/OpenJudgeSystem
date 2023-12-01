@@ -22,7 +22,7 @@ import {
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsByContestIdParams,
-    IGetSubmissionsUrlParams,
+    IGetSubmissionsUrlParams, IGetUserSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -188,32 +188,19 @@ const getSubmissionDetailsUrl = ({ submissionId }:ISubmissionDetailsUrlParams) =
 
 const getSubmissionDetailsRedirectionUrl = ({ submissionId }:ISubmissionDetailsUrlParams) => `/submissions/${submissionId}/details`;
 
-const getPublicSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
-    const pageQuery = isNil(page)
-        ? ''
-        : `page=${page}`;
+const getSubmissionsUrl = ({ status, page }: IGetSubmissionsUrlParams) => {
+    const params = { status, page };
+    const query = Object.entries(params)
+        .filter(([ value ]) => !isNil(value))
+        .map(([ key, value ]) => `${key}=${value}`)
+        .join('&');
 
-    return `${baseApiUrl}/Submissions/Public?${pageQuery}`;
+    return `${baseApiUrl}/Submissions/GetSubmissions?${query}`;
 };
 
-const getUnprocessedSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
-    const pageQuery = isNil(page)
-        ? ''
-        : `page=${page}`;
-
-    return `${baseApiUrl}/Submissions/GetProcessingSubmissions?${pageQuery}`;
-};
-
-const getPendingSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
-    const pageQuery = isNil(page)
-        ? ''
-        : `page=${page}`;
-
-    return `${baseApiUrl}/Submissions/GetPendingSubmissions?${pageQuery}`;
-};
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
-const getUserSubmissionsUrl = ({ page }: IGetSubmissionsUrlParams) => {
+const getUserSubmissionsUrl = ({ page }: IGetUserSubmissionsUrlParams) => {
     const pageQuery = isNil(page)
         ? ''
         : `page=${page}`;
@@ -287,10 +274,7 @@ export {
     getContestByProblemUrl,
     getSubmissionResultsByProblemUrl,
     getSubmissionResultsUrl,
-    getPublicSubmissionsUrl,
     getSubmissionsByContestIdUrl,
-    getUnprocessedSubmissionsUrl,
-    getPendingSubmissionsUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
     getUserSubmissionsUrl,
@@ -316,4 +300,5 @@ export {
     getContestsByStrategyUrl,
     getAdministrationTestEditUrl,
     getAdministrationTestEditInternalUrl,
+    getSubmissionsUrl,
 };
