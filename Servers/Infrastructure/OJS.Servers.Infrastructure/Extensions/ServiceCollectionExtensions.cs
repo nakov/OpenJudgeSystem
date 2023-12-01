@@ -17,9 +17,11 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -48,12 +50,29 @@ namespace OJS.Servers.Infrastructure.Extensions
     {
         private const string DefaultDbConnectionName = "DefaultConnection";
 
-        public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
-            => services
+        public static IServiceCollection AddWebServer<TStartup>(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services
                 .AddAutoMapperConfigurations<TStartup>()
                 .AddWebServerServices<TStartup>()
                 .AddOptionsWithValidation<ApplicationConfig>()
                 .AddOptionsWithValidation<HealthCheckConfig>();
+
+            var maxRequestLimit = configuration.GetSectionWithValidation<HttpConfig>().MaxRequestSizeLimit;
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = maxRequestLimit;
+            });
+
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = maxRequestLimit;
+            });
+
+            return services;
+        }
 
         /// <summary>
         /// Adds identity database and authentication services to the service collection.

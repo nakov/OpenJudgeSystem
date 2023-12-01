@@ -16,7 +16,7 @@ internal static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
         => services
-            .AddWebServer<Program>()
+            .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
             .AddScoped<DbContext, OjsDbContext>()
             .AddSubmissionExecutor(configuration)
