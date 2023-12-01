@@ -1,15 +1,20 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
-@use 'src/styles/components';
+@use 'src/styles/variables';
+@use 'src/styles/responsive';
 
 .userElement {
+  @extend %font-family-lato;
+
   align-content: center;
   border-radius: 8px;
   box-shadow: colors.$box-shadow-color;
+  color: colors.$text-dark-gray-color;
   display: grid;
   flex: 0 0 10em;
   flex-flow: wrap;
   grid-gap: 10px;
+  justify-content: center;
   margin: 10px;
   min-height: 5vh;
   min-width: 240px;
@@ -18,8 +23,90 @@
 }
 
 .userText {
+  font-size: variables.$f-size-24;
+  justify-self: center;
+  max-height: 40px;
+  max-width: 200px;
+  overflow: hidden;
+  padding-bottom: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+
+  @media only screen and (max-width: variables.$r-small-desktop-max) {
+    font-size: variables.$f-size-18;
+  }
+}
+
+.redirectButton {
+  background-color: inherit;
+  border: 0;
+  color: colors.$text-dark-gray-color;
+  cursor: pointer;
+  font-size: variables.$f-size-24;
+  width: 100%;
+}
+
+.tooltip {
+  max-width: 255px;
+  opacity: 0;
+  padding-left: 65px;
+  position: absolute;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+
+  .tooltipText {
+    background-color: #fff;
+    border: 2px solid colors.$light-blue-color;
+    border-radius: 4px;
+    bottom: 100%;
+    display: block;
+    font-size: 20px;
+    height: auto;
+    margin: -6px;
+    overflow: hidden;
+    padding: 10px;
+    text-align: left;
+    transition: all 0.2s ease-in-out;
+    white-space: normal;
+    width: 80%;
+  }
+}
+
+.usernameHoverable {
+  &:hover {
+    .tooltip {
+      cursor: auto;
+      opacity: 1;
+    }
+
+    .tooltipText {
+      display: block;
+    }
+
+    .userText {
+      visibility: hidden;
+    }
+  }
+}
+
+.userCardHeader {
   @extend %font-family-lato;
 
-  color: colors.$text-dark-gray-color;
-  justify-self: center;
+  border-bottom-color: colors.$bottom-border-color;
+  flex-direction: row;
+  font-weight: 500;
+  margin: 10px;
+}
+
+@media (max-width: 950px) {
+  .tooltipText {
+    width: 111% !important;
+  }
+}
+
+@media (max-width: 710px) {
+  .tooltipText {
+    width: 80%;
+  }
 }
