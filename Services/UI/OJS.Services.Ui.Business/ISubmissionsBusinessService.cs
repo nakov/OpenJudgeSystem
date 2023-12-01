@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
@@ -31,17 +32,13 @@
 
         Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int page);
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(SubmissionForPublicSubmissionsServiceModel model);
-
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool? isOfficial, int page);
-
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page);
 
         Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page);
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page);
-
         Task<int> GetTotalCount();
+
+        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionStatus status, int page);
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
     }
