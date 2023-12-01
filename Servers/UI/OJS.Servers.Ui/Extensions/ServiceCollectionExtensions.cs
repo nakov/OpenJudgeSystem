@@ -35,7 +35,11 @@ namespace OJS.Servers.Ui.Extensions
             {
                 options.AddPolicy(
                     GlobalConstants.CorsDefaultPolicyName,
-                    config => config.WithOrigins(configuration.GetSection("FRONTEND_URL").Value)
+                    config =>
+                        config.WithOrigins(
+                                configuration
+                                    .GetSection("ApplicationUrls")
+                                    .Get<ApplicationUrlsConfig>().FrontEndUrl)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
