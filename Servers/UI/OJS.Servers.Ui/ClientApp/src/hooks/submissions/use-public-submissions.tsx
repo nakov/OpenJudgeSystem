@@ -8,6 +8,7 @@ import {
     IGetSubmissionsByContestIdParams,
     IGetSubmissionsUrlParams,
     IGetUserSubmissionsUrlParams,
+    IUserInfoUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import isNilOrEmpty from '../../utils/check-utils';
@@ -461,8 +462,4 @@ export {
     usePublicSubmissions,
     PublicSubmissionState,
     SubmissionStatus,
-};
-
-export type {
-    ISubmissionResponseModel,
 };

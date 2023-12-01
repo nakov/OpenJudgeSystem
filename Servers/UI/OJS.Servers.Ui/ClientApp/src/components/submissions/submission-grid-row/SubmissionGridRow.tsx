@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
+import { ISubmissionResponseModel } from '../../../common/types';
+import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
 import { useUsers } from '../../../hooks/use-users';
