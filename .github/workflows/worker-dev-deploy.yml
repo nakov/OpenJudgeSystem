@@ -16,7 +16,7 @@ jobs:
     needs: [build-and-push]
     uses: ./.github/workflows/deploy-worker.yml
     secrets:
-      host: ${{ secrets.WORKER_DEV_SERVER_01_PORT }}
+      host: ${{ secrets.WORKER_DEV_SERVER_01_HOST }}
       username: ${{ secrets.WORKER_DEV_SERVER_01_USERNAME }}
       key: ${{ secrets.WORKER_DEV_SERVER_01_KEY }}
       port: ${{ secrets.WORKER_DEV_SERVER_01_PORT }}
