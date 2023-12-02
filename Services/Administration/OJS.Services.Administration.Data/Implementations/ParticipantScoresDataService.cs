@@ -122,6 +122,8 @@ namespace OJS.Services.Administration.Data.Implementations
             });
 
             UpdateTotalScoreSnapshot(participant, 0, submission.Points, true);
+            this.participantsData.Update(participant);
+
             await this.SaveChanges();
         }
 
@@ -143,9 +145,9 @@ namespace OJS.Services.Administration.Data.Implementations
                 shouldUpdateTotalScoreDate);
 
             this.Update(participantScore);
-            await this.SaveChanges();
-
             this.participantsData.Update(participant);
+
+            await this.SaveChanges();
         }
 
         public Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>

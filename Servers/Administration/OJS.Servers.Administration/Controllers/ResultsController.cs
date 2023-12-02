@@ -23,17 +23,20 @@ public class ResultsController : BaseAdminViewController
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IContestResultsAggregatorCommonService contestResultsAggregator;
+    private readonly Services.Administration.Business.IUserProviderService userProviderService;
 
     public ResultsController(
         IContestsDataService contestsData,
         IContestsBusinessService contestsBusiness,
         IContestResultsAggregatorCommonService contestResultsAggregator,
-        IContestsValidationHelper contestsValidationHelper)
+        IContestsValidationHelper contestsValidationHelper,
+        Services.Administration.Business.IUserProviderService userProviderService)
     {
         this.contestsData = contestsData;
         this.contestsBusiness = contestsBusiness;
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsValidationHelper = contestsValidationHelper;
+        this.userProviderService = userProviderService;
     }
 
     [HttpPost]
@@ -52,14 +55,16 @@ public class ResultsController : BaseAdminViewController
 
         var official = model.Type == ContestExportResultType.Compete;
 
+        var user = this.userProviderService.GetCurrentUser();
+
         var contestResultsModel = new ContestResultsModel
         {
             Contest = contest,
             Official = official,
-            IsUserAdminOrLecturer = true,
+            IsUserAdminOrLecturer = user.IsAdminOrLecturer,
             IsFullResults = false,
             TotalResultsCount = null,
-            IsExportResults = true,
+            IsExportResults = false,
         };
 
         var contestResults = this.contestResultsAggregator.GetContestResults(contestResultsModel);
