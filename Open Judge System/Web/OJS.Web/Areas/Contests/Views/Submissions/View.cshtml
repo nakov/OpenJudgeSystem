@@ -91,9 +91,12 @@ else
             <h2>@Resource.Execution_result:</h2>
             <pre>@Model.ProcessingComment</pre>
         }
-         <pre>@Resource.Exception_type: @Model.ExceptionType
+        if(!string.IsNullOrWhiteSpace(Model.ExecutionComment))
+        {
+            <pre>@Resource.Exception_type: @Model.ExceptionType
             @Model.ExecutionComment
-         </pre>
+            </pre>
+        }
     }
     if (!Model.IsCompiledSuccessfully)
     {
