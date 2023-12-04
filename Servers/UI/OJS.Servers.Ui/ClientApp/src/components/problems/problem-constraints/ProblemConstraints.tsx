@@ -28,7 +28,7 @@ const ProblemConstraints = () => {
 
         const { fileSizeLimit, checkerName, problemSubmissionTypeExecutionDetails } = currentProblem;
         const { id } = selectedSubmissionType;
-        const problemSubmissionTypeLimits = problemSubmissionTypeExecutionDetails.find((x) => x.submissionTypeId === id);
+        const problemSubmissionTypeLimits = problemSubmissionTypeExecutionDetails?.find((x) => x.submissionTypeId === id);
         if (isNil(problemSubmissionTypeLimits)) {
             return [];
         }
