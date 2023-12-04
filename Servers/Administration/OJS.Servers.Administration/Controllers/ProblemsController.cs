@@ -441,6 +441,13 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .ToListAsync();
 
         await this.ModifyFormControls(formControls, entity, action, entityDict).ConfigureAwait(false);
+        if (action == EntityAction.Create)
+        {
+            formControls.First(x => x.Name == AdditionalFormFields.TimeLimit.ToString()).Value =
+                GlobalConstants.ProblemDefaultTimeLimit;
+            formControls.First(x => x.Name == AdditionalFormFields.MemoryLimit.ToString()).Value =
+                GlobalConstants.ProblemDefaultMemoryLimit;
+        }
 
         formControls.Add(new FormControlViewModel
         {
