@@ -21,8 +21,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
-# Setup for installing Node.js 12 (LTS)
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN set -uex; \
+    apt-get update; \
+    apt-get install -y ca-certificates curl gnupg; \
+    mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+     | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+     > /etc/apt/sources.list.d/nodesource.list; \
+    apt-get -qy update; \
+    apt-get -qy install nodejs;
 
 # Setup for installing .NET Core SDK
 RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
