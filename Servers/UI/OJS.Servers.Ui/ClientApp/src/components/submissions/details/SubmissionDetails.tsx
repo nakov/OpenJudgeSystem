@@ -98,7 +98,7 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    const renderRetestButton = useCallback(() => {
+    const renderRetestButton = useCallback((onClick?: () => void | null) => {
         if (currentSubmission?.userIsInRoleForContest ||
             (!isNil(currentSubmission) &&
                 isRegularUserInRoleForSubmission(currentSubmission, user.username) &&
@@ -107,7 +107,12 @@ const SubmissionDetails = () => {
                 <Button
                   type={ButtonType.secondary}
                   size={ButtonSize.medium}
-                  onClick={() => setShouldNotRetestOnLoad(false)}
+                  onClick={() => {
+                      if (!isNil(onClick)) {
+                          onClick();
+                      }
+                      setShouldNotRetestOnLoad(false);
+                  }}
                   text="Retest"
                   className={styles.retestButton}
                 />
@@ -127,8 +132,8 @@ const SubmissionDetails = () => {
             : (
                 <div className={submissionDetailsClassName}>
                     <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                    {isNil(currentSubmission)
-                        ? ''
+                    { isNil(currentSubmission) || !currentSubmission.isProcessed
+                        ? <span>Submission is not processed yet.</span>
                         : (
                             <SubmissionResults
                               testRuns={currentSubmission.testRuns}
@@ -137,7 +142,8 @@ const SubmissionDetails = () => {
                             />
                         )}
                 </div>
-            )),
+            )
+        ),
         [ isFetching, submissionDetailsClassName, detailsHeadingText, currentSubmission ],
     );
 
@@ -160,15 +166,21 @@ const SubmissionDetails = () => {
         [ validationErrors ],
     );
 
+    const resetSubmissionToUnprocessed = useCallback(() => {
+        const unprocessedSubmission = { ...currentSubmission };
+        unprocessedSubmission.isProcessed = false;
+
+        dispatch(setSubmission(unprocessedSubmission));
+    }, [ currentSubmission, dispatch ]);
+
     useEffect(
         () => {
             if (retestIsSuccess) {
-                // Minimal timeout so results query does
-                // not get fetched before test runs are cleared in BE
-                setTimeout(() => { reloadPage(); }, 3000);
+                resetSubmissionToUnprocessed();
             }
         },
-        [ reloadPage, retestIsSuccess ],
+        // eslint-disable-next-line
+        [ retestIsSuccess ],
     );
 
     if (!isFetching && isNil(currentSubmission) && isEmpty(validationErrors)) {
@@ -200,7 +212,11 @@ const SubmissionDetails = () => {
                 />
                 {submissionResults()}
             </div>
-            <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+            {
+                currentSubmission?.isProcessed
+                    ? <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+                    : null
+            }
         </>
     );
 };

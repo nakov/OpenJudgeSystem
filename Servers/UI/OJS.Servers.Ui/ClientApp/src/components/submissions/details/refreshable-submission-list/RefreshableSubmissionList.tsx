@@ -18,7 +18,7 @@ interface IRefreshableSubmissionListProps {
     renderRetestButton: () => ReactNode;
 }
 const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableSubmissionListProps) => {
-    const { state: { user, user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, currentSubmissionResults } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
@@ -36,24 +36,19 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         [ reload ],
     );
 
-    const renderButtonsSection = useCallback(() => {
-        console.log(user.isAdmin);
-        console.log(currentSubmission?.userIsInRoleForContest);
-
-        return (
-            <div className={styles.buttonsSection}>
-                <Button
-                  onClick={handleReloadClick}
-                  text="Reload"
-                  type={ButtonType.secondary}
-                  className={styles.submissionReloadBtn}
-                />
-                { !isNil(currentSubmission) && currentSubmission.isProcessed && currentSubmission.userIsInRoleForContest
-                    ? renderRetestButton()
-                    : null }
-            </div>
-        );
-    }, [ user, currentSubmission, handleReloadClick, renderRetestButton ]);
+    const renderButtonsSection = useCallback(() => (
+        <div className={styles.buttonsSection}>
+            <Button
+              onClick={handleReloadClick}
+              text="Reload"
+              type={ButtonType.secondary}
+              className={styles.submissionReloadBtn}
+            />
+            { !isNil(currentSubmission) && currentSubmission.isProcessed && currentSubmission.userIsInRoleForContest
+                ? renderRetestButton()
+                : null }
+        </div>
+    ), [ currentSubmission, handleReloadClick, renderRetestButton ]);
 
     const renderSubmissionInfo = useCallback(
         () => {

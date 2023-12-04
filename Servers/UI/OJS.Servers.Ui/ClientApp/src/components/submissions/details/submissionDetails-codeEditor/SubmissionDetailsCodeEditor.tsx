@@ -19,13 +19,14 @@ import LeftArrowIcon from '../../../guidelines/icons/LeftArrowIcon';
 import styles from './SubmissionDetailsCodeEditor.module.scss';
 
 interface ISubmissionDetailsCodeEditorProps {
-    renderRetestButton: () => ReactNode;
+    renderRetestButton: (onClick: () => void) => ReactNode;
     retestSuccess: boolean;
 }
 
 const SubmissionDetailsCodeEditor = ({ renderRetestButton, retestSuccess }: ISubmissionDetailsCodeEditorProps) => {
     const [ submissionId, setSubmissionId ] = useState<number | null>(null);
     const [ shouldFetch, setShouldFetch ] = useState<boolean>(true);
+    const [ testsChangedBoxClosed, setTestsChangedBoxClosed ] = useState<boolean>(false);
     const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { state: { user } } = useAuth();
     const { currentSubmission, downloadErrorMessage } =
@@ -122,7 +123,8 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton, retestSuccess }: ISub
 
     const renderTestsChangeMessage = useCallback(() => (
         !isNil(currentSubmission) &&
-        currentSubmission.isEligibleForRetest
+        currentSubmission.isEligibleForRetest &&
+        !testsChangedBoxClosed
             ? (
                 <div className={styles.testChangesWrapper}>
                     <p>
@@ -135,11 +137,11 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton, retestSuccess }: ISub
                         Click &quot;Retest&quot; to resubmit your solution for re-evaluation against the new test cases.
                         Your score may change.
                     </p>
-                    {renderRetestButton()}
+                    {renderRetestButton(() => setTestsChangedBoxClosed(true))}
                 </div>
             )
             : ''
-    ), [ currentSubmission, renderRetestButton ]);
+    ), [ currentSubmission, renderRetestButton, testsChangedBoxClosed ]);
 
     const backButtonState = useMemo(
         () => isNil(currentSubmission?.contestId)
@@ -193,19 +195,19 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton, retestSuccess }: ISub
             <div className={styles.messagesWrapper}>
                 {renderRetestSuccessMessage()}
                 {renderTestsChangeMessage()}
+                {
+                    !currentSubmission?.isProcessed
+                        ? (
+                            <AlertBox
+                              className={styles.alertBox}
+                              message="The submission is in queue and will be processed shortly. Please wait."
+                              type={AlertBoxType.info}
+                              isClosable={false}
+                            />
+                        )
+                        : null
+                }
             </div>
-            {
-                !currentSubmission?.isProcessed
-                    ? (
-                        <AlertBox
-                          className={styles.alertBox}
-                          message="The submission is in queue and will be processed shortly. Please wait."
-                          type={AlertBoxType.info}
-                          isClosable={false}
-                        />
-                    )
-                    : null
-            }
             {submissionType?.allowBinaryFilesUpload
                 ? (
                     <div className={styles.resourceWrapper}>

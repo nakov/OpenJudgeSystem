@@ -178,7 +178,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
 
     return (
         <div className={styles.submissionResultDetailsWrapper}>
-            {testRuns?.map((test: ITestCaseRun, idx: number) => (
+            { testRuns?.map((test: ITestCaseRun, idx: number) => (
                 <div key={`test-run-details-${test.id}`} className={styles.submissionResultDetails}>
                     <div className={styles.testHeadingAndIds}>
                         {renderTestHeading(test, idx)}

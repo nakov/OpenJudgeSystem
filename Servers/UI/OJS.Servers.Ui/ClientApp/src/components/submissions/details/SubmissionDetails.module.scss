@@ -27,6 +27,8 @@
 }
 
 .submissionDetails {
+  @extend %font-family-lato;
+  
   border-left: 0;
 
   ul {

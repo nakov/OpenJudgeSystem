@@ -30,7 +30,6 @@ const submissionDetailsService = createApi({
                 return { blob, filename };
             }
 
-            console.log(response.headers.get('Content-Length'));
             if (response.headers.get('Content-Length')) {
                 return '';
             }
