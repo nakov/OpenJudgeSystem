@@ -32,7 +32,7 @@ public class ContestValidationService : IContestValidationService
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            (!contest.IsVisible && !isUserLecturerInContest && !user.IsAdmin))
+            ((!contest.IsVisible || !contest.Category!.IsVisible) && !isUserLecturerInContest && !user.IsAdmin))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }
