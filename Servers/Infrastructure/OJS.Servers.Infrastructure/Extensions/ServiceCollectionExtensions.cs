@@ -17,16 +17,17 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common.Enumerations;
-    using OJS.Common.Utils;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
@@ -43,20 +44,41 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using static OJS.Common.GlobalConstants;
-    using static OJS.Common.GlobalConstants.EnvironmentVariables;
     using static OJS.Common.GlobalConstants.FileExtensions;
 
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddWebServer<TStartup>(this IServiceCollection services)
-            => services
+        private const string DefaultDbConnectionName = "DefaultConnection";
+
+        public static IServiceCollection AddWebServer<TStartup>(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services
                 .AddAutoMapperConfigurations<TStartup>()
-                .AddWebServerServices<TStartup>();
+                .AddWebServerServices<TStartup>()
+                .AddOptionsWithValidation<ApplicationConfig>()
+                .AddOptionsWithValidation<HealthCheckConfig>();
+
+            var maxRequestLimit = configuration.GetSectionWithValidation<HttpConfig>().MaxRequestSizeLimit;
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = maxRequestLimit;
+            });
+
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = maxRequestLimit;
+            });
+
+            return services;
+        }
 
         /// <summary>
         /// Adds identity database and authentication services to the service collection.
         /// </summary>
         /// <param name="services">The service collection.</param>
+        /// <param name="configuration">The configuration.</param>
         /// <param name="globalQueryFilterTypes">
         /// The global query filter types to add to the context.
         /// <br/> If null, adds all default global query filters,
@@ -69,6 +91,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
             TIdentityUserRole>(
             this IServiceCollection services,
+            IConfiguration configuration,
             IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
             where TDbContext : DbContext, IDataProtectionKeyContext
             where TIdentityUser : IdentityUser
@@ -76,7 +99,16 @@ namespace OJS.Servers.Infrastructure.Extensions
             where TIdentityUserRole : IdentityUserRole<string>, new()
         {
             services
-                .AddSqlDatabase<TDbContext>(globalQueryFilterTypes);
+                .AddDbContext<TDbContext>(options =>
+                {
+                    var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
+                    options.UseSqlServer(connectionString);
+                    // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
+                    options.UseLazyLoadingProxies();
+                })
+                .AddScoped<DbContext, TDbContext>()
+                .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
+                .AddTransactionsProvider<TDbContext>();
 
             services
                 .AddIdentity<TIdentityUser, TIdentityRole>()
@@ -93,10 +125,14 @@ namespace OJS.Servers.Infrastructure.Extensions
                     IdentityUserToken<string>,
                     IdentityRoleClaim<string>>>();
 
+            var sharedAuthCookieDomain = configuration
+                .GetSectionValueWithValidation<ApplicationConfig, string>(
+                    nameof(ApplicationConfig.SharedAuthCookieDomain));
+
             services
                 .ConfigureApplicationCookie(opt =>
                 {
-                    opt.Cookie.Domain = EnvironmentUtils.GetRequiredByKey(SharedAuthCookieDomain);
+                    opt.Cookie.Domain = sharedAuthCookieDomain;
                     opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
                     opt.Events.OnRedirectToLogin = UnAuthorizedResponse;
                 });
@@ -114,11 +150,12 @@ namespace OJS.Servers.Infrastructure.Extensions
 
         public static IServiceCollection AddHangfireServer(
             this IServiceCollection services,
+            IConfiguration configuration,
             ApplicationName app)
         {
-            var connectionString = EnvironmentUtils.GetApplicationConnectionString(app);
+            var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
 
-            services.AddHangfire(configuration => configuration
+            services.AddHangfire(cfg => cfg
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
@@ -163,13 +200,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 });
 
         public static IServiceCollection AddDistributedCaching(
-            this IServiceCollection services)
-            => services.AddRedis(ApplicationFullName);
+            this IServiceCollection services,
+            IConfiguration configuration)
+            => services.AddRedis(configuration, ApplicationFullName);
 
         public static IServiceCollection AddDistributedCaching(
             this IServiceCollection services,
+            IConfiguration configuration,
             string instanceName)
-            => services.AddRedis(instanceName);
+            => services.AddRedis(configuration, instanceName);
 
         public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
@@ -182,7 +221,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .Where(t => typeof(IConsumer).IsAssignableFrom(t))
                 .ToList();
 
-            var messageQueueConfig = configuration.GetSection(nameof(MessageQueueConfig)).Get<MessageQueueConfig>();
+            var messageQueueConfig = configuration.GetSectionWithValidation<MessageQueueConfig>();
 
             services.AddMassTransit(config =>
             {
@@ -236,6 +275,15 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddTransient(s =>
                     s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new ClaimsPrincipal());
 
+        public static IServiceCollection AddOptionsWithValidation<T>(this IServiceCollection services)
+            where T : BaseConfig
+            => services
+                .AddOptions<T>()
+                .BindConfiguration(Activator.CreateInstance<T>().SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart()
+                .Services;
+
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
             services
@@ -248,20 +296,18 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddRedis(this IServiceCollection services, string instanceName)
+        private static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration, string instanceName)
         {
-            EnvironmentUtils.ValidateEnvironmentVariableExists(
-                new[] { RedisConnectionString });
+            var redisConfig = configuration.GetSectionWithValidation<RedisConfig>();
 
-            var redisConnectionString = EnvironmentUtils.GetRequiredByKey(RedisConnectionString);
-            var redisConnection = ConnectionMultiplexer.Connect(redisConnectionString);
+            var redisConnection = ConnectionMultiplexer.Connect(redisConfig.ConnectionString);
 
             services.AddSingleton<IConnectionMultiplexer>(redisConnection);
             services.AddSingleton<ICacheService, CacheService>();
 
             return services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = redisConnectionString;
+                options.Configuration = redisConfig.ConnectionString;
                 options.InstanceName = $"{instanceName}:";
             });
         }

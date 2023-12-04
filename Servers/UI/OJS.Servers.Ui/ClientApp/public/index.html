@@ -1,7 +1,4 @@
-﻿@using OJS.Common.Enumerations;
-@using OJS.Common;
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -40,11 +37,11 @@
     <script>
         window.isLoggedIn = Boolean(@Model?.IsAuthenticated.ToString().ToLower());
         window.URLS = {
-            UI_URL: '@applicationUrls.GetUrl(ApplicationName.Ui)',
-            ADMINISTRATION_URL: '@applicationUrls.GetUrl(ApplicationName.Administration)',
+            UI_URL: '@appUrls.Value.UiUrl',
+            ADMINISTRATION_URL: '@appUrls.Value.AdministrationUrl',
         }
         window.Keys = {
-            YOUTUBE_VIDEO_ID: '@environmentVariables.GetValue(GlobalConstants.EnvironmentVariables.UiHomeYouTubeVideoId)',
+            YOUTUBE_VIDEO_ID: '@appConfig.Value.UiHomeYouTubeVideoId',
         }
     </script>
 </head>

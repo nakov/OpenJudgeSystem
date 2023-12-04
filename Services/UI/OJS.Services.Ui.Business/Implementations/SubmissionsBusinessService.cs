@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
+using OJS.Common.Enumerations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -553,25 +554,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPublicSubmissions(
-        SubmissionForPublicSubmissionsServiceModel model)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        if (user.IsAdminOrLecturer)
-        {
-            return await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                DefaultSubmissionsPerPage, model.PageNumber);
-        }
-
-        var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>();
-
-        modelResult.Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-            DefaultSubmissionsPerPage);
-
-        return modelResult;
-    }
-
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
         bool? isOfficial,
         int page)
@@ -597,13 +579,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetProcessingSubmissions(int page)
-        => await this.submissionsCommonData
-            .GetAllProcessing()
-            .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-
     public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
     {
         var user = this.userProviderService.GetCurrentUser();
@@ -616,15 +591,47 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetPendingSubmissions(int page)
-        => await this.submissionsCommonData
-            .GetAllPending()
+    public Task<int> GetTotalCount()
+        => this.submissionsData.GetTotalSubmissionsCount();
+
+    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(
+        SubmissionStatus status,
+        int page)
+    {
+        IQueryable<Submission> query;
+
+        if (status == SubmissionStatus.Processing)
+        {
+            query = this.submissionsCommonData.GetAllProcessing();
+        }
+        else if (status == SubmissionStatus.Pending)
+        {
+            query = this.submissionsCommonData.GetAllPending();
+        }
+        else
+        {
+            var user = this.userProviderService.GetCurrentUser();
+            if (user.IsAdminOrLecturer)
+            {
+                return await this.submissionsData
+                    .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                        DefaultSubmissionsPerPage, page);
+            }
+
+            var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
+            {
+                Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                    DefaultSubmissionsPerPage),
+            };
+
+            return modelResult;
+        }
+
+        return await query
             .OrderByDescending(s => s.Id)
             .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-
-    public Task<int> GetTotalCount()
-        => this.submissionsData.GetTotalSubmissionsCount();
+    }
 
     private static void ProcessTestsExecutionResult(
         Submission submission,

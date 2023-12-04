@@ -1,15 +1,21 @@
-﻿namespace OJS.Servers.Worker
-{
-    using Microsoft.AspNetCore.Builder;
-    using OJS.Servers.Worker.Infrastructure.Extensions;
+﻿namespace OJS.Servers.Worker;
 
-    internal class Program
+using Microsoft.AspNetCore.Builder;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Servers.Worker.Extensions;
+
+internal class Program
+{
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-            => WebApplication.CreateBuilder(args)
-                .ConfigureBuilder<Program>()
-                .Build()
-                .ConfigureWebApplication()
-                .Run();
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.ConfigureServices(builder.Configuration);
+        builder.Host.UseFileLogger<Program>();
+
+        var app = builder.Build();
+
+        app.ConfigureWebApplication();
+        app.Run();
     }
 }
