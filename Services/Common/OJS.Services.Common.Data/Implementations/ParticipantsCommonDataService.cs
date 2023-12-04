@@ -28,5 +28,12 @@ public class ParticipantsCommonDataService : DataService<Participant>, IParticip
     public IQueryable<Participant> GetAllWithProblemsScoresAndSubmissionsByContestAndIsOfficial(
         int contestId,
         bool isOfficial)
-        => this.GetAllByContestAndIsOfficial(contestId, isOfficial);
+        => this.GetAllByContestAndIsOfficial(contestId, isOfficial)
+            .Include(p => p.ProblemsForParticipants)
+            .Include(p => p.Scores)
+                .ThenInclude(s => s.Problem)
+                    .ThenInclude(p => p.ProblemGroup)
+            .Include(p => p.Scores)
+                .ThenInclude(s => s.Submission)
+                    .ThenInclude(s => s!.SubmissionType);
 }
