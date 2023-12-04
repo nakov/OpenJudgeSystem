@@ -69,6 +69,13 @@ interface IProblemResourceType {
     type: number;
 }
 
+interface IProblemSubmissionTypeExecutionDetailsType {
+    submissionTypeId: number;
+    problemId: number;
+    timeLimit: number;
+    memoryLimit: number;
+}
+
 interface IProblemType {
     id: number;
     name: string;
@@ -83,6 +90,7 @@ interface IProblemType {
     checkerDescription: string;
     resources: IProblemResourceType[];
     allowedSubmissionTypes: ISubmissionTypeType[];
+    problemSubmissionTypeExecutionDetails: IProblemSubmissionTypeExecutionDetailsType[];
 }
 
 interface IContestDetailsProblemType {
@@ -258,4 +266,5 @@ export type {
     IContestDetailsProblemType,
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
+    IProblemSubmissionTypeExecutionDetailsType,
 };
