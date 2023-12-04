@@ -52,7 +52,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                 .Select(sId => new SubmissionForProcessing
                 {
                     SubmissionId = sId
-                });
+                }).ToList();
 
             var submissionsToGet = this.submissions
                 .All()
@@ -67,6 +67,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                 newSubmissionsForProcessing.ForEach(sfp =>
                     this.AssignWorkerType(sfp, submissionsToGet.First(s => s.Id == sfp.SubmissionId)));
 
+                
                 submissionIds
                     .ChunkBy(GlobalConstants.BatchOperationsChunkSize)
                     .ForEach(chunk => this.submissionsForProcessing
