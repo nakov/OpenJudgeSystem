@@ -1,7 +1,8 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
 using System.Threading.Tasks;
-using System.Linq;
+using FluentExtensions.Extensions;
+using OJS.Services.Common;
 using Models.Search;
 using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -16,17 +17,20 @@ public class SearchBusinessService : ISearchBusinessService
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IUsersBusinessService usersBusinessService;
     private readonly ISearchValidationService searchValidationService;
+    private readonly IContestsActivityService activityService;
 
     public SearchBusinessService(
         IContestsBusinessService contestsBusinessService,
         IProblemsBusinessService problemsBusinessService,
         IUsersBusinessService usersBusinessService,
-        ISearchValidationService searchValidationService)
+        ISearchValidationService searchValidationService,
+        IContestsActivityService activityService)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.problemsBusinessService = problemsBusinessService;
         this.usersBusinessService = usersBusinessService;
         this.searchValidationService = searchValidationService;
+        this.activityService = activityService;
     }
 
     public async Task<PagedResult<ContestSearchServiceModel>> GetContestSearchResults(
@@ -46,6 +50,8 @@ public class SearchBusinessService : ISearchBusinessService
 
         var modelResult = model.Map<PagedResult<ContestSearchServiceModel>>();
         modelResult.Items = contestSearchListingModel.Contests;
+
+        modelResult.Items.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
 
         return modelResult;
     }
@@ -67,6 +73,15 @@ public class SearchBusinessService : ISearchBusinessService
 
         var modelResult = model.Map<PagedResult<ProblemSearchServiceModel>>();
         modelResult.Items = problemsSearchListingModel.Problems;
+
+        problemsSearchListingModel.Problems
+            .ForEach(p =>
+            {
+                if (p.Contest != null)
+                {
+                     this.activityService.SetCanBeCompetedAndPracticed(p.Contest);
+                }
+            });
 
         return modelResult;
     }
