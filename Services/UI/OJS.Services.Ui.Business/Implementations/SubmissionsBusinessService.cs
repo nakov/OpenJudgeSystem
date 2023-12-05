@@ -436,7 +436,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem);
         await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToJson());
         await this.submissionsData.SaveChanges();
 
@@ -631,15 +631,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
     private SubmissionServiceModel BuildSubmissionForProcessing(
         Submission submission,
-        Problem problem,
-        SubmissionType submissionType)
+        Problem problem)
     {
         // We detach the existing entity, in order to avoid tracking exception on Update.
         this.submissionsData.Detach(submission);
-
-        // Needed to map execution details
-        submission.Problem = problem;
-        submission.SubmissionType = submissionType;
 
         var problemSubmissionTypeExecutionDetails =
             problem.ProblemSubmissionTypeExecutionDetails.FirstOrDefault(x =>
@@ -648,14 +643,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             problem.TimeLimit = problemSubmissionTypeExecutionDetails.TimeLimit ?? problem.TimeLimit;
             problem.MemoryLimit = problemSubmissionTypeExecutionDetails.MemoryLimit ?? problem.MemoryLimit;
+            problem.SolutionSkeleton = problemSubmissionTypeExecutionDetails.SolutionSkeleton ?? problem.SolutionSkeleton;
         }
 
-        var serviceModel = submission.Map<SubmissionServiceModel>();
+        // Needed to map execution details
+        submission.Problem = problem;
 
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.ProblemSubmissionTypeExecutionDetails
-            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
-            .Select(x => x.SolutionSkeleton)
-            .FirstOrDefault();
+        var serviceModel = submission.Map<SubmissionServiceModel>();
 
         return serviceModel;
     }
