@@ -1,33 +1,30 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import first from 'lodash/first';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { isRegularUserInRoleForSubmission } from '../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../common/types';
-import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import {
     setCurrentPage,
     setCurrentSubmissionResults,
+    setRetestIsSuccess,
     setSubmission,
 } from '../../../redux/features/submissionDetailsSlice';
 import {
     useGetCurrentSubmissionQuery,
     useGetSubmissionResultsQuery,
-    useRetestSubmissionQuery,
 } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { Button, ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
 
-import RefreshableSubmissionList from './refreshable-submission-list/RefreshableSubmissionList';
+import RefreshableSubmissionList from './retest-btn/RefreshableSubmissionList';
 import SubmissionResultsDetails from './submission-result-details/SubmissionResultsDetails';
 import SubmissionDetailsCodeEditor from './submissionDetails-codeEditor/SubmissionDetailsCodeEditor';
 
@@ -35,27 +32,22 @@ import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { user } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, validationErrors, currentPage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const { submissionId } = useParams();
+
     const {
         data: currentSubmissionData,
         isFetching,
         refetch: refetchCurrentSubmission,
     } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
+
     const {
         data: allSubmissionsData,
         isFetching: isLoadingResults,
         refetch: refetchResults,
-    } =
-    useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
-    const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
-    const { isSuccess: retestIsSuccess } = useRetestSubmissionQuery(
-        { id: Number(submissionId) },
-        { skip: shouldNotRetestOnLoad },
-    );
+    } = useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
 
     useEffect(() => () => {
         dispatch(setCurrentPage(1));
@@ -78,8 +70,8 @@ const SubmissionDetails = () => {
     const reloadPage = useCallback(() => {
         refetchCurrentSubmission();
         refetchResults();
-        setShouldNotRetestOnLoad(true);
-    }, [ refetchCurrentSubmission, refetchResults ]);
+        dispatch(setRetestIsSuccess(false));
+    }, [ dispatch, refetchCurrentSubmission, refetchResults ]);
 
     const detailsHeadingText = useMemo(
         () => (
@@ -97,30 +89,6 @@ const SubmissionDetails = () => {
         styles.submissionDetails,
         submissionsDetails,
     );
-
-    const renderRetestButton = useCallback((onClick?: () => void | null) => {
-        if (currentSubmission?.userIsInRoleForContest ||
-            (!isNil(currentSubmission) &&
-                isRegularUserInRoleForSubmission(currentSubmission, user.username) &&
-                currentSubmission.isEligibleForRetest)) {
-            return (
-                <Button
-                  type={ButtonType.secondary}
-                  size={ButtonSize.medium}
-                  onClick={() => {
-                      if (!isNil(onClick)) {
-                          onClick();
-                      }
-                      setShouldNotRetestOnLoad(false);
-                  }}
-                  text="Retest"
-                  className={styles.retestButton}
-                />
-            );
-        }
-
-        return null;
-    }, [ user, currentSubmission ]);
 
     const submissionResults = useCallback(
         () => (isFetching
@@ -166,23 +134,6 @@ const SubmissionDetails = () => {
         [ validationErrors ],
     );
 
-    const resetSubmissionToUnprocessed = useCallback(() => {
-        const unprocessedSubmission = { ...currentSubmission };
-        unprocessedSubmission.isProcessed = false;
-
-        dispatch(setSubmission(unprocessedSubmission));
-    }, [ currentSubmission, dispatch ]);
-
-    useEffect(
-        () => {
-            if (retestIsSuccess) {
-                resetSubmissionToUnprocessed();
-            }
-        },
-        // eslint-disable-next-line
-        [ retestIsSuccess ],
-    );
-
     if (!isFetching && isNil(currentSubmission) && isEmpty(validationErrors)) {
         return <div>No details fetched.</div>;
     }
@@ -202,14 +153,8 @@ const SubmissionDetails = () => {
     return (
         <>
             <div className={styles.detailsWrapper}>
-                <RefreshableSubmissionList
-                  renderRetestButton={renderRetestButton}
-                  reload={reloadPage}
-                />
-                <SubmissionDetailsCodeEditor
-                  renderRetestButton={renderRetestButton}
-                  retestSuccess={retestIsSuccess}
-                />
+                <RefreshableSubmissionList reload={reloadPage} />
+                <SubmissionDetailsCodeEditor />
                 {submissionResults()}
             </div>
             {

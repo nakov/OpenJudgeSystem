@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
@@ -10,18 +10,20 @@ import Button, { ButtonType } from '../../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import PaginationControls from '../../../guidelines/pagination/PaginationControls';
 import SubmissionsList from '../../submissions-list/SubmissionsList';
+import RetestButton from '../refreshable-submission-list/RetestButton';
 
 import styles from './RefreshableSubmissionList.module.scss';
 
 interface IRefreshableSubmissionListProps {
     reload: () => void;
-    renderRetestButton: () => ReactNode;
 }
-const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableSubmissionListProps) => {
+const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) => {
     const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
-    const { currentSubmission, currentSubmissionResults } =
-    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
+    const {
+        currentSubmission,
+        currentSubmissionResults,
+    } = useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const handlePageChange = useCallback(
         (page: number) => {
             dispatch(setCurrentPage(page));
@@ -44,11 +46,9 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            { !isNil(currentSubmission) && currentSubmission.isProcessed && currentSubmission.userIsInRoleForContest
-                ? renderRetestButton()
-                : null }
+            <RetestButton />
         </div>
-    ), [ currentSubmission, handleReloadClick, renderRetestButton ]);
+    ), [ handleReloadClick ]);
 
     const renderSubmissionInfo = useCallback(
         () => {

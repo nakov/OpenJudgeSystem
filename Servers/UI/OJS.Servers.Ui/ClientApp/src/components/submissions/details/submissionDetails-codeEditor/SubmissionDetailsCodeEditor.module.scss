@@ -4,6 +4,9 @@
 @use 'src/styles/variables';
 @use 'src/styles/colors';
 
+.tenPixelsMarginUnder {
+    margin-bottom: 10px;
+}
 
 .resourceWrapper {
     align-items: center;
