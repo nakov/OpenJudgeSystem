@@ -38,7 +38,6 @@ services:
       - .:/app
       - /app/node_modules
     env_file:
-      - Docker/common/common.env
       - Docker/applications/fe/fe.env
     links:
       - ui
