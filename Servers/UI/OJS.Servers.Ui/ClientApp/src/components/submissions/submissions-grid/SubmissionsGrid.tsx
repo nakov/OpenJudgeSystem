@@ -57,8 +57,6 @@ const SubmissionsGrid = () => {
             userSubmissions,
             userSubmissionsLoading,
             publicSubmissions,
-            unprocessedSubmissions,
-            pendingSubmissions,
             totalSubmissionsCount,
             totalUnprocessedSubmissionsCount,
             userByContestSubmissions,
@@ -107,7 +105,7 @@ const SubmissionsGrid = () => {
             2: initiateUnprocessedSubmissionsQuery,
             3: initiatePendingSubmissionsQuery,
         } as IDictionary<() => void>),
-        [ initiatePendingSubmissionsQuery, initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery ],
+        [ initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, initiatePendingSubmissionsQuery ],
     );
 
     useEffect(
@@ -232,16 +230,8 @@ const SubmissionsGrid = () => {
     );
 
     const getCurrentAllSubmissions = useMemo(
-        () => {
-            if (selectedActive === 1) {
-                return publicSubmissions;
-            }
-            if (selectedActive === 2) {
-                return unprocessedSubmissions;
-            }
-            return pendingSubmissions;
-        },
-        [ pendingSubmissions, publicSubmissions, selectedActive, unprocessedSubmissions ],
+        () => publicSubmissions,
+        [ publicSubmissions ],
     );
 
     const getCurrentMySubmissions = useMemo(
