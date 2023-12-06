@@ -31,7 +31,7 @@ const ProblemConstraints = () => {
                 ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toFixed(3).toString()} sec.`
                 : '',
             !isNil(memoryLimit)
-                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toFixed(2).toString()} MB`
+                ? `${ProblemConstraintsTitles.MemoryLimit}: ${(memoryLimit / 1000000).toFixed(2).toString()} MB`
                 : '',
             !isNil(fileSizeLimit)
                 ? `${ProblemConstraintsTitles.FileSizeLimit}: ${fileSizeLimit.toFixed(2).toString()} KB`
