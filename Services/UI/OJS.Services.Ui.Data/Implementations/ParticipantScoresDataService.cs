@@ -146,9 +146,6 @@ namespace OJS.Services.Ui.Data.Implementations
             int submissionPoints,
             Participant participant)
         {
-            participantScore.SubmissionId = submissionId;
-            participantScore.Points = submissionPoints;
-
             // The submission TotalScoreSnapshotModifiedOn must be changed only if it is new submission in other way the results will not be ordered correctly.
             var shouldUpdateTotalScoreDate = submissionId != null && submissionId != participantScore.SubmissionId;
             UpdateTotalScoreSnapshot(
@@ -157,10 +154,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 submissionPoints,
                 shouldUpdateTotalScoreDate);
 
-            this.Update(participantScore);
-            await this.SaveChanges();
+            participantScore.SubmissionId = submissionId;
+            participantScore.Points = submissionPoints;
 
+            this.Update(participantScore);
             this.participantsData.Update(participant);
+            await this.SaveChanges();
         }
 
         public Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
