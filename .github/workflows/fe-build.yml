@@ -13,7 +13,7 @@ jobs:
   build-and-push-fe:
     uses: ./.github/workflows/build-and-push.yml
     with:
-      docker_image_name: judge_web_ui_fe
+      docker_image_name: judge_web_fe
       dockerfile_name: Dockerfile.fe
       build_command: build
       additional_run_commands: |
