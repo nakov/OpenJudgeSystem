@@ -18,7 +18,7 @@ on:
         additional_run_commands:
           required: false
           type: string
-        build_command:
+        build_args:
           required: false
           type: string
 
@@ -37,7 +37,6 @@ jobs:
         echo "IMG=${IMG}" >> $GITHUB_ENV
         echo "IMAGE=ghcr.io/${OWNER}/${IMG}" >> $GITHUB_ENV
         echo "BUILD_DATE=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-        echo "BUILD_COMMAND=${{ inputs.build_command }}" >> $GITHUB_ENV
         echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
         ${{ inputs.additional_run_commands }}
     - name: Get branch name (merge)
@@ -93,7 +92,7 @@ jobs:
         file: ${{ env.DOCKERFILE_PATH }}
         builder: ${{ steps.buildx.outputs.name }}
         build-args: |
-          BUILD_COMMAND=${{ env.BUILD_COMMAND }}
+          ${{ inputs.build_args }}
         labels: |
           org.opencontainers.image.authors=${{ github.repository_owner }}
           org.opencontainers.image.created=${{ env.BUILD_DATE }}

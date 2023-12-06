@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: ./Docker/Dockerfile.fe
       args:
-        - BUILD_COMMAND=build:local
+        - YARN_BUILD_COMMAND=build:local
     image: judge_web_fe
     container_name: web_fe_instance
     ports:
@@ -37,8 +37,6 @@ services:
       - ./Logs:/Logs
       - .:/app
       - /app/node_modules
-    env_file:
-      - Docker/applications/fe/fe.env
     links:
       - ui
     depends_on:
