@@ -46,9 +46,11 @@ const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) 
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            <RetestButton />
+            { currentSubmission?.userIsInRoleForContest
+                ? <RetestButton />
+                : null}
         </div>
-    ), [ handleReloadClick ]);
+    ), [ currentSubmission?.userIsInRoleForContest, handleReloadClick ]);
 
     const renderSubmissionInfo = useCallback(
         () => {

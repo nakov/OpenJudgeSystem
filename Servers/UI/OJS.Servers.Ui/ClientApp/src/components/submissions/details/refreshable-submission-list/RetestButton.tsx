@@ -4,9 +4,10 @@ import isNil from 'lodash/isNil';
 
 import { isRegularUserInRoleForSubmission } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
+import { ISubmissionResults } from '../../../../hooks/submissions/types';
 import { useAuth } from '../../../../hooks/use-auth';
-import { setRetestIsSuccess, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
-import { useGetSubmissionResultsQuery, useRetestSubmissionQuery } from '../../../../redux/services/submissionDetailsService';
+import { setCurrentSubmissionResults, setRetestIsSuccess, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
+import { useRetestSubmissionQuery } from '../../../../redux/services/submissionDetailsService';
 import Button, { ButtonSize, ButtonType } from '../../../guidelines/buttons/Button';
 
 import styles from './RetestButton.module.scss';
@@ -19,7 +20,7 @@ const RetestButton = ({ onSuccessfulRetest }: IRetestButtonProps) => {
 
     const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
 
-    const { currentSubmission } = useSelector((state: {
+    const { currentSubmission, currentSubmissionResults } = useSelector((state: {
             submissionDetails: ISubmissionDetailsReduxState;
         }) => state.submissionDetails);
 
@@ -28,20 +29,45 @@ const RetestButton = ({ onSuccessfulRetest }: IRetestButtonProps) => {
         { skip: shouldNotRetestOnLoad },
     );
 
-    const { refetch: refetchResults } = useGetSubmissionResultsQuery({
-        submissionId: Number(currentSubmission?.id),
-        page: 1,
-    });
-
     const dispatch = useDispatch();
 
     const resetSubmissionToUnprocessed = useCallback(() => {
         const unprocessedSubmission = { ...currentSubmission };
         unprocessedSubmission.isProcessed = false;
 
-        refetchResults();
+        // Copying objects because original objs are readonly
+        const newSubmissionResults = { ...currentSubmissionResults };
+
+        const predicate = (s: ISubmissionResults) => s.id === unprocessedSubmission.id;
+
+        const submissionResultIndex = newSubmissionResults
+            .items?.findIndex(predicate);
+
+        if (!newSubmissionResults.items || isNil(submissionResultIndex)) {
+            return;
+        }
+
+        const submissionResult = newSubmissionResults.items?.find(predicate) as ISubmissionResults;
+
+        // Overwrite to be default unprocessed submission
+        const newSubmissionResult = {
+            ...submissionResult,
+            isProcessed: false,
+            isCompiledSuccessfully: false,
+            points: 0,
+            maxMemoryUsed: 0,
+            maxTimeUsed: 0,
+            testRuns: [],
+            testRunsCount: 0,
+        } as ISubmissionResults;
+
+        const newItems = [ ...newSubmissionResults.items ];
+        newItems[submissionResultIndex] = newSubmissionResult;
+        newSubmissionResults.items = newItems;
+
+        dispatch(setCurrentSubmissionResults(newSubmissionResults));
         dispatch(setSubmission(unprocessedSubmission));
-    }, [ currentSubmission, dispatch, refetchResults ]);
+    }, [ currentSubmission, currentSubmissionResults, dispatch ]);
 
     const handleOnClick = useCallback(() => {
         setShouldNotRetestOnLoad(false);

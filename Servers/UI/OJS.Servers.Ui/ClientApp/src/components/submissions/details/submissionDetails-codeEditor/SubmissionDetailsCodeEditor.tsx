@@ -37,7 +37,7 @@ const SubmissionDetailsCodeEditor = () => {
             submissionDetails: ISubmissionDetailsReduxState;
         }) => state.submissionDetails);
 
-    const { data, error } = useSaveAttachmentQuery({ id: submissionId }, { skip: shouldFetch });
+    const { data, error } = useSaveAttachmentQuery({ id: submissionId! }, { skip: shouldFetch });
 
     useEffect(() => {
         if (error && 'error' in error) {

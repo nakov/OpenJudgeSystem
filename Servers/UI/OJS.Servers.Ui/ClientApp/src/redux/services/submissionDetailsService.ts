@@ -4,7 +4,10 @@ import { ISubmissionDetailsUrlParams } from '../../common/app-url-types';
 import { defaultPathIdentifier } from '../../common/constants';
 import { submissionDetailsPageServiceName } from '../../common/reduxNames';
 import { IPagedResultType } from '../../common/types';
-import { IDownloadSubmissionFileUrlParams, IGetSubmissionDetailsByIdUrlParams } from '../../common/url-types';
+import {
+    IGetSubmissionDetailsByIdUrlParams,
+    IRetestSubmissionUrlParams,
+} from '../../common/url-types';
 import { ISubmissionDetailsType, ISubmissionResults } from '../../hooks/submissions/types';
 
 const submissionDetailsService = createApi({
@@ -48,10 +51,10 @@ const submissionDetailsService = createApi({
             }),
         }),
         // eslint-disable-next-line max-len
-        saveAttachment: builder.query<{ blob: Blob; filename: string }, IDownloadSubmissionFileUrlParams>({ query: ({ id }) => ({ url: `/${defaultPathIdentifier}/Submissions/Download/${id}` }) }),
+        saveAttachment: builder.query<{ blob: Blob; filename: string }, IRetestSubmissionUrlParams>({ query: ({ id }) => ({ url: `/${defaultPathIdentifier}/Submissions/Download/${id}` }) }),
         retestSubmission: builder.query<
             void,
-            IDownloadSubmissionFileUrlParams>({
+            IRetestSubmissionUrlParams>({
                 query: ({ id }) => ({
                     url: `/${defaultPathIdentifier}/Compete/Retest/${id}`,
                     method: 'POST',
