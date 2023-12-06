@@ -105,7 +105,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.logger = logger;
     }
 
-    public Task Retest(int id)
+    public async Task Retest(int id)
     {
         var user = this.userProviderService.GetCurrentUser();
 
@@ -117,8 +117,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
-        var isUserInRoleForContest =
-            this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(submission.ContestId);
+        var isUserInRoleForContest = await this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(submission.ContestId);
 
         var validationResult =
             this.retestSubmissionValidationService.GetValidationResult((
@@ -131,7 +130,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        return this.submissionPublisher.PublishRetest(submission.Id);
+        await this.submissionPublisher.PublishRetest(submission.Id);
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -150,9 +149,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .FirstOrDefaultAsync();
 
         var contest = await this.contestsDataService
-            .GetWithCategoryByProblem<Contest>(submissionDetailsServiceModel!.Problem.Id);
+            .GetWithCategoryByProblem<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id);
 
-        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!.Id);
 
         submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
         submissionDetailsServiceModel.IsEligibleForRetest =

@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
+using System.Threading.Tasks;
 using System.Linq;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
@@ -35,11 +36,14 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
         return isAdmin || isUserLecturerInContest;
     }
 
-    public bool IsUserAdminOrLecturerInContest(int contestId)
+    public async Task<bool> IsUserAdminOrLecturerInContest(int contestId)
     {
-        var contest = this.contestsDataService
-            .GetByIdQuery(contestId)
-            .FirstOrDefault();
+        var contest = await this.contestsDataService.OneById(contestId);
+
+        if (contest == null)
+        {
+            contest = this.contestsDataService.GetByIdQuery(contestId).FirstOrDefault();
+        }
 
         return this.IsUserAdminOrLecturerInContest(contest);
     }

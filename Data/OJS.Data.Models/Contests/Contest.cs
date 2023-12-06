@@ -7,11 +7,10 @@ namespace OJS.Data.Models.Contests
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
-    public class Contest : DeletableAuditInfoEntity<int>, IOrderableEntity, IMapFrom<Contest>
+    public class Contest : DeletableAuditInfoEntity<int>, IOrderableEntity
     {
         [MaxLength(NameMaxLength)]
         [MinLength(NameMinLength)]
