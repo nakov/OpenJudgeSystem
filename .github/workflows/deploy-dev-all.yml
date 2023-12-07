@@ -9,7 +9,7 @@ jobs:
   build-and-deploy-ui:
     uses: ./.github/workflows/ui-dev-deploy.yml
     secrets: inherit
-      build-and-deploy-fe:
+  build-and-deploy-fe:
     uses: ./.github/workflows/fe-dev-deploy.yml
     secrets: inherit
   build-and-deploy-worker:
