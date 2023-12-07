@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataGrid, getGridNumericOperators, getGridStringOperators, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { contestParticipationType } from '../../common/contest-helpers';
+import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
@@ -15,6 +17,9 @@ import {
 } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { useAuth } from '../../hooks/use-auth';
+import { useContestCategories } from '../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
+import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -108,7 +113,9 @@ const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { state: { user } } = useAuth();
     const { contestId, participationType: participationUrlType, resultType } = params;
-
+    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { contestDetails }, actions: { getContestDetails } } = useCurrentContest();
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
     const [ numberedRows, setNumberedRows ] = useState<Array<IContestResultsTypeWithRowNumber>>([]);
@@ -178,8 +185,28 @@ const ContestResultsPage = () => {
     useEffect(
         () => {
             setPageTitle(contestResultsPageTitle);
+
+            if (!isNil(contestId)) {
+                getContestDetails({ id: contestId.toString() });
+            }
+
+            if (isEmpty(categoriesFlat)) {
+                (async () => {
+                    await loadCategories();
+                })();
+            }
         },
-        [ contestResultsPageTitle, setPageTitle ],
+        [ contestResultsPageTitle, setPageTitle, categoriesFlat, loadCategories, contestId, getContestDetails ],
+    );
+
+    useEffect(
+        () => {
+            if (!isNil(contestDetails) && !isEmpty(categoriesFlat)) {
+                const category = categoriesFlat.find(({ id }) => id.toString() === contestDetails?.categoryId.toString());
+                updateBreadcrumb(category, categoriesFlat);
+            }
+        },
+        [ categoriesFlat, contestDetails, updateBreadcrumb ],
     );
 
     const getColumns = useCallback(
@@ -205,6 +232,9 @@ const ContestResultsPage = () => {
     const renderElements = useMemo(
         () => (
             <>
+                <div className={styles.breadcrumbContainer}>
+                    <ContestBreadcrumb />
+                </div>
                 <Heading
                   type={HeadingType.primary}
                   className={styles.contestResultsHeading}
