@@ -13,7 +13,7 @@ namespace OJS.Services
     public class RedisCacheService : IRedisCacheService
     {
         private readonly IDatabase redisCache;
-        private readonly double memoryCacheExpirationInMinutes = 5;
+        private readonly double memoryCacheExpirationInMinutes = 60;
         private readonly IEmailSenderService emailSenderService;
         private readonly string devEmail;
         private readonly IMemoryCacheService memoryCacheService;
