@@ -1,12 +1,15 @@
 import React, { useCallback } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemSearchType } from '../../../common/search-types';
 import { useProblems } from '../../../hooks/use-problems';
 import concatClassNames from '../../../utils/class-names';
+import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { getParticipateInContestUrl } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonState, ButtonType } from '../../guidelines/buttons/Button';
+import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 
 import SearchProblemTooltip from './SearchProblemTooltip';
 
@@ -29,6 +32,8 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
     const searchProblemContestClassName = concatClassNames(styles.problemContest, searchProblemContestName);
     const contestCardControlBtns = 'search-problem-card-control-buttons';
     const searchProblemCardControlBtnsClassName = concatClassNames(styles.problemCardControls, contestCardControlBtns);
+    const searchContestCardCounter = 'search-contest-card-counter';
+    const searchContestCardCounterClassName = concatClassNames(styles.problemCardCountdown, searchContestCardCounter);
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
 
@@ -42,6 +47,33 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
             initiateRedirectionToProblem(id, participateInContestUrl);
         },
         [ contest.id, id, initiateRedirectionToProblem ],
+    );
+
+    const endDate = !isNil(contest.endTime) && new Date(contest.endTime) >= getCurrentTimeInUTC()
+        ? contest.endTime
+        : !isNil(contest.practiceEndTime)
+            ? contest.practiceEndTime
+            : null;
+
+    const renderCountdown = useCallback(
+        () => {
+            if (isNil(endDate) || new Date(endDate) < getCurrentTimeInUTC()) {
+                return null;
+            }
+
+            if (isNil(contest.startTime) || new Date(contest.startTime) > getCurrentTimeInUTC()) {
+                return null;
+            }
+
+            return (
+                <Countdown
+                  key={id}
+                  duration={convertToSecondsRemaining(new Date(endDate))}
+                  metric={Metric.seconds}
+                />
+            );
+        },
+        [ contest.startTime, endDate, id ],
     );
 
     const renderPage = useCallback(
@@ -66,6 +98,9 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                         {' '}
                         {contest.name}
                     </span>
+                    <div className={searchContestCardCounterClassName}>
+                        {renderCountdown()}
+                    </div>
                     <div className={searchProblemCardControlBtnsClassName}>
                         <Button
                           id="button-card-compete"
@@ -94,8 +129,8 @@ const SearchProblem = ({ problem }: ISearchProblem) => {
                     </div>
                 </div>
             ),
-        [ contest, handleButtonSubmit, problem, searchContestElementClassName, searchProblemCardControlBtnsClassName,
-            searchProblemCategoryClassName, searchProblemContestClassName ],
+        [ contest, handleButtonSubmit, problem, renderCountdown, searchContestCardCounterClassName, searchContestElementClassName,
+            searchProblemCardControlBtnsClassName, searchProblemCategoryClassName, searchProblemContestClassName ],
     );
 
     return (
