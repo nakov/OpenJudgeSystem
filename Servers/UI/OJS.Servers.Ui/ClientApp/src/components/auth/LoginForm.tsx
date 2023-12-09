@@ -53,7 +53,6 @@ const LoginPage = () => {
 
     const renderLoginForm = useCallback(
         (shouldHideButton : boolean) => (
-
             <Form
               className={styles.loginForm}
               onSubmit={() => handleLoginClick()}
