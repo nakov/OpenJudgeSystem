@@ -20,6 +20,7 @@ interface IAuthContext {
         loginOrGetAuthInitiated: boolean;
         hasCompletedGetAuthInfo: boolean;
         isLoggedIn: boolean;
+        isLoggingIn: boolean;
         loginErrorMessage: string;
     };
     actions: {
@@ -28,6 +29,7 @@ interface IAuthContext {
         loadAuthInfo: () => Promise<void>;
         setUsername: (value: string) => void;
         setPassword: (value: string) => void;
+        setIsLoggingIn: (value:boolean) => void;
     };
 }
 
@@ -59,6 +61,7 @@ interface ILoginDetailsType {
 
 const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoggingIn, setIsLoggingIn ] = useState(false);
     const [ internalUser, setInternalUser ] = useState<IUserType>(defaultState.user);
     const [ username, setUsername ] = useState<string>('');
     const [ password, setPassword ] = useState<string>();
@@ -211,12 +214,14 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 loginOrGetAuthInitiated,
                 hasCompletedGetAuthInfo,
                 isLoggedIn,
+                isLoggingIn,
                 loginErrorMessage,
                 isLoading,
             },
             actions: {
                 signIn,
                 signOut,
+                setIsLoggingIn,
                 loadAuthInfo: getAuth,
                 setUsername,
                 setPassword,
@@ -226,6 +231,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             getAuth,
             hasCompletedGetAuthInfo,
             internalUser,
+            isLoggingIn,
             isLoggedIn,
             loginErrorMessage,
             loginOrGetAuthInitiated,
