@@ -11,6 +11,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Configurations;
 using SoftUni.Data.Infrastructure.Enumerations;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
+using System.Text.Json.Serialization;
 
 internal static class ServiceCollectionExtensions
 {
@@ -35,5 +36,6 @@ internal static class ServiceCollectionExtensions
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
             .UseAutoCrudAdmin()
-            .AddControllersWithViews();
+            .AddControllersWithViews()
+            .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 }

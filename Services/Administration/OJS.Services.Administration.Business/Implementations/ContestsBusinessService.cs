@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Pagination;
+using OJS.Services.Administration.Models.Contests;
 
 public class ContestsBusinessService : IContestsBusinessService
 {
@@ -38,4 +40,7 @@ public class ContestsBusinessService : IContestsBusinessService
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
     }
+
+    public async Task<PaginatedList<ContestInListModel>> GetAllContests(PaginationModel<Contest> paginationModel)
+        => await paginationModel.ApplyPagination<ContestInListModel>(this.contestsData.GetAllWithDeleted());
 }
