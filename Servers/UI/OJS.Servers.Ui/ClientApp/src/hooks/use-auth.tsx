@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -6,11 +7,7 @@ import { HttpStatus } from '../common/common';
 import { IUserPermissionsType, IUserResponseType, IUserType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import isNilOrEmpty from '../utils/check-utils';
-import {
-    getLoginSubmitUrl,
-    getLogoutUrl,
-    getUserAuthInfoUrl,
-} from '../utils/urls';
+import { getLoginPath, getLoginSubmitUrl, getLogoutUrl, getUserAuthInfoUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
@@ -68,6 +65,8 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ password, setPassword ] = useState<string>();
     const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
+    const navigate = useNavigate();
+    const location = useLocation();
     const defaultLoginErrorMessage = useMemo(() => 'Invalid username or password', []);
 
     const {
@@ -178,14 +177,14 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 ? defaultLoginErrorMessage
                 : data.toString());
 
+            setIsLoggingIn(false);
+
             return;
         }
 
         (async () => {
             await getAuth();
         })();
-
-        window.location.reload();
     }, [
         loginSubmitResponse,
         loginSubmitStatus,
@@ -203,6 +202,18 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         setUserDetails(getUserFromResponse(authInfo));
     }, [ authInfo, getUserFromResponse, isGetAuthInfoSuccess, setUserDetails ]);
 
+    // Purpose: Added to prevent flickering Login button while loading
+    // If the user is successfully logged in > we first navigate to home
+    // then refresh the window to set internal user and header info
+    useEffect(() => {
+        if (!isLoggingIn &&
+            loginSubmitStatus === HttpStatus.Success &&
+            location.pathname === getLoginPath()) {
+            navigate('/');
+            window.location.reload();
+        }
+    }, [ navigate, loginSubmitStatus, isLoggingIn, location.pathname ]);
+
     useEffect(() => {
         (async () => {
             await getAuth();
@@ -210,10 +221,10 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     }, [ getAuth ]);
 
     useEffect(() => {
-        if (isLoggedIn) {
+        if (isLoggedIn || loginSubmitStatus === HttpStatus.Success) {
             setIsLoggingIn(false);
         }
-    }, [ isLoggedIn ]);
+    }, [ isLoggedIn, loginSubmitStatus ]);
 
     useEffect(() => {
         if (!isNilOrEmpty(authInfo) && !isLoggedIn) {

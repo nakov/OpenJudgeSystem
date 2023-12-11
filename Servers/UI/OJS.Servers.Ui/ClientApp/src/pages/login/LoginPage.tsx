@@ -8,8 +8,6 @@ const LoginPage = () => {
     const {
         state:
         { user, isLoggedIn },
-        actions:
-            { setIsLoggingIn },
     } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -23,7 +21,7 @@ const LoginPage = () => {
 
             navigate(origin);
         }
-    }, [ isLoggedIn, location, navigate, user, setIsLoggingIn ]);
+    }, [ isLoggedIn, location, navigate, user ]);
 
     return (
         <LoginForm />
