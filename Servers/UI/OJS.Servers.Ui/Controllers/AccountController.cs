@@ -20,6 +20,7 @@ namespace OJS.Servers.Ui.Controllers
     using static OJS.Common.GlobalConstants.Urls;
 
     [Authorize]
+    [Route("api/[controller]/[action]")]
     public class AccountController : BaseViewController
     {
         private readonly UserManager<UserProfile> userManager;
@@ -47,7 +48,6 @@ namespace OJS.Servers.Ui.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody]LoginRequestModel model)
         {
             if (!this.ModelState.IsValid)
@@ -105,6 +105,7 @@ namespace OJS.Servers.Ui.Controllers
             return this.Ok();
         }
 
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();

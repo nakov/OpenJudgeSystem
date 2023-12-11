@@ -44,10 +44,10 @@ const baseApiUrl = `${baseUrl}/api`;
 const getHomePageUrl = () => '/';
 
 // auth
-const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
-const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
+const getLoginSubmitUrl = () => `${baseApiUrl}/Account/Login`;
+const getLogoutUrl = () => `${baseApiUrl}/Account/Logout`;
 
-const getLoginPageUrl = () => `${baseUrl}/login`;
+const getLoginPageUrl = () => `${baseApiUrl}/login`;
 
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
