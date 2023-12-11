@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 import { HttpStatus } from '../common/common';
 import { IUserPermissionsType, IUserResponseType, IUserType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import isNilOrEmpty from '../utils/check-utils';
 import {
     getLoginSubmitUrl,
     getLogoutUrl,
@@ -146,6 +147,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const signIn = useCallback(
         async () => {
+            setIsLoggingIn(true);
             setIsLoading(true);
             await loginSubmit({
                 Username: username,
@@ -206,6 +208,18 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             await getAuth();
         })();
     }, [ getAuth ]);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            setIsLoggingIn(false);
+        }
+    }, [ isLoggedIn ]);
+
+    useEffect(() => {
+        if (!isNilOrEmpty(authInfo) && !isLoggedIn) {
+            setIsLoggingIn(true);
+        }
+    }, [ authInfo, isLoggedIn ]);
 
     const value = useMemo(
         () => ({

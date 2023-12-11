@@ -16,12 +16,12 @@ const LoginPage = () => {
         state: {
             loginErrorMessage,
             isLoggingIn,
+            isLoggedIn,
         },
         actions: {
             setUsername,
             setPassword,
             signIn,
-            setIsLoggingIn,
         },
     } = useAuth();
     const usernameFieldName = 'Username';
@@ -40,9 +40,8 @@ const LoginPage = () => {
     }, [ setPassword ]);
 
     const handleLoginClick = useCallback(async () => {
-        setIsLoggingIn(true);
         await signIn();
-    }, [ signIn, setIsLoggingIn ]);
+    }, [ signIn ]);
 
     const renderLoginErrorMessage = useCallback(
         () => (!isNil(loginErrorMessage)
@@ -119,7 +118,7 @@ const LoginPage = () => {
     );
 
     return (
-        isLoggingIn
+        isLoggingIn || isLoggedIn
             ? renderLoginForm(true)
             : renderLoginForm(false)
     );

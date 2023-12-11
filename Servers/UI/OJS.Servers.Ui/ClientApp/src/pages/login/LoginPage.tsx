@@ -21,7 +21,6 @@ const LoginPage = () => {
             // @ts-ignore
             const origin = location.state?.from?.pathname || '/';
 
-            setIsLoggingIn(false);
             navigate(origin);
         }
     }, [ isLoggedIn, location, navigate, user, setIsLoggingIn ]);
