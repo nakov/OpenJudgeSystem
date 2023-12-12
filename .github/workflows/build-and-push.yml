@@ -18,6 +18,9 @@ on:
         additional_run_commands:
           required: false
           type: string
+        build_args:
+          required: false
+          type: string
 
 env:
     IMG: ${{ inputs.docker_image_name }}
@@ -88,6 +91,8 @@ jobs:
         registry: ghcr.io
         file: ${{ env.DOCKERFILE_PATH }}
         builder: ${{ steps.buildx.outputs.name }}
+        build-args: |
+          ${{ inputs.build_args }}
         labels: |
           org.opencontainers.image.authors=${{ github.repository_owner }}
           org.opencontainers.image.created=${{ env.BUILD_DATE }}

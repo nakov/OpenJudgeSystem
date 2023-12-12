@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Common;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models.Users;
+using OJS.Servers.Administration.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -19,6 +20,8 @@ using System.Linq;
 public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
 {
     public const string RoleIdKey = nameof(UserInRole.RoleId);
+    private const string Username = nameof(UserInRole.User);
+    private const string RoleName = nameof(UserInRole.Role);
 
     private readonly IUsersDataService usersDataService;
 
@@ -29,9 +32,7 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
         => this.usersDataService = usersDataService;
 
     protected override Expression<Func<UserInRole, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForStringColumnFilter(RoleIdKey, out var roleId)
-            ? ur => ur.RoleId == roleId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<GridAction> DefaultActions
         => new[] { new GridAction { Action = nameof(this.Delete) } };
@@ -59,5 +60,27 @@ public class UserRolesController : BaseAutoCrudAdminController<UserInRole>
         formControls.Remove(formControlToRemove);
 
         return formControls;
+    }
+
+    protected override Expression<Func<UserInRole, bool>> GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<UserInRole, bool>>>();
+
+        if (this.TryGetEntityIdForStringColumnFilter(RoleIdKey, out var roleId))
+        {
+            filterExpressions.Add(ur => ur.RoleId == roleId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(Username, out var username))
+        {
+            filterExpressions.Add(ur => ur.User.UserName == username);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(RoleName, out var roleName))
+        {
+            filterExpressions.Add(ur => ur.Role.Name == roleName);
+        }
+
+        return filterExpressions.CombineMultiple();
     }
 }
