@@ -6,6 +6,7 @@
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models.Mappings;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -28,7 +29,7 @@
             configuration.CreateMap<Problem, TestsExecutionDetailsServiceModel>()
                 .ForMember(
                     d => d.CheckerType,
-                    opt => opt.MapFrom(s => s.Checker!.Name.ToLower()))
+                    opt => opt.MapFrom(s => s.Checker!.ClassName!.ToLower().TrimFromEnd("checker")))
                 .ForMember(
                     d => d.CheckerParameter,
                     opt => opt.MapFrom(s => s.Checker!.Parameter))

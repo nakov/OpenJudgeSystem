@@ -44,8 +44,10 @@ const ContestsPage = () => {
     const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
     const { state: params, actions: { clearParams } } = useUrlParams();
-    const { state: { strategies } } = useContestStrategyFilters();
-    const { actions: { load: loadStrategies } } = useContestStrategyFilters();
+    const {
+        state: { strategies },
+        actions: { load: loadStrategies },
+    } = useContestStrategyFilters();
     const [ showAlert, setShowAlert ] = useState<boolean>(false);
 
     useEffect(
