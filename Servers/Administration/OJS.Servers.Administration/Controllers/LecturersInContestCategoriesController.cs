@@ -9,6 +9,7 @@ using AutoCrudAdmin.ViewModels;
 using Microsoft.Extensions.Options;
 using OJS.Common;
 using OJS.Data.Models.Users;
+using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using System;
@@ -26,6 +27,9 @@ public class LecturersInContestCategoriesController : BaseAutoCrudAdminControlle
         IOptions<ApplicationConfig> appConfigOptions)
         : base(appConfigOptions)
         => this.usersDataService = usersDataService;
+
+    protected override Expression<Func<LecturerInContestCategory, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<FormControlViewModel> GenerateFormControls(
         LecturerInContestCategory entity,
@@ -50,5 +54,24 @@ public class LecturersInContestCategoriesController : BaseAutoCrudAdminControlle
         formControls.Remove(formControlToRemove);
 
         return formControls;
+    }
+
+    protected override Expression<Func<LecturerInContestCategory, bool>>? GetMasterGridFilter()
+    {
+        const string lecturerCategoryName = nameof(LecturerInContestCategory.ContestCategory);
+
+        var filterExpressions = new List<Expression<Func<LecturerInContestCategory, bool>>>();
+
+        if (this.TryGetEntityIdForStringColumnFilter(lecturerCategoryName, out var categoryName))
+        {
+            filterExpressions.Add(lic => lic.ContestCategory.Name == categoryName);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(Lecturer, out var lecturerName))
+        {
+            filterExpressions.Add(lic => lic.Lecturer.UserName == lecturerName);
+        }
+
+        return filterExpressions.CombineMultiple();
     }
 }
