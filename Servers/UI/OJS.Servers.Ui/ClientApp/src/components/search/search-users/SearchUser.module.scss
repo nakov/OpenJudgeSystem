@@ -3,7 +3,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/responsive';
 
-.userElement {
+.user-element {
   @extend %font-family-lato;
 
   align-content: center;
@@ -22,7 +22,7 @@
   width: 13vw;
 }
 
-.userText {
+.user-text {
   font-size: variables.$f-size-24;
   justify-self: center;
   max-height: 40px;
@@ -90,7 +90,7 @@
   }
 }
 
-.userCardHeader {
+.usercard-header {
   @extend %font-family-lato;
 
   border-bottom-color: colors.$bottom-border-color;
