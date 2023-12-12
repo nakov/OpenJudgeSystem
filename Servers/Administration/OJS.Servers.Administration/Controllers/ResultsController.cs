@@ -1,11 +1,13 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using OJS.Services.Common;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ClosedXML.Excel;
 using OJS.Common;
+using OJS.Common.Extensions;
 using OJS.Servers.Administration.Models.Contests;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Infrastructure.Extensions;
@@ -20,18 +22,21 @@ public class ResultsController : BaseAdminViewController
     private readonly IContestsDataService contestsData;
     private readonly IContestsBusinessService contestsBusiness;
     private readonly IContestsValidationHelper contestsValidationHelper;
-    private readonly IContestResultsAggregatorService contestResultsAggregator;
+    private readonly IContestResultsAggregatorCommonService contestResultsAggregator;
+    private readonly Services.Administration.Business.IUserProviderService userProviderService;
 
     public ResultsController(
         IContestsDataService contestsData,
         IContestsBusinessService contestsBusiness,
-        IContestResultsAggregatorService contestResultsAggregator,
-        IContestsValidationHelper contestsValidationHelper)
+        IContestResultsAggregatorCommonService contestResultsAggregator,
+        IContestsValidationHelper contestsValidationHelper,
+        Services.Administration.Business.IUserProviderService userProviderService)
     {
         this.contestsData = contestsData;
         this.contestsBusiness = contestsBusiness;
         this.contestResultsAggregator = contestResultsAggregator;
         this.contestsValidationHelper = contestsValidationHelper;
+        this.userProviderService = userProviderService;
     }
 
     [HttpPost]
@@ -50,12 +55,19 @@ public class ResultsController : BaseAdminViewController
 
         var official = model.Type == ContestExportResultType.Compete;
 
-        var contestResults = this.contestResultsAggregator.GetContestResults(
-            contest,
-            official,
-            isUserAdminOrLecturer: true,
-            isFullResults: false,
-            isExportResults: true);
+        var user = this.userProviderService.GetCurrentUser();
+
+        var contestResultsModel = new ContestResultsModel
+        {
+            Contest = contest,
+            Official = official,
+            IsUserAdminOrLecturer = user.IsAdminOrLecturer,
+            IsFullResults = false,
+            TotalResultsCount = null,
+            IsExportResults = false,
+        };
+
+        var contestResults = this.contestResultsAggregator.GetContestResults(contestResultsModel);
 
         // Suggested file name in the "Save as" dialog which will be displayed to the end user
         var fileName = string.Format(

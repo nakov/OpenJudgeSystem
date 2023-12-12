@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,15 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
+using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
 public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 {
+    private const string ContestName = nameof(ExamGroup.Contest);
+
     private readonly IContestsValidationHelper contestsValidationHelper;
     private readonly IValidatorsFactory<ExamGroup> examGroupValidatorsFactory;
     private readonly IValidationService<ExamGroupDeleteValidationServiceModel> examGroupsDeleteValidation;
@@ -38,6 +42,9 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
         this.examGroupsDeleteValidation = examGroupsDeleteValidation;
         this.contestsActivity = contestsActivity;
     }
+
+    protected override Expression<Func<ExamGroup, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<Func<ExamGroup, ExamGroup, AdminActionContext, ValidatorResult>> EntityValidators
         => this.examGroupValidatorsFactory.GetValidators();
@@ -84,6 +91,16 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
         this.examGroupsDeleteValidation
             .GetValidationResult(validationModel)
             .VerifyResult();
+    }
+
+    protected override Expression<Func<ExamGroup, bool>>? GetMasterGridFilter()
+    {
+        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        {
+            return eg => eg.Contest != null && eg.Contest.Name == contestName;
+        }
+
+        return base.MasterGridFilter;
     }
 
     private async Task ValidateContestPermissions(ExamGroup entity)

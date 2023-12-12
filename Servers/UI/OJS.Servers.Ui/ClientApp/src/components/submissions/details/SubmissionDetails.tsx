@@ -45,7 +45,6 @@ const SubmissionDetails = () => {
         dispatch(setSubmission(currentSubmissionData));
         dispatch(setCurrentSubmissionResults(allSubmissionsData));
     }, [ currentSubmissionData, allSubmissionsData, dispatch ]);
-
     useEffect(
         () => {
             if (currentSubmission) {

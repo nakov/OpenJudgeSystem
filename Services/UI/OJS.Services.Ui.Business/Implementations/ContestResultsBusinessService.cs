@@ -10,14 +10,15 @@ using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
 public class ContestResultsBusinessService : IContestResultsBusinessService
 {
-    private readonly IContestResultsAggregatorService contestResultsAggregator;
+    private readonly IContestResultsAggregatorCommonService contestResultsAggregator;
     private readonly IContestsDataService contestsData;
     private readonly IContestResultsValidationService contestResultsValidation;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
     private readonly IUserProviderService userProvider;
-
+    private readonly int itemsPerPageCompete = 100;
+    private readonly int itemsPerPagePractice = 50;
     public ContestResultsBusinessService(
-        IContestResultsAggregatorService contestResultsAggregator,
+        IContestResultsAggregatorCommonService contestResultsAggregator,
         IContestsDataService contestsData,
         IContestResultsValidationService contestResultsValidation,
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,
@@ -46,10 +47,20 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var results = this.contestResultsAggregator.GetContestResults(
-            contest,
-            official,
-            full);
+        var user = this.userProvider.GetCurrentUser();
+
+        var contestResultsModel = new ContestResultsModel
+        {
+            Contest = contest,
+            Official = official,
+            IsUserAdminOrLecturer = user.IsAdminOrLecturer,
+            IsFullResults = full,
+            TotalResultsCount = null,
+            IsExportResults = false,
+            ItemsInPage = official ? this.itemsPerPageCompete : this.itemsPerPagePractice,
+        };
+
+        var results = this.contestResultsAggregator.GetContestResults(contestResultsModel);
 
         results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
 

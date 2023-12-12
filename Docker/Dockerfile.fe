@@ -1,0 +1,28 @@
+# Node.js build
+FROM node:18-alpine as node_build
+
+ARG YARN_BUILD_COMMAND
+WORKDIR /app
+
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json /src/Servers/UI/OJS.Servers.Ui/ClientApp/package.json
+COPY Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock /src/Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+RUN yarn install
+
+WORKDIR /src
+
+COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientApp
+
+WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
+
+RUN yarn run lint
+RUN yarn ${YARN_BUILD_COMMAND}
+
+# Server using Nginx
+FROM nginx:alpine
+COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/ClientApp/dist /usr/share/nginx/html
+
+# Handle client side routing
+COPY Docker/applications/fe/conf.d /etc/nginx/conf.d
+COPY Docker/applications/fe/ngnix.conf /etc/nginx/nginx.conf
+CMD ["nginx", "-g", "daemon off;"]

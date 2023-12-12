@@ -36,6 +36,10 @@ namespace OJS.Data.Models.Participants
 
         public bool IsInvalidated { get; set; }
 
+        public int TotalScoreSnapshot { get; set; }
+
+        public DateTime? TotalScoreSnapshotModifiedOn { get; set; }
+
         public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
 
         public virtual ICollection<ParticipantScore> Scores { get; set; } = new HashSet<ParticipantScore>();
