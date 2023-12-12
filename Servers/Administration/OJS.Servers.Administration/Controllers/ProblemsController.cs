@@ -491,18 +491,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     Name = st.Name,
                     Value = st.Id,
                     IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
-                    Expand = new List<FormControlViewModel>
+                    Expand = new FormControlViewModel
                     {
-                        new ()
-                        {
-                            Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-                            Value = submissionTypesInProblem
-                                .Where(x => x.SubmissionTypeId == st.Id)
-                                .Select(x => x.SolutionSkeleton)
-                                .FirstOrDefault()?.Decompress(),
-                            Type = typeof(string),
-                            FormControlType = FormControlType.TextArea,
-                        },
+                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
+                        Value = submissionTypesInProblem
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.SolutionSkeleton)
+                            .FirstOrDefault()?.Decompress(),
+                        Type = typeof(string),
+                        FormControlType = FormControlType.TextArea,
                     },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
