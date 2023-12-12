@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Common.Data.Pagination;
 
 using System.Collections.Generic;
+using System;
 
 public class PaginatedList<T>
 {
@@ -21,4 +22,6 @@ public class PaginatedList<T>
     public int ItemsPerPage { get; set; }
 
     public int TotalCount { get; set; }
+
+    public int TotalPages => (int)Math.Ceiling((decimal)this.TotalCount / this.ItemsPerPage);
 }

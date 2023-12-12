@@ -7,7 +7,7 @@ using System.Reflection;
 
 public abstract class SortingService<TEntity> : FilteringService<TEntity>
 {
-    protected virtual IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, string? sorting)
+    protected virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting)
     {
         if (string.IsNullOrEmpty(sorting))
         {
@@ -27,7 +27,7 @@ public abstract class SortingService<TEntity> : FilteringService<TEntity>
             var key = sortingParts[0].Trim();
             var sortingType = sortingParts[1].Trim();
 
-            var sortingProperty = GetEntityProperty(key);
+            var sortingProperty = GetProperty<TModel>(key);
 
             if (sortingProperty is null)
             {
@@ -35,19 +35,19 @@ public abstract class SortingService<TEntity> : FilteringService<TEntity>
             }
             else
             {
-                return query.Provider.CreateQuery<TEntity>(BuildSortingExpression(query, sortingProperty, sortingType));
+                return query.Provider.CreateQuery<TModel>(BuildSortingExpression(query, sortingProperty, sortingType));
             }
         }
 
         return query;
     }
 
-    private static MethodCallExpression BuildSortingExpression(
-        IQueryable<TEntity> query,
+    private static MethodCallExpression BuildSortingExpression<TModel>(
+        IQueryable<TModel> query,
         PropertyInfo sortingProperty,
         string sortingType)
     {
-        var parameter = Expression.Parameter(typeof(TEntity), "x");
+        var parameter = Expression.Parameter(typeof(TModel), "x");
         var property = Expression.Property(parameter, sortingProperty);
         var lambda = Expression.Lambda(property, parameter);
 
@@ -69,7 +69,7 @@ public abstract class SortingService<TEntity> : FilteringService<TEntity>
         return Expression.Call(
             typeof(Queryable),
             methodName,
-            new Type[] { typeof(TEntity), property.Type },
+            new Type[] { typeof(TModel), property.Type },
             query.Expression,
             lambda);
     }

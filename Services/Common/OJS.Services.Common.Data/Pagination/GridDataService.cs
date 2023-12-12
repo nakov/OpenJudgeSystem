@@ -1,11 +1,13 @@
 ﻿namespace OJS.Services.Common.Data.Pagination;
 
 using Microsoft.EntityFrameworkCore;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 using SoftUni.Data.Infrastructure.Models;
 using OJS.Services.Common.Models.Pagination;
+using OJS.Services.Common.Data.Pagination.Enums;
+using System;
+using System.Collections.Generic;
 
 public abstract class GridDataService<TEntity> : SortingService<TEntity>
     where TEntity : class, IEntity
@@ -17,17 +19,20 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
     public async Task<PaginatedList<T>> GetAll<T>(PaginationRequestModel paginationRequestModel)
     {
         var query = this.dataService.GetQuery();
-        query = this.ApplyFiltering<T>(query, paginationRequestModel.Filter);
-        query = this.ApplySorting(query, paginationRequestModel.Sorting);
+
+        var filterAsCollection = MapFilterStringToCollection<T>(paginationRequestModel).ToList();
+
+        var mappedQuery = this.ApplyFiltering<T>(query, filterAsCollection);
+        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting);
 
         var response = await this.ApplyPagination<T>(
-            query,
+            mappedQuery,
             paginationRequestModel.Page,
             paginationRequestModel.ItemsPerPage);
         return response;
     }
 
-    protected virtual async Task<PaginatedList<T>> ApplyPagination<T>(IQueryable<TEntity> query, int page, int itemsPerPage)
+    protected virtual async Task<PaginatedList<T>> ApplyPagination<T>(IQueryable<T> query, int page, int itemsPerPage)
     {
         var paginatedList = new PaginatedList<T>(page, itemsPerPage);
 
@@ -35,9 +40,58 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
         paginatedList.Items = await query
             .Skip((page - 1) * itemsPerPage)
             .Take(itemsPerPage)
-            .MapCollection<T>()
             .ToListAsync();
 
         return paginatedList;
+    }
+
+    private static IEnumerable<FilteringModel> MapFilterStringToCollection<T>(PaginationRequestModel paginationRequestModel)
+    {
+        var filteringCollection = new List<FilteringModel>();
+        if (string.IsNullOrEmpty(paginationRequestModel.Filter))
+        {
+            return filteringCollection;
+        }
+
+        var conditions = paginationRequestModel.Filter!.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var condition in conditions)
+        {
+            var filterParts = condition.Split(new[] { '=', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (filterParts.Length != 3)
+            {
+                throw new ArgumentOutOfRangeException($"Filter {condition} must contain key, operator and value");
+            }
+
+            var key = filterParts[0];
+            var operatorTypeAsString = filterParts[1];
+            var value = filterParts[2];
+
+            var isParsed = Enum.TryParse(operatorTypeAsString, true, out OperatorType operatorType);
+
+            if (!isParsed)
+            {
+                throw new ArgumentException($"Operator with type {operatorTypeAsString} is not supported.");
+            }
+
+            var filteringProperty = GetProperty<TEntity>(key);
+
+            if (filteringProperty is null)
+            {
+                filteringProperty = GetProperty<T>(key);
+                if (filteringProperty is null)
+                {
+                    throw new ArgumentNullException($"Property with name {key} is not found.");
+                }
+
+                filteringCollection.Add(new FilteringModel(filteringProperty, operatorType, value, false));
+            }
+            else
+            {
+                filteringCollection.Add(new FilteringModel(filteringProperty, operatorType, value, true));
+            }
+        }
+
+        return filteringCollection;
     }
 }

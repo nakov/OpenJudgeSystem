@@ -5,12 +5,15 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Common.Models.Pagination;
+using System.Collections.Generic;
 
 public abstract class FilteringService<TEntity>
 {
-    protected static PropertyInfo? GetEntityProperty(string key)
+    protected static PropertyInfo? GetProperty<T>(string key)
     {
-        var propertyInfo = typeof(TEntity).GetProperties()
+        var propertyInfo = typeof(T).GetProperties()
             .FirstOrDefault(p =>
                 string.Equals(p.Name, key, StringComparison.OrdinalIgnoreCase));
 
@@ -22,84 +25,52 @@ public abstract class FilteringService<TEntity>
         return propertyInfo;
     }
 
-    protected virtual IQueryable<TEntity> ApplyFiltering<TModel>(IQueryable<TEntity> query, string? filter)
+    protected virtual IQueryable<TModel> ApplyFiltering<TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
     {
-        if (string.IsNullOrEmpty(filter))
+        if (!filters.Any())
         {
-            return query;
+            return query.MapCollection<TModel>();
         }
 
-        var conditions = filter.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        var baseFilters = filters.Where(f => f.IsBaseProperty);
 
-        foreach (var condition in conditions)
+        foreach (var filter in baseFilters)
         {
-            var filterParts = condition.Split(new[] { '=', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (filterParts.Length != 3)
-            {
-                throw new ArgumentOutOfRangeException($"Filter {condition} must contain key, operator and value");
-            }
-
-            var key = filterParts[0];
-            var operatorTypeAsString = filterParts[1];
-            var value = filterParts[2];
-
-            var isParsed = Enum.TryParse(operatorTypeAsString, true, out OperatorType operatorType);
-
-            if (!isParsed)
-            {
-                throw new ArgumentException($"Operator with type {operatorTypeAsString} is not supported.");
-            }
-
-            var filteringProperty = GetEntityProperty(key);
-            if (filteringProperty is null)
-            {
-                filteringProperty = GetModelProperty(key);
-            }
-
-            if (filteringProperty is null)
-            {
-                throw new ArgumentNullException($"Property with name {key} is not found.");
-            }
-
-            var expression = BuildFilteringExpression(query, filteringProperty, operatorType, value);
+            var expression = BuildFilteringExpression(query, filter);
             query = query.Where(expression);
         }
 
-        return query;
-    }
+        var mappedQuery = query.MapCollection<TModel>();
 
-    private static PropertyInfo? GetModelProperty(string key)
-    {
-        var propertyInfo = typeof(TEntity).GetProperties()
-            .FirstOrDefault(p =>
-                string.Equals(p.Name, key, StringComparison.OrdinalIgnoreCase));
+        var customFilters = filters.Where(f => !f.IsBaseProperty);
 
-        if (propertyInfo is null)
+        foreach (var filter in customFilters)
         {
-            return null;
+            var expression = BuildFilteringExpression(mappedQuery, filter);
+            mappedQuery = mappedQuery.Where(expression);
         }
 
-        return propertyInfo;
+        return mappedQuery;
     }
 
-    private static Expression<Func<TEntity, bool>> BuildFilteringExpression(IQueryable<TEntity> query, PropertyInfo filteringProperty, OperatorType operatorType, string value)
+    private static Expression<Func<T, bool>> BuildFilteringExpression<T>(IQueryable<T> query, FilteringModel filter)
     {
-        var parameter = Expression.Parameter(typeof(TEntity), "x");
-        var property = Expression.Property(parameter, filteringProperty);
+        var parameter = Expression.Parameter(typeof(T), "x");
+        var property = Expression.Property(parameter, filter.Property);
 
         Expression? expression = null;
-        if (filteringProperty.PropertyType == typeof(string))
+        if (filter.Property.PropertyType == typeof(string))
         {
-            expression = BuildStringExpression(operatorType, value, property);
+            expression = BuildStringExpression(filter.OperatorType, filter.Value, property);
         }
-        else if (filteringProperty.PropertyType == typeof(bool))
+        else if (filter.Property.PropertyType == typeof(bool))
         {
-            expression = BuildBooleanExpression(operatorType, value, property);
+            expression = BuildBooleanExpression(filter.OperatorType, filter.Value, property);
         }
-        else if (filteringProperty.PropertyType == typeof(int) ||
-                 Nullable.GetUnderlyingType(filteringProperty.PropertyType) == typeof(int))
+        else if (filter.Property.PropertyType == typeof(int) ||
+                 Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(int))
         {
-            expression = BuildIntExpression(operatorType, value, property);
+            expression = BuildIntExpression(filter.OperatorType, filter.Value, property);
         }
 
         if (expression == null)
@@ -107,7 +78,7 @@ public abstract class FilteringService<TEntity>
             throw new InvalidOperationException("Expression cannot be build");
         }
 
-        return Expression.Lambda<Func<TEntity, bool>>(expression, parameter);
+        return Expression.Lambda<Func<T, bool>>(expression, parameter);
     }
 
     private static Expression? BuildIntExpression(OperatorType operatorType, string? value, MemberExpression property)
