@@ -9,8 +9,8 @@
     manifest.json provides metadata used when your web app is added to the
     homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
-<!--    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">-->
-<!--    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">-->
+<!--    <link rel="manifest" href="./public/manifest.json" />-->
+<!--    <<link rel="icon" href="./public/favicon.ico" />-->
     <!--
     Notice the use of %PUBLIC_URL% in the tags above.
     It will be replaced with the URL of the `public` folder during the build.
@@ -34,14 +34,11 @@
     <!--        font-family: 'Roboto', sans-serif;-->
     <!--      }-->
     <!--    </style>-->
-    <script>
-        window.isLoggedIn = Boolean(@Model?.IsAuthenticated.ToString().ToLower());
+    <script type="module">
         window.URLS = {
-            UI_URL: '@appUrls.Value.UiUrl',
-            ADMINISTRATION_URL: '@appUrls.Value.AdministrationUrl',
-        }
-        window.Keys = {
-            YOUTUBE_VIDEO_ID: '@appConfig.Value.UiHomeYouTubeVideoId',
+            UI_URL: import.meta.env.VITE_UI_SERVER_URL,
+            ADMINISTRATION_URL: import.meta.env.VITE_ADMINISTRATION_URL,
+            PLATFORM_URL: import.meta.env.VITE_PLATFORM_URL,
         }
     </script>
 </head>
@@ -50,6 +47,7 @@
     You need to enable JavaScript to run this app.
 </noscript>
 <div id="root"></div>
+<script type="module" src="/src/index.tsx"></script>
 <!--
 This HTML file is a template.
 If you open it directly in the browser, you will see an empty page.
