@@ -1,7 +1,6 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using OJS.Servers.Administration.Extensions;
-using X.PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +30,7 @@ using OJS.Common.Extensions;
 public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemResource>
 {
     public const string ProblemIdKey = nameof(ProblemResource.ProblemId);
+    private const string ProblemName = nameof(ProblemResource.Problem);
 
     private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
     private readonly IValidatorsFactory<ProblemResource> problemResourceValidatorsFactory;
@@ -210,6 +210,30 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         await this.problemResourcesOrderableService.ReevaluateOrder(problemResources);
     }
 
+    protected override Expression<Func<ProblemResource, bool>> GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<ProblemResource, bool>>>();
+
+        Expression<Func<ProblemResource, bool>> filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusinessService.GetProblemResourcesUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        filterExpressions.Add(filterByLecturerRightsExpression);
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
+        {
+            filterExpressions.Add(ps => ps.ProblemId == problemId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ProblemName, out var problemName))
+        {
+            filterExpressions.Add(pr => pr.Problem.Name == problemName);
+        }
+
+        return filterExpressions.CombineMultiple();
+    }
+
     private static IEnumerable<FormControlViewModel> GetAdditionalFormControls()
         => new List<FormControlViewModel>
         {
@@ -245,19 +269,5 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
         {
             new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
         };
-    }
-
-    private Expression<Func<ProblemResource, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<ProblemResource, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusinessService.GetProblemResourcesUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? x => x.ProblemId == problemId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

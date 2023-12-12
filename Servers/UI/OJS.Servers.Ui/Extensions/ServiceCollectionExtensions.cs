@@ -4,6 +4,7 @@ namespace OJS.Servers.Ui.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Users;
@@ -29,6 +30,18 @@ namespace OJS.Servers.Ui.Extensions
                 services
                     .AddSpaStaticFiles(cnfg => { cnfg.RootPath = "ClientApp/dist"; });
             }
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    GlobalConstants.CorsDefaultPolicyName,
+                    config =>
+                        config.WithOrigins(
+                                configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+            });
 
             services
                 .AddWebServer<Program>(configuration)

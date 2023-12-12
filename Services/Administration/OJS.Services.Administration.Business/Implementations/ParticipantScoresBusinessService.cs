@@ -60,6 +60,7 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
             {
                 p.IsOfficial,
                 p.User.UserName,
+                Participant = p,
             })
             .FirstOrDefault();
 
@@ -78,7 +79,8 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
             await this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                 submission,
                 participant.UserName,
-                participant.IsOfficial);
+                participant.IsOfficial,
+                participant.Participant);
 
             return;
         }
@@ -89,7 +91,8 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
             await this.participantScoresData.UpdateBySubmissionAndPoints(
                 existingScore,
                 submission.Id,
-                submission.Points);
+                submission.Points,
+                participant.Participant);
         }
     }
 
@@ -123,5 +126,6 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
                 await this.participantScoresData.UpdateBySubmissionAndPoints(
                     x.ParticipantScore,
                     x.ParticipantScore.SubmissionId,
-                    x.ProblemMaxPoints));
+                    x.ProblemMaxPoints,
+                    x.ParticipantScore.Participant));
 }
