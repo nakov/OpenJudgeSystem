@@ -33,12 +33,12 @@
   white-space: nowrap;
   width: 100%;
 
-  @media only screen and (max-width: variables.$r-small-desktop-max) {
+  @media only screen and (width <= variables.$r-small-desktop-max) {
     font-size: variables.$f-size-18;
   }
 }
 
-.redirectButton {
+.redirect-button {
   background-color: inherit;
   border: 0;
   color: colors.$text-dark-gray-color;
@@ -55,7 +55,7 @@
   transition: all 0.2s ease-in-out;
   width: 100%;
 
-  .tooltipText {
+  .tooltip-text {
     background-color: #fff;
     border: 2px solid colors.$light-blue-color;
     border-radius: 4px;
@@ -73,14 +73,14 @@
   }
 }
 
-.usernameHoverable {
+.username-hoverable {
   &:hover {
     .tooltip {
       cursor: auto;
       opacity: 1;
     }
 
-    .tooltipText {
+    .tooltip-text {
       display: block;
     }
 
@@ -99,14 +99,14 @@
   margin: 10px;
 }
 
-@media (max-width: 950px) {
-  .tooltipText {
+@media (width <= 950px) {
+  .tooltip-text {
     width: 111% !important;
   }
 }
 
-@media (max-width: 710px) {
-  .tooltipText {
+@media (width <= 710px) {
+  .tooltip-text {
     width: 80%;
   }
 }
