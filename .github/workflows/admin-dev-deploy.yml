@@ -10,7 +10,7 @@ jobs:
       docker_image_name: judge_web_administration
       dockerfile_name: Dockerfile.administration
       docker_tag: dev-latest
-      branch_name: add-vite
+      branch_name: v2-development
     secrets: inherit
   deploy:
     needs: [build-and-push]

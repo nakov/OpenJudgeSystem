@@ -10,7 +10,7 @@ jobs:
       docker_image_name: judge_worker
       dockerfile_name: Dockerfile.worker
       docker_tag: dev-latest
-      branch_name: add-vite
+      branch_name: v2-development
     secrets: inherit
   deploy:
     needs: [build-and-push]

@@ -10,7 +10,7 @@ jobs:
       docker_image_name: judge_web_fe
       dockerfile_name: Dockerfile.fe
       docker_tag: dev-latest
-      branch_name: add-vite
+      branch_name: v2-development
       build_args: YARN_BUILD_COMMAND=build:staging
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
