@@ -6,9 +6,15 @@
     public class RecurringBackgroundJobsBusinessService : IRecurringBackgroundJobsBusinessService
     {
         private readonly ISubmissionsForProcessingBusinessService submissionsForProcessing;
+        private readonly IParticipantsBusinessService participantsBusinessService;
 
-        public RecurringBackgroundJobsBusinessService(ISubmissionsForProcessingBusinessService submissionsForProcessing)
-            => this.submissionsForProcessing = submissionsForProcessing;
+        public RecurringBackgroundJobsBusinessService(
+            ISubmissionsForProcessingBusinessService submissionsForProcessing,
+            IParticipantsBusinessService participantsBusinessService)
+        {
+            this.submissionsForProcessing = submissionsForProcessing;
+            this.participantsBusinessService = participantsBusinessService;
+        }
 
         public async Task<object> EnqueuePendingSubmissions()
         {
@@ -22,6 +28,20 @@
             await this.submissionsForProcessing.DeleteProcessedSubmissions();
 
             return "Successfully deleted all processed submissions from SubmissionsForProcessing table";
+        }
+
+        public async Task<object> UpdateTotalScoreSnapshotOfParticipants()
+        {
+           await this.participantsBusinessService.UpdateTotalScoreSnapshotOfParticipants();
+
+           return "Successfully updated total score snapshot of participants";
+        }
+
+        public async Task<object> RemoveParticipantMultipleScores()
+        {
+            await this.participantsBusinessService.RemoveDuplicateParticipantScores();
+
+            return "Successfully removed participant multiple scores";
         }
     }
 }

@@ -27,12 +27,13 @@ namespace OJS.Services.Administration.Data
 
         Task Delete(IEnumerable<ParticipantScore> participantScores);
 
-        Task AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial);
+        Task AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial, Participant participant);
 
         Task UpdateBySubmissionAndPoints(
             ParticipantScore participantScore,
             int? submissionId,
-            int submissionPoints);
+            int submissionPoints,
+            Participant participant);
 
         Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds);
     }

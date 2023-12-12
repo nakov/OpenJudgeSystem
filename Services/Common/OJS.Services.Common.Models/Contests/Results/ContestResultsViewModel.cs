@@ -27,6 +27,8 @@ public class ContestResultsViewModel
 
     public bool IsCompete { get; set; }
 
+    public bool UserHasContestRights { get; set; }
+
     public ContestResultsViewModel ToPagedResults(int page, int pageSize)
     {
         this.PagedResults = this.Results.ToPagedList(page, pageSize);

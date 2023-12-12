@@ -7,6 +7,7 @@ using AutoCrudAdmin.ViewModels;
 using Common;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models;
+using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
@@ -26,6 +27,8 @@ using OJS.Services.Administration.Models;
 public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExamGroup>
 {
     public const string ExamGroupIdKey = nameof(UserInExamGroup.ExamGroupId);
+    private const string ExamGroupName = nameof(UserInExamGroup.ExamGroup);
+    private const string ExamGroupUsername = nameof(UserInExamGroup.User);
 
     private readonly IValidatorsFactory<UserInExamGroup> userInExamGroupValidatorsFactory;
     private readonly IValidationService<UserInExamGroupCreateDeleteValidationServiceModel> usersInExamGroupsCreateDeleteValidation;
@@ -50,9 +53,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
     }
 
     protected override Expression<Func<UserInExamGroup, bool>>? MasterGridFilter
-        => this.TryGetEntityIdForNumberColumnFilter(ExamGroupIdKey, out var examGroupId)
-            ? u => u.ExamGroupId == examGroupId
-            : base.MasterGridFilter;
+        => this.GetMasterGridFilter();
 
     protected override IEnumerable<AutoCrudAdminGridToolbarActionViewModel> CustomToolbarActions
         => this.TryGetEntityIdForNumberColumnFilter(ExamGroupIdKey, out var examGroupId)
@@ -116,6 +117,28 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
         await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
+    }
+
+    protected override Expression<Func<UserInExamGroup, bool>> GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<UserInExamGroup, bool>>>();
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ExamGroupIdKey, out var examGroupId))
+        {
+            filterExpressions.Add(ueg => ueg.ExamGroupId == examGroupId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ExamGroupName, out var examGroupName))
+        {
+            filterExpressions.Add(ueg => ueg.ExamGroup.Name == examGroupName);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ExamGroupUsername, out var examGroupUsername))
+        {
+            filterExpressions.Add(ueg => ueg.User.UserName == examGroupUsername);
+        }
+
+        return filterExpressions.CombineMultiple();
     }
 
     private static void LockExamGroupId(IEnumerable<FormControlViewModel> formControls, int examGroupId)

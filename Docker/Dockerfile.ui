@@ -2,26 +2,6 @@
 
 WORKDIR /app
 
-# Node.js build
-FROM node:18-alpine as node_build
-
-WORKDIR /src
-
-COPY Servers/UI/OJS.Servers.Ui/ClientApp/package.json /src/Servers/UI/OJS.Servers.Ui/ClientApp/package.json
-COPY Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock /src/Servers/UI/OJS.Servers.Ui/ClientApp/yarn.lock
-WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
-RUN yarn install
-
-WORKDIR /src
-
-COPY Servers/UI/OJS.Servers.Ui/Views /src/Servers/UI/OJS.Servers.Ui/Views
-COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientApp
-
-WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
-
-RUN yarn run lint
-RUN yarn build
-
 # .Net build
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS dotnet_build
 
@@ -40,11 +20,6 @@ COPY Services/Infrastructure ./Services/Infrastructure
 
 # Dotnet Publish
 FROM dotnet_build AS publish
-
-WORKDIR /src/Servers/UI/OJS.Servers.Ui
-
-COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/Views /src/Servers/UI/OJS.Servers.Ui/Views
-COPY --from=node_build /src/Servers/UI/OJS.Servers.Ui/ClientApp/build /src/Servers/UI/OJS.Servers.Ui/ClientApp/build
 
 WORKDIR /src/Servers/UI/OJS.Servers.Ui
 RUN dotnet publish OJS.Servers.Ui.csproj -c Release -o /app/publish
