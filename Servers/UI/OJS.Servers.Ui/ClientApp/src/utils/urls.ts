@@ -47,7 +47,7 @@ const getHomePageUrl = () => '/';
 const getLoginSubmitUrl = () => `${baseApiUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseApiUrl}/Account/Logout`;
 
-const getLoginPageUrl = () => `${baseApiUrl}/login`;
+const getLoginPageUrl = () => `${baseUrl}/login`;
 
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
