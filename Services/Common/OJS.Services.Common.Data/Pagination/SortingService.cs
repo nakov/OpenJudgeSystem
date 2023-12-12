@@ -1,22 +1,20 @@
-﻿namespace OJS.Services.Infrastructure.Pagination;
+﻿namespace OJS.Services.Common.Data.Pagination;
 
-using System.Linq;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-public class SortingModel<TEntity> : FilterModel<TEntity>
+public abstract class SortingService<TEntity> : FilteringService<TEntity>
 {
-    public string? Sorting { get; set; }
-
-    protected IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query)
+    protected virtual IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, string? sorting)
     {
-        if (string.IsNullOrEmpty(this.Sorting))
+        if (string.IsNullOrEmpty(sorting))
         {
             return query;
         }
 
-        var conditions = this.Sorting.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        var conditions = sorting.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var condition in conditions)
         {
@@ -31,7 +29,14 @@ public class SortingModel<TEntity> : FilterModel<TEntity>
 
             var sortingProperty = GetEntityProperty(key);
 
-            return query.Provider.CreateQuery<TEntity>(BuildSortingExpression(query, sortingProperty, sortingType));
+            if (sortingProperty is null)
+            {
+                return query;
+            }
+            else
+            {
+                return query.Provider.CreateQuery<TEntity>(BuildSortingExpression(query, sortingProperty, sortingType));
+            }
         }
 
         return query;

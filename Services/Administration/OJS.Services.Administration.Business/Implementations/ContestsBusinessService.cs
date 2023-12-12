@@ -6,10 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using OJS.Services.Infrastructure.Pagination;
-using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Common.Data.Pagination;
 
-public class ContestsBusinessService : IContestsBusinessService
+public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
 {
     private readonly IContestsDataService contestsData;
     private readonly Business.IUserProviderService userProvider;
@@ -17,6 +16,7 @@ public class ContestsBusinessService : IContestsBusinessService
     public ContestsBusinessService(
         IContestsDataService contestsData,
         Business.IUserProviderService userProvider)
+        : base(contestsData)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
@@ -40,7 +40,4 @@ public class ContestsBusinessService : IContestsBusinessService
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
     }
-
-    public async Task<PaginatedList<ContestInListModel>> GetAllContests(PaginationModel<Contest> paginationModel)
-        => await paginationModel.ApplyPagination<ContestInListModel>(this.contestsData.GetAllWithDeleted());
 }

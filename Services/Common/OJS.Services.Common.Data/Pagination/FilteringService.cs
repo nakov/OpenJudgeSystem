@@ -1,16 +1,14 @@
-﻿namespace OJS.Services.Infrastructure.Pagination;
+﻿namespace OJS.Services.Common.Data.Pagination;
 
-using System.Linq;
+using OJS.Services.Common.Data.Pagination.Enums;
 using System;
-using System.Reflection;
+using System.Linq;
 using System.Linq.Expressions;
-using OJS.Services.Infrastructure.Pagination.Enums;
+using System.Reflection;
 
-public class FilterModel<TEntity>
+public abstract class FilteringService<TEntity>
 {
-    public string? Filter { get; set; }
-
-    protected static PropertyInfo GetEntityProperty(string key)
+    protected static PropertyInfo? GetEntityProperty(string key)
     {
         var propertyInfo = typeof(TEntity).GetProperties()
             .FirstOrDefault(p =>
@@ -18,20 +16,20 @@ public class FilterModel<TEntity>
 
         if (propertyInfo is null)
         {
-            throw new ArgumentException("Property: {key} not found");
+            return null;
         }
 
         return propertyInfo;
     }
 
-    protected IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query)
+    protected virtual IQueryable<TEntity> ApplyFiltering<TModel>(IQueryable<TEntity> query, string? filter)
     {
-        if (string.IsNullOrEmpty(this.Filter))
+        if (string.IsNullOrEmpty(filter))
         {
             return query;
         }
 
-        var conditions = this.Filter.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        var conditions = filter.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var condition in conditions)
         {
@@ -53,12 +51,35 @@ public class FilterModel<TEntity>
             }
 
             var filteringProperty = GetEntityProperty(key);
-            var expression = BuildFilteringExpression(query, filteringProperty, operatorType, value);
+            if (filteringProperty is null)
+            {
+                filteringProperty = GetModelProperty(key);
+            }
 
+            if (filteringProperty is null)
+            {
+                throw new ArgumentNullException($"Property with name {key} is not found.");
+            }
+
+            var expression = BuildFilteringExpression(query, filteringProperty, operatorType, value);
             query = query.Where(expression);
         }
 
         return query;
+    }
+
+    private static PropertyInfo? GetModelProperty(string key)
+    {
+        var propertyInfo = typeof(TEntity).GetProperties()
+            .FirstOrDefault(p =>
+                string.Equals(p.Name, key, StringComparison.OrdinalIgnoreCase));
+
+        if (propertyInfo is null)
+        {
+            return null;
+        }
+
+        return propertyInfo;
     }
 
     private static Expression<Func<TEntity, bool>> BuildFilteringExpression(IQueryable<TEntity> query, PropertyInfo filteringProperty, OperatorType operatorType, string value)

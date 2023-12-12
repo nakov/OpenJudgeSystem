@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Infrastructure.Pagination.Enums;
+﻿namespace OJS.Services.Common.Data.Pagination.Enums;
 
 public enum OperatorType
 {

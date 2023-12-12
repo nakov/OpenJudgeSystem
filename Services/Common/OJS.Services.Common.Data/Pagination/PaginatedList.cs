@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Infrastructure.Pagination;
+﻿namespace OJS.Services.Common.Data.Pagination;
 
 using System.Collections.Generic;
 
