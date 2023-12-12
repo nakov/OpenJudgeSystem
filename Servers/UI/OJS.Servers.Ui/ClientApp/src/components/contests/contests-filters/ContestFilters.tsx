@@ -84,9 +84,18 @@ const ContestFilters = ({ onFilterClick }: IContestFiltersProps) => {
         (fg: IFiltersGroup) => {
             const { type, filters: groupFilters } = fg;
 
+            const currentSelectedFilter =
+                groupFilters.find(({ value }) => value.toString() === selectValue);
+
+            // Array is passed to the dropdown for strategy selection
+            // If there are no filtered strategies we pass all group filters
+            // If the currently selected filter is not in the filteredStrategyFilters
+            // it has to be added to the array in order for it to be displayed in the dropdown
             const strategyFilters = isEmpty(filteredStrategyFilters)
                 ? groupFilters
-                : filteredStrategyFilters;
+                : currentSelectedFilter && !filteredStrategyFilters.includes(currentSelectedFilter)
+                    ? [ ...filteredStrategyFilters, currentSelectedFilter ]
+                    : [ ...filteredStrategyFilters ];
 
             if (type === FilterType.Strategy) {
                 return (
