@@ -74,7 +74,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
         {
             var user = this.userProviderService.GetCurrentUser();
-            var contest = await this.contestsData.GetByIdWithProblems(id);
+            var contest = await this.contestsData.GetByIdWithProblemsAndSubmissionTypes(id);
             var isLecturerOrAdmin = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest, user.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
@@ -90,7 +90,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
 
             var participant = await this.participantsData
-                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
+                .GetWithProblemsForParticipantsByContestByUserAndIsOfficial(
                     id,
                     user.Id,
                     contestActivityEntity.CanBeCompeted);
