@@ -14,7 +14,6 @@ using OJS.Services.Common.Models;
 using OJS.Common.Extensions;
 using SharedResource = OJS.Common.Resources.ContestsGeneral;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
-using OJS.Services.Common.Models.Cache;
 
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {
@@ -22,17 +21,20 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
     private readonly IDatesService datesService;
+    private readonly IParticipantScoresDataService scoresDataService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         ISubmissionsDataService submissionsData,
         IContestsDataService contestsData,
-        IDatesService datesService)
+        IDatesService datesService,
+        IParticipantScoresDataService scoresDataService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
         this.datesService = datesService;
+        this.scoresDataService = scoresDataService;
     }
 
     public Task<int> GetPracticeParticipantsCount(int contestId)

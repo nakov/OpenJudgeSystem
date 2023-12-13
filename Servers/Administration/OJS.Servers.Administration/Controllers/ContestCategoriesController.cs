@@ -1,6 +1,9 @@
 namespace OJS.Servers.Administration.Controllers;
 
 using FluentExtensions.Extensions;
+using AutoCrudAdmin.Extensions;
+using System;
+using System.Linq.Expressions;
 using AutoCrudAdmin.Models;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models.Contests;
@@ -16,6 +19,8 @@ using System.Collections.Generic;
 
 public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCategory>
 {
+    private const string Parent = nameof(ContestCategory.Parent);
+
     private readonly IContestCategoriesDataService contestCategoriesData;
     private readonly IContestCategoriesCacheService contestCategoriesCache;
     private readonly IValidationService<ContestCategoriesValidationServiceModel> contestCategoriesValidationService;
@@ -34,6 +39,9 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         this.contestCategoriesValidationService = contestCategoriesValidationService;
         this.contestCategoriesOrderableService = contestCategoriesOrderableService;
     }
+
+    protected override Expression<Func<ContestCategory, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
 
     protected override Task BeforeEntitySaveOnCreateAsync(ContestCategory entity, AdminActionContext actionContext)
     {
@@ -120,6 +128,16 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
     {
         this.contestCategoriesCache.ClearMainContestCategoriesCache();
         return Task.CompletedTask;
+    }
+
+    protected override Expression<Func<ContestCategory, bool>>? GetMasterGridFilter()
+    {
+        if (this.TryGetEntityIdForStringColumnFilter(Parent, out var parentName))
+        {
+            return cc => cc.Parent!.Name == parentName;
+        }
+
+        return base.MasterGridFilter;
     }
 
     private async Task CascadeDeleteCategories(ContestCategory contestCategory)

@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -71,6 +72,7 @@ namespace OJS.Services.Ui.Data.Implementations
                 {
                     p.IsOfficial,
                     p.User.UserName,
+                    Participant = p,
                 })
                 .FirstOrDefaultAsync();
 
@@ -86,11 +88,11 @@ namespace OJS.Services.Ui.Data.Implementations
 
             if (existingScore == null)
             {
-                await this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.IsOfficial);
+                await this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.IsOfficial, participant.Participant);
             }
             else
             {
-                await this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points);
+                await this.UpdateBySubmissionAndPoints(existingScore, submission.Id, submission.Points, participant.Participant);
             }
         }
 
@@ -122,7 +124,7 @@ namespace OJS.Services.Ui.Data.Implementations
             await this.SaveChanges();
         }
 
-        public async Task AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial)
+        public async Task AddBySubmissionByUsernameAndIsOfficial(Submission submission, string username, bool isOfficial, Participant participant)
         {
             await this.Add(new ParticipantScore
             {
@@ -134,18 +136,31 @@ namespace OJS.Services.Ui.Data.Implementations
                 IsOfficial = isOfficial,
             });
 
+            UpdateTotalScoreSnapshot(participant, 0, submission.Points, true);
+            this.participantsData.Update(participant);
+
             await this.SaveChanges();
         }
 
         public async Task UpdateBySubmissionAndPoints(
             ParticipantScore participantScore,
             int? submissionId,
-            int submissionPoints)
+            int submissionPoints,
+            Participant participant)
         {
+            // The submission TotalScoreSnapshotModifiedOn must be changed only if it is new submission in other way the results will not be ordered correctly.
+            var shouldUpdateTotalScoreDate = submissionId != null && submissionId != participantScore.SubmissionId;
+            UpdateTotalScoreSnapshot(
+                participant,
+                participantScore.Points,
+                submissionPoints,
+                shouldUpdateTotalScoreDate);
+
             participantScore.SubmissionId = submissionId;
             participantScore.Points = submissionPoints;
 
             this.Update(participantScore);
+            this.participantsData.Update(participant);
             await this.SaveChanges();
         }
 
@@ -173,5 +188,18 @@ namespace OJS.Services.Ui.Data.Implementations
                             .Max(),
                     })
                 .ToEnumerableAsync();
+
+        private static void UpdateTotalScoreSnapshot(
+            Participant participant,
+            int previousPoints,
+            int newPoints,
+            bool shouldUpdateDate)
+        {
+            participant.TotalScoreSnapshot = (participant.TotalScoreSnapshot - previousPoints) + newPoints;
+            if (shouldUpdateDate)
+            {
+                participant.TotalScoreSnapshotModifiedOn = DateTime.Now;
+            }
+        }
     }
 }

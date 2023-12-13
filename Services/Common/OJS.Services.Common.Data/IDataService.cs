@@ -71,5 +71,7 @@ namespace OJS.Services.Common.Data
             bool descending = false,
             int? skip = null,
             int? take = null);
+
+        Task ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds);
     }
 }

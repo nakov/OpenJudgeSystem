@@ -14,5 +14,9 @@
         /// Deletes all processed (and not processing) submissions from the SubmissionsForProcessing table.
         /// </summary>
         Task<object> DeleteProcessedSubmissions();
+
+        Task<object> UpdateTotalScoreSnapshotOfParticipants();
+
+        Task<object> RemoveParticipantMultipleScores();
     }
 }

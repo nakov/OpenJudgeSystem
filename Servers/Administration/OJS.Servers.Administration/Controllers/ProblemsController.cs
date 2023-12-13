@@ -44,6 +44,7 @@ using Resource = OJS.Common.Resources.ProblemGroupsControllers;
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
     public const string ContestIdKey = nameof(OJS.Data.Models.Problems.Problem.ProblemGroup.ContestId);
+    private const string CheckerName = nameof(Data.Models.Problems.Problem.Checker);
 
     private readonly IProblemsBusinessService problemsBusiness;
     private readonly IContestsBusinessService contestsBusiness;
@@ -493,18 +494,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     Name = st.Name,
                     Value = st.Id,
                     IsChecked = submissionTypesInProblem.Any(x => x.SubmissionTypeId == st.Id),
-                    Expand = new List<FormControlViewModel>
+                    Expand = new FormControlViewModel
                     {
-                        new ()
-                        {
-                            Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
-                            Value = submissionTypesInProblem
-                                .Where(x => x.SubmissionTypeId == st.Id)
-                                .Select(x => x.SolutionSkeleton)
-                                .FirstOrDefault()?.Decompress(),
-                            Type = typeof(string),
-                            FormControlType = FormControlType.TextArea,
-                        },
+                        Name = st.Name + " " + AdditionalFormFields.SolutionSkeletonRaw.ToString(),
+                        Value = submissionTypesInProblem
+                            .Where(x => x.SubmissionTypeId == st.Id)
+                            .Select(x => x.SolutionSkeleton)
+                            .FirstOrDefault()?.Decompress(),
+                        Type = typeof(string),
+                        FormControlType = FormControlType.TextArea,
                     },
                 }),
             FormControlType = FormControlType.ExpandableMultiChoiceCheckBox,
@@ -627,6 +625,30 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .VerifyResult();
     }
 
+    protected override Expression<Func<Problem, bool>> GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<Problem, bool>>>();
+
+        var filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusiness.GetProblemsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        filterExpressions.Add(filterByLecturerRightsExpression);
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
+        {
+            filterExpressions.Add(p => p.ProblemGroup.ContestId == contestId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(CheckerName, out var checkerName))
+        {
+            filterExpressions.Add(p => p.Checker != null && p.Checker.Name == checkerName);
+        }
+
+        return filterExpressions.CombineMultiple();
+    }
+
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
 
@@ -724,19 +746,5 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             new () { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
             new () { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
         };
-    }
-
-    private Expression<Func<Problem, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<Problem, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusiness.GetProblemsUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId)
-            ? x => x.ProblemGroup.ContestId == contestId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

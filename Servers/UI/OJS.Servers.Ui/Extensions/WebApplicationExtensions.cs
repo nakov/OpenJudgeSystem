@@ -1,13 +1,10 @@
 namespace OJS.Servers.Ui.Extensions
 {
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.FileProviders;
     using Microsoft.Extensions.Hosting;
+    using OJS.Common;
     using OJS.Data;
     using OJS.Servers.Infrastructure.Extensions;
-    using System.IO;
 
     internal static class WebApplicationExtensions
     {
@@ -15,10 +12,10 @@ namespace OJS.Servers.Ui.Extensions
             this WebApplication app,
             string apiVersion)
         {
+            app.UseCors(GlobalConstants.CorsDefaultPolicyName);
             app
                 .UseDefaults()
-                .MapDefaultRoutes()
-                .UseReactStaticFiles();
+                .MapDefaultRoutes();
 
             app.MigrateDatabase<OjsDbContext>();
 
@@ -35,39 +32,8 @@ namespace OJS.Servers.Ui.Extensions
                 endpoints.MapControllerRoute(
                     "default",
                     "{controller=Home}/{action=Index}");
-                endpoints.MapFallbackToController("index", "home");
             });
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-                app.UseSpa(spa =>
-                {
-                    spa.Options.SourcePath = "ClientApp";
-                    if (app.Environment.IsDevelopment())
-                    {
-                        // spa.UseProxyToSpaDevelopmentServer("htp://");
-                        spa.UseReactDevelopmentServer(npmScript: "start");
-                    }
-                });
-            }
-
-            return app;
-        }
-
-        public static WebApplication UseReactStaticFiles(this WebApplication app)
-        {
-            // var distDirectory = app.Environment.IsDevelopment()
-            //     ? "dist"
-            //     : "build";
-            var distDirectory = "build";
-            var reactFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", distDirectory);
-            if (!Directory.Exists(reactFilesPath))
-            {
-                Directory.CreateDirectory(reactFilesPath);
-            }
-
-            app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(reactFilesPath), });
             return app;
         }
     }

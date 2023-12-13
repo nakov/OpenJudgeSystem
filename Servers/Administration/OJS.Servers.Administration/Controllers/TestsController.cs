@@ -1,5 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
-
+using OJS.Workers.Common.Extensions;
 using OJS.Common.Utils;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
@@ -39,6 +39,7 @@ using Resource = OJS.Common.Resources.TestsControllers;
 public class TestsController : BaseAutoCrudAdminController<Test>
 {
     public const string ProblemIdKey = nameof(Test.ProblemId);
+    private const string ProblemName = nameof(Test.Problem);
 
     private const int TestInputMaxLengthInGrid = 20;
 
@@ -337,6 +338,30 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         UpdateType(entity, actionContext);
     }
 
+    protected override Expression<Func<Test, bool>> GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<Test, bool>>>();
+
+        var filterByLecturerRightsExpression =
+            this.lecturerContestPrivilegesBusinessService.GetTestsUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+        filterExpressions.Add(filterByLecturerRightsExpression);
+
+        if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
+        {
+            filterExpressions.Add(t => t.ProblemId == problemId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ProblemName, out var problemName))
+        {
+            filterExpressions.Add(t => t.Problem.Name == problemName);
+        }
+
+        return filterExpressions.CombineMultiple();
+    }
+
     private static void UpdateType(Test entity, AdminActionContext actionContext)
     {
         Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
@@ -398,19 +423,5 @@ public class TestsController : BaseAutoCrudAdminController<Test>
                 FormControls = GetFormControlsForImportTests(problemId),
             },
         };
-    }
-
-    private Expression<Func<Test, bool>> GetMasterGridFilter()
-    {
-        Expression<Func<Test, bool>> filterByLecturerRightsExpression =
-            this.lecturerContestPrivilegesBusinessService.GetTestsUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
-
-        var filter = this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId)
-            ? t => t.ProblemId == problemId
-            : base.MasterGridFilter;
-
-        return filterByLecturerRightsExpression.CombineAndAlso(filter);
     }
 }

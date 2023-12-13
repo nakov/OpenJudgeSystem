@@ -130,6 +130,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             services
                 .ConfigureApplicationCookie(opt =>
                 {
+                    opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    opt.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
                     opt.Cookie.Domain = sharedAuthCookieDomain;
                     opt.Events.OnRedirectToAccessDenied = UnAuthorizedResponse;
                     opt.Events.OnRedirectToLogin = UnAuthorizedResponse;

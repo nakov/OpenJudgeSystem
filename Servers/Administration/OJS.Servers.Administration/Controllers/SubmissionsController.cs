@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
@@ -31,7 +32,10 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     public const string ContestIdKey = nameof(ProblemGroup.ContestId);
     public const string ProblemIdKey = nameof(Submission.ProblemId);
     public const string ParticipantIdKey = nameof(Submission.ParticipantId);
-    public const string SubmissionIdKey = nameof(Submission.Id);
+    private const string Participant = nameof(Submission.Participant);
+    private const string ProblemName = nameof(Submission.Problem);
+    private const string SubmissionIdKey = nameof(Submission.Id);
+    private const string ContestName = nameof(Contest);
 
     private readonly IProblemsValidationHelper problemsValidationHelper;
     private readonly IParticipantScoresBusinessService participantScoresBusiness;
@@ -82,13 +86,13 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         {
             new ()
             {
-                Name = "Contest",
-                ValueFunc = s => s.Problem != null ? s.Problem.ProblemGroup.Contest.ToString() : string.Empty,
+                Name = nameof(Contest),
+                ValueFunc = s => s.Problem!.ProblemGroup.Contest.Name ?? string.Empty,
             },
             new ()
             {
                 Name = "Contest Id",
-                ValueFunc = s => s.Problem != null ? s.Problem!.ProblemGroup.ContestId.ToString() : string.Empty,
+                ValueFunc = s => s.Problem!.ProblemGroup.ContestId.ToString(),
             },
         };
 
@@ -218,36 +222,48 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         });
     }
 
-    private Expression<Func<Submission, bool>>? GetMasterGridFilter()
+    protected override Expression<Func<Submission, bool>> GetMasterGridFilter()
     {
-        Expression<Func<Submission, bool>> filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
+        var filterExpressions = new List<Expression<Func<Submission, bool>>>();
+
+        var filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService
             .GetSubmissionsUserPrivilegesExpression(
                 this.User.GetId(),
                 this.User.IsAdmin());
 
-        Expression<Func<Submission, bool>> filterByKeyExpression = null!;
+        filterExpressions.Add(filterByLecturerRightsExpression);
 
         if (this.TryGetEntityIdForNumberColumnFilter(ContestIdKey, out var contestId))
         {
-            filterByKeyExpression = x => x.Problem != null && x.Problem.ProblemGroup.ContestId == contestId;
+            filterExpressions.Add(s => s.Problem.ProblemGroup.ContestId == contestId);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ProblemName, out var problemName))
+        {
+            filterExpressions.Add(s => s.Problem.Name == problemName);
+        }
+
+        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        {
+            return s => s.Problem.ProblemGroup.Contest.Name == contestName;
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ProblemIdKey, out var problemId))
         {
-            filterByKeyExpression = x => x.ProblemId == problemId;
+            filterExpressions.Add(s => s.ProblemId == problemId);
         }
 
         if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var participantId))
         {
-            filterByKeyExpression = x => x.ParticipantId == participantId;
+            filterExpressions.Add(s => s.ParticipantId == participantId);
         }
 
-        if (this.TryGetEntityIdForNumberColumnFilter(ParticipantIdKey, out var submissionId))
+        if (this.TryGetEntityIdForStringColumnFilter(Participant, out var participant))
         {
-            filterByKeyExpression = x => x.Id == submissionId;
+            filterExpressions.Add(s => s.Participant != null && s.Participant.UserId == participant);
         }
 
-        return filterByLecturerRightsExpression.CombineAndAlso(filterByKeyExpression);
+        return filterExpressions.CombineMultiple();
     }
 
     private IActionResult RedirectToSubmissionById(int id)

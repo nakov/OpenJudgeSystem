@@ -1,6 +1,7 @@
 namespace OJS.Servers.Administration.Controllers
 {
     using System;
+    using AutoCrudAdmin.Extensions;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -13,6 +14,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
+    using OJS.Servers.Administration.Extensions;
     using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
@@ -27,6 +29,8 @@ namespace OJS.Servers.Administration.Controllers
 
     public class ContestsController : BaseAutoCrudAdminController<Contest>
     {
+        private const string ContestCategoryName = nameof(Contest.Category);
+
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
@@ -277,6 +281,24 @@ namespace OJS.Servers.Administration.Controllers
                 });
         }
 
+        protected override Expression<Func<Contest, bool>>? GetMasterGridFilter()
+        {
+            var filterExpressions = new List<Expression<Func<Contest, bool>>>();
+
+            var filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
+                this.User.GetId(),
+                this.User.IsAdmin());
+
+            filterExpressions.Add(filterByLecturerRightsExpression);
+
+            if (this.TryGetEntityIdForStringColumnFilter(ContestCategoryName, out var categoryName))
+            {
+                filterExpressions.Add(c => c.Category != null && c.Category.Name == categoryName);
+            }
+
+            return filterExpressions.CombineMultiple();
+        }
+
         private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
         {
             for (var i = 1; i <= problemGroupsCount; i++)
@@ -324,10 +346,5 @@ namespace OJS.Servers.Administration.Controllers
                 await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
             }
         }
-
-        private Expression<Func<Contest, bool>>? GetMasterGridFilter()
-            => this.lecturerContestPrivilegesBusinessService.GetContestUserPrivilegesExpression(
-                this.User.GetId(),
-                this.User.IsAdmin());
     }
 }
