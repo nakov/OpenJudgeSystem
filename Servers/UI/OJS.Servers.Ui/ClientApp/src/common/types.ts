@@ -275,6 +275,25 @@ interface ISearchProps<T> {
     renderItem: (item: T) => React.ReactElement<any, string | React.JSXElementConstructor<any>>;
 }
 
+interface IContestAdministration {
+    id: number;
+    name: string;
+    type: number;
+    categoryId: number;
+    categoryName: string;
+    description: string;
+    startTime: Date;
+    endTime: Date;
+    practiceStartTime: Date;
+    practiceEndTime: Date;
+    limitBetweenSubmissions: number;
+    isVisible: boolean;
+    newIpPassword: string;
+    allowParallelSubmissionsInTasks: boolean;
+    autoChangeTestsFeedbackVisibility: boolean;
+    orderBy: number;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -301,4 +320,5 @@ export type {
     IGetAllContestsAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,
+    IContestAdministration,
 };

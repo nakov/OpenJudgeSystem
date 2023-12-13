@@ -1,0 +1,32 @@
+.halfWidth {
+    width: 50%;
+}
+
+.flex{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.spacing{
+    margin: 0.7rem;
+}
+
+.centralize{
+    text-align: center;
+    margin-bottom: 0.2rem;
+}
+
+.paged {
+    min-height: 1080px;
+    padding: 2rem;
+    width: 100%;
+}
+.form {
+    min-height: 800px;
+    width: 100%;
+}
+.edit {
+    width:200px;
+    height: 45px;
+}

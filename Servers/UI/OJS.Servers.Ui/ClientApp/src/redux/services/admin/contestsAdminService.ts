@@ -1,24 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import {
-    IAdminContestResponseType,
-    IAdminPagedResultType,
-    IGetAllContestsAdminParams,
-} from '../../../common/types';
+import { defaultPathIdentifier } from '../../../common/constants';
+import { IContestAdministration, IGetAllContestsAdminParams,
+    IIndexContestsType,
+    IPagedResultType } from '../../../common/types';
+import { IContestDetailsUrlParams } from '../../../common/url-types';
 
-const contestsAdminService = createApi({
-    reducerPath: 'adminContests',
+// eslint-disable-next-line import/group-exports
+export const contestService = createApi({
+    reducerPath: 'contests',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:5001/api',
+        baseUrl: import.meta.env.VITE_ADMINISTRATION_URL,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
     }),
     endpoints: (builder) => ({
-        getAllAdminContests: builder.query<IAdminPagedResultType<IAdminContestResponseType>, IGetAllContestsAdminParams>({
+        getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsAdminParams>({
             query: ({ filter, page, ItemsPerPage, sorting }) => ({
-                url: '/contest',
+                url: `${defaultPathIdentifier}/contest`,
                 params: {
                     filter,
                     page,
@@ -27,9 +28,11 @@ const contestsAdminService = createApi({
                 },
             }),
         }),
+        // eslint-disable-next-line max-len
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `${defaultPathIdentifier}/contest/${id}` }) }),
     }),
 });
 
-export const { useGetAllAdminContestsQuery } = contestsAdminService;
-
-export default contestsAdminService;
+// eslint-disable-next-line import/group-exports
+export const { useGetAllAdminContestsQuery, useGetContestByIdQuery } = contestService;
+export default contestService;
