@@ -90,7 +90,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .ThenInclude(pg => pg.Problems)
             .FirstOrDefaultAsync(c => c.Id == id);
 
-    public Task<Contest?> GetByIdWithProblemsAndSubmissionTypes(int id)
+    public Task<Contest?> GetByIdWithCategoryAndProblemsAndSubmissionTypes(int id)
         => this.DbSet
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
@@ -109,9 +109,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                  .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                    .ThenInclude(p => p.ProblemsForParticipants)
             .FirstOrDefaultAsync(c => c.Id == id);
 
     public Task<Contest?> GetByIdWithParticipants(int id)

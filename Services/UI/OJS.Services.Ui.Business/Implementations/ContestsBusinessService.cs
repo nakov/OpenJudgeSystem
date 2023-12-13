@@ -1,5 +1,6 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private const int DefaultContestsPerPage = 12;
 
         private readonly IContestsDataService contestsData;
+        private readonly ISubmissionsDataService submissionsData;
         private readonly IContestsActivityService activityService;
         private readonly IExamGroupsDataService examGroupsData;
         private readonly IParticipantsDataService participantsData;
@@ -43,6 +45,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public ContestsBusinessService(
             IContestsDataService contestsData,
+            ISubmissionsDataService submissionsData,
             IContestsActivityService activityService,
             IExamGroupsDataService examGroupsData,
             IParticipantsDataService participantsData,
@@ -57,6 +60,7 @@ namespace OJS.Services.Ui.Business.Implementations
             IContestDetailsValidationService contestDetailsValidationService)
         {
             this.contestsData = contestsData;
+            this.submissionsData = submissionsData;
             this.activityService = activityService;
             this.examGroupsData = examGroupsData;
             this.participantsData = participantsData;
@@ -74,7 +78,7 @@ namespace OJS.Services.Ui.Business.Implementations
         public async Task<ContestDetailsServiceModel> GetContestDetails(int id)
         {
             var user = this.userProviderService.GetCurrentUser();
-            var contest = await this.contestsData.GetByIdWithProblemsAndSubmissionTypes(id);
+            var contest = await this.contestsData.GetByIdWithCategoryAndProblemsAndSubmissionTypes(id);
             var isLecturerOrAdmin = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest, user.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
@@ -143,7 +147,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
             var participant = await this.participantsData
-                .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
+                .GetByContestByUserAndByIsOfficial(
                     id,
                     userProfile!.Id,
                     official);
@@ -238,6 +242,13 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var participationModel = participant!.Map<ContestParticipationServiceModel>();
+
+            // explicitly setting lastSubmissionTime to avoid including all submissions for participant
+            var lastSubmissionTime = this.submissionsData
+                .GetAllForUserByContest(contest.Id, user.Id)
+                .Select(x => (DateTime?)x.CreatedOn)
+                .Max();
+            participationModel.LastSubmissionTime = lastSubmissionTime;
 
             participationModel.Contest.AllowedSubmissionTypes =
                 participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
