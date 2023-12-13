@@ -7,7 +7,7 @@ import ContestProblemsPage from '../../pages/administration/ContestProblemsPage'
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../pages/administration/TestEditPage';
 import Administration from '../../pages/administration-new/Administration';
-import { AdministrationContestsPage } from '../../pages/administration-new/AdministrationContests';
+import AdministrationContestsPage from '../../pages/administration-new/AdministrationContests';
 import { AdministrationSubmissionsPage } from '../../pages/administration-new/AdministrationSubmissions';
 import { AdministrationContestPage } from '../../pages/administration-new/Contest/AdministrationContestPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
@@ -21,7 +21,7 @@ import NotFoundPage from '../../pages/not-found/NotFoundPage';
 import ProfilePage from '../../pages/profile/ProfilePage';
 import RegisterPage from '../../pages/register/RegisterPage';
 import SearchPage from '../../pages/search/SearchPage';
-import { withAdministrationNav } from '../../pages/shared/set-admin-navigation';
+import withAdministrationNav from '../../pages/shared/set-admin-navigation';
 import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
