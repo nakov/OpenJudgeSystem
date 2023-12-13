@@ -4,12 +4,11 @@ using System.Reflection;
 
 public class FilteringModel
 {
-    public FilteringModel(PropertyInfo property, OperatorType operatorType, string value, bool isBaseProperty)
+    public FilteringModel(PropertyInfo property, OperatorType operatorType, string value)
     {
         this.Property = property;
         this.OperatorType = operatorType;
         this.Value = value;
-        this.IsBaseProperty = isBaseProperty;
     }
 
     public PropertyInfo Property { get; set; }
@@ -17,6 +16,4 @@ public class FilteringModel
     public OperatorType OperatorType { get; set; }
 
     public string Value { get; set; }
-
-    public bool IsBaseProperty { get; set; }
 }

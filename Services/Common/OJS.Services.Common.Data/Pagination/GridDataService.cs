@@ -74,22 +74,14 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
                 throw new ArgumentException($"Operator with type {operatorTypeAsString} is not supported.");
             }
 
-            var filteringProperty = GetProperty<TEntity>(key);
+            var filteringProperty = GetProperty<T>(key);
 
             if (filteringProperty is null)
             {
-                filteringProperty = GetProperty<T>(key);
-                if (filteringProperty is null)
-                {
                     throw new ArgumentNullException($"Property with name {key} is not found.");
-                }
+            }
 
-                filteringCollection.Add(new FilteringModel(filteringProperty, operatorType, value, false));
-            }
-            else
-            {
-                filteringCollection.Add(new FilteringModel(filteringProperty, operatorType, value, true));
-            }
+            filteringCollection.Add(new FilteringModel(filteringProperty, operatorType, value));
         }
 
         return filteringCollection;

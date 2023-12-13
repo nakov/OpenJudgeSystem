@@ -32,19 +32,9 @@ public abstract class FilteringService<TEntity>
             return query.MapCollection<TModel>();
         }
 
-        var baseFilters = filters.Where(f => f.IsBaseProperty);
-
-        foreach (var filter in baseFilters)
-        {
-            var expression = BuildFilteringExpression(query, filter);
-            query = query.Where(expression);
-        }
-
         var mappedQuery = query.MapCollection<TModel>();
 
-        var customFilters = filters.Where(f => !f.IsBaseProperty);
-
-        foreach (var filter in customFilters)
+        foreach (var filter in filters)
         {
             var expression = BuildFilteringExpression(mappedQuery, filter);
             mappedQuery = mappedQuery.Where(expression);
