@@ -116,6 +116,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
+        if (submissionDetailsServiceModel.IsNull())
+        {
+            throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
+        }
+
         var validationResult =
             this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
 

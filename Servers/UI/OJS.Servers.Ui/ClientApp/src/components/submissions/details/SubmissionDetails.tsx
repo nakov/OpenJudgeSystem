@@ -9,6 +9,7 @@ import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
+import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import { setCurrentPage, setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
 import { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
@@ -138,7 +139,7 @@ const SubmissionDetails = () => {
     );
 
     if (!isFetching && isNil(currentSubmission) && isEmpty(validationErrors)) {
-        return <div>No details fetched.</div>;
+        return <NotFoundPage />;
     }
 
     if (!isEmpty(validationErrors)) {
