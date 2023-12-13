@@ -3,7 +3,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/responsive';
 
-.user-element {
+.userElement {
   @extend %font-family-lato;
 
   align-content: center;
@@ -22,7 +22,7 @@
   width: 13vw;
 }
 
-.user-text {
+.userText {
   font-size: variables.$f-size-24;
   justify-self: center;
   max-height: 40px;
@@ -38,7 +38,7 @@
   }
 }
 
-.redirect-button {
+.redirectButton {
   background-color: inherit;
   border: 0;
   color: colors.$text-dark-gray-color;
@@ -55,7 +55,7 @@
   transition: all 0.2s ease-in-out;
   width: 100%;
 
-  .tooltip-text {
+  .tooltipText {
     background-color: #fff;
     border: 2px solid colors.$light-blue-color;
     border-radius: 4px;
@@ -73,14 +73,14 @@
   }
 }
 
-.username-hoverable {
+.usernameHoverable {
   &:hover {
     .tooltip {
       cursor: auto;
       opacity: 1;
     }
 
-    .tooltip-text {
+    .tooltipText {
       display: block;
     }
 
@@ -90,7 +90,7 @@
   }
 }
 
-.usercard-header {
+.userCardHeader {
   @extend %font-family-lato;
 
   border-bottom-color: colors.$bottom-border-color;
@@ -100,13 +100,13 @@
 }
 
 @media (width <= 950px) {
-  .tooltip-text {
+  .tooltipText {
     width: 111% !important;
   }
 }
 
 @media (width <= 710px) {
-  .tooltip-text {
+  .tooltipText {
     width: 80%;
   }
 }
