@@ -7,7 +7,6 @@ import { useAuth } from '../../hooks/use-auth';
 import { useSearch } from '../../hooks/use-search';
 import concatClassNames from '../../utils/class-names';
 import generateId from '../../utils/id-generator';
-import { getAdministrationNavigation } from '../../utils/urls';
 import PageNav from '../nav/PageNav';
 
 import logo from './softuni-logo-horizontal.svg';
@@ -25,8 +24,7 @@ const PageHeader = () => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                  to={getAdministrationNavigation()}
-                  isToExternal
+                  to="administration"
                   text="Administration"
                 />
             )
@@ -49,13 +47,6 @@ const PageHeader = () => {
                   text="Submissions"
                 />
                 { administrationLink }
-                <LinkButton
-                  id="nav-submissions-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/administration-new"
-                  text="Administration New"
-                />
             </>
         );
     }, [ user.permissions.canAccessAdministration ]);

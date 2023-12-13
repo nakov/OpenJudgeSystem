@@ -1,18 +1,16 @@
 import React, { FC } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Toolbar from '@mui/material/Toolbar';
+
 import { Anything } from '../../common/common-types';
-import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import { Link, useLocation } from "react-router-dom";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import SportsScoreIcon from "@mui/icons-material/SportsScore";
-import PublishIcon from "@mui/icons-material/Publish";
-import BugReportIcon from "@mui/icons-material/BugReport";
-import TaskIcon from "@mui/icons-material/Task";
+import GithubIcon from '../../components/guidelines/icons/GitHubIcon';
 
 import styles from './set-admin-navigation.module.scss';
 
@@ -21,25 +19,25 @@ const drawerWidth = 240;
 const administrationItems = [
     {
         name: 'Contests',
-        icon: <SportsScoreIcon />,
-        path: '/administration/contests'
+        icon: <GithubIcon />,
+        path: '/administration/contests',
     }, {
         name: 'Submissions',
-        icon: <PublishIcon />,
-        path: '/administration/submissions'
+        icon: <GithubIcon />,
+        path: '/administration/submissions',
     }, {
         name: 'Tests',
-        icon: <BugReportIcon />,
-        path: '/administration/tests'
+        icon: <GithubIcon />,
+        path: '/administration/tests',
     }, {
         name: 'Problems',
-        icon: <TaskIcon />,
-        path: '/administration/problems'
+        icon: <GithubIcon />,
+        path: '/administration/problems',
     }, {
         name: 'Submission Types',
-        icon: <PublishIcon />,
-        path: '/administration/submissionTypes'
-    }
+        icon: <GithubIcon />,
+        path: '/administration/submissionTypes',
+    },
 ];
 
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
@@ -49,21 +47,31 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         // @ts-ignore
         <Box sx={{ display: 'flex', zIndex: 0 }}>
             <Drawer
-                variant="permanent"
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-                }}
+              variant="permanent"
+              sx={{
+                  width: drawerWidth,
+                  flexShrink: 0,
+                  '& .MuiDrawer-paper': { width: drawerWidth, boxSizing: 'border-box' },
+              }}
             >
                 <Toolbar />
                 <Box sx={{ overflow: 'auto', marginTop: '20px' }}>
                     <List>
                         {administrationItems.map((item, index) => (
                             <ListItem key={item.name} disablePadding>
-                                <Link to={item.path} className={`${location.pathname === item.path ? styles.activeAdminNavLink : ''} ${styles.adminNavLink}`}>
+                                <Link
+                                  to={item.path}
+                                  className={`${location.pathname === item.path
+                                      ? styles.activeAdminNavLink
+                                      : ''} ${styles.adminNavLink}`}
+                                >
                                     <ListItemButton>
-                                        <ListItemIcon style={{ color: location.pathname === item.path ? '#42abf8' : '#3e4c5d' }}>
+                                        <ListItemIcon style={{
+                                            color: location.pathname === item.path
+                                                ? '#42abf8'
+                                                : '#3e4c5d',
+                                        }}
+                                        >
                                             {item.icon}
                                         </ListItemIcon>
                                         <ListItemText primary={item.name} />
