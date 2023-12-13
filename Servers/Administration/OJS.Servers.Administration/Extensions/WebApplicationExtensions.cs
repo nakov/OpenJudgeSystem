@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Extensions;
 
+using OJS.Common;
 using AutoCrudAdmin;
 using AutoCrudAdmin.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ internal static class WebApplicationExtensions
 {
     public static WebApplication ConfigureWebApplication(this WebApplication app)
     {
+        app.UseCors(GlobalConstants.CorsDefaultPolicyName);
         app
             .UseDefaults()
             .UseStaticFiles();

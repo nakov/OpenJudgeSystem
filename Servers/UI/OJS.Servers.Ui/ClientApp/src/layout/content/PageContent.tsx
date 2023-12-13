@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import Administration from "../../pages/administration-new/Administration";
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -19,6 +20,9 @@ import RegisterPage from '../../pages/register/RegisterPage';
 import SearchPage from '../../pages/search/SearchPage';
 import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
+import { withAdministrationNav } from '../../pages/shared/set-admin-navigation';
+import { AdministrationContestsPage } from "../../pages/administration-new/AdministrationContests";
+import { AdministrationSubmissionsPage } from "../../pages/administration-new/AdministrationSubmissions";
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
 
@@ -74,10 +78,6 @@ const routes = [
         Element: ContestResultsPage,
     },
     {
-        path: '/administration',
-        Element: AdministrationPage,
-    },
-    {
         path: '/Submissions/Retest/:submissionId',
         Element: SubmissionRetestPage,
     },
@@ -103,9 +103,44 @@ const routes = [
     },
 ];
 
+const adminRoutes = [
+    {
+        path: '/administration',
+        Element: Administration
+    },
+    {
+        path: '/administration/contests',
+        Element: AdministrationContestsPage
+    },
+    {
+        path: '/administration/submissions',
+        Element: AdministrationSubmissionsPage
+    },
+    {
+        path: '/administration/tests',
+        Element: Administration
+    },
+    {
+        path: '/administration/problems',
+        Element: Administration
+    },
+    {
+        path: '/administration/submissionTypes',
+        Element: Administration
+    },
+    {
+        path: '/administration-new',
+        Element: AdministrationPage,
+        title: 'Administration'
+    }
+]
+
 const PageContent = () => {
-    const renderRoute = (path: string, Element: FC, title: string | undefined) => {
-        const WrappedElement = asPage(withTitle(Element, title));
+    const renderRoute = (path: string, Element: FC, title: string | undefined, isAdminRoute: boolean) => {
+        let WrappedElement = asPage(withTitle(Element, title));
+        if (isAdminRoute) {
+           WrappedElement = withAdministrationNav(Element);
+        }
         return (
             <Route key={path} path={path} element={<WrappedElement />} />
         );
@@ -114,7 +149,8 @@ const PageContent = () => {
     return (
         <main className={styles.main}>
             <Routes>
-                {routes.map(({ path, Element, title }) => renderRoute(path, Element, title))}
+                {routes.map(({ path, Element, title }) => renderRoute(path, Element, title, false))}
+                {adminRoutes.map(({ path, Element, title }) => renderRoute(path, Element, title, true))}
             </Routes>
         </main>
     );

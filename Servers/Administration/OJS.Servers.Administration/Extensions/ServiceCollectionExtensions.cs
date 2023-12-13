@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Extensions;
 
+using OJS.Common;
 using System.Linq;
 using AutoCrudAdmin.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -37,5 +38,16 @@ internal static class ServiceCollectionExtensions
             .AddOptionsWithValidation<EmailServiceConfig>()
             .UseAutoCrudAdmin()
             .AddControllersWithViews()
-            .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+            .Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    GlobalConstants.CorsDefaultPolicyName,
+                    config =>
+                        config.WithOrigins(
+                                configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials());
+            });
 }

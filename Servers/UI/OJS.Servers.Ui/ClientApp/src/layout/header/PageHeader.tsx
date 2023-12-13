@@ -49,6 +49,13 @@ const PageHeader = () => {
                   text="Submissions"
                 />
                 { administrationLink }
+                <LinkButton
+                  id="nav-submissions-link"
+                  type={LinkButtonType.plain}
+                  size={ButtonSize.none}
+                  to="/administration-new"
+                  text="Administration New"
+                />
             </>
         );
     }, [ user.permissions.canAccessAdministration ]);
