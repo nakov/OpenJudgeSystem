@@ -1,5 +1,3 @@
 import React from 'react';
 
-export const AdministrationSubmissionsPage = () => {
-    return(<div>Administration submissions</div>)
-};
+export const AdministrationSubmissionsPage = () => (<div>Administration submissions</div>);

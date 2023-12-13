@@ -1,11 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllContestsAdminParams,
-    IIndexContestsType,
-    IPagedResultType } from '../../../common/types';
+import {
+    IAdminContestResponseType,
+    IAdminPagedResultType,
+    IGetAllContestsAdminParams,
+} from '../../../common/types';
 
-export const contestService = createApi({
-    reducerPath: 'contests',
+const contestsAdminService = createApi({
+    reducerPath: 'adminContests',
     baseQuery: fetchBaseQuery({
         baseUrl: 'http://localhost:5001/api',
         prepareHeaders: (headers) => {
@@ -14,7 +16,7 @@ export const contestService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsAdminParams>({
+        getAllAdminContests: builder.query<IAdminPagedResultType<IAdminContestResponseType>, IGetAllContestsAdminParams>({
             query: ({ filter, page, ItemsPerPage, sorting }) => ({
                 url: '/contest',
                 params: {
@@ -28,4 +30,6 @@ export const contestService = createApi({
     }),
 });
 
-export const { useGetAllAdminContestsQuery } = contestService;
+export const { useGetAllAdminContestsQuery } = contestsAdminService;
+
+export default contestsAdminService;

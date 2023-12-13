@@ -63,18 +63,18 @@ interface ISubmissionResponseModel {
 }
 
 interface IGetAllContestsOptions {
-    status: string,
-    sortType: string,
-    page: number,
-    category?: number | null,
-    strategy?: number | null
+    status: string;
+    sortType: string;
+    page: number;
+    category?: number | null;
+    strategy?: number | null;
 }
 
 interface IGetAllContestsAdminParams {
-    filter?: string,
-    ItemsPerPage: number,
-    page: number,
-    sorting?: string
+    filter?: string;
+    ItemsPerPage: number;
+    page: number;
+    sorting?: string;
 }
 
 interface IProblemResourceType {
@@ -216,6 +216,30 @@ interface IPagedResultType<TItem> {
     items?: TItem[];
 }
 
+interface IAdminPagedResultType<TItem> {
+    items?: TItem[];
+    page: number;
+    itemsPerPage: number;
+    totalCount: number;
+    totalPages: number;
+}
+
+interface IAdminContestResponseType {
+    id: number;
+    category: string;
+    name: string;
+    allowParallelSubmissionsInTasks: boolean;
+    autoChangeTestsFeedbackVisibility: boolean;
+    categoryId: number;
+    startTime: string;
+    endTime: string;
+    contestPassword: string;
+    description: string;
+    isDeleted: boolean;
+    isVisible: boolean;
+    limitBetweenSubmissions: number;
+}
+
 interface IPage {
     page: number;
 }
@@ -274,5 +298,7 @@ export type {
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
     IGetAllContestsOptions,
-    IGetAllContestsAdminParams
+    IGetAllContestsAdminParams,
+    IAdminPagedResultType,
+    IAdminContestResponseType,
 };

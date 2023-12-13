@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -14,10 +15,12 @@ import logo from './softuni-logo-horizontal.svg';
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
+    const { pathname } = useLocation();
     const { state: { user } } = useAuth();
 
     const { actions: { toggleVisibility } } = useSearch();
 
+    const shouldRenderPageHeader = !pathname.includes('administration');
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
             ? (
@@ -83,6 +86,7 @@ const PageHeader = () => {
     const headingSecondaryClass = 'headingSeconary';
     const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 
+    if (!shouldRenderPageHeader) { return null; }
     return (
         <header id="pageHeader" className={styles.header}>
             <div className={styles.headerSize}>
