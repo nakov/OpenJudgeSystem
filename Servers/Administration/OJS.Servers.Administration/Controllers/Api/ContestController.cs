@@ -21,18 +21,22 @@ using OJS.Servers.Administration.Models;
 public class ContestController : ControllerBase
 {
     private readonly IContestsBusinessService contestsBusinessServiceService;
-    private readonly IDataService<Contest> contestsDataService;
 
-    public ContestController(IContestsBusinessService contestsBusinessServiceService, IDataService<Contest> contestsDataService)
-    {
-        this.contestsBusinessServiceService = contestsBusinessServiceService;
-        this.contestsDataService = contestsDataService;
-    }
+    public ContestController(IContestsBusinessService contestsBusinessServiceService)
+        => this.contestsBusinessServiceService = contestsBusinessServiceService;
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
         var contest = await this.contestsBusinessServiceService.GetAll<ContestInListModel>(model);
+        return this.Ok(contest);
+    }
+
+    [HttpGet]
+    [Route("{id}")]
+    public async Task<IActionResult> ById(int id)
+    {
+        var contest = await this.contestsBusinessServiceService.ById(id);
         return this.Ok(contest);
     }
 }

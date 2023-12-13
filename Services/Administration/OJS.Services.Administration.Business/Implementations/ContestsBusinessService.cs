@@ -7,6 +7,7 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Models.Contests;
 
 public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
 {
@@ -40,4 +41,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
     }
+
+    public async Task<ContestResponseModel> ById(int id)
+        => await this.contestsData.GetByIdWithProblems(id).Map<ContestResponseModel>();
 }
