@@ -391,6 +391,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var hasUserNotProcessedSubmissionForProblem =
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
 
+        var hasUserNotProcessedSubmissionForContest =
+            this.submissionsData.HasUserNotProcessedSubmissionForContest(participant.ContestId, currentUser.Id!);
+
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
             (problem,
                 currentUser,
@@ -398,6 +401,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 contestValidationResult,
                 userSubmissionTimeLimit,
                 hasUserNotProcessedSubmissionForProblem,
+                hasUserNotProcessedSubmissionForContest,
                 model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)

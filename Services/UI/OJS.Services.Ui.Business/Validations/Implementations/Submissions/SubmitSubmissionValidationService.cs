@@ -18,11 +18,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         => this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
 
     public ValidationResult GetValidationResult(
-        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)
+        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, bool, SubmitSubmissionServiceModel)
             validationInput)
     {
         var (problem, user, participant, contestValidationResult,
-                userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) =
+                userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem,
+                hasUserNotProcessedSubmissionForContest, submitSubmissionServiceModel) =
             validationInput;
 
         if (problem == null)
@@ -34,7 +35,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         if (participant != null &&
             !participant.Contest.AllowParallelSubmissionsInTasks &&
-            participant.Submissions.Any(s => !s.Processed))
+            hasUserNotProcessedSubmissionForContest)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
