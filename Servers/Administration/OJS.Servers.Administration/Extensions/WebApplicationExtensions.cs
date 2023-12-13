@@ -13,7 +13,7 @@ internal static class WebApplicationExtensions
 {
     public static WebApplication ConfigureWebApplication(this WebApplication app)
     {
-        app.UseCors(GlobalConstants.CorsDefaultPolicyName);
+        app.UseCorsPolicy();
         app
             .UseDefaults()
             .UseStaticFiles();

@@ -27,6 +27,7 @@ internal static class ServiceCollectionExtensions
             .AddHangfireServer(configuration, AppName)
             .AddMessageQueue<Program>(configuration)
             .ConfigureGlobalDateFormat()
+            .ConfigureCorsPolicy(configuration)
             .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(
                 configuration,
                 Enumerable.Empty<GlobalQueryFilterType>())
@@ -38,16 +39,5 @@ internal static class ServiceCollectionExtensions
             .AddOptionsWithValidation<EmailServiceConfig>()
             .UseAutoCrudAdmin()
             .AddControllersWithViews()
-            .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
-            .Services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    GlobalConstants.CorsDefaultPolicyName,
-                    config =>
-                        config.WithOrigins(
-                                configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .AllowCredentials());
-            });
+            .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 }

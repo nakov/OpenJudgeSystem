@@ -31,23 +31,12 @@ namespace OJS.Servers.Ui.Extensions
                     .AddSpaStaticFiles(cnfg => { cnfg.RootPath = "ClientApp/dist"; });
             }
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy(
-                    GlobalConstants.CorsDefaultPolicyName,
-                    config =>
-                        config.WithOrigins(
-                                configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
-            });
-
             services
                 .AddWebServer<Program>(configuration)
                 .AddHttpContextServices()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
                 .AddHangfireServer(configuration, AppName)
+                .ConfigureCorsPolicy(configuration)
                 .AddMessageQueue<Program>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddMemoryCache()

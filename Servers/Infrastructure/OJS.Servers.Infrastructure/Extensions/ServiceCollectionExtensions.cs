@@ -27,6 +27,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
+    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
@@ -285,6 +286,19 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .ValidateDataAnnotations()
                 .ValidateOnStart()
                 .Services;
+
+        public static IServiceCollection ConfigureCorsPolicy(this IServiceCollection services, IConfiguration configuration) =>
+        services.AddCors(options =>
+        {
+            options.AddPolicy(
+                GlobalConstants.CorsDefaultPolicyName,
+                config =>
+                    config.WithOrigins(
+                            configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+        });
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {
