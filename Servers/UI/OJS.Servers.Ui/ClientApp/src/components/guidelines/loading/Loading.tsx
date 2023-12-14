@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { ReactComponent } from './Loading.svg';
+import LoadingIcon from './Loading.svg?react';
 
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from './Loading.module.scss';
 
 interface ILoadingProps {
@@ -15,7 +16,7 @@ const loadingRoot = document.createElement('div') as HTMLElement;
 const LoadingInternal = () => (
     <div className={styles.loadingWrapper}>
         <div className={styles.loading}>
-            <ReactComponent className={styles.svg} />
+            <LoadingIcon className={styles.svg} />
         </div>
     </div>
 );

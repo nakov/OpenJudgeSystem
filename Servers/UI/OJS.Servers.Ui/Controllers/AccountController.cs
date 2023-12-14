@@ -20,6 +20,7 @@ namespace OJS.Servers.Ui.Controllers
     using static OJS.Common.GlobalConstants.Urls;
 
     [Authorize]
+    [Route("api/[controller]/[action]")]
     public class AccountController : BaseViewController
     {
         private readonly UserManager<UserProfile> userManager;
@@ -47,12 +48,11 @@ namespace OJS.Servers.Ui.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody]LoginRequestModel model)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToAction("Index", "Home");
+                return this.BadRequest();
             }
 
             ExternalUserInfoModel? externalUser;
@@ -102,13 +102,14 @@ namespace OJS.Servers.Ui.Controllers
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
 
-            return this.RedirectToAction("Index", "Home");
+            return this.Ok();
         }
 
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            return this.RedirectToAction("Index", "Home");
+            return this.Ok();
         }
     }
 }

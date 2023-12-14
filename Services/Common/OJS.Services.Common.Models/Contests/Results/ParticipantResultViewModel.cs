@@ -8,6 +8,18 @@ using System.Linq.Expressions;
 
 public class ParticipantResultViewModel
 {
+    public static Expression<Func<Participant, ParticipantResultViewModel>> FromParticipant =>
+        participant => new ParticipantResultViewModel
+        {
+            Id = participant.Id,
+            ParticipantUsername = participant.User.UserName,
+            ParticipantFirstName = participant.User.UserSettings.FirstName,
+            ParticipantLastName = participant.User.UserSettings.LastName,
+            ParticipantProblemIds = participant.ProblemsForParticipants.Select(p => p.ProblemId),
+        };
+
+    public int Id { get; set; }
+
     public string? ParticipantUsername { get; set; }
 
     public string? ParticipantFirstName { get; set; }

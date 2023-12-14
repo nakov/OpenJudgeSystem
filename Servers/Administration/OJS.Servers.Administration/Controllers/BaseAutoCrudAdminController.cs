@@ -64,6 +64,9 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
         return (TEntityId)Convert.ChangeType(id, typeof(TEntityId));
     }
 
+    protected virtual Expression<Func<TEntity, bool>>? GetMasterGridFilter()
+        => this.MasterGridFilter;
+
     protected virtual Task ModifyFormControls(
         ICollection<FormControlViewModel> formControls,
         TEntity entity,

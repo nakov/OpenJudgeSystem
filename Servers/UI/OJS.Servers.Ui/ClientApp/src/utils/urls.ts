@@ -44,8 +44,8 @@ const baseApiUrl = `${baseUrl}/api`;
 const getHomePageUrl = () => '/';
 
 // auth
-const getLoginSubmitUrl = () => `${baseUrl}/Account/Login`;
-const getLogoutUrl = () => `${baseUrl}/Account/Logout`;
+const getLoginSubmitUrl = () => `${baseApiUrl}/Account/Login`;
+const getLogoutUrl = () => `${baseApiUrl}/Account/Logout`;
 
 const getLoginPageUrl = () => `${baseUrl}/login`;
 
