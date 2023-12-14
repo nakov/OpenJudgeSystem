@@ -97,8 +97,9 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                 };
                 this.AssignWorkerType(submissionForProcessing, submission);
                 this.submissionsForProcessing.Add(submissionForProcessing);
-                this.submissionsForProcessing.SaveChanges();
             }
+
+            this.submissionsForProcessing.SaveChanges();
         }
 
         public void RemoveBySubmission(int submissionId)
@@ -134,9 +135,10 @@ namespace OJS.Services.Data.SubmissionsForProcessing
 
         private void AssignWorkerType(SubmissionForProcessing submissionForProcessing, Submission submission)
         {
-            submissionForProcessing.WorkerType = submission.WorkerType;
-            if (submissionForProcessing.WorkerType != WorkerType.Default)
+            var submissionWorkerType = submission.WorkerType;
+            if (submissionWorkerType != WorkerType.Default)
             {
+                submissionForProcessing.WorkerType = submissionWorkerType;
                 return;
             }
 

@@ -35,7 +35,6 @@
                     AllowBinaryFilesUpload = st.AllowBinaryFilesUpload,
                     AllowedFileExtensions = st.AllowedFileExtensions,
                     WorkerType = st.WorkerType,
-                    
                 };
             }
         }
@@ -109,6 +108,7 @@
             model.Description = this.Description;
             model.AllowBinaryFilesUpload = this.AllowBinaryFilesUpload;
             model.AllowedFileExtensions = this.AllowedFileExtensions;
+            model.WorkerType = this.WorkerType;
             return model;
         }
     }
