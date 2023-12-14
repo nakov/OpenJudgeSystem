@@ -33,7 +33,9 @@
                     AdditionalCompilerArguments = st.AdditionalCompilerArguments,
                     Description = st.Description,
                     AllowBinaryFilesUpload = st.AllowBinaryFilesUpload,
-                    AllowedFileExtensions = st.AllowedFileExtensions
+                    AllowedFileExtensions = st.AllowedFileExtensions,
+                    WorkerType = st.WorkerType,
+                    
                 };
             }
         }
@@ -90,6 +92,10 @@
         [Display(Name = nameof(Resource.Allowed_file_extensions), ResourceType = typeof(Resource))]
         [UIHint(SingleLineText)]
         public string AllowedFileExtensions { get; set; }
+
+        [DatabaseProperty]
+        [UIHint(EnumDropDown)]
+        public WorkerType WorkerType { get; set; }
 
         public SubmissionType GetEntityModel(SubmissionType model = null)
         {

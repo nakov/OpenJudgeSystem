@@ -153,9 +153,15 @@ namespace OJS.Services.Data.SubmissionsForProcessing
                 submissionForProcessing.WorkerType = strategyDetailsWorkerType;
                 return;
             }
-            
+
             var contestWorkerType = problem.ProblemGroup.Contest.DefaultWorkerType;
-            submissionForProcessing.WorkerType = contestWorkerType;
+            if (contestWorkerType != WorkerType.Default)
+            {
+                submissionForProcessing.WorkerType = contestWorkerType;
+                return;
+            }
+
+            submissionForProcessing.WorkerType = submission.SubmissionType.WorkerType;
         }
     }
 }
