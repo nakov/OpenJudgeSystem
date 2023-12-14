@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 // eslint-disable-next-line no-restricted-imports
+import { useLocation } from 'react-router-dom';
 import { Checkbox, TextField, Typography } from '@material-ui/core';
 import { Box, FormControlLabel, Tab, Tabs, TextareaAutosize } from '@mui/material';
 
@@ -15,7 +16,11 @@ import { useGetContestByIdQuery } from '../../../redux/services/admin/contestsAd
 import styles from './AdministrationContestPage.module.scss';
 // eslint-disable-next-line import/prefer-default-export
 export const AdministrationContestPage = () => {
-    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: 4385 });
+    const { pathname } = useLocation();
+    // this would be best to be set in redux state on button press in the mai grid, keeping this only for demonstariton
+    const contestId = pathname.split('/')[pathname.split('/').length - 1];
+
+    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
 
     const [ contest, setContest ] = useState<IContestAdministration>({} as IContestAdministration);
     const [ tabName, setTabName ] = useState('problems');
@@ -63,9 +68,9 @@ export const AdministrationContestPage = () => {
                               InputLabelProps={{ shrink: true }}
                             />
                             <Box className={styles.flex}>
-                                <FormControlLabel control={<Checkbox defaultChecked={contest.isVisible && false} />} label="IsVisible" />
-                                <FormControlLabel control={<Checkbox defaultChecked={contest.allowParallelSubmissionsInTasks && false} />} label="Allow parallel submissions in tasks" />
-                                <FormControlLabel control={<Checkbox defaultChecked={contest.autoChangeTestsFeedbackVisibility && false} />} label="AutoChangeTestsFeedbackVisibility" />
+                                <FormControlLabel control={<Checkbox checked={contest.isVisible} />} label="IsVisible" />
+                                <FormControlLabel control={<Checkbox defaultChecked={contest.allowParallelSubmissionsInTasks} />} label="Allow parallel submissions in tasks" />
+                                <FormControlLabel control={<Checkbox defaultChecked={contest.autoChangeTestsFeedbackVisibility} />} label="AutoChangeTestsFeedbackVisibility" />
                             </Box>
                             <Button onClick={() => edit()} className={styles.edit}>Edit</Button>
                         </form>

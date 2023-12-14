@@ -2,19 +2,61 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
+import { Modal } from '@mui/material';
+import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
+import { useGetAllAdminContestsQuery, useGetContestByIdQuery } from '../../redux/services/admin/contestsAdminService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
+const modalStyles = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    borderRadius: 3,
+    boxShadow: 24,
+    p: 4,
+    fontFamily: 'Roboto, Helvetica , Arial',
+};
+
 const AdministrationContestsPage = () => {
+    const [ openModal, setOpenModal ] = useState(false);
+    const [ contestId, setContestId ] = useState<any>();
     const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: 15 });
     const {
         data,
         error,
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
+    const {
+        data: contestDetailsData,
+        isLoading: contestDetailsIsLoading,
+        error: contestDetailsError,
+    } = useGetContestByIdQuery({ id: Number(contestId) });
+
+    const onEditClick = (id: number) => {
+        setOpenModal(true);
+        setContestId(id);
+    };
+
+    const renderModal = () => (
+        <Modal
+          open={openModal}
+          onClose={() => setOpenModal(false)}
+        >
+            <Box sx={modalStyles}>
+                { contestDetailsIsLoading
+                    ? <SpinningLoader />
+                    : contestDetailsError
+                        ? <div>Error loading details</div>
+                        : <div>{contestDetailsData?.name}</div>}
+            </Box>
+        </Modal>
+    );
 
     const dataColumns: GridColDef[] = [
         {
@@ -82,10 +124,8 @@ const AdministrationContestsPage = () => {
             headerName: 'Quick Details',
             width: 100,
             align: 'center',
-            renderCell: () => (
-                <Link to="/">
-                    <EditIcon />
-                </Link>
+            renderCell: (params: GridRenderCellParams) => (
+                <EditIcon onClick={() => onEditClick(params.row.id)} />
             ),
         },
         {
@@ -111,15 +151,18 @@ const AdministrationContestsPage = () => {
             { error
                 ? <div>Error loading data</div>
                 : (
-                    <DataGrid
-                      columns={dataColumns}
-                      rows={data?.items ?? []}
-                      rowCount={data?.totalCount ?? 0}
-                      paginationMode="server"
-                      onPageChange={(e) => {
-                          setQueryParams({ ...queryParams, page: e + 1 });
-                      }}
-                    />
+                    <>
+                        { openModal && renderModal() }
+                        <DataGrid
+                          columns={dataColumns}
+                          rows={data?.items ?? []}
+                          rowCount={data?.totalCount ?? 0}
+                          paginationMode="server"
+                          onPageChange={(e) => {
+                              setQueryParams({ ...queryParams, page: e + 1 });
+                          }}
+                        />
+                    </>
                 )}
         </div>
     );
