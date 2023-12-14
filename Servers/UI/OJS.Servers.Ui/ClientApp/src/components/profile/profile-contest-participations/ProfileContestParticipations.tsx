@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import isNil from 'lodash/isNil';
+import isEmpty from 'lodash/isEmpty';
 
 import { useAuth } from '../../../hooks/use-auth';
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
@@ -61,7 +61,7 @@ const ProfileContestParticipations = () => {
                 return;
             }
 
-            const usernameParam = isNil(userProfileUsername)
+            const usernameParam = isEmpty(userProfileUsername)
                 ? user.username
                 : userProfileUsername;
 

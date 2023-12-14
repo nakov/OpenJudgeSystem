@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import Heading from '../../components/guidelines/headings/Heading';
-import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
@@ -11,7 +11,6 @@ import { useAuth } from '../../hooks/use-auth';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useUsers } from '../../hooks/use-users';
 import isNilOrEmpty from '../../utils/check-utils';
-import { flexCenterObjectStyles } from '../../utils/object-utils';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -24,7 +23,6 @@ const ProfilePage = () => {
     const {
         state: {
             myProfile,
-            isProfileInfoLoading,
             isProfileInfoLoaded,
             userProfileUsername,
         },
@@ -35,16 +33,7 @@ const ProfilePage = () => {
     } = useUsers();
     const { state: { user: { username: myUsername } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
-
-    useEffect(
-        () => {
-            if (isNil(userProfileUsername)) {
-                return;
-            }
-            setPageTitle(`${userProfileUsername}'s profile`);
-        },
-        [ setPageTitle, userProfileUsername ],
-    );
+    const { username } = useParams();
 
     useEffect(
         () => {
@@ -52,13 +41,26 @@ const ProfilePage = () => {
                 return;
             }
 
-            const usernameParam = isNil(userProfileUsername)
-                ? myUsername
+            const usernameParam = isEmpty(userProfileUsername)
+                ? !isNil(username)
+                    ? username
+                    : myUsername
                 : userProfileUsername;
 
             getProfile(usernameParam);
         },
-        [ getProfile, myProfile.userName, myUsername, userProfileUsername ],
+        [ getProfile, myProfile.userName, myUsername, userProfileUsername, username ],
+    );
+
+    useEffect(
+        () => {
+            if (!isProfileInfoLoaded) {
+                return;
+            }
+
+            setPageTitle(`${myProfile.userName}'s profile`);
+        },
+        [ setPageTitle, myProfile, isProfileInfoLoaded ],
     );
 
     useEffect(
@@ -70,9 +72,9 @@ const ProfilePage = () => {
 
     const renderUsernameHeading = useCallback(
         () => {
-            const username = isNil(userProfileUsername)
-                ? myUsername
-                : userProfileUsername;
+            const usernameForHeading = isEmpty(myProfile.userName)
+                ? username
+                : myProfile.userName;
 
             return isNilOrEmpty(username)
                 ? (
@@ -80,13 +82,13 @@ const ProfilePage = () => {
                 )
                 : (
                     <Heading>
-                        {username}
+                        {usernameForHeading}
                         &apos;s
                         profile
                     </Heading>
                 );
         },
-        [ myUsername, userProfileUsername ],
+        [ myProfile.userName, username ],
     );
 
     const renderPage = useCallback(
@@ -110,14 +112,6 @@ const ProfilePage = () => {
         ),
         [ myProfile, renderUsernameHeading, isProfileInfoLoaded ],
     );
-
-    if (isProfileInfoLoading) {
-        return (
-            <div style={{ ...flexCenterObjectStyles }}>
-                <SpinningLoader />
-            </div>
-        );
-    }
 
     return renderPage();
 };

@@ -81,6 +81,22 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
 
     useEffect(
         () => {
+            if (isNil(profileData)) {
+                return;
+            }
+
+            (async () => {
+                setIsLoading(true);
+                await getProfileInfo();
+            })();
+
+            setProfileInfoUrlParam(null);
+        },
+        [ getProfileInfo, getProfileInfoUrlUrlParam, profileData ],
+    );
+
+    useEffect(
+        () => {
             if (isNil(getProfileInfoUrlUrlParam)) {
                 return;
             }
