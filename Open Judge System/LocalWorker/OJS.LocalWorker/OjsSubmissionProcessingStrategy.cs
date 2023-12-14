@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using OJS.Workers.Common.Helpers;
-
-namespace OJS.LocalWorker
+﻿namespace OJS.LocalWorker
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Data.Models;
     using OJS.Services.Business.ParticipantScores.Models;
@@ -13,6 +11,7 @@ namespace OJS.LocalWorker
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Services.Data.TestRuns;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
     using Workers.ExecutionStrategies.Models;
     using Workers.SubmissionProcessors;
@@ -46,7 +45,7 @@ namespace OJS.LocalWorker
 
         public override IOjsSubmission RetrieveSubmission(List<WorkerType> workerTypes)
         {
-            lock (this.SubmissionsForProcessing)
+            lock (this.SharedLockObject)
             {
                 if (this.SubmissionsForProcessing.IsEmpty)
                 {
@@ -66,7 +65,7 @@ namespace OJS.LocalWorker
                     return null;
                 }
 
-                this.Logger.InfoFormat($"Submission #{submissionId} retrieved from data store successfully");
+                this.Logger.InfoFormat($"Submission #{submissionId} retrieved from data store successfully for {string.Join(",", workerTypes.Select(wt => wt.ToString()))} worker.");
 
                 this.submission = this.submissionsData.GetById(submissionId);
 
@@ -96,7 +95,7 @@ namespace OJS.LocalWorker
         public override void OnError(IOjsSubmission submissionModel, Exception ex)
         {
             this.submission.ProcessingComment = submissionModel.ProcessingComment;
-            this.submission.ExecutionComment = $"{ex.Message} {ex.InnerException} \n" + $"{ex.StackTrace}";
+            this.submission.ExecutionComment = $"{ex.GetAllMessages()}{Environment.NewLine}{ex.StackTrace}";
             this.submission.ExceptionType = submissionModel.ExceptionType;
             this.submission.StartedExecutionOn = submissionModel.StartedExecutionOn;
             this.submission.CompletedExecutionOn = submissionModel.CompletedExecutionOn;
