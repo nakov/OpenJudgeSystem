@@ -6,7 +6,6 @@ import { ISubmissionResponseModel } from '../../../common/types';
 import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
-import { useUsers } from '../../../hooks/use-users';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import {
@@ -50,12 +49,10 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const { actions: { initiateRedirectionToUserProfile } } = useUsers();
     const {
         state: {
             user: {
                 username: loggedInUsername,
-                isInRole,
                 isAdmin,
             },
         },
@@ -134,30 +131,17 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         [ state, maxPoints, points ],
     );
 
-    const handleUserRedirection = useCallback(
-        () => {
-            const getUserProfileInfoUrl = getUserProfileInfoUrlByUsername(username);
-
-            initiateRedirectionToUserProfile(username, getUserProfileInfoUrl);
-        },
-        [ initiateRedirectionToUserProfile, username ],
-    );
-
     const renderUsername = useCallback(
-        (userName: string) => (
-            isInRole
-                ? (
-                    <Button
-                      internalClassName={styles.redirectButton}
-                      type={ButtonType.secondary}
-                      text={username}
-                      onClick={handleUserRedirection}
-                      size={ButtonSize.small}
-                    />
-                )
-                : <span>{userName}</span>
+        () => (
+            <LinkButton
+              type={LinkButtonType.plain}
+              size={ButtonSize.none}
+              to={getUserProfileInfoUrlByUsername(username)}
+              text={username}
+              internalClassName={styles.redirectButton}
+            />
         ),
-        [ handleUserRedirection, isInRole, username ],
+        [ username ],
     );
 
     const renderProblemInformation = useCallback(
@@ -224,8 +208,8 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                         {' '}
                         by
                         {' '}
+                        {renderUsername()}
                     </span>
-                    {renderUsername(username)}
                 </div>
             </div>
             <div className={styles.executionResultContainer}>

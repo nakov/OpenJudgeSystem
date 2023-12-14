@@ -3,13 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { ISubmissionDetailsType } from '../../../../hooks/submissions/types';
 import { useAuth } from '../../../../hooks/use-auth';
-import { useUsers } from '../../../../hooks/use-users';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
 import { getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
-import Button, { ButtonSize, ButtonType } from '../../../guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import PaginationControls from '../../../guidelines/pagination/PaginationControls';
 import SubmissionsList from '../../submissions-list/SubmissionsList';
@@ -31,15 +29,7 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         },
         [ dispatch ],
     );
-    const { actions: { initiateRedirectionToUserProfile } } = useUsers();
-    const {
-        state: {
-            user: {
-                permissions: { canAccessAdministration },
-                isInRole,
-            },
-        },
-    } = useAuth();
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
 
     const handleReloadClick = useCallback(
         async () => {
@@ -61,39 +51,6 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
             </div>
         ),
         [ handleReloadClick, renderRetestButton ],
-    );
-
-    const handleUserRedirection = useCallback(
-        () => {
-            const { user: { userName } } = currentSubmission as ISubmissionDetailsType;
-            const getUserProfileInfoUrl = getUserProfileInfoUrlByUsername(userName);
-
-            initiateRedirectionToUserProfile(userName, getUserProfileInfoUrl);
-        },
-        [ currentSubmission, initiateRedirectionToUserProfile ],
-    );
-
-    const renderUsername = useCallback(
-        (username: string) => (
-            isInRole
-                ? (
-                    <Button
-                      internalClassName={styles.redirectButton}
-                      type={ButtonType.secondary}
-                      text={username}
-                      onClick={handleUserRedirection}
-                      size={ButtonSize.small}
-                    />
-                )
-                : (
-                    <p className={styles.submissionInfoParagraph}>
-                        Username:
-                        {' '}
-                        {username}
-                    </p>
-                )
-        ),
-        [ handleUserRedirection, isInRole ],
     );
 
     const renderSubmissionInfo = useCallback(
@@ -132,11 +89,21 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
                             ? 'never'
                             : preciseFormatDate(completedExecutionOn)}
                     </p>
-                    {renderUsername(userName)}
+                    <p className={styles.submissionInfoParagraph}>
+                        Username:
+                        {' '}
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to={getUserProfileInfoUrlByUsername(userName)}
+                          text={userName}
+                          internalClassName={styles.redirectButton}
+                        />
+                    </p>
                 </div>
             );
         },
-        [ currentSubmission, canAccessAdministration, renderUsername ],
+        [ currentSubmission, canAccessAdministration ],
     );
 
     return (
