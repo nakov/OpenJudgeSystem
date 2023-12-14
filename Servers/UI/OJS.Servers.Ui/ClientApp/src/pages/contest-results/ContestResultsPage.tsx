@@ -21,6 +21,7 @@ import { useContestCategories } from '../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { getContestDetailsAppUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -241,9 +242,14 @@ const ContestResultsPage = () => {
                 >
                     {participationType}
                     {' '}
-                    results for contests -
+                    results for contest -
                     {' '}
-                    {contestResults?.name}
+                    <LinkButton
+                      to={getContestDetailsAppUrl(contestResults?.id ?? 0)}
+                      text={contestResults?.name}
+                      type={LinkButtonType.plain}
+                      className={styles.contestName}
+                    />
                 </Heading>
                 <DataGrid
                   rows={numberedRows}
