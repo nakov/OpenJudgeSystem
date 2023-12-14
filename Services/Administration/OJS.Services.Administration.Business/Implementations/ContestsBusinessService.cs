@@ -8,19 +8,22 @@ using OJS.Services.Administration.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Administration.Models.Contests;
-
+using OJS.Services.Administration.Models.Problems;
 public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
 {
     private readonly IContestsDataService contestsData;
     private readonly Business.IUserProviderService userProvider;
+    private readonly IProblemsDataService problemsDataService;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
-        Business.IUserProviderService userProvider)
+        Business.IUserProviderService userProvider,
+        IProblemsDataService problemsDataService)
         : base(contestsData)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
+        this.problemsDataService = problemsDataService;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -44,4 +47,14 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
 
     public async Task<ContestResponseModel> ById(int id)
         => await this.contestsData.GetByIdWithProblems(id).Map<ContestResponseModel>();
+
+    public async Task<IEnumerable<ContestViewProblemModel>> GetContestProblems(int id)
+    {
+        var contestProblems = await this.problemsDataService
+            .GetAllByContest(id)
+            .MapCollection<ContestViewProblemModel>()
+            .ToListAsync();
+
+        return contestProblems;
+    }
 }

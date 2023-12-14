@@ -6,6 +6,7 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common.Data.Pagination;
 using SoftUni.Services.Infrastructure;
 using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Administration.Models.Problems;
 
 public interface IContestsBusinessService : IGridDataService<Contest>, IService
 {
@@ -15,4 +16,6 @@ public interface IContestsBusinessService : IGridDataService<Contest>, IService
         where TServiceModel : class;
 
     Task<ContestResponseModel> ById(int id);
+
+    Task<IEnumerable<ContestViewProblemModel>> GetContestProblems(int id);
 }

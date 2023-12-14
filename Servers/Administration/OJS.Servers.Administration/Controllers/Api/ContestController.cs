@@ -39,4 +39,12 @@ public class ContestController : ControllerBase
         var contest = await this.contestsBusinessServiceService.ById(id);
         return this.Ok(contest);
     }
+
+    [HttpGet]
+    [Route("problems/{id}")]
+    public async Task<IActionResult> Problems(int id)
+    {
+        var contest = await this.contestsBusinessServiceService.GetContestProblems(id);
+        return this.Ok(contest);
+    }
 }

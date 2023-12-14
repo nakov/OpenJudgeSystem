@@ -282,16 +282,25 @@ interface IContestAdministration {
     categoryId: number;
     categoryName: string;
     description: string;
-    startTime: Date;
-    endTime: Date;
-    practiceStartTime: Date;
-    practiceEndTime: Date;
+    startTime: string;
+    endTime: string;
+    practiceStartTime: string;
+    practiceEndTime: string;
     limitBetweenSubmissions: number;
     isVisible: boolean;
     newIpPassword: string;
     allowParallelSubmissionsInTasks: boolean;
     autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
+}
+
+interface IAdministrationContestProblems {
+    id: number;
+    name: string;
+    group: number;
+    groupType: string;
+    practiceTests: number;
+    competeTests: number;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -321,4 +330,5 @@ export type {
     IAdminPagedResultType,
     IAdminContestResponseType,
     IContestAdministration,
+    IAdministrationContestProblems,
 };

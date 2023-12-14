@@ -1,8 +1,13 @@
 import React, { FC, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import BorderAllIcon from '@mui/icons-material/BorderAll';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import MenuIcon from '@mui/icons-material/Menu';
+import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
+import ScienceIcon from '@mui/icons-material/Science';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -16,7 +21,6 @@ import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 
 import { Anything } from '../../common/common-types';
-import GithubIcon from '../../components/guidelines/icons/GitHubIcon';
 
 import styles from './set-admin-navigation.module.scss';
 
@@ -29,23 +33,23 @@ interface IAppBarProps extends MuiAppBarProps {
 const administrationItems = [
     {
         name: 'Contests',
-        icon: <GithubIcon />,
+        icon: <AutoStoriesIcon />,
         path: '/administration/contests',
     }, {
         name: 'Submissions',
-        icon: <GithubIcon />,
+        icon: <DoneOutlineIcon />,
         path: '/administration/submissions',
     }, {
         name: 'Tests',
-        icon: <GithubIcon />,
+        icon: <ScienceIcon />,
         path: '/administration/tests',
     }, {
         name: 'Problems',
-        icon: <GithubIcon />,
+        icon: <NotListedLocationIcon />,
         path: '/administration/problems',
     }, {
         name: 'Submission Types',
-        icon: <GithubIcon />,
+        icon: <BorderAllIcon />,
         path: '/administration/submissionTypes',
     },
 ];

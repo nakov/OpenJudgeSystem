@@ -6,8 +6,9 @@ import { Modal } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { ContestEdit } from '../../components/administration/Contests/ContestEdit/ContestEdit';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import { useGetAllAdminContestsQuery, useGetContestByIdQuery } from '../../redux/services/admin/contestsAdminService';
+import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 const modalStyles = {
@@ -15,7 +16,7 @@ const modalStyles = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '50%',
     bgcolor: 'background.paper',
     borderRadius: 3,
     boxShadow: 24,
@@ -32,11 +33,6 @@ const AdministrationContestsPage = () => {
         error,
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
-    const {
-        data: contestDetailsData,
-        isLoading: contestDetailsIsLoading,
-        error: contestDetailsError,
-    } = useGetContestByIdQuery({ id: Number(contestId) });
 
     const onEditClick = (id: number) => {
         setOpenModal(true);
@@ -49,11 +45,7 @@ const AdministrationContestsPage = () => {
           onClose={() => setOpenModal(false)}
         >
             <Box sx={modalStyles}>
-                { contestDetailsIsLoading
-                    ? <SpinningLoader />
-                    : contestDetailsError
-                        ? <div>Error loading details</div>
-                        : <div>{contestDetailsData?.name}</div>}
+                <ContestEdit contestId={Number(contestId)} />
             </Box>
         </Modal>
     );

@@ -1,7 +1,8 @@
+/* eslint-disable max-len */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { IContestAdministration, IGetAllContestsAdminParams,
+import { IAdministrationContestProblems, IContestAdministration, IGetAllContestsAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
@@ -30,9 +31,10 @@ export const contestService = createApi({
         }),
         // eslint-disable-next-line max-len
         getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `${defaultPathIdentifier}/contest/${id}` }) }),
+        getContestProblems: builder.query<Array<IAdministrationContestProblems>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `${defaultPathIdentifier}/contest/Problems/${id}` }) }),
     }),
 });
 
 // eslint-disable-next-line import/group-exports
-export const { useGetAllAdminContestsQuery, useGetContestByIdQuery } = contestService;
+export const { useGetAllAdminContestsQuery, useGetContestByIdQuery, useGetContestProblemsQuery } = contestService;
 export default contestService;
