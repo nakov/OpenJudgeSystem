@@ -85,7 +85,6 @@
 
         public override void BeforeExecute()
         {
-            this.submission.ProcessingComment = null;
             this.submission.ExceptionType = ExceptionType.None;
             this.submission.CompilerComment = null;
             this.submission.ExecutionComment = null;
@@ -94,12 +93,13 @@
 
         public override void OnError(IOjsSubmission submissionModel, Exception ex)
         {
-            this.submission.ProcessingComment = submissionModel.ProcessingComment;
             this.submission.ExecutionComment = $"{ex.GetAllMessages()}{Environment.NewLine}{ex.StackTrace}";
-            this.submission.ExceptionType = submissionModel.ExceptionType;
             this.submission.StartedExecutionOn = submissionModel.StartedExecutionOn;
             this.submission.CompletedExecutionOn = submissionModel.CompletedExecutionOn;
             this.submission.WorkerEndpoint = submissionModel.WorkerEndpoint;
+            this.submission.ExceptionType = submissionModel.ExceptionType != ExceptionType.None
+                ? submissionModel.ExceptionType
+                : ExceptionType.Strategy;
             this.UpdateResults();
         }
 
@@ -214,7 +214,8 @@
                     this.submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in CalculatePointsForSubmission: {ex.Message}";
+                this.submission.ExecutionComment = $"Exception in CalculatePointsForSubmission: {ex.Message} {Environment.NewLine}"
+                    + this.submission.ExecutionComment;
             }
         }
 
@@ -274,7 +275,8 @@
                     this.submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
+                this.submission.ExecutionComment = $"Exception in SaveParticipantScore: {ex.Message}{Environment.NewLine}"
+                    + this.submission.ExecutionComment;
             }
         }
 
@@ -282,6 +284,7 @@
         {
             try
             {
+                this.submission.WorkerTypeLastExecutedOn = this.submissionForProcessing.WorkerType;
                 this.submission.Processed = true;
                 this.submissionForProcessing.Processed = true;
                 this.submissionForProcessing.Processing = false;
@@ -311,7 +314,8 @@
                     this.submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
+                this.submission.ExecutionComment = $"Exception in CacheTestRuns: {ex.Message}{Environment.NewLine}"
+                    + this.submission.ExecutionComment;
             }
         }
 

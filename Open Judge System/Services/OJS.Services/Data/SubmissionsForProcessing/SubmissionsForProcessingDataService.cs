@@ -135,7 +135,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
 
         private void AssignWorkerType(SubmissionForProcessing submissionForProcessing, Submission submission)
         {
-            var submissionWorkerType = submission.WorkerType;
+            var submissionWorkerType = submission.WorkerTypeToExecuteOn;
             if (submissionWorkerType != WorkerType.Default)
             {
                 submissionForProcessing.WorkerType = submissionWorkerType;
