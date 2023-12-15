@@ -87,6 +87,7 @@ namespace OJS.Services.Data.SubmissionsForProcessing
             {
                 submissionForProcessing.Processing = false;
                 submissionForProcessing.Processed = false;
+                submissionForProcessing.ExecutionFailuresCount = 0;
                 this.AssignWorkerType(submissionForProcessing, submission);
             }
             else
