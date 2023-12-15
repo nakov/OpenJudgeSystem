@@ -5,9 +5,10 @@ import BorderAllIcon from '@mui/icons-material/BorderAll';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
-import MenuIcon from '@mui/icons-material/Menu';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import ScienceIcon from '@mui/icons-material/Science';
+import { Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -17,7 +18,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles';
+import { CSSObject, styled, Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 
 import { Anything } from '../../common/common-types';
@@ -90,7 +91,6 @@ const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
     ...open && {
         marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create([ 'width', 'margin' ], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -102,6 +102,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    boxShadow: '0px 0px 19px -4px rgba(22,0,0,0.75)',
     boxSizing: 'border-box',
     ...open && {
         ...openedMixin(theme),
@@ -115,7 +116,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
-    const theme = useTheme();
     const [ open, setOpen ] = useState(true);
 
     const handleDrawerOpen = () => {
@@ -132,21 +132,11 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         <Box sx={{ display: 'flex', zIndex: 0 }}>
             <AppBar position="fixed" open={open}>
                 <Toolbar>
-                    <IconButton
-                      color="inherit"
-                      aria-label="open drawer"
-                      onClick={handleDrawerOpen}
-                      edge="start"
-                      sx={{
-                          marginRight: 5,
-                          ...open && { display: 'none' },
-                      }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
                     <div className={styles.adminHeaderWrapper}>
                         <Link to="/" className={styles.adminHeaderLink}>
-                            Back to Platform
+                            <Tooltip title="Return to client app">
+                                <KeyboardReturnIcon />
+                            </Tooltip>
                         </Link>
                         <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
                     </div>
@@ -157,15 +147,22 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
               open={open}
             >
                 <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl'
-                            ? <ChevronRightIcon />
-                            : <ChevronLeftIcon />}
-                    </IconButton>
+                    <div />
                 </DrawerHeader>
+                {open === false
+                    ? (
+                        <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerOpen}>
+                            <ChevronRightIcon />
+                        </IconButton>
+                    )
+                    : (
+                        <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerClose}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                    )}
                 {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                 <List>
-                    {administrationItems.map((item, index) => (
+                    {administrationItems.map((item) => (
                         <ListItem key={item.name} disablePadding>
                             <Link
                               to={item.path}
