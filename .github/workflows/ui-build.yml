@@ -6,16 +6,18 @@ on:
       - "v2"
   pull_request:
     types:
-      - "ready_for_review"
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     branches:
       - "*"
 jobs:
   build-and-push-ui:
+    name: UI build and push
+    if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_ui
       dockerfile_name: Dockerfile.ui
-      additional_run_commands: |
-        echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
-        export NODE_OPTIONS=--max-old-space-size=8192
     secrets: inherit
