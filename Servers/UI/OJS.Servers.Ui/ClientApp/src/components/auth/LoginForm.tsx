@@ -1,6 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import {
+    EmptyPasswordErrorMessage,
+    EmptyUsernameErrorMessage,
+    PasswordLengthErrorMessage,
+    UsernameFormatErrorMessage, UsernameLengthErrorMessage,
+} from '../../common/constants';
 import { useAuth } from '../../hooks/use-auth';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
@@ -22,22 +29,62 @@ const LoginPage = () => {
             setUsername,
             setPassword,
             signIn,
+            setLoginErrorMessage,
         },
     } = useAuth();
+
+    const [ usernameFormError, setUsernameFormError ] = useState('');
+    const [ passwordFormError, setPasswordFormError ] = useState('');
+
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
     const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
+        if (isEmpty(value)) {
+            setUsernameFormError(EmptyUsernameErrorMessage);
+        } else if (!isNil(value) && (value.length < 5 || value.length > 32)) {
+            setUsernameFormError(UsernameLengthErrorMessage);
+        } else {
+            const regex = /^[a-zA-Z][a-zA-Z0-9._]{3,30}[a-zA-Z0-9]$/;
+            if (!regex.test(value as string)) {
+                setUsernameFormError(UsernameFormatErrorMessage);
+            } else {
+                setUsernameFormError('');
+            }
+        }
+
         setUsername(isNil(value)
             ? ''
             : value as string);
     }, [ setUsername ]);
 
     const handleOnChangeUpdatePassword = useCallback((value?: IFormControlOnChangeValueType) => {
+        if (isEmpty(value)) {
+            setPasswordFormError(EmptyPasswordErrorMessage);
+        } else if (!isNil(value) && value.length < 6) {
+            setPasswordFormError(PasswordLengthErrorMessage);
+        } else {
+            setPasswordFormError('');
+        }
+
         setPassword(isNil(value)
             ? ''
             : value as string);
     }, [ setPassword ]);
+
+    useEffect(() => {
+        if (!isEmpty(usernameFormError)) {
+            setLoginErrorMessage(usernameFormError);
+            return;
+        }
+
+        if (!isEmpty(passwordFormError)) {
+            setLoginErrorMessage(passwordFormError);
+            return;
+        }
+
+        setLoginErrorMessage('');
+    }, [ usernameFormError, passwordFormError, setLoginErrorMessage ]);
 
     const handleLoginClick = useCallback(async () => {
         await signIn();

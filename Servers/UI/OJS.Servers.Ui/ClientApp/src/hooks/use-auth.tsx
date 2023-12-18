@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
+import { DefaultLoginErrorMessage, EmptyLoginFormErrorMessage } from '../common/constants';
 import { IUserPermissionsType, IUserResponseType, IUserType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
 import isNilOrEmpty from '../utils/check-utils';
@@ -28,6 +29,7 @@ interface IAuthContext {
         setUsername: (value: string) => void;
         setPassword: (value: string) => void;
         setIsLoggingIn: (value:boolean) => void;
+        setLoginErrorMessage: (value: string) => void;
     };
 }
 
@@ -67,7 +69,6 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
     const { showError } = useNotifications();
     const navigate = useNavigate();
     const location = useLocation();
-    const defaultLoginErrorMessage = useMemo(() => 'Invalid username or password', []);
 
     const {
         post: loginSubmit,
@@ -174,9 +175,16 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             const { data } = loginSubmitResponse;
 
             setLoginErrorMessage(isNil(data) || isEmpty(data)
-                ? defaultLoginErrorMessage
+                ? DefaultLoginErrorMessage
                 : data.toString());
 
+            setIsLoggingIn(false);
+
+            return;
+        }
+
+        if (loginSubmitStatus === HttpStatus.Error && isEmpty(username)) {
+            setLoginErrorMessage(EmptyLoginFormErrorMessage);
             setIsLoggingIn(false);
 
             return;
@@ -190,8 +198,9 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         loginSubmitStatus,
         showError,
         setUserDetails,
-        defaultLoginErrorMessage,
         getAuth,
+        username,
+        loginErrorMessage,
     ]);
 
     useEffect(() => {
@@ -250,6 +259,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 loadAuthInfo: getAuth,
                 setUsername,
                 setPassword,
+                setLoginErrorMessage,
             },
         }),
         [
