@@ -78,6 +78,7 @@
                 if (user != null && await this.UserManager.IsInRoleAsync(user.Id, SystemRole.Administrator.ToString()))
                 {
                     await this.SignInAsync(user, model.RememberMe);
+                    this.TempData.AddWarningMessage(Resources.Account.AccountControllers.Suls_login_issue);
                     return this.RedirectToLocal(returnUrl);
                 }
                 
