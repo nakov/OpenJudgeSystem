@@ -10,8 +10,8 @@ const DefaultLoginErrorMessage = 'Invalid username or password';
 const EmptyLoginFormErrorMessage = 'Username and password are required';
 const EmptyUsernameErrorMessage = 'Username is required';
 const UsernameLengthErrorMessage = 'The username must be between 5 and 32 characters long.';
-const UsernameFormatErrorMessage = 'The username can contain only latin characters, numbers, and the symbols \'.\' or \'_\'. ' +
-    'The username must start with a letter and end with a letter or number.';
+const UsernameFormatErrorMessage = 'The username can contain only Latin letters, numbers, and the symbols \'.\' or \'_\'. ' +
+    'The username must start with a letter and end with a letter or a number.';
 const EmptyPasswordErrorMessage = 'Please enter your password';
 const PasswordLengthErrorMessage = 'The password must be at least 6 characters long.';
 const { Status: DEFAULT_FILTER_TYPE } = FilterType;
