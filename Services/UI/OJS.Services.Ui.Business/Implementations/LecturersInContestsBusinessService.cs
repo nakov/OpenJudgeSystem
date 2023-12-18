@@ -43,9 +43,9 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
                contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
     }
 
-    public bool IsUserLecturerInContest(int contestId, string userId) =>
-        this.contestsDataService.IsUserLecturerInByContestAndUser(contestId, userId).GetAwaiter().GetResult();
+    public bool IsUserLecturerInContest(int contestId, string userId)
+        => this.contestsDataService.IsUserLecturerInByContestAndUser(contestId, userId).GetAwaiter().GetResult();
 
-    public bool IsUserAdminOrLecturerInContest(int contestId, UserInfoModel user) =>
-        user.IsAdmin || this.IsUserLecturerInContest(contestId, user.Id);
+    public bool IsUserAdminOrLecturerInContest(int contestId, UserInfoModel user)
+        => user.IsAdmin || this.IsUserLecturerInContest(contestId, user.Id);
 }
