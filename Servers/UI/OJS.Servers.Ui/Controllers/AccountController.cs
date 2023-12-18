@@ -22,7 +22,6 @@ namespace OJS.Servers.Ui.Controllers
     [Authorize]
     public class AccountController : BaseViewController
     {
-        private readonly UserManager<UserProfile> userManager;
         private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
@@ -30,14 +29,12 @@ namespace OJS.Servers.Ui.Controllers
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public AccountController(
-            UserManager<UserProfile> userManager,
             IUsersBusinessService usersBusinessService,
             SignInManager<UserProfile> signInManager,
             ISulsPlatformHttpClientService sulsPlatformHttpClient,
             ILogger<AccountController> logger,
             IWebHostEnvironment webHostEnvironment)
         {
-            this.userManager = userManager;
             this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
@@ -54,8 +51,6 @@ namespace OJS.Servers.Ui.Controllers
             {
                 return this.RedirectToAction("Index", "Home");
             }
-
-            ExternalUserInfoModel? externalUser;
 
             var platformCallResult = new ExternalDataRetrievalResult<ExternalUserInfoModel>();
 
@@ -78,7 +73,7 @@ namespace OJS.Servers.Ui.Controllers
 
             if (platformCallResult.IsSuccess)
             {
-                externalUser = platformCallResult.Data;
+                var externalUser = platformCallResult.Data;
 
                 if (externalUser == null)
                 {
@@ -91,8 +86,6 @@ namespace OJS.Servers.Ui.Controllers
             {
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
-
-            var user = await this.userManager.FindByNameAsync(model.UserName);
 
             var signInResult = await this.signInManager
                 .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
