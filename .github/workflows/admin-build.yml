@@ -6,11 +6,16 @@ on:
       - "v2"
   pull_request:
     types:
-      - "ready_for_review"
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     branches:
       - "*"
 jobs:
   build-and-push-admin:
+    name: Admin build and push
+    if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_administration
