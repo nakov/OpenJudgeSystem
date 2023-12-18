@@ -1,16 +1,13 @@
-﻿using OJS.Common.Models;
-
-namespace OJS.Web.Controllers
+﻿namespace OJS.Web.Controllers
 {
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
-
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.Owin.Security;
-
     using OJS.Common;
+    using OJS.Common.Models;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Common.HttpRequester;
