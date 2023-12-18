@@ -56,19 +56,18 @@ namespace OJS.Servers.Ui.Controllers
 
             try
             {
-                this.logger.LogInformation("START PLATFORM LOGIN CALL");
+                this.logger.LogDebug($"START PLATFORM LOGIN CALL FOR USER: {model.UserName}");
                 platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
                     new { model.UserName },
                     string.Format(GetUserInfoByUsernamePath));
-                this.logger.LogInformation("ЕND PLATFORM LOGIN CALL");
-                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.IsSuccess}");
-                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.ErrorMessage}");
-                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.Data}");
+                this.logger.LogDebug("ЕND PLATFORM LOGIN CALL. RESULT:");
+                this.logger.LogDebug($"{nameof(platformCallResult.IsSuccess)}: {platformCallResult.IsSuccess}");
+                this.logger.LogDebug($"{nameof(platformCallResult.ErrorMessage)}: {platformCallResult.ErrorMessage}");
+                this.logger.LogDebug($"{nameof(platformCallResult.Data)}: {platformCallResult.Data}");
             }
             catch (Exception e)
             {
-                this.logger.LogError("EXCEPTION IN PLATFORM CALL");
-                this.logger.LogError(e.GetAllMessages());
+                this.logger.LogError(e, "EXCEPTION IN PLATFORM CALL");
             }
 
             if (platformCallResult.IsSuccess)
