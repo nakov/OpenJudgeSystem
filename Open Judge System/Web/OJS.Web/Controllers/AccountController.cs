@@ -1,4 +1,6 @@
-﻿namespace OJS.Web.Controllers
+﻿using OJS.Common.Models;
+
+namespace OJS.Web.Controllers
 {
     using System.Threading.Tasks;
     using System.Web;
@@ -75,6 +77,13 @@
             }
             else
             {
+                var user = await this.UserManager.FindAsync(model.UserName, model.Password);
+                if (user != null && await this.UserManager.IsInRoleAsync(user.Id, SystemRole.Administrator.ToString()))
+                {
+                    await this.SignInAsync(user, model.RememberMe);
+                    return this.RedirectToLocal(returnUrl);
+                }
+                
                 this.TempData.AddInfoMessage(Resources.Account.AccountControllers.Inactive_login_system);
                 return this.RedirectToHome();
             }
