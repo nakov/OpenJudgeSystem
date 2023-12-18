@@ -126,6 +126,7 @@ const LoginPage = () => {
                   type={FormControlType.input}
                   onChange={handleOnChangeUpdateUsername}
                   value=""
+                  showPlaceholder={false}
                 />
                 <FormControl
                   id={passwordFieldName.toLowerCase()}
@@ -134,6 +135,7 @@ const LoginPage = () => {
                   type={FormControlType.password}
                   onChange={handleOnChangeUpdatePassword}
                   value=""
+                  showPlaceholder={false}
                 />
                 <div className={styles.loginFormControls}>
                     <FormControl
