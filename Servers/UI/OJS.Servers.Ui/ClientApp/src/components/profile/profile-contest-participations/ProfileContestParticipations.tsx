@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import { useAuth } from '../../../hooks/use-auth';
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
@@ -53,7 +54,8 @@ const ProfileContestParticipations = () => {
         state: { userParticipations },
         actions: { getUserParticipations },
     } = useParticipations();
-    const { state: { isProfileInfoLoaded, userProfileUsername } } = useUsers();
+    const { state: { isProfileInfoLoaded, myProfile } } = useUsers();
+    const { username } = useParams();
 
     useEffect(
         () => {
@@ -61,13 +63,13 @@ const ProfileContestParticipations = () => {
                 return;
             }
 
-            const usernameParam = isEmpty(userProfileUsername)
-                ? user.username
-                : userProfileUsername;
+            const usernameParam = !isNil(username)
+                ? username
+                : myProfile.userName;
 
             getUserParticipations(usernameParam);
         },
-        [ isProfileInfoLoaded, getUserParticipations, user.username, userProfileUsername ],
+        [ isProfileInfoLoaded, getUserParticipations, user.username, myProfile.userName, username ],
     );
 
     useEffect(

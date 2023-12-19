@@ -1,5 +1,4 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { IUserInfoUrlParams } from '../common/url-types';
@@ -23,11 +22,9 @@ interface IUsersContext {
         myProfile: IUserProfileType;
         isProfileInfoLoaded: boolean;
         isProfileInfoLoading: boolean;
-        userProfileUsername: string;
     };
     actions: {
         getProfile: (username: string) => void;
-        initiateRedirectionToUserProfile: (username: string, url: string) => void;
         clearUserProfileInformation: () => void;
     };
 }
@@ -41,20 +38,9 @@ type IUsersProviderProps = IHaveChildrenProps
 const UsersProvider = ({ children }: IUsersProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
     const [ myProfile, setMyProfile ] = useState(defaultState.state.myProfile);
-    const [ userProfileUsername, setUserProfileUsername ] = useState('');
-    const [ getProfileInfoUrlUrlParam, setProfileInfoUrlParam ] =
+    const [ profileInfoUrlUrlParam, setProfileInfoUrlParam ] =
         useState<IUserInfoUrlParams | null>();
     const { showError } = useNotifications();
-    const navigate = useNavigate();
-
-    const initiateRedirectionToUserProfile = useCallback(
-        (profileUsername: string, url: string) => {
-            setUserProfileUsername(profileUsername);
-
-            navigate(url);
-        },
-        [ navigate ],
-    );
 
     const {
         get: getProfileInfo,
@@ -62,7 +48,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         isSuccess,
     } = useHttp<IUserInfoUrlParams, IUserProfileType>({
         url: getProfileInfoUrl,
-        parameters: getProfileInfoUrlUrlParam,
+        parameters: profileInfoUrlUrlParam,
     });
 
     const getProfile = useCallback(
@@ -81,7 +67,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
 
     useEffect(
         () => {
-            if (isNil(profileData)) {
+            if (isNil(profileInfoUrlUrlParam)) {
                 return;
             }
 
@@ -92,23 +78,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
 
             setProfileInfoUrlParam(null);
         },
-        [ getProfileInfo, getProfileInfoUrlUrlParam, profileData ],
-    );
-
-    useEffect(
-        () => {
-            if (isNil(getProfileInfoUrlUrlParam)) {
-                return;
-            }
-
-            (async () => {
-                setIsLoading(true);
-                await getProfileInfo();
-            })();
-
-            setProfileInfoUrlParam(null);
-        },
-        [ getProfileInfo, getProfileInfoUrlUrlParam ],
+        [ getProfileInfo, profileInfoUrlUrlParam ],
     );
 
     useEffect(
@@ -131,15 +101,13 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
                 myProfile,
                 isProfileInfoLoaded: isSuccess,
                 isProfileInfoLoading: isLoading,
-                userProfileUsername,
             },
             actions: {
                 getProfile,
-                initiateRedirectionToUserProfile,
                 clearUserProfileInformation,
             },
         }),
-        [ getProfile, myProfile, isSuccess, isLoading, userProfileUsername, initiateRedirectionToUserProfile, clearUserProfileInformation ],
+        [ getProfile, myProfile, isSuccess, isLoading, clearUserProfileInformation ],
     );
 
     return (

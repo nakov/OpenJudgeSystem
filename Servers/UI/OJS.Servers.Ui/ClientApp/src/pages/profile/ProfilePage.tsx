@@ -24,7 +24,6 @@ const ProfilePage = () => {
         state: {
             myProfile,
             isProfileInfoLoaded,
-            userProfileUsername,
         },
         actions: {
             getProfile,
@@ -41,15 +40,13 @@ const ProfilePage = () => {
                 return;
             }
 
-            const usernameParam = isEmpty(userProfileUsername)
-                ? !isNil(username)
-                    ? username
-                    : myUsername
-                : userProfileUsername;
+            const usernameParam = !isNil(username)
+                ? username
+                : myUsername;
 
             getProfile(usernameParam);
         },
-        [ getProfile, myProfile.userName, myUsername, userProfileUsername, username ],
+        [ getProfile, myProfile, myProfile.userName, myUsername, username ],
     );
 
     useEffect(
