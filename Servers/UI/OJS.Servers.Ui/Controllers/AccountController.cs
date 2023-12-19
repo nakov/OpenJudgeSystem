@@ -101,15 +101,12 @@ namespace OJS.Servers.Ui.Controllers
 
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
-            else
-            {
-                var signInResult = await this.signInManager
-                    .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
 
-                if (!signInResult.Succeeded)
-                {
-                    return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
-                }
+            var result = await this.signInManager
+                    .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+            if (!result.Succeeded)
+            {
+                return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
 
             return this.Ok();
