@@ -74,6 +74,8 @@ const TestRunDetails = ({ testRun, trialTestsCount }: ITestRunDetailsProps) => {
                         <Icon Component={BiMemoryCard} size={IconSize.Large} className={styles.iconPassiveColor} />
                         <span style={{ marginTop: '5px' }}>
                             {(testRun.memoryUsed / 1000000).toFixed(2)}
+                            {' '}
+                            MB
                         </span>
                     </span>
                     <Icon Component={BiInfoCircle} size={IconSize.Large} className={styles.iconActiveColor} />
