@@ -654,6 +654,12 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime?>("ParticipationStartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("TotalScoreSnapshot")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TotalScoreSnapshotModifiedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");

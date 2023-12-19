@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/responsive';
 
 .problemElement {
   @extend %font-family-lato;
@@ -14,11 +15,12 @@
   flex-flow: wrap;
   grid-gap: 10px;
   grid-template-rows: auto 2fr auto;
-  margin: 10px;
-  min-height: 10vh;
+  height: 240px;
+  justify-content: center;
+  margin: 15px;
   min-width: 240px;
-  padding: 0.7vw;
-  width: 13vw;
+  padding: 10px;
+  width: 220px;
 }
 
 .problemContest {
@@ -26,11 +28,12 @@
   font-size: variables.$f-size-16;
   margin-left: 10px;
   max-width: 14vw;
+  padding-bottom: 25px;
 }
 
 .problemCategory {
   color: colors.$text-light-gray-color;
-  font-size: variables.$f-size-10;
+  font-size: variables.$f-size-14;
   font-weight: bold;
   margin-left: 10px;
   text-transform: uppercase;
@@ -41,4 +44,23 @@
   display: flex;
   grid-gap: 10px;
   justify-content: center;
+}
+
+.problemCardCountdown {
+  color: colors.$text-dark-gray-color;
+  font-size: variables.$f-size-12;
+  font-weight: bold;
+  padding: 10px;
+}
+
+@media (max-width: 950px) {
+  .problemElement {
+    width: 320px;
+  }
+}
+
+@media (max-width: 710px) {
+  .problemElement {
+    width: 250px;
+  }
 }

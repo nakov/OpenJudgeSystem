@@ -20,9 +20,9 @@ namespace OJS.Servers.Ui.Controllers
     using static OJS.Common.GlobalConstants.Urls;
 
     [Authorize]
+    [Route("api/[controller]/[action]")]
     public class AccountController : BaseViewController
     {
-        private readonly UserManager<UserProfile> userManager;
         private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
@@ -30,14 +30,12 @@ namespace OJS.Servers.Ui.Controllers
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public AccountController(
-            UserManager<UserProfile> userManager,
             IUsersBusinessService usersBusinessService,
             SignInManager<UserProfile> signInManager,
             ISulsPlatformHttpClientService sulsPlatformHttpClient,
             ILogger<AccountController> logger,
             IWebHostEnvironment webHostEnvironment)
         {
-            this.userManager = userManager;
             this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
@@ -47,38 +45,34 @@ namespace OJS.Servers.Ui.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody]LoginRequestModel model)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToAction("Index", "Home");
+                return this.BadRequest();
             }
-
-            ExternalUserInfoModel? externalUser;
 
             var platformCallResult = new ExternalDataRetrievalResult<ExternalUserInfoModel>();
 
             try
             {
-                this.logger.LogInformation("START PLATFORM LOGIN CALL");
+                this.logger.LogDebug($"START PLATFORM LOGIN CALL FOR USER: {model.UserName}");
                 platformCallResult = await this.sulsPlatformHttpClient.GetAsync<ExternalUserInfoModel>(
                     new { model.UserName },
                     string.Format(GetUserInfoByUsernamePath));
-                this.logger.LogInformation("ЕND PLATFORM LOGIN CALL");
-                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.IsSuccess}");
-                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.ErrorMessage}");
-                this.logger.LogInformation($"PLATFORM RESULT: {platformCallResult.Data}");
+                this.logger.LogDebug("ЕND PLATFORM LOGIN CALL. RESULT:");
+                this.logger.LogDebug($"{nameof(platformCallResult.IsSuccess)}: {platformCallResult.IsSuccess}");
+                this.logger.LogDebug($"{nameof(platformCallResult.ErrorMessage)}: {platformCallResult.ErrorMessage}");
+                this.logger.LogDebug($"{nameof(platformCallResult.Data)}: {platformCallResult.Data}");
             }
             catch (Exception e)
             {
-                this.logger.LogError("EXCEPTION IN PLATFORM CALL");
-                this.logger.LogError(e.GetAllMessages());
+                this.logger.LogError(e, "EXCEPTION IN PLATFORM CALL");
             }
 
             if (platformCallResult.IsSuccess)
             {
-                externalUser = platformCallResult.Data;
+                var externalUser = platformCallResult.Data;
 
                 if (externalUser == null)
                 {
@@ -92,8 +86,6 @@ namespace OJS.Servers.Ui.Controllers
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
 
-            var user = await this.userManager.FindByNameAsync(model.UserName);
-
             var signInResult = await this.signInManager
                 .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
 
@@ -102,13 +94,14 @@ namespace OJS.Servers.Ui.Controllers
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
 
-            return this.RedirectToAction("Index", "Home");
+            return this.Ok();
         }
 
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            return this.RedirectToAction("Index", "Home");
+            return this.Ok();
         }
     }
 }
