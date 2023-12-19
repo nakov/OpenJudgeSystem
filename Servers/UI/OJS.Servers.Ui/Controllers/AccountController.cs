@@ -87,16 +87,15 @@ namespace OJS.Servers.Ui.Controllers
             }
             else if (this.webHostEnvironment.IsProduction())
             {
-                var signInResult = await this.signInManager
-                    .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
-
-                if (signInResult.Succeeded)
+                var user = await this.userManager.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
+                if (user != null && await this.userManager.IsInRoleAsync(user!, GlobalConstants.Roles.Administrator))
                 {
-                    var user = await this.userManager.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
-                    var isInRole = await this.userManager.IsInRoleAsync(user!, GlobalConstants.Roles.Administrator);
-                    return isInRole
-                        ? this.Ok(GlobalConstants.ErrorMessages.LoggedInThroughDatabase)
-                        : this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
+                    var signInResult = await this.signInManager
+                        .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                    if (signInResult.Succeeded)
+                    {
+                        return this.Ok(GlobalConstants.ErrorMessages.LoggedInThroughDatabase);
+                    }
                 }
 
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
