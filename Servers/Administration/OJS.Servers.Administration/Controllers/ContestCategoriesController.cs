@@ -1,11 +1,11 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using FluentExtensions.Extensions;
 using AutoCrudAdmin.Extensions;
 using System;
 using System.Linq.Expressions;
 using AutoCrudAdmin.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
@@ -98,6 +98,9 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         entity.Children = this.contestCategoriesData
             .GetByIdQuery(entity.Id)
             .SelectMany(c => c.Children)
+            .Include(ch => ch.Children)
+                .ThenInclude(ch => ch.Children)
+                    .ThenInclude(ch => ch.Children)
             .ToList();
 
         return Task.WhenAll(
@@ -142,10 +145,10 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
 
     private async Task CascadeDeleteCategories(ContestCategory contestCategory)
     {
-        await contestCategory.Children.ForEachAsync(async children =>
+        foreach (var children in contestCategory.Children.ToList())
         {
             await this.CascadeDeleteCategories(children);
-        });
+        }
 
         this.contestCategoriesData.Delete(contestCategory);
     }
