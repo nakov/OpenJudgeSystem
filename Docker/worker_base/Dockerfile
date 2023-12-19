@@ -21,9 +21,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
-# Setup for installing Node.js 12 (LTS)
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-
+RUN mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list;
 # Setup for installing .NET Core SDK
 RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
@@ -31,16 +31,16 @@ RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ub
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
-      dotnet-sdk-6.0 \
-      dotnet-sdk-3.1 \
-      dotnet-sdk-5.0 \
-      openjdk-11-jdk \
-      nodejs \
-      python3.8 \
-      python3-pip \
-      golang-go \
-      libgtk-3-0 \
-      libgbm1 && \
+    dotnet-sdk-6.0 \
+    dotnet-sdk-3.1 \
+    dotnet-sdk-5.0 \
+    openjdk-11-jdk \
+    nodejs \
+    python3.8 \
+    python3-pip \
+    golang-go \
+    libgtk-3-0 \
+    libgbm1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Docker setup

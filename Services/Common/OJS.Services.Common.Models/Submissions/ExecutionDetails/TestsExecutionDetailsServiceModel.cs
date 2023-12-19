@@ -29,7 +29,7 @@
             configuration.CreateMap<Problem, TestsExecutionDetailsServiceModel>()
                 .ForMember(
                     d => d.CheckerType,
-                    opt => opt.MapFrom(s => s.Checker!.ClassName!.ToLower().TrimFromEnd("checker")))
+                    opt => opt.MapFrom(s => s.Checker!.ClassName!.ToLower().TrimEnd("checker".ToCharArray())))
                 .ForMember(
                     d => d.CheckerParameter,
                     opt => opt.MapFrom(s => s.Checker!.Parameter))
