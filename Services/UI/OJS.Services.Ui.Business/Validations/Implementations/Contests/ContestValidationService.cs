@@ -32,12 +32,10 @@ public class ContestValidationService : IContestValidationService
 
         var isUserLecturerInContest = contest != null && user != null && user.IsLecturer;
 
-        var isCategoryChildOfInvisibleParent = this.IsCategoryChildOfInvisibleParent(contestId);
-
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            ((!contest.IsVisible || !contest.Category!.IsVisible || isCategoryChildOfInvisibleParent) &&
+            ((!contest.IsVisible || !contest.Category!.IsVisible || this.IsCategoryChildOfInvisibleParent(contest.Category.Id)) &&
             !isUserLecturerInContest &&
             !user.IsAdmin))
         {
@@ -65,8 +63,8 @@ public class ContestValidationService : IContestValidationService
         return ValidationResult.Valid();
     }
 
-    private bool IsCategoryChildOfInvisibleParent(int? contestId) =>
+    private bool IsCategoryChildOfInvisibleParent(int? categoryId) =>
         this.categoriesDataService.GetAllInvisible()
             .Any(c => c.Children
-                .Any(cc => cc.Id == contestId));
+                .Any(cc => cc.Id == categoryId));
 }
