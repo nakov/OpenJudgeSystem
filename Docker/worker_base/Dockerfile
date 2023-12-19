@@ -31,16 +31,17 @@ RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ub
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
-    dotnet-sdk-6.0 \
-    dotnet-sdk-3.1 \
-    dotnet-sdk-5.0 \
-    openjdk-11-jdk \
-    nodejs \
-    python3.8 \
-    python3-pip \
-    golang-go \
-    libgtk-3-0 \
-    libgbm1 && \
+      dotnet-sdk-6.0 \
+      dotnet-sdk-3.1 \
+      dotnet-sdk-5.0 \
+      openjdk-11-jdk \
+      openjdk-17-jdk \
+      nodejs \
+      python3.8 \
+      python3-pip \
+      golang-go \
+      libgtk-3-0 \
+      libgbm1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Docker setup
@@ -50,7 +51,16 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /
       docker-ce \
       docker-ce-cli \
       containerd.io && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* 
+
+# Install Maven
+ENV MAVEN_VERSION 3.9.1
+RUN mkdir /judge-resources && \
+	cd /judge-resources && \
+    curl -O https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    tar -xzvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    ln -s /judge-resources/apache-maven-$MAVEN_VERSION/bin/mvn /usr/bin/mvn
 
 # Java setup
 WORKDIR /tmp/java
@@ -60,7 +70,8 @@ COPY ./java/gradle ./gradle
 RUN ./gradlew
 
 COPY ./java/build.gradle ./build.gradle
-RUN ./gradlew getDeps
+RUN ./gradlew getDeps11
+RUN ./gradlew getDeps17
 
 # JS and JS SPA
 COPY ./js /judge-resources/js
@@ -73,6 +84,7 @@ RUN npm install && \
     bash /judge-resources/js/chromium-scripts/update-and-run.sh
 
 ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
+ENV JAVA17_LIBS_DIR=/judge-resources/java17Libs/
 ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
 
 # Python 11 with Django support
