@@ -268,7 +268,7 @@
 
         // SafeLocalMemHandle
         [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true, BestFitMapping = false)]
-        internal static extern bool ConvertStringSecurityDescriptorToSecurityDescriptor(string stringSecurityDescriptor, int stringSdRevision, out SafeLocalMemHandle securityDescriptor, IntPtr securityDescriptorSize);
+        internal static extern bool ConvertStringSecurityDescriptorToSecurityDescriptor([MarshalAs(UnmanagedType.LPWStr)]string stringSecurityDescriptor, int stringSdRevision, out SafeLocalMemHandle securityDescriptor, IntPtr securityDescriptorSize);
 
 #pragma warning disable SYSLIB0004
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
