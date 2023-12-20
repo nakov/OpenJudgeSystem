@@ -115,8 +115,8 @@ const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { state: { user } } = useAuth();
     const { contestId, participationType: participationUrlType, resultType } = params;
-    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
-    const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
+    const { state: { categoriesFlat, isLoaded }, actions: { load: loadCategories } } = useContestCategories();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
     const [ numberedRows, setNumberedRows ] = useState<Array<IContestResultsTypeWithRowNumber>>([]);
@@ -303,7 +303,7 @@ const ContestResultsPage = () => {
 
     return (
         isNil(contestResultsError)
-            ? areContestResultsLoaded && !isEmpty(breadcrumbItems)
+            ? areContestResultsLoaded && isLoaded
                 ? renderElements
                 : (
                     <div style={{ ...flexCenterObjectStyles }}>
