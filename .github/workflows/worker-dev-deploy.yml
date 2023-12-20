@@ -14,9 +14,7 @@ jobs:
     secrets: inherit
   deploy:
     needs: [build-and-push]
-    uses: ./.github/workflows/deploy-worker.yml
+    uses: ./.github/workflows/deploy.yml
     secrets:
-      host: ${{ secrets.WORKER_DEV_SERVER_01_HOST }}
-      username: ${{ secrets.WORKER_DEV_SERVER_01_USERNAME }}
-      key: ${{ secrets.WORKER_DEV_SERVER_01_KEY }}
-      port: ${{ secrets.WORKER_DEV_SERVER_01_PORT }}
+      webhook_url: ${{ secrets.WORKER_WEBHOOK_URL }}
+      webhook_secret: ${{ secrets.WEBHOOK_SECRET }}

@@ -148,6 +148,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
+        if (submissionDetailsServiceModel.IsNull())
+        {
+            throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
+        }
+
         var contest = await this.contestsDataService
             .GetWithCategoryByProblem<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id);
 

@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using OJS.Common.Enumerations;
 using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
+using OJS.Data.Models.Contests;
+using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
@@ -22,10 +24,13 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
+using AutoCrudAdmin.Extensions;
 using OJS.Common.Extensions;
 
 public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
 {
+    private const string ContestName = nameof(Contest);
+
     private readonly IValidatorsFactory<ProblemGroup> problemGroupValidatorsFactory;
     private readonly IValidationService<ProblemGroupDeleteValidationServiceModel> problemGroupsDeleteValidation;
     private readonly IValidationService<ProblemGroupEditValidationServiceModel> problemGroupsEditValidation;
@@ -60,6 +65,9 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         this.lecturerContestPrivilegesBusinessService = lecturerContestPrivilegesBusinessService;
     }
 
+    protected override Expression<Func<ProblemGroup, bool>>? MasterGridFilter
+        => this.GetMasterGridFilter();
+
     protected override IEnumerable<Func<ProblemGroup, ProblemGroup, AdminActionContext, ValidatorResult>>
         EntityValidators
         => this.problemGroupValidatorsFactory.GetValidators();
@@ -73,9 +81,6 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         {
             new () { Action = nameof(this.Problems) },
         };
-
-    protected override Expression<Func<ProblemGroup, bool>>? MasterGridFilter
-        => this.GetMasterGridFilter();
 
     public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)
         => this.RedirectToActionWithNumberFilter(
@@ -171,8 +176,21 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     protected override async Task AfterEntitySaveAsync(ProblemGroup entity, AdminActionContext actionContext)
         => await this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(entity.ContestId, entity);
 
-    private Expression<Func<ProblemGroup, bool>> GetMasterGridFilter()
-        => this.lecturerContestPrivilegesBusinessService.GetProblemGroupsUserPrivilegesExpression(
+    protected override Expression<Func<ProblemGroup, bool>> GetMasterGridFilter()
+    {
+        var filterExpressions = new List<Expression<Func<ProblemGroup, bool>>>();
+
+        var filterByLecturerRightsExpression = this.lecturerContestPrivilegesBusinessService.GetProblemGroupsUserPrivilegesExpression(
             this.User.GetId(),
             this.User.IsAdmin());
+
+        filterExpressions.Add(filterByLecturerRightsExpression);
+
+        if (this.TryGetEntityIdForStringColumnFilter(ContestName, out var contestName))
+        {
+            filterExpressions.Add(pg => pg.Contest.Name == contestName);
+        }
+
+        return filterExpressions.CombineMultiple();
+    }
 }

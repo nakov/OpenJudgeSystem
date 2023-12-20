@@ -26,6 +26,10 @@ interface IContestSearchType{
 interface IProblemContest {
     id: number;
     name: string;
+    startTime: Date;
+    endTime: Date;
+    practiceStartTime: Date;
+    practiceEndTime: Date;
     canBeCompeted: boolean;
     canBePracticed: boolean;
     category: string;

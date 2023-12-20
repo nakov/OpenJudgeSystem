@@ -34,6 +34,9 @@ const LoginPage = () => {
     }, [ setPassword ]);
 
     const handleLoginClick = useCallback(async () => {
+        /* TODO:  Add message to notify the admin if SULS is not working.
+         Get the message from legacy Judge.
+        */
         await signIn();
     }, [ signIn ]);
 

@@ -8,16 +8,13 @@ import isNil from 'lodash/isNil';
 import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
-import {
-    setCurrentPage,
+import NotFoundPage from '../../../pages/not-found/NotFoundPage';
+import { setCurrentPage,
     setCurrentSubmissionResults,
     setRetestIsSuccess,
-    setSubmission,
-} from '../../../redux/features/submissionDetailsSlice';
-import {
-    useGetCurrentSubmissionQuery,
-    useGetSubmissionResultsQuery,
-} from '../../../redux/services/submissionDetailsService';
+    setSubmission } from '../../../redux/features/submissionDetailsSlice';
+import { useGetCurrentSubmissionQuery,
+    useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -57,7 +54,6 @@ const SubmissionDetails = () => {
         dispatch(setSubmission(currentSubmissionData));
         dispatch(setCurrentSubmissionResults(allSubmissionsData));
     }, [ currentSubmissionData, allSubmissionsData, dispatch ]);
-
     useEffect(
         () => {
             if (currentSubmission) {
@@ -135,7 +131,7 @@ const SubmissionDetails = () => {
     );
 
     if (!isFetching && isNil(currentSubmission) && isEmpty(validationErrors)) {
-        return <div>No details fetched.</div>;
+        return <NotFoundPage />;
     }
 
     if (!isEmpty(validationErrors)) {
