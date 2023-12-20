@@ -48,6 +48,7 @@ const getLoginSubmitUrl = () => `${baseApiUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseApiUrl}/Account/Logout`;
 
 const getLoginPageUrl = () => `${baseUrl}/login`;
+const getLoginPath = () => '/login';
 
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
@@ -244,6 +245,7 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
 export {
     getLoginSubmitUrl,
     getLogoutUrl,
+    getLoginPath,
     getSearchPageURL,
     getSearchResultsUrl,
     getUserAuthInfoUrl,

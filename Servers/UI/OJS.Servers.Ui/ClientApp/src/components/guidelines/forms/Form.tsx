@@ -11,6 +11,7 @@ interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName 
     id?: string;
     submitButtonClassName?: string;
     disableButton?: boolean;
+    hideFormButton?: boolean;
 }
 
 const Form = ({
@@ -21,6 +22,7 @@ const Form = ({
     className = '',
     submitButtonClassName = '',
     disableButton = false,
+    hideFormButton = false,
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: FormEvent) => {
@@ -64,7 +66,7 @@ const Form = ({
           className={internalClassName}
         >
             {children}
-            {renderButton()}
+            {!hideFormButton && renderButton()}
         </form>
     );
 };
