@@ -75,6 +75,11 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         return categories;
     }
 
+    public bool IsCategoryChildOfInvisibleParent(int? categoryId) =>
+        this.contestCategoriesData.GetAllInvisible()
+            .Any(c => c.Children
+                .Any(cc => cc.Id == categoryId));
+
     private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(
         IEnumerable<ContestCategoryTreeViewModel> allCategories)
     {
