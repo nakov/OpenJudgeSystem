@@ -20,6 +20,10 @@
             => this.DbSet
                 .Where(cc => cc.IsVisible);
 
+        public IQueryable<ContestCategory> GetAllInvisible()
+            => this.DbSet
+                .Where(cc => !cc.IsVisible);
+
         public Task<IEnumerable<T>> GetAllVisible<T>()
             => this.DbSet
                 .Where(cc => cc.IsVisible)
