@@ -8,6 +8,7 @@ import { contestParticipationType } from '../../common/contest-helpers';
 import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import {
     IContestResultsParticipationProblemType,
@@ -19,8 +20,8 @@ import { useCurrentContestResults } from '../../hooks/contests/use-current-conte
 import { useAuth } from '../../hooks/use-auth';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
-import { useCurrentContest } from '../../hooks/use-current-contest';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { getContestDetailsAppUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -115,11 +116,11 @@ const ContestResultsPage = () => {
     const { state: { user } } = useAuth();
     const { contestId, participationType: participationUrlType, resultType } = params;
     const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
-    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
-    const { state: { contestDetails }, actions: { getContestDetails } } = useCurrentContest();
+    const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
     const [ numberedRows, setNumberedRows ] = useState<Array<IContestResultsTypeWithRowNumber>>([]);
+    const [ isCategoriesRequestSent, setIsCategoriesRequestSent ] = useState(false);
 
     const participationType = contestParticipationType(official);
 
@@ -183,31 +184,37 @@ const ContestResultsPage = () => {
         [ contestResults ],
     );
 
+    useEffect(() => () => {
+        setIsCategoriesRequestSent(false);
+    }, []);
+
     useEffect(
         () => {
             setPageTitle(contestResultsPageTitle);
+        },
+        [ contestResultsPageTitle, setPageTitle, categoriesFlat, loadCategories, contestId ],
+    );
 
-            if (!isNil(contestId)) {
-                getContestDetails({ id: contestId.toString() });
-            }
-
-            if (isEmpty(categoriesFlat)) {
+    useEffect(
+        () => {
+            if (isEmpty(categoriesFlat) && !isCategoriesRequestSent) {
+                setIsCategoriesRequestSent(true);
                 (async () => {
                     await loadCategories();
                 })();
             }
         },
-        [ contestResultsPageTitle, setPageTitle, categoriesFlat, loadCategories, contestId, getContestDetails ],
+        [ categoriesFlat, isCategoriesRequestSent, loadCategories ],
     );
 
     useEffect(
         () => {
-            if (!isNil(contestDetails) && !isEmpty(categoriesFlat)) {
-                const category = categoriesFlat.find(({ id }) => id.toString() === contestDetails?.categoryId.toString());
+            if (!isEmpty(contestResults?.results) && !isEmpty(categoriesFlat)) {
+                const category = categoriesFlat.find(({ id }) => id.toString() === contestResults?.categoryId.toString());
                 updateBreadcrumb(category, categoriesFlat);
             }
         },
-        [ categoriesFlat, contestDetails, updateBreadcrumb ],
+        [ categoriesFlat, contestResults?.categoryId, contestResults?.results, updateBreadcrumb ],
     );
 
     const getColumns = useCallback(
@@ -245,7 +252,7 @@ const ContestResultsPage = () => {
                     results for contest -
                     {' '}
                     <LinkButton
-                      to={getContestDetailsAppUrl(contestResults?.id ?? 0)}
+                      to={getContestDetailsAppUrl(contestId)}
                       text={contestResults?.name}
                       type={LinkButtonType.plain}
                       className={styles.contestName}
@@ -265,7 +272,7 @@ const ContestResultsPage = () => {
                 />
             </>
         ),
-        [ contestResults, getColumns, participationType, numberedRows ],
+        [ participationType, contestId, contestResults, numberedRows, getColumns ],
     );
 
     const renderErrorHeading = useCallback(
@@ -296,9 +303,13 @@ const ContestResultsPage = () => {
 
     return (
         isNil(contestResultsError)
-            ? areContestResultsLoaded
+            ? areContestResultsLoaded && !isEmpty(breadcrumbItems)
                 ? renderElements
-                : <div>Loading data</div>
+                : (
+                    <div style={{ ...flexCenterObjectStyles }}>
+                        <SpinningLoader />
+                    </div>
+                )
             : renderErrorMessage()
     );
 };
