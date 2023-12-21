@@ -227,7 +227,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             }
 
             // Create an executor and checker
-            var executor = this.CreateExecutor(ProcessExecutorType.Standard);
+            var executor = this.CreateExecutor();
 
             var checker = executionContext.Input.GetChecker();
 
@@ -263,7 +263,7 @@ class _$SandboxSecurityManager extends SecurityManager {
                 return result;
             }
 
-            var executor = this.CreateExecutor(ProcessExecutorType.Standard);
+            var executor = this.CreateExecutor();
 
             var processExecutionResult = this.Execute(
                 executor,

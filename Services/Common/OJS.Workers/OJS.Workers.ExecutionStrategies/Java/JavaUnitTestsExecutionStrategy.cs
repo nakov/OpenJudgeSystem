@@ -129,7 +129,7 @@ public class _$TestRunner {{
             FileHelpers.UnzipFile(submissionFilePath, this.WorkingDirectory);
             File.Delete(submissionFilePath);
 
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             var checker = executionContext.Input.GetChecker();
 

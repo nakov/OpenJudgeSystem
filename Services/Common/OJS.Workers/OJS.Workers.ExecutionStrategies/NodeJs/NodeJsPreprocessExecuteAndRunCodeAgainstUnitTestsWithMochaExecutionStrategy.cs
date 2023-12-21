@@ -93,7 +93,7 @@ after(function() {
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             var codeSavePath = this.SaveCodeToTempFile(executionContext);
 

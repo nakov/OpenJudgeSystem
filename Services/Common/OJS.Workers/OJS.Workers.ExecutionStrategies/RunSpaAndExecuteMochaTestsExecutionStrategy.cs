@@ -313,9 +313,6 @@ finally:
             return result;
         }
 
-        protected override IExecutor CreateExecutor()
-            => this.CreateExecutor(ProcessExecutorType.Standard);
-
         private static void ValidateAllowedFileExtension<TInput>(IExecutionContext<TInput> executionContext)
         {
             var trimmedAllowedFileExtensions = executionContext.AllowedFileExtensions?.Trim();

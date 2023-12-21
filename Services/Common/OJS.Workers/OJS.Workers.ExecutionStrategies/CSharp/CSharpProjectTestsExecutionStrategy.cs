@@ -168,7 +168,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             // Delete tests before execution so the user can't access them
             FileHelpers.DeleteFiles(this.TestPaths.ToArray());
 
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             return this.RunUnitTests(
                 this.NUnitConsoleRunnerPath,

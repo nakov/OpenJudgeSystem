@@ -122,8 +122,5 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 directory,
                 false,
                 true);
-
-        protected virtual IExecutor CreateExecutor()
-            => this.CreateExecutor(ProcessExecutorType.Restricted);
     }
 }

@@ -29,7 +29,7 @@
                 executionContext,
                 result,
                 this.GetCompilerPathFunc,
-                this.CreateExecutor(ProcessExecutorType.Restricted),
+                this.CreateExecutor(),
                 useSystemEncoding: false,
                 dependOnExitCodeForRunTimeError: true);
         }

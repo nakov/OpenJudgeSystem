@@ -42,7 +42,7 @@
 
             this.CorrectProjectReferences(project);
 
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             return this.RunUnitTests(
                 this.NUnitConsoleRunnerPath,

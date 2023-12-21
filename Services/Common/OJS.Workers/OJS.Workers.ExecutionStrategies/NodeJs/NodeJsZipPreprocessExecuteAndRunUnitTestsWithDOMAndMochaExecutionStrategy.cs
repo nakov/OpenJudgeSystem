@@ -175,7 +175,7 @@ function afterBundling() {
             var codeSavePath = FileHelpers.SaveStringToTempFile(this.WorkingDirectory, codeToExecute);
 
             // Create a Restricted Process Executor
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             // Process tests
             result.Results.AddRange(this.ProcessTests(

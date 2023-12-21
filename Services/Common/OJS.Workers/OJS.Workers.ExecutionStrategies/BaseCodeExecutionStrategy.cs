@@ -103,7 +103,7 @@
                     : processExecutionResult.ErrorOutput,
             };
 
-        protected IExecutor CreateExecutor(ProcessExecutorType processExecutorType)
+        protected IExecutor CreateExecutor(ProcessExecutorType processExecutorType = ProcessExecutorType.Default)
             => this.ProcessExecutorFactory
                 .CreateProcessExecutor(this.BaseTimeUsed, this.BaseMemoryUsed, processExecutorType);
 

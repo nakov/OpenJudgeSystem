@@ -174,7 +174,7 @@ describe('TestDOMScope', function() {{
                 this.ProgramEntryPath);
 
             var codeSavePath = FileHelpers.SaveStringToTempFile(this.WorkingDirectory, codeToExecute);
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             result.Results.AddRange(this.ProcessTests(
                 executionContext,

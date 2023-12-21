@@ -26,7 +26,7 @@
                 executionContext,
                 result,
                 this.GetCompilerPathFunc,
-                this.CreateExecutor(ProcessExecutorType.Restricted));
+                this.CreateExecutor());
 
         protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
@@ -42,7 +42,7 @@
                 return result;
             }
 
-            var executor = this.CreateExecutor(ProcessExecutorType.Restricted);
+            var executor = this.CreateExecutor();
 
             var processExecutionResult = executor.Execute(
                 compileResult.OutputFile,

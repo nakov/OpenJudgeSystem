@@ -28,7 +28,7 @@
                 executionContext,
                 result,
                 this.GetCompilerPathFunc,
-                this.CreateExecutor(ProcessExecutorType.Standard),
+                this.CreateExecutor(),
                 useSystemEncoding: true,
                 dependOnExitCodeForRunTimeError: false,
                 useWorkingDirectoryForProcess: true);
