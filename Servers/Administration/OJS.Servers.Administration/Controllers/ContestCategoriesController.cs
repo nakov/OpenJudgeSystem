@@ -95,13 +95,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         ContestCategory entity,
         AdminActionContext actionContext)
     {
-        entity.Children = this.contestCategoriesData
-            .GetByIdQuery(entity.Id)
-            .SelectMany(c => c.Children)
-            .Include(ch => ch.Children)
-                .ThenInclude(ch => ch.Children)
-                    .ThenInclude(ch => ch.Children)
-            .ToList();
+        this.contestCategoriesData.LoadChildrenRecursively(entity);
 
         return Task.WhenAll(
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
