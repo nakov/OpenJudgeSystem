@@ -209,12 +209,12 @@ const ContestResultsPage = () => {
 
     useEffect(
         () => {
-            if (!isEmpty(contestResults?.results) && !isEmpty(categoriesFlat)) {
+            if (areContestResultsLoaded && !isEmpty(categoriesFlat)) {
                 const category = categoriesFlat.find(({ id }) => id.toString() === contestResults?.categoryId.toString());
                 updateBreadcrumb(category, categoriesFlat);
             }
         },
-        [ categoriesFlat, contestResults?.categoryId, contestResults?.results, updateBreadcrumb ],
+        [ categoriesFlat, contestResults, areContestResultsLoaded, updateBreadcrumb ],
     );
 
     const getColumns = useCallback(
