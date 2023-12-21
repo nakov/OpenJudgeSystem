@@ -11,8 +11,6 @@
 
         Task<IEnumerable<T>> GetAllVisible<T>();
 
-        IQueryable<ContestCategory> GetAllInvisible();
-
         IQueryable<ContestCategory> GetAllVisibleByLecturer(string lecturerId);
 
         Task<string?> GetNameById(int id);
