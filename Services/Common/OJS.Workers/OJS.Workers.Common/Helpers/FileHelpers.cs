@@ -12,13 +12,6 @@
     // TODO: Unit test
     public static class FileHelpers
     {
-        public static string SaveStringToTempFile(string stringToWrite)
-        {
-            var tempFilePath = Path.GetTempFileName();
-            File.WriteAllText(tempFilePath, stringToWrite);
-            return tempFilePath;
-        }
-
         public static string SaveStringToFile(string stringToWrite, string filePath)
         {
             File.WriteAllText(filePath, stringToWrite);
@@ -34,13 +27,6 @@
             return fullTempFilePath;
         }
 
-        public static string SaveByteArrayToTempFile(byte[] dataToWrite)
-        {
-            var tempFilePath = Path.GetFileName(Path.GetTempFileName());
-            File.WriteAllBytes(tempFilePath, dataToWrite);
-            return tempFilePath;
-        }
-
         public static string SaveByteArrayToTempFile(string directory, byte[] dataToWrite)
         {
             var tempFilePath = Path.GetTempFileName();
@@ -48,14 +34,6 @@
             var fullTempFilePath = Path.Combine(directory, Path.GetFileName(tempFilePath));
             File.WriteAllBytes(fullTempFilePath, dataToWrite);
             return fullTempFilePath;
-        }
-
-        public static void ConvertContentToZip(string submissionZipFilePath)
-        {
-            using (var zipFile = new ZipFile(submissionZipFilePath))
-            {
-                zipFile.Save();
-            }
         }
 
         public static void UnzipFile(string fileToUnzip, string outputDirectory) =>
@@ -78,19 +56,6 @@
             var files = DiscoverAllFilesMatchingPattern(workingDirectory, pattern);
 
             var discoveredFile = files.OrderByDescending(orderBy).First();
-
-            return ProcessModulePath(discoveredFile);
-        }
-
-        public static string FindFileMatchingPattern<TOut>(
-            string workingDirectory,
-            string pattern,
-            Func<string, bool> where,
-            Func<string, TOut> orderBy)
-        {
-            var files = DiscoverAllFilesMatchingPattern(workingDirectory, pattern);
-
-            var discoveredFile = files.Where(where).OrderByDescending(orderBy).First();
 
             return ProcessModulePath(discoveredFile);
         }
