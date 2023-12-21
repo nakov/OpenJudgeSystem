@@ -35,7 +35,7 @@ public class ContestValidationService : IContestValidationService
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParent(contest.Category.Id)) &&
+            ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !isUserLecturerInContest &&
             !user.IsAdmin))
         {

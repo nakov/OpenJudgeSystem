@@ -15,5 +15,5 @@ public interface IContestCategoriesBusinessService : IService
 
     Task<IEnumerable<ContestCategoryListViewModel>> GetAllParentCategories(int categoryId);
 
-    bool IsCategoryChildOfInvisibleParent(int? categoryId);
+    bool IsCategoryChildOfInvisibleParentRecursive(int? categoryId);
 }
