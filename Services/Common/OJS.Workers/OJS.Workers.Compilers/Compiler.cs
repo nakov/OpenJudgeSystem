@@ -35,8 +35,6 @@ public abstract class Compiler : ICompiler
         {
             case CompilerType.None:
                 return null;
-            case CompilerType.CSharp:
-                return new CSharpCompiler(Settings.CSharpCompilerProcessExitTimeOutMultiplier);
             case CompilerType.CSharpDotNetCore:
                 return new CSharpDotNetCoreCompiler(
                     Settings.CSharpDotNetCoreCompilerProcessExitTimeOutMultiplier,
@@ -44,24 +42,18 @@ public abstract class Compiler : ICompiler
                     Settings.DotNetCoreSharedAssembliesPath(type));
             case CompilerType.CPlusPlusGcc:
                 return new CPlusPlusCompiler(Settings.CPlusPlusCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.MsBuild:
-                return new MsBuildCompiler(Settings.MsBuildCompilerProcessExitTimeOutMultiplier);
             case CompilerType.Java:
                 return new JavaCompiler(Settings.JavaCompilerProcessExitTimeOutMultiplier);
             case CompilerType.JavaZip:
                 return new JavaZipCompiler(Settings.JavaZipCompilerProcessExitTimeOutMultiplier);
             case CompilerType.JavaInPlaceCompiler:
                 return new JavaInPlaceFolderCompiler(Settings.JavaInPlaceCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.MsBuildLibrary:
-                return new MsBuildLibraryCompiler(Settings.MsBuildLibraryCompilerProcessExitTimeOutMultiplier);
             case CompilerType.CPlusPlusZip:
                 return new CPlusPlusZipCompiler(Settings.CPlusPlusZipCompilerProcessExitTimeOutMultiplier);
             case CompilerType.DotNetCompiler:
                 return new DotNetCompiler(Settings.DotNetCompilerProcessExitTimeOutMultiplier);
             case CompilerType.GolangCompiler:
                 return new GolangCompiler(Settings.GolangCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.SolidityCompiler:
-                return new SolidityCompiler(Settings.SolidityCompilerProcessExitTimeOutMultiplier);
             default:
                 throw new ArgumentException("Unsupported compiler.");
         }

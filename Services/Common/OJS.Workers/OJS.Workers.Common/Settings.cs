@@ -7,20 +7,13 @@
 
     public static class Settings
     {
-        public static string MonitoringServiceExecutablePath =>
-            SettingsHelper.GetSetting("MonitoringServiceExecutablePath");
-
         public static string DotNetCompilerPath => SettingsHelper.GetSetting("DotNetCompilerPath");
 
         public static string MavenPath => SettingsHelper.GetSetting("MavenPath");
 
-        public static string CSharpCompilerPath => SettingsHelper.GetSetting("CSharpCompilerPath");
-
         public static string CPlusPlusGccCompilerPath => SettingsHelper.GetSetting("CPlusPlusGccCompilerPath");
 
         public static string NUnitConsoleRunnerPath => SettingsHelper.GetSetting("NUnitConsoleRunnerPath");
-
-        public static string MsBuildExecutablePath => SettingsHelper.GetSetting("MsBuildExecutablePath");
 
         public static string NuGetExecutablePath => SettingsHelper.GetSetting("NuGetExecutablePath");
 
@@ -83,12 +76,6 @@
         public static string BootstrapCssPath => SettingsHelper.GetSetting("BootstrapCssPath");
 
         public static string PythonExecutablePath => SettingsHelper.GetSetting("PythonExecutablePath");
-
-        public static string PhpCgiExecutablePath => SettingsHelper.GetSetting("PhpCgiExecutablePath");
-
-        public static string PhpCliExecutablePath => SettingsHelper.GetSetting("PhpCliExecutablePath");
-
-        public static string SolidityCompilerPath => SettingsHelper.GetSetting("SolidityCompilerPath");
 
         public static string SqlServerLocalDbMasterDbConnectionString =>
             SettingsHelper.GetSetting("SqlServerLocalDbMasterDbConnectionString");
@@ -157,24 +144,6 @@
         public static int GPlusPlusBaseMemoryUsedInBytes =>
             SettingsHelper.GetSettingOrDefault("GPlusPlusBaseMemoryUsedInBytes", 0);
 
-        public static int PhpCgiBaseTimeUsedInMilliseconds =>
-            SettingsHelper.GetSettingOrDefault("PhpCgiBaseTimeUsedInMilliseconds", 0);
-
-        public static int PhpCgiBaseMemoryUsedInBytes =>
-            SettingsHelper.GetSettingOrDefault("PhpCgiBaseMemoryUsedInBytes", 0);
-
-        public static int PhpCliBaseTimeUsedInMilliseconds =>
-            SettingsHelper.GetSettingOrDefault("PhpCliBaseTimeUsedInMilliseconds", 0);
-
-        public static int PhpCliBaseMemoryUsedInBytes =>
-            SettingsHelper.GetSettingOrDefault("PhpCliBaseMemoryUsedInBytes", 0);
-
-        public static int RubyBaseTimeUsedInMilliseconds =>
-            SettingsHelper.GetSettingOrDefault("RubyBaseTimeUsedInMilliseconds", 0);
-
-        public static int RubyBaseMemoryUsedInBytes =>
-            SettingsHelper.GetSettingOrDefault("RubyBaseMemoryUsedInBytes", 0);
-
         public static int PythonBaseTimeUsedInMilliseconds =>
             SettingsHelper.GetSettingOrDefault("PythonBaseTimeUsedInMilliseconds", 0);
 
@@ -217,15 +186,6 @@
 
         public static int JavaZipCompilerProcessExitTimeOutMultiplier =>
             SettingsHelper.GetSettingOrDefault("JavaZipCompilerProcessExitTimeOutMultiplier", 1);
-
-        public static int MsBuildCompilerProcessExitTimeOutMultiplier =>
-            SettingsHelper.GetSettingOrDefault("MsBuildCompilerProcessExitTimeOutMultiplier", 1);
-
-        public static int MsBuildLibraryCompilerProcessExitTimeOutMultiplier =>
-            SettingsHelper.GetSettingOrDefault("MsBuildLibraryCompilerProcessExitTimeOutMultiplier", 1);
-
-        public static int SolidityCompilerProcessExitTimeOutMultiplier =>
-            SettingsHelper.GetSettingOrDefault("SolidityCompilerProcessExitTimeOutMultiplier", 1);
 
         public static int HttpClientTimeoutForRemoteWorkersInSeconds =>
             SettingsHelper.GetSettingOrDefault("HttpClientTimeoutForRemoteWorkersInSeconds", 120);

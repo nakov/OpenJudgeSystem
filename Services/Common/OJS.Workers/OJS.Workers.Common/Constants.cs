@@ -56,7 +56,7 @@
 #pragma warning disable SA1307
 #pragma warning disable SA1311
         public static readonly string javaSourceFileExtension = $".{CompilerType.Java.GetFileExtension()}";
-        public static readonly string cSharpFileExtension = $".{CompilerType.CSharp.GetFileExtension()}";
+        public static readonly string cSharpFileExtension = $".{CompilerType.CSharpDotNetCore.GetFileExtension()}";
         public static readonly string classDelimiterUnix = $"~~!!!==#==!!!~~{NewLineUnix}";
         public static readonly string classDelimiterWin = $"~~!!!==#==!!!~~{NewLineWin}";
 #pragma warning restore SA1311

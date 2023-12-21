@@ -50,7 +50,7 @@ namespace OJS.Workers.Executors
                 StandardOutputEncoding = useSystemEncoding ? Encoding.Default : new UTF8Encoding(false),
             };
 
-            using (var process = System.Diagnostics.Process.Start(processStartInfo))
+            using (var process = Process.Start(processStartInfo))
             {
                 if (process == null)
                 {

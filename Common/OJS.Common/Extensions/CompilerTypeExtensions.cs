@@ -8,8 +8,7 @@ namespace OJS.Common.Extensions
             => compilerType switch
             {
                 CompilerType.None => null,
-                CompilerType.CSharp => "cs",
-                CompilerType.MsBuild => "zip",
+                CompilerType.CSharpDotNetCore => "cs",
                 CompilerType.CPlusPlusGcc => "cpp",
                 CompilerType.Java => "java",
                 _ => null

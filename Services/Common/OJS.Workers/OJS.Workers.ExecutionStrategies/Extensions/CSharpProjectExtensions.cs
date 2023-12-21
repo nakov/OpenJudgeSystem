@@ -28,17 +28,6 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
             }
         }
 
-        public static void RemoveVsToolsImport(this Project project)
-        {
-            var vsToolsImport = project.Imports.Any(i =>
-                i.ImportingElement.Project == VsToolsImportProjectPath);
-
-            if (vsToolsImport)
-            {
-                RemoveXmlNodeFromCsProj(project.FullPath, VsToolsXmlNodeXPath);
-            }
-        }
-
         public static void RemoveItemByName(this Project project, string itemName)
         {
             var item = project.Items.FirstOrDefault(pi =>

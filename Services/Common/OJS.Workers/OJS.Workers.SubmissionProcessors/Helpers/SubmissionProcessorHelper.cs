@@ -8,13 +8,11 @@ namespace OJS.Workers.SubmissionProcessors.Helpers
     using OJS.Workers.ExecutionStrategies.CPlusPlus;
     using OJS.Workers.ExecutionStrategies.CSharp;
     using OJS.Workers.ExecutionStrategies.CSharp.DotNetCore;
-    using OJS.Workers.ExecutionStrategies.CSharp.DotNetFramework;
     using OJS.Workers.ExecutionStrategies.Golang;
     using OJS.Workers.ExecutionStrategies.Java;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.ExecutionStrategies.NodeJs;
     using OJS.Workers.ExecutionStrategies.Python;
-    using OJS.Workers.ExecutionStrategies.Ruby;
     using OJS.Workers.ExecutionStrategies.Sql.MySql;
     using OJS.Workers.ExecutionStrategies.Sql.PostgreSql;
     using OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase;
@@ -80,14 +78,6 @@ namespace OJS.Workers.SubmissionProcessors.Helpers
                         Settings.MicrosoftEntityFrameworkCoreInMemoryVersion(type),
                         Settings.MicrosoftEntityFrameworkCoreProxiesVersion(type));
                     break;
-                case ExecutionStrategyType.CSharpUnitTestsExecutionStrategy:
-                    executionStrategy = new CSharpUnitTestsExecutionStrategy(
-                        GetCompilerPath,
-                        processExecutorFactory,
-                        Settings.NUnitConsoleRunnerPath,
-                        Settings.MsBuildBaseTimeUsedInMilliseconds,
-                        Settings.MsBuildBaseMemoryUsedInBytes);
-                    break;
                 case ExecutionStrategyType.CSharpProjectTestsExecutionStrategy:
                     executionStrategy = new CSharpProjectTestsExecutionStrategy(
                         GetCompilerPath,
@@ -117,13 +107,6 @@ namespace OJS.Workers.SubmissionProcessors.Helpers
                         Settings.DotNetCoreTargetFrameworkName(type),
                         Settings.MicrosoftEntityFrameworkCoreInMemoryVersion(type),
                         Settings.MicrosoftEntityFrameworkCoreProxiesVersion(type));
-                    break;
-                case ExecutionStrategyType.RubyExecutionStrategy:
-                    executionStrategy = new RubyExecutionStrategy(
-                        processExecutorFactory,
-                        Settings.RubyPath,
-                        Settings.RubyBaseTimeUsedInMilliseconds,
-                        Settings.RubyBaseMemoryUsedInBytes);
                     break;
                 case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
                     executionStrategy = new JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
@@ -437,11 +420,6 @@ namespace OJS.Workers.SubmissionProcessors.Helpers
             {
                 case CompilerType.None:
                     return null;
-                case CompilerType.CSharp:
-                    return Settings.CSharpCompilerPath;
-                case CompilerType.MsBuild:
-                case CompilerType.MsBuildLibrary:
-                    return Settings.MsBuildExecutablePath;
                 case CompilerType.CPlusPlusGcc:
                 case CompilerType.CPlusPlusZip:
                     return Settings.CPlusPlusGccCompilerPath;
@@ -454,8 +432,6 @@ namespace OJS.Workers.SubmissionProcessors.Helpers
                     return Settings.DotNetCompilerPath;
                 case CompilerType.GolangCompiler:
                     return Settings.GolangCompilerPath;
-                case CompilerType.SolidityCompiler:
-                    return Settings.SolidityCompilerPath;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }

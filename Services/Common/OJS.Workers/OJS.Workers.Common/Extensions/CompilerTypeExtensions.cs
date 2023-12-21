@@ -11,10 +11,8 @@ namespace OJS.Workers.Common.Extensions
             {
                 case CompilerType.None:
                     return null;
-                case CompilerType.CSharp:
+                case CompilerType.CSharpDotNetCore:
                     return "cs";
-                case CompilerType.MsBuild:
-                    return "zip";
                 case CompilerType.CPlusPlusGcc:
                     return "cpp";
                 case CompilerType.Java:

@@ -2,6 +2,8 @@
 {
     public enum ExecutionStrategyType
     {
+        // Commented out execution strategy types are deprecated, but left here to preserve order,
+        // as modifying values will require database migration.
         NotFound = 0,
         CompileExecuteAndCheck = 1,
         NodeJsPreprocessExecuteAndCheck = 2,
@@ -20,7 +22,7 @@
         NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha = 20,
         NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy = 21,
         NodeJsZipExecuteHtmlAndCssStrategy = 22,
-        CSharpUnitTestsExecutionStrategy = 23,
+        // CSharpUnitTestsExecutionStrategy = 23,
         CSharpProjectTestsExecutionStrategy = 24,
         JavaProjectTestsExecutionStrategy = 25,
         CPlusPlusZipFileExecutionStrategy = 26,

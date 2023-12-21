@@ -6,7 +6,6 @@ namespace OJS.Workers.Executors
     using System.IO;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Executors.Process;
 
     public abstract class ProcessExecutor : IExecutor
     {
@@ -98,12 +97,6 @@ namespace OJS.Workers.Executors
                 {
                     switch (process)
                     {
-                        case RestrictedProcess restrictedProcess:
-                        {
-                            peakWorkingSetSize = restrictedProcess.PeakWorkingSetSize;
-                            break;
-                        }
-
                         case System.Diagnostics.Process systemProcess:
                         {
                             if (systemProcess.HasExited)

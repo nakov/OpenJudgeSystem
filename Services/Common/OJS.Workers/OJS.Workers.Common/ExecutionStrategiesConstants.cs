@@ -255,7 +255,6 @@ namespace OJS.Workers.Common
 
                 // CSharp
                 ExecutionStrategyType.CSharpProjectTestsExecutionStrategy,
-                ExecutionStrategyType.CSharpUnitTestsExecutionStrategy,
             };
 
             public static ISet<CompilerType> DisabledLocalWorkerExecuteAndCompileTypes => new HashSet<CompilerType>
