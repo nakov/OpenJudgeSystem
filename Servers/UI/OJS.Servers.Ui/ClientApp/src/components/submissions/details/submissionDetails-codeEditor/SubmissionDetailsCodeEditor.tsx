@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Dictionary } from '@reduxjs/toolkit';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
@@ -124,6 +125,7 @@ const SubmissionDetailsCodeEditor = () => {
                 <AlertBox
                   className={styles.tenPixelsMarginUnder}
                   message="Submission retested successfully."
+                  delay={3500}
                   type={AlertBoxType.success}
                 />
             )
@@ -156,18 +158,16 @@ const SubmissionDetailsCodeEditor = () => {
             : ''
     ), [ currentSubmission, testsChangedBoxClosed ]);
 
-    const renderInQueueMessage = useCallback(() => (
-        !currentSubmission?.isProcessed
-            ? (
-                <AlertBox
-                  className={styles.alertBox}
-                  message="The submission is in queue and will be processed shortly. Please wait."
-                  type={AlertBoxType.info}
-                  isClosable={false}
-                />
-            )
-            : null
-    ), [ currentSubmission?.isProcessed ]);
+    const renderInQueueMessage = useCallback(() => !currentSubmission?.isProcessed
+        ? (
+            <AlertBox
+              className={styles.alertBox}
+              message="The submission is in queue and will be processed shortly. Please wait."
+              type={AlertBoxType.info}
+              isClosable={false}
+            />
+        )
+        : null, [ currentSubmission?.isProcessed ]);
 
     const backButtonState = useMemo(
         () => isNil(currentSubmission?.contestId)

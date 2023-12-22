@@ -6,9 +6,13 @@ import { isRegularUserInRoleForSubmission } from '../../../../common/submission-
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { ISubmissionResults } from '../../../../hooks/submissions/types';
 import { useAuth } from '../../../../hooks/use-auth';
-import { setCurrentSubmissionResults, setRetestIsSuccess, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
+import {
+    setCurrentSubmissionResults,
+    setRetestIsSuccess,
+    setSubmission,
+} from '../../../../redux/features/submissionDetailsSlice';
 import { useRetestSubmissionQuery } from '../../../../redux/services/submissionDetailsService';
-import Button, { ButtonSize, ButtonType } from '../../../guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonState, ButtonType } from '../../../guidelines/buttons/Button';
 
 import styles from './RetestButton.module.scss';
 
@@ -100,6 +104,9 @@ const RetestButton = ({ onSuccessfulRetest }: IRetestButtonProps) => {
         ? (
             <Button
               type={ButtonType.secondary}
+              state={!currentSubmission.isProcessed
+                  ? ButtonState.disabled
+                  : ButtonState.enabled}
               size={ButtonSize.medium}
               onClick={handleOnClick}
               text="Retest"
