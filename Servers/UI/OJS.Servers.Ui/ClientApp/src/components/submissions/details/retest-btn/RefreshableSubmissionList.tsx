@@ -2,6 +2,10 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
+import {
+    isRegularUserInRoleForSubmission,
+    isRegularUserParticipantAndNotInRole, isUserNotParticipantAndNotInRole,
+} from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
@@ -54,19 +58,43 @@ const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) 
 
     const renderSubmissionInfo = useCallback(
         () => {
-            if (!canAccessAdministration || isNil(currentSubmission)) {
+            if (isNil(currentSubmission)) {
                 return null;
             }
 
-            const { createdOn, modifiedOn, startedExecutionOn, completedExecutionOn, user: { userName } } = currentSubmission;
+            const { user: { userName } } = currentSubmission;
+
+            if (isUserNotParticipantAndNotInRole(currentSubmission, userName)) {
+                return null;
+            }
+
+            const { createdOn } = currentSubmission;
+
+            const createdOnSection = (
+                <p className={styles.submissionInfoParagraph}>
+                    Created on:
+                    {' '}
+                    {preciseFormatDate(createdOn)}
+                </p>
+            );
+
+            if (isRegularUserParticipantAndNotInRole(currentSubmission, userName)) {
+                return (
+                    <div className={styles.submissionInfo}>
+                        {createdOnSection}
+                    </div>
+                );
+            }
+
+            const {
+                modifiedOn,
+                startedExecutionOn,
+                completedExecutionOn,
+            } = currentSubmission;
 
             return (
                 <div className={styles.submissionInfo}>
-                    <p className={styles.submissionInfoParagraph}>
-                        Created on:
-                        {' '}
-                        {preciseFormatDate(createdOn)}
-                    </p>
+                    {createdOnSection}
                     <p className={styles.submissionInfoParagraph}>
                         Modified on:
                         {' '}
