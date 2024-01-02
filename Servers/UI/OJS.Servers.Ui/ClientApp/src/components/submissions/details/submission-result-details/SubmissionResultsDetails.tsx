@@ -167,7 +167,7 @@ const SubmissionResultsDetails = ({ testRuns }: ISubmissionResultsDetails) => {
                     <div>
                         Memory used:
                         {' '}
-                        { test.memoryUsed }
+                        { (test.memoryUsed / 1000000).toFixed(2) }
                         {' '}
                         MB
                     </div>

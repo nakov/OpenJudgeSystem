@@ -93,6 +93,7 @@ namespace OJS.Common
             public const string InvalidUsernameOrPassword =
                 "Invalid username or password.";
             public const string ContestNotFound = "Contest not found";
+            public const string LoggedInThroughDatabase = "We were unable to log you in through the SULS Platform. If you have profile changes, they won't take effect until you log out.";
         }
 
         public static class FileExtensions
