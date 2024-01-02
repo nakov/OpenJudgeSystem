@@ -28,13 +28,13 @@ const ProblemConstraints = () => {
 
         return [
             !isNil(timeLimit)
-                ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toFixed(3).toString()} sec.`
+                ? `${ProblemConstraintsTitles.TimeLimit}: ${timeLimit.toFixed(3)} sec.`
                 : '',
             !isNil(memoryLimit)
-                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toFixed(2).toString()} MB`
+                ? `${ProblemConstraintsTitles.MemoryLimit}: ${memoryLimit.toFixed(2)} MB`
                 : '',
             !isNil(fileSizeLimit)
-                ? `${ProblemConstraintsTitles.FileSizeLimit}: ${fileSizeLimit.toFixed(2).toString()} KB`
+                ? `${ProblemConstraintsTitles.FileSizeLimit}: ${fileSizeLimit.toFixed(2)} KB`
                 : '',
             !isNil(checkerName)
                 ? `${ProblemConstraintsTitles.Checker}: ${checkerName}`
