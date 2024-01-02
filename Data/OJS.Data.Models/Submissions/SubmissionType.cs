@@ -6,7 +6,7 @@ namespace OJS.Data.Models.Submissions
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    using OJS.Common.Extensions;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
     using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.SubmissionTypes;

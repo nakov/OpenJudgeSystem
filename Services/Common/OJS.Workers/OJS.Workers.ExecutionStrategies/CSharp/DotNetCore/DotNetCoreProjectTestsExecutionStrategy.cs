@@ -6,7 +6,7 @@
     using System.Linq;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -41,14 +41,14 @@
             $@"<ProjectReference Include=""{ProjectPathPlaceholder}"" />";
 
         public DotNetCoreProjectTestsExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             int baseTimeUsed,
             int baseMemoryUsed,
             string targetFrameworkName,
             string microsoftEntityFrameworkCoreInMemoryVersion,
             string microsoftEntityFrameworkCoreProxiesVersion)
-            : base(getCompilerPathFunc, processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
         {
             this.TargetFrameworkName = targetFrameworkName;
             this.MicrosoftEntityFrameworkCoreInMemoryVersion = microsoftEntityFrameworkCoreInMemoryVersion;

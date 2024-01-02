@@ -1,4 +1,4 @@
-﻿namespace OJS.Workers.SubmissionProcessors.Models
+﻿namespace OJS.Workers.Common.Models
 {
     using FluentExtensions.Extensions;
     using System;

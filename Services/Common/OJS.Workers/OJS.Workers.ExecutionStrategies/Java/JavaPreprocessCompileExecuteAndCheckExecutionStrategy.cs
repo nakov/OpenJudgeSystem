@@ -8,6 +8,7 @@
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -24,14 +25,14 @@
         private readonly int baseUpdateTimeOffset;
 
         public JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string javaExecutablePath,
             string javaLibrariesPath,
             int baseTimeUsed,
             int baseMemoryUsed,
             int baseUpdateTimeOffset = 0)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
         {
             if (!File.Exists(javaExecutablePath))
             {
@@ -45,7 +46,6 @@
                     nameof(javaLibrariesPath));
             }
 
-            this.GetCompilerPathFunc = getCompilerPathFunc;
             this.JavaExecutablePath = javaExecutablePath;
             this.JavaLibrariesPath = javaLibrariesPath;
             this.baseUpdateTimeOffset = baseUpdateTimeOffset;
@@ -171,8 +171,6 @@ class _$SandboxSecurityManager extends SecurityManager {
 
         protected string JavaLibrariesPath { get; }
 
-        protected Func<CompilerType, string> GetCompilerPathFunc { get; }
-
         protected string SandboxExecutorSourceFilePath
             => $"{Path.Combine(this.WorkingDirectory, SandboxExecutorClassName)}{Constants.javaSourceFileExtension}";
 
@@ -285,12 +283,10 @@ class _$SandboxSecurityManager extends SecurityManager {
             IExecutionContext<TInput> executionContext,
             string submissionFilePath)
         {
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
-
             // Compile all source files - sandbox executor and submission file
             var compilerResult = this.CompileSourceFiles(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 executionContext.AdditionalCompilerArguments,
                 new[] { this.SandboxExecutorSourceFilePath, submissionFilePath });
 

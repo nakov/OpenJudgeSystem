@@ -1,8 +1,7 @@
 ﻿#nullable disable
-namespace OJS.Workers.SubmissionProcessors.Models
+namespace OJS.Workers.Common
 {
     using System;
-    using OJS.Workers.Common;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
 

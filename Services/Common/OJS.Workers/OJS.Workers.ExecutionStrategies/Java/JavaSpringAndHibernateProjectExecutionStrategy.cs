@@ -10,7 +10,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using System.Xml;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
@@ -37,16 +37,16 @@ namespace OJS.Workers.ExecutionStrategies.Java
             $@"\[ERROR\]";
 
         public JavaSpringAndHibernateProjectExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string javaExecutablePath,
             string javaLibrariesPath,
             string mavenPath,
             int baseTimeUsed,
             int baseMemoryUsed)
             : base(
-                getCompilerPathFunc,
                 processExecutorFactory,
+                compilerFactory,
                 javaExecutablePath,
                 javaLibrariesPath,
                 baseTimeUsed,

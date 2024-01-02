@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Common.Models.Submissions
 {
-    using OJS.Workers.SubmissionProcessors.Models;
+    using OJS.Workers.Common.Models;
     using System;
 
     public class SubmissionExecutionResult

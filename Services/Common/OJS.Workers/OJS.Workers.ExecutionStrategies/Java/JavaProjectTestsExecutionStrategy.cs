@@ -10,7 +10,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -23,15 +23,15 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
 
         public JavaProjectTestsExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string javaExecutablePath,
             string javaLibrariesPath,
             int baseTimeUsed,
             int baseMemoryUsed)
             : base(
-                getCompilerPathFunc,
                 processExecutorFactory,
+                compilerFactory,
                 javaExecutablePath,
                 javaLibrariesPath,
                 baseTimeUsed,
@@ -123,7 +123,6 @@ class Classes{{
                 return result;
             }
 
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
             var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
             var executor = this.CreateExecutor();
@@ -142,7 +141,7 @@ class Classes{{
 
                 var preprocessCompileResult = this.Compile(
                     executionContext.CompilerType,
-                    compilerPath,
+                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                     combinedArguments,
                     submissionFilePath);
 
@@ -190,7 +189,7 @@ class Classes{{
 
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 combinedArguments,
                 submissionFilePath);
 

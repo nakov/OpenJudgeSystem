@@ -7,7 +7,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using OJS.Workers.Common;
-using OJS.Workers.Common.Models;
 
 /// <summary>
 /// Defines the base of the work with compilers algorithm and allow the subclasses to implement some of the algorithm parts.
@@ -26,38 +25,6 @@ public abstract class Compiler : ICompiler
     public virtual int MaxProcessExitTimeOutInMilliseconds { get; }
 
     protected string CompilationDirectory { get; set; }
-
-    public static ICompiler CreateCompiler(
-        CompilerType compilerType,
-        ExecutionStrategyType type = ExecutionStrategyType.DoNothing)
-    {
-        switch (compilerType)
-        {
-            case CompilerType.None:
-                return null;
-            case CompilerType.CSharpDotNetCore:
-                return new CSharpDotNetCoreCompiler(
-                    Settings.CSharpDotNetCoreCompilerProcessExitTimeOutMultiplier,
-                    Settings.CSharpDotNetCoreCompilerPath(type),
-                    Settings.DotNetCoreSharedAssembliesPath(type));
-            case CompilerType.CPlusPlusGcc:
-                return new CPlusPlusCompiler(Settings.CPlusPlusCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.Java:
-                return new JavaCompiler(Settings.JavaCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.JavaZip:
-                return new JavaZipCompiler(Settings.JavaZipCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.JavaInPlaceCompiler:
-                return new JavaInPlaceFolderCompiler(Settings.JavaInPlaceCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.CPlusPlusZip:
-                return new CPlusPlusZipCompiler(Settings.CPlusPlusZipCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.DotNetCompiler:
-                return new DotNetCompiler(Settings.DotNetCompilerProcessExitTimeOutMultiplier);
-            case CompilerType.GolangCompiler:
-                return new GolangCompiler(Settings.GolangCompilerProcessExitTimeOutMultiplier);
-            default:
-                throw new ArgumentException("Unsupported compiler.");
-        }
-    }
 
     public virtual CompileResult Compile(
         string compilerPath,

@@ -13,16 +13,17 @@
     {
         protected BaseCompiledCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             int baseTimeUsed,
             int baseMemoryUsed)
             : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
-        {
-        }
+            => this.CompilerFactory = compilerFactory;
+
+        protected ICompilerFactory CompilerFactory { get; }
 
         protected IExecutionResult<TestResult> CompileExecuteAndCheck(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result,
-            Func<CompilerType, string> getCompilerPathFunc,
             IExecutor executor,
             bool useSystemEncoding = true,
             bool dependOnExitCodeForRunTimeError = false,
@@ -31,7 +32,6 @@
             // Compile the file
             var compileResult = this.ExecuteCompiling(
                 executionContext,
-                getCompilerPathFunc,
                 result,
                 useWorkingDirectoryForProcess);
 
@@ -72,18 +72,15 @@
 
         protected CompileResult ExecuteCompiling<TInput, TResult>(
             IExecutionContext<TInput> executionContext,
-            Func<CompilerType, string> getCompilerPathFunc,
             IExecutionResult<TResult> result,
             bool useWorkingDirectoryForProcess = false)
             where TResult : ISingleCodeRunResult, new()
         {
             var submissionFilePath = this.SaveCodeToTempFile(executionContext);
 
-            var compilerPath = getCompilerPathFunc(executionContext.CompilerType);
-
             var compileResult = this.Compile(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 executionContext.AdditionalCompilerArguments,
                 submissionFilePath,
                 useWorkingDirectoryForProcess);
@@ -111,7 +108,7 @@
                 throw new ArgumentException($"Compiler not found in: {compilerPath}", nameof(compilerPath));
             }
 
-            var compiler = Compiler.CreateCompiler(compilerType, this.Type);
+            var compiler = this.CompilerFactory.CreateCompiler(compilerType, this.Type);
             var compilerResult = compiler.Compile(compilerPath, submissionFilePath, compilerArguments, useWorkingDirectoryForProcess);
 
             return compilerResult;

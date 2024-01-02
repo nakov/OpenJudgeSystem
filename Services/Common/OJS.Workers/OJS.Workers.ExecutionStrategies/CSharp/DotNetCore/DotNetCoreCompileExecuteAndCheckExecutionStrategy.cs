@@ -7,6 +7,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using System.Linq;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
@@ -17,18 +18,13 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         private readonly string dotNetCoreRuntimeVersion;
 
         public DotNetCoreCompileExecuteAndCheckExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string dotNetCoreRuntimeVersion,
             int baseTimeUsed,
             int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
-        {
-            this.GetCompilerPathFunc = getCompilerPathFunc;
-            this.dotNetCoreRuntimeVersion = dotNetCoreRuntimeVersion;
-        }
-
-        protected Func<CompilerType, string> GetCompilerPathFunc { get; }
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            => this.dotNetCoreRuntimeVersion = dotNetCoreRuntimeVersion;
 
         private static IEnumerable<string> DotNetSixDefaultUsingNamespaces
             => new List<string>
@@ -58,7 +54,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         {
             var compileResult = this.ExecuteCompiling(
                 executionContext,
-                this.GetCompilerPathFunc,
                 result);
 
             if (!compileResult.IsCompiledSuccessfully)
@@ -68,16 +63,14 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             var executor = this.PrepareExecutor(
                 compileResult,
-                executionContext,
-                out var arguments,
-                out var compilerPath);
+                out var arguments);
 
             var checker = executionContext.Input.GetChecker();
 
             foreach (var test in executionContext.Input.Tests)
             {
                 var processExecutionResult = executor.Execute(
-                    compilerPath,
+                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                     test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -102,7 +95,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         {
             var compileResult = this.ExecuteCompiling(
                 executionContext,
-                this.GetCompilerPathFunc,
                 result);
 
             if (!compileResult.IsCompiledSuccessfully)
@@ -112,12 +104,10 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             var executor = this.PrepareExecutor(
                 compileResult,
-                executionContext,
-                out var arguments,
-                out var compilerPath);
+                out var arguments);
 
             var processExecutionResult = executor.Execute(
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -168,11 +158,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 ? string.Empty
                 : usingNamespace;
 
-        private IExecutor PrepareExecutor<TInput>(
+        private IExecutor PrepareExecutor(
             CompileResult compileResult,
-            IExecutionContext<TInput> executionContext,
-            out string[] arguments,
-            out string compilerPath)
+            out string[] arguments)
         {
             var executor = this.CreateExecutor();
 
@@ -180,8 +168,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             {
                 compileResult.OutputFile,
             };
-
-            compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
 
             CreateRuntimeConfigJsonFile(this.WorkingDirectory, this.RuntimeConfigJsonTemplate);
 

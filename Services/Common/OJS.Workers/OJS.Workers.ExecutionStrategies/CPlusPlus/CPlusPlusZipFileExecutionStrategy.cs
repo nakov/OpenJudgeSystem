@@ -8,7 +8,7 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -17,15 +17,14 @@
     {
         private const string FileNameAndExtensionPattern = @"//((\w+)\.(cpp|h))//";
 
-        private readonly Func<CompilerType, string> getCompilerPathFunc;
-
         public CPlusPlusZipFileExecutionStrategy(
-            Func<CompilerType, string> getCompilerPath,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             int baseTimeUsed,
             int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed) =>
-                this.getCompilerPathFunc = getCompilerPath;
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+        {
+        }
 
         protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -43,11 +42,9 @@
                 FileHelpers.AddFilesToZipArchive(submissionDestination, string.Empty, pathsOfHeadersAndCppFiles.ToArray());
             }
 
-            var compilerPath = this.getCompilerPathFunc(executionContext.CompilerType);
-
             var compilationResult = this.Compile(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 executionContext.AdditionalCompilerArguments,
                 submissionDestination);
 
@@ -90,7 +87,7 @@
         private IEnumerable<string> ExtractTaskSkeleton(string executionContextTaskSkeletonAsString)
         {
             var headersAndCppFiles = executionContextTaskSkeletonAsString.Split(
-                new string[] { Constants.classDelimiterUnix, Constants.classDelimiterWin },
+                new[] { Constants.classDelimiterUnix, Constants.classDelimiterWin },
                 StringSplitOptions.RemoveEmptyEntries);
 
             var pathsToHeadersAndCppFiles = new List<string>();

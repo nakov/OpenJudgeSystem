@@ -12,6 +12,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -62,24 +63,23 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             @"((?:\d+|\d+-\d+)\) (?:Failed|Error)\s:\s(.*)\.(.*))\r?\n((?:.*)\r?\n(?:.*))";
 
         public CSharpProjectTestsExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             int baseTimeUsed,
             int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
         {
-            this.GetCompilerPathFunc = getCompilerPathFunc;
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();
         }
 
         public CSharpProjectTestsExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string nUnitConsoleRunnerPath,
             int baseTimeUsed,
             int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
         {
             if (!File.Exists(nUnitConsoleRunnerPath))
             {
@@ -89,7 +89,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             }
 
             this.NUnitConsoleRunnerPath = nUnitConsoleRunnerPath;
-            this.GetCompilerPathFunc = getCompilerPathFunc;
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();
         }

@@ -1,26 +1,25 @@
-﻿#nullable disable
-namespace OJS.Workers.SubmissionProcessors
+﻿namespace OJS.Services.Worker.Business.Implementations
 {
     using System;
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
-    using OJS.Workers.SubmissionProcessors.Helpers;
-    using OJS.Workers.SubmissionProcessors.Models;
+    using OJS.Workers.ExecutionStrategies.Models;
 
     public class SubmissionExecutor : ISubmissionExecutor
     {
-        private readonly string submissionProcessorIdentifier;
+        private readonly IExecutionStrategyFactory executionStrategyFactory;
 
-        public SubmissionExecutor(string submissionProcessorIdentifier) => this.submissionProcessorIdentifier = submissionProcessorIdentifier;
+        public SubmissionExecutor(IExecutionStrategyFactory executionStrategyFactory)
+            => this.executionStrategyFactory = executionStrategyFactory;
 
         public IExecutionResult<TResult> Execute<TInput, TResult>(
-            IOjsSubmission submission)
+            OjsSubmission<TInput> submission)
             where TResult : ISingleCodeRunResult, new()
         {
             var executionStrategy = this.CreateExecutionStrategy(submission);
 
-            var executionContext = this.CreateExecutionContext<TInput>(submission);
+            var executionContext = this.CreateExecutionContext(submission);
 
             return this.ExecuteSubmission<TInput, TResult>(executionStrategy, executionContext, submission);
         }
@@ -29,9 +28,7 @@ namespace OJS.Workers.SubmissionProcessors
         {
             try
             {
-                return SubmissionProcessorHelper.CreateExecutionStrategy(
-                    submission.ExecutionStrategyType,
-                    this.submissionProcessorIdentifier);
+                return this.executionStrategyFactory.CreateExecutionStrategy(submission.ExecutionStrategyType);
             }
             catch (Exception ex)
             {
@@ -41,12 +38,21 @@ namespace OJS.Workers.SubmissionProcessors
             }
         }
 
-        private IExecutionContext<TInput> CreateExecutionContext<TInput>(IOjsSubmission submission)
+        private IExecutionContext<TInput> CreateExecutionContext<TInput>(OjsSubmission<TInput> submission)
         {
             try
             {
-                return SubmissionProcessorHelper.CreateExecutionContext(
-                    submission as OjsSubmission<TInput>);
+                return new ExecutionContext<TInput>
+                {
+                    AdditionalCompilerArguments = submission.AdditionalCompilerArguments,
+                    Code = submission.Code,
+                    FileContent = submission.FileContent,
+                    AllowedFileExtensions = submission.AllowedFileExtensions,
+                    CompilerType = submission.CompilerType,
+                    MemoryLimit = submission.MemoryLimit,
+                    TimeLimit = submission.TimeLimit,
+                    Input = submission.Input,
+                };
             }
             catch (Exception ex)
             {

@@ -1,7 +1,6 @@
 namespace OJS.Workers.Common
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     using OJS.Workers.Common.Models;
 
@@ -116,10 +115,6 @@ namespace OJS.Workers.Common
                     { ExecutionStrategyNames.PythontUnitTests, ExecutionStrategyType.PythonUnitTests },
                     { ExecutionStrategyNames.PythonDjangoOrmExecutionStrategy, ExecutionStrategyType.PythonDjangoOrmExecutionStrategy },
 
-                    // PHP
-                    { ExecutionStrategyNames.PhpCode, ExecutionStrategyType.PhpCliExecuteAndCheck },
-                    { ExecutionStrategyNames.PhpCodeCgi, ExecutionStrategyType.PhpCgiExecuteAndCheck },
-
                     // Go
                     { ExecutionStrategyNames.GoCode, ExecutionStrategyType.GolangCompileExecuteAndCheck },
 
@@ -169,98 +164,6 @@ namespace OJS.Workers.Common
                     { ExecutionStrategyNames.PostgreSqlRunQueriesAndCheckDatabase, ExecutionStrategyType.PostgreSqlRunQueriesAndCheckDatabase },
                     { ExecutionStrategyNames.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase, ExecutionStrategyType.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase },
                 };
-
-            public static IDictionary<ExecutionStrategyType, string> ExecutionStrategyToNameMappings =>
-                NameToExecutionStrategyMappings.ToDictionary(x => x.Value, y => y.Key);
-
-            public static ISet<ExecutionStrategyType> EnabledRemoteWorkerStrategies =>
-                new HashSet<ExecutionStrategyType>(NameToExecutionStrategyMappings.Values);
-
-            public static ISet<ExecutionStrategyType> DisabledLocalWorkerStrategies => new HashSet<ExecutionStrategyType>
-            {
-                // .NET
-                ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck,
-                ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck,
-                ExecutionStrategyType.DotNetCore6CompileExecuteAndCheck,
-                ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy,
-                ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy,
-                ExecutionStrategyType.DotNetCore6ProjectTestsExecutionStrategy,
-                ExecutionStrategyType.DotNetCoreUnitTestsExecutionStrategy,
-                ExecutionStrategyType.DotNetCore5UnitTestsExecutionStrategy,
-                ExecutionStrategyType.DotNetCore6UnitTestsExecutionStrategy,
-                ExecutionStrategyType.DotNetCoreProjectExecutionStrategy,
-                ExecutionStrategyType.DotNetCore5ProjectExecutionStrategy,
-                ExecutionStrategyType.DotNetCore6ProjectExecutionStrategy,
-
-                // GO
-                ExecutionStrategyType.GolangCompileExecuteAndCheck,
-
-                // JS Project strategy
-                ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy,
-                ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy,
-
-                // MySQL strategies
-                ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries,
-                ExecutionStrategyType.MySqlRunQueriesAndCheckDatabase,
-                ExecutionStrategyType.MySqlRunSkeletonRunQueriesAndCheckDatabase,
-
-                // Python
-                ExecutionStrategyType.PythonExecuteAndCheck,
-                ExecutionStrategyType.PythonCodeExecuteAgainstUnitTests,
-                ExecutionStrategyType.PythonUnitTests,
-                ExecutionStrategyType.PythonDjangoOrmExecutionStrategy,
-
-                // PostgreSql strategies
-                ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries,
-                ExecutionStrategyType.PostgreSqlRunQueriesAndCheckDatabase,
-                ExecutionStrategyType.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase,
-                ExecutionStrategyType.PythonProjectTests,
-                ExecutionStrategyType.PythonProjectUnitTests,
-
-                // PHP
-                ExecutionStrategyType.PhpCliExecuteAndCheck,
-                ExecutionStrategyType.PhpCgiExecuteAndCheck,
-
-                // HTML and CSS
-                ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy,
-
-                // C++
-                ExecutionStrategyType.CPlusPlusZipFileExecutionStrategy,
-
-                // NodeJs
-                ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck,
-                ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha,
-                ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests,
-                ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy,
-                ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy,
-                ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha,
-
-                // JAVA
-                ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck,
-                ExecutionStrategyType.JavaProjectTestsExecutionStrategy,
-                ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck,
-                ExecutionStrategyType.JavaUnitTestsExecutionStrategy,
-                ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy,
-
-                // Text only
-                ExecutionStrategyType.CheckOnly,
-
-                // SQL Server
-                ExecutionStrategyType.SqlServerSingleDatabasePrepareDatabaseAndRunQueries,
-                ExecutionStrategyType.SqlServerSingleDatabaseRunQueriesAndCheckDatabase,
-                ExecutionStrategyType.SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabase,
-
-                // Ruby
-                ExecutionStrategyType.RubyExecutionStrategy,
-
-                // CSharp
-                ExecutionStrategyType.CSharpProjectTestsExecutionStrategy,
-            };
-
-            public static ISet<CompilerType> DisabledLocalWorkerExecuteAndCompileTypes => new HashSet<CompilerType>
-            {
-                CompilerType.CSharpDotNetCore,
-            };
         }
     }
 }

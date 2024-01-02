@@ -1,23 +1,20 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
-    using System;
-
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     public class CompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
     {
         public CompileExecuteAndCheckExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             int baseTimeUsed,
             int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
-            => this.GetCompilerPathFunc = getCompilerPathFunc;
-
-        protected Func<CompilerType, string> GetCompilerPathFunc { get; }
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+        {
+        }
 
         protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -25,7 +22,6 @@
             => this.CompileExecuteAndCheck(
                 executionContext,
                 result,
-                this.GetCompilerPathFunc,
                 this.CreateExecutor());
 
         protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
@@ -34,7 +30,6 @@
         {
             var compileResult = this.ExecuteCompiling(
                 executionContext,
-                this.GetCompilerPathFunc,
                 result);
 
             if (!compileResult.IsCompiledSuccessfully)

@@ -7,7 +7,7 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.Executors;
 
     public class JavaZipFileCompileExecuteAndCheckExecutionStrategy : JavaPreprocessCompileExecuteAndCheckExecutionStrategy
@@ -15,15 +15,15 @@
         protected const string SubmissionFileName = "_$submission";
 
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string javaExecutablePath,
             string javaLibsPath,
             int baseTimeUsed,
             int baseMemoryUsed)
             : base(
-                getCompilerPathFunc,
                 processExecutorFactory,
+                compilerFactory,
                 javaExecutablePath,
                 javaLibsPath,
                 baseTimeUsed,
@@ -51,12 +51,10 @@
             IExecutionContext<TInput> executionContext,
             string submissionFilePath)
         {
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
-
             // Compile the zip file with user code and sandbox executor
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 executionContext.AdditionalCompilerArguments + this.ClassPathArgument,
                 submissionFilePath);
 

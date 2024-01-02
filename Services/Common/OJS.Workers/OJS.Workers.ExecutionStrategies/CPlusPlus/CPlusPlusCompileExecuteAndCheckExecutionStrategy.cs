@@ -1,9 +1,7 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CPlusPlus
 {
-    using System;
-
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -11,11 +9,11 @@
     public class CPlusPlusCompileExecuteAndCheckExecutionStrategy : CompileExecuteAndCheckExecutionStrategy
     {
         public CPlusPlusCompileExecuteAndCheckExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             int baseTimeUsed,
             int baseMemoryUsed)
-            : base(getCompilerPathFunc, processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
         {
         }
 
@@ -28,7 +26,6 @@
             return this.CompileExecuteAndCheck(
                 executionContext,
                 result,
-                this.GetCompilerPathFunc,
                 this.CreateExecutor(),
                 useSystemEncoding: false,
                 dependOnExitCodeForRunTimeError: true);

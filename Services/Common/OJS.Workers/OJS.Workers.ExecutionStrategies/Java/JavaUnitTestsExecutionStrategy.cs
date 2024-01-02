@@ -32,15 +32,15 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected const string TestResultsRegex = @"Total Tests: (\d+) Successful: (\d+) Failed: (\d+)";
 
         public JavaUnitTestsExecutionStrategy(
-            Func<CompilerType, string> getCompilerPathFunc,
             IProcessExecutorFactory processExecutorFactory,
+            ICompilerFactory compilerFactory,
             string javaExecutablePath,
             string javaLibrariesPath,
             int baseTimeUsed,
             int baseMemoryUsed)
             : base(
-                getCompilerPathFunc,
                 processExecutorFactory,
+                compilerFactory,
                 javaExecutablePath,
                 javaLibrariesPath,
                 baseTimeUsed,
@@ -231,7 +231,7 @@ public class _$TestRunner {{
                 throw new ArgumentException($"Compiler not found in: {compilerPath}", nameof(compilerPath));
             }
 
-            var compiler = Compiler.CreateCompiler(compilerType);
+            var compiler = this.CompilerFactory.CreateCompiler(compilerType);
             var compilerResult = compiler.Compile(compilerPath, submissionFilePath, compilerArguments);
             return compilerResult;
         }
@@ -319,12 +319,11 @@ public class _$TestRunner {{
 
         private CompileResult CompileProject(IExecutionContext<TestsInputModel> executionContext)
         {
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
             var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
             return this.Compile(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 combinedArguments,
                 this.WorkingDirectory);
         }
