@@ -21,11 +21,11 @@
         {
         }
 
-        public override IDbConnection GetOpenConnection(string databaseName)
+        protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
-            using (var connection = new MySqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new MySqlConnection(this.MasterDbConnectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 var createDatabaseQuery = $"CREATE DATABASE `{databaseName}`;";
 
@@ -52,22 +52,20 @@
             return workerConnection;
         }
 
-        public override void DropDatabase(string databaseName)
+        protected override async Task DropDatabase(string databaseName)
         {
-            using (var connection = new MySqlConnection(this.MasterDbConnectionString))
-            {
-                connection.Open();
+            await using var connection = new MySqlConnection(this.MasterDbConnectionString);
+            await connection.OpenAsync();
 
-                this.ExecuteNonQuery(connection, $"DROP DATABASE IF EXISTS `{databaseName}`;");
-            }
+            this.ExecuteNonQuery(connection, $"DROP DATABASE IF EXISTS `{databaseName}`;");
         }
 
-        protected override IExecutionResult<TestResult> Execute(
+        protected override async Task<IExecutionResult<TestResult>> Execute(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result,
             Action<IDbConnection, TestContext> executionFlow)
         {
-            result = base.Execute(executionContext, result, executionFlow);
+            result = await base.Execute(executionContext, result, executionFlow);
 
             // TODO: Fix concurrent execution of SQL queries.
             // This is a temporary fix for the following error,

@@ -105,7 +105,7 @@ class Classes{{
     public static Map<String, Class> allClasses = new HashMap<>();
 }}";
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -161,7 +161,7 @@ class Classes{{
                 preprocessArguments.Add(this.WorkingDirectory);
                 preprocessArguments.AddRange(this.UserClassNames);
 
-                var preprocessExecutionResult = preprocessExecutor.Execute(
+                var preprocessExecutionResult = await preprocessExecutor.Execute(
                     this.JavaExecutablePath,
                     string.Empty,
                     executionContext.TimeLimit,
@@ -209,7 +209,7 @@ class Classes{{
 
             arguments.AddRange(this.UserClassNames);
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 this.JavaExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,

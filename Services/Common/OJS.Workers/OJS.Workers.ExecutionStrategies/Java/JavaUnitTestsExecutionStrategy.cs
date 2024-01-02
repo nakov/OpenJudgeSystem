@@ -108,7 +108,7 @@ public class _$TestRunner {{
     }}
 }}";
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -167,7 +167,7 @@ public class _$TestRunner {{
                 };
 
                 // Process the submission and check each test
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                     this.JavaExecutablePath,
                     string.Empty,
                     executionContext.TimeLimit,

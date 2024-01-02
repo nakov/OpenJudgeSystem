@@ -29,11 +29,11 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";
 
-        public override IDbConnection GetOpenConnection(string databaseName)
+        protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
             if (this.currentConnection != null)
             {
-                return this.CreateConnection();
+                return await this.CreateConnection();
             }
 
             this.EnsureDatabaseIsSetup();
@@ -43,14 +43,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
                 this.currentConnection.Dispose();
             }
 
-            return this.CreateConnection();
+            return await this.CreateConnection();
         }
 
-        public override string GetDatabaseName() => this.databaseNameForSubmissionProcessor;
+        protected override string GetDatabaseName() => this.databaseNameForSubmissionProcessor;
 
-        public override void DropDatabase(string databaseName)
-        {
-        }
+        protected override Task DropDatabase(string databaseName) => Task.CompletedTask;
 
         protected override string BuildWorkerDbConnectionString(string databaseName)
         {
@@ -70,34 +68,30 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             return createdDbConnectionString;
         }
 
-        protected override IExecutionResult<TestResult> Execute(IExecutionContext<TestsInputModel> executionContext, IExecutionResult<TestResult> result, Action<IDbConnection, TestContext> executionFlow)
+        protected override async Task<IExecutionResult<TestResult>> Execute(IExecutionContext<TestsInputModel> executionContext, IExecutionResult<TestResult> result, Action<IDbConnection, TestContext> executionFlow)
         {
             result.IsCompiledSuccessfully = true;
 
             try
             {
-                using (var connection = this.GetOpenConnection(this.GetDatabaseName()))
+                using var connection = await this.GetOpenConnection(this.GetDatabaseName());
+                this.ExecuteBeforeTests(connection, executionContext);
+
+                foreach (var test in executionContext.Input.Tests)
                 {
-                    this.ExecuteBeforeTests(connection, executionContext);
-
-                    foreach (var test in executionContext.Input.Tests)
-                    {
-                        this.ExecuteBeforeEachTest(connection, executionContext, test);
-                        executionFlow(connection, test);
-                        this.ExecuteAfterEachTest(connection, executionContext, test);
-                    }
-
-                    this.ExecuteAfterTests(connection, executionContext);
+                    this.ExecuteBeforeEachTest(connection, executionContext, test);
+                    executionFlow(connection, test);
+                    this.ExecuteAfterEachTest(connection, executionContext, test);
                 }
+
+                this.ExecuteAfterTests(connection, executionContext);
             }
             catch (Exception ex)
             {
                 if (!string.IsNullOrWhiteSpace(this.GetDatabaseName()))
                 {
-                    using (var connection = this.GetOpenConnection(this.GetDatabaseName()))
-                    {
-                        this.CleanUpDb(connection);
-                    }
+                    using var connection = await this.GetOpenConnection(this.GetDatabaseName());
+                    this.CleanUpDb(connection);
                 }
 
                 result.IsCompiledSuccessfully = false;
@@ -128,13 +122,11 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         {
             try
             {
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandTimeout = timeLimit / 1000;
-                    command.CommandText = this.FixCommandText(commandText);
+                using var command = connection.CreateCommand();
+                command.CommandTimeout = timeLimit / 1000;
+                command.CommandText = this.FixCommandText(commandText);
 
-                    command.ExecuteNonQuery();
-                }
+                command.ExecuteNonQuery();
             }
             catch (TimeoutException)
             {
@@ -153,28 +145,24 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
             try
             {
-                using (var command = connection.CreateCommand())
+                using var command = connection.CreateCommand();
+                command.CommandText = commandText;
+                command.CommandTimeout = timeLimit / 1000;
+
+                using var reader = command.ExecuteReader();
+                do
                 {
-                    command.CommandText = commandText;
-                    command.CommandTimeout = timeLimit / 1000;
-
-                    using (var reader = command.ExecuteReader())
+                    while (reader.Read())
                     {
-                        do
+                        for (var i = 0; i < reader.FieldCount; i++)
                         {
-                            while (reader.Read())
-                            {
-                                for (var i = 0; i < reader.FieldCount; i++)
-                                {
-                                    var fieldValue = this.GetDataRecordFieldValue(reader, i);
+                            var fieldValue = this.GetDataRecordFieldValue(reader, i);
 
-                                    sqlTestResult.Results.Add(fieldValue);
-                                }
-                            }
+                            sqlTestResult.Results.Add(fieldValue);
                         }
-                        while (reader.NextResult());
                     }
                 }
+                while (reader.NextResult());
             }
             catch (TimeoutException)
             {
@@ -264,10 +252,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             this.workerDbConnectionString = this.BuildWorkerDbConnectionString(databaseName);
         }
 
-        private IDbConnection CreateConnection()
+        private async Task<IDbConnection> CreateConnection()
         {
-            var connection = new NpgsqlConnection(this.workerDbConnectionString);
-            connection.Open();
+            await using var connection = new NpgsqlConnection(this.workerDbConnectionString);
+            await connection.OpenAsync();
             connection.Disposed += (sender, args) =>
             {
                 this.isDisposed = true;

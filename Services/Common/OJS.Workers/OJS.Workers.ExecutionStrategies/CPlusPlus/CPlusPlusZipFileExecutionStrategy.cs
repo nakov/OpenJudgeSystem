@@ -26,7 +26,7 @@
         {
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -62,7 +62,7 @@
 
             foreach (var test in executionContext.Input.Tests)
             {
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                     compilationResult.OutputFile,
                     test.Input,
                     executionContext.TimeLimit,

@@ -1,30 +1,16 @@
 ﻿namespace OJS.Workers.Common
 {
     using System;
-    using System.Text.RegularExpressions;
 
     public class ProcessExecutionResult
     {
-        private const string ColorEncodingsSearchPattern = @"\x1b\[[0-9;]*m";
+        public string ReceivedOutput { get; set; } = string.Empty;
 
-        public ProcessExecutionResult()
-        {
-            this.ReceivedOutput = string.Empty;
-            this.ErrorOutput = string.Empty;
-            this.ExitCode = 0;
-            this.Type = ProcessExecutionResultType.Success;
-            this.TimeWorked = default(TimeSpan);
-            this.ProcessWasKilled = false;
-            this.MemoryUsed = 0;
-        }
-
-        public string ReceivedOutput { get; set; }
-
-        public string ErrorOutput { get; set; }
+        public string ErrorOutput { get; set; } = string.Empty;
 
         public int ExitCode { get; set; }
 
-        public ProcessExecutionResultType Type { get; set; }
+        public ProcessExecutionResultType Type { get; set; } = ProcessExecutionResultType.Success;
 
         public TimeSpan TimeWorked { get; set; }
 
@@ -34,7 +20,7 @@
 
         public TimeSpan UserProcessorTime { get; set; }
 
-        public bool ProcessWasKilled { get; set; }
+        public bool ProcessWasKilled { get; set; } = false;
 
         public TimeSpan TotalProcessorTime => this.PrivilegedProcessorTime + this.UserProcessorTime;
 
@@ -59,8 +45,5 @@
                     : this.TotalProcessorTime;
             }
         }
-
-        public void RemoveColorEncodingsFromReceivedOutput() =>
-            this.ReceivedOutput = Regex.Replace(this.ReceivedOutput, ColorEncodingsSearchPattern, string.Empty);
     }
 }

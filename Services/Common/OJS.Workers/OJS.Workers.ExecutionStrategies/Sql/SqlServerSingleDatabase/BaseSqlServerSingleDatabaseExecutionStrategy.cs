@@ -27,9 +27,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 
         private string WorkerDbConnectionString { get; set; }
 
-        public override IDbConnection GetOpenConnection(string databaseName)
+        protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
-            this.EnsureDatabaseIsSetup();
+            await this.EnsureDatabaseIsSetup();
 
             this.transactionScope = new TransactionScope();
             var createdDbConnection = new SqlConnection(this.WorkerDbConnectionString);
@@ -38,7 +38,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
             return createdDbConnection;
         }
 
-        public override void DropDatabase(string databaseName)
+        protected override async Task DropDatabase(string databaseName)
         {
             if (this.transactionScope != null)
             {
@@ -46,19 +46,19 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
             }
             else
             {
-                base.DropDatabase(databaseName);
+                await base.DropDatabase(databaseName);
             }
         }
 
-        public override string GetDatabaseName() => this.databaseNameForSubmissionProcessor;
+        protected override string GetDatabaseName() => this.databaseNameForSubmissionProcessor;
 
-        private void EnsureDatabaseIsSetup()
+        private async Task EnsureDatabaseIsSetup()
         {
             var databaseName = this.GetDatabaseName();
 
-            using (var connection = new SqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new SqlConnection(this.MasterDbConnectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 var setupDatabaseQuery =
                     $@"IF DB_ID('{databaseName}') IS NULL

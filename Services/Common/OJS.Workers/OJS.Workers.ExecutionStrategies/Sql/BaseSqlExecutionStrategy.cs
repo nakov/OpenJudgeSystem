@@ -51,12 +51,6 @@ namespace OJS.Workers.ExecutionStrategies.Sql
 
         protected string RestrictedUserPassword { get; }
 
-        public abstract IDbConnection GetOpenConnection(string databaseName);
-
-        public abstract void DropDatabase(string databaseName);
-
-        public virtual string GetDatabaseName() => Guid.NewGuid().ToString();
-
         protected static void ProcessSqlResult(
             SqlResult sqlResult,
             IExecutionContext<TestsInputModel> executionContext,
@@ -97,9 +91,15 @@ namespace OJS.Workers.ExecutionStrategies.Sql
             }
         }
 
+        protected abstract Task<IDbConnection> GetOpenConnection(string databaseName);
+
+        protected abstract Task DropDatabase(string databaseName);
+
+        protected virtual string GetDatabaseName() => Guid.NewGuid().ToString();
+
         protected abstract string BuildWorkerDbConnectionString(string databaseName);
 
-        protected virtual IExecutionResult<TestResult> Execute(
+        protected virtual async Task<IExecutionResult<TestResult>> Execute(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result,
             Action<IDbConnection, TestContext> executionFlow)
@@ -113,19 +113,19 @@ namespace OJS.Workers.ExecutionStrategies.Sql
                 {
                     databaseName = this.GetDatabaseName();
 
-                    using (var connection = this.GetOpenConnection(databaseName))
+                    using (var connection = await this.GetOpenConnection(databaseName))
                     {
                         executionFlow(connection, test);
                     }
 
-                    this.DropDatabase(databaseName);
+                    await this.DropDatabase(databaseName);
                 }
             }
             catch (Exception ex)
             {
                 if (!string.IsNullOrWhiteSpace(databaseName))
                 {
-                    this.DropDatabase(databaseName);
+                    await this.DropDatabase(databaseName);
                 }
 
                 result.IsCompiledSuccessfully = false;

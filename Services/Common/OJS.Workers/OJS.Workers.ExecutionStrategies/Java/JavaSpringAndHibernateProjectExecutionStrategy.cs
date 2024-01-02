@@ -113,7 +113,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             DirectoryHelpers.SafeDeleteDirectory(extractionDirectory, true);
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -145,7 +145,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             var mavenExecutor = this.CreateExecutor();
 
-            var packageExecutionResult = mavenExecutor.Execute(
+            var packageExecutionResult = await mavenExecutor.Execute(
               this.MavenPath,
               string.Empty,
               executionContext.TimeLimit,
@@ -173,7 +173,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 var testFile = this.TestNames[testIndex++];
                 mavenArgs = new[] { string.Format(MavenTestCommand, pomXmlPath, testFile) };
 
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                 this.MavenPath,
                 string.Empty,
                 executionContext.TimeLimit,

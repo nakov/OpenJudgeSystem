@@ -43,7 +43,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         {
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -64,7 +64,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             var executor = this.CreateExecutor();
 
-            return this.RunUnitTests(
+            return await this.RunUnitTests(
                 nunitLiteConsoleApp.csProjPath,
                 executionContext,
                 executor,
@@ -74,7 +74,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 AdditionalExecutionArguments);
         }
 
-        protected override IExecutionResult<TestResult> RunUnitTests(
+        protected override async Task<IExecutionResult<TestResult>> RunUnitTests(
             string consoleRunnerPath,
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
@@ -123,7 +123,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 var arguments = new List<string> { compilerResult.OutputFile };
                 arguments.AddRange(additionalExecutionArgumentsArray);
 
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                     compilerPath,
                     string.Empty,
                     executionContext.TimeLimit,

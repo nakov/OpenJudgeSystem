@@ -1,13 +1,13 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -161,7 +161,7 @@ describe('TestDOMScope', function() {{
 
         protected override string JsCodeEvaluation => TestsPlaceholder;
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -176,7 +176,7 @@ describe('TestDOMScope', function() {{
             var codeSavePath = FileHelpers.SaveStringToTempFile(this.WorkingDirectory, codeToExecute);
             var executor = this.CreateExecutor();
 
-            result.Results.AddRange(this.ProcessTests(
+            result.Results.AddRange(await this.ProcessTests(
                 executionContext,
                 executor,
                 executionContext.Input.GetChecker(),
@@ -210,7 +210,7 @@ describe('TestDOMScope', function() {{
             return testsCode;
         }
 
-        protected override List<TestResult> ProcessTests(
+        protected override async Task<List<TestResult>> ProcessTests(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
             IChecker checker,
@@ -222,7 +222,7 @@ describe('TestDOMScope', function() {{
             arguments.Add(codeSavePath);
             arguments.AddRange(this.AdditionalExecutionArguments);
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 this.NodeJsExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,

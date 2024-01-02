@@ -21,13 +21,13 @@
         {
         }
 
-        public override IDbConnection GetOpenConnection(string databaseName)
+        protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
             var databaseFilePath = $"{this.WorkingDirectory}\\{databaseName}.mdf";
 
-            using (var connection = new SqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new SqlConnection(this.MasterDbConnectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 var createDatabaseQuery =
                     $"CREATE DATABASE [{databaseName}] ON PRIMARY (NAME=N'{databaseName}', FILENAME=N'{databaseFilePath}');";
@@ -62,21 +62,19 @@
             return createdDbConnection;
         }
 
-        public override void DropDatabase(string databaseName)
+        protected override async Task DropDatabase(string databaseName)
         {
-            using (var connection = new SqlConnection(this.MasterDbConnectionString))
-            {
-                connection.Open();
+            await using var connection = new SqlConnection(this.MasterDbConnectionString);
+            await connection.OpenAsync();
 
-                var dropDatabaseQuery = $@"
+            var dropDatabaseQuery = $@"
                     IF EXISTS (SELECT name FROM master.sys.databases WHERE name=N'{databaseName}')
                     BEGIN
                     ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
                     DROP DATABASE [{databaseName}];
                     END;";
 
-                this.ExecuteNonQuery(connection, dropDatabaseQuery);
-            }
+            this.ExecuteNonQuery(connection, dropDatabaseQuery);
         }
 
         protected override string BuildWorkerDbConnectionString(string databaseName)

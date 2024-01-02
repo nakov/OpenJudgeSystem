@@ -1,11 +1,11 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -171,7 +171,7 @@ process.stdin.on('end', function() {
             EvaluationPlaceholder +
             PostevaluationPlaceholder;
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -181,14 +181,14 @@ process.stdin.on('end', function() {
 
             var checker = executionContext.Input.GetChecker();
 
-            var testResults = this.ProcessTests(executionContext, executor, checker, codeSavePath);
+            var testResults = await this.ProcessTests(executionContext, executor, checker, codeSavePath);
 
             result.Results.AddRange(testResults);
 
             return result;
         }
 
-        protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
+        protected override async Task<IExecutionResult<OutputResult>> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
             IExecutionResult<OutputResult> result)
         {
@@ -196,7 +196,7 @@ process.stdin.on('end', function() {
 
             var executor = this.CreateExecutor();
 
-            var processExecutionResult = this.ExecuteCode(
+            var processExecutionResult = await this.ExecuteCode(
                 executionContext,
                 executor,
                 codeSavePath,
@@ -207,7 +207,7 @@ process.stdin.on('end', function() {
             return result;
         }
 
-        protected virtual List<TestResult> ProcessTests(
+        protected virtual async Task<List<TestResult>> ProcessTests(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
             IChecker checker,
@@ -218,7 +218,7 @@ process.stdin.on('end', function() {
             foreach (var test in executionContext.Input.Tests)
             {
                 var testInput = PrepareTestInput(test.Input);
-                var processExecutionResult = this.ExecuteCode(
+                var processExecutionResult = await this.ExecuteCode(
                     executionContext,
                     executor,
                     codeSavePath,
@@ -269,7 +269,7 @@ process.stdin.on('end', function() {
             return FileHelpers.SaveStringToTempFile(this.WorkingDirectory, codeToExecute);
         }
 
-        private ProcessExecutionResult ExecuteCode<TInput>(
+        private Task<ProcessExecutionResult> ExecuteCode<TInput>(
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,

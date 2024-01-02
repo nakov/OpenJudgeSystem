@@ -4,13 +4,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
+    using FluentExtensions.Extensions;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
-
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
     public class PythonExecuteAndCheckExecutionStrategy : BaseInterpretedCodeExecutionStrategy
@@ -37,7 +35,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         protected virtual IEnumerable<string> ExecutionArguments
             => new[] { IsolatedModeArgument, OptimizeAndDiscardDocstringsArgument };
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -50,7 +48,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             return this.RunTests(codeSavePath, executor, checker, executionContext, result);
         }
 
-        protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
+        protected override async Task<IExecutionResult<OutputResult>> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
             IExecutionResult<OutputResult> result)
         {
@@ -58,7 +56,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
             var executor = this.CreateExecutor();
 
-            var processExecutionResult = this.Execute(
+            var processExecutionResult = await this.Execute(
                 executionContext,
                 executor,
                 codeSavePath,
@@ -69,26 +67,27 @@ namespace OJS.Workers.ExecutionStrategies.Python
             return result;
         }
 
-        protected virtual IExecutionResult<TestResult> RunTests(
+        protected virtual async Task<IExecutionResult<TestResult>> RunTests(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
-            result.Results.AddRange(
-                executionContext.Input.Tests
-                    .Select(test => this.RunIndividualTest(
-                        codeSavePath,
-                        executor,
-                        checker,
-                        executionContext,
-                        test)));
+            var testResults = await executionContext.Input.Tests
+                .SelectSequential(async test => await this.RunIndividualTest(
+                    codeSavePath,
+                    executor,
+                    checker,
+                    executionContext,
+                    test));
+
+            result.Results.AddRange(testResults);
 
             return result;
         }
 
-        protected virtual TestResult RunIndividualTest(
+        protected virtual async Task<TestResult> RunIndividualTest(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
@@ -96,7 +95,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             TestContext test)
         {
             var testInput = PrepareTestInput(test.Input);
-            var processExecutionResult = this.Execute(executionContext, executor, codeSavePath, testInput);
+            var processExecutionResult = await this.Execute(executionContext, executor, codeSavePath, testInput);
 
             var testResult = CheckAndGetTestResult(
                 test,
@@ -107,7 +106,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             return testResult;
         }
 
-        protected virtual ProcessExecutionResult Execute<TInput>(
+        protected virtual Task<ProcessExecutionResult> Execute<TInput>(
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,

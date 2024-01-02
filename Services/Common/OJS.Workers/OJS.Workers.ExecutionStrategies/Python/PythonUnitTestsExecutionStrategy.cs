@@ -28,7 +28,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
         }
 
-        protected override IExecutionResult<TestResult> RunTests(
+        protected override Task<IExecutionResult<TestResult>> RunTests(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
@@ -56,7 +56,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 result.Results.Add(testResult);
             }
 
-            return result;
+            return Task.FromResult(result);
         }
 
         protected virtual TestResult RunIndividualUnitTest(
@@ -70,7 +70,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
             WriteTestInCodeFile(test.Input, codeSavePath, executionContext.Code);
 
-            var processExecutionResult = this.Execute(executionContext, executor, codeSavePath, string.Empty);
+            var processExecutionResult = this.Execute(executionContext, executor, codeSavePath, string.Empty)
+                .GetAwaiter().GetResult();
 
             return this.GetUnitTestsResultFromExecutionResult(
                 ref originalTestsPassed,

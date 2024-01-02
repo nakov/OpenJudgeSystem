@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies
 {
+    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -255,7 +256,7 @@ finally:
 
         private string ContainerName { get; set; }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -276,7 +277,7 @@ finally:
             var preExecuteCodeSavePath = this.SavePythonCodeTemplateToTempFile(this.PythonPreExecuteCodeTemplate);
             var executor = this.CreateExecutor();
             var checker = executionContext.Input.GetChecker();
-            var preExecutionResult = this.Execute(executionContext, executor, preExecuteCodeSavePath, string.Empty);
+            var preExecutionResult = await this.Execute(executionContext, executor, preExecuteCodeSavePath, string.Empty);
             var match = Regex.Match(preExecutionResult.ReceivedOutput, @"Container port: (\d+);Container name: ([a-zA-Z-_]+);");
             if (match.Success)
             {
@@ -290,10 +291,10 @@ finally:
                 return result;
             }
 
-            return this.RunTests(string.Empty, executor, checker, executionContext, result);
+            return await this.RunTests(string.Empty, executor, checker, executionContext, result);
         }
 
-        protected override IExecutionResult<TestResult> RunTests(
+        protected override async Task<IExecutionResult<TestResult>> RunTests(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
@@ -301,14 +302,14 @@ finally:
             IExecutionResult<TestResult> result)
         {
             result.Results.AddRange(
-                executionContext.Input.Tests
-                    .Select(
-                        test => this.RunIndividualTest(
+                (await executionContext.Input.Tests
+                    .SelectSequential(
+                        async test => await this.RunIndividualTest(
                             codeSavePath,
                             executor,
                             executionContext,
                             test,
-                            test.Id == executionContext.Input.Tests.Last().Id))
+                            test.Id == executionContext.Input.Tests.Last().Id)))
                     .SelectMany(resultList => resultList));
             return result;
         }
@@ -350,7 +351,7 @@ finally:
             return nodeModules;
         }
 
-        private ICollection<TestResult> RunIndividualTest(
+        private async Task<ICollection<TestResult>> RunIndividualTest(
             string codeSavePath,
             IExecutor executor,
             IExecutionContext<TestsInputModel> executionContext,
@@ -370,7 +371,7 @@ finally:
 
             this.SaveTestsToFiles(executionContext.Input.Tests);
 
-            var processExecutionResult = this.Execute(executionContext, executor, mainCodeSavePath, test.Input);
+            var processExecutionResult = await this.Execute(executionContext, executor, mainCodeSavePath, test.Input);
             return this.ExtractTestResultsFromReceivedOutput(processExecutionResult.ReceivedOutput, test.Id);
         }
 

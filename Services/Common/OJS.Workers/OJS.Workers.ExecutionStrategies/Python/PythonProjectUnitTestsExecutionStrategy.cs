@@ -56,7 +56,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 DiscoverTestsCommandName,
             };
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -88,7 +88,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 executor,
                 codeSavePath,
                 string.Empty,
-                this.WorkingDirectory);
+                this.WorkingDirectory)
+                .GetAwaiter()
+                .GetResult();
 
             return this.GetUnitTestsResultFromExecutionResult(
                 ref originalTestsPassed,

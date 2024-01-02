@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -8,7 +9,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -157,7 +157,7 @@ function afterBundling() {
     });
 }";
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -178,7 +178,7 @@ function afterBundling() {
             var executor = this.CreateExecutor();
 
             // Process tests
-            result.Results.AddRange(this.ProcessTests(
+            result.Results.AddRange(await this.ProcessTests(
                 executionContext,
                 executor,
                 executionContext.Input.GetChecker(),

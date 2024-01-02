@@ -208,7 +208,7 @@ it('Test{testsCount++}', function(done) {{
             return testsCode;
         }
 
-        protected override List<TestResult> ProcessTests(
+        protected override async Task<List<TestResult>> ProcessTests(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
             IChecker checker,
@@ -221,7 +221,7 @@ it('Test{testsCount++}', function(done) {{
             arguments.Add(codeSavePath);
             arguments.AddRange(this.AdditionalExecutionArguments);
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 this.NodeJsExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,

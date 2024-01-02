@@ -14,22 +14,13 @@ namespace OJS.Workers.ExecutionStrategies
 
     public abstract class BaseExecutionStrategy : IExecutionStrategy
     {
-        private readonly ILog logger;
-
-        protected BaseExecutionStrategy() => this.logger = LogManager.GetLogger(typeof(BaseExecutionStrategy));
+        private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy));
 
         public ExecutionStrategyType Type { get; set; }
 
         protected string WorkingDirectory { get; set; }
 
-        public IExecutionResult<TResult> Execute<TInput, TResult>(IExecutionContext<TInput> executionContext)
-            where TResult : ISingleCodeRunResult, new()
-        {
-            executionContext.Code = this.PreprocessCode(executionContext);
-            return this.InternalExecute(executionContext, new ExecutionResult<TResult>());
-        }
-
-        public IExecutionResult<TResult> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
+        public Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
             where TResult : ISingleCodeRunResult, new()
         {
             this.WorkingDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
@@ -62,17 +53,17 @@ namespace OJS.Workers.ExecutionStrategies
             }
         }
 
-        protected virtual IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
+        protected virtual Task<IExecutionResult<OutputResult>> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
             IExecutionResult<OutputResult> result)
             => throw new DerivedImplementationNotFoundException();
 
-        protected virtual IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected virtual Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
             => throw new DerivedImplementationNotFoundException();
 
-        protected virtual IExecutionResult<TResult> InternalExecute<TInput, TResult>(
+        protected virtual async Task<IExecutionResult<TResult>> InternalExecute<TInput, TResult>(
             IExecutionContext<TInput> executionContext,
             IExecutionResult<TResult> result)
             where TResult : ISingleCodeRunResult, new()
@@ -80,7 +71,7 @@ namespace OJS.Workers.ExecutionStrategies
             if (executionContext is IExecutionContext<SimpleInputModel> stringInputExecutionContext &&
                 result is IExecutionResult<OutputResult> outputResult)
             {
-                return (IExecutionResult<TResult>)this.ExecuteAgainstSimpleInput(
+                return (IExecutionResult<TResult>)await this.ExecuteAgainstSimpleInput(
                     stringInputExecutionContext,
                     outputResult);
             }
@@ -88,7 +79,7 @@ namespace OJS.Workers.ExecutionStrategies
             if (executionContext is IExecutionContext<TestsInputModel> testsExecutionContext &&
                 result is IExecutionResult<TestResult> testsResult)
             {
-                return (IExecutionResult<TResult>)this.ExecuteAgainstTestsInput(
+                return (IExecutionResult<TResult>)await this.ExecuteAgainstTestsInput(
                     testsExecutionContext,
                     testsResult);
             }
@@ -99,5 +90,12 @@ namespace OJS.Workers.ExecutionStrategies
         protected virtual string PreprocessCode<TInput>(
             IExecutionContext<TInput> executionContext)
             => executionContext.Code;
+
+        private Task<IExecutionResult<TResult>> Execute<TInput, TResult>(IExecutionContext<TInput> executionContext)
+            where TResult : ISingleCodeRunResult, new()
+        {
+            executionContext.Code = this.PreprocessCode(executionContext);
+            return this.InternalExecute(executionContext, new ExecutionResult<TResult>());
+        }
     }
 }

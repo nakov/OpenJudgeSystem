@@ -22,7 +22,7 @@
         /// lower that -1 as a RunTime error if the ErrorOutput is empty.</param>
         /// <param name="timeoutMultiplier">A multiplier for the timeLimit, the total execution limit for the process is equal
         /// to the <param name="timeLimit">timeLimit</param> * .<param name="timeoutMultiplier">timeoutMultiplier</param></param>
-        ProcessExecutionResult Execute(
+        Task<ProcessExecutionResult> Execute(
             string fileName,
             string inputData,
             int timeLimit,

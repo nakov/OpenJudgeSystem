@@ -40,7 +40,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 UnitTestModuleName,
             };
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -49,10 +49,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             var executor = this.CreateExecutor();
             var checker = executionContext.Input.GetChecker();
 
-            return this.RunTests(string.Empty, executor, checker, executionContext, result);
+            return await this.RunTests(string.Empty, executor, checker, executionContext, result);
         }
 
-        protected override IExecutionResult<TestResult> RunTests(
+        protected override async Task<IExecutionResult<TestResult>> RunTests(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
@@ -68,7 +68,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 var test = tests[i];
                 var testPath = this.TestPaths[i];
 
-                var processExecutionResult = this.Execute(
+                var processExecutionResult = await this.Execute(
                     executionContext,
                     executor,
                     testPath,

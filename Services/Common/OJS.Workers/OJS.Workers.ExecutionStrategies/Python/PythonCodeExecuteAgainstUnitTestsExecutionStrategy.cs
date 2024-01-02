@@ -42,7 +42,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             FileHelpers.WriteAllText(codeSavePath, codeAndTestText);
         }
 
-        protected override TestResult RunIndividualTest(
+        protected override async Task<TestResult> RunIndividualTest(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
@@ -51,21 +51,21 @@ namespace OJS.Workers.ExecutionStrategies.Python
         {
             WriteTestInCodeFile(executionContext.Code, codeSavePath, test.Input);
 
-            var processExecutionResult = this.Execute(executionContext, executor, codeSavePath, string.Empty);
+            var processExecutionResult = await this.Execute(executionContext, executor, codeSavePath, string.Empty);
 
             var testResult = this.GetTestResult(processExecutionResult, test, checker);
 
             return testResult;
         }
 
-        protected override ProcessExecutionResult Execute<TInput>(
+        protected override async Task<ProcessExecutionResult> Execute<TInput>(
             IExecutionContext<TInput> executionContext,
             IExecutor executor,
             string codeSavePath,
             string input,
             string directory = null)
         {
-            var processExecutionResult = base.Execute(executionContext, executor, codeSavePath, input, directory);
+            var processExecutionResult = await base.Execute(executionContext, executor, codeSavePath, input, directory);
             this.FixReceivedOutput(processExecutionResult);
             return processExecutionResult;
         }

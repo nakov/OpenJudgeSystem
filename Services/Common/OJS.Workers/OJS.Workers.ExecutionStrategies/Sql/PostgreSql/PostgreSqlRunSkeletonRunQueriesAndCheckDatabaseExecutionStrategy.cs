@@ -16,7 +16,7 @@
         {
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
             => this.Execute(

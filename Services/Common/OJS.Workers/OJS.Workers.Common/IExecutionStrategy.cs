@@ -6,10 +6,7 @@
     {
         ExecutionStrategyType Type { get; set; }
 
-        IExecutionResult<TResult> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
-            where TResult : ISingleCodeRunResult, new();
-
-        IExecutionResult<TResult> Execute<TInput, TResult>(IExecutionContext<TInput> executionContext)
+        Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
             where TResult : ISingleCodeRunResult, new();
     }
 }

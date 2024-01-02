@@ -5,14 +5,14 @@ namespace OJS.Workers.ExecutionStrategies
 
     public class DoNothingExecutionStrategy : BaseExecutionStrategy
     {
-        protected override IExecutionResult<TResult> InternalExecute<TInput, TResult>(
+        protected override Task<IExecutionResult<TResult>> InternalExecute<TInput, TResult>(
             IExecutionContext<TInput> executionContext,
             IExecutionResult<TResult> result)
         {
             result.CompilerComment = null;
             result.IsCompiledSuccessfully = true;
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

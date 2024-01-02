@@ -48,7 +48,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 }}
             }}";
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -69,7 +69,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             foreach (var test in executionContext.Input.Tests)
             {
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                     this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                     test.Input,
                     executionContext.TimeLimit,
@@ -89,7 +89,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             return result;
         }
 
-        protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
+        protected override async Task<IExecutionResult<OutputResult>> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
             IExecutionResult<OutputResult> result)
         {
@@ -106,7 +106,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 compileResult,
                 out var arguments);
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,

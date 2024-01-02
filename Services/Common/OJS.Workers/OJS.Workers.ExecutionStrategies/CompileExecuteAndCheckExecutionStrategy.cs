@@ -16,7 +16,7 @@
         {
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
             => this.CompileExecuteAndCheck(
@@ -24,7 +24,7 @@
                 result,
                 this.CreateExecutor());
 
-        protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
+        protected override async Task<IExecutionResult<OutputResult>> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
             IExecutionResult<OutputResult> result)
         {
@@ -39,7 +39,7 @@
 
             var executor = this.CreateExecutor();
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 compileResult.OutputFile,
                 executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,

@@ -21,7 +21,7 @@
                 Environment.NewLine,
                 testInput.Split(new[] { NewLineUnix, NewLineWin }, StringSplitOptions.None));
 
-        protected override IExecutionResult<TResult> InternalExecute<TInput, TResult>(
+        protected override Task<IExecutionResult<TResult>> InternalExecute<TInput, TResult>(
             IExecutionContext<TInput> executionContext,
             IExecutionResult<TResult> result)
         {

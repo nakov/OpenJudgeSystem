@@ -38,7 +38,7 @@ namespace OJS.Workers.Executors
             this.TasksService = tasksService;
         }
 
-        public ProcessExecutionResult Execute(
+        public async Task<ProcessExecutionResult> Execute(
             string fileName,
             string inputData,
             int processTimeLimit,
@@ -57,11 +57,10 @@ namespace OJS.Workers.Executors
 
             this.BeforeExecute();
 
-            var processExecutionResult = this.InternalExecute(
+            var processExecutionResult = await this.InternalExecute(
                 fileName,
                 inputData,
                 this.timeLimit,
-                this.memoryLimit,
                 executionArguments,
                 workingDirectory,
                 useSystemEncoding,
@@ -75,11 +74,10 @@ namespace OJS.Workers.Executors
             return processExecutionResult;
         }
 
-        protected abstract ProcessExecutionResult InternalExecute(
+        protected abstract Task<ProcessExecutionResult> InternalExecute(
             string fileName,
             string inputData,
             int timeLimit,
-            int memoryLimit,
             IEnumerable<string> executionArguments,
             string workingDirectory,
             bool useSystemEncoding,

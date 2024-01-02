@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -8,7 +9,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -89,7 +89,7 @@ after(function() {
 
         private Random Random { get; }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -98,7 +98,7 @@ after(function() {
             var codeSavePath = this.SaveCodeToTempFile(executionContext);
 
             // Process the submission and check each test
-            result.Results.AddRange(this.ProcessTests(
+            result.Results.AddRange(await this.ProcessTests(
                 executionContext,
                 executor,
                 executionContext.Input.GetChecker(),
@@ -158,7 +158,7 @@ describe('Test {i} ', function(){{
             return testsCode;
         }
 
-        protected override List<TestResult> ProcessTests(
+        protected override async Task<List<TestResult>> ProcessTests(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
             IChecker checker,
@@ -172,7 +172,7 @@ describe('Test {i} ', function(){{
             arguments.AddRange(this.AdditionalExecutionArguments);
 
             var testCount = 0;
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 this.NodeJsExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,

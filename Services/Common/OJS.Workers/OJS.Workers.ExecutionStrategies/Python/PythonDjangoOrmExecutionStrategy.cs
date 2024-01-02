@@ -53,7 +53,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         protected override IEnumerable<string> ExecutionArguments
             => Enumerable.Empty<string>();
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -73,13 +73,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
             try
             {
-                this.CreateVirtualEnvironment(executor, executionContext, virtualEnvironmentName);
-                this.ActivateVirtualEnvironment(executor, executionContext, virtualEnvironmentName);
+                await this.CreateVirtualEnvironment(executor, executionContext, virtualEnvironmentName);
+                await this.ActivateVirtualEnvironment(executor, executionContext, virtualEnvironmentName);
                 ChangeDbConnection(pathToSettingsFile);
-                this.ExportDjangoSettingsModule(executor, executionContext, virtualEnvironmentName);
-                this.ApplyMigrations(executor, executionContext);
+                await this.ExportDjangoSettingsModule(executor, executionContext, virtualEnvironmentName);
+                await this.ApplyMigrations(executor, executionContext);
 
-                this.RunTests(string.Empty, executor, checker, executionContext, result);
+                await this.RunTests(string.Empty, executor, checker, executionContext, result);
             }
             finally
             {
@@ -89,7 +89,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             return result;
         }
 
-        protected override IExecutionResult<TestResult> RunTests(
+        protected override async Task<IExecutionResult<TestResult>> RunTests(
             string codeSavePath,
             IExecutor executor,
             IChecker checker,
@@ -105,7 +105,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 var test = tests[i];
                 var testPath = this.TestPaths[i];
 
-                var processExecutionResult = this.ExecuteTest(executor, executionContext, testPath);
+                var processExecutionResult = await this.ExecuteTest(executor, executionContext, testPath);
 
                 var testResult = this.GetTestResult(processExecutionResult, test, checker);
 
@@ -131,12 +131,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private static string GetErrorOutput(ProcessExecutionResult result)
             => $"Error output: {result.ReceivedOutput + Environment.NewLine + result.ErrorOutput} and result type: {result.Type}";
 
-        private ProcessExecutionResult ExecuteTest(
+        private async Task<ProcessExecutionResult> ExecuteTest(
             IExecutor executor,
             IExecutionContext<TestsInputModel> executionContext,
             string testPath)
         {
-            var processExecutionResult = this.Execute(
+            var processExecutionResult = await this.Execute(
                 this.PythonExecutablePath,
                 this.ExecutionArguments.Concat(new[]
                 {
@@ -148,9 +148,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
             return processExecutionResult;
         }
 
-        private void CreateVirtualEnvironment(IExecutor executor, IExecutionContext<TestsInputModel> executionContext, string envName)
+        private async Task CreateVirtualEnvironment(IExecutor executor, IExecutionContext<TestsInputModel> executionContext, string envName)
         {
-            var result = this.Execute(
+            var result = await this.Execute(
                 PyenvAppFileName,
                 this.ExecutionArguments.Concat(new[] { $"virtualenv 3.11 {envName}" }),
                 executor,
@@ -164,9 +164,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
             throw new ArgumentException($"Failed to create virtual environment! {GetErrorOutput(result)}");
         }
 
-        private void ActivateVirtualEnvironment(IExecutor executor, IExecutionContext<TestsInputModel> executionContext, string envName)
+        private async Task ActivateVirtualEnvironment(IExecutor executor, IExecutionContext<TestsInputModel> executionContext, string envName)
         {
-            var result = this.Execute(
+            var result = await this.Execute(
                 PyenvAppFileName,
                 this.ExecutionArguments.Concat(new[] { $"local {envName}" }),
                 executor,
@@ -189,9 +189,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 MaximumTimeForEnvDeletion,
                 "y");
 
-        private void ExportDjangoSettingsModule(IExecutor executor, IExecutionContext<TestsInputModel> executionContext, string envName)
+        private async Task ExportDjangoSettingsModule(IExecutor executor, IExecutionContext<TestsInputModel> executionContext, string envName)
         {
-            var result = this.Execute(
+            var result = await this.Execute(
                 "/bin/bash",
                 this.ExecutionArguments.Concat(new[] { $"-c export DJANGO_SETTINGS_MODULE={envName}.settings" }),
                 executor,
@@ -205,9 +205,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
             throw new ArgumentException("Failed to export DJANGO_SETTINGS_MODULE! " + GetErrorOutput(result));
         }
 
-        private void ApplyMigrations(IExecutor executor, IExecutionContext<TestsInputModel> executionContext)
+        private async Task ApplyMigrations(IExecutor executor, IExecutionContext<TestsInputModel> executionContext)
         {
-            var result = this.Execute(
+            var result = await this.Execute(
                 this.PythonExecutablePath,
                 this.ExecutionArguments.Concat(new[] { "manage.py migrate" }),
                 executor,
@@ -221,7 +221,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             throw new ArgumentException("Failed to apply migrations! " + GetErrorOutput(result));
         }
 
-        private ProcessExecutionResult Execute(
+        private Task<ProcessExecutionResult> Execute(
             string fileName,
             IEnumerable<string> arguments,
             IExecutor executor,

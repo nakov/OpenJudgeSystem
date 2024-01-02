@@ -2,10 +2,11 @@
 {
     using OJS.Workers.Common;
     using SoftUni.Services.Infrastructure;
+    using System.Threading.Tasks;
 
     public interface ISubmissionExecutor : IService
     {
-        IExecutionResult<TResult> Execute<TInput, TResult>(OjsSubmission<TInput> submission)
+        Task<IExecutionResult<TResult>> Execute<TInput, TResult>(OjsSubmission<TInput> submission)
             where TResult : ISingleCodeRunResult, new();
     }
 }

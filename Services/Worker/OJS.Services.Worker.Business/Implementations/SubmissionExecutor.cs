@@ -5,6 +5,7 @@
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
+    using System.Threading.Tasks;
 
     public class SubmissionExecutor : ISubmissionExecutor
     {
@@ -13,7 +14,7 @@
         public SubmissionExecutor(IExecutionStrategyFactory executionStrategyFactory)
             => this.executionStrategyFactory = executionStrategyFactory;
 
-        public IExecutionResult<TResult> Execute<TInput, TResult>(
+        public Task<IExecutionResult<TResult>> Execute<TInput, TResult>(
             OjsSubmission<TInput> submission)
             where TResult : ISingleCodeRunResult, new()
         {
@@ -62,7 +63,7 @@
             }
         }
 
-        private IExecutionResult<TResult> ExecuteSubmission<TInput, TResult>(
+        private Task<IExecutionResult<TResult>> ExecuteSubmission<TInput, TResult>(
             IExecutionStrategy executionStrategy,
             IExecutionContext<TInput> executionContext,
             IOjsSubmission submission)

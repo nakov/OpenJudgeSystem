@@ -21,7 +21,7 @@
 
         protected ICompilerFactory CompilerFactory { get; }
 
-        protected IExecutionResult<TestResult> CompileExecuteAndCheck(
+        protected async Task<IExecutionResult<TestResult>> CompileExecuteAndCheck(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result,
             IExecutor executor,
@@ -47,7 +47,7 @@
 
             foreach (var test in executionContext.Input.Tests)
             {
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                     outputFile,
                     test.Input,
                     executionContext.TimeLimit,

@@ -126,7 +126,7 @@ describe('TestScope', function() {
         protected virtual IEnumerable<string> AdditionalExecutionArguments
             => new[] { TestsReporterArgument, JsonReportName };
 
-        protected override List<TestResult> ProcessTests(
+        protected override async Task<List<TestResult>> ProcessTests(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
             IChecker checker,
@@ -141,7 +141,7 @@ describe('TestScope', function() {
 
             foreach (var test in executionContext.Input.Tests)
             {
-                var processExecutionResult = executor.Execute(
+                var processExecutionResult = await executor.Execute(
                     this.NodeJsExecutablePath,
                     test.Input,
                     executionContext.TimeLimit,

@@ -213,7 +213,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             File.Delete(timeMeasurementFilePath);
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -232,7 +232,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             // Process the submission and check each test
             foreach (var test in executionContext.Input.Tests)
             {
-                var processExecutionResult = this.Execute(
+                var processExecutionResult = await this.Execute(
                     executor,
                     executionContext,
                     compileResult.OutputFile,
@@ -250,7 +250,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             return result;
         }
 
-        protected override IExecutionResult<OutputResult> ExecuteAgainstSimpleInput(
+        protected override async Task<IExecutionResult<OutputResult>> ExecuteAgainstSimpleInput(
             IExecutionContext<SimpleInputModel> executionContext,
             IExecutionResult<OutputResult> result)
         {
@@ -263,7 +263,7 @@ class _$SandboxSecurityManager extends SecurityManager {
 
             var executor = this.CreateExecutor();
 
-            var processExecutionResult = this.Execute(
+            var processExecutionResult = await this.Execute(
                 executor,
                 executionContext,
                 compileResult.OutputFile,
@@ -293,7 +293,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             return compilerResult;
         }
 
-        private ProcessExecutionResult Execute<TInput>(
+        private async Task<ProcessExecutionResult> Execute<TInput>(
             IExecutor executor,
             IExecutionContext<TInput> executionContext,
             string filePath,
@@ -316,7 +316,7 @@ class _$SandboxSecurityManager extends SecurityManager {
                 $"\"{timeMeasurementFilePath}\"",
             };
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                     this.JavaExecutablePath,
                     input,
                     executionContext.TimeLimit * 2, // Java virtual machine takes more time to start up

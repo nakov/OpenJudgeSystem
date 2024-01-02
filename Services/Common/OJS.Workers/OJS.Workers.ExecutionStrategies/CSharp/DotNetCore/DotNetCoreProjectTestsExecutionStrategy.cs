@@ -83,7 +83,7 @@
                 </ItemGroup>
             </Project>";
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -124,7 +124,7 @@
 
             var executor = this.CreateExecutor();
 
-            return this.RunUnitTests(
+            return await this.RunUnitTests(
                 compilerPath,
                 executionContext,
                 executor,

@@ -131,7 +131,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             return (totalTests, passedTests);
         }
 
-        protected override IExecutionResult<TestResult> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
@@ -169,7 +169,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
 
             var executor = this.CreateExecutor();
 
-            return this.RunUnitTests(
+            return await this.RunUnitTests(
                 this.NUnitConsoleRunnerPath,
                 executionContext,
                 executor,
@@ -198,7 +198,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             }
         }
 
-        protected virtual IExecutionResult<TestResult> RunUnitTests(
+        protected virtual async Task<IExecutionResult<TestResult>> RunUnitTests(
             string consoleRunnerPath,
             IExecutionContext<TestsInputModel> executionContext,
             IExecutor executor,
@@ -210,7 +210,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             var arguments = new List<string> { $"\"{compiledFile}\"" };
             arguments.AddRange(additionalExecutionArguments.Split(' '));
 
-            var processExecutionResult = executor.Execute(
+            var processExecutionResult = await executor.Execute(
                 consoleRunnerPath,
                 string.Empty,
                 executionContext.TimeLimit,
