@@ -3,11 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import {
-    isRegularUserInRoleForSubmission,
     isRegularUserParticipantAndNotInRole, isUserNotParticipantAndNotInRole,
 } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
 import Button, { ButtonType } from '../../../guidelines/buttons/Button';
@@ -22,7 +20,6 @@ interface IRefreshableSubmissionListProps {
     reload: () => void;
 }
 const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) => {
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const {
         currentSubmission,
@@ -124,7 +121,7 @@ const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) 
                 </div>
             );
         },
-        [ currentSubmission, canAccessAdministration ],
+        [ currentSubmission ],
     );
 
     return (

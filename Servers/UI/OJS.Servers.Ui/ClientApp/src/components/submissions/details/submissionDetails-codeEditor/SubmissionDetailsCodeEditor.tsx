@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dictionary } from '@reduxjs/toolkit';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';

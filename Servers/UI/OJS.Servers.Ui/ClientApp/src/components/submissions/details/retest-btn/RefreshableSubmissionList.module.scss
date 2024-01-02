@@ -5,19 +5,19 @@
 @use 'src/styles/colors';
 
 .buttonsSection {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .submissionInfo {
-    font-family: fonts.$font-family-lato-regular;
-    margin-top: 15px;
+  font-family: fonts.$font-family-lato-regular;
+  margin-top: 15px;
 }
 
 .submissionInfoParagraph {
-    @extend %font-family-lato;
-  
-    color: colors.$text-dark-gray-color;
-    margin-bottom: 10px;
+  @extend %font-family-lato;
+
+  color: colors.$text-dark-gray-color;
+  margin-bottom: 10px;
 }
 
 .navigation,
@@ -27,31 +27,31 @@
 }
 
 .submissionsList {
-    height: 465px;
-  
-    ul {
-      @extend %customScroll;
-  
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
+  height: 465px;
+
+  ul {
+    @extend %customScroll;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
 }
 
 .submissionReloadBtn {
-    margin-right: 20px;
-    margin-top: 10px;
+  margin-right: 20px;
+  margin-top: 10px;
 }
 
 @media only screen and (1px <= width <= 1430px) {
-    .buttonsSection {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-  
-      a {
-        margin-left: 0;
-        margin-right: 20px;
-        margin-top: 10px;
-      }
+  .buttonsSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    a {
+      margin-left: 0;
+      margin-right: 20px;
+      margin-top: 10px;
     }
   }
+}
