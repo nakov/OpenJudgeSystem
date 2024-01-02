@@ -1,21 +1,24 @@
 /* eslint-disable max-len */
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Box, Slide, Tab, Tabs } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
+import { Box, Button, Slide, Tab, Tabs } from '@mui/material';
 
-import { ContestEdit } from '../../../components/administration/Contests/ContestEdit/ContestEdit';
-import { ProblemsInContestView } from '../../../components/administration/Contests/ContestEdit/problems/problemsInContestView/ProblemsInContestView';
+import ContestEdit from '../../../components/administration/Contests/ContestEdit/ContestEdit';
+import ProblemsInContestView from '../../../components/administration/Contests/ContestEdit/problems/problemsInContestView/ProblemsInContestView';
 
 import styles from './AdministrationContestPage.module.scss';
 
+enum CONTEST_LISTED_DATA {
+    PROBLEMS = 'problems',
+    PARTICIPANTS = 'participants'
+}
+
 const AdministrationContestPage = () => {
     const { pathname } = useLocation();
-    // this would be best to be set in redux state on button press in the mai grid, keeping this only for demonstariton
-    // eslint-disable-next-line prefer-destructuring
-    const contestId = pathname.split('/')[pathname.split('/').length - 1];
-    const [ tabName, setTabName ] = useState('problems');
+    const [ , , , contestId ] = pathname.split('/');
+    const [ tabName, setTabName ] = useState(CONTEST_LISTED_DATA.PROBLEMS);
 
-    const onTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    const onTabChange = (event: React.SyntheticEvent, newValue: CONTEST_LISTED_DATA) => {
         setTabName(newValue);
     };
 
@@ -24,6 +27,9 @@ const AdministrationContestPage = () => {
             <Box>
                 <ContestEdit contestId={Number(contestId)} />
                 <Box className={styles.paged}>
+                    <Link to="/administration/contests" className={styles.backToParentButton}>
+                        <Button>Back to Contests</Button>
+                    </Link>
                     <Tabs
                       sx={{ minWidth: '100%', display: 'flex', justifyContent: 'space-around' }}
                       value={tabName}

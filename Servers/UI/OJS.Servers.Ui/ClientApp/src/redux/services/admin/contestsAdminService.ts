@@ -29,12 +29,17 @@ export const contestService = createApi({
                 },
             }),
         }),
-        // eslint-disable-next-line max-len
         getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `${defaultPathIdentifier}/contest/${id}` }) }),
         getContestProblems: builder.query<Array<IAdministrationContestProblems>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `${defaultPathIdentifier}/contest/Problems/${id}` }) }),
+        getContestParticipants: builder.query<Array<any>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `${defaultPathIdentifier}/contest/Participants/${id}` }) }),
     }),
 });
 
 // eslint-disable-next-line import/group-exports
-export const { useGetAllAdminContestsQuery, useGetContestByIdQuery, useGetContestProblemsQuery } = contestService;
+export const {
+    useGetAllAdminContestsQuery,
+    useGetContestByIdQuery,
+    useGetContestProblemsQuery,
+    useGetContestParticipantsQuery,
+} = contestService;
 export default contestService;

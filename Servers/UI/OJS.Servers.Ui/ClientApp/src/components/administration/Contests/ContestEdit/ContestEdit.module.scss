@@ -6,23 +6,29 @@
 .edit {
     width:200px;
     height: 45px;
+    margin: 20px 0;
 }
 
-.halfWidth {
-    width: 50%;
+.inputRow {
+    width: 85%;
+    margin-bottom: 10px !important;
 }
 
-.flex{
+.flex {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
-.spacing{
-    margin: 0.7rem;
+.row {
+    display: flex;
+    justify-content: space-between;
+    width: 85%;
 }
 
-.centralize{
+.centralize {
     text-align: center;
-    margin-bottom: 0.2rem;
+    margin-bottom: 10px !important;
 }

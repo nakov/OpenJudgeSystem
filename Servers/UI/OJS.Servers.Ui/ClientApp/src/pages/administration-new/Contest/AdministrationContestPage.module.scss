@@ -1,5 +1,9 @@
 .paged {
-    min-height: 1080px;
     padding: 2rem;
-    width: 100%;
+}
+
+.backToParentButton {
+    position: absolute;
+    top: 85px;
+    left: 270px;
 }

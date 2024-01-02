@@ -1,9 +1,4 @@
-/* eslint-disable max-len */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable import/prefer-default-export */
 import { useEffect, useState } from 'react';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -23,9 +18,10 @@ import { useGetContestProblemsQuery } from '../../../../../../redux/services/adm
 interface IProblemsInContestViewProps {
     contestId: number;
 }
-export const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
+const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
+    const { contestId } = props;
     const [ contestProblems, setContestProblems ] = useState<Array<IAdministrationContestProblems>>([]);
-    const { data: problemsData } = useGetContestProblemsQuery({ id: Number(props.contestId) });
+    const { data: problemsData } = useGetContestProblemsQuery({ id: Number(contestId) });
 
     useEffect(
         () => {
@@ -36,16 +32,36 @@ export const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         [ problemsData, setContestProblems ],
     );
 
-    const onProblemEdit = (problemId: number) => {};
+    const onProblemEdit = (problemId: number) => console.log('edit problem with id => ', problemId);
 
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
-            <Box sx={{ marginTop: '2rem', width: '80%' }}>
-                <Tooltip title="Add new problem"><IconButton><AddBoxIcon sx={{ height: '40px', width: '40px' }} /></IconButton></Tooltip>
-                <Tooltip title="Delete all problems"><IconButton><ClearIcon sx={{ height: '40px', width: '40px' }} /></IconButton></Tooltip>
-                <Tooltip title="Export in excel"><IconButton><FileDownloadOffIcon sx={{ height: '40px', width: '40px' }} /></IconButton></Tooltip>
-                <Tooltip title="Submit solution"><IconButton><PublishIcon sx={{ height: '40px', width: '40px' }} /></IconButton></Tooltip>
-                <Tooltip title="Copy All"><IconButton><FileCopyIcon sx={{ height: '40px', width: '40px' }} /></IconButton></Tooltip>
+            <Box sx={{ marginTop: '2rem', width: '100%' }}>
+                <Tooltip title="Add new problem">
+                    <IconButton>
+                        <AddBoxIcon sx={{ height: '40px', width: '40px' }} />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete all problems">
+                    <IconButton>
+                        <ClearIcon sx={{ height: '40px', width: '40px' }} />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Export in excel">
+                    <IconButton>
+                        <FileDownloadOffIcon sx={{ height: '40px', width: '40px' }} />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Submit solution">
+                    <IconButton>
+                        <PublishIcon sx={{ height: '40px', width: '40px' }} />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Copy All">
+                    <IconButton>
+                        <FileCopyIcon sx={{ height: '40px', width: '40px' }} />
+                    </IconButton>
+                </Tooltip>
                 <TableContainer
                   className="mt-1"
                   sx={{
@@ -68,7 +84,7 @@ export const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {contestProblems.map((x, i) => (
+                            {contestProblems.map((x) => (
                                 <TableRow key={x.id} hover>
                                     <TableCell scope="row">{x.id}</TableCell>
                                     <TableCell scope="row">{x.name}</TableCell>
@@ -78,11 +94,31 @@ export const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                                     <TableCell scope="row">{x.practiceTests}</TableCell>
                                     <TableCell scope="row">
                                         <Box>
-                                            <Tooltip title="Edit"><IconButton><EditIcon onClick={() => onProblemEdit(x.id)} /></IconButton></Tooltip>
-                                            <Tooltip title="Tests"><IconButton><QuizIcon onClick={() => onProblemEdit(x.id)} /></IconButton></Tooltip>
-                                            <Tooltip title="Delete"><IconButton><CloseIcon onClick={() => onProblemEdit(x.id)} /></IconButton></Tooltip>
-                                            <Tooltip title="Retest"><IconButton><ReplayIcon onClick={() => onProblemEdit(x.id)} /></IconButton></Tooltip>
-                                            <Tooltip title="Copy"><IconButton><CopyAllIcon onClick={() => onProblemEdit(x.id)} /></IconButton></Tooltip>
+                                            <Tooltip title="Edit">
+                                                <IconButton>
+                                                    <EditIcon onClick={() => onProblemEdit(x.id)} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Tests">
+                                                <IconButton>
+                                                    <QuizIcon onClick={() => onProblemEdit(x.id)} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Delete">
+                                                <IconButton>
+                                                    <CloseIcon onClick={() => onProblemEdit(x.id)} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Retest">
+                                                <IconButton>
+                                                    <ReplayIcon onClick={() => onProblemEdit(x.id)} />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Copy">
+                                                <IconButton>
+                                                    <CopyAllIcon onClick={() => onProblemEdit(x.id)} />
+                                                </IconButton>
+                                            </Tooltip>
                                         </Box>
                                     </TableCell>
                                 </TableRow>
@@ -94,3 +130,5 @@ export const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         </Slide>
     );
 };
+
+export default ProblemsInContestView;
