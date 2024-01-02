@@ -193,6 +193,18 @@ namespace OJS.Services.Administration.Business.Implementations
             return result;
         }
 
+        public async Task<ServiceResult> Retest(int id)
+        {
+            var submission = await this.submissionsData.OneById(id);
+
+            if (submission == null)
+            {
+                return new ServiceResult("Submission doesn't exist");
+            }
+
+            return await this.Retest(submission!);
+        }
+
         public async Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId)
         {
             var bestScore = await this.participantScoresData.GetByParticipantIdAndProblemId(participantId, problemId);

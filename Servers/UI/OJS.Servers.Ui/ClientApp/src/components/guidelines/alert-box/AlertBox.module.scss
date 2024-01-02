@@ -27,6 +27,12 @@
     color: colors.$white-color;
   }
 
+  &.success {
+    background-color: colors.$primary-green;
+    border: 2px solid colors.$primary-green;
+    color: colors.$white-color;
+  }
+
   &.hidden {
     display: none;
   }
