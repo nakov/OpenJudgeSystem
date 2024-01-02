@@ -35,6 +35,8 @@ const LoginPage = () => {
 
     const [ usernameFormError, setUsernameFormError ] = useState('');
     const [ passwordFormError, setPasswordFormError ] = useState('');
+    const [ disableLoginButton, setDisableLoginButton ] = useState(false);
+    const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
@@ -73,25 +75,34 @@ const LoginPage = () => {
     }, [ setPassword ]);
 
     useEffect(() => {
-        if (!isEmpty(usernameFormError)) {
+        if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
             setLoginErrorMessage(usernameFormError);
+            setDisableLoginButton(true);
             return;
         }
 
-        if (!isEmpty(passwordFormError)) {
+        if (!isEmpty(passwordFormError) && hasPressedLoginBtn) {
             setLoginErrorMessage(passwordFormError);
+            setDisableLoginButton(true);
             return;
         }
 
         setLoginErrorMessage('');
-    }, [ usernameFormError, passwordFormError, setLoginErrorMessage ]);
+        setDisableLoginButton(false);
+    }, [ usernameFormError, passwordFormError, setLoginErrorMessage, hasPressedLoginBtn ]);
 
     const handleLoginClick = useCallback(async () => {
         /* TODO:  Add message to notify the admin if SULS is not working.
          Get the message from legacy Judge.
         */
+
+        setHasPressedLoginBtn(true);
+        if (!isEmpty(loginErrorMessage) || !isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
+            return;
+        }
+
         await signIn();
-    }, [ signIn ]);
+    }, [ loginErrorMessage, passwordFormError, signIn, usernameFormError ]);
 
     const renderLoginErrorMessage = useCallback(
         () => (!isNil(loginErrorMessage)
@@ -107,6 +118,7 @@ const LoginPage = () => {
               onSubmit={() => handleLoginClick()}
               submitText="Login"
               hideFormButton={shouldHideButton}
+              disableButton={disableLoginButton}
             >
                 <header className={styles.loginFormHeader}>
                     <Heading type={HeadingType.primary}>Login</Heading>
@@ -166,7 +178,8 @@ const LoginPage = () => {
                 )}
             </Form>
         ),
-        [ handleLoginClick, handleOnChangeUpdatePassword, handleOnChangeUpdateUsername, isLoggingIn, renderLoginErrorMessage ],
+        [ disableLoginButton, handleLoginClick, handleOnChangeUpdatePassword, handleOnChangeUpdateUsername,
+            isLoggingIn, renderLoginErrorMessage ],
     );
 
     return (
