@@ -13,5 +13,7 @@ public class PaginationRequestModel
 
     public string? Sorting { get; set; }
 
+    public string? Direction { get; set; }
+
     public string? Filter { get; set; }
 }

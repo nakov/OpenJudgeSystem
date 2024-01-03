@@ -23,7 +23,7 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
         var filterAsCollection = MapFilterStringToCollection<T>(paginationRequestModel).ToList();
 
         var mappedQuery = this.ApplyFiltering<T>(query, filterAsCollection);
-        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting);
+        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting, paginationRequestModel.Direction);
 
         var response = await this.ApplyPagination<T>(
             mappedQuery,
@@ -53,11 +53,11 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
             return filteringCollection;
         }
 
-        var conditions = paginationRequestModel.Filter!.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        var conditions = paginationRequestModel.Filter!.Split('&', StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var condition in conditions)
         {
-            var filterParts = condition.Split(new[] { '=', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var filterParts = condition.Split('~', StringSplitOptions.RemoveEmptyEntries);
             if (filterParts.Length != 3)
             {
                 throw new ArgumentOutOfRangeException($"Filter {condition} must contain key, operator and value");
