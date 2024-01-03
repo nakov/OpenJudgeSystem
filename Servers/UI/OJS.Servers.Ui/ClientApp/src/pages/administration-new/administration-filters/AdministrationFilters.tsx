@@ -7,10 +7,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-import styles from './AdministrationFilters.module.scss';
+import { FilterColumnTypeEnum } from '../../../common/enums';
+import { IFilterColumn } from '../../../common/types';
+
+import styles from './administration-filters.module.scss';
+
+interface IFiltersColumnOperators {
+    name: string;
+    value: string;
+}
 
 interface IAdministrationFilters {
-    columns: string[];
+    columns: IFilterColumn[];
 }
 
 interface IAdministrationFilter {
@@ -19,7 +27,26 @@ interface IAdministrationFilter {
     value: string;
 }
 
-const OPERATORS = [ 'Contains', 'Equals', 'Starts with', 'Ends with', 'Is empty', 'Is not empty' ];
+const STRING_OPERATORS = [
+    { name: 'Contains', value: 'contains' },
+    { name: 'Equals', value: 'equals' },
+    { name: 'Starts with', value: 'startswith' },
+    { name: 'Ends with', value: 'endswith' },
+];
+const BOOL_OPERATORS = [
+    { name: 'Equals', value: 'equals' },
+];
+const INT_OPERATORS = [
+    { name: 'Equals', value: 'equals' },
+    { name: 'Greater Than', value: 'greatherthan' },
+    { name: 'Less Than', value: 'lessthan' },
+    { name: 'Less Than Or Equal', value: 'lessthanorequal' },
+    { name: 'Greater Than Or Equal', value: 'greatherthanorequal' },
+    { name: 'Equals Not Equals', value: 'equalsnotequals' },
+];
+const DATE_OPERATORS = [
+    { name: 'Test', value: 'test' },
+]; // TBD
 
 const AdministrationFilters = (props: IAdministrationFilters) => {
     const { columns } = props;
@@ -28,6 +55,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
     const [ filters, setFilters ] =
         useState<Array<IAdministrationFilter>>([ { column: '', operator: '', value: '' } ]);
+    const [ filtersOperators, setFiltersOperators ] = useState<Array<Array<IFiltersColumnOperators>>>([ [ { name: '', value: '' } ] ]);
 
     const open = Boolean(anchor);
 
@@ -65,30 +93,92 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         const newFiltersArray = [ ...filters ];
         newFiltersArray.push({ column: '', operator: '', value: '' });
         setFilters(newFiltersArray);
+
+        const newFiltersOperatorsArray = [ ...filtersOperators ];
+        newFiltersOperatorsArray.push([ { name: '', value: '' } ]);
+        setFiltersOperators(newFiltersOperatorsArray);
     };
 
     const removeAllFilters = () => {
         setFilters([ { column: '', operator: '', value: '' } ]);
         setSearchParams('');
+        setFiltersOperators([ [] ]);
     };
 
     const removeSingleFilter = (idx: number) => {
         const newFiltersArray = [ ...filters ];
         newFiltersArray.splice(idx, 1);
-
         setFilters(newFiltersArray);
+
+        const newFiltersOperatorsArray = [ ...filtersOperators ];
+        newFiltersOperatorsArray.splice(idx, 1);
+        setFiltersOperators(newFiltersOperatorsArray);
+    };
+
+    const getFilterOperatorsByType = (columnType: FilterColumnTypeEnum) => {
+        let operators;
+        if (columnType === FilterColumnTypeEnum.STRING) {
+            operators = STRING_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.INT) {
+            operators = INT_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.BOOL) {
+            operators = BOOL_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.DATE) {
+            operators = DATE_OPERATORS;
+        }
+
+        return operators;
+    };
+
+    const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
+
+    const getValueFieldInputType = (idx: number) => {
+        // eslint-disable-next-line prefer-destructuring
+        const { column } = filters[idx];
+        const filterColumnType = getColumnTypeByName(column);
+
+        if (filterColumnType === FilterColumnTypeEnum.INT) {
+            return 'number';
+        }
+
+        return 'text';
     };
 
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
         const newFiltersArray = [ ...filters ].map((element, idx) => {
             if (idx === indexToUpdate) {
+                if (updateProperty === 'column') {
+                    return { column: value, operator: '', value: '' };
+                }
                 return { ...element, [updateProperty]: value };
             }
             return element;
         });
 
         setFilters(newFiltersArray);
+
+        if (updateProperty !== 'column') {
+            return;
+        }
+        // set correct operators depending on the selected column type
+        const selectedColumnType = getColumnTypeByName(value);
+        if (!selectedColumnType) {
+            return;
+        }
+
+        const indexFilterOperators = getFilterOperatorsByType(selectedColumnType);
+        if (!indexFilterOperators) {
+            return;
+        }
+        const newFiltersOperators = [ ...filtersOperators ].map((element, idx) => {
+            if (idx === indexToUpdate) {
+                return indexFilterOperators;
+            }
+            return element;
+        });
+
+        setFiltersOperators(newFiltersOperators);
     };
 
     const renderFilter = (idx: number) => (
@@ -105,7 +195,14 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                   label="Column"
                   onChange={(e) => updateFilterColumnData(idx, e, 'column')}
                 >
-                    { columns.map((column) => (<MenuItem key={`s-c-${column}`} value={column}>{column}</MenuItem>)) }
+                    { columns.map((column) => (
+                        <MenuItem
+                          key={`s-c-${column.columnName}`}
+                          value={column.columnName}
+                        >
+                            {column.columnName}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
             <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
@@ -115,8 +212,10 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                   value={filters[idx]?.operator}
                   label="Operator"
                   onChange={(e) => updateFilterColumnData(idx, e, 'operator')}
+                  disabled={!filters[idx].column}
                 >
-                    { OPERATORS.map((operator) => (<MenuItem key={`s-o-${operator}`} value={operator}>{operator}</MenuItem>)) }
+                    { filtersOperators[idx]?.map((operator) => (
+                        <MenuItem key={`s-o-${operator.value}`} value={operator.value}>{operator.name}</MenuItem>)) }
                 </Select>
             </FormControl>
             <TextField
@@ -124,8 +223,9 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
               variant="standard"
               value={filters[idx]?.value}
               multiline
-              type="text"
+              type={getValueFieldInputType(idx)}
               onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+              disabled={!filters[idx].operator}
             />
         </div>
     );
