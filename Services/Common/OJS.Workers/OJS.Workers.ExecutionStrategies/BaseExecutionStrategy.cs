@@ -27,7 +27,8 @@ namespace OJS.Workers.ExecutionStrategies
 
             try
             {
-                return this.Execute<TInput, TResult>(executionContext);
+                executionContext.Code = this.PreprocessCode(executionContext);
+                return this.InternalExecute(executionContext, new ExecutionResult<TResult>());
                 // Catch logic is handled by the caller
             }
             finally
@@ -90,12 +91,5 @@ namespace OJS.Workers.ExecutionStrategies
         protected virtual string PreprocessCode<TInput>(
             IExecutionContext<TInput> executionContext)
             => executionContext.Code;
-
-        private Task<IExecutionResult<TResult>> Execute<TInput, TResult>(IExecutionContext<TInput> executionContext)
-            where TResult : ISingleCodeRunResult, new()
-        {
-            executionContext.Code = this.PreprocessCode(executionContext);
-            return this.InternalExecute(executionContext, new ExecutionResult<TResult>());
-        }
     }
 }
