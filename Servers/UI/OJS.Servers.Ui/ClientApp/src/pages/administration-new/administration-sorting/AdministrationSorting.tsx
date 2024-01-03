@@ -42,6 +42,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     const onClearIconClick = () => {
         setSelectedSortColumn('');
         setSelectedOrderBy(SortingEnum.ASC);
+
+        updateCb('');
     };
 
     return (
