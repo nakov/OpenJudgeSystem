@@ -25,6 +25,7 @@ interface IAdministrationFilter {
     column: string;
     operator: string;
     value: string;
+    availableOperators?: IFiltersColumnOperators[];
 }
 
 const STRING_OPERATORS = [
@@ -54,8 +55,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
     const [ filters, setFilters ] =
-        useState<Array<IAdministrationFilter>>([ { column: '', operator: '', value: '' } ]);
-    const [ filtersOperators, setFiltersOperators ] = useState<Array<Array<IFiltersColumnOperators>>>([ [ { name: '', value: '' } ] ]);
+        useState<Array<IAdministrationFilter>>([ { column: '', operator: '', value: '', availableOperators: [] } ]);
 
     const open = Boolean(anchor);
 
@@ -91,28 +91,19 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     const addFilter = () => {
         const newFiltersArray = [ ...filters ];
-        newFiltersArray.push({ column: '', operator: '', value: '' });
+        newFiltersArray.push({ column: '', operator: '', value: '', availableOperators: [] });
         setFilters(newFiltersArray);
-
-        const newFiltersOperatorsArray = [ ...filtersOperators ];
-        newFiltersOperatorsArray.push([ { name: '', value: '' } ]);
-        setFiltersOperators(newFiltersOperatorsArray);
     };
 
     const removeAllFilters = () => {
-        setFilters([ { column: '', operator: '', value: '' } ]);
+        setFilters([ { column: '', operator: '', value: '', availableOperators: [] } ]);
         setSearchParams('');
-        setFiltersOperators([ [] ]);
     };
 
     const removeSingleFilter = (idx: number) => {
         const newFiltersArray = [ ...filters ];
         newFiltersArray.splice(idx, 1);
         setFilters(newFiltersArray);
-
-        const newFiltersOperatorsArray = [ ...filtersOperators ];
-        newFiltersOperatorsArray.splice(idx, 1);
-        setFiltersOperators(newFiltersOperatorsArray);
     };
 
     const getFilterOperatorsByType = (columnType: FilterColumnTypeEnum) => {
@@ -149,7 +140,11 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         const newFiltersArray = [ ...filters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 if (updateProperty === 'column') {
-                    return { column: value, operator: '', value: '' };
+                    const columnType = getColumnTypeByName(value);
+                    const columnOperators = columnType
+                        ? getFilterOperatorsByType(columnType)
+                        : [];
+                    return { column: value, operator: '', value: '', availableOperators: columnOperators };
                 }
                 return { ...element, [updateProperty]: value };
             }
@@ -157,28 +152,6 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         });
 
         setFilters(newFiltersArray);
-
-        if (updateProperty !== 'column') {
-            return;
-        }
-        // set correct operators depending on the selected column type
-        const selectedColumnType = getColumnTypeByName(value);
-        if (!selectedColumnType) {
-            return;
-        }
-
-        const indexFilterOperators = getFilterOperatorsByType(selectedColumnType);
-        if (!indexFilterOperators) {
-            return;
-        }
-        const newFiltersOperators = [ ...filtersOperators ].map((element, idx) => {
-            if (idx === indexToUpdate) {
-                return indexFilterOperators;
-            }
-            return element;
-        });
-
-        setFiltersOperators(newFiltersOperators);
     };
 
     const renderFilter = (idx: number) => (
@@ -214,7 +187,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                   onChange={(e) => updateFilterColumnData(idx, e, 'operator')}
                   disabled={!filters[idx].column}
                 >
-                    { filtersOperators[idx]?.map((operator) => (
+                    { filters[idx].availableOperators?.map((operator) => (
                         <MenuItem key={`s-o-${operator.value}`} value={operator.value}>{operator.name}</MenuItem>)) }
                 </Select>
             </FormControl>
