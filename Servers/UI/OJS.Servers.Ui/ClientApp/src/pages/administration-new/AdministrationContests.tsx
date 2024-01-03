@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { FilterColumnTypeEnum } from '../../common/enums';
-import { IFilterColumn, IUpdateSortingProps } from '../../common/types';
+import { IFilterColumn } from '../../common/types';
 import ContestEdit from '../../components/administration/Contests/ContestEdit/ContestEdit';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
@@ -35,7 +35,7 @@ const AdministrationContestsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openModal, setOpenModal ] = useState(false);
     const [ contestId, setContestId ] = useState<number>();
-    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: 15, filter: '', sorting: '', direction: '' });
+    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: 15, filter: '', sorting: '' });
     const {
         data,
         error,
@@ -46,7 +46,7 @@ const AdministrationContestsPage = () => {
 
     useEffect(() => {
         if (!filterParams) {
-            setQueryParams({ page: 1, ItemsPerPage: 15, filter: '', sorting: '', direction: '' });
+            setQueryParams({ page: 1, ItemsPerPage: 15, filter: '', sorting: '' });
             return;
         }
         setQueryParams({ ...queryParams, filter: filterParams });
@@ -58,9 +58,8 @@ const AdministrationContestsPage = () => {
         setContestId(id);
     };
 
-    const sortingUpdateCb = (updateData: IUpdateSortingProps) => {
-        const { orderBy, sortBy } = updateData;
-        setQueryParams({ ...queryParams, sorting: sortBy.toLowerCase(), direction: orderBy });
+    const sortingUpdateCb = (sortData: string) => {
+        setQueryParams({ ...queryParams, sorting: sortData });
     };
 
     const renderModal = () => (

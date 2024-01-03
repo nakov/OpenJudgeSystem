@@ -8,7 +8,7 @@ import styles from './AdministrationSorting.module.scss';
 
 interface IAdministrationSortProps {
     columns: string[];
-    updateCb: (updateDate: any) => void;
+    updateCb: (updateDate: string) => void;
 }
 
 const orderByOptions = [
@@ -25,7 +25,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         const { value } = target;
         setSelectedSortColumn(value);
 
-        updateCb({ orderBy: selectedOrderBy, sortBy: value.replace(' ', '') });
+        updateCb(`${value.replace(' ', '').toLowerCase()}=${selectedOrderBy}`);
     };
 
     const updateOrderByColumn = ({ target }: SelectChangeEvent<SortingEnum>) => {
@@ -35,7 +35,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             : SortingEnum.DESC;
 
         setSelectedOrderBy(enumValue);
-        updateCb({ orderBy: enumValue, sortBy: selectedSortColumn.replace(' ', '') });
+
+        updateCb(`${selectedSortColumn}=${selectedOrderBy}`);
     };
 
     const onClearIconClick = () => {
