@@ -310,6 +310,11 @@ interface IFilterColumn {
     columnType: FilterColumnTypeEnum;
 }
 
+interface IUpdateSortingProps {
+    orderBy: string;
+    sortBy: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -339,4 +344,5 @@ export type {
     IContestAdministration,
     IAdministrationContestProblems,
     IFilterColumn,
+    IUpdateSortingProps,
 };

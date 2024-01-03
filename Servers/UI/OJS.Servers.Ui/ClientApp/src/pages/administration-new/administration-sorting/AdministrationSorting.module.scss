@@ -1,0 +1,14 @@
+.sortWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 25px 0;
+
+  .clearIcon {
+    cursor: pointer;
+    transition: color .2s ease-in-out;
+    &:hover {
+      color: #5a90ea;
+    }
+  }
+}

@@ -2,10 +2,15 @@ enum FilterColumnTypeEnum {
     STRING = 'string',
     BOOL = 'boolean',
     INT = 'integer',
-    DATE = 'date'
+    DATE = 'date',
+}
+
+enum SortingEnum {
+    ASC = 'ASC',
+    DESC = 'DESC',
 }
 
 export {
-    // eslint-disable-next-line import/prefer-default-export
     FilterColumnTypeEnum,
+    SortingEnum,
 };

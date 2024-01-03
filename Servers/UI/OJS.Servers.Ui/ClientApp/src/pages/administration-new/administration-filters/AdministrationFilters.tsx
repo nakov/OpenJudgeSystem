@@ -205,7 +205,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     return (
         <div>
-            <Button onClick={handleOpenClick} style={{ margin: '20px 0' }}>
+            <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>
                 { open
                     ? 'close'
                     : 'open' }
