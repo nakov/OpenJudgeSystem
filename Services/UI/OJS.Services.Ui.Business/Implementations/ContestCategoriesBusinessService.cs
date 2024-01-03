@@ -93,7 +93,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
                 return true;
             }
 
-            return this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.ParentId);
+            return this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.Id);
         }
 
         return false;
