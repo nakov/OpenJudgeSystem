@@ -18,11 +18,11 @@ using OJS.Servers.Administration.Models;
 [Route("api/[controller]")]
 //TODO Replace with admin authorization
 [AllowAnonymous]
-public class ContestController : ControllerBase
+public class ContestsController : ControllerBase
 {
     private readonly IContestsBusinessService contestsBusinessServiceService;
 
-    public ContestController(IContestsBusinessService contestsBusinessServiceService)
+    public ContestsController(IContestsBusinessService contestsBusinessServiceService)
         => this.contestsBusinessServiceService = contestsBusinessServiceService;
 
     [HttpGet]

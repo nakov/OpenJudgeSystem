@@ -23,7 +23,7 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
         var filterAsCollection = MapFilterStringToCollection<T>(paginationRequestModel).ToList();
 
         var mappedQuery = this.ApplyFiltering<T>(query, filterAsCollection);
-        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting, paginationRequestModel.Direction);
+        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting);
 
         var response = await this.ApplyPagination<T>(
             mappedQuery,

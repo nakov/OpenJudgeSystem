@@ -8,24 +8,20 @@ using System.Collections.Generic;
 
 public abstract class SortingService<TEntity> : FilteringService<TEntity>
 {
-    protected virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting, string? directions)
+    protected virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting)
     {
-        if (string.IsNullOrEmpty(sorting) || string.IsNullOrEmpty(directions))
+        if (string.IsNullOrEmpty(sorting))
         {
             return query;
         }
 
-        var sortingList = sorting.Split(" ").ToList();
-        var directionsList = directions.Split(" ").ToList();
-        if (sortingList.Count != directionsList.Count)
+        var sortingList = sorting.Split("&").ToList();
+        int index = 0;
+        foreach (var sort in sortingList)
         {
-            throw new ArgumentOutOfRangeException($"Exception throw in {nameof(this.ApplySorting)}: All sorting conditions must have direction");
-        }
-
-        for (int i = 0; i < sortingList.Count; i++)
-        {
-            var key = sortingList[i];
-            var sortingDirection = directionsList[i];
+            var sortArgs = sort.Split("=");
+            var key = sortArgs[0];
+            var sortingDirection = sortArgs[1];
 
             var sortingProperty = GetProperty<TModel>(key);
 
@@ -34,7 +30,7 @@ public abstract class SortingService<TEntity> : FilteringService<TEntity>
                 continue;
             }
 
-            var methodName = i == 0
+            var methodName = index == 0
                 ? (sortingDirection == "ASC"
                     ? "OrderBy" : "OrderByDescending")
                 :
@@ -44,6 +40,7 @@ public abstract class SortingService<TEntity> : FilteringService<TEntity>
 
             var expression = BuildSortingExpression(query, sortingProperty, methodName);
             query = query.Provider.CreateQuery<TModel>(expression);
+            index += 1;
         }
 
         return query;
