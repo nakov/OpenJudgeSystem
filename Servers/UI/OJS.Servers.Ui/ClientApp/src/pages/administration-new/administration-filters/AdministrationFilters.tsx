@@ -10,7 +10,7 @@ import debounce from 'lodash/debounce';
 import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IFilterColumn } from '../../../common/types';
 
-import styles from './administration-filters.module.scss';
+import styles from './administrationFilters.module.scss';
 
 interface IFiltersColumnOperators {
     name: string;
