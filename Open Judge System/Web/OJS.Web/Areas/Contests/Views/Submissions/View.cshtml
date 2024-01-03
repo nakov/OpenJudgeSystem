@@ -268,7 +268,7 @@ else
 
         if (displayCheckerComment)
         {
-            if (displayShowInputButton)
+            if (displayShowInputButton && testResult.ResultType != TestRunResultType.CorrectAnswer)
             {
                 <div class="diff">
                     @if (!string.IsNullOrWhiteSpace(testResult.CheckerComment))
