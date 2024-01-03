@@ -83,7 +83,6 @@ const AdministrationContestsPage = () => {
             headerName: 'Name',
             width: 200,
             align: 'center',
-            resizable: true,
             flex: 2,
             type: 'string',
             filterable: false,
@@ -151,7 +150,6 @@ const AdministrationContestsPage = () => {
             field: 'allowParallelSubmissionsInTasks',
             headerName: 'allowParallelSubmissionsInTasks',
             type: 'boolean',
-            resizable: true,
             flex: 0,
             filterable: false,
             sortable: false,
@@ -242,6 +240,11 @@ const AdministrationContestsPage = () => {
                               onPageChange={(e) => {
                                   setQueryParams({ ...queryParams, page: e + 1 });
                               }}
+                              rowsPerPageOptions={[ 15, 50, 100 ]}
+                              onPageSizeChange={(itemsPerRow: number) => {
+                                  setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
+                              }}
+                              pageSize={queryParams.ItemsPerPage}
                             />
                         </>
                     )}

@@ -66,7 +66,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
             }
 
             // eslint-disable-next-line consistent-return
-            return `${filter.column}~${filter.operator}~${filter.value}`;
+            return `${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`;
         };
 
         const filtersFormattedString = filters.map(formatFilterToString);
