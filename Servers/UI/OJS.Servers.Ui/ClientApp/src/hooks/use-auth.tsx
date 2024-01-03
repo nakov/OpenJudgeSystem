@@ -183,7 +183,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
             return;
         }
 
-        if (loginSubmitStatus === HttpStatus.Error && isEmpty(username)) {
+        if (loginSubmitStatus === HttpStatus.Error) {
             setLoginErrorMessage(EmptyLoginFormErrorMessage);
             setIsLoggingIn(false);
 
