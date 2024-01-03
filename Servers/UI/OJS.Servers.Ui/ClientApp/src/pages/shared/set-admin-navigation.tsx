@@ -149,7 +149,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                 <DrawerHeader>
                     <div />
                 </DrawerHeader>
-                {open === false
+                {!open
                     ? (
                         <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerOpen}>
                             <ChevronRightIcon />

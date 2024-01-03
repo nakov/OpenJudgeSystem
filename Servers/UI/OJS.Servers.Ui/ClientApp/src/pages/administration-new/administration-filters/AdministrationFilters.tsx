@@ -66,11 +66,11 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
             }
 
             // eslint-disable-next-line consistent-return
-            return `${filter.column} ${filter.operator} ${filter.value}`;
+            return `${filter.column}~${filter.operator}~${filter.value}`;
         };
 
         const filtersFormattedString = filters.map(formatFilterToString);
-        const resultString = `filter=${filtersFormattedString.join(',')}`;
+        const resultString = `filter=${filtersFormattedString.join('%26')}`;
 
         const delayedSetOfSearch = debounce(() => {
             setSearchParams(resultString);

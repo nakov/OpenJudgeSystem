@@ -75,6 +75,8 @@ const AdministrationContestsPage = () => {
             width: 10,
             align: 'center',
             type: 'number',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'name',
@@ -84,6 +86,8 @@ const AdministrationContestsPage = () => {
             resizable: true,
             flex: 2,
             type: 'string',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'category',
@@ -91,6 +95,8 @@ const AdministrationContestsPage = () => {
             width: 250,
             align: 'center',
             type: 'string',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'categoryId',
@@ -99,6 +105,8 @@ const AdministrationContestsPage = () => {
             flex: 1,
             align: 'center',
             type: 'number',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'contestPassword',
@@ -107,6 +115,8 @@ const AdministrationContestsPage = () => {
             flex: 2,
             align: 'center',
             type: 'string',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'startTime',
@@ -115,6 +125,8 @@ const AdministrationContestsPage = () => {
             flex: 1,
             align: 'center',
             type: 'date',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'endTime',
@@ -123,6 +135,8 @@ const AdministrationContestsPage = () => {
             flex: 1,
             align: 'center',
             type: 'date',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'limitBetweenSubmissions',
@@ -130,6 +144,8 @@ const AdministrationContestsPage = () => {
             align: 'center',
             flex: 0,
             type: 'number',
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'allowParallelSubmissionsInTasks',
@@ -137,30 +153,40 @@ const AdministrationContestsPage = () => {
             type: 'boolean',
             resizable: true,
             flex: 0,
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'autoChangeTestsFeedbackVisibility',
             headerName: 'autoChangeTestsFeedbackVisibility',
             type: 'boolean',
             flex: 0,
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'isDeleted',
             headerName: 'Is Deleted',
             type: 'boolean',
             flex: 0,
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'isVisible',
             headerName: 'Is Visible',
             type: 'boolean',
             flex: 0,
+            filterable: false,
+            sortable: false,
         },
         {
             field: 'showModal',
             headerName: 'Quick Details',
             width: 100,
             align: 'center',
+            filterable: false,
+            sortable: false,
             renderCell: (params: GridRenderCellParams) => (
                 <IconButton onClick={() => onEditClick(params.row.id)}>
                     <EditIcon />
@@ -173,6 +199,8 @@ const AdministrationContestsPage = () => {
             width: 100,
             align: 'center',
             headerAlign: 'center',
+            filterable: false,
+            sortable: false,
             renderCell: (params: GridRenderCellParams) => (
                 <Link to={`/administration/contests/${params.row.id}`}>
                     <ShortcutIcon />
