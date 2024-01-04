@@ -105,16 +105,15 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
     };
 
     const addFilter = () => {
-        const newFiltersArray = [ ...filters ];
         const availableColumns = columns.filter((column) => !filters.some((f) => f.column === column.columnName));
-        newFiltersArray.push({
+        const newFiltersArray = [ {
             column: '',
             operator: '',
             value: '',
             availableOperators: [],
             availableColumns,
             inputType: FilterColumnTypeEnum.STRING,
-        });
+        }, ...filters ];
         setFilters(newFiltersArray);
     };
 
