@@ -153,10 +153,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
-        var contest = await this.contestsDataService
-            .GetWithCategoryByProblem<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id);
-
-        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!.Id);
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsUserAdminOrLecturerInContestByProblem(submissionDetailsServiceModel!.Problem.Id);
 
         submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
         submissionDetailsServiceModel.IsEligibleForRetest =

@@ -40,11 +40,10 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 
-    public async Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId)
-        => await this.DbSet
+    public Task<Contest?> GetWithCategoryByProblem(int problemId)
+        => this.DbSet
             .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
             .Include(c => c.Category)
-            .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 
     public async Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>()

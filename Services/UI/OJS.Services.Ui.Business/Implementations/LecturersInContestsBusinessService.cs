@@ -48,6 +48,13 @@ public class LecturersInContestsBusinessService : ILecturersInContestsBusinessSe
         return this.IsUserAdminOrLecturerInContest(contest);
     }
 
+    public async Task<bool> IsUserAdminOrLecturerInContestByProblem(int problemId)
+    {
+        var contest = await this.contestsDataService.GetWithCategoryByProblem(problemId);
+
+        return this.IsUserAdminOrLecturerInContest(contest);
+    }
+
     public bool IsUserLecturerInContest(Contest contest)
     {
         var currentUser = this.userProviderService.GetCurrentUser();

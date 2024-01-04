@@ -10,5 +10,7 @@ public interface ILecturersInContestsBusinessService : IService
 
     Task<bool> IsUserAdminOrLecturerInContest(int contestId);
 
+    Task<bool> IsUserAdminOrLecturerInContestByProblem(int problemId);
+
     bool IsUserLecturerInContest(Contest contest);
 }

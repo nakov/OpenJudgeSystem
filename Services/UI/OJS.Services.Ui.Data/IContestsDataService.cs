@@ -28,7 +28,7 @@ namespace OJS.Services.Ui.Data
 
         Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
 
-        Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId);
+        Task<Contest?> GetWithCategoryByProblem(int problemId);
 
         IQueryable<Contest> GetAllActive();
 
