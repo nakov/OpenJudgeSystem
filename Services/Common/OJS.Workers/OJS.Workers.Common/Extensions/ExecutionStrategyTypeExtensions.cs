@@ -1,4 +1,4 @@
-namespace OJS.Common.Extensions
+namespace OJS.Workers.Common.Extensions
 {
     using OJS.Workers.Common.Models;
 
@@ -11,7 +11,7 @@ namespace OJS.Common.Extensions
                 ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck => "js",
                 ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck => "java",
                 ExecutionStrategyType.PythonExecuteAndCheck => "py",
-                _ => null
+                _ => null,
             };
     }
 }
