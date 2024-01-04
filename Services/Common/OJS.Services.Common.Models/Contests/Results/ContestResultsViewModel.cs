@@ -11,6 +11,8 @@ public class ContestResultsViewModel
 
     public string? Name { get; set; }
 
+    public int? CategoryId { get; set; }
+
     public IEnumerable<ContestProblemListViewModel> Problems { get; set; } = Enumerable.Empty<ContestProblemListViewModel>();
 
     public IEnumerable<ParticipantResultViewModel> Results { get; set; } = Enumerable.Empty<ParticipantResultViewModel>();
