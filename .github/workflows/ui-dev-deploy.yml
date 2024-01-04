@@ -3,6 +3,11 @@ name: 02. Deploy UI (Development)
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      branch_name:
+        description: 'The branch that will be deployed'
+        required: false
+        type: string
 jobs:
   build-and-push:
     uses: ./.github/workflows/build-and-push.yml
@@ -10,7 +15,7 @@ jobs:
       docker_image_name: judge_web_ui
       dockerfile_name: Dockerfile.ui
       docker_tag: dev-latest
-      branch_name: v2-development
+      branch_name: ${{ inputs.branch_name || 'v2-development' }}
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
         export NODE_OPTIONS=--max-old-space-size=8192

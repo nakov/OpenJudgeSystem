@@ -1,5 +1,6 @@
 interface IContestResultsType {
     id: number;
+    categoryId: number;
     name: string;
     userIsInRoleForContest: boolean;
     problems: IContestResultsProblemType[];

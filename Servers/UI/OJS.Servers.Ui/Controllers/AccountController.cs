@@ -7,6 +7,7 @@ namespace OJS.Servers.Ui.Controllers
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using OJS.Common;
@@ -25,6 +26,7 @@ namespace OJS.Servers.Ui.Controllers
     {
         private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;
+        private readonly UserManager<UserProfile> userManager;
         private readonly ISulsPlatformHttpClientService sulsPlatformHttpClient;
         private readonly ILogger<AccountController> logger;
         private readonly IWebHostEnvironment webHostEnvironment;
@@ -34,13 +36,15 @@ namespace OJS.Servers.Ui.Controllers
             SignInManager<UserProfile> signInManager,
             ISulsPlatformHttpClientService sulsPlatformHttpClient,
             ILogger<AccountController> logger,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            UserManager<UserProfile> userManager)
         {
             this.usersBusinessService = usersBusinessService;
             this.signInManager = signInManager;
             this.sulsPlatformHttpClient = sulsPlatformHttpClient;
             this.logger = logger;
             this.webHostEnvironment = webHostEnvironment;
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -83,13 +87,23 @@ namespace OJS.Servers.Ui.Controllers
             }
             else if (this.webHostEnvironment.IsProduction())
             {
+                var user = await this.userManager.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
+                if (user != null && await this.userManager.IsInRoleAsync(user, GlobalConstants.Roles.Administrator))
+                {
+                    var signInResult = await this.signInManager
+                        .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                    if (signInResult.Succeeded)
+                    {
+                        return this.Ok(GlobalConstants.ErrorMessages.LoggedInThroughDatabase);
+                    }
+                }
+
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InactiveLoginSystem);
             }
 
-            var signInResult = await this.signInManager
-                .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
-
-            if (!signInResult.Succeeded)
+            var result = await this.signInManager
+                    .PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+            if (!result.Succeeded)
             {
                 return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
             }
