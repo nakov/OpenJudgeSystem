@@ -14,16 +14,16 @@ public class ContestValidationService : IContestValidationService
 {
     private readonly IDatesService datesService;
     private readonly IContestsActivityService activityService;
-    private readonly IContestCategoriesDataService categoriesDataService;
+    private readonly IContestCategoriesBusinessService categoriesService;
 
     public ContestValidationService(
         IDatesService datesService,
         IContestsActivityService activityService,
-        IContestCategoriesDataService categoriesDataService)
+        IContestCategoriesBusinessService categoriesService)
     {
         this.datesService = datesService;
         this.activityService = activityService;
-        this.categoriesDataService = categoriesDataService;
+        this.categoriesService = categoriesService;
     }
 
     public ValidationResult GetValidationResult((Contest?, int?, UserInfoModel?, bool) item)
@@ -35,7 +35,7 @@ public class ContestValidationService : IContestValidationService
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            ((!contest.IsVisible || !contest.Category!.IsVisible || this.IsCategoryChildOfInvisibleParent(contest.Category.Id)) &&
+            ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !isUserLecturerInContest &&
             !user.IsAdmin))
         {
@@ -62,9 +62,4 @@ public class ContestValidationService : IContestValidationService
 
         return ValidationResult.Valid();
     }
-
-    private bool IsCategoryChildOfInvisibleParent(int? categoryId) =>
-        this.categoriesDataService.GetAllInvisible()
-            .Any(c => c.Children
-                .Any(cc => cc.Id == categoryId));
 }
