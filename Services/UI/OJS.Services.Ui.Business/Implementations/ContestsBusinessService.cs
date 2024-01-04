@@ -152,7 +152,8 @@ namespace OJS.Services.Ui.Business.Implementations
                     userProfile!.Id,
                     official);
 
-            var contest = await this.contestsData.OneById(id);
+            var contest = this.contestsData.GetByIdQuery(id)
+                .Include(c => c.Category).FirstOrDefault();
 
             var validationResult = this.contestValidationService.GetValidationResult((
                 contest,
