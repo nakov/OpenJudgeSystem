@@ -52,6 +52,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         var contestResultsModel = new ContestResultsModel
         {
             Contest = contest,
+            CategoryId = contest.CategoryId.GetValueOrDefault(),
             Official = official,
             IsUserAdminOrLecturer = user.IsAdminOrLecturer,
             IsFullResults = full,

@@ -23,7 +23,7 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
         this.publisher = publisher;
     }
 
-    public Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
+    public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
         var message = context.Message;
 
@@ -34,7 +34,7 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
 
         try
         {
-            var executionResult = this.submissionsBusiness.ExecuteSubmission(submission);
+            var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
 
             result.SetExecutionResult(executionResult.Map<ExecutionResultServiceModel>());
         }
@@ -47,6 +47,6 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
             result.SetStartedAndCompletedExecutionOn(startedExecutionOn, completedExecutionOn: DateTime.UtcNow);
         }
 
-        return this.publisher.Publish(result);
+        await this.publisher.Publish(result);
     }
 }

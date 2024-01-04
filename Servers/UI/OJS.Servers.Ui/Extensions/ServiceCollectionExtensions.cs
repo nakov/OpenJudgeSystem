@@ -51,7 +51,6 @@ namespace OJS.Servers.Ui.Extensions
                 .AddMessageQueue<Program>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
                 .AddMemoryCache()
-                .AddSoftUniJudgeCommonServices()
                 .AddDistributedCaching(configuration)
                 .AddLogging()
                 .AddOptionsWithValidation<ApplicationConfig>()

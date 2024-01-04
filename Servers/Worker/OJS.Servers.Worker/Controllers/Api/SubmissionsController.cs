@@ -67,7 +67,7 @@ public class SubmissionsController : BaseApiController
         var startedExecutionTime = DateTime.UtcNow;
         try
         {
-            var executionResult = this.submissionsBusiness.ExecuteSubmission(submission);
+            var executionResult = await this.submissionsBusiness.ExecuteSubmission(submission);
 
             var executionResultResponseModel = executionResult.Map<ExecutionResultResponseModel>();
 
