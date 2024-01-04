@@ -9,6 +9,8 @@ public class ContestResultsModel : IMapExplicitly
 {
     public Contest Contest { get; set; } = new Contest();
 
+    public int CategoryId { get; set; }
+
     public bool Official { get; set; }
 
     public bool IsUserAdminOrLecturer { get; set; }
