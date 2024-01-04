@@ -5,12 +5,18 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IFilterColumn } from '../../../common/types';
 
-import styles from './administrationFilters.module.scss';
+import styles from './AdministrationFilters.module.scss';
 
 interface IFiltersColumnOperators {
     name: string;
@@ -25,7 +31,9 @@ interface IAdministrationFilter {
     column: string;
     operator: string;
     value: string;
+    inputType: FilterColumnTypeEnum;
     availableOperators?: IFiltersColumnOperators[];
+    availableColumns: IFilterColumn[];
 }
 
 const STRING_OPERATORS = [
@@ -37,7 +45,7 @@ const STRING_OPERATORS = [
 const BOOL_OPERATORS = [
     { name: 'Equals', value: 'equals' },
 ];
-const INT_OPERATORS = [
+const NUMBER_OPERATORS = [
     { name: 'Equals', value: 'equals' },
     { name: 'Greater Than', value: 'greatherthan' },
     { name: 'Less Than', value: 'lessthan' },
@@ -49,13 +57,26 @@ const DATE_OPERATORS = [
     { name: 'Test', value: 'test' },
 ]; // TBD
 
+const BOOL_DROPDOWN_VALUES = [
+    { name: 'True', value: 'true' },
+    { name: 'False', value: 'false' },
+    { name: 'Null', value: '' },
+];
+
 const AdministrationFilters = (props: IAdministrationFilters) => {
     const { columns } = props;
     const [ , setSearchParams ] = useSearchParams();
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
     const [ filters, setFilters ] =
-        useState<Array<IAdministrationFilter>>([ { column: '', operator: '', value: '', availableOperators: [] } ]);
+        useState<Array<IAdministrationFilter>>([ {
+            column: '',
+            operator: '',
+            value: '',
+            inputType: FilterColumnTypeEnum.STRING,
+            availableOperators: [],
+            availableColumns: columns,
+        } ]);
 
     const open = Boolean(anchor);
 
@@ -91,12 +112,27 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     const addFilter = () => {
         const newFiltersArray = [ ...filters ];
-        newFiltersArray.push({ column: '', operator: '', value: '', availableOperators: [] });
+        const availableColumns = columns.filter((column) => !filters.some((f) => f.column === column.columnName));
+        newFiltersArray.push({
+            column: '',
+            operator: '',
+            value: '',
+            availableOperators: [],
+            availableColumns,
+            inputType: FilterColumnTypeEnum.STRING,
+        });
         setFilters(newFiltersArray);
     };
 
     const removeAllFilters = () => {
-        setFilters([ { column: '', operator: '', value: '', availableOperators: [] } ]);
+        setFilters([ {
+            column: '',
+            operator: '',
+            value: '',
+            availableOperators: [],
+            availableColumns: columns,
+            inputType: FilterColumnTypeEnum.STRING,
+        } ]);
         setSearchParams('');
     };
 
@@ -110,8 +146,8 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         let operators;
         if (columnType === FilterColumnTypeEnum.STRING) {
             operators = STRING_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.INT) {
-            operators = INT_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.NUMBER) {
+            operators = NUMBER_OPERATORS;
         } else if (columnType === FilterColumnTypeEnum.BOOL) {
             operators = BOOL_OPERATORS;
         } else if (columnType === FilterColumnTypeEnum.DATE) {
@@ -123,20 +159,16 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
 
-    const getValueFieldInputType = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
-        const { column } = filters[idx];
-        const filterColumnType = getColumnTypeByName(column);
-
-        if (filterColumnType === FilterColumnTypeEnum.INT) {
-            return 'number';
-        }
-
-        return 'text';
-    };
-
-    const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
+    const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string, inputType?: FilterColumnTypeEnum) => {
         const { value } = target;
+        if (inputType === FilterColumnTypeEnum.NUMBER) {
+            const isNumberRegex = /^[0-9]+$/;
+            const isNumber = isNumberRegex.test(value);
+
+            if (!isNumber) {
+                return;
+            }
+        }
         const newFiltersArray = [ ...filters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 if (updateProperty === 'column') {
@@ -144,7 +176,14 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                     const columnOperators = columnType
                         ? getFilterOperatorsByType(columnType)
                         : [];
-                    return { column: value, operator: '', value: '', availableOperators: columnOperators };
+                    return {
+                        column: value,
+                        operator: '',
+                        value: '',
+                        inputType: columnType || FilterColumnTypeEnum.STRING,
+                        availableOperators: columnOperators,
+                        availableColumns: element.availableColumns,
+                    };
                 }
                 return { ...element, [updateProperty]: value };
             }
@@ -152,6 +191,56 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         });
 
         setFilters(newFiltersArray);
+    };
+
+    const renderInputField = (idx: number) => {
+        // eslint-disable-next-line prefer-destructuring
+        const { inputType } = filters[idx];
+        if (inputType === FilterColumnTypeEnum.STRING || inputType === FilterColumnTypeEnum.NUMBER) {
+            return (
+                <TextField
+                  label="Value"
+                  variant="standard"
+                  value={filters[idx]?.value}
+                  multiline
+                  onChange={(e) => updateFilterColumnData(idx, e, 'value', inputType)}
+                  disabled={!filters[idx].operator}
+                />
+            );
+        } if (inputType === FilterColumnTypeEnum.DATE) {
+            return (
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Value"
+                      value={filters[idx]?.value}
+                      disabled={!filters[idx].operator}
+                      onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+                      sx={{ border: 'none' }}
+                    />
+                </LocalizationProvider>
+            );
+        }
+        return (
+            <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
+                <InputLabel id="value-select-label">Value</InputLabel>
+                <Select
+                  labelId="value-select-label"
+                  value={filters[idx]?.value}
+                  label="Value"
+                  onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+                  disabled={!filters[idx].operator}
+                >
+                    { BOOL_DROPDOWN_VALUES.map((column) => (
+                        <MenuItem
+                          key={`s-c-${column.value}`}
+                          value={column.value}
+                        >
+                            {column.name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        );
     };
 
     const renderFilter = (idx: number) => (
@@ -168,7 +257,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                   label="Column"
                   onChange={(e) => updateFilterColumnData(idx, e, 'column')}
                 >
-                    { columns.map((column) => (
+                    { filters[idx]?.availableColumns?.map((column) => (
                         <MenuItem
                           key={`s-c-${column.columnName}`}
                           value={column.columnName}
@@ -191,15 +280,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                         <MenuItem key={`s-o-${operator.value}`} value={operator.value}>{operator.name}</MenuItem>)) }
                 </Select>
             </FormControl>
-            <TextField
-              label="Value"
-              variant="standard"
-              value={filters[idx]?.value}
-              multiline
-              type={getValueFieldInputType(idx)}
-              onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-              disabled={!filters[idx].operator}
-            />
+            {renderInputField(idx)}
         </div>
     );
 
@@ -218,7 +299,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                         { filters.map((filter, idx) => renderFilter(idx))}
                     </div>
                     <div className={styles.buttonsSection}>
-                        <Button onClick={addFilter}>Add filter</Button>
+                        <Button onClick={addFilter} disabled={!filters[filters.length - 1].value}>Add filter</Button>
                         <Button onClick={removeAllFilters}>Remove All</Button>
                     </div>
                 </div>

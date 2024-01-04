@@ -1,7 +1,7 @@
 enum FilterColumnTypeEnum {
     STRING = 'string',
     BOOL = 'boolean',
-    INT = 'integer',
+    NUMBER = 'number',
     DATE = 'date',
 }
 

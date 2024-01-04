@@ -213,10 +213,10 @@ const AdministrationContestsPage = () => {
     ];
 
     const filtersColumns: IFilterColumn[] = [
-        { columnName: 'Id', columnType: FilterColumnTypeEnum.STRING },
+        { columnName: 'Id', columnType: FilterColumnTypeEnum.NUMBER },
         { columnName: 'Name', columnType: FilterColumnTypeEnum.STRING },
         { columnName: 'Category', columnType: FilterColumnTypeEnum.STRING },
-        { columnName: 'CategoryId', columnType: FilterColumnTypeEnum.STRING },
+        { columnName: 'CategoryId', columnType: FilterColumnTypeEnum.NUMBER },
         { columnName: 'StartTime', columnType: FilterColumnTypeEnum.DATE },
         { columnName: 'EndTime', columnType: FilterColumnTypeEnum.DATE },
         { columnName: 'IsDeleted', columnType: FilterColumnTypeEnum.BOOL },

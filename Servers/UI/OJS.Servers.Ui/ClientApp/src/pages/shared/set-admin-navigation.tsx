@@ -35,23 +35,23 @@ const administrationItems = [
     {
         name: 'Contests',
         icon: <AutoStoriesIcon />,
-        path: '/administration/contests',
+        path: '/administration-new/contests',
     }, {
         name: 'Submissions',
         icon: <DoneOutlineIcon />,
-        path: '/administration/submissions',
+        path: '/administration-new/submissions',
     }, {
         name: 'Tests',
         icon: <ScienceIcon />,
-        path: '/administration/tests',
+        path: '/administration-new/tests',
     }, {
         name: 'Problems',
         icon: <NotListedLocationIcon />,
-        path: '/administration/problems',
+        path: '/administration-new/problems',
     }, {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
-        path: '/administration/submissionTypes',
+        path: '/administration-new/submissionTypes',
     },
 ];
 

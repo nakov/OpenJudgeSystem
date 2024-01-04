@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
 
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -24,12 +25,25 @@ const PageHeader = () => {
     const renderLinks = useCallback(() => {
         const administrationLink = user.permissions.canAccessAdministration
             ? (
-                <LinkButton
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="administration"
-                  text="Administration"
-                />
+                <div className={styles.administrationsNavWrapper}>
+                    <LinkButton
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to="administration"
+                      text="Administration"
+                      isToExternal
+                    />
+                    <div style={{ marginLeft: '10px' }}>
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to="administration-new"
+                          text="Administration"
+                          isToExternal
+                        />
+                    </div>
+                    <FiberNewIcon className={styles.newIcon} />
+                </div>
             )
             : null;
 

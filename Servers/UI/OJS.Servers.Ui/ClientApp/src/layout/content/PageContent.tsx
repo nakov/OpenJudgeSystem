@@ -107,35 +107,36 @@ const routes = [
 
 const adminRoutes = [
     {
-        path: '/administration',
+        path: '/administration-new',
+        Element: AdministrationContestsPage,
+        title: 'Administration',
+    },
+    {
+        path: '/administration-new/contests',
         Element: AdministrationContestsPage,
     },
     {
-        path: '/administration/contests',
-        Element: AdministrationContestsPage,
-    },
-    {
-        path: '/administration/contests/:id',
+        path: '/administration-new/contests/:id',
         Element: AdministrationContestPage,
     },
     {
-        path: '/administration/submissions',
+        path: '/administration-new/submissions',
         Element: AdministrationSubmissionsPage,
     },
     {
-        path: '/administration/tests',
+        path: '/administration-new/tests',
         Element: Administration,
     },
     {
-        path: '/administration/problems',
+        path: '/administration-new/problems',
         Element: Administration,
     },
     {
-        path: '/administration/submissionTypes',
+        path: '/administration-new/submissionTypes',
         Element: Administration,
     },
     {
-        path: '/administration-new',
+        path: '/administration',
         Element: AdministrationPage,
         title: 'Administration',
     },
