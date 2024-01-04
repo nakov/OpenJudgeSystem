@@ -1,26 +1,29 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
-using System;
 using System.Linq;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Data.Models.Contests;
-using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
+using OJS.Services.Ui.Data;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Ui.Models.Participants;
 using Infrastructure;
 
 public class ContestValidationService : IContestValidationService
 {
     private readonly IDatesService datesService;
     private readonly IContestsActivityService activityService;
+    private readonly IContestCategoriesBusinessService categoriesService;
 
-    public ContestValidationService(IDatesService datesService, IContestsActivityService activityService)
+    public ContestValidationService(
+        IDatesService datesService,
+        IContestsActivityService activityService,
+        IContestCategoriesBusinessService categoriesService)
     {
         this.datesService = datesService;
         this.activityService = activityService;
+        this.categoriesService = categoriesService;
     }
 
     public ValidationResult GetValidationResult((Contest?, int?, UserInfoModel?, bool) item)
@@ -32,7 +35,9 @@ public class ContestValidationService : IContestValidationService
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            (!contest.IsVisible && !isUserLecturerInContest && !user.IsAdmin))
+            ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
+            !isUserLecturerInContest &&
+            !user.IsAdmin))
         {
             return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
         }

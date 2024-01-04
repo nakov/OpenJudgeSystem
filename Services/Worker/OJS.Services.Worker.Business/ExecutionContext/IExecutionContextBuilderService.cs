@@ -2,7 +2,7 @@
 
 using SoftUni.Services.Infrastructure;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using OJS.Workers.SubmissionProcessors.Models;
+using OJS.Workers.Common;
 
 public interface IExecutionContextBuilderService : IService
 {

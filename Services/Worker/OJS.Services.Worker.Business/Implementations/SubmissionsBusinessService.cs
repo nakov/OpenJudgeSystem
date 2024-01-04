@@ -20,6 +20,7 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common.Constants;
+using System.Threading.Tasks;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -46,7 +47,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.mapper = mapper;
     }
 
-    public ExecutionResultServiceModel ExecuteSubmission(SubmissionServiceModel submission)
+    public Task<ExecutionResultServiceModel> ExecuteSubmission(SubmissionServiceModel submission)
     {
         this.submissionsValidation
             .GetValidationResult(submission)
@@ -142,7 +143,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private ExecutionResultServiceModel InternalExecuteSubmission<TInput, TResult>(
+    private async Task<ExecutionResultServiceModel> InternalExecuteSubmission<TInput, TResult>(
         SubmissionServiceModel submission)
         where TResult : ISingleCodeRunResult, new()
     {
@@ -151,7 +152,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var ojsSubmission = this.executionContextBuilder.BuildOjsSubmission<TInput>(submission);
 
-        var ojsWorkerExecutionResult = this.submissionExecutor.Execute<TInput, TResult>(ojsSubmission);
+        var ojsWorkerExecutionResult = await this.submissionExecutor.Execute<TInput, TResult>(ojsSubmission);
 
         var executionResult = this.mapper.Map<ExecutionResultServiceModel>(ojsWorkerExecutionResult);
 

@@ -1,9 +1,8 @@
 ﻿namespace OJS.Services.Worker.Business.ExecutionContext.Implementations;
 
-using System;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common;
-using OJS.Workers.SubmissionProcessors.Models;
+using OJS.Workers.Common;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using static OJS.Services.Worker.Business.ExecutionContext.ExecutionContextConstants;

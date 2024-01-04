@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OJS.Data;
 using OJS.Servers.Infrastructure.Extensions;
+using OJS.Services.Worker.Business.Implementations;
 using OJS.Services.Worker.Models.Configuration;
-using OJS.Workers.Common;
-using OJS.Workers.SubmissionProcessors;
+using OJS.Workers.Compilers;
 using ApplicationConfig = OJS.Services.Worker.Models.Configuration.ApplicationConfig;
 
 internal static class ServiceCollectionExtensions
@@ -19,20 +19,12 @@ internal static class ServiceCollectionExtensions
             .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
             .AddScoped<DbContext, OjsDbContext>()
-            .AddSubmissionExecutor(configuration)
+            .AddTransient<ICompilerFactory, CompilerFactory>()
             .AddMemoryCache()
             .AddMessageQueue<Program>(configuration)
             .AddLogging()
-            .AddSoftUniJudgeCommonServices()
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<SubmissionExecutionConfig>()
+            .AddOptionsWithValidation<OjsWorkersConfig>()
             .AddControllers();
-
-    private static IServiceCollection AddSubmissionExecutor(
-        this IServiceCollection services,
-        IConfiguration configuration)
-        => services
-            .AddTransient<ISubmissionExecutor>(_ => new SubmissionExecutor(
-                configuration.GetSectionWithValidation<ApplicationConfig>()
-                    .SubmissionsProcessorIdentifierNumber.ToString()));
 }

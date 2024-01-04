@@ -3,6 +3,11 @@ name: 05. Deploy FE (Development)
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      branch_name:
+        description: 'The branch that will be deployed'
+        required: false
+        type: string
 jobs:
   build-and-push:
     uses: ./.github/workflows/build-and-push.yml
@@ -10,7 +15,7 @@ jobs:
       docker_image_name: judge_web_fe
       dockerfile_name: Dockerfile.fe
       docker_tag: dev-latest
-      branch_name: v2-development
+      branch_name: ${{ inputs.branch_name || 'v2-development' }}
       build_args: YARN_BUILD_COMMAND=build:staging
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
