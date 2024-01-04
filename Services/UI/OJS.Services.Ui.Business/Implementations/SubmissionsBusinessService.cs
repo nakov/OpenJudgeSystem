@@ -116,7 +116,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-        if (submissionDetailsServiceModel.IsNull())
+        if (submissionDetailsServiceModel == null)
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
@@ -129,10 +129,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var contest = await this.contestsDataService
-            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
-        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness
-            .IsUserAdminOrLecturerInContest(contest, currentUser.Id);
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
 
         if (!userIsAdminOrLecturerInContest)
         {

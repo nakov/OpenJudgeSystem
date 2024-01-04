@@ -14,11 +14,5 @@ namespace OJS.Services.Ui.Business
         Task DeleteByContest(int contestId);
 
         Task<ProblemSearchServiceResultModel> GetSearchProblemsByName(SearchServiceModel model);
-
-        void ValidateProblemForParticipant(
-            Participant participant,
-            Contest contest,
-            int problemId,
-            bool isOfficial);
     }
 }

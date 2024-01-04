@@ -59,7 +59,9 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         var isAdminOrLecturer = this.lecturersInContestsBusinessService
-            .IsUserAdminOrLecturerInContest(participant!.Contest.Id, user);
+            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
+            .GetAwaiter()
+            .GetResult();
 
         if (submitSubmissionServiceModel.Official &&
             participant!.Contest.IsOnlineExam &&

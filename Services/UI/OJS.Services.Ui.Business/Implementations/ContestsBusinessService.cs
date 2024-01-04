@@ -79,7 +79,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
             var contest = await this.contestsData.GetByIdWithCategoryAndProblemsAndSubmissionTypes(id);
-            var isLecturerOrAdmin = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest, user.Id);
+            var isLecturerOrAdmin = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
@@ -235,7 +235,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     userProfile!.Id,
                     model.IsOfficial);
 
-            var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest!.Id, user);
+            var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
             if (participant == null)
             {
@@ -246,7 +246,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
-                .GetAllForUserByContest(contest.Id, user.Id)
+                .GetAllForUserByContest(contest!.Id, user.Id)
                 .Select(x => (DateTime?)x.CreatedOn)
                 .Max();
             participationModel.LastSubmissionTime = lastSubmissionTime;
