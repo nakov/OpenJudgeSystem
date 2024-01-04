@@ -44,7 +44,9 @@ const ProfilePage = () => {
                 ? username
                 : myUsername;
 
-            getProfile(usernameParam);
+            const decodedUsernameParam = usernameParam.replace(/~/g, '.');
+
+            getProfile(decodedUsernameParam);
         },
         [ getProfile, myProfile, myProfile.userName, myUsername, username ],
     );

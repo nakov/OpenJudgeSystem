@@ -69,6 +69,16 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         [ initiateRedirectionToProblem, problemId, submissionId ],
     );
 
+    const createUsernameAsUrlParam = useCallback((usernameFromSubmission: string) => {
+        const index = usernameFromSubmission.indexOf('.');
+
+        if (index === -1) {
+            return username;
+        }
+
+        return usernameFromSubmission.replace(/\./g, '~');
+    }, [ username ]);
+
     const handleParticipateInContestSubmit = useCallback(
         () => {
             const participateInContestUrl = getParticipateInContestUrl({
@@ -136,12 +146,12 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             <LinkButton
               type={LinkButtonType.plain}
               size={ButtonSize.none}
-              to={getUserProfileInfoUrlByUsername(username)}
+              to={getUserProfileInfoUrlByUsername(createUsernameAsUrlParam(username))}
               text={username}
               internalClassName={styles.redirectButton}
             />
         ),
-        [ username ],
+        [ createUsernameAsUrlParam, username ],
     );
 
     const renderProblemInformation = useCallback(

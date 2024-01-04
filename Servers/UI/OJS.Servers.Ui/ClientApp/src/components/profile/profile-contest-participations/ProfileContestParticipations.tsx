@@ -67,7 +67,7 @@ const ProfileContestParticipations = () => {
                 ? username
                 : myProfile.userName;
 
-            getUserParticipations(usernameParam);
+            getUserParticipations(usernameParam.replace(/~/g, '.'));
         },
         [ isProfileInfoLoaded, getUserParticipations, user.username, myProfile.userName, username ],
     );
