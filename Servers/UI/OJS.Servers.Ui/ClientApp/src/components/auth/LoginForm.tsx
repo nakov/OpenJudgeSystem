@@ -97,12 +97,13 @@ const LoginPage = () => {
         */
 
         setHasPressedLoginBtn(true);
-        if (!isEmpty(loginErrorMessage) || !isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
+
+        if (!isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
             return;
         }
 
         await signIn();
-    }, [ loginErrorMessage, passwordFormError, signIn, usernameFormError ]);
+    }, [ passwordFormError, signIn, usernameFormError ]);
 
     const renderLoginErrorMessage = useCallback(
         () => (!isNil(loginErrorMessage)
