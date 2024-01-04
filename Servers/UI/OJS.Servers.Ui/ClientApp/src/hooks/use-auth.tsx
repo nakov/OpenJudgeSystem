@@ -174,6 +174,10 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         if (loginSubmitStatus === HttpStatus.Unauthorized) {
             const { data } = loginSubmitResponse;
 
+            if (!isLoggingIn) {
+                return;
+            }
+
             setLoginErrorMessage(isNil(data) || isEmpty(data)
                 ? DefaultLoginErrorMessage
                 : data.toString());
