@@ -129,9 +129,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var contest = await this.contestsDataService
-            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
-        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsUserAdminOrLecturerInContestByProblem(submissionDetailsServiceModel!.Problem.Id);
 
         if (!userIsAdminOrLecturerInContest)
         {
