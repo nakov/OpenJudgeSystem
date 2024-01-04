@@ -8,12 +8,11 @@ import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-import {
+import { encodeUsernameAsUrlParam,
     getContestDetailsAppUrl,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
-    getUserProfileInfoUrlByUsername,
-} from '../../../utils/urls';
+    getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import ExecutionResult from '../execution-result/ExecutionResult';
@@ -68,16 +67,6 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
         },
         [ initiateRedirectionToProblem, problemId, submissionId ],
     );
-
-    const createUsernameAsUrlParam = useCallback((usernameFromSubmission: string) => {
-        const index = usernameFromSubmission.indexOf('.');
-
-        if (index === -1) {
-            return username;
-        }
-
-        return usernameFromSubmission.replace(/\./g, '~');
-    }, [ username ]);
 
     const handleParticipateInContestSubmit = useCallback(
         () => {
@@ -146,12 +135,12 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             <LinkButton
               type={LinkButtonType.plain}
               size={ButtonSize.none}
-              to={getUserProfileInfoUrlByUsername(createUsernameAsUrlParam(username))}
+              to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(username))}
               text={username}
               internalClassName={styles.redirectButton}
             />
         ),
-        [ createUsernameAsUrlParam, username ],
+        [ username ],
     );
 
     const renderProblemInformation = useCallback(

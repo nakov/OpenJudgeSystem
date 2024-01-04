@@ -6,7 +6,7 @@ import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
-import { getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
+import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
 import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import PaginationControls from '../../../guidelines/pagination/PaginationControls';
@@ -95,7 +95,7 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={getUserProfileInfoUrlByUsername(userName)}
+                          to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(userName))}
                           text={userName}
                           internalClassName={styles.redirectButton}
                         />

@@ -7,6 +7,7 @@ import { useAuth } from '../../../hooks/use-auth';
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
 import { useUsers } from '../../../hooks/use-users';
 import { formatDate } from '../../../utils/dates';
+import { decodeUsernameFromUrlParam } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 const columns: GridColDef[] = [
@@ -67,7 +68,7 @@ const ProfileContestParticipations = () => {
                 ? username
                 : myProfile.userName;
 
-            getUserParticipations(usernameParam.replace(/~/g, '.'));
+            getUserParticipations(decodeUsernameFromUrlParam(usernameParam));
         },
         [ isProfileInfoLoaded, getUserParticipations, user.username, myProfile.userName, username ],
     );

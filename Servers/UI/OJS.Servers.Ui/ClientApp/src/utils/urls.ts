@@ -244,6 +244,11 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
     return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
 };
 
+// Username url utils for decoding/encoding usernames containing '.'
+
+const encodeUsernameAsUrlParam = (username: string) => username.replace(/\./g, '~');
+const decodeUsernameFromUrlParam = (username: string) => username.replace(/~/g, '.');
+
 export {
     getLoginSubmitUrl,
     getLogoutUrl,
@@ -301,4 +306,6 @@ export {
     getAdministrationTestEditUrl,
     getAdministrationTestEditInternalUrl,
     getSubmissionsUrl,
+    encodeUsernameAsUrlParam,
+    decodeUsernameFromUrlParam,
 };

@@ -11,6 +11,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useUsers } from '../../hooks/use-users';
 import isNilOrEmpty from '../../utils/check-utils';
+import { decodeUsernameFromUrlParam } from '../../utils/urls';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -44,9 +45,7 @@ const ProfilePage = () => {
                 ? username
                 : myUsername;
 
-            const decodedUsernameParam = usernameParam.replace(/~/g, '.');
-
-            getProfile(decodedUsernameParam);
+            getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
         [ getProfile, myProfile, myProfile.userName, myUsername, username ],
     );
