@@ -203,6 +203,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         showError,
         setUserDetails,
         getAuth,
+        isLoggingIn,
         username,
         loginErrorMessage,
     ]);
