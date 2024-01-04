@@ -5,12 +5,6 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
@@ -159,16 +153,9 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
 
-    const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string, inputType?: FilterColumnTypeEnum) => {
+    const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
-        if (inputType === FilterColumnTypeEnum.NUMBER) {
-            const isNumberRegex = /^[0-9]+$/;
-            const isNumber = isNumberRegex.test(value);
 
-            if (!isNumber) {
-                return;
-            }
-        }
         const newFiltersArray = [ ...filters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 if (updateProperty === 'column') {
@@ -196,50 +183,38 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
     const renderInputField = (idx: number) => {
         // eslint-disable-next-line prefer-destructuring
         const { inputType } = filters[idx];
-        if (inputType === FilterColumnTypeEnum.STRING || inputType === FilterColumnTypeEnum.NUMBER) {
+        if (inputType === FilterColumnTypeEnum.BOOL) {
             return (
-                <TextField
-                  label="Value"
-                  variant="standard"
-                  value={filters[idx]?.value}
-                  multiline
-                  onChange={(e) => updateFilterColumnData(idx, e, 'value', inputType)}
-                  disabled={!filters[idx].operator}
-                />
-            );
-        } if (inputType === FilterColumnTypeEnum.DATE) {
-            return (
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      label="Value"
+                <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
+                    <InputLabel id="value-select-label">Value</InputLabel>
+                    <Select
+                      labelId="value-select-label"
                       value={filters[idx]?.value}
-                      disabled={!filters[idx].operator}
+                      label="Value"
                       onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-                      sx={{ border: 'none' }}
-                    />
-                </LocalizationProvider>
+                      disabled={!filters[idx].operator}
+                    >
+                        { BOOL_DROPDOWN_VALUES.map((column) => (
+                            <MenuItem
+                              key={`s-c-${column.value}`}
+                              value={column.value}
+                            >
+                                {column.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             );
         }
         return (
-            <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
-                <InputLabel id="value-select-label">Value</InputLabel>
-                <Select
-                  labelId="value-select-label"
-                  value={filters[idx]?.value}
-                  label="Value"
-                  onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-                  disabled={!filters[idx].operator}
-                >
-                    { BOOL_DROPDOWN_VALUES.map((column) => (
-                        <MenuItem
-                          key={`s-c-${column.value}`}
-                          value={column.value}
-                        >
-                            {column.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+            <TextField
+              label="Value"
+              variant="standard"
+              type={inputType}
+              value={filters[idx]?.value}
+              onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+              disabled={!filters[idx].operator}
+            />
         );
     };
 
