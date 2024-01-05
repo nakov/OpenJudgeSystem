@@ -45,9 +45,9 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.DbSet
                 .Where(p => p.UserId == userId);
 
-        public IQueryable<Participant> GetAllWithContestSubmissionsAndProblemsByUser(string? userId)
+        public IQueryable<Participant> GetAllWithContestAndProblemsByUsername(string username)
             => this.DbSet
-                .Where(p => p.UserId == userId)
+                .Where(p => p.User.UserName == username)
                 .Include(p => p.Contest)
                     .ThenInclude(c => c.ProblemGroups)
                         .ThenInclude(pg => pg.Problems);

@@ -10,7 +10,8 @@ import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
-    IAllContestsUrlParams, IContestDetailsUrlParams,
+    IAllContestsUrlParams,
+    IContestDetailsUrlParams,
     IContestEditUrlParams,
     IContestProblemsUrlParams,
     IDownloadProblemResourceUrlParams,
