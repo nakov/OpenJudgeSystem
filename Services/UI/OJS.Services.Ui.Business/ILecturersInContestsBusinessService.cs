@@ -1,11 +1,9 @@
 ﻿namespace OJS.Services.Ui.Business;
 
-using OJS.Data.Models.Contests;
 using SoftUni.Services.Infrastructure;
+using System.Threading.Tasks;
 
 public interface ILecturersInContestsBusinessService : IService
 {
-    bool IsUserAdminOrLecturerInContest(Contest? contest);
-
-    bool IsUserLecturerInContest(Contest contest);
+    Task<bool> IsCurrentUserAdminOrLecturerInContest(int? contestId);
 }

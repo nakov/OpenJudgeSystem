@@ -63,7 +63,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
 
         var results = this.contestResultsAggregator.GetContestResults(contestResultsModel);
 
-        results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
+        results.UserIsInRoleForContest = await this.lecturersInContestsBusinessService.IsCurrentUserAdminOrLecturerInContest(contest.Id);
 
         return results;
     }

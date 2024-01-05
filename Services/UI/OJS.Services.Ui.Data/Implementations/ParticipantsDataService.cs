@@ -25,20 +25,32 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
-        public Task<Participant?> GetWithContestByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
+        public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.Contest)
-                .ThenInclude(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(c => c.ProblemGroups)
+                        .ThenInclude(pg => pg.Problems)
+                            .ThenInclude(p => p.SubmissionTypesInProblems)
+                                .ThenInclude(sp => sp.SubmissionType)
+                .Include(p => p.ProblemsForParticipants)
+                .FirstOrDefaultAsync();
+
+        public Task<Participant?> GetWithProblemsForParticipantsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
+            => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+                .Include(p => p.ProblemsForParticipants)
+                    .ThenInclude(pfp => pfp.Problem)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetAllByUser(string? userId)
             => this.DbSet
                 .Where(p => p.UserId == userId);
 
-        public IQueryable<Participant> GetAllByUsername(string username)
+        public IQueryable<Participant> GetAllWithContestSubmissionsAndProblemsByUser(string? userId)
             => this.DbSet
-                .Where(p => p.User.UserName == username);
+                .Where(p => p.UserId == userId)
+                .Include(p => p.Contest)
+                    .ThenInclude(c => c.ProblemGroups)
+                        .ThenInclude(pg => pg.Problems);
 
         public IQueryable<Participant> GetAllByContest(int contestId)
             => this.DbSet

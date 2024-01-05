@@ -22,9 +22,11 @@ namespace OJS.Services.Ui.Data.Implementations
             : base(db)
             => this.participantsData = participantsData;
 
-        public Task<IEnumerable<ParticipantScore>> GetByParticipantId(int participantId)
+        public Task<IEnumerable<ParticipantScore>> GetWithSubmissionsAndTestsByParticipantId(int participantId)
             => this.DbSet
                 .Where(ps => ps.ParticipantId == participantId)
+                .Include(ps => ps.Submission)
+                    .ThenInclude(s => s!.TestRuns)
                 .ToEnumerableAsync();
 
         public Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId) =>

@@ -49,6 +49,7 @@ const getLoginSubmitUrl = () => `${baseApiUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseApiUrl}/Account/Logout`;
 
 const getLoginPageUrl = () => `${baseUrl}/login`;
+const getLoginPath = () => '/login';
 
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
@@ -86,6 +87,7 @@ ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 const getUserProfileInfoUrlByUsername = (username: string) => `/profile/${username}`;
 const getProfileInfoUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Users/GetProfileInfo?username=${username}`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
+const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 // eslint-disable-next-line max-len
 const getAllParticipationsForUserUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Participations/GetAllForUser?username=${username}`;
 
@@ -252,6 +254,7 @@ const decodeUsernameFromUrlParam = (username: string) => username.replace(/~/g, 
 export {
     getLoginSubmitUrl,
     getLogoutUrl,
+    getLoginPath,
     getSearchPageURL,
     getSearchResultsUrl,
     getUserAuthInfoUrl,
@@ -264,6 +267,7 @@ export {
     getParticipateInContestUrl,
     getContestCategoryBreadcrumbItemPath,
     getSubmissionsForProfileUrl,
+    getParticipationsForProfileUrl,
     getAllParticipationsForUserUrl,
     getIndexContestsUrl,
     getAllContestsUrl,

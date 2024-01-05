@@ -8,6 +8,6 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Ui.Models.Submissions;
 
 public interface ISubmitSubmissionValidationService : IValidationService
-   <(Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)>
+   <(Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, bool, SubmitSubmissionServiceModel)>
 {
 }
