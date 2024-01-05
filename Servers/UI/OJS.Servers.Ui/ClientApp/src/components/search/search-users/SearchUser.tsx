@@ -2,7 +2,7 @@ import React from 'react';
 
 import { IUserSearchType } from '../../../common/search-types';
 import concatClassNames from '../../../utils/class-names';
-import { getUserProfileInfoUrlByUsername } from '../../../utils/urls';
+import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SearchUser.module.scss';
@@ -23,7 +23,7 @@ const SearchUser = ({ user }: ISearchUser) => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                  to={getUserProfileInfoUrlByUsername(user.name)}
+                  to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(user.name))}
                   text={user.name}
                 />
             </span>
