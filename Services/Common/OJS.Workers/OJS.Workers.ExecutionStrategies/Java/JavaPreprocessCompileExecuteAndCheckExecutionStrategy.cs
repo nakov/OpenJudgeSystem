@@ -4,14 +4,12 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
-
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
-
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
     public class JavaPreprocessCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
@@ -47,6 +45,7 @@
                     nameof(javaLibrariesPath));
             }
 
+            this.GetCompilerPathFunc = getCompilerPathFunc;
             this.JavaExecutablePath = javaExecutablePath;
             this.JavaLibrariesPath = javaLibrariesPath;
             this.baseUpdateTimeOffset = baseUpdateTimeOffset;
@@ -85,8 +84,8 @@ public class " + SandboxExecutorClassName + @" {
             }
 
             // Set the sandbox security manager
-            _$SandboxSecurityManager securityManager = new _$SandboxSecurityManager();
-            System.setSecurityManager(securityManager);
+            // _$SandboxSecurityManager securityManager = new _$SandboxSecurityManager();
+            // System.setSecurityManager(securityManager);
 
             startTime = System.nanoTime();
 
@@ -102,8 +101,10 @@ public class " + SandboxExecutorClassName + @" {
             }
         }
     }
-}
+}";
 
+        protected static string SandboxSecurityManagerCode
+            => @"
 class _$SandboxSecurityManager extends SecurityManager {
     private static final String JAVA_HOME_DIR = System.getProperty(""java.home"");
     private static final String USER_DIR = System.getProperty(""user.dir"");
@@ -172,13 +173,13 @@ class _$SandboxSecurityManager extends SecurityManager {
 
         protected string JavaLibrariesPath { get; }
 
+        protected Func<ExecutionStrategyType, string> GetCompilerPathFunc { get; }
+
         protected string SandboxExecutorSourceFilePath
             => $"{Path.Combine(this.WorkingDirectory, SandboxExecutorClassName)}{Constants.javaSourceFileExtension}";
 
         protected virtual string ClassPathArgument
             => $@" -cp ""{this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}"" ";
-
-        protected Func<ExecutionStrategyType, string> GetCompilerPathFunc { get; } = null!;
 
         protected static void UpdateExecutionTime(
             string timeMeasurementFilePath,
