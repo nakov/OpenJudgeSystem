@@ -34,6 +34,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
+            Func<ExecutionStrategyType, string> getCompilerPathFunc,
             string javaExecutablePath,
             string javaLibrariesPath,
             int baseTimeUsed,
@@ -41,6 +42,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             : base(
                 processExecutorFactory,
                 compilerFactory,
+                getCompilerPathFunc,
                 javaExecutablePath,
                 javaLibrariesPath,
                 baseTimeUsed,
@@ -319,6 +321,8 @@ public class _$TestRunner {{
 
         private CompileResult CompileProject(IExecutionContext<TestsInputModel> executionContext)
         {
+            var compilerPath = this.GetCompilerPathFunc(this.Type);
+
             var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
             return this.Compile(

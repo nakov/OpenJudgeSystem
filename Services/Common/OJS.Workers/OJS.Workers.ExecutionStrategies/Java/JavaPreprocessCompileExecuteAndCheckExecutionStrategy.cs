@@ -27,6 +27,7 @@
         public JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
+            Func<ExecutionStrategyType, string> getCompilerPathFunc,
             string javaExecutablePath,
             string javaLibrariesPath,
             int baseTimeUsed,
@@ -177,6 +178,8 @@ class _$SandboxSecurityManager extends SecurityManager {
         protected virtual string ClassPathArgument
             => $@" -cp ""{this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}"" ";
 
+        protected Func<ExecutionStrategyType, string> GetCompilerPathFunc { get; } = null!;
+
         protected static void UpdateExecutionTime(
             string timeMeasurementFilePath,
             ProcessExecutionResult processExecutionResult,
@@ -283,10 +286,12 @@ class _$SandboxSecurityManager extends SecurityManager {
             IExecutionContext<TInput> executionContext,
             string submissionFilePath)
         {
+            var compilerPath = this.GetCompilerPathFunc(this.Type);
+
             // Compile all source files - sandbox executor and submission file
             var compilerResult = this.CompileSourceFiles(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                compilerPath,
                 executionContext.AdditionalCompilerArguments,
                 new[] { this.SandboxExecutorSourceFilePath, submissionFilePath });
 

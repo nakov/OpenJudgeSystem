@@ -32,6 +32,11 @@ namespace OJS.Workers.Common
             public const string JavaUnitTests = "java-unit-tests";
             public const string JavaZipFileCode = "java-zip-file-code";
             public const string JavaSpringAndHibernateProjectExecutionStrategy = "run-java-spring-data-junit-tests";
+            public const string Java17ProjectTests = "java-17-project-tests";
+            public const string Java17PreprocessCompileExecuteAndCheck = "java-17-code";
+            public const string Java17ZipFileCode = "java-17-zip-file-code";
+            public const string Java17UnitTests = "java-17-unit-tests";
+            public const string Java17SpringAndHibernateProjectExecutionStrategy = "run-java17-spring-data-junit-tests";
 
             // JavaScript
             public const string JavaScriptCode = "javascript-code";
@@ -139,6 +144,10 @@ namespace OJS.Workers.Common
                     { ExecutionStrategyNames.JavaZipFileCode, ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck },
                     { ExecutionStrategyNames.JavaUnitTests, ExecutionStrategyType.JavaUnitTestsExecutionStrategy },
                     { ExecutionStrategyNames.JavaSpringAndHibernateProjectExecutionStrategy, ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy },
+                    { ExecutionStrategyNames.Java17PreprocessCompileExecuteAndCheck, ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck },
+                    { ExecutionStrategyNames.Java17ZipFileCode, ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck },
+                    { ExecutionStrategyNames.Java17UnitTests, ExecutionStrategyType.Java17UnitTestsExecutionStrategy },
+                    { ExecutionStrategyNames.Java17SpringAndHibernateProjectExecutionStrategy, ExecutionStrategyType.Java17SpringAndHibernateProjectExecution },
 
                     // Plain text
                     { ExecutionStrategyNames.PlainText, ExecutionStrategyType.CheckOnly },

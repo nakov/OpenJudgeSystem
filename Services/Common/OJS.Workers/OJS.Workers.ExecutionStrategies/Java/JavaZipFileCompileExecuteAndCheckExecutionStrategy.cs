@@ -2,11 +2,10 @@
 {
     using System;
     using System.IO;
-
     using Ionic.Zip;
-
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.Executors;
 
@@ -17,6 +16,7 @@
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
+            Func<ExecutionStrategyType, string> getCompilerPathFunc,
             string javaExecutablePath,
             string javaLibsPath,
             int baseTimeUsed,
@@ -24,6 +24,7 @@
             : base(
                 processExecutorFactory,
                 compilerFactory,
+                getCompilerPathFunc,
                 javaExecutablePath,
                 javaLibsPath,
                 baseTimeUsed,
@@ -51,6 +52,8 @@
             IExecutionContext<TInput> executionContext,
             string submissionFilePath)
         {
+            var compilerPath = this.GetCompilerPathFunc(this.Type);
+
             // Compile the zip file with user code and sandbox executor
             var compilerResult = this.Compile(
                 executionContext.CompilerType,

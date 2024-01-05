@@ -1,6 +1,6 @@
-﻿#nullable disable
-namespace OJS.Workers.ExecutionStrategies.Java
+﻿namespace OJS.Workers.ExecutionStrategies.Java
 {
+#nullable disable
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,6 +10,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using System.Xml;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -39,6 +40,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaSpringAndHibernateProjectExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
+            Func<ExecutionStrategyType, string> getCompilerPathFunc,
             string javaExecutablePath,
             string javaLibrariesPath,
             string mavenPath,
@@ -47,6 +49,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             : base(
                 processExecutorFactory,
                 compilerFactory,
+                getCompilerPathFunc,
                 javaExecutablePath,
                 javaLibrariesPath,
                 baseTimeUsed,

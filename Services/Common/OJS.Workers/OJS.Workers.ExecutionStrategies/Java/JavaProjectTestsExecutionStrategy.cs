@@ -1,19 +1,18 @@
-﻿#nullable disable
-namespace OJS.Workers.ExecutionStrategies.Java
+﻿namespace OJS.Workers.ExecutionStrategies.Java
 {
+#nullable disable
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
-
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
@@ -25,6 +24,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
+            Func<ExecutionStrategyType, string> getCompilerPathFunc,
             string javaExecutablePath,
             string javaLibrariesPath,
             int baseTimeUsed,
@@ -32,6 +32,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             : base(
                 processExecutorFactory,
                 compilerFactory,
+                getCompilerPathFunc,
                 javaExecutablePath,
                 javaLibrariesPath,
                 baseTimeUsed,
@@ -123,6 +124,8 @@ class Classes{{
                 return result;
             }
 
+            var compilerPath = this.GetCompilerPathFunc(this.Type);
+
             var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
             var executor = this.CreateExecutor();
@@ -141,7 +144,7 @@ class Classes{{
 
                 var preprocessCompileResult = this.Compile(
                     executionContext.CompilerType,
-                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                    compilerPath,
                     combinedArguments,
                     submissionFilePath);
 

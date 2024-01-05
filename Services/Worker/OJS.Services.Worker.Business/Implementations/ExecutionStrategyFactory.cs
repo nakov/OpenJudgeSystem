@@ -1,4 +1,5 @@
 ﻿#nullable disable
+
 namespace OJS.Services.Worker.Business.Implementations
 {
     using Microsoft.Extensions.Options;
@@ -126,48 +127,58 @@ namespace OJS.Services.Worker.Business.Implementations
                         OjsWorkersConfig.MicrosoftEntityFrameworkCoreProxiesVersion(type));
                     break;
                 case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
+                case ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck:
                     executionStrategy = new JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.settings.JavaExecutablePath,
-                        this.settings.JavaLibsPath,
+                        this.GetJavaCompilerPath,
+                        this.GetJavaExecutablePath(type),
+                        this.GetJavaLibsPath(type),
                         this.settings.JavaBaseTimeUsedInMilliseconds,
                         this.settings.JavaBaseMemoryUsedInBytes,
                         this.settings.JavaBaseUpdateTimeOffsetInMilliseconds);
                     break;
                 case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
+                case ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck:
                     executionStrategy = new JavaZipFileCompileExecuteAndCheckExecutionStrategy(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.settings.JavaExecutablePath,
-                        this.settings.JavaLibsPath,
+                        this.GetJavaCompilerPath,
+                        this.GetJavaExecutablePath(type),
+                        this.GetJavaLibsPath(type),
                         this.settings.JavaBaseTimeUsedInMilliseconds,
                         this.settings.JavaBaseMemoryUsedInBytes);
                     break;
                 case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
+                case ExecutionStrategyType.Java17ProjectTestsExecutionStrategy:
                     executionStrategy = new JavaProjectTestsExecutionStrategy(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.settings.JavaExecutablePath,
-                        this.settings.JavaLibsPath,
+                        this.GetJavaCompilerPath,
+                        this.GetJavaExecutablePath(type),
+                        this.GetJavaLibsPath(type),
                         this.settings.JavaBaseTimeUsedInMilliseconds,
                         this.settings.JavaBaseMemoryUsedInBytes);
                     break;
                 case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
+                case ExecutionStrategyType.Java17UnitTestsExecutionStrategy:
                     executionStrategy = new JavaUnitTestsExecutionStrategy(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.settings.JavaExecutablePath,
-                        this.settings.JavaLibsPath,
+                        this.GetJavaCompilerPath,
+                        this.GetJavaExecutablePath(type),
+                        this.GetJavaLibsPath(type),
                         this.settings.JavaBaseTimeUsedInMilliseconds,
                         this.settings.JavaBaseMemoryUsedInBytes);
                     break;
                 case ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy:
+                case ExecutionStrategyType.Java17SpringAndHibernateProjectExecution:
                     executionStrategy = new JavaSpringAndHibernateProjectExecutionStrategy(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.settings.JavaExecutablePath,
-                        this.settings.JavaLibsPath,
+                        this.GetJavaCompilerPath,
+                        this.GetJavaExecutablePath(type),
+                        this.GetJavaLibsPath(type),
                         this.settings.MavenPath,
                         this.settings.JavaBaseTimeUsedInMilliseconds,
                         this.settings.JavaBaseMemoryUsedInBytes);
@@ -409,6 +420,28 @@ namespace OJS.Services.Worker.Business.Implementations
             executionStrategy.Type = type;
 
             return executionStrategy;
+        }
+
+        private static bool IsJava17(ExecutionStrategyType type)
+            => type.ToString().Contains("17");
+
+        private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
+            => IsJava17(strategyType)
+                ? this.settings.Java17ExecutablePath
+                : this.settings.JavaExecutablePath;
+
+        private string GetJavaLibsPath(ExecutionStrategyType strategyType)
+            => IsJava17(strategyType)
+                ? this.settings.Java17LibsPath
+                : this.settings.JavaLibsPath;
+
+        private string GetJavaCompilerPath(ExecutionStrategyType strategyType)
+        {
+            var isJava17 = strategyType.ToString().Contains("17");
+
+            return isJava17
+                ? this.settings.Java17CompilerPath
+                : this.settings.JavaCompilerPath;
         }
     }
 }
