@@ -41,10 +41,10 @@ const BOOL_OPERATORS = [
 ];
 const NUMBER_OPERATORS = [
     { name: 'Equals', value: 'equals' },
-    { name: 'Greater Than', value: 'greatherthan' },
+    { name: 'Greater Than', value: 'greaterthan' },
     { name: 'Less Than', value: 'lessthan' },
     { name: 'Less Than Or Equal', value: 'lessthanorequal' },
-    { name: 'Greater Than Or Equal', value: 'greatherthanorequal' },
+    { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
     { name: 'Equals Not Equals', value: 'equalsnotequals' },
 ];
 const DATE_OPERATORS = [
@@ -84,8 +84,11 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
             return `${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`;
         };
 
-        const filtersFormattedString = filters.map(formatFilterToString);
-        const resultString = `filter=${filtersFormattedString.join('%26')}`;
+        const filtersFormattedArray = filters.map(formatFilterToString).filter((filter) => filter);
+        if (!filtersFormattedArray.length) {
+            return;
+        }
+        const resultString = `filter=${filtersFormattedArray.join('%26')}`;
 
         const delayedSetOfSearch = debounce(() => {
             setSearchParams(resultString);
@@ -93,10 +96,12 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
         delayedSetOfSearch();
 
+        // eslint-disable-next-line consistent-return
         return () => {
             delayedSetOfSearch.cancel();
         };
-    }, [ filters, setSearchParams ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ filters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchor(anchor

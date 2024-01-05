@@ -43,23 +43,21 @@ const AdministrationContestsPage = () => {
     } = useGetAllAdminContestsQuery(queryParams);
 
     const filterParams = searchParams.get('filter');
+    const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        if (!filterParams) {
-            setQueryParams({ page: 1, ItemsPerPage: 15, filter: '', sorting: '' });
-            return;
-        }
-        setQueryParams({ ...queryParams, filter: filterParams });
+        setQueryParams({ ...queryParams, filter: filterParams ?? '' });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ filterParams ]);
+
+    useEffect(() => {
+        setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ sortingParams ]);
 
     const onEditClick = (id: number) => {
         setOpenModal(true);
         setContestId(id);
-    };
-
-    const sortingUpdateCb = (sortData: string) => {
-        setQueryParams({ ...queryParams, sorting: sortData });
     };
 
     const renderModal = () => (
@@ -240,7 +238,7 @@ const AdministrationContestsPage = () => {
                             <Typography marginBottom="0.5rem" align="center" variant="h5">Contests</Typography>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
                                 <AdministrationFilters columns={filtersColumns} />
-                                <AdministrationSorting columns={sortingColumns} updateCb={sortingUpdateCb} />
+                                <AdministrationSorting columns={sortingColumns} />
                             </div>
                             <DataGrid
                               columns={dataColumns}
