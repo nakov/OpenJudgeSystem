@@ -39,7 +39,6 @@ const defaultState = {
         permissions: { canAccessAdministration: false } as IUserPermissionsType,
         isInRole: false,
         isAdmin: false,
-        isLecturer: false,
     },
 };
 

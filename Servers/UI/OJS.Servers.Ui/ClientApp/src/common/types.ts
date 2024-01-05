@@ -212,7 +212,6 @@ interface IUserType {
     permissions: IUserPermissionsType;
     isInRole: boolean;
     isAdmin: boolean;
-    isLecturer: boolean;
 }
 
 interface IUserRoleType {
