@@ -280,7 +280,7 @@ interface ISearchProps<T> {
 interface IContestAdministration {
     id: number;
     name: string;
-    type: number;
+    type: string;
     categoryId: number;
     categoryName: string;
     description: string;
@@ -288,12 +288,15 @@ interface IContestAdministration {
     endTime: string;
     practiceStartTime: string;
     practiceEndTime: string;
+    contestPassword: string;
+    practicePassword: string;
     limitBetweenSubmissions: number;
     isVisible: boolean;
     newIpPassword: string;
     allowParallelSubmissionsInTasks: boolean;
     autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
+    allowedIps: string;
 }
 
 interface IAdministrationContestProblems {

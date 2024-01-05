@@ -13,7 +13,7 @@ public class ContestResponseModel : IMapExplicitly
 
     public string Name { get; set; } = null!;
 
-    public ContestType Type { get; set; }
+    public string? Type { get; set; }
 
     public int? CategoryId { get; set; }
 
@@ -29,11 +29,16 @@ public class ContestResponseModel : IMapExplicitly
 
     public DateTime? PracticeEndTime { get; set; }
 
+    public string? ContestPassword { get; set; }
+
+    public string? PracticePassword { get; set; }
+
     public int LimitBetweenSubmissions { get; set; }
 
     public bool IsVisible { get; set; }
 
     public string? NewIpPassword { get; set; }
+    public string? AllowedIps { get; set; }
 
     public bool AllowParallelSubmissionsInTasks { get; set; }
 
@@ -75,5 +80,11 @@ public class ContestResponseModel : IMapExplicitly
             .ForMember(crm => crm.AutoChangeTestsFeedbackVisibility, opt
                 => opt.MapFrom(c => c.AutoChangeTestsFeedbackVisibility))
             .ForMember(crm => crm.OrderBy, opt
-                => opt.MapFrom(c => c.OrderBy));
+                => opt.MapFrom(c => c.OrderBy))
+            .ForMember(crm => crm.ContestPassword, opt
+                => opt.MapFrom(c => c.ContestPassword))
+            .ForMember(crm => crm.PracticePassword, opt
+                => opt.MapFrom(c => c.PracticePassword))
+            .ForMember(crm => crm.AllowedIps, opt
+                => opt.MapFrom(c => c.IpsInContests));
 }
