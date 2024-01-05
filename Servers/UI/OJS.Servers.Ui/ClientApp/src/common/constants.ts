@@ -6,6 +6,14 @@ const PAGE_BOUNDARY_COUNT = 0;
 
 const ExcludedFromHomeWorkTaskHeadingAddition = '(not included in final score)';
 const NotSelectedSearchCategoryMessage = 'No search category has been selected.';
+const DefaultLoginErrorMessage = 'Invalid username or password.';
+const EmptyLoginFormErrorMessage = 'Username and password are required.';
+const EmptyUsernameErrorMessage = 'Username is required.';
+const UsernameLengthErrorMessage = 'The username must be between 5 and 32 characters long.';
+const UsernameFormatErrorMessage = 'The username can contain only Latin letters, numbers, and the symbols \'.\' or \'_\'. ' +
+    'The username must start with a letter and end with a letter or a number.';
+const EmptyPasswordErrorMessage = 'Please enter your password.';
+const PasswordLengthErrorMessage = 'The password must be at least 6 characters long.';
 const { Status: DEFAULT_FILTER_TYPE } = FilterType;
 const { All: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
 const { Sort: DEFAULT_SORT_FILTER_TYPE } = FilterType;
@@ -49,4 +57,11 @@ export {
     PAGE_SIBLING_COUNT,
     PAGE_BOUNDARY_COUNT,
     defaultPathIdentifier,
+    DefaultLoginErrorMessage,
+    EmptyLoginFormErrorMessage,
+    EmptyUsernameErrorMessage,
+    UsernameLengthErrorMessage,
+    UsernameFormatErrorMessage,
+    EmptyPasswordErrorMessage,
+    PasswordLengthErrorMessage,
 };

@@ -1,15 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { HttpStatus } from '../common/common';
+import { DefaultLoginErrorMessage, EmptyLoginFormErrorMessage } from '../common/constants';
 import { IUserPermissionsType, IUserResponseType, IUserType } from '../common/types';
 import { IHaveChildrenProps } from '../components/common/Props';
-import {
-    getLoginSubmitUrl,
-    getLogoutUrl,
-    getUserAuthInfoUrl,
-} from '../utils/urls';
+import isNilOrEmpty from '../utils/check-utils';
+import { getLoginPath, getLoginSubmitUrl, getLogoutUrl, getUserAuthInfoUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
 import { useNotifications } from './use-notifications';
@@ -20,6 +19,7 @@ interface IAuthContext {
         loginOrGetAuthInitiated: boolean;
         hasCompletedGetAuthInfo: boolean;
         isLoggedIn: boolean;
+        isLoggingIn: boolean;
         loginErrorMessage: string;
     };
     actions: {
@@ -28,6 +28,8 @@ interface IAuthContext {
         loadAuthInfo: () => Promise<void>;
         setUsername: (value: string) => void;
         setPassword: (value: string) => void;
+        setIsLoggingIn: (value:boolean) => void;
+        setLoginErrorMessage: (value: string) => void;
     };
 }
 
@@ -59,12 +61,14 @@ interface ILoginDetailsType {
 
 const AuthProvider = ({ children }: IAuthProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isLoggingIn, setIsLoggingIn ] = useState(false);
     const [ internalUser, setInternalUser ] = useState<IUserType>(defaultState.user);
     const [ username, setUsername ] = useState<string>('');
     const [ password, setPassword ] = useState<string>();
     const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const { showError } = useNotifications();
-    const defaultLoginErrorMessage = useMemo(() => 'Invalid username or password', []);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const {
         post: loginSubmit,
@@ -143,6 +147,7 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
 
     const signIn = useCallback(
         async () => {
+            setIsLoggingIn(true);
             setIsLoading(true);
             await loginSubmit({
                 Username: username,
@@ -169,9 +174,22 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         if (loginSubmitStatus === HttpStatus.Unauthorized) {
             const { data } = loginSubmitResponse;
 
+            if (!isLoggingIn) {
+                return;
+            }
+
             setLoginErrorMessage(isNil(data) || isEmpty(data)
-                ? defaultLoginErrorMessage
+                ? DefaultLoginErrorMessage
                 : data.toString());
+
+            setIsLoggingIn(false);
+
+            return;
+        }
+
+        if (loginSubmitStatus === HttpStatus.Error) {
+            setLoginErrorMessage(EmptyLoginFormErrorMessage);
+            setIsLoggingIn(false);
 
             return;
         }
@@ -179,15 +197,15 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         (async () => {
             await getAuth();
         })();
-
-        window.location.reload();
     }, [
         loginSubmitResponse,
         loginSubmitStatus,
         showError,
         setUserDetails,
-        defaultLoginErrorMessage,
         getAuth,
+        isLoggingIn,
+        username,
+        loginErrorMessage,
     ]);
 
     useEffect(() => {
@@ -198,11 +216,35 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
         setUserDetails(getUserFromResponse(authInfo));
     }, [ authInfo, getUserFromResponse, isGetAuthInfoSuccess, setUserDetails ]);
 
+    // Purpose: Added to prevent flickering Login button while loading
+    // If the user is successfully logged in > we first navigate to home
+    // then refresh the window to set internal user and header info
+    useEffect(() => {
+        if (!isLoggingIn &&
+            loginSubmitStatus === HttpStatus.Success &&
+            location.pathname === getLoginPath()) {
+            navigate('/');
+            window.location.reload();
+        }
+    }, [ navigate, loginSubmitStatus, isLoggingIn, location.pathname ]);
+
     useEffect(() => {
         (async () => {
             await getAuth();
         })();
     }, [ getAuth ]);
+
+    useEffect(() => {
+        if (isLoggedIn || loginSubmitStatus === HttpStatus.Success) {
+            setIsLoggingIn(false);
+        }
+    }, [ isLoggedIn, loginSubmitStatus ]);
+
+    useEffect(() => {
+        if (!isNilOrEmpty(authInfo) && !isLoggedIn) {
+            setIsLoggingIn(true);
+        }
+    }, [ authInfo, isLoggedIn ]);
 
     const value = useMemo(
         () => ({
@@ -211,21 +253,25 @@ const AuthProvider = ({ children }: IAuthProviderProps) => {
                 loginOrGetAuthInitiated,
                 hasCompletedGetAuthInfo,
                 isLoggedIn,
+                isLoggingIn,
                 loginErrorMessage,
                 isLoading,
             },
             actions: {
                 signIn,
                 signOut,
+                setIsLoggingIn,
                 loadAuthInfo: getAuth,
                 setUsername,
                 setPassword,
+                setLoginErrorMessage,
             },
         }),
         [
             getAuth,
             hasCompletedGetAuthInfo,
             internalUser,
+            isLoggingIn,
             isLoggedIn,
             loginErrorMessage,
             loginOrGetAuthInitiated,
