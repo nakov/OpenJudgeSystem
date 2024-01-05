@@ -102,8 +102,6 @@ namespace OJS.Servers.Infrastructure.Extensions
                 {
                     var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
                     options.UseSqlServer(connectionString);
-                    // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
-                    options.UseLazyLoadingProxies();
                 })
                 .AddScoped<DbContext, TDbContext>()
                 .AddGlobalQueryFilterTypes(globalQueryFilterTypes)

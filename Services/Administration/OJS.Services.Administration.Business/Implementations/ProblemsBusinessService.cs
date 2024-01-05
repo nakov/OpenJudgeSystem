@@ -192,7 +192,6 @@ namespace OJS.Services.Administration.Business.Implementations
             problem.OrderBy = orderBy;
             problem.SubmissionTypesInProblems = await this.submissionTypesData
                 .GetAllByProblem(problem.Id)
-                .Include(x => x.SubmissionTypesInProblems)
                 .SelectMany(x => x.SubmissionTypesInProblems)
                 .ToListAsync();
 

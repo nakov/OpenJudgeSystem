@@ -84,7 +84,7 @@ ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
-const getAllParticipationsForUserUrl = () => '/api/Participations/GetAllForUser';
+const getAllParticipationsForUserUrl = () => `${baseApiUrl}/Participations/GetAllForUser`;
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;

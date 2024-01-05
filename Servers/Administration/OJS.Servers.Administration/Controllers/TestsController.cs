@@ -5,6 +5,7 @@ using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -106,7 +107,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Import(TestsImportRequestModel model)
     {
-        var problem = await this.problemsData.OneById(model.ProblemId);
+        var problem = this.problemsData.GetWithTestsSubmissionTypesAndProblemGroupById(model.ProblemId);
 
         await this.problemsValidationHelper
             .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())
@@ -186,7 +187,7 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
     public async Task<IActionResult> ExportZip(int problemId)
     {
-        var problem = await this.problemsData.OneById(problemId);
+        var problem = this.problemsData.GetWithTestsAndProblemGroupById(problemId);
 
         await this.problemsValidationHelper
             .ValidatePermissionsOfCurrentUser(problem?.Map<ProblemShortDetailsServiceModel>())

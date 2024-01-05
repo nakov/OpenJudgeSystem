@@ -12,12 +12,18 @@ using System.Text;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
+    private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+
+    public SubmitSubmissionValidationService(ILecturersInContestsBusinessService lecturersInContestsBusinessService)
+        => this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+
     public ValidationResult GetValidationResult(
-        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, SubmitSubmissionServiceModel)
+        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, bool, SubmitSubmissionServiceModel)
             validationInput)
     {
         var (problem, user, participant, contestValidationResult,
-                userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem, submitSubmissionServiceModel) =
+                userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem,
+                hasUserNotProcessedSubmissionForContest, submitSubmissionServiceModel) =
             validationInput;
 
         if (problem == null)
@@ -29,7 +35,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         if (participant != null &&
             !participant.Contest.AllowParallelSubmissionsInTasks &&
-            participant.Submissions.Any(s => !s.Processed))
+            hasUserNotProcessedSubmissionForContest)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
@@ -52,9 +58,14 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return contestValidationResult;
         }
 
+        var isAdminOrLecturer = this.lecturersInContestsBusinessService
+            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
+            .GetAwaiter()
+            .GetResult();
+
         if (submitSubmissionServiceModel.Official &&
             participant!.Contest.IsOnlineExam &&
-            !IsUserAdminOrLecturerInContest(participant.Contest, user) &&
+            !isAdminOrLecturer &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
             return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemId);
@@ -119,9 +130,4 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
 
         return ValidationResult.Valid();
     }
-
-    private static bool IsUserAdminOrLecturerInContest(Contest contest, UserInfoModel currentUser)
-        => currentUser.IsAdmin ||
-           contest.LecturersInContests.Any(c => c.LecturerId == currentUser.Id) ||
-           contest.Category!.LecturersInContestCategories.Any(cl => cl.LecturerId == currentUser.Id);
 }

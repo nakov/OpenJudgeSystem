@@ -49,7 +49,7 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<Contest?> GetByIdWithProblems(int id)
             => this.DbSet
                 .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(pg => pg.Problems)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
         public Task<Contest?> GetByIdWithParticipants(int id)
@@ -101,6 +101,11 @@ namespace OJS.Services.Administration.Data.Implementations
             => this.GetAllByLecturer(lecturerId)
                 .Where(c => c.CategoryId == categoryId);
 
+        public IQueryable<Contest> GetContestWithIps(int id)
+            => this.GetByIdQuery(id)
+                .Include(c => c.IpsInContests)
+                    .ThenInclude(ip => ip.Ip);
+
         public IQueryable<Contest> GetAllWithDeleted() => this.DbSet.IgnoreQueryFilters();
 
         public Task<int> GetMaxPointsById(int id)
@@ -131,7 +136,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Select(c => c.Type)
                 .FirstOrDefaultAsync() == ContestType.OnlinePracticalExam;
 
-        public Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId)
+        public Task<bool> IsUserLecturerInContestByContestAndUser(int id, string? userId)
             => this.GetByIdQuery(id)
                 .AnyAsync(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == userId) ||

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
@@ -478,7 +479,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             Name = AdditionalFormFields.AdditionalFiles.ToString(), Type = typeof(IFormFile),
         });
 
-        var submissionTypesInProblem = entity.SubmissionTypesInProblems.ToList();
+        var submissionTypesInProblem = await this.problemsData.GetByIdQuery(entity.Id)
+            .SelectMany(p => p.SubmissionTypesInProblems)
+            .ToListAsync();
 
         formControls.Add(new FormControlViewModel
         {
@@ -513,12 +516,20 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem entity,
         EntityAction action,
         IDictionary<string, string> entityDict)
-        => await this.contestsValidationHelper
+    {
+        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
+        await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(GetContestId(entity, entityDict))
             .VerifyResult();
+    }
 
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
+        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
+        entity.SubmissionTypesInProblems = await this.problemsData.GetByIdQuery(entity.Id)
+            .SelectMany(p => p.SubmissionTypesInProblems)
+            .ToListAsync();
+
         await base.BeforeEntitySaveAsync(entity, actionContext);
 
         var contestId = GetContestId(entity, actionContext.EntityDict);
@@ -553,6 +564,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
+        originalEntity.ProblemGroup = this.problemGroupsData.GetByProblem(originalEntity.Id) !;
         newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
 
         if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
@@ -588,6 +600,15 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     protected override async Task AfterEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
         var contestId = GetContestId(actionContext.EntityDict, entity);
+
+        if (entity.ProblemGroup == default)
+        {
+            var problemGroup = await this.problemGroupsData.GetAllByContestId(contestId)
+                .Where(group => group.Problems.Any(problem => problem.Id == entity.Id))
+                .FirstOrDefaultAsync();
+
+            entity.ProblemGroup = problemGroup!;
+        }
 
         await this.problemsBusiness.ReevaluateProblemsOrder(contestId, entity);
     }
@@ -656,8 +677,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
                     : Array.Empty<byte>(),
             });
 
-        problem.SubmissionTypesInProblems.Clear();
-        problem.SubmissionTypesInProblems.AddRange(newSubmissionTypes);
+        problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);
     }
 
     private static int GetContestId(Problem entity, IDictionary<string, string> entityDict)
