@@ -289,6 +289,18 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.settings.NodeJsBaseTimeUsedInMilliseconds,
                         this.settings.NodeJsBaseMemoryUsedInBytes);
                     break;
+                case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
+                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests(
+                        processExecutorFactory,
+                        this.settings.PythonExecutablePath,
+                        this.settings.JsProjNodeModules,
+                        this.settings.MochaModulePath,
+                        this.settings.ChaiModulePath,
+                        this.settings.PlaywrightChromiumModulePath,
+                        this.settings.JsProjDefaultApplicationPortNumber,
+                        this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                        this.settings.NodeJsBaseMemoryUsedInBytes);
+                    break;
                 case ExecutionStrategyType.PythonExecuteAndCheck:
                     executionStrategy = new PythonExecuteAndCheckExecutionStrategy(
                         processExecutorFactory,
