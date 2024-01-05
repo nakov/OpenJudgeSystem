@@ -5,14 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Contests;
-using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
-using OJS.Data.Models.Contests;
-using OJS.Services.Common.Data;
-using Microsoft.EntityFrameworkCore;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using System.Linq;
-using OJS.Servers.Administration.Models;
+using System;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -32,6 +26,25 @@ public class ContestsController : ControllerBase
         return this.Ok(contest);
     }
 
+    [HttpPost]
+    [Route("create")]
+    public Task<IActionResult> Create(ContestAdministrationModel model) => Task.FromResult<IActionResult>(this.BadRequest(new NotImplementedException()));
+
+    [HttpPatch]
+    [Route("{id}")]
+    public async Task<IActionResult> Update(ContestAdministrationModel model)
+    {
+        //TODO: Note should there be check if user is admin or lecturer for the contest.
+        if (!IsValidContest(model) || !model.Id.HasValue)
+        {
+            return this.BadRequest("Contest configuration is not valid.");
+        }
+
+        var contest = await this.contestsBusinessServiceService.Edit(model);
+
+        return this.Ok(contest);
+    }
+
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> ById(int id)
@@ -46,5 +59,18 @@ public class ContestsController : ControllerBase
     {
         var contest = await this.contestsBusinessServiceService.GetContestProblems(id);
         return this.Ok(contest);
+    }
+
+    private static bool IsValidContest(ContestAdministrationModel model)
+    {
+        bool isStartTimeValid = !(model.StartTime >= model.EndTime);
+
+        bool isPracticeTimeValid = !(model.PracticeStartTime >= model.PracticeEndTime);
+
+        bool validateCategoryIsSet = !model.CategoryId.HasValue || model.CategoryId != default(int);
+
+        //TODO add validation for online contest problem groups;
+
+        return isStartTimeValid && isPracticeTimeValid && validateCategoryIsSet;
     }
 }

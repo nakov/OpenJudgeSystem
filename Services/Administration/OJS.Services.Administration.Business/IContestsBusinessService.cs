@@ -15,7 +15,9 @@ public interface IContestsBusinessService : IGridDataService<Contest>, IService
     Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>()
         where TServiceModel : class;
 
-    Task<ContestResponseModel> ById(int id);
+    Task<ContestAdministrationModel> ById(int id);
 
     Task<IEnumerable<ContestViewProblemModel>> GetContestProblems(int id);
+
+    Task<ContestAdministrationModel> Edit(ContestAdministrationModel model);
 }
