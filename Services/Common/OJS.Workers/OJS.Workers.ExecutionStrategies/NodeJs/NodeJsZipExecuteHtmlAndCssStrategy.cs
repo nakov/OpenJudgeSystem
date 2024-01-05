@@ -106,51 +106,50 @@ fs = undefined;";
         protected override string JsCodePreevaulationCode => $@"
 describe('TestDOMScope', function() {{
     let bgCoderConsole = {{}};
-    before(function(done) {{
-        jsdom.env({{
-            html: userCode,
-            src:[bootstrap],
-            done: function(errors, window) {{
-                global.window = window;
-                global.document = window.document;
-                global.$ = global.jQuery = jq(window);
-                Object.getOwnPropertyNames(window)
-                    .filter(function (prop) {{
-                        return prop.toLowerCase().indexOf('html') >= 0;
-                    }}).forEach(function (prop) {{
-                        global[prop] = window[prop];
-                    }});
-
-                let head = $(document.head);
-                let style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = bootstrapCss;
-                head.append(style);
-
-                let links = head.find('link');
-                links.each((index, el)=>{{
-                    let style = document.createElement('style');
-                    style.type = 'test/css';
-                    let path = '{UserBaseDirectoryPlaceholder}/' + el.href;
-                    let css = fs.readFileSync(path, 'utf-8');
-                    style.innerHTML = css;
-                    head.append(style);
-                }});
-
-                links.remove();
-
-                Object.keys(console)
-                    .forEach(function (prop) {{
-                        bgCoderConsole[prop] = console[prop];
-                        console[prop] = new Function('');
-                    }});
-
-{NodeDisablePlaceholder}
-
-                done();
-            }}
-        }});
+before(function(done) {{
+    const dom = new jsdom.JSDOM(userCode, {{
+        runScripts: ""dangerously"",
+        resources: ""usable""
     }});
+
+    const {{ window }} = dom;
+
+    global.window = window;
+    global.document = window.document;
+    global.$ = global.jQuery = jq(window);
+
+    Object.getOwnPropertyNames(window)
+        .filter((prop) => prop.toLowerCase().indexOf('html') >= 0)
+        .forEach((prop) => {{
+            global[prop] = window[prop];
+        }});
+
+    let head = $(document.head);
+    let style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = bootstrapCss;
+    head.append(style);
+
+    head.find('link').each(function() {{
+        let link = $(this);
+        let cssPath = link.attr('href').replace('{UserBaseDirectoryPlaceholder}/', '');
+        let cssContent = fs.readFileSync(cssPath, 'utf-8');
+        let inlineStyle = document.createElement('style');
+        inlineStyle.type = 'text/css';
+        inlineStyle.innerHTML = cssContent;
+        head.append(inlineStyle);
+    }}).remove();
+
+    let bgCoderConsole = {{}};
+    Object.keys(console).forEach((prop) => {{
+        bgCoderConsole[prop] = console[prop];
+        console[prop] = function() {{}};
+    }});
+
+    {NodeDisablePlaceholder}
+
+    done();
+}});
 
     after(function() {{
         Object.keys(bgCoderConsole)

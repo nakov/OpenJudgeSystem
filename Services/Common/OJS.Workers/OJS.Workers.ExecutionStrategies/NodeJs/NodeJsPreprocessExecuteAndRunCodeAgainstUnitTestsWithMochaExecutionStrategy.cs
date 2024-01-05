@@ -197,7 +197,7 @@ describe('Test {i} ', function(){{
                             "<minTestCount>(\\d+)</minTestCount>").Groups[1].Value);
                     if (numberOfUserTests < minTestCount)
                     {
-                        message = $"Insufficient amount of tests, you have to have atleast {minTestCount} tests!";
+                        message = $"Insufficient amount of tests, you have to have at least {minTestCount} tests!";
                     }
 
                     testResult = CheckAndGetTestResult(
