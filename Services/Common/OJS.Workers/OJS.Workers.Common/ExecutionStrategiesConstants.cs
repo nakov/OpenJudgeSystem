@@ -162,7 +162,7 @@ namespace OJS.Workers.Common
                     // Run SPA and Execute mocha tests
                     { ExecutionStrategyNames.RunSpaAndExecuteMochaTestsExecutionStrategy, ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy },
                     // Run SPA and Execute mocha tests
-                    { ExecutionStrategyNames.RunSpaAndExecuteMochaTestsExecutionStrategy, ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy },
+                    { ExecutionStrategyNames.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests, ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests },
 
                     // PostgreSql
                     { ExecutionStrategyNames.PostgreSqlPrepareDbAndRunQueries, ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries },
