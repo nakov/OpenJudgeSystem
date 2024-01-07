@@ -145,7 +145,6 @@ namespace OJS.Workers.Common
                     { ExecutionStrategyNames.JavaZipFileCode, ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck },
                     { ExecutionStrategyNames.JavaUnitTests, ExecutionStrategyType.JavaUnitTestsExecutionStrategy },
                     { ExecutionStrategyNames.JavaSpringAndHibernateProjectExecutionStrategy, ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy },
-
                     { ExecutionStrategyNames.Java17PreprocessCompileExecuteAndCheck, ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck },
                     { ExecutionStrategyNames.Java17ProjectTests, ExecutionStrategyType.Java17ProjectTestsExecutionStrategy },
                     { ExecutionStrategyNames.Java17ZipFileCode, ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck },
