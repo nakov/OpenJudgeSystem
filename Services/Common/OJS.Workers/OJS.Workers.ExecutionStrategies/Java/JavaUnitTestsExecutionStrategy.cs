@@ -327,7 +327,7 @@ public class _$TestRunner {{
 
             return this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                compilerPath,
                 combinedArguments,
                 this.WorkingDirectory);
         }

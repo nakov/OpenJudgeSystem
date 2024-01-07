@@ -57,7 +57,7 @@
             // Compile the zip file with user code and sandbox executor
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                compilerPath,
                 executionContext.AdditionalCompilerArguments + this.ClassPathArgument,
                 submissionFilePath);
 
