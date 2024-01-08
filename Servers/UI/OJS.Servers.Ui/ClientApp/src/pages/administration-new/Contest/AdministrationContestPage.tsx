@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Box, Button, Slide, Tab, Tabs } from '@mui/material';
 
 import ContestEdit from '../../../components/administration/Contests/ContestEdit/ContestEdit';
+import ParticipantsInContestView from '../../../components/administration/Contests/ContestEdit/problems/participantsInContestView/ParticipantsInContestView';
 import ProblemsInContestView from '../../../components/administration/Contests/ContestEdit/problems/problemsInContestView/ProblemsInContestView';
 
 import styles from './AdministrationContestPage.module.scss';
@@ -46,6 +47,8 @@ const AdministrationContestPage = () => {
                     </Tabs>
                     {tabName === 'problems' &&
                         <ProblemsInContestView contestId={Number(contestId)} />}
+                    {tabName === 'participants' &&
+                        <ParticipantsInContestView contestId={Number(contestId)} />}
                 </Box>
             </Box>
         </Slide>

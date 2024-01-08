@@ -28,7 +28,8 @@ public class ContestsController : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public Task<IActionResult> Create(ContestAdministrationModel model) => Task.FromResult<IActionResult>(this.BadRequest(new NotImplementedException()));
+    public Task<IActionResult> Create(ContestAdministrationModel model)
+        => Task.FromResult<IActionResult>(this.BadRequest(new NotImplementedException()));
 
     [HttpPatch]
     [Route("{id}")]

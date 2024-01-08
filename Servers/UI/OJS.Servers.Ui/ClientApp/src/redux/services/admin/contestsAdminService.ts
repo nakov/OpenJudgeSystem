@@ -2,7 +2,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { IAdministrationContestProblems, IContestAdministration, IGetAllContestsAdminParams,
+import { IAdministrationContestProblems, IContestAdministration, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
@@ -18,7 +18,7 @@ export const contestService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsAdminParams>({
+        getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllAdminParams>({
             query: ({ filter, page, ItemsPerPage, sorting }) => ({
                 url: '',
                 params: {
@@ -28,10 +28,10 @@ export const contestService = createApi({
                     sorting,
                 },
             }),
+            keepUnusedDataFor: 10,
         }),
-        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${id}` }) }),
-        getContestProblems: builder.query<Array<IAdministrationContestProblems>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Problems/${id}` }) }),
-        getContestParticipants: builder.query<Array<any>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Participants/${id}` }) }),
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 0 }),
+        getContestProblems: builder.query<Array<IAdministrationContestProblems>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Problems/${id}` }), keepUnusedDataFor: 0 }),
     }),
 });
 
@@ -40,6 +40,5 @@ export const {
     useGetAllAdminContestsQuery,
     useGetContestByIdQuery,
     useGetContestProblemsQuery,
-    useGetContestParticipantsQuery,
 } = contestService;
 export default contestService;

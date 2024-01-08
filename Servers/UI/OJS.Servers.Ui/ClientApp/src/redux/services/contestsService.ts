@@ -1,8 +1,8 @@
+/* eslint-disable import/group-exports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { IContestStrategyFilter } from '../../common/contest-types';
-import { IGetAllContestsAdminParams,
-    IGetAllContestsOptions,
+import { IGetAllContestsOptions,
     IGetContestsForIndexResponseType,
     IIndexContestsType,
     IPagedResultType } from '../../common/types';

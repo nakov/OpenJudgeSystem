@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using System.Threading.Tasks;
 using System.Linq;
+using OJS.Data.Models.Participants;
+using OJS.Services.Common.Data.Pagination;
 
-public class ParticipantsBusinessService : IParticipantsBusinessService
+public class ParticipantsBusinessService : GridDataService<Participant>, IParticipantsBusinessService
 {
     private readonly IParticipantsDataService participantsData;
     private readonly IParticipantScoresDataService scoresDataService;
@@ -13,6 +15,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         IParticipantScoresDataService scoresDataService)
+        : base(participantsData)
     {
         this.participantsData = participantsData;
         this.scoresDataService = scoresDataService;
@@ -42,4 +45,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         await this.scoresDataService.Delete(participantScoresToRemove);
     }
+
+    public IQueryable<Participant> GetByContest(int contestId)
+        => this.participantsData.GetAllByContest(contestId);
 }

@@ -20,17 +20,11 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
     {
         var query = this.dataService.GetQuery();
 
-        var filterAsCollection = MapFilterStringToCollection<T>(paginationRequestModel).ToList();
-
-        var mappedQuery = this.ApplyFiltering<T>(query, filterAsCollection);
-        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting);
-
-        var response = await this.ApplyPagination<T>(
-            mappedQuery,
-            paginationRequestModel.Page,
-            paginationRequestModel.ItemsPerPage);
-        return response;
+        return await this.ApplyAll<T>(paginationRequestModel, query);
     }
+
+    public async Task<PaginatedList<T>> GetAll<T>(PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query)
+        => await this.ApplyAll<T>(paginationRequestModel, query);
 
     protected virtual async Task<PaginatedList<T>> ApplyPagination<T>(IQueryable<T> query, int page, int itemsPerPage)
     {
@@ -85,5 +79,19 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
         }
 
         return filteringCollection;
+    }
+
+    private async Task<PaginatedList<T>> ApplyAll<T>(PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query)
+    {
+        var filterAsCollection = MapFilterStringToCollection<T>(paginationRequestModel).ToList();
+
+        var mappedQuery = this.ApplyFiltering<T>(query, filterAsCollection);
+        mappedQuery = this.ApplySorting(mappedQuery, paginationRequestModel.Sorting);
+
+        var response = await this.ApplyPagination<T>(
+                mappedQuery,
+                paginationRequestModel.Page,
+                paginationRequestModel.ItemsPerPage);
+        return response;
     }
 }

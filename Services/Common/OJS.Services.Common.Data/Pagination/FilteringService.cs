@@ -62,6 +62,10 @@ public abstract class FilteringService<TEntity>
         {
             expression = BuildIntExpression(filter.OperatorType, filter.Value, property);
         }
+        else if (filter.Property.PropertyType == typeof(DateTime))
+        {
+            expression
+        }
 
         if (expression == null)
         {

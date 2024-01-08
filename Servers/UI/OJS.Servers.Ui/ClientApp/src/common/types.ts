@@ -71,7 +71,7 @@ interface IGetAllContestsOptions {
     strategy?: number | null;
 }
 
-interface IGetAllContestsAdminParams {
+interface IGetAllAdminParams {
     filter?: string;
     ItemsPerPage: number;
     page: number;
@@ -174,6 +174,13 @@ interface IIndexContestsType {
     hasPracticePassword: boolean;
     category: string;
     isLoading: boolean;
+}
+
+interface IParticiapntsInContestView {
+    id:number;
+    userName:string;
+    contest:string;
+    isOfficial:boolean;
 }
 
 interface IContestModalInfoType {
@@ -336,10 +343,11 @@ export type {
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
     IGetAllContestsOptions,
-    IGetAllContestsAdminParams,
+    IGetAllAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,
     IContestAdministration,
     IAdministrationContestProblems,
     IFilterColumn,
+    IParticiapntsInContestView,
 };

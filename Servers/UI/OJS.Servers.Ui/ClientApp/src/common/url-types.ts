@@ -2,9 +2,14 @@
 import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
 
 import { IFilter, ISort } from './contest-types';
+import { IGetAllAdminParams } from './types';
 
 interface IContestDetailsUrlParams {
     id: number;
+}
+
+interface IGetParticipantsByContestId extends IGetAllAdminParams {
+    contestId: number;
 }
 
 interface IGetContestByProblemUrlParams {
@@ -129,4 +134,5 @@ export type {
     IContestProblemsUrlParams,
     IContestEditUrlParams,
     IGetSubmissionsByContestIdParams,
+    IGetParticipantsByContestId,
 };
