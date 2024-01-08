@@ -80,7 +80,7 @@ namespace OJS.Servers.Ui.Controllers
 
                 if (externalUser == null)
                 {
-                    return this.Unauthorized(GlobalConstants.ErrorMessages.NonExistentUser);
+                    return this.Unauthorized(GlobalConstants.ErrorMessages.InvalidUsernameOrPassword);
                 }
 
                 await this.usersBusinessService.AddOrUpdateUser(externalUser.Entity);

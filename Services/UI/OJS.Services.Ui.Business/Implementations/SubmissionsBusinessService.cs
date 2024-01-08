@@ -116,7 +116,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
-        if (submissionDetailsServiceModel.IsNull())
+        if (submissionDetailsServiceModel == null)
         {
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
@@ -129,9 +129,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        var contest = await this.contestsDataService
-            .GetByProblemId<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id).Map<Contest>();
-        var userIsAdminOrLecturerInContest = this.lecturersInContestsBusiness.IsUserAdminOrLecturerInContest(contest);
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
 
         if (!userIsAdminOrLecturerInContest)
         {
@@ -364,6 +363,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public async Task Submit(SubmitSubmissionServiceModel model)
     {
         var problem = await this.problemsDataService.GetWithProblemGroupCheckerAndTestsById(model.ProblemId);
+
         if (problem == null)
         {
             throw new BusinessServiceException(ValidationMessages.Problem.NotFound);
@@ -371,7 +371,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var currentUser = this.userProviderService.GetCurrentUser();
         var participant = await this.participantsDataService
-            .GetWithContestByContestByUserAndIsOfficial(
+            .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                 problem.ProblemGroup.ContestId,
                 currentUser.Id!,
                 model.Official);
@@ -389,6 +389,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var hasUserNotProcessedSubmissionForProblem =
             this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
 
+        var hasUserNotProcessedSubmissionForContest =
+            this.submissionsData.HasUserNotProcessedSubmissionForContest(participant.ContestId, currentUser.Id!);
+
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
             (problem,
                 currentUser,
@@ -396,6 +399,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 contestValidationResult,
                 userSubmissionTimeLimit,
                 hasUserNotProcessedSubmissionForProblem,
+                hasUserNotProcessedSubmissionForContest,
                 model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
@@ -457,6 +461,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var submission = await this.submissionsData
             .GetByIdQuery(submissionExecutionResult.SubmissionId)
             .Include(s => s.Problem!.Tests)
+            .Include(s => s.TestRuns)
             .FirstOrDefaultAsync();
 
         if (submission == null)

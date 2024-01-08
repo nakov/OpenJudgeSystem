@@ -10,10 +10,11 @@ namespace OJS.Services.Administration.Data.Implementations
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
+        private readonly DbContext dbContext;
+
         public ContestCategoriesDataService(DbContext db)
-            : base(db)
-        {
-        }
+            : base(db) =>
+            this.dbContext = db;
 
         public Task<IEnumerable<ContestCategory>> GetContestCategoriesByParentId(int? parentId)
             => this.DbSet
@@ -55,5 +56,15 @@ namespace OJS.Services.Administration.Data.Implementations
             => this.GetAllVisible()
                 .Where(cc => cc.Id == id)
                 .AnyAsync(cc => cc.Contests.Any());
+
+        public void LoadChildrenRecursively(ContestCategory category)
+        {
+            this.dbContext.Entry(category).Collection(c => c.Children).Load();
+
+            foreach (var child in category.Children)
+            {
+                this.LoadChildrenRecursively(child);
+            }
+        }
     }
 }

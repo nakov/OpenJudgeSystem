@@ -48,6 +48,7 @@ const getLoginSubmitUrl = () => `${baseApiUrl}/Account/Login`;
 const getLogoutUrl = () => `${baseApiUrl}/Account/Logout`;
 
 const getLoginPageUrl = () => `${baseUrl}/login`;
+const getLoginPath = () => '/login';
 
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
@@ -84,7 +85,7 @@ ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
-const getAllParticipationsForUserUrl = () => '/api/Participations/GetAllForUser';
+const getAllParticipationsForUserUrl = () => `${baseApiUrl}/Participations/GetAllForUser`;
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
@@ -244,6 +245,7 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
 export {
     getLoginSubmitUrl,
     getLogoutUrl,
+    getLoginPath,
     getSearchPageURL,
     getSearchResultsUrl,
     getUserAuthInfoUrl,

@@ -1,19 +1,13 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
-    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common;
     using OJS.Common.Helpers;
-    using OJS.Data.Models.Contests;
-    using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
-    using OJS.Services.Common.Models;
-    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -110,6 +104,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var allProblemsQueryable = this.problemsData
                 .GetAllNonDeletedProblems()
+                .Include(p => p.ProblemGroup)
+                    .ThenInclude(pg => pg.Contest)
+                    .ThenInclude(c => c.Category)
                 .Where(p => p.Name.Contains(model.SearchTerm ?? string.Empty) &&
                             p.ProblemGroup.Contest.IsVisible &&
                             (p.ProblemGroup.Contest.Category != null &&
@@ -123,17 +120,6 @@ namespace OJS.Services.Ui.Business.Implementations
             modelResult.TotalProblemsCount = allProblemsQueryable.Count();
 
             return modelResult;
-        }
-
-        public void ValidateProblemForParticipant(Participant participant, Contest contest, int problemId, bool isOfficial)
-        {
-            if (isOfficial &&
-                contest.IsExam &&
-                !this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest) &&
-                participant.ProblemsForParticipants.All(p => p.ProblemId != problemId))
-            {
-                throw new BusinessServiceException(Resources.ContestsGeneral.ProblemNotAssignedToUser);
-            }
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)
