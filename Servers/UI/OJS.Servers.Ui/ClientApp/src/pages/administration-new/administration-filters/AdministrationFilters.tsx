@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-import { FilterColumnTypeEnum } from '../../../common/enums';
+import { FilterColumnTypeEnum, SortingEnum } from '../../../common/enums';
 import { IFilterColumn } from '../../../common/types';
 
 import styles from './AdministrationFilters.module.scss';
@@ -59,7 +59,7 @@ const BOOL_DROPDOWN_VALUES = [
 
 const AdministrationFilters = (props: IAdministrationFilters) => {
     const { columns } = props;
-    const [ , setSearchParams ] = useSearchParams();
+    const [ searchParams, setSearchParams ] = useSearchParams();
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
     const [ filters, setFilters ] =
@@ -73,6 +73,50 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         } ]);
 
     const open = Boolean(anchor);
+
+    const getFilterOperatorsByType = (columnType: FilterColumnTypeEnum) => {
+        let operators;
+        if (columnType === FilterColumnTypeEnum.STRING) {
+            operators = STRING_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.NUMBER) {
+            operators = NUMBER_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.BOOL) {
+            operators = BOOL_OPERATORS;
+        } else if (columnType === FilterColumnTypeEnum.DATE) {
+            operators = DATE_OPERATORS;
+        }
+
+        return operators;
+    };
+
+    const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
+
+    useEffect(() => {
+        const filterParams = searchParams.get('filter')?.split('&') ?? [];
+        filterParams.filter((f) => f).forEach((filter: string) => {
+            const filterColumn = filter.split('~')[0];
+            const filterOperator = filter.split('~')[1];
+            const filterValue = filter.split('~')[2];
+
+            const column = columns.find((f) => f.columnName.toLowerCase() === filterColumn);
+            const availableColumns = columns.filter((c) => !filters.some((f) => f.column === c.columnName));
+            const columnOperators = column?.columnType
+                ? getFilterOperatorsByType(column?.columnType)
+                : [];
+
+            const newFiltersArray = [ ...filters, {
+                column: column?.columnName || '',
+                operator: filterOperator,
+                value: filterValue,
+                availableColumns,
+                availableOperators: columnOperators,
+                inputType: column?.columnType || FilterColumnTypeEnum.STRING,
+            } ];
+
+            setFilters(newFiltersArray);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         const formatFilterToString = (filter: IAdministrationFilter) => {
@@ -88,10 +132,11 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         if (!filtersFormattedArray.length) {
             return;
         }
-        const resultString = `filter=${filtersFormattedArray.join('%26')}`;
+        const resultString = `${filtersFormattedArray.join('&')}`;
 
         const delayedSetOfSearch = debounce(() => {
-            setSearchParams(resultString);
+            searchParams.set('filter', resultString);
+            setSearchParams(searchParams);
         }, 500);
 
         delayedSetOfSearch();
@@ -131,7 +176,8 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
             availableColumns: columns,
             inputType: FilterColumnTypeEnum.STRING,
         } ]);
-        setSearchParams('');
+        searchParams.delete('filter');
+        setSearchParams(searchParams);
     };
 
     const removeSingleFilter = (idx: number) => {
@@ -139,23 +185,6 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         newFiltersArray.splice(idx, 1);
         setFilters(newFiltersArray);
     };
-
-    const getFilterOperatorsByType = (columnType: FilterColumnTypeEnum) => {
-        let operators;
-        if (columnType === FilterColumnTypeEnum.STRING) {
-            operators = STRING_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.NUMBER) {
-            operators = NUMBER_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.BOOL) {
-            operators = BOOL_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.DATE) {
-            operators = DATE_OPERATORS;
-        }
-
-        return operators;
-    };
-
-    const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
 
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
@@ -278,7 +307,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                         { filters.map((filter, idx) => renderFilter(idx))}
                     </div>
                     <div className={styles.buttonsSection}>
-                        <Button onClick={addFilter} disabled={!filters[filters.length - 1].value}>Add filter</Button>
+                        <Button onClick={addFilter} disabled={!filters[0].value}>Add filter</Button>
                         <Button onClick={removeAllFilters}>Remove All</Button>
                     </div>
                 </div>

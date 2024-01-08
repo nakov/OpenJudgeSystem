@@ -28,7 +28,7 @@ const orderByOptions = [
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
     const { columns } = props;
-    const [ , setSearchParams ] = useSearchParams();
+    const [ searchParams, setSearchParams ] = useSearchParams();
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
     const [ sorters, setSorters ] =
@@ -39,6 +39,28 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         } ]);
 
     const open = Boolean(anchor);
+
+    useEffect(() => {
+        const sorterParams = searchParams.get('sorting')?.split('&') ?? [];
+        sorterParams.filter((s) => s).forEach((sorter: string) => {
+            const sorterColumn = sorter.split('=')[0];
+            const sorterOrderBy = sorter.split('=')[1];
+
+            const columnName = columns.find((c) => c.toLowerCase() === sorterColumn) || '';
+            const orderBy = sorterOrderBy === 'ASC'
+                ? SortingEnum.ASC
+                : SortingEnum.DESC;
+            const availableColumns = columns.filter((column) => !sorters.some((s) => s.columnName === column));
+
+            const newSortersArray = [ ...sorters, {
+                columnName,
+                orderBy,
+                availableColumns,
+            } ];
+            setSorters(newSortersArray);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         const formatSorterToString = (sorter: IAdministrationSorter) => {
@@ -55,10 +77,11 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         if (!sorterFormattedArray.length) {
             return;
         }
-        const resultString = `sorting=${sorterFormattedArray.join('%3D')}`;
+        const resultString = `${sorterFormattedArray.join('&')}`;
 
         const delayedSetOfSearch = debounce(() => {
-            setSearchParams(resultString);
+            searchParams.set('sorting', resultString);
+            setSearchParams(searchParams);
         }, 500);
 
         delayedSetOfSearch();
@@ -92,7 +115,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             orderBy: SortingEnum.ASC,
             availableColumns: columns,
         } ]);
-        setSearchParams('');
+        searchParams.delete('sorting');
+        setSearchParams(searchParams);
     };
 
     const removeSingleSorter = (idx: number) => {
@@ -128,7 +152,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                   label="Sort By"
                   onChange={(e) => updateSorterColumnData(idx, e, 'columnName')}
                 >
-                    { columns.map((sortOption) => (
+                    { sorters[idx].availableColumns.map((sortOption) => (
                         <MenuItem key={`a-s-e-${sortOption}`} value={sortOption}>{sortOption}</MenuItem>)) }
                 </Select>
             </FormControl>
