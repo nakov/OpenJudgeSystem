@@ -1,0 +1,8 @@
+const DEFAULT_ITEMS_PER_PAGE = 15;
+
+const DEFAULT_ROWS_PER_PAGE = [ 15, 50, 100 ];
+
+export {
+    DEFAULT_ROWS_PER_PAGE,
+    DEFAULT_ITEMS_PER_PAGE,
+};

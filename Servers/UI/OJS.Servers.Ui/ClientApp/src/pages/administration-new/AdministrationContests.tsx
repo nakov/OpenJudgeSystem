@@ -9,6 +9,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import ContestEdit from '../../components/administration/Contests/ContestEdit/ContestEdit';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 import AdministrationFilters, {
@@ -37,7 +38,7 @@ const AdministrationContestsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openModal, setOpenModal ] = useState(false);
     const [ contestId, setContestId ] = useState<number>();
-    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: 15, filter: '', sorting: '' });
+    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: '', sorting: '' });
     const {
         data,
         error,
@@ -241,7 +242,7 @@ const AdministrationContestsPage = () => {
                               onPageChange={(e) => {
                                   setQueryParams({ ...queryParams, page: e + 1 });
                               }}
-                              rowsPerPageOptions={[ 15, 50, 100 ]}
+                              rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                               onPageSizeChange={(itemsPerRow: number) => {
                                   setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
                               }}
