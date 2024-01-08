@@ -15,6 +15,8 @@ using OJS.Data.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Common.Enumerations;
+using OJS.Services.Administration.Business.Validation.Helpers;
+using OJS.Services.Infrastructure.Extensions;
 
 public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
 {
@@ -24,13 +26,15 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IParticipantsDataService participantsData;
+    private readonly IContestsValidationHelper contestsValidationHelper;
     public ContestsBusinessService(
         IContestsDataService contestsData,
         Business.IUserProviderService userProvider,
         IProblemsDataService problemsDataService,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
-        IParticipantsDataService participantsData)
+        IParticipantsDataService participantsData,
+        IContestsValidationHelper contestsValidationHelper)
         : base(contestsData)
     {
         this.contestsData = contestsData;
@@ -39,6 +43,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.participantsData = participantsData;
+        this.contestsValidationHelper = contestsValidationHelper;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -82,13 +87,8 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             throw new ArgumentNullException($"Contest with Id:{model.Id} not found");
         }
 
-        var isActive = !await this.ValidateActiveContestCannotEditDurationTypeOnEdit(
+        await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
             oldContest, model);
-
-        if (isActive)
-        {
-            throw new InvalidOperationException("Contest is active and cannot edit duration.");
-        }
 
         if (!model.IsOnlineExam && model.Duration != null)
         {
@@ -116,6 +116,19 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         return model;
     }
 
+    public async Task Delete(int id)
+    {
+        var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();
+        if (contest is null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        await this.contestsValidationHelper.ValidateContestIsNotActive(contest).VerifyResult();
+        this.contestsData.Delete(contest);
+        await this.contestsData.SaveChanges();
+    }
+
     private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
     {
         for (var i = 1; i <= problemGroupsCount; i++)
@@ -139,23 +152,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
                 contest.IpsInContests.Add(new IpInContest { Ip = ip, IsOriginallyAllowed = true });
             }
         }
-    }
-
-    private async Task<bool> ValidateActiveContestCannotEditDurationTypeOnEdit(
-        Contest existingContest,
-        ContestAdministrationModel newContest)
-    {
-        var isActive = await this.activityService.IsContestActive(existingContest.Map<ContestForActivityServiceModel>());
-
-        var updateContestType = (ContestType)Enum.Parse(typeof(ContestType), newContest.Type!);
-        if (isActive &&
-            (existingContest.Duration != newContest.Duration ||
-             existingContest.Type != updateContestType))
-        {
-            return false;
-        }
-
-        return true;
     }
 
     private async Task InvalidateParticipants(

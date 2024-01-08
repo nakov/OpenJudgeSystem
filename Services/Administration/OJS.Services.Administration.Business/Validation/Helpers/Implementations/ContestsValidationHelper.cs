@@ -7,6 +7,9 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using Resource = OJS.Common.Resources.ContestsControllers;
+using OJS.Common.Enumerations;
+using OJS.Services.Administration.Models.Contests;
+using System;
 
 public class ContestsValidationHelper : IContestsValidationHelper
 {
@@ -44,6 +47,7 @@ public class ContestsValidationHelper : IContestsValidationHelper
             user.IsAdmin));
     }
 
+    // For deletion after new administration is added.
     public async Task<ValidationResult> ValidateActiveContestCannotEditDurationTypeOnEdit(
         Contest existingContest,
         Contest newContest)
@@ -53,6 +57,23 @@ public class ContestsValidationHelper : IContestsValidationHelper
         if (isActive &&
             (existingContest.Duration != newContest.Duration ||
              existingContest.Type != newContest.Type))
+        {
+            return ValidationResult.Invalid(Resource.ActiveContestCannotEditDurationType);
+        }
+
+        return ValidationResult.Valid();
+    }
+
+    public async Task<ValidationResult> ValidateActiveContestCannotEditDurationTypeOnEdit(
+        Contest existingContest,
+        ContestAdministrationModel newContest)
+    {
+        var isActive = await this.activityService.IsContestActive(existingContest.Map<ContestForActivityServiceModel>());
+
+        var updateContestType = (ContestType)Enum.Parse(typeof(ContestType), newContest.Type!);
+        if (isActive &&
+            (existingContest.Duration != newContest.Duration ||
+             existingContest.Type != updateContestType))
         {
             return ValidationResult.Invalid(Resource.ActiveContestCannotEditDurationType);
         }

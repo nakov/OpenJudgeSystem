@@ -31,6 +31,19 @@ public class ContestsController : ControllerBase
     public Task<IActionResult> Create(ContestAdministrationModel model)
         => Task.FromResult<IActionResult>(this.BadRequest(new NotImplementedException()));
 
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        if (id <= 0)
+        {
+            return this.BadRequest("Invalid contest id.");
+        }
+
+        await this.contestsBusinessServiceService.Delete(id);
+        return this.Ok($"Contest with id:{id} successfully deleted.");
+    }
+
     [HttpPatch]
     [Route("{id}")]
     public async Task<IActionResult> Update(ContestAdministrationModel model)
