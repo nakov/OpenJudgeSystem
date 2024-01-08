@@ -28,10 +28,12 @@ namespace OJS.Services.Ui.Data.Implementations
         public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.Contest)
-                    .ThenInclude(c => c.ProblemGroups)
-                        .ThenInclude(pg => pg.Problems)
-                            .ThenInclude(p => p.SubmissionTypesInProblems)
-                                .ThenInclude(sp => sp.SubmissionType)
+                    .ThenInclude(c => c.Category)
+                .Include(p => p.Contest)
+                        .ThenInclude(c => c.ProblemGroups)
+                            .ThenInclude(pg => pg.Problems)
+                                .ThenInclude(p => p.SubmissionTypesInProblems)
+                                    .ThenInclude(sp => sp.SubmissionType)
                 .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();
 
