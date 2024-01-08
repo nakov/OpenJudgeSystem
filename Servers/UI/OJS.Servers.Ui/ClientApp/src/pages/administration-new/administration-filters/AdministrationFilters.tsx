@@ -5,9 +5,10 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
-import { FilterColumnTypeEnum, SortingEnum } from '../../../common/enums';
+import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IFilterColumn } from '../../../common/types';
 
 import styles from './AdministrationFilters.module.scss';
@@ -56,6 +57,17 @@ const BOOL_DROPDOWN_VALUES = [
     { name: 'False', value: 'false' },
     { name: 'Null', value: '' },
 ];
+
+const mapStringToFilterColumnTypeEnum = (type: string) => {
+    if (type === 'number') {
+        return FilterColumnTypeEnum.NUMBER;
+    } if (type === 'boolean') {
+        return FilterColumnTypeEnum.BOOL;
+    } if (type === 'date') {
+        return FilterColumnTypeEnum.DATE;
+    }
+    return FilterColumnTypeEnum.STRING;
+};
 
 const AdministrationFilters = (props: IAdministrationFilters) => {
     const { columns } = props;
@@ -219,7 +231,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         if (inputType === FilterColumnTypeEnum.BOOL) {
             return (
                 <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
-                    <InputLabel id="value-select-label">Value</InputLabel>
+                    <InputLabel id="value-select-label" shrink>Value</InputLabel>
                     <Select
                       labelId="value-select-label"
                       value={filters[idx]?.value}
@@ -241,7 +253,9 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
         }
         return (
             <TextField
-              label="Value"
+              label={inputType === FilterColumnTypeEnum.DATE
+                  ? ' '
+                  : 'Value'}
               variant="standard"
               type={inputType}
               value={filters[idx]?.value}
@@ -317,3 +331,8 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 };
 
 export default AdministrationFilters;
+
+export const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
+    const mappedEnumType = mapStringToFilterColumnTypeEnum(column.type || '');
+    return { columnName: column.headerName?.replace(' ', '') ?? '', columnType: mappedEnumType };
+});

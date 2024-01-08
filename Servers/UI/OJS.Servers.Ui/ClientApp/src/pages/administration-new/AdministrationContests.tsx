@@ -6,15 +6,17 @@ import { IconButton, Modal, Slide, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { FilterColumnTypeEnum } from '../../common/enums';
-import { IFilterColumn } from '../../common/types';
 import ContestEdit from '../../components/administration/Contests/ContestEdit/ContestEdit';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
-import AdministrationFilters from './administration-filters/AdministrationFilters';
-import AdministrationSorting from './administration-sorting/AdministrationSorting';
+import AdministrationFilters, {
+    mapGridColumnsToAdministrationFilterProps,
+} from './administration-filters/AdministrationFilters';
+import AdministrationSorting, {
+    mapGridColumnsToAdministrationSortingProps,
+} from './administration-sorting/AdministrationSorting';
 
 const modalStyles = {
     position: 'absolute' as const,
@@ -210,18 +212,9 @@ const AdministrationContestsPage = () => {
         },
     ];
 
-    const filtersColumns: IFilterColumn[] = [
-        { columnName: 'Id', columnType: FilterColumnTypeEnum.NUMBER },
-        { columnName: 'Name', columnType: FilterColumnTypeEnum.STRING },
-        { columnName: 'Category', columnType: FilterColumnTypeEnum.STRING },
-        { columnName: 'CategoryId', columnType: FilterColumnTypeEnum.NUMBER },
-        { columnName: 'StartTime', columnType: FilterColumnTypeEnum.DATE },
-        { columnName: 'EndTime', columnType: FilterColumnTypeEnum.DATE },
-        { columnName: 'IsDeleted', columnType: FilterColumnTypeEnum.BOOL },
-        { columnName: 'IsVisible', columnType: FilterColumnTypeEnum.BOOL },
-    ];
+    const sortingColumns = mapGridColumnsToAdministrationSortingProps(dataColumns);
 
-    const sortingColumns = dataColumns.map((column) => column.headerName || '').filter((el) => el);
+    const filtersColumns = mapGridColumnsToAdministrationFilterProps(dataColumns);
 
     if (isLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;

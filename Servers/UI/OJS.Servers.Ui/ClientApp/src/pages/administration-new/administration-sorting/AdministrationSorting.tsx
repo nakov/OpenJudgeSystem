@@ -5,6 +5,7 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
 import { SortingEnum } from '../../../common/enums';
@@ -197,3 +198,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 };
 
 export default AdministrationSorting;
+
+export const mapGridColumnsToAdministrationSortingProps =
+    (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName || '').filter((el) => el);
