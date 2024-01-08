@@ -71,6 +71,8 @@
 
             var profile = await this.usersProfileData
                 .GetByIdQuery(currentUser.Id!)
+                .Include(u => u.UsersInRoles)
+                .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync();
 
             return profile?.Map<UserAuthInfoServiceModel>();

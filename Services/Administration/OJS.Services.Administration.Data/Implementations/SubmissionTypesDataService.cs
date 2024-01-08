@@ -14,7 +14,6 @@
 
         public IQueryable<SubmissionType> GetAllByProblem(int problemId)
             => this.DbSet
-                .Include(st => st.SubmissionTypesInProblems)
                 .Where(st => st.SubmissionTypesInProblems
                     .Select(stp => stp.ProblemId)
                     .Contains(problemId));

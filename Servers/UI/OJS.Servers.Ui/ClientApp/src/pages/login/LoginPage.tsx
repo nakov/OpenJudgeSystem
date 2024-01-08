@@ -5,7 +5,10 @@ import LoginForm from '../../components/auth/LoginForm';
 import { useAuth } from '../../hooks/use-auth';
 
 const LoginPage = () => {
-    const { state: { user, isLoggedIn } } = useAuth();
+    const {
+        state:
+        { user, isLoggedIn },
+    } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 

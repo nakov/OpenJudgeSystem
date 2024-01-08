@@ -30,10 +30,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
             .ForMember(d => d.Contest, opt => opt.MapFrom(s => s.Contest))
-            .ForMember(d => d.LastSubmissionTime, opt => opt.MapFrom(s =>
-                s.Submissions.Any()
-                    ? (DateTime?)s.Submissions.Max(x => x.CreatedOn)
-                    : null))
             .ForMember(d => d.EndDateTimeForParticipantOrContest, opt => opt.MapFrom(s =>
                 s.ParticipationEndTime.HasValue
                 ? s.ParticipationEndTime

@@ -34,10 +34,12 @@ namespace OJS.Servers.Administration.Controllers
         private readonly IIpsDataService ipsData;
         private readonly IParticipantsDataService participantsData;
         private readonly ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService;
-        private readonly IContestsDataService contestsDataService;
         private readonly IValidatorsFactory<Contest> contestValidatorsFactory;
         private readonly IContestCategoriesValidationHelper categoriesValidationHelper;
         private readonly IContestsValidationHelper contestsValidationHelper;
+        private readonly IProblemGroupsDataService problemGroupsData;
+        private readonly IContestsDataService contestsDataService;
+        private readonly IIpsDataService ipsDataService;
         private readonly INotDefaultValueValidationHelper notDefaultValueValidationHelper;
 
         public ContestsController(
@@ -45,11 +47,13 @@ namespace OJS.Servers.Administration.Controllers
             IParticipantsDataService participantsData,
             ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService,
             IValidatorsFactory<Contest> contestValidatorsFactory,
-            IContestsValidationHelper contestsValidationHelper,
             IContestCategoriesValidationHelper categoriesValidationHelper,
             INotDefaultValueValidationHelper notDefaultValueValidationHelper,
+            IOptions<ApplicationConfig> appConfigOptions,
+            IContestsValidationHelper contestsValidationHelper,
+            IProblemGroupsDataService problemGroupsData,
             IContestsDataService contestsDataService,
-            IOptions<ApplicationConfig> appConfigOptions)
+            IIpsDataService ipsDataService)
             : base(appConfigOptions)
         {
             this.ipsData = ipsData;
@@ -59,7 +63,9 @@ namespace OJS.Servers.Administration.Controllers
             this.contestsValidationHelper = contestsValidationHelper;
             this.categoriesValidationHelper = categoriesValidationHelper;
             this.notDefaultValueValidationHelper = notDefaultValueValidationHelper;
+            this.problemGroupsData = problemGroupsData;
             this.contestsDataService = contestsDataService;
+            this.ipsDataService = ipsDataService;
         }
 
         protected override Expression<Func<Contest, bool>>? MasterGridFilter
@@ -161,7 +167,7 @@ namespace OJS.Servers.Administration.Controllers
             var oldContest = await this.contestsDataService
                 .OneById(entity.Id);
 
-            if (oldContest!.CategoryId != entity.CategoryId)
+            if (oldContest != null && oldContest!.CategoryId != entity.CategoryId)
             {
                 // If a lecturer tries to update the category of a contest
                 // he should be able to do it only for categories he has lecturer rights for.
@@ -191,6 +197,10 @@ namespace OJS.Servers.Administration.Controllers
             Contest newContest,
             AdminActionContext actionContext)
         {
+            newContest.ProblemGroups = this.problemGroupsData
+                .GetAllByContest(newContest.Id)
+                .ToList();
+
             await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
                 existingContest, newContest).VerifyResult();
 
@@ -204,7 +214,13 @@ namespace OJS.Servers.Administration.Controllers
                 newContest.Duration = null;
             }
 
-            newContest.IpsInContests.Clear();
+            var ipsInContests = this.GetContestIps(existingContest.Id);
+
+            if (ipsInContests.Any())
+            {
+                await this.ipsDataService.DeleteIps(ipsInContests);
+            }
+
             await this.AddIpsToContest(newContest, actionContext.GetFormValue(AdditionalFormFields.AllowedIps));
         }
 
@@ -244,6 +260,13 @@ namespace OJS.Servers.Administration.Controllers
                         ((ContestCategory)category)
                         .Contests
                         .Any(cc => !cc.IsDeleted && cc.LecturersInContests.Any(l => l.LecturerId == this.User.GetId()))));
+            }
+
+            var ipsInContests = this.GetContestIps(entity.Id);
+
+            if (ipsInContests.Any())
+            {
+                entity.IpsInContests = ipsInContests.ToList();
             }
 
             return base.GenerateFormControls(entity, action, entityDict, complexOptionFilters, autocompleteType)
@@ -300,6 +323,11 @@ namespace OJS.Servers.Administration.Controllers
                 }
             }
         }
+
+        private IEnumerable<IpInContest> GetContestIps(int id)
+            => this.contestsDataService
+                .GetContestWithIps(id)
+                .SelectMany(c => c.IpsInContests);
 
         private async Task InvalidateParticipants(
             string? originalContestPassword,

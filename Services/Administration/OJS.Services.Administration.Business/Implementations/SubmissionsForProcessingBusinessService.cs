@@ -28,6 +28,7 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
     {
         var pendingSubmissions = await this.submissionsCommonData
             .GetAllPending()
+            .Include(s => s.SubmissionType)
             .MapCollection<SubmissionServiceModel>()
             .ToListAsync();
 

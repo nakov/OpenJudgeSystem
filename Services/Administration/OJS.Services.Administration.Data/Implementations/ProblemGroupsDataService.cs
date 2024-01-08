@@ -14,6 +14,7 @@
 
         public ProblemGroup? GetByProblem(int problemId) =>
             this.DbSet
+                .Include(p => p.Contest)
                 .FirstOrDefault(pg => pg.Problems
                     .Any(p => p.Id == problemId));
 

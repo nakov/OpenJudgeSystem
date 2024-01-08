@@ -5,6 +5,7 @@ using System;
 using System.Linq.Expressions;
 using AutoCrudAdmin.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
@@ -93,9 +94,13 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
     protected override Task BeforeEntitySaveOnDeleteAsync(
         ContestCategory entity,
         AdminActionContext actionContext)
-        => Task.WhenAll(
+    {
+        this.contestCategoriesData.LoadChildrenRecursively(entity);
+
+        return Task.WhenAll(
             this.contestCategoriesCache.ClearContestCategory(entity.Id),
             this.CascadeDeleteCategories(entity));
+    }
 
     protected override async Task AfterEntitySaveOnCreateAsync(
         ContestCategory entity,
