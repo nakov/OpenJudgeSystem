@@ -222,6 +222,22 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.settings.NodeJsBaseTimeUsedInMilliseconds,
                         this.settings.NodeJsBaseMemoryUsedInBytes);
                     break;
+                case ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy:
+                    executionStrategy = new NodeJsZipExecuteHtmlAndCssStrategy(
+                        processExecutorFactory,
+                        this.settings.NodeJsExecutablePath,
+                        this.settings.MochaModulePath,
+                        this.settings.ChaiModulePath,
+                        this.settings.SinonModulePath,
+                        this.settings.SinonChaiModulePath,
+                        this.settings.JsDomModulePath,
+                        this.settings.JQueryModulePath,
+                        this.settings.UnderscoreModulePath,
+                        this.settings.BootstrapModulePath,
+                        this.settings.BootstrapCssPath,
+                        this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                        this.settings.NodeJsBaseMemoryUsedInBytes);
+                    break;
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy:
                     executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategy(
                         processExecutorFactory,
