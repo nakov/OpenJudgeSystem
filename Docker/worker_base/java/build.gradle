@@ -41,7 +41,7 @@ dependencies {
     
     
     // Dependencies from https://mvnrepository.com
-    java17 group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.3'
+    java17 group: 'junit', name: 'junit', version: '5.9.3'
     java17 group: 'org.mockito', name: 'mockito-core', version: '2.18.3'
 
     java17 group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
