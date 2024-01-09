@@ -50,20 +50,12 @@ const AdministrationContestsPage = () => {
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        console.log(queryParams);
-        setQueryParams({ ...queryParams, filter: filterParams ?? '', sorting: sortingParams ?? '' });
-    }, [ filterParams, sortingParams ]);
-
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filterParams ?? '' });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ filterParams ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ sortingParams ]);
 
     const onEditClick = (id: number) => {
