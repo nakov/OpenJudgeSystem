@@ -53,6 +53,16 @@ const typeToIcon: IDictionary<FC<IIconProps>> = {
     [StrategyType.FileUpload]: FileUploadIcon,
 };
 
+const typeToMonacoLanguage: IDictionary<string> = {
+    [StrategyType.Cpp]: 'cpp',
+    [StrategyType.DotNet]: 'csharp',
+    [StrategyType.Go]: 'go',
+    [StrategyType.Java]: 'java',
+    [StrategyType.JavaScript]: 'javascript',
+    [StrategyType.Php]: 'php',
+    [StrategyType.Python]: 'python',
+};
+
 const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
     const strategyNameToLower = strategyName.toLowerCase();
 
@@ -72,7 +82,12 @@ const strategyTypeToIcon = (type: StrategyType): FC<IIconProps> | null => isNil(
     ? null
     : typeToIcon[type];
 
+const strategyTypeToMonacoLanguage = (type: StrategyType): string | null => isNil(typeToMonacoLanguage[type])
+    ? null
+    : typeToMonacoLanguage[type];
+
 export {
     strategyTypeToIcon,
+    strategyTypeToMonacoLanguage,
     fullStrategyNameToStrategyType,
 };
