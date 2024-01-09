@@ -82,7 +82,7 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
     const open = Boolean(anchor);
 
     useEffect(() => {
-        if (selectedFilters.length === 0 && !selectedFilters[0].availableColumns.length) {
+        if (!selectedFilters[0].availableColumns.length) {
             dispatch(setInitialAdminContestsColumns(columns));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -38,7 +40,7 @@ const AdministrationContestsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openModal, setOpenModal ] = useState(false);
     const [ contestId, setContestId ] = useState<number>();
-    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: '', sorting: '' });
+    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
     const {
         data,
         error,
@@ -50,8 +52,9 @@ const AdministrationContestsPage = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
+        console.log(queryParams);
         setQueryParams({ ...queryParams, filter: filterParams ?? '', sorting: sortingParams ?? '' });
-    });
+    }, [ filterParams, sortingParams ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filterParams ?? '' });
@@ -189,6 +192,9 @@ const AdministrationContestsPage = () => {
             filterable: false,
             sortable: false,
         },
+    ];
+
+    const nonFilterableColumns: GridColDef[] = [
         {
             field: 'showModal',
             headerName: 'Quick Details',
@@ -240,7 +246,7 @@ const AdministrationContestsPage = () => {
                                 <AdministrationSorting columns={sortingColumns} />
                             </div>
                             <DataGrid
-                              columns={dataColumns}
+                              columns={[ ...dataColumns, ...nonFilterableColumns ]}
                               rows={data?.items ?? []}
                               rowCount={data?.totalCount ?? 0}
                               paginationMode="server"

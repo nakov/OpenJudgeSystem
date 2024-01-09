@@ -1,14 +1,14 @@
 /* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from 'react';
-import { Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 // eslint-disable-next-line no-restricted-imports
 import { isNaN } from 'lodash';
-import moment from 'moment';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { IContestAdministration } from '../../../../common/types';
-import { useGetContestByIdQuery } from '../../../../redux/services/admin/contestsAdminService';
-import Button from '../../../guidelines/buttons/Button';
+import { useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 // eslint-disable-next-line import/no-unresolved
@@ -22,6 +22,10 @@ const ContestEdit = (props:IContestEditProps) => {
     const { contestId } = props;
 
     const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
+    const [ errorMessage, setErrorMessage ] = useState<string| null>(null);
+    const [ updateContest, { isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
+    const navigate = useNavigate();
+
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
         allowParallelSubmissionsInTasks: false,
@@ -29,7 +33,7 @@ const ContestEdit = (props:IContestEditProps) => {
         categoryId: 0,
         categoryName: '',
         contestPassword: '',
-        description: '',
+        description: null,
         endTime: '',
         name: '',
         id: 0,
@@ -43,9 +47,7 @@ const ContestEdit = (props:IContestEditProps) => {
         startTime: '',
         type: 'Exercise',
     });
-
-    const edit = () => console.log('edit => ');
-
+    const [ deleteContest, { isLoading: isDeleting, isSuccess, error } ] = useDeleteContestMutation();
     useEffect(
         () => {
             if (data) {
@@ -54,6 +56,18 @@ const ContestEdit = (props:IContestEditProps) => {
         },
         [ data ],
     );
+
+    useEffect(() => {
+        if (error && !isSuccess) {
+            // The data by default is of type unknown
+            setErrorMessage(error.data);
+        } else if (updateError && !isSuccess) {
+            // The data by default is of type unknown
+            setErrorMessage(updateError.data);
+        } else {
+            setErrorMessage(null);
+        }
+    }, [ error, updateError ]);
 
     const onChange = (e: any) => {
         const { name, value, type, checked } = e.target;
@@ -67,11 +81,37 @@ const ContestEdit = (props:IContestEditProps) => {
         }));
     };
 
+    const confirmDeleteContest = () => {
+        deleteContest({ id: Number(contestId) });
+    };
+
+    const edit = () => updateContest(contest);
+
+    useEffect(() => {
+        if (isSuccess) {
+            navigate('/administration-new/contests');
+        }
+    });
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toISOString().split('T')[0];
+    };
+
     return (
-        isFetching || isLoading
+        isFetching || isLoading || isDeleting
             ? <SpinningLoader />
             : (
-                <div className={`${styles.flex}`} style={{ height: '90%' }}>
+                <div className={`${styles.flex}`}>
+                    { errorMessage && (
+                    <Alert
+                      variant={AlertVariant.Filled}
+                      vertical={AlertVerticalOrientation.Top}
+                      horizontal={AlertHorizontalOrientation.Right}
+                      severity={AlertSeverity.Error}
+                      message={errorMessage}
+                    />
+                    )}
                     <Typography className={styles.centralize} variant="h4">
                         {contest.name}
                     </Typography>
@@ -151,14 +191,14 @@ const ContestEdit = (props:IContestEditProps) => {
                                   variant="standard"
                                   name="practicePassword"
                                   onChange={(e) => onChange(e)}
-                                  value={contest.practicePassword}
+                                  value={contest.practicePassword || ''}
                                   InputLabelProps={{ shrink: true }}
                                 />
                                 <TextField
                                   className={styles.inputRow}
                                   label="New Ip password"
                                   variant="standard"
-                                  value={contest.newIpPassword}
+                                  value={contest.newIpPassword || ''}
                                   name="newIpPassword"
                                   onChange={(e) => onChange(e)}
                                   type="text"
@@ -187,7 +227,9 @@ const ContestEdit = (props:IContestEditProps) => {
                             <FormLabel>Description</FormLabel>
                             <TextareaAutosize
                               placeholder="Enter description here..."
-                              value={contest.description}
+                              value={contest.description === null
+                                  ? ''
+                                  : contest.description}
                               minRows={10}
                               name="description"
                               onChange={(e) => onChange(e)}
@@ -202,7 +244,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               onChange={(e) => onChange(e)}
                               name="startTime"
                               value={contest.startTime
-                                  ? moment(contest.startTime).format('DD/MM/YYYY')
+                                  ? formatDate(contest.startTime)
                                   : ''}
                               InputLabelProps={{ shrink: true }}
                             />
@@ -215,7 +257,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               name="endTime"
                               onChange={(e) => onChange(e)}
                               value={contest.endTime
-                                  ? moment(contest.endTime).format('DD/MM/YYYY')
+                                  ? formatDate(contest.endTime)
                                   : ''}
                               InputLabelProps={{ shrink: true }}
                             />
@@ -229,7 +271,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               name="practiceStartTime"
                               onChange={(e) => onChange(e)}
                               value={contest.practiceStartTime
-                                  ? moment(contest.practiceStartTime).format('DD/MM/YYYY')
+                                  ? formatDate(contest.practiceStartTime)
                                   : ''}
                               InputLabelProps={{ shrink: true }}
                             />
@@ -242,7 +284,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               name="practiceEndTime"
                               onChange={(e) => onChange(e)}
                               value={contest.practiceEndTime
-                                  ? moment(contest.practiceEndTime).format('DD/MM/YYYY')
+                                  ? formatDate(contest.practiceEndTime)
                                   : ''}
                               InputLabelProps={{ shrink: true }}
                             />
@@ -275,8 +317,11 @@ const ContestEdit = (props:IContestEditProps) => {
                               label="Auto change tests feedback visibility"
                             />
                         </Box>
-                        <Button onClick={() => edit()} className={styles.edit}>Edit</Button>
                     </form>
+                    <div className={styles.buttonsWrapper}>
+                        <Button variant="contained" onClick={() => edit()} className={styles.button}>Edit</Button>
+                        <Button className={styles.button} variant="contained" color="error" onClick={confirmDeleteContest}>Delete</Button>
+                    </div>
                 </div>
             )
     );

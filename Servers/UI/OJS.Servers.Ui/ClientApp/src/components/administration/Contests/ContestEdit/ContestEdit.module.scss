@@ -15,11 +15,6 @@
     justify-content: space-evenly;
     height: auto;
 }
-.edit {
-    width:200px;
-    height: 45px;
-    margin: 20px 0;
-}
 
 .inputRow {
     width: 90%;
@@ -48,4 +43,16 @@
 .centralize {
     text-align: center;
     margin-bottom: 10px !important;
+}
+
+.button {
+    width:10rem;
+    height: 3rem;
+    margin: 20px;
+}
+.buttonsWrapper {
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    max-width: 30%;
 }

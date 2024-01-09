@@ -95,28 +95,28 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                                     <TableCell scope="row">
                                         <Box>
                                             <Tooltip title="Edit">
-                                                <IconButton>
-                                                    <EditIcon onClick={() => onProblemEdit(x.id)} />
+                                                <IconButton onClick={() => onProblemEdit(x.id)}>
+                                                    <EditIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Tests">
-                                                <IconButton>
-                                                    <QuizIcon onClick={() => onProblemEdit(x.id)} />
+                                                <IconButton onClick={() => onProblemEdit(x.id)}>
+                                                    <QuizIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Delete">
-                                                <IconButton>
-                                                    <CloseIcon onClick={() => onProblemEdit(x.id)} />
+                                                <IconButton onClick={() => onProblemEdit(x.id)}>
+                                                    <CloseIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Retest">
-                                                <IconButton>
-                                                    <ReplayIcon onClick={() => onProblemEdit(x.id)} />
+                                                <IconButton onClick={() => onProblemEdit(x.id)}>
+                                                    <ReplayIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Copy">
-                                                <IconButton>
-                                                    <CopyAllIcon onClick={() => onProblemEdit(x.id)} />
+                                                <IconButton onClick={() => onProblemEdit(x.id)}>
+                                                    <CopyAllIcon />
                                                 </IconButton>
                                             </Tooltip>
                                         </Box>

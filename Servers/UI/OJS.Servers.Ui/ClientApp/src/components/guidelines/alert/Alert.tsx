@@ -62,6 +62,7 @@ const Alert = (props:IAlertProps) => {
               severity={severity}
               variant={variant}
               onClose={onClose}
+              sx={{ display: 'flex', alignItems: 'center' }}
             >
                 {message}
                 <Button className="alert-button" color="inherit" size="small">Close</Button>

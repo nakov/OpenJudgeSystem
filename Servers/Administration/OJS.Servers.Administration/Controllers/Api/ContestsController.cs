@@ -41,7 +41,7 @@ public class ContestsController : ControllerBase
         }
 
         await this.contestsBusinessServiceService.Delete(id);
-        return this.Ok($"Contest with id:{id} successfully deleted.");
+        return this.Ok();
     }
 
     [HttpPatch]
@@ -77,11 +77,11 @@ public class ContestsController : ControllerBase
 
     private static bool IsValidContest(ContestAdministrationModel model)
     {
-        bool isStartTimeValid = !(model.StartTime >= model.EndTime);
+        var isStartTimeValid = !(model.StartTime >= model.EndTime);
 
-        bool isPracticeTimeValid = !(model.PracticeStartTime >= model.PracticeEndTime);
+        var isPracticeTimeValid = !(model.PracticeStartTime >= model.PracticeEndTime);
 
-        bool validateCategoryIsSet = !model.CategoryId.HasValue || model.CategoryId != default(int);
+        var validateCategoryIsSet = !model.CategoryId.HasValue || model.CategoryId != default(int);
 
         //TODO add validation for online contest problem groups;
 

@@ -26,15 +26,15 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IParticipantsDataService participantsData;
-    private readonly IContestsValidationHelper contestsValidationHelper;
+    // private readonly IContestsValidationHelper contestsValidationHelper;
     public ContestsBusinessService(
         IContestsDataService contestsData,
         Business.IUserProviderService userProvider,
         IProblemsDataService problemsDataService,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
-        IParticipantsDataService participantsData,
-        IContestsValidationHelper contestsValidationHelper)
+        IParticipantsDataService participantsData)
+        // IContestsValidationHelper contestsValidationHelper
         : base(contestsData)
     {
         this.contestsData = contestsData;
@@ -43,7 +43,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.participantsData = participantsData;
-        this.contestsValidationHelper = contestsValidationHelper;
+        // this.contestsValidationHelper = contestsValidationHelper;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -87,8 +87,8 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             throw new ArgumentNullException($"Contest with Id:{model.Id} not found");
         }
 
-        await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
-            oldContest, model);
+        // await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
+        //     oldContest, model);
 
         if (!model.IsOnlineExam && model.Duration != null)
         {
@@ -124,7 +124,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             throw new ArgumentNullException();
         }
 
-        await this.contestsValidationHelper.ValidateContestIsNotActive(contest).VerifyResult();
+        // await this.contestsValidationHelper.ValidateContestIsNotActive(contest).VerifyResult();
         this.contestsData.Delete(contest);
         await this.contestsData.SaveChanges();
     }
