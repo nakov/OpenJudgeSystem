@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -9,7 +10,8 @@ import { GridColDef } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
-import { IFilterColumn } from '../../../common/types';
+import { IFilterColumn, IRootStore } from '../../../common/types';
+import { setAdminContestsFilters, setInitialAdminContestsColumns } from '../../../redux/features/admin/contestsAdminSlice';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -71,20 +73,88 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 
 const AdministrationFilters = (props: IAdministrationFilters) => {
     const { columns } = props;
+    const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
+    const { selectedFilters } = useSelector((state: IRootStore) => state.adminContests);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
-    const [ filters, setFilters ] =
-        useState<Array<IAdministrationFilter>>([ {
+
+    const open = Boolean(anchor);
+
+    useEffect(() => {
+        if (selectedFilters.length === 0 && !selectedFilters[0].availableColumns.length) {
+            dispatch(setInitialAdminContestsColumns(columns));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        const formatFilterToString = (filter: IAdministrationFilter) => {
+            if (!filter.column || !filter.operator || !filter.value) {
+                return;
+            }
+
+            // eslint-disable-next-line consistent-return
+            return `${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`;
+        };
+
+        const filtersFormattedArray = selectedFilters.map(formatFilterToString).filter((filter) => filter);
+        if (!filtersFormattedArray.length) {
+            return;
+        }
+        const resultString = `${filtersFormattedArray.join('&')}`;
+
+        const delayedSetOfSearch = debounce(() => {
+            searchParams.set('filter', resultString);
+            setSearchParams(searchParams);
+        }, 500);
+
+        delayedSetOfSearch();
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+            delayedSetOfSearch.cancel();
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ selectedFilters ]);
+
+    const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchor(anchor
+            ? null
+            : event.currentTarget);
+    };
+
+    const addFilter = () => {
+        const availableColumns = columns.filter((column) => !selectedFilters.some((f) => f.column === column.columnName));
+        const newFiltersArray = [ {
             column: '',
             operator: '',
             value: '',
+            availableOperators: [],
+            availableColumns,
             inputType: FilterColumnTypeEnum.STRING,
+        }, ...selectedFilters ];
+        dispatch(setAdminContestsFilters(newFiltersArray));
+    };
+
+    const removeAllFilters = () => {
+        searchParams.delete('filter');
+        setSearchParams(searchParams);
+        dispatch(setAdminContestsFilters([ {
+            column: '',
+            operator: '',
+            value: '',
             availableOperators: [],
             availableColumns: columns,
-        } ]);
+            inputType: FilterColumnTypeEnum.STRING,
+        } ]));
+    };
 
-    const open = Boolean(anchor);
+    const removeSingleFilter = (idx: number) => {
+        const newFiltersArray = [ ...selectedFilters ];
+        newFiltersArray.splice(idx, 1);
+        dispatch(setAdminContestsFilters(newFiltersArray));
+    };
 
     const getFilterOperatorsByType = (columnType: FilterColumnTypeEnum) => {
         let operators;
@@ -103,105 +173,10 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
 
     const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
 
-    useEffect(() => {
-        const filterParams = searchParams.get('filter')?.split('&') ?? [];
-        filterParams.filter((f) => f).forEach((filter: string) => {
-            const filterColumn = filter.split('~')[0];
-            const filterOperator = filter.split('~')[1];
-            const filterValue = filter.split('~')[2];
-
-            const column = columns.find((f) => f.columnName.toLowerCase() === filterColumn);
-            const availableColumns = columns.filter((c) => !filters.some((f) => f.column === c.columnName));
-            const columnOperators = column?.columnType
-                ? getFilterOperatorsByType(column?.columnType)
-                : [];
-
-            const newFiltersArray = [ ...filters, {
-                column: column?.columnName || '',
-                operator: filterOperator,
-                value: filterValue,
-                availableColumns,
-                availableOperators: columnOperators,
-                inputType: column?.columnType || FilterColumnTypeEnum.STRING,
-            } ];
-
-            setFilters(newFiltersArray);
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        const formatFilterToString = (filter: IAdministrationFilter) => {
-            if (!filter.column || !filter.operator || !filter.value) {
-                return;
-            }
-
-            // eslint-disable-next-line consistent-return
-            return `${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`;
-        };
-
-        const filtersFormattedArray = filters.map(formatFilterToString).filter((filter) => filter);
-        if (!filtersFormattedArray.length) {
-            return;
-        }
-        const resultString = `${filtersFormattedArray.join('&')}`;
-
-        const delayedSetOfSearch = debounce(() => {
-            searchParams.set('filter', resultString);
-            setSearchParams(searchParams);
-        }, 500);
-
-        delayedSetOfSearch();
-
-        // eslint-disable-next-line consistent-return
-        return () => {
-            delayedSetOfSearch.cancel();
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ filters ]);
-
-    const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchor(anchor
-            ? null
-            : event.currentTarget);
-    };
-
-    const addFilter = () => {
-        const availableColumns = columns.filter((column) => !filters.some((f) => f.column === column.columnName));
-        const newFiltersArray = [ {
-            column: '',
-            operator: '',
-            value: '',
-            availableOperators: [],
-            availableColumns,
-            inputType: FilterColumnTypeEnum.STRING,
-        }, ...filters ];
-        setFilters(newFiltersArray);
-    };
-
-    const removeAllFilters = () => {
-        setFilters([ {
-            column: '',
-            operator: '',
-            value: '',
-            availableOperators: [],
-            availableColumns: columns,
-            inputType: FilterColumnTypeEnum.STRING,
-        } ]);
-        searchParams.delete('filter');
-        setSearchParams(searchParams);
-    };
-
-    const removeSingleFilter = (idx: number) => {
-        const newFiltersArray = [ ...filters ];
-        newFiltersArray.splice(idx, 1);
-        setFilters(newFiltersArray);
-    };
-
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
 
-        const newFiltersArray = [ ...filters ].map((element, idx) => {
+        const newFiltersArray = [ ...selectedFilters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 if (updateProperty === 'column') {
                     const columnType = getColumnTypeByName(value);
@@ -222,22 +197,22 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
             return element;
         });
 
-        setFilters(newFiltersArray);
+        dispatch(setAdminContestsFilters(newFiltersArray));
     };
 
     const renderInputField = (idx: number) => {
         // eslint-disable-next-line prefer-destructuring
-        const { inputType } = filters[idx];
+        const { inputType } = selectedFilters[idx];
         if (inputType === FilterColumnTypeEnum.BOOL) {
             return (
                 <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
                     <InputLabel id="value-select-label" shrink>Value</InputLabel>
                     <Select
                       labelId="value-select-label"
-                      value={filters[idx]?.value}
+                      value={selectedFilters[idx]?.value}
                       label="Value"
                       onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-                      disabled={!filters[idx].operator}
+                      disabled={!selectedFilters[idx].operator}
                     >
                         { BOOL_DROPDOWN_VALUES.map((column) => (
                             <MenuItem
@@ -258,9 +233,9 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                   : 'Value'}
               variant="standard"
               type={inputType}
-              value={filters[idx]?.value}
+              value={selectedFilters[idx]?.value}
               onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-              disabled={!filters[idx].operator}
+              disabled={!selectedFilters[idx].operator}
             />
         );
     };
@@ -275,11 +250,11 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                 <InputLabel id="column-select-label">Column</InputLabel>
                 <Select
                   labelId="column-select-label"
-                  value={filters[idx]?.column}
+                  value={selectedFilters[idx]?.column}
                   label="Column"
                   onChange={(e) => updateFilterColumnData(idx, e, 'column')}
                 >
-                    { filters[idx]?.availableColumns?.map((column) => (
+                    { selectedFilters[idx]?.availableColumns?.map((column) => (
                         <MenuItem
                           key={`s-c-${column.columnName}`}
                           value={column.columnName}
@@ -293,12 +268,12 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
                 <InputLabel id="column-operator-label">Operator</InputLabel>
                 <Select
                   labelId="column-operator-label"
-                  value={filters[idx]?.operator}
+                  value={selectedFilters[idx]?.operator}
                   label="Operator"
                   onChange={(e) => updateFilterColumnData(idx, e, 'operator')}
-                  disabled={!filters[idx].column}
+                  disabled={!selectedFilters[idx].column}
                 >
-                    { filters[idx].availableOperators?.map((operator) => (
+                    { selectedFilters[idx].availableOperators?.map((operator) => (
                         <MenuItem key={`s-o-${operator.value}`} value={operator.value}>{operator.name}</MenuItem>)) }
                 </Select>
             </FormControl>
@@ -318,10 +293,10 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
             <BasePopup anchor={anchor} open={open}>
                 <div className={styles.administrationFilters}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        { filters.map((filter, idx) => renderFilter(idx))}
+                        { selectedFilters.map((filter, idx) => renderFilter(idx))}
                     </div>
                     <div className={styles.buttonsSection}>
-                        <Button onClick={addFilter} disabled={!filters[0].value}>Add filter</Button>
+                        <Button onClick={addFilter} disabled={!selectedFilters[0].value}>Add filter</Button>
                         <Button onClick={removeAllFilters}>Remove All</Button>
                     </div>
                 </div>
@@ -330,9 +305,15 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
     );
 };
 
-export default AdministrationFilters;
-
-export const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
+const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
     const mappedEnumType = mapStringToFilterColumnTypeEnum(column.type || '');
     return { columnName: column.headerName?.replace(' ', '') ?? '', columnType: mappedEnumType };
 });
+
+export {
+    type IAdministrationFilter,
+    type IFiltersColumnOperators,
+    mapGridColumnsToAdministrationFilterProps,
+};
+
+export default AdministrationFilters;

@@ -4,15 +4,15 @@ import { createSlice } from '@reduxjs/toolkit';
 import { IContestStrategyFilter, IFilter } from '../../common/contest-types';
 
 interface IContestState {
-    category: IFilter | null,
-    status: string,
-    strategy: IContestStrategyFilter | null
+    category: IFilter | null;
+    status: string;
+    strategy: IContestStrategyFilter | null;
 }
 
 const initialState: IContestState = {
     category: null,
     status: 'All',
-    strategy: null
+    strategy: null,
 };
 
 export const contestSlice = createSlice({
@@ -20,27 +20,27 @@ export const contestSlice = createSlice({
     initialState,
     reducers: {
         setContestCategory: (state, action) => {
-            state.category = action.payload
+            state.category = action.payload;
         },
         setContestStatus: (state, action) => {
-            state.status = action.payload
+            state.status = action.payload;
         },
         setContestStrategy: (state, action) => {
-            state.strategy = action.payload
+            state.strategy = action.payload;
         },
         clearContestFilters: (state) => {
             state.category = null;
-            state.status =  'All';
+            state.status = 'All';
             state.strategy = null;
-        }
-    }
+        },
+    },
 });
 
 export const {
     setContestCategory,
     setContestStatus,
     setContestStrategy,
-    clearContestFilters
+    clearContestFilters,
 } = contestSlice.actions;
 
 export default contestSlice.reducer;

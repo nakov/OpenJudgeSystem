@@ -54,6 +54,7 @@
     "react-scripts": "^5.0.1",
     "react-slick": "^0.29.0",
     "react-youtube": "^10.0.0",
+    "redux-persist": "^6.0.0",
     "sass": "^1.69.5",
     "slick-carousel": "^1.8.1",
     "svgo": "2.8.0",

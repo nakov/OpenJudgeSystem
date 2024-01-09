@@ -3,6 +3,7 @@ import React from 'react';
 import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 import { IErrorDataType } from '../hooks/use-http';
+import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 
 import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
@@ -320,6 +321,15 @@ interface IFilterColumn {
     columnType: FilterColumnTypeEnum;
 }
 
+interface IContestsAdminSlice {
+    selectedFilters: IAdministrationFilter[];
+    selectedSorters: string[];
+}
+
+interface IRootStore {
+    adminContests: IContestsAdminSlice;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -350,4 +360,6 @@ export type {
     IAdministrationContestProblems,
     IFilterColumn,
     IParticiapntsInContestView,
+    IContestsAdminSlice,
+    IRootStore,
 };

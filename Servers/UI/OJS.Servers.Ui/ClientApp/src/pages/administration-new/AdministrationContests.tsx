@@ -48,6 +48,11 @@ const AdministrationContestsPage = () => {
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        setQueryParams({ ...queryParams, filter: filterParams ?? '', sorting: sortingParams ?? '' });
+    });
+
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filterParams ?? '' });
         // eslint-disable-next-line react-hooks/exhaustive-deps
