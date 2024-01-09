@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { IUserProfileType } from '../../../hooks/use-users';
+import isNilOrEmpty from '../../../utils/check-utils';
 
 import styles from './ProfileAboutInfo.module.scss';
 
@@ -14,14 +15,20 @@ const ProfileAboutInfo = ({ value } : IProfileAboutInfoProps) => (
             <h2>Username:</h2>
             <p>{value.userName}</p>
         </div>
-        <div className={styles.profileAboutInfoGroupControl}>
-            <h2>Name:</h2>
-            <p>
-                {value.firstName}
-                {' '}
-                {value.lastName}
-            </p>
-        </div>
+        {
+            isNilOrEmpty(value.firstName) || isNilOrEmpty(value.lastName)
+                ? null
+                : (
+                    <div className={styles.profileAboutInfoGroupControl}>
+                        <h2>Name:</h2>
+                        <p>
+                            {value.firstName}
+                            {' '}
+                            {value.lastName}
+                        </p>
+                    </div>
+                )
+        }
         <div className={styles.profileAboutInfoGroupControl}>
             <h2>Email:</h2>
             <p>{value.email}</p>

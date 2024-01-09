@@ -27,6 +27,8 @@ namespace OJS.Services.Administration.Data
 
         IQueryable<Contest> GetAllVisible();
 
+        IQueryable<Contest> GetContestWithIps(int id);
+
         IQueryable<Contest> GetAllVisibleByCategory(int categoryId);
 
         IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId);
@@ -47,6 +49,10 @@ namespace OJS.Services.Administration.Data
 
         Task<bool> IsOnlineById(int id);
 
-        Task<bool> IsUserLecturerInByContestAndUser(int id, string? userId);
+        Task<bool> IsUserLecturerInContestByContestAndUser(int id, string? userId);
+
+        Task<bool> IsUserParticipantInByContestAndUser(int id, string? userId);
+
+        Task<bool> IsUserInExamGroupByContestAndUser(int id, string? userId);
     }
 }

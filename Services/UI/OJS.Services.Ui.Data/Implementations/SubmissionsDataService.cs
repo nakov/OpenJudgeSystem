@@ -153,6 +153,10 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
     public bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId) =>
         this.DbSet.Any(s => s.ProblemId == problemId && s.Participant!.UserId == userId && !s.Processed);
 
+    public bool HasUserNotProcessedSubmissionForContest(int contestId, string userId) =>
+        this.DbSet.Any(s => s.Problem.ProblemGroup.ContestId == contestId
+                            && s.Participant!.UserId == userId && !s.Processed);
+
     public async Task<int> GetProblemIdBySubmission(int submissionId)
         => await this.GetByIdQuery(submissionId)
             .Select(p => p.Problem.Id)

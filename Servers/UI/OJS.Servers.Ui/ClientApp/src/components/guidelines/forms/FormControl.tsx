@@ -34,6 +34,7 @@ interface IFormControlProps extends IHaveOptionalClassName {
     checked?: boolean;
     id?: string;
     shouldDisableLabel?: boolean;
+    showPlaceholder?: boolean;
 }
 
 interface ILabelInternalProps extends IHaveChildrenProps, IHaveOptionalClassName {
@@ -100,6 +101,7 @@ const FormControl = ({
     checked = false,
     id = generateId(),
     shouldDisableLabel = false,
+    showPlaceholder = true,
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
 
@@ -203,12 +205,15 @@ const FormControl = ({
                   onInput={handleOnInput}
                   value={formControlValue}
                   checked={checked}
-                  placeholder={labelText}
+                  placeholder={showPlaceholder
+                      ? labelText
+                      // eslint-disable-next-line no-undefined
+                      : undefined}
                 />
             );
         },
-        [ checked, componentClassName, formControlValue, handleOnChange, handleOnInput,
-            id, isChecked, labelText, name, onChange, onClick, type, value ],
+        [ checked, componentClassName, formControlValue, handleOnChange, handleOnInput, id,
+            isChecked, labelText, name, onChange, onClick, showPlaceholder, type, value ],
     );
 
     const generateFormControlWithLabel = useCallback(

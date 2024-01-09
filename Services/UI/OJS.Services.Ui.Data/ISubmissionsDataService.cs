@@ -60,4 +60,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
     int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions);
 
     bool HasUserNotProcessedSubmissionForProblem(int problemId, string userId);
+
+    bool HasUserNotProcessedSubmissionForContest(int contestId, string userId);
 }
