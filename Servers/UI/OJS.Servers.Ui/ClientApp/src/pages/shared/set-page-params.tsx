@@ -13,6 +13,7 @@ const routes = [
     '/logout',
     '/',
     '/profile',
+    '/profile/:username',
     '/submissions',
     '/submissions/:id/details',
     '/contests',
@@ -32,7 +33,9 @@ const routes = [
 const isPathInAllowedRoutes = (pathname: string) => {
     const exactPathname = toLowerCase(pathname.split('?')[0]);
     const matchingRoute = routes.find((route) => {
-        const regexPattern = route.replace(/:id/g, '([1-9]\\d{0,8}|0|2147483647)');
+        const regexPattern = route
+            .replace(/:id/g, '([1-9]\\d{0,8}|0|2147483647)')
+            .replace(/:username/g, '([^/]+)');
         return new RegExp(`^${regexPattern}$`).test(exactPathname);
     });
 

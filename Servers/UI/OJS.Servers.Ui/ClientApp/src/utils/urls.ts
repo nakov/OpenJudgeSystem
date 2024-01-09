@@ -10,7 +10,8 @@ import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
-    IAllContestsUrlParams, IContestDetailsUrlParams,
+    IAllContestsUrlParams,
+    IContestDetailsUrlParams,
     IContestEditUrlParams,
     IContestProblemsUrlParams,
     IDownloadProblemResourceUrlParams,
@@ -26,6 +27,7 @@ import {
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
+    IUserInfoUrlParams,
 } from '../common/url-types';
 
 const
@@ -82,10 +84,13 @@ const administrationDeleteProblem = (id : number) => `
 ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
 // profile
-const getProfileInfoUrl = () => `${baseApiUrl}/Users/GetProfileInfo`;
+
+const getUserProfileInfoUrlByUsername = (username: string) => `/profile/${username}`;
+const getProfileInfoUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Users/GetProfileInfo?username=${username}`;
 const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
-const getAllParticipationsForUserUrl = () => `${baseApiUrl}/Participations/GetAllForUser`;
+// eslint-disable-next-line max-len
+const getAllParticipationsForUserUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Participations/GetAllForUser?username=${username}`;
 
 // contests
 const getIndexContestsUrl = () => `${baseApiUrl}/Contests/GetForHomeIndex`;
@@ -242,6 +247,11 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
     return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
 };
 
+// Username url utils for decoding/encoding usernames containing '.'
+
+const encodeUsernameAsUrlParam = (username: string) => username.replace(/\./g, '~');
+const decodeUsernameFromUrlParam = (username: string) => username.replace(/~/g, '.');
+
 export {
     getLoginSubmitUrl,
     getLogoutUrl,
@@ -253,6 +263,7 @@ export {
     getAdministrationContestsGridUrl,
     getAdministrationNavigation,
     getAdministrationRetestSubmission,
+    getUserProfileInfoUrlByUsername,
     getProfileInfoUrl,
     getParticipateInContestUrl,
     getContestCategoryBreadcrumbItemPath,
@@ -300,4 +311,6 @@ export {
     getAdministrationTestEditUrl,
     getAdministrationTestEditInternalUrl,
     getSubmissionsUrl,
+    encodeUsernameAsUrlParam,
+    decodeUsernameFromUrlParam,
 };

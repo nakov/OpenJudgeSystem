@@ -1,8 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import isNil from 'lodash/isNil';
 
-import { useParticipations } from '../../../hooks/use-participations';
+import { useAuth } from '../../../hooks/use-auth';
+import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
+import { useUsers } from '../../../hooks/use-users';
 import { formatDate } from '../../../utils/dates';
+import { decodeUsernameFromUrlParam } from '../../../utils/urls';
+import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 const columns: GridColDef[] = [
     {
@@ -41,32 +47,52 @@ const columns: GridColDef[] = [
 ];
 
 const ProfileContestParticipations = () => {
+    const [ numberedRows, setNumberedRows ] =
+        useState<Array<IParticipationType>>([]);
+    const { state: { user } } = useAuth();
+
     const {
-        areUserParticipationsRetrieved,
-        userParticipations,
-        getUserParticipations,
+        state: { userParticipations },
+        actions: { getUserParticipations },
     } = useParticipations();
+    const { state: { isProfileInfoLoaded, myProfile } } = useUsers();
+    const { username } = useParams();
 
-    useEffect(() => {
-        if (areUserParticipationsRetrieved) {
-            return;
-        }
+    useEffect(
+        () => {
+            if (!isProfileInfoLoaded) {
+                return;
+            }
 
-        (async () => {
-            await getUserParticipations();
-        })();
-    }, [ areUserParticipationsRetrieved, getUserParticipations, userParticipations ]);
+            const usernameParam = !isNil(username)
+                ? username
+                : myProfile.userName;
+
+            getUserParticipations(decodeUsernameFromUrlParam(usernameParam));
+        },
+        [ isProfileInfoLoaded, getUserParticipations, user.username, myProfile.userName, username ],
+    );
+
+    useEffect(
+        () => setNumberedRows(userParticipations.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
+
+        [ userParticipations ],
+    );
 
     return (
-        <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
-              rows={userParticipations}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[ 5 ]}
-              disableSelectionOnClick
-            />
-        </div>
+        <>
+            <Heading type={HeadingType.secondary}>Participations:</Heading>
+            <div style={{ height: 400, width: '100%' }}>
+                <DataGrid
+                  getRowId={(row) => row.id}
+                  rows={numberedRows}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[ 5 ]}
+                  disableSelectionOnClick
+                />
+            </div>
+        </>
     );
 };
 

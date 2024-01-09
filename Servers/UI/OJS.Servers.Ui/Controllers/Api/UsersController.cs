@@ -22,12 +22,13 @@ public class UsersController : BaseApiController
     /// <summary>
     /// Gets user info for the profile page.
     /// </summary>
+    /// <param name="username">The username of the user.</param>
     /// <returns>User profile info model.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(UserProfileResponseModel), Status200OK)]
-    public async Task<IActionResult> GetProfileInfo()
+    public async Task<IActionResult> GetProfileInfo([FromQuery] string username)
         => await this.usersBusiness
-            .GetUserProfileByUsername(this.HttpContext.User.Identity!.Name)
+            .GetUserProfileByUsername(username)
             .Map<UserProfileResponseModel>()
             .ToOkResult();
 
