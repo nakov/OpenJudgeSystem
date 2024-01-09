@@ -140,7 +140,7 @@ const SubmissionDetailsCodeEditor = () => {
             ? (
                 <div className={concatClassNames(styles.testChangesWrapper, styles.tenPixelsMarginUnder)}>
                     <p>
-                        The input/output data changed. Your (
+                        The input/output data changed and your (
                         {currentSubmission.points}
                         /
                         {currentSubmission.problem.maximumPoints}
