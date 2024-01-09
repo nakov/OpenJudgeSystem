@@ -11,9 +11,8 @@ type ExtraOptionsType = {
 // Add extra options if needed
 }
 type DataType = {
-    errors: {
-        Description: Array<string>;
-    };
+    errors: object;
+    title:string;
 }
 const errorStatusCodes = [ 400, 401, 403 ];
 const succesfullStatusCodes = [ 200, 204 ];
@@ -28,19 +27,19 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
     });
     const result = await baseQuery(args, api, extraOptions);
     const response = result.meta?.response;
-    console.log(result);
 
     if (result.error && response && errorStatusCodes.some((status) => status === Number(result.error.status))) {
         const contentType = response.headers.get('Content-Type');
         if (contentType && !contentType.includes('application/json')) {
             const receivedData = await await result.error.data as DataType;
 
-            const errorText = receivedData.errors.Description[0];
-
-            return { error: { status: 400, data: errorText } };
+            // eslint-disable-next-line prefer-destructuring
+            const errorText = receivedData.title;
+            return { error: { status: 400, data: errorText as string } };
         }
         return result;
     }
+    console.log(response?.status);
 
     if (response && succesfullStatusCodes.some((status) => status === Number(response!.status))) {
         const contentType = response.headers.get('Content-Type');
@@ -72,7 +71,7 @@ export const contestService = createApi({
         getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 0 }),
         getContestProblems: builder.query<Array<IAdministrationContestProblems>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Problems/${id}` }), keepUnusedDataFor: 0 }),
         deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
-        updateContest: builder.mutation<IContestAdministration, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
+        updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
     }),
 });
 

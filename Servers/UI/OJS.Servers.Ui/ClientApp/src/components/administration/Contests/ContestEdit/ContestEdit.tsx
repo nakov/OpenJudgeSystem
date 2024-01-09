@@ -22,8 +22,8 @@ const ContestEdit = (props:IContestEditProps) => {
     const { contestId } = props;
 
     const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
-    const [ errorMessage, setErrorMessage ] = useState<string| null>(null);
-    const [ updateContest, { isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
+    const [ message, setMessage ] = useState<string | null>(undefined);
+    const [ updateContest, { data: updateData, isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
     const navigate = useNavigate();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
@@ -47,7 +47,7 @@ const ContestEdit = (props:IContestEditProps) => {
         startTime: '',
         type: 'Exercise',
     });
-    const [ deleteContest, { isLoading: isDeleting, isSuccess, error } ] = useDeleteContestMutation();
+    const [ deleteContest, { data: deleteData, isLoading: isDeleting, isSuccess, error: deleteError } ] = useDeleteContestMutation();
     useEffect(
         () => {
             if (data) {
@@ -58,16 +58,26 @@ const ContestEdit = (props:IContestEditProps) => {
     );
 
     useEffect(() => {
-        if (error && !isSuccess) {
+        setMessage(null);
+        if (isSuccesfullyUpdated) {
+            setMessage(updateData as string);
+        }
+        if (isSuccess) {
+            setMessage(deleteData as string);
+        }
+    }, [ deleteData, isSuccesfullyUpdated, isSuccess, updateData ]);
+
+    useEffect(() => {
+        if (deleteError && !isSuccess) {
             // The data by default is of type unknown
-            setErrorMessage(error.data);
+            setMessage(deleteError.data as string);
         } else if (updateError && !isSuccess) {
             // The data by default is of type unknown
-            setErrorMessage(updateError.data);
+            setMessage(updateError.data as string);
         } else {
-            setErrorMessage(null);
+            setMessage(null);
         }
-    }, [ error, updateError ]);
+    }, [ deleteError, isSuccess, updateError ]);
 
     const onChange = (e: any) => {
         const { name, value, type, checked } = e.target;
@@ -103,13 +113,15 @@ const ContestEdit = (props:IContestEditProps) => {
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
-                    { errorMessage && (
+                    { message && (
                     <Alert
                       variant={AlertVariant.Filled}
                       vertical={AlertVerticalOrientation.Top}
                       horizontal={AlertHorizontalOrientation.Right}
-                      severity={AlertSeverity.Error}
-                      message={errorMessage}
+                      severity={deleteError || updateError
+                          ? AlertSeverity.Error
+                          : AlertSeverity.Success}
+                      message={message}
                     />
                     )}
                     <Typography className={styles.centralize} variant="h4">
