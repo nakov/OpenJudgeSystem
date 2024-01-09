@@ -20,8 +20,9 @@ interface IFiltersColumnOperators {
     value: string;
 }
 
-interface IAdministrationFilters {
+interface IAdministrationFilterProps {
     columns: IFilterColumn[];
+    shouldUpdateUrl?: boolean;
 }
 
 interface IAdministrationFilter {
@@ -71,8 +72,8 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
     return FilterColumnTypeEnum.STRING;
 };
 
-const AdministrationFilters = (props: IAdministrationFilters) => {
-    const { columns } = props;
+const AdministrationFilters = (props: IAdministrationFilterProps) => {
+    const { columns, shouldUpdateUrl = true } = props;
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { selectedFilters } = useSelector((state: IRootStore) => state.adminContests);
@@ -89,6 +90,9 @@ const AdministrationFilters = (props: IAdministrationFilters) => {
     }, []);
 
     useEffect(() => {
+        if (!shouldUpdateUrl) {
+            return;
+        }
         const formatFilterToString = (filter: IAdministrationFilter) => {
             if (!filter.column || !filter.operator || !filter.value) {
                 return;
