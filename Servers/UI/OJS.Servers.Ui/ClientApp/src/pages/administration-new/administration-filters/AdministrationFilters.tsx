@@ -34,26 +34,28 @@ interface IAdministrationFilter {
     availableColumns: IFilterColumn[];
 }
 
-const STRING_OPERATORS = [
-    { name: 'Contains', value: 'contains' },
-    { name: 'Equals', value: 'equals' },
-    { name: 'Starts with', value: 'startswith' },
-    { name: 'Ends with', value: 'endswith' },
-];
-const BOOL_OPERATORS = [
-    { name: 'Equals', value: 'equals' },
-];
-const NUMBER_OPERATORS = [
-    { name: 'Equals', value: 'equals' },
-    { name: 'Greater Than', value: 'greaterthan' },
-    { name: 'Less Than', value: 'lessthan' },
-    { name: 'Less Than Or Equal', value: 'lessthanorequal' },
-    { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-    { name: 'Equals Not Equals', value: 'equalsnotequals' },
-];
-const DATE_OPERATORS = [
-    { name: 'Test', value: 'test' },
-]; // TBD
+const DROPDOWN_OPERATORS = {
+    [FilterColumnTypeEnum.STRING]: [
+        { name: 'Contains', value: 'contains' },
+        { name: 'Equals', value: 'equals' },
+        { name: 'Starts with', value: 'startswith' },
+        { name: 'Ends with', value: 'endswith' },
+    ],
+    [FilterColumnTypeEnum.BOOL]: [
+        { name: 'Equals', value: 'equals' },
+    ],
+    [FilterColumnTypeEnum.NUMBER]: [
+        { name: 'Equals', value: 'equals' },
+        { name: 'Greater Than', value: 'greaterthan' },
+        { name: 'Less Than', value: 'lessthan' },
+        { name: 'Less Than Or Equal', value: 'lessthanorequal' },
+        { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
+        { name: 'Equals Not Equals', value: 'equalsnotequals' },
+    ],
+    [FilterColumnTypeEnum.DATE]: [
+        { name: 'Test', value: 'test' },
+    ], // TBD
+};
 
 const BOOL_DROPDOWN_VALUES = [
     { name: 'True', value: 'true' },
@@ -160,21 +162,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         dispatch(setAdminContestsFilters(newFiltersArray));
     };
 
-    const getFilterOperatorsByType = (columnType: FilterColumnTypeEnum) => {
-        let operators;
-        if (columnType === FilterColumnTypeEnum.STRING) {
-            operators = STRING_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.NUMBER) {
-            operators = NUMBER_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.BOOL) {
-            operators = BOOL_OPERATORS;
-        } else if (columnType === FilterColumnTypeEnum.DATE) {
-            operators = DATE_OPERATORS;
-        }
-
-        return operators;
-    };
-
     const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
 
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
@@ -185,7 +172,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                 if (updateProperty === 'column') {
                     const columnType = getColumnTypeByName(value);
                     const columnOperators = columnType
-                        ? getFilterOperatorsByType(columnType)
+                        ? DROPDOWN_OPERATORS[columnType]
                         : [];
                     return {
                         column: value,
