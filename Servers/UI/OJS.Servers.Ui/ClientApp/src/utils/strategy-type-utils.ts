@@ -61,6 +61,7 @@ const typeToMonacoLanguage: IDictionary<string> = {
     [StrategyType.JavaScript]: 'javascript',
     [StrategyType.Php]: 'php',
     [StrategyType.Python]: 'python',
+    [StrategyType.Ruby]: 'ruby',
 };
 
 const fullStrategyNameToStrategyType = (strategyName: string): StrategyType => {
