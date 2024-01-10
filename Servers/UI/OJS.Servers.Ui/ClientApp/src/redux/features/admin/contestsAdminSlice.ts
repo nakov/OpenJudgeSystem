@@ -1,41 +1,39 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IAdministrationFilter } from '../../../pages/administration-new/administration-filters/AdministrationFilters';
 
 interface IContestsAdminSlice {
-    selectedFilters: IAdministrationFilter[];
-    selectedSorters: string[];
+    [key: string]: null | {
+        selectedFilters: IAdministrationFilter[];
+        selectedSorters: string[];
+    };
 }
 
-const initialState: IContestsAdminSlice = {
-    selectedFilters: [ {
-        column: '',
-        operator: '',
-        value: '',
-        inputType: FilterColumnTypeEnum.STRING,
-        availableOperators: [],
-        availableColumns: [],
-    } ],
-    selectedSorters: [],
-};
+const initialState: IContestsAdminSlice = {};
 
 // eslint-disable-next-line import/group-exports
 export const contestsAdminSlice = createSlice({
     name: 'adminContests',
     initialState,
     reducers: {
-        setInitialAdminContestsColumns: (state, action) => {
-            // eslint-disable-next-line no-param-reassign,prefer-destructuring
-            state.selectedFilters[0].availableColumns = action.payload;
-        },
         setAdminContestsFilters: (state, action) => {
-            // eslint-disable-next-line no-param-reassign,prefer-destructuring
-            state.selectedFilters = action.payload;
+            // eslint-disable-next-line prefer-destructuring
+            const { key, filters } = action.payload;
+
+            if (state[key]) {
+                // eslint-disable-next-line no-param-reassign,@typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                // eslint-disable-next-line no-param-reassign
+                state[key].selectedFilters = filters;
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                state[key] = { selectedFilters: [ filters ], selectedSorters: [] };
+            }
         },
         setAdminContestsSorters: (state, action) => {
             // eslint-disable-next-line no-param-reassign,prefer-destructuring
-            state.selectedSorters = action.payload;
+            // state.selectedSorters = action.payload;
+            console.log('action => ', action);
         },
     },
 });
@@ -44,7 +42,6 @@ export const contestsAdminSlice = createSlice({
 export const {
     setAdminContestsFilters,
     setAdminContestsSorters,
-    setInitialAdminContestsColumns,
 } = contestsAdminSlice.actions;
 
 export default contestsAdminSlice.reducer;

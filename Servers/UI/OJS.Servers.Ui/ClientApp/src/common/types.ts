@@ -326,8 +326,10 @@ interface IFilterColumn {
 }
 
 interface IContestsAdminSlice {
-    selectedFilters: IAdministrationFilter[];
-    selectedSorters: string[];
+    [key: string]: null | {
+        selectedFilters: IAdministrationFilter[];
+        selectedSorters: string[];
+    };
 }
 
 interface IRootStore {

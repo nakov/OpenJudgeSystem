@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IFilterColumn, IRootStore } from '../../../common/types';
-import { setAdminContestsFilters, setInitialAdminContestsColumns } from '../../../redux/features/admin/contestsAdminSlice';
+import { setAdminContestsFilters } from '../../../redux/features/admin/contestsAdminSlice';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -22,6 +22,7 @@ interface IFiltersColumnOperators {
 
 interface IAdministrationFilterProps {
     columns: IFilterColumn[];
+    location: string;
     shouldUpdateUrl?: boolean;
 }
 
@@ -75,18 +76,85 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 };
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, shouldUpdateUrl = true } = props;
+    const { columns, shouldUpdateUrl = true, location } = props;
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { selectedFilters } = useSelector((state: IRootStore) => state.adminContests);
+    const adminContests = useSelector((state: IRootStore) => state.adminContests);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchor);
 
+    const selectedFilters = React.useMemo(() => {
+        if (adminContests[location]) {
+            return adminContests[location]?.selectedFilters || [];
+        }
+        return [];
+    }, [ adminContests, location ]);
+
+    const mapUrlToFilters = (): IAdministrationFilter[] => {
+        const urlSelectedFilters: IAdministrationFilter[] = [ {
+            column: '',
+            operator: '',
+            value: '',
+            inputType: FilterColumnTypeEnum.STRING,
+            availableOperators: [],
+            availableColumns: columns,
+        } ];
+
+        const filterParams = searchParams.get('filter') ?? '';
+        const urlParams = filterParams.split('&').filter((param) => param);
+        urlParams.forEach((param: string) => {
+            const paramChunks = param.split('~').filter((chunk) => chunk);
+
+            const columnValue = paramChunks[0];
+            const operator = paramChunks[1];
+            const value = paramChunks[2];
+
+            const column = columns.find((c) => c.columnName.toLowerCase() === columnValue);
+            const availableColumns = columns.filter((c) => !urlSelectedFilters.some((f) => f.column === c.columnName));
+            const availableOperators = column?.columnType
+                ? DROPDOWN_OPERATORS[column.columnType]
+                : [];
+
+            const filter: IAdministrationFilter = {
+                column: column?.columnName || '',
+                operator,
+                value,
+                availableOperators,
+                availableColumns,
+                inputType: column?.columnType || FilterColumnTypeEnum.STRING,
+            };
+
+            urlSelectedFilters.push(filter);
+        });
+
+        return urlSelectedFilters;
+    };
+
     useEffect(() => {
-        if (!selectedFilters[0].availableColumns.length) {
-            dispatch(setInitialAdminContestsColumns(columns));
+        if (!shouldUpdateUrl) {
+            return;
+        }
+
+        const urlSelectedFilters = mapUrlToFilters();
+        dispatch(setAdminContestsFilters({ key: location, filters: urlSelectedFilters }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        if (!adminContests[location]?.selectedFilters) {
+            dispatch(setAdminContestsFilters({
+                key: location,
+                filters: {
+                    column: '',
+                    operator: '',
+                    value: '',
+                    inputType: FilterColumnTypeEnum.STRING,
+                    availableOperators: [],
+                    availableColumns: columns,
+                },
+            }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -95,6 +163,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         if (!shouldUpdateUrl) {
             return;
         }
+
         const formatFilterToString = (filter: IAdministrationFilter) => {
             if (!filter.column || !filter.operator || !filter.value) {
                 return;
@@ -140,26 +209,29 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             availableColumns,
             inputType: FilterColumnTypeEnum.STRING,
         }, ...selectedFilters ];
-        dispatch(setAdminContestsFilters(newFiltersArray));
+        dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
     };
 
     const removeAllFilters = () => {
         searchParams.delete('filter');
         setSearchParams(searchParams);
-        dispatch(setAdminContestsFilters([ {
-            column: '',
-            operator: '',
-            value: '',
-            availableOperators: [],
-            availableColumns: columns,
-            inputType: FilterColumnTypeEnum.STRING,
-        } ]));
+        dispatch(setAdminContestsFilters({
+            key: location,
+            filters: [ {
+                column: '',
+                operator: '',
+                value: '',
+                availableOperators: [],
+                availableColumns: columns,
+                inputType: FilterColumnTypeEnum.STRING,
+            } ],
+        }));
     };
 
     const removeSingleFilter = (idx: number) => {
         const newFiltersArray = [ ...selectedFilters ];
         newFiltersArray.splice(idx, 1);
-        dispatch(setAdminContestsFilters(newFiltersArray));
+        dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
     };
 
     const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
@@ -188,7 +260,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        dispatch(setAdminContestsFilters(newFiltersArray));
+        dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
     };
 
     const renderInputField = (idx: number) => {

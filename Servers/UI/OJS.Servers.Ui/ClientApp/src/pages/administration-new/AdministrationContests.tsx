@@ -209,7 +209,7 @@ const AdministrationContestsPage = () => {
             filterable: false,
             sortable: false,
             renderCell: (params: GridRenderCellParams) => (
-                <Link to={`/administration/contests/${params.row.id}`}>
+                <Link to={`/administration-new/contests/${params.row.id}`}>
                     <ShortcutIcon />
                 </Link>
             ),
@@ -234,7 +234,7 @@ const AdministrationContestsPage = () => {
                             { openModal && renderModal() }
                             <Typography marginBottom="0.5rem" align="center" variant="h5">Contests</Typography>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
-                                <AdministrationFilters columns={filtersColumns} />
+                                <AdministrationFilters columns={filtersColumns} location="allContests" />
                                 <AdministrationSorting columns={sortingColumns} />
                             </div>
                             <DataGrid

@@ -115,7 +115,11 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
                         <>
                             {/* { openModal && renderModal() } */}
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
-                                <AdministrationFilters columns={filtersColumns} shouldUpdateUrl={false} />
+                                <AdministrationFilters
+                                  columns={filtersColumns}
+                                  shouldUpdateUrl={false}
+                                  location={`contestDetailsParticipants-${contestId}`}
+                                />
                                 <AdministrationSorting columns={sortingColumns} />
                             </div>
                             <DataGrid
