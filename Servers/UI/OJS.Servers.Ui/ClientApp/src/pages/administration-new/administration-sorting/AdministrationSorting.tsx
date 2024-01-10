@@ -181,6 +181,11 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                     : 'open' }
                 {' '}
                 sorters
+                <span style={{ marginLeft: '10px', color: 'black' }}>
+                    (
+                    {sorters.filter((s) => s.columnName).length}
+                    ) Active
+                </span>
             </Button>
             <BasePopup anchor={anchor} open={open}>
                 <div className={styles.administrationSorters}>

@@ -352,6 +352,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                     : 'open' }
                 {' '}
                 filters
+                <span style={{ marginLeft: '10px', color: 'black' }}>
+                    (
+                    {selectedFilters.filter((f) => f.value).length}
+                    ) Active
+                </span>
             </Button>
             <BasePopup anchor={anchor} open={open}>
                 <div className={styles.administrationFilters}>
