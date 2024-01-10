@@ -227,31 +227,29 @@ const AdministrationContestsPage = () => {
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div style={{ height: '800px' }}>
+                { openModal && renderModal() }
+                <Typography marginBottom="0.5rem" align="center" variant="h5">Contests</Typography>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
+                    <AdministrationFilters columns={filtersColumns} location="allContests" />
+                    <AdministrationSorting columns={sortingColumns} />
+                </div>
                 { error
                     ? <div>Error loading data</div>
                     : (
-                        <>
-                            { openModal && renderModal() }
-                            <Typography marginBottom="0.5rem" align="center" variant="h5">Contests</Typography>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
-                                <AdministrationFilters columns={filtersColumns} location="allContests" />
-                                <AdministrationSorting columns={sortingColumns} />
-                            </div>
-                            <DataGrid
-                              columns={[ ...dataColumns, ...nonFilterableColumns ]}
-                              rows={data?.items ?? []}
-                              rowCount={data?.totalCount ?? 0}
-                              paginationMode="server"
-                              onPageChange={(e) => {
-                                  setQueryParams({ ...queryParams, page: e + 1 });
-                              }}
-                              rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                              onPageSizeChange={(itemsPerRow: number) => {
-                                  setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
-                              }}
-                              pageSize={queryParams.ItemsPerPage}
-                            />
-                        </>
+                        <DataGrid
+                          columns={[ ...dataColumns, ...nonFilterableColumns ]}
+                          rows={data?.items ?? []}
+                          rowCount={data?.totalCount ?? 0}
+                          paginationMode="server"
+                          onPageChange={(e) => {
+                              setQueryParams({ ...queryParams, page: e + 1 });
+                          }}
+                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
+                          onPageSizeChange={(itemsPerRow: number) => {
+                              setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
+                          }}
+                          pageSize={queryParams.ItemsPerPage}
+                        />
                     )}
             </div>
         </Slide>

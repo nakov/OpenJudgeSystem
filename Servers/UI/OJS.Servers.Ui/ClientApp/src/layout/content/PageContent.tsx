@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+// import { useAuth } from '../../hooks/use-auth';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -142,8 +143,7 @@ const adminRoutes = [
 ];
 
 const PageContent = () => {
-    // const { state: loggedInUser } = useAuth();
-    // const { user: { isAdmin } } = loggedInUser;
+    // const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
 
     const renderRoute = (path: string, Element: FC, title: string | undefined, isAdminRoute: boolean) => {
         let WrappedElement = asPage(withTitle(Element, title));

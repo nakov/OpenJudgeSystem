@@ -86,10 +86,19 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const open = Boolean(anchor);
 
     const selectedFilters = React.useMemo(() => {
+        const defaultFilter = {
+            column: '',
+            operator: '',
+            value: '',
+            inputType: FilterColumnTypeEnum.STRING,
+            availableOperators: [],
+            availableColumns: columns,
+        };
         if (adminContests[location]) {
-            return adminContests[location]?.selectedFilters || [];
+            return adminContests[location]?.selectedFilters || [ defaultFilter ];
         }
-        return [];
+        return [ defaultFilter ];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ adminContests, location ]);
 
     const mapUrlToFilters = (): IAdministrationFilter[] => {
