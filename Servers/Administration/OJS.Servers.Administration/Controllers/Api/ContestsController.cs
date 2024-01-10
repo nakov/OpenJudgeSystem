@@ -54,9 +54,9 @@ public class ContestsController : ControllerBase
             return this.BadRequest("Contest configuration is not valid.");
         }
 
-        var contest = await this.contestsBusinessServiceService.Edit(model, id);
+        await this.contestsBusinessServiceService.Edit(model, id);
 
-        return this.Ok(contest);
+        return this.Ok("Contest was successfully updated.");
     }
 
     [HttpGet]

@@ -78,7 +78,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         return contestProblems;
     }
 
-    public async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model, int id)
+    public async Task Edit(ContestAdministrationModel model, int id)
     {
         var oldContest = await this.contestsData.GetByIdQuery(id).AsNoTracking().FirstOrDefaultAsync();
 
@@ -106,6 +106,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             AddProblemGroupsToContest(oldContest, model.NumberOfProblemGroups);
         }
 
+        //TODO check what is happening here.
         oldContest.IpsInContests.Clear();
         await this.AddIpsToContest(oldContest, model.AllowedIps);
 
@@ -113,8 +114,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         await this.contestsData.SaveChanges();
 
         await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, model);
-
-        return model;
     }
 
     public async Task Delete(int id)

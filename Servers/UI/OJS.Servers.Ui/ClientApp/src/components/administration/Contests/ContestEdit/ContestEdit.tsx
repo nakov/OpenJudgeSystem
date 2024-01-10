@@ -28,7 +28,8 @@ const ContestEdit = (props:IContestEditProps) => {
     const { contestId } = props;
 
     const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
-    const [ message, setMessage ] = useState<string | null>(undefined);
+    const [ message, setMessage ] = useState<string | null>(null);
+    const [ isValidForm, setIsValidForm ] = useState<boolean>(true);
     // eslint-disable-next-line max-len
     const [ updateContest, { data: updateData, isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
     const navigate = useNavigate();
@@ -57,7 +58,7 @@ const ContestEdit = (props:IContestEditProps) => {
     });
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
-        isNameValid: false,
+        isNameValid: true,
         isTypeTouched: false,
         isTypeValid: true,
         isLimitBetweenSubmissionsTouched: false,
@@ -99,6 +100,15 @@ const ContestEdit = (props:IContestEditProps) => {
             setMessage(null);
         }
     }, [ deleteError, isSuccess, updateError ]);
+
+    const validateForm = () => {
+        const isValid = contestValidations.isNameValid &&
+        contestValidations.isTypeValid &&
+        contestValidations.isLimitBetweenSubmissionsValid &&
+        contestValidations.isOrderByValid &&
+        contestValidations.isNewIpPasswordValid;
+        setIsValidForm(isValid);
+    };
 
     const onChange = (e: any) => {
         const { name, value, checked } = e.target;
@@ -156,9 +166,15 @@ const ContestEdit = (props:IContestEditProps) => {
             break;
         case 'contestPassword':
             contestPassword = value;
+            if (!value) {
+                contestPassword = null;
+            }
             break;
         case 'practicePassword':
             practicePassword = value;
+            if (!value) {
+                practicePassword = null;
+            }
             break;
         case 'allowedIps':
             allowedIps = value;
@@ -167,24 +183,42 @@ const ContestEdit = (props:IContestEditProps) => {
             currentContestValidations.isNewIpPasswordTouched = true;
             currentContestValidations.isNewIpPasswordValid = true;
             newIpPassword = value;
+            if (!value) {
+                newIpPassword = null;
+            }
             if (newIpPassword!.length > 20) {
                 currentContestValidations.isNewIpPasswordValid = false;
             }
             break;
         case 'description':
             description = value;
+            if (!value) {
+                description = null;
+            }
             break;
         case 'startTime':
-            startTime = value;
+            startTime = null;
+            if (value) {
+                startTime = value;
+            }
             break;
         case 'endTime':
-            endTime = value;
+            endTime = null;
+            if (value) {
+                endTime = value;
+            }
             break;
         case 'practiceStartTime':
-            practiceStartTime = value;
+            practiceStartTime = null;
+            if (value) {
+                practiceStartTime = value;
+            }
             break;
         case 'practiceEndTime':
-            practiceEndTime = value;
+            practiceEndTime = null;
+            if (value) {
+                practiceEndTime = value;
+            }
             break;
         case 'isVisible':
             isVisible = checked;
@@ -225,6 +259,7 @@ const ContestEdit = (props:IContestEditProps) => {
             categoryId,
             categoryName,
         }));
+        validateForm();
     };
 
     const handleAutocompleteChange = (name: string, newValue:IContestCategories) => {
@@ -259,8 +294,9 @@ const ContestEdit = (props:IContestEditProps) => {
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
-                    {/* { message && (
+                    { message && (
                     <Alert
+                      autoHideDuration={3000}
                       variant={AlertVariant.Filled}
                       vertical={AlertVerticalOrientation.Top}
                       horizontal={AlertHorizontalOrientation.Right}
@@ -269,7 +305,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           : AlertSeverity.Success}
                       message={message}
                     />
-                    )} */}
+                    )}
                     <Typography className={styles.centralize} variant="h4">
                         {contest.name}
                     </Typography>
@@ -360,7 +396,7 @@ const ContestEdit = (props:IContestEditProps) => {
                                   type="text"
                                   label="Contest Password"
                                   variant="standard"
-                                  value={contest.contestPassword}
+                                  value={contest.contestPassword || ''}
                                   name="contestPassword"
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
@@ -515,7 +551,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         </Box>
                     </form>
                     <div className={styles.buttonsWrapper}>
-                        <Button variant="contained" onClick={() => edit()} className={styles.button}>Edit</Button>
+                        <Button variant="contained" onClick={() => edit()} className={styles.button} disabled={!isValidForm}>Edit</Button>
                         <Button className={styles.button} variant="contained" color="error" onClick={confirmDeleteContest}>Delete</Button>
                     </div>
                 </div>

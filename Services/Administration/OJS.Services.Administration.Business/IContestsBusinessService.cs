@@ -19,6 +19,7 @@ public interface IContestsBusinessService : IGridDataService<Contest>, IService
 
     Task<IEnumerable<ContestViewProblemModel>> GetContestProblems(int id);
 
-    Task<ContestAdministrationModel> Edit(ContestAdministrationModel model, int id);
+    Task Edit(ContestAdministrationModel model, int id);
+
     Task Delete(int id);
 }

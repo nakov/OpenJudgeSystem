@@ -292,11 +292,11 @@ interface IContestAdministration {
     categoryId: number;
     categoryName: string;
     description: string | null;
-    startTime: string;
-    endTime: string;
-    practiceStartTime: string;
-    practiceEndTime: string;
-    contestPassword: string;
+    startTime: string | null;
+    endTime: string | null;
+    practiceStartTime: string | null;
+    practiceEndTime: string | null;
+    contestPassword: string | null;
     practicePassword: string | null;
     limitBetweenSubmissions: number;
     isVisible: boolean;

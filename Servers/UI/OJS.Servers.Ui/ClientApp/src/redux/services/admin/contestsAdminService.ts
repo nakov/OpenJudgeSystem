@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
@@ -13,8 +14,9 @@ type ExtraOptionsType = {
 type DataType = {
     errors: object;
     title:string;
+    detail:string;
 }
-const errorStatusCodes = [ 400, 401, 403 ];
+const errorStatusCodes = [ 400, 401, 403, 500 ];
 const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
@@ -28,19 +30,18 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 
     const result = await baseQuery(args, api, extraOptions);
     const response = result.meta?.response;
-
     if (result.error && response && errorStatusCodes.some((status) => status === Number(result.error.status))) {
         const contentType = response.headers.get('Content-Type');
         if (contentType && !contentType.includes('application/json')) {
             const receivedData = await await result.error.data as DataType;
-
-            // eslint-disable-next-line prefer-destructuring
             const errorText = receivedData.title;
             return { error: { status: 400, data: errorText as string } };
         }
-        return result;
+
+        const receivedData = await await result.error.data as DataType;
+        const errorText = receivedData.detail;
+        return { error: { status: 400, data: errorText as string } };
     }
-    console.log(response?.status);
 
     if (response && succesfullStatusCodes.some((status) => status === Number(response!.status))) {
         const contentType = response.headers.get('Content-Type');
