@@ -1,12 +1,18 @@
+/* eslint-disable no-case-declarations */
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/jsx-no-bind */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-len */
 /* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Autocomplete, AutocompleteRenderInputParams, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 // eslint-disable-next-line no-restricted-imports
 import { isNaN } from 'lodash';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { IContestAdministration } from '../../../../common/types';
+import { IContestAdministration, IContestCategories } from '../../../../common/types';
+import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -23,8 +29,10 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
     const [ message, setMessage ] = useState<string | null>(undefined);
+    // eslint-disable-next-line max-len
     const [ updateContest, { data: updateData, isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
     const navigate = useNavigate();
+    const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -47,6 +55,19 @@ const ContestEdit = (props:IContestEditProps) => {
         startTime: '',
         type: 'Exercise',
     });
+    const [ contestValidations, setContestValidations ] = useState({
+        isNameTouched: false,
+        isNameValid: false,
+        isTypeTouched: false,
+        isTypeValid: true,
+        isLimitBetweenSubmissionsTouched: false,
+        isLimitBetweenSubmissionsValid: true,
+        isOrderByTouched: false,
+        isOrderByValid: true,
+        isNewIpPasswordTouched: false,
+        isNewIpPasswordValid: true,
+    });
+
     const [ deleteContest, { data: deleteData, isLoading: isDeleting, isSuccess, error: deleteError } ] = useDeleteContestMutation();
     useEffect(
         () => {
@@ -80,15 +101,140 @@ const ContestEdit = (props:IContestEditProps) => {
     }, [ deleteError, isSuccess, updateError ]);
 
     const onChange = (e: any) => {
-        const { name, value, type, checked } = e.target;
-        const newValue = type === 'checkbox'
-            ? checked
-            : value;
-
-        setContest((prevContest) => ({
-            ...prevContest,
-            [name]: newValue,
+        const { name, value, checked } = e.target;
+        let contestName = contest.name;
+        let contestType = contest.type;
+        let limitBetweenSubmissions = contest.limitBetweenSubmissions;
+        let orderBy = contest.orderBy;
+        let contestPassword = contest.contestPassword;
+        let practicePassword = contest.practicePassword;
+        let allowedIps = contest.allowedIps;
+        let newIpPassword = contest.newIpPassword;
+        let description = contest.description;
+        let startTime = contest.startTime;
+        let endTime = contest.endTime;
+        let practiceStartTime = contest.practiceStartTime;
+        let practiceEndTime = contest.practiceEndTime;
+        let isVisible = contest.isVisible;
+        let allowParallelSubmissionsInTasks = contest.allowParallelSubmissionsInTasks;
+        let autoChangeTestsFeedbackVisibility = contest.autoChangeTestsFeedbackVisibility;
+        let categoryId = contest.categoryId;
+        let categoryName = contest.categoryName;
+        const currentContestValidations = contestValidations;
+        // eslint-disable-next-line default-case
+        switch (name) {
+        case 'name':
+            contestName = value;
+            currentContestValidations.isNameTouched = true;
+            currentContestValidations.isNameValid = true;
+            if (value.length < 4 || value.length > 100) {
+                currentContestValidations.isNameValid = false;
+            }
+            break;
+        case 'type':
+            contestType = value;
+            currentContestValidations.isTypeTouched = true;
+            // eslint-disable-next-line no-case-declarations
+            const isValid = !!Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).some((x) => x === value);
+            currentContestValidations.isTypeValid = isValid;
+            break;
+        case 'limitBetweenSubmissions':
+            currentContestValidations.isLimitBetweenSubmissionsTouched = true;
+            currentContestValidations.isLimitBetweenSubmissionsValid = true;
+            limitBetweenSubmissions = value;
+            if (value < 0) {
+                currentContestValidations.isLimitBetweenSubmissionsValid = false;
+            }
+            break;
+        case 'orderBy':
+            currentContestValidations.isOrderByTouched = true;
+            currentContestValidations.isOrderByValid = true;
+            orderBy = value;
+            if (value < 0) {
+                currentContestValidations.isOrderByValid = false;
+            }
+            break;
+        case 'contestPassword':
+            contestPassword = value;
+            break;
+        case 'practicePassword':
+            practicePassword = value;
+            break;
+        case 'allowedIps':
+            allowedIps = value;
+            break;
+        case 'newIpPassword':
+            currentContestValidations.isNewIpPasswordTouched = true;
+            currentContestValidations.isNewIpPasswordValid = true;
+            newIpPassword = value;
+            if (newIpPassword!.length > 20) {
+                currentContestValidations.isNewIpPasswordValid = false;
+            }
+            break;
+        case 'description':
+            description = value;
+            break;
+        case 'startTime':
+            startTime = value;
+            break;
+        case 'endTime':
+            endTime = value;
+            break;
+        case 'practiceStartTime':
+            practiceStartTime = value;
+            break;
+        case 'practiceEndTime':
+            practiceEndTime = value;
+            break;
+        case 'isVisible':
+            isVisible = checked;
+            break;
+        case 'allowParallelSubmissionsInTasks':
+            allowParallelSubmissionsInTasks = checked;
+            break;
+        case 'autoChangeTestsFeedbackVisibility':
+            autoChangeTestsFeedbackVisibility = checked;
+            break;
+        case 'category':
+            const category = contestCategories?.find((cc) => cc.id === value);
+            if (category) {
+                categoryId = category.id;
+                categoryName = category.name;
+            }
+            break;
+        }
+        setContestValidations(currentContestValidations);
+        setContest((prevState) => ({
+            ...prevState,
+            name: contestName,
+            type: contestType,
+            limitBetweenSubmissions,
+            orderBy,
+            contestPassword,
+            practicePassword,
+            allowedIps,
+            newIpPassword,
+            description,
+            startTime,
+            endTime,
+            practiceStartTime,
+            practiceEndTime,
+            isVisible,
+            allowParallelSubmissionsInTasks,
+            autoChangeTestsFeedbackVisibility,
+            categoryId,
+            categoryName,
         }));
+    };
+
+    const handleAutocompleteChange = (name: string, newValue:IContestCategories) => {
+        const event = {
+            target: {
+                name,
+                value: newValue?.id,
+            },
+        };
+        onChange(event);
     };
 
     const confirmDeleteContest = () => {
@@ -109,11 +255,11 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     return (
-        isFetching || isLoading || isDeleting
+        isFetching || isLoading || isDeleting || isGettingCategories
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
-                    { message && (
+                    {/* { message && (
                     <Alert
                       variant={AlertVariant.Filled}
                       vertical={AlertVerticalOrientation.Top}
@@ -123,7 +269,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           : AlertSeverity.Success}
                       message={message}
                     />
-                    )}
+                    )} */}
                     <Typography className={styles.centralize} variant="h4">
                         {contest.name}
                     </Typography>
@@ -144,6 +290,12 @@ const ContestEdit = (props:IContestEditProps) => {
                                   name="name"
                                   onChange={(e) => onChange(e)}
                                   value={contest.name}
+                                  color={contestValidations.isNameValid && contestValidations.isNameTouched
+                                      ? 'success'
+                                      : 'primary'}
+                                  error={(contestValidations.isNameTouched && !contestValidations.isNameValid)}
+                                  // eslint-disable-next-line max-len
+                                  helperText={(contestValidations.isNameTouched && !contestValidations.isNameValid) && 'Contest name length must be between 4 and 100 characters long'}
                                 />
                                 <FormControl
                                   className={styles.inputRow}
@@ -156,23 +308,34 @@ const ContestEdit = (props:IContestEditProps) => {
                                       name="type"
                                       labelId="contest-type"
                                       onChange={(e) => onChange(e)}
+                                      onBlur={(e) => onChange(e)}
+                                      color={contestValidations.isTypeValid && contestValidations.isTypeTouched
+                                          ? 'success'
+                                          : 'primary'}
+                                      error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
                                     >
                                         {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
                                             <MenuItem key={key} value={key}>
                                                 {key}
                                             </MenuItem>
                                         ))}
+                                        helperText=
+                                        {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
+                                        'Contest type is invalid'}
                                     </Select>
                                 </FormControl>
-                                <TextField
+                                <Autocomplete
                                   className={styles.inputRow}
-                                  label="Category Name"
-                                  variant="standard"
-                                  value={contest.categoryName}
-                                  name="categoryName"
-                                  onChange={(e) => onChange(e)}
-                                  multiline
-                                  type="text"
+                                  onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
+                                  value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
+                                  options={contestCategories!}
+                                  renderInput={(params) => <TextField {...params} label="Select Option" key={params.id} />}
+                                  getOptionLabel={(option) => option?.name}
+                                  renderOption={(properties, option) => (
+                                      <MenuItem {...properties} key={option.id} value={option.id}>
+                                          {option.name}
+                                      </MenuItem>
+                                  )}
                                 />
                                 <TextField
                                   className={styles.inputRow}
@@ -183,6 +346,12 @@ const ContestEdit = (props:IContestEditProps) => {
                                   onChange={(e) => onChange(e)}
                                   value={contest.limitBetweenSubmissions}
                                   InputLabelProps={{ shrink: true }}
+                                  color={contestValidations.isLimitBetweenSubmissionsValid && contestValidations.isLimitBetweenSubmissionsTouched
+                                      ? 'success'
+                                      : 'primary'}
+                                  error={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid)}
+                                // eslint-disable-next-line max-len
+                                  helperText={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid) && 'Limit between submissions cannot be less than 0'}
                                 />
                             </Box>
                             <Box>
@@ -214,6 +383,12 @@ const ContestEdit = (props:IContestEditProps) => {
                                   name="newIpPassword"
                                   onChange={(e) => onChange(e)}
                                   type="text"
+                                  color={contestValidations.isNewIpPasswordValid && contestValidations.isNewIpPasswordTouched
+                                      ? 'success'
+                                      : 'primary'}
+                                  error={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid)}
+                            // eslint-disable-next-line max-len
+                                  helperText={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid) && 'New Ip password cannot be more than 20 characters long'}
                                 />
                                 <TextField
                                   className={styles.inputRow}
@@ -223,15 +398,24 @@ const ContestEdit = (props:IContestEditProps) => {
                                   value={contest.orderBy}
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
+                                  name="orderBy"
+                                  color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
+                                      ? 'success'
+                                      : 'primary'}
+                                  error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
+                              // eslint-disable-next-line max-len
+                                  helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
                                 />
                                 <TextField
                                   className={styles.inputRow}
                                   type="text"
                                   label="Allowed Ips"
                                   variant="standard"
+                                  placeholder="Split by ,"
                                   value={contest.allowedIps}
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
+                                  name="allowedIps"
                                 />
                             </Box>
                         </Box>

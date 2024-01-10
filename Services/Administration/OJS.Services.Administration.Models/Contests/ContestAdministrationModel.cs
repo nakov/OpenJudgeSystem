@@ -7,8 +7,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using OJS.Data.Validation;
 using OJS.Common.Enumerations;
-using System.Collections.Generic;
-using OJS.Data.Models.Problems;
+using System.Linq;
 
 public class ContestAdministrationModel : IMapExplicitly
 {
@@ -100,12 +99,12 @@ public class ContestAdministrationModel : IMapExplicitly
                 => opt.MapFrom(c => c.ContestPassword))
             .ForMember(crm => crm.PracticePassword, opt
                 => opt.MapFrom(c => c.PracticePassword))
-            .ForMember(crm => crm.AllowedIps, opt
-                => opt.MapFrom(c => c.IpsInContests))
             .ForMember(crm => crm.Duration, opt
                 => opt.MapFrom(c => c.Duration))
             .ForMember(crm => crm.NumberOfProblemGroups, opt
-                => opt.MapFrom(c => c.ProblemGroups.Count));
+                => opt.MapFrom(c => c.ProblemGroups.Count))
+            .ForMember(crm => crm.AllowedIps, opt
+                => opt.MapFrom(c => string.Join(',', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
 
         configuration.CreateMap<ContestAdministrationModel, Contest>()
             .ForMember(crm => crm.Name, opt

@@ -25,6 +25,7 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
             return headers;
         },
     });
+
     const result = await baseQuery(args, api, extraOptions);
     const response = result.meta?.response;
 

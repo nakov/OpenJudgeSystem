@@ -78,15 +78,16 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         return contestProblems;
     }
 
-    public async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model)
+    public async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model, int id)
     {
-        var oldContest = await this.contestsData.GetByIdQuery(model.Id!.Value).AsNoTracking().FirstOrDefaultAsync();
+        var oldContest = await this.contestsData.GetByIdQuery(id).AsNoTracking().FirstOrDefaultAsync();
 
         if (oldContest is null)
         {
-            throw new ArgumentNullException($"Contest with Id:{model.Id} not found");
+            throw new ArgumentNullException($"Contest with Id:{id} not found");
         }
 
+        model.Id = id;
         // await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
         //     oldContest, model);
 

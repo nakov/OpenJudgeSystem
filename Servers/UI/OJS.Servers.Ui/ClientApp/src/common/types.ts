@@ -306,6 +306,10 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
 }
+interface IContestCategories {
+    id: number;
+    name: string;
+}
 
 interface IAdministrationContestProblems {
     id: number;
@@ -362,4 +366,5 @@ export type {
     IParticiapntsInContestView,
     IContestsAdminSlice,
     IRootStore,
+    IContestCategories,
 };

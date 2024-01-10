@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import submissionDetailsReducer from './features/submissionDetailsSlice';
+import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // services
 import contestsAdminService from './services/admin/contestsAdminService';
 import participantsAdminService from './services/admin/participantsAdminService';
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
+    [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -40,6 +42,7 @@ const store = configureStore({
         submissionDetailsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
+        contestCategoriesAdminService.middleware,
     ]),
 });
 

@@ -46,15 +46,15 @@ public class ContestsController : ControllerBase
 
     [HttpPatch]
     [Route("{id}")]
-    public async Task<IActionResult> Update(ContestAdministrationModel model)
+    public async Task<IActionResult> Update(ContestAdministrationModel model, [FromRoute] int id)
     {
         //TODO: Note should there be check if user is admin or lecturer for the contest.
-        if (!IsValidContest(model) || !model.Id.HasValue)
+        if (!IsValidContest(model))
         {
             return this.BadRequest("Contest configuration is not valid.");
         }
 
-        var contest = await this.contestsBusinessServiceService.Edit(model);
+        var contest = await this.contestsBusinessServiceService.Edit(model, id);
 
         return this.Ok(contest);
     }
