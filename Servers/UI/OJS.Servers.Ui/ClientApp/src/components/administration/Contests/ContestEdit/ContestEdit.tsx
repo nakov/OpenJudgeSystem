@@ -1,13 +1,10 @@
-/* eslint-disable no-case-declarations */
+/* eslint-disable no-restricted-imports */
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable max-len */
+/* eslint-disable no-case-declarations */
 /* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Autocomplete, AutocompleteRenderInputParams, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
-// eslint-disable-next-line no-restricted-imports
+import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { isNaN } from 'lodash';
 
 import { ContestVariation } from '../../../../common/contest-types';
@@ -111,25 +108,28 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     const onChange = (e: any) => {
+        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
-        let contestName = contest.name;
-        let contestType = contest.type;
-        let limitBetweenSubmissions = contest.limitBetweenSubmissions;
-        let orderBy = contest.orderBy;
-        let contestPassword = contest.contestPassword;
-        let practicePassword = contest.practicePassword;
-        let allowedIps = contest.allowedIps;
-        let newIpPassword = contest.newIpPassword;
-        let description = contest.description;
-        let startTime = contest.startTime;
-        let endTime = contest.endTime;
-        let practiceStartTime = contest.practiceStartTime;
-        let practiceEndTime = contest.practiceEndTime;
-        let isVisible = contest.isVisible;
-        let allowParallelSubmissionsInTasks = contest.allowParallelSubmissionsInTasks;
-        let autoChangeTestsFeedbackVisibility = contest.autoChangeTestsFeedbackVisibility;
-        let categoryId = contest.categoryId;
-        let categoryName = contest.categoryName;
+        let {
+            name: contestName,
+            type: contestType,
+            limitBetweenSubmissions,
+            orderBy,
+            contestPassword,
+            practicePassword,
+            allowedIps,
+            newIpPassword,
+            description,
+            startTime,
+            endTime,
+            practiceStartTime,
+            practiceEndTime,
+            isVisible,
+            allowParallelSubmissionsInTasks,
+            autoChangeTestsFeedbackVisibility,
+            categoryId,
+            categoryName,
+        } = contest;
         const currentContestValidations = contestValidations;
         // eslint-disable-next-line default-case
         switch (name) {
@@ -290,7 +290,7 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     return (
-        isFetching || isLoading || isDeleting || isGettingCategories
+        isFetching || isLoading || isDeleting || isGettingCategories || isUpdating
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
@@ -382,12 +382,15 @@ const ContestEdit = (props:IContestEditProps) => {
                                   onChange={(e) => onChange(e)}
                                   value={contest.limitBetweenSubmissions}
                                   InputLabelProps={{ shrink: true }}
-                                  color={contestValidations.isLimitBetweenSubmissionsValid && contestValidations.isLimitBetweenSubmissionsTouched
+                                  color={contestValidations.isLimitBetweenSubmissionsValid &&
+                                    contestValidations.isLimitBetweenSubmissionsTouched
                                       ? 'success'
                                       : 'primary'}
-                                  error={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid)}
+                                  error={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                                    !contestValidations.isLimitBetweenSubmissionsValid)}
                                 // eslint-disable-next-line max-len
-                                  helperText={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid) && 'Limit between submissions cannot be less than 0'}
+                                  helperText={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid) &&
+                                    'Limit between submissions cannot be less than 0'}
                                 />
                             </Box>
                             <Box>
