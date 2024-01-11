@@ -70,12 +70,12 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             const orderBy = sorterOrderBy === 'ASC'
                 ? SortingEnum.ASC
                 : SortingEnum.DESC;
-            const availableColumns = columns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
+            const availableColumns = columns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column));
 
             const sorter: IAdministrationSorter = {
                 columnName,
                 orderBy,
-                availableColumns: [ ...availableColumns, columnName ],
+                availableColumns,
             };
 
             urlSelectedSorters.push(sorter);
@@ -150,7 +150,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     const removeAllSorters = () => {
-        searchParams.delete('sorters');
+        searchParams.delete('sorting');
         setSearchParams(searchParams);
         dispatch(setAdminContestsSorters({ key: location, sorters: [ defaultSorter ] }));
     };

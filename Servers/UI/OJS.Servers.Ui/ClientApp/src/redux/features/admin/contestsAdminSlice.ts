@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IAdministrationFilter } from '../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../../../pages/administration-new/administration-sorting/AdministrationSorting';
 
 interface IContestsAdminSlice {
     [key: string]: null | {
         selectedFilters: IAdministrationFilter[];
-        selectedSorters: string[];
+        selectedSorters: IAdministrationSorter[];
     };
 }
 
