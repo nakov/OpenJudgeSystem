@@ -2,13 +2,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton, Modal, Slide, Typography } from '@mui/material';
+import { IconButton, Modal, Slide, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import ContestEdit from '../../components/administration/Contests/ContestEdit/ContestEdit';
+import ContestDeleteButton from '../../components/administration/delete/ContestDeleteButton';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
@@ -49,6 +52,7 @@ const AdministrationContestsPage = () => {
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
 
+    const [ showCreateContest, setShowCreateContest ] = useState<boolean>(false);
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
 
@@ -94,6 +98,7 @@ const AdministrationContestsPage = () => {
             type: 'number',
             filterable: false,
             sortable: false,
+            flex: 1,
         },
         {
             field: 'name',
@@ -113,12 +118,13 @@ const AdministrationContestsPage = () => {
             type: 'string',
             filterable: false,
             sortable: false,
+            flex: 2,
         },
         {
             field: 'categoryId',
             headerName: 'Category Id',
             width: 60,
-            flex: 1,
+            flex: 0,
             align: 'center',
             type: 'number',
             filterable: false,
@@ -199,30 +205,22 @@ const AdministrationContestsPage = () => {
 
     const nonFilterableColumns: GridColDef[] = [
         {
-            field: 'showModal',
-            headerName: 'Quick Details',
+            field: 'actions',
+            headerName: 'Actions',
             width: 100,
             align: 'center',
             filterable: false,
             sortable: false,
             renderCell: (params: GridRenderCellParams) => (
-                <IconButton onClick={() => onEditClick(params.row.id)}>
-                    <EditIcon />
-                </IconButton>
-            ),
-        },
-        {
-            field: 'showDetails',
-            headerName: 'Details',
-            width: 100,
-            align: 'center',
-            headerAlign: 'center',
-            filterable: false,
-            sortable: false,
-            renderCell: (params: GridRenderCellParams) => (
-                <Link to={`/administration-new/contests/${params.row.id}`}>
-                    <ShortcutIcon />
-                </Link>
+                <>
+                    <IconButton onClick={() => onEditClick(params.row.id)}>
+                        <EditIcon color="warning" />
+                    </IconButton>
+                    <Link to={`/administration-new/contests/${params.row.id}`}>
+                        <ShortcutIcon color="primary" />
+                    </Link>
+                    <ContestDeleteButton contestId={Number(params.row.id)} contestName={params.row.name} />
+                </>
             ),
         },
     ];
@@ -239,37 +237,73 @@ const AdministrationContestsPage = () => {
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div style={{ height: '800px' }}>
                 { openModal && renderModal() }
-                <Typography marginBottom="0.5rem" align="center" variant="h5">Contests</Typography>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
-                    <AdministrationFilters columns={filtersColumns} location="all-contests" />
-                    <AdministrationSorting columns={sortingColumns} location="all-contests" />
+                <div style={{ display: 'flex' }}>
+                    <div style={{ width: '30%' }}>
+                        <Tooltip title="Create new contest">
+                            <IconButton
+                              onClick={() => setShowCreateContest(!showCreateContest)}
+                            >
+                                <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Create new contest with details">
+                            <IconButton
+                              onClick={() => setShowCreateContest(!showCreateContest)}
+                            >
+                                <CreateNewFolderIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
+                        <AdministrationFilters columns={filtersColumns} location="all-contests" />
+                        <AdministrationSorting columns={sortingColumns} location="all-contests" />
+                    </div>
                 </div>
+                <Modal open={showCreateContest} onClose={() => setShowCreateContest(!showCreateContest)}>
+                    <Box sx={modalStyles}>
+                        <ContestEdit contestId={null} isEditMode={false} />
+                    </Box>
+                </Modal>
                 { error
                     ? <div className={styles.errorText}>Error loading data</div>
                     : (
-                        <DataGrid
-                          columns={[ ...dataColumns, ...nonFilterableColumns ]}
-                          rows={data?.items ?? []}
-                          rowCount={data?.totalCount ?? 0}
-                          paginationMode="server"
-                          onPageChange={(e) => {
-                              setQueryParams({ ...queryParams, page: e + 1 });
-                          }}
-                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                          onPageSizeChange={(itemsPerRow: number) => {
-                              setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
-                          }}
-                          pageSize={queryParams.ItemsPerPage}
-                          getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
-                          initialState={{
-                              columns: {
-                                  columnVisibilityModel: {
-                                      isDeleted: false,
-                                      isVisible: false,
+                        <>
+                            <DataGrid
+                              columns={[ ...dataColumns, ...nonFilterableColumns ]}
+                              rows={data?.items ?? []}
+                              rowCount={data?.totalCount ?? 0}
+                              paginationMode="server"
+                              onPageChange={(e) => {
+                                  setQueryParams({ ...queryParams, page: e + 1 });
+                              }}
+                              rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
+                              onPageSizeChange={(itemsPerRow: number) => {
+                                  setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
+                              }}
+                              pageSize={queryParams.ItemsPerPage}
+                              getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
+                              initialState={{
+                                  columns: {
+                                      columnVisibilityModel: {
+                                          isDeleted: false,
+                                          isVisible: false,
+                                      },
                                   },
-                              },
-                          }}
-                        />
+                              }}
+                            />
+                            <Box className={styles.legendBox}>
+                                <Box className={styles.rowColorBox}>
+                                    <Box className={`${styles.colorBox} ${styles.deleted}`} />
+                                    <p className={styles.colorSeparator}>-</p>
+                                    <p>Contest is deleted.</p>
+                                </Box>
+                                <Box className={styles.rowColorBox}>
+                                    <Box className={`${styles.colorBox} ${styles.visible}`} />
+                                    <p className={styles.colorSeparator}>-</p>
+                                    <p>Contest is not visible.</p>
+                                </Box>
+                            </Box>
+                        </>
                     )}
             </div>
         </Slide>

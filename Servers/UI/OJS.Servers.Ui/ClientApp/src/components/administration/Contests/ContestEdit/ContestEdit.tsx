@@ -1,32 +1,35 @@
+/* eslint-disable max-len */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-case-declarations */
 /* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { isNaN } from 'lodash';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { IContestAdministration, IContestCategories } from '../../../../common/types';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import ContestDeleteButton from '../../delete/ContestDeleteButton';
 
 // eslint-disable-next-line import/no-unresolved
 import styles from './ContestEdit.module.scss';
 
 interface IContestEditProps {
-    contestId: number;
+    contestId: number | null;
+    isEditMode?: boolean;
 }
 
 const ContestEdit = (props:IContestEditProps) => {
-    const { contestId } = props;
+    const { contestId, isEditMode = true } = props;
 
-    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
+    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
     const [ message, setMessage ] = useState<string | null>(null);
-    const [ isValidForm, setIsValidForm ] = useState<boolean>(true);
+    const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
     // eslint-disable-next-line max-len
     const [ updateContest, { data: updateData, isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
     const navigate = useNavigate();
@@ -55,7 +58,7 @@ const ContestEdit = (props:IContestEditProps) => {
     });
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
-        isNameValid: true,
+        isNameValid: !!isEditMode,
         isTypeTouched: false,
         isTypeValid: true,
         isLimitBetweenSubmissionsTouched: false,
@@ -66,7 +69,6 @@ const ContestEdit = (props:IContestEditProps) => {
         isNewIpPasswordValid: true,
     });
 
-    const [ deleteContest, { data: deleteData, isLoading: isDeleting, isSuccess, error: deleteError } ] = useDeleteContestMutation();
     useEffect(
         () => {
             if (data) {
@@ -81,22 +83,16 @@ const ContestEdit = (props:IContestEditProps) => {
         if (isSuccesfullyUpdated) {
             setMessage(updateData as string);
         }
-        if (isSuccess) {
-            setMessage(deleteData as string);
-        }
-    }, [ deleteData, isSuccesfullyUpdated, isSuccess, updateData ]);
+    }, [ isSuccesfullyUpdated, updateData ]);
 
     useEffect(() => {
-        if (deleteError && !isSuccess) {
-            // The data by default is of type unknown
-            setMessage(deleteError.data as string);
-        } else if (updateError && !isSuccess) {
+        if (updateError && !isSuccesfullyUpdated) {
             // The data by default is of type unknown
             setMessage(updateError.data as string);
         } else {
             setMessage(null);
         }
-    }, [ deleteError, isSuccess, updateError ]);
+    }, [ isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
@@ -144,7 +140,6 @@ const ContestEdit = (props:IContestEditProps) => {
         case 'type':
             contestType = value;
             currentContestValidations.isTypeTouched = true;
-            // eslint-disable-next-line no-case-declarations
             const isValid = !!Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).some((x) => x === value);
             currentContestValidations.isTypeValid = isValid;
             break;
@@ -272,17 +267,17 @@ const ContestEdit = (props:IContestEditProps) => {
         onChange(event);
     };
 
-    const confirmDeleteContest = () => {
-        deleteContest({ id: Number(contestId) });
+    const edit = () => {
+        if (isValidForm) {
+            updateContest(contest);
+        }
     };
 
-    const edit = () => updateContest(contest);
-
-    useEffect(() => {
-        if (isSuccess) {
-            navigate('/administration-new/contests');
+    const create = () => {
+        if (isValidForm) {
+            console.log('Send Request');
         }
-    });
+    };
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -290,24 +285,23 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     return (
-        isFetching || isLoading || isDeleting || isGettingCategories || isUpdating
+        isFetching || isLoading || isGettingCategories || isUpdating
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
                     { message && (
                     <Alert
-                      autoHideDuration={3000}
                       variant={AlertVariant.Filled}
                       vertical={AlertVerticalOrientation.Top}
                       horizontal={AlertHorizontalOrientation.Right}
-                      severity={deleteError || updateError
+                      severity={updateError
                           ? AlertSeverity.Error
                           : AlertSeverity.Success}
                       message={message}
                     />
                     )}
                     <Typography className={styles.centralize} variant="h4">
-                        {contest.name}
+                        {contest.name || 'Contest form'}
                     </Typography>
                     <form className={`${styles.form}`}>
                         <Box className={`${styles.fieldBox}`}>
@@ -333,46 +327,6 @@ const ContestEdit = (props:IContestEditProps) => {
                                   // eslint-disable-next-line max-len
                                   helperText={(contestValidations.isNameTouched && !contestValidations.isNameValid) && 'Contest name length must be between 4 and 100 characters long'}
                                 />
-                                <FormControl
-                                  className={styles.inputRow}
-                                >
-                                    <InputLabel id="contest-type">Type</InputLabel>
-                                    <Select
-                                      variant="standard"
-                                      value={contest.type}
-                                      className={styles.inputRow}
-                                      name="type"
-                                      labelId="contest-type"
-                                      onChange={(e) => onChange(e)}
-                                      onBlur={(e) => onChange(e)}
-                                      color={contestValidations.isTypeValid && contestValidations.isTypeTouched
-                                          ? 'success'
-                                          : 'primary'}
-                                      error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
-                                    >
-                                        {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
-                                            <MenuItem key={key} value={key}>
-                                                {key}
-                                            </MenuItem>
-                                        ))}
-                                        helperText=
-                                        {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
-                                        'Contest type is invalid'}
-                                    </Select>
-                                </FormControl>
-                                <Autocomplete
-                                  className={styles.inputRow}
-                                  onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
-                                  value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
-                                  options={contestCategories!}
-                                  renderInput={(params) => <TextField {...params} label="Select Option" key={params.id} />}
-                                  getOptionLabel={(option) => option?.name}
-                                  renderOption={(properties, option) => (
-                                      <MenuItem {...properties} key={option.id} value={option.id}>
-                                          {option.name}
-                                      </MenuItem>
-                                  )}
-                                />
                                 <TextField
                                   className={styles.inputRow}
                                   type="number"
@@ -391,6 +345,22 @@ const ContestEdit = (props:IContestEditProps) => {
                                 // eslint-disable-next-line max-len
                                   helperText={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid) &&
                                     'Limit between submissions cannot be less than 0'}
+                                />
+                                <TextField
+                                  className={styles.inputRow}
+                                  type="number"
+                                  label="Order By"
+                                  variant="standard"
+                                  value={contest.orderBy}
+                                  onChange={(e) => onChange(e)}
+                                  InputLabelProps={{ shrink: true }}
+                                  name="orderBy"
+                                  color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
+                                      ? 'success'
+                                      : 'primary'}
+                                  error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
+                              // eslint-disable-next-line max-len
+                                  helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
                                 />
                             </Box>
                             <Box>
@@ -431,22 +401,6 @@ const ContestEdit = (props:IContestEditProps) => {
                                 />
                                 <TextField
                                   className={styles.inputRow}
-                                  type="number"
-                                  label="Order By"
-                                  variant="standard"
-                                  value={contest.orderBy}
-                                  onChange={(e) => onChange(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                  name="orderBy"
-                                  color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
-                                      ? 'success'
-                                      : 'primary'}
-                                  error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                              // eslint-disable-next-line max-len
-                                  helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
                                   type="text"
                                   label="Allowed Ips"
                                   variant="standard"
@@ -458,6 +412,33 @@ const ContestEdit = (props:IContestEditProps) => {
                                 />
                             </Box>
                         </Box>
+                        <FormControl
+                          className={styles.inputRow}
+                        >
+                            <InputLabel id="contest-type">Type</InputLabel>
+                            <Select
+                              variant="standard"
+                              value={contest.type}
+                              className={styles.inputRow}
+                              name="type"
+                              labelId="contest-type"
+                              onChange={(e) => onChange(e)}
+                              onBlur={(e) => onChange(e)}
+                              color={contestValidations.isTypeValid && contestValidations.isTypeTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
+                            >
+                                {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
+                                    <MenuItem key={key} value={key}>
+                                        {key}
+                                    </MenuItem>
+                                ))}
+                                helperText=
+                                {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
+                                        'Contest type is invalid'}
+                            </Select>
+                        </FormControl>
                         <FormControl className={styles.textArea}>
                             <FormLabel>Description</FormLabel>
                             <TextareaAutosize
@@ -468,6 +449,21 @@ const ContestEdit = (props:IContestEditProps) => {
                               minRows={10}
                               name="description"
                               onChange={(e) => onChange(e)}
+                            />
+                        </FormControl>
+                        <FormControl className={styles.textArea}>
+                            <Autocomplete
+                              className={styles.inputRow}
+                              onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
+                              value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
+                              options={contestCategories!}
+                              renderInput={(params) => <TextField {...params} label="Select Option" key={params.id} />}
+                              getOptionLabel={(option) => option?.name}
+                              renderOption={(properties, option) => (
+                                  <MenuItem {...properties} key={option.id} value={option.id}>
+                                      {option.name}
+                                  </MenuItem>
+                              )}
                             />
                         </FormControl>
                         <div className={styles.row}>
@@ -524,7 +520,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               InputLabelProps={{ shrink: true }}
                             />
                         </div>
-                        <Box className={styles.flex}>
+                        <Box className={styles.checkboxes}>
                             <FormControlLabel
                               control={<Checkbox checked={contest.isVisible} />}
                               label="IsVisible"
@@ -553,10 +549,20 @@ const ContestEdit = (props:IContestEditProps) => {
                             />
                         </Box>
                     </form>
-                    <div className={styles.buttonsWrapper}>
-                        <Button variant="contained" onClick={() => edit()} className={styles.button} disabled={!isValidForm}>Edit</Button>
-                        <Button className={styles.button} variant="contained" color="error" onClick={confirmDeleteContest}>Delete</Button>
-                    </div>
+                    {isEditMode
+                        ? (
+                            <div className={styles.buttonsWrapper}>
+                                <Button variant="contained" onClick={() => edit()} className={styles.button} disabled={!isValidForm}>Edit</Button>
+                            </div>
+                        )
+                        : (
+                            <div className={styles.buttonsWrapper}>
+                                <Button variant="contained" onClick={() => create()} className={styles.button} disabled={!isValidForm}>Create</Button>
+                            </div>
+                        )}
+                    <Box sx={{ alignSelf: 'flex-end' }}>
+                        <ContestDeleteButton contestId={contestId!} contestName={contest.name} onSuccess={() => navigate('/administration-new/contests')} />
+                    </Box>
                 </div>
             )
     );

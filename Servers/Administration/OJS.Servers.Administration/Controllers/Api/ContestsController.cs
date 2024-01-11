@@ -41,7 +41,7 @@ public class ContestsController : ControllerBase
         }
 
         await this.contestsBusinessServiceService.Delete(id);
-        return this.Ok();
+        return this.Ok("Contest was successfully marked as deleted.");
     }
 
     [HttpPatch]

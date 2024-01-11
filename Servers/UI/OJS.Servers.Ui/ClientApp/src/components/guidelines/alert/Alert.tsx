@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert as MuiAlert, Button, Snackbar } from '@mui/material';
+import { Alert as MuiAlert, Button, Portal, Snackbar } from '@mui/material';
 
 import './Alert.module.scss';
 
@@ -50,24 +50,26 @@ const Alert = (props:IAlertProps) => {
     };
 
     return (
-        <Snackbar
-          open={open}
-          onClose={handleClose}
-          autoHideDuration={autoHideDuration}
-          anchorOrigin={{ vertical, horizontal }}
-          onClick={handleClose}
-        >
-            <MuiAlert
-              className={`${alertClass}`}
-              severity={severity}
-              variant={variant}
-              onClose={onClose}
-              sx={{ display: 'flex', alignItems: 'center' }}
+        <Portal>
+            <Snackbar
+              open={open}
+              onClose={handleClose}
+              autoHideDuration={autoHideDuration}
+              anchorOrigin={{ vertical, horizontal }}
+              onClick={handleClose}
             >
-                {message}
-                <Button className="alert-button" color="inherit" size="small">Close</Button>
-            </MuiAlert>
-        </Snackbar>
+                <MuiAlert
+                  className={`${alertClass}`}
+                  severity={severity}
+                  variant={variant}
+                  onClose={onClose}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                    {message}
+                    <Button className="alert-button" color="inherit" size="small">Close</Button>
+                </MuiAlert>
+            </Snackbar>
+        </Portal>
     );
 };
 

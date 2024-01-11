@@ -80,9 +80,9 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
 
     public async Task Edit(ContestAdministrationModel model, int id)
     {
-        var oldContest = await this.contestsData.GetByIdQuery(id).AsNoTracking().FirstOrDefaultAsync();
+        var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();
 
-        if (oldContest is null)
+        if (contest is null)
         {
             throw new ArgumentNullException($"Contest with Id:{id} not found");
         }
@@ -96,21 +96,21 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             model.Duration = null;
         }
 
-        var originalContestPassword = oldContest.ContestPassword;
-        var originalPracticePassword = oldContest.PracticePassword;
+        var originalContestPassword = contest.ContestPassword;
+        var originalPracticePassword = contest.PracticePassword;
 
-        oldContest = model.Map<Contest>();
+        contest.MapFrom(model);
 
-        if (model.IsOnlineExam && oldContest.ProblemGroups.Count == 0)
+        if (model.IsOnlineExam && contest.ProblemGroups.Count == 0)
         {
-            AddProblemGroupsToContest(oldContest, model.NumberOfProblemGroups);
+            AddProblemGroupsToContest(contest, model.NumberOfProblemGroups);
         }
 
         //TODO check what is happening here.
-        oldContest.IpsInContests.Clear();
-        await this.AddIpsToContest(oldContest, model.AllowedIps);
+        contest.IpsInContests.Clear();
+        await this.AddIpsToContest(contest, model.AllowedIps);
 
-        this.contestsData.Update(oldContest);
+        this.contestsData.Update(contest);
         await this.contestsData.SaveChanges();
 
         await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, model);
