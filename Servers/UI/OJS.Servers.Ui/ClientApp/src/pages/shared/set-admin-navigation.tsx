@@ -117,6 +117,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
     const [ open, setOpen ] = useState(true);
+    const locationTitle = location.pathname.split('/')[location.pathname.split('/').length - 1].toUpperCase();
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -138,6 +139,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                                 <KeyboardReturnIcon />
                             </Tooltip>
                         </Link>
+                        <div className={styles.locationTitle}>{locationTitle}</div>
                         <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
                     </div>
                 </Toolbar>
