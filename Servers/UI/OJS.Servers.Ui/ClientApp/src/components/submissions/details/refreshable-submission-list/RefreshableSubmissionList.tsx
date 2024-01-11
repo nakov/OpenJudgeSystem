@@ -6,7 +6,8 @@ import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
-import Button, { ButtonType } from '../../../guidelines/buttons/Button';
+import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
+import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import PaginationControls from '../../../guidelines/pagination/PaginationControls';
 import SubmissionsList from '../../submissions-list/SubmissionsList';
@@ -19,7 +20,6 @@ interface IRefreshableSubmissionListProps {
  renderRetestButton: () => ReactNode;
 }
 const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableSubmissionListProps) => {
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, currentSubmissionResults } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
@@ -29,6 +29,7 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         },
         [ dispatch ],
     );
+    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
 
     const handleReloadClick = useCallback(
         async () => {
@@ -37,17 +38,20 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         [ reload ],
     );
 
-    const renderButtonsSection = useCallback(() => (
-        <div className={styles.buttonsSection}>
-            <Button
-              onClick={handleReloadClick}
-              text="Reload"
-              type={ButtonType.secondary}
-              className={styles.submissionReloadBtn}
-            />
-            {renderRetestButton()}
-        </div>
-    ), [ handleReloadClick, renderRetestButton ]);
+    const renderButtonsSection = useCallback(
+        () => (
+            <div className={styles.buttonsSection}>
+                <Button
+                  onClick={handleReloadClick}
+                  text="Reload"
+                  type={ButtonType.secondary}
+                  className={styles.submissionReloadBtn}
+                />
+                {renderRetestButton()}
+            </div>
+        ),
+        [ handleReloadClick, renderRetestButton ],
+    );
 
     const renderSubmissionInfo = useCallback(
         () => {
@@ -88,7 +92,13 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
                     <p className={styles.submissionInfoParagraph}>
                         Username:
                         {' '}
-                        {userName}
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(userName))}
+                          text={userName}
+                          internalClassName={styles.redirectButton}
+                        />
                     </p>
                 </div>
             );
