@@ -155,14 +155,14 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         if (!adminContests[location]?.selectedFilters) {
             dispatch(setAdminContestsFilters({
                 key: location,
-                filters: {
+                filters: [ {
                     column: '',
                     operator: '',
                     value: '',
                     inputType: FilterColumnTypeEnum.STRING,
                     availableOperators: [],
                     availableColumns: columns,
-                },
+                } ],
             }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
