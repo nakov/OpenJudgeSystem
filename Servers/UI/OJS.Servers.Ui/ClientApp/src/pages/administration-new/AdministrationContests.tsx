@@ -245,7 +245,7 @@ const AdministrationContestsPage = () => {
                     <AdministrationSorting columns={sortingColumns} location="all-contests" />
                 </div>
                 { error
-                    ? <div>Error loading data</div>
+                    ? <div className={styles.errorText}>Error loading data</div>
                     : (
                         <DataGrid
                           columns={[ ...dataColumns, ...nonFilterableColumns ]}

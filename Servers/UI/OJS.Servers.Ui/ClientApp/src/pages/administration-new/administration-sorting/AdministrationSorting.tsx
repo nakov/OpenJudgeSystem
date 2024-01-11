@@ -238,7 +238,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 };
 
 const mapGridColumnsToAdministrationSortingProps =
-    (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName || '').filter((el) => el);
+    (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName?.replace(/\s/g, '') ?? '').filter((el) => el);
 
 export {
     type IAdministrationSorter,

@@ -379,7 +379,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
 const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
     const mappedEnumType = mapStringToFilterColumnTypeEnum(column.type || '');
-    return { columnName: column.headerName?.replace(' ', '') ?? '', columnType: mappedEnumType };
+    return { columnName: column.headerName?.replace(/\s/g, '') ?? '', columnType: mappedEnumType };
 });
 
 export {
