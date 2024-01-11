@@ -27,7 +27,7 @@ export const contestsAdminSlice = createSlice({
                 state[key].selectedFilters = filters;
             } else {
                 // eslint-disable-next-line no-param-reassign
-                state[key] = { selectedFilters: [ filters ], selectedSorters: [] };
+                state[key] = { selectedFilters: filters, selectedSorters: [] };
             }
         },
         setAdminContestsSorters: (state, action) => {
