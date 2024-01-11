@@ -1,10 +1,8 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Contests;
 
-using System.Linq;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
-using OJS.Services.Ui.Data;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
@@ -30,6 +28,7 @@ public class ContestValidationService : IContestValidationService
     {
         var (contest, contestId, user, official) = item;
 
+        // TODO: Fix so it uses lecturers in contests business service
         var isUserLecturerInContest = contest != null && user != null && user.IsLecturer;
 
         if (contest == null ||
