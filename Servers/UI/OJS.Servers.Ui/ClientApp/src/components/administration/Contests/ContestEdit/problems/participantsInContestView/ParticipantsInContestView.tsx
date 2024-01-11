@@ -113,9 +113,13 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
                     <AdministrationFilters
                       columns={filtersColumns}
                       shouldUpdateUrl={false}
-                      location={`contestDetailsParticipants-${contestId}`}
+                      location={`contest-details-participants-${contestId}`}
                     />
-                    <AdministrationSorting columns={sortingColumns} />
+                    <AdministrationSorting
+                      columns={sortingColumns}
+                      shouldUpdateUrl={false}
+                      location={`contest-details-participants-${contestId}`}
+                    />
                 </div>
                 { error
                     ? <div>Error loading data</div>

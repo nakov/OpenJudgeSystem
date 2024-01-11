@@ -4,6 +4,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hoo
 import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
 import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
@@ -328,7 +329,7 @@ interface IFilterColumn {
 interface IContestsAdminSlice {
     [key: string]: null | {
         selectedFilters: IAdministrationFilter[];
-        selectedSorters: string[];
+        selectedSorters: IAdministrationSorter[];
     };
 }
 

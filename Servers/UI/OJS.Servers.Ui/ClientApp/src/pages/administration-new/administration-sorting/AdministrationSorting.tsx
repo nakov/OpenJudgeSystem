@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -9,11 +10,15 @@ import { GridColDef } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
 import { SortingEnum } from '../../../common/enums';
+import { IRootStore } from '../../../common/types';
+import { setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
 
 import styles from './AdministrationSorting.module.scss';
 
 interface IAdministrationSortProps {
     columns: string[];
+    location: string;
+    shouldUpdateUrl?: boolean;
 }
 
 interface IAdministrationSorter {
@@ -28,44 +33,79 @@ const orderByOptions = [
 ];
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns } = props;
+    const { columns, shouldUpdateUrl = true, location } = props;
+    const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
+    const adminContests = useSelector((state: IRootStore) => state.adminContests);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
-    const [ sorters, setSorters ] =
-        useState<Array<IAdministrationSorter>>([ {
-            columnName: '',
-            orderBy: SortingEnum.ASC,
-            availableColumns: columns,
-        } ]);
 
     const open = Boolean(anchor);
 
-    useEffect(() => {
-        const sorterParams = searchParams.get('sorting')?.split('&') ?? [];
-        sorterParams.filter((s) => s).forEach((sorter: string) => {
-            const sorterColumn = sorter.split('=')[0];
-            const sorterOrderBy = sorter.split('=')[1];
+    const defaultSorter = useMemo((): IAdministrationSorter => ({
+        columnName: '',
+        orderBy: SortingEnum.ASC,
+        availableColumns: columns,
+    }), [ columns ]);
+
+    const selectedSorters = useMemo(() => {
+        if (adminContests[location]) {
+            return adminContests[location]?.selectedSorters || [ defaultSorter ];
+        }
+        return [ defaultSorter ];
+    }, [ defaultSorter, adminContests, location ]);
+
+    const mapUrlToSorters = (): IAdministrationSorter[] => {
+        const urlSelectedSorters: IAdministrationSorter[] = [];
+
+        const sorterParams = searchParams.get('sorting') ?? '';
+        const urlParams = sorterParams.split('&').filter((param) => param);
+        urlParams.forEach((param: string) => {
+            const paramChunks = param.split('=').filter((chunk) => chunk);
+
+            const sorterColumn = paramChunks[0];
+            const sorterOrderBy = paramChunks[1];
 
             const columnName = columns.find((c) => c.toLowerCase() === sorterColumn) || '';
             const orderBy = sorterOrderBy === 'ASC'
                 ? SortingEnum.ASC
                 : SortingEnum.DESC;
-            const availableColumns = columns.filter((column) => !sorters.some((s) => s.columnName === column));
+            const availableColumns = columns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
 
-            const newSortersArray = [ ...sorters, {
+            const sorter: IAdministrationSorter = {
                 columnName,
                 orderBy,
-                availableColumns,
-            } ];
-            setSorters(newSortersArray);
+                availableColumns: [ ...availableColumns, columnName ],
+            };
+
+            urlSelectedSorters.push(sorter);
         });
+
+        return urlSelectedSorters;
+    };
+
+    useEffect(() => {
+        if (!adminContests[location]?.selectedSorters) {
+            dispatch(setAdminContestsSorters({ key: location, sorters: [ defaultSorter ] }));
+        }
+
+        if (!shouldUpdateUrl) {
+            return;
+        }
+
+        const urlSelectedSorters = mapUrlToSorters();
+        if (urlSelectedSorters.length) {
+            dispatch(setAdminContestsSorters({ key: location, sorters: urlSelectedSorters }));
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
+        if (!shouldUpdateUrl) {
+            return;
+        }
         const formatSorterToString = (sorter: IAdministrationSorter) => {
-            if (!sorter.columnName) {
+            if (!sorter?.columnName) {
                 return;
             }
 
@@ -73,8 +113,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             return `${sorter.columnName.replace(' ', '').toLowerCase()}=${sorter.orderBy}`;
         };
 
-        const sorterFormattedArray = sorters.filter((sorter) => sorter.columnName).map(formatSorterToString);
-
+        const sorterFormattedArray = selectedSorters.map(formatSorterToString).filter((sorter) => sorter);
         if (!sorterFormattedArray.length) {
             return;
         }
@@ -92,7 +131,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             delayedSetOfSearch.cancel();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ sorters ]);
+    }, [ selectedSorters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchor(anchor
@@ -101,42 +140,38 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     const addSorter = () => {
-        const availableColumns = columns.filter((column) => !sorters.some((s) => s.columnName === column));
+        const availableColumns = columns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
         const newSortersArray = [ {
             columnName: '',
             availableColumns,
             orderBy: SortingEnum.ASC,
-        }, ...sorters ];
-        setSorters(newSortersArray);
+        }, ...selectedSorters ];
+        dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
     };
 
     const removeAllSorters = () => {
-        setSorters([ {
-            columnName: '',
-            orderBy: SortingEnum.ASC,
-            availableColumns: columns,
-        } ]);
-        searchParams.delete('sorting');
+        searchParams.delete('sorters');
         setSearchParams(searchParams);
+        dispatch(setAdminContestsSorters({ key: location, sorters: [ defaultSorter ] }));
     };
 
     const removeSingleSorter = (idx: number) => {
-        const newSortersArray = [ ...sorters ];
+        const newSortersArray = [ ...selectedSorters ];
         newSortersArray.splice(idx, 1);
-        setSorters(newSortersArray);
+        dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
     };
 
     const updateSorterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
 
-        const newSortersArray = [ ...sorters ].map((element, idx) => {
+        const newSortersArray = [ ...selectedSorters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 return { ...element, [updateProperty]: value };
             }
             return element;
         });
 
-        setSorters(newSortersArray);
+        dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
     };
 
     const renderSorter = (idx: number) => (
@@ -149,11 +184,11 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                 <InputLabel id="column-sorting-label">Sort by</InputLabel>
                 <Select
                   labelId="column-sorting-label"
-                  value={sorters[idx]?.columnName}
+                  value={selectedSorters[idx]?.columnName}
                   label="Sort By"
                   onChange={(e) => updateSorterColumnData(idx, e, 'columnName')}
                 >
-                    { sorters[idx].availableColumns.map((sortOption) => (
+                    { selectedSorters[idx].availableColumns.map((sortOption) => (
                         <MenuItem key={`a-s-e-${sortOption}`} value={sortOption}>{sortOption}</MenuItem>)) }
                 </Select>
             </FormControl>
@@ -161,10 +196,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                 <InputLabel id="column-order-label">Order By</InputLabel>
                 <Select
                   labelId="column-order-label"
-                  value={sorters[idx]?.orderBy}
+                  value={selectedSorters[idx]?.orderBy}
                   label="Order By"
                   onChange={(e) => updateSorterColumnData(idx, e, 'orderBy')}
-                  disabled={!sorters[idx]?.columnName}
+                  disabled={!selectedSorters[idx]?.columnName}
                 >
                     { orderByOptions.map((orderByOption) => (
                         <MenuItem key={`s-o-o-${orderByOption.name}`} value={orderByOption.value}>{orderByOption.name}</MenuItem>)) }
@@ -183,17 +218,17 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                 sorters
                 <span style={{ marginLeft: '10px', color: 'black' }}>
                     (
-                    {sorters.filter((s) => s.columnName).length}
+                    {selectedSorters.filter((s) => s.columnName).length}
                     ) Active
                 </span>
             </Button>
             <BasePopup anchor={anchor} open={open}>
                 <div className={styles.administrationSorters}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        { sorters.map((sorter, idx) => renderSorter(idx))}
+                        { selectedSorters.map((sorter, idx) => renderSorter(idx))}
                     </div>
                     <div className={styles.buttonsSection}>
-                        <Button onClick={addSorter} disabled={!sorters[sorters.length - 1].columnName}>Add Sorter</Button>
+                        <Button onClick={addSorter} disabled={!selectedSorters[selectedSorters.length - 1].columnName}>Add Sorter</Button>
                         <Button onClick={removeAllSorters}>Remove All</Button>
                     </div>
                 </div>
@@ -202,7 +237,12 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     );
 };
 
-export default AdministrationSorting;
-
-export const mapGridColumnsToAdministrationSortingProps =
+const mapGridColumnsToAdministrationSortingProps =
     (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName || '').filter((el) => el);
+
+export {
+    type IAdministrationSorter,
+    mapGridColumnsToAdministrationSortingProps,
+};
+
+export default AdministrationSorting;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -85,7 +85,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     const open = Boolean(anchor);
 
-    const selectedFilters = React.useMemo(() => {
+    const selectedFilters = useMemo(() => {
         const defaultFilter = {
             column: '',
             operator: '',
@@ -98,8 +98,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return adminContests[location]?.selectedFilters || [ defaultFilter ];
         }
         return [ defaultFilter ];
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ adminContests, location ]);
+    }, [ columns, adminContests, location ]);
 
     const mapUrlToFilters = (): IAdministrationFilter[] => {
         const urlSelectedFilters: IAdministrationFilter[] = [];

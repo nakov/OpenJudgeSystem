@@ -241,8 +241,8 @@ const AdministrationContestsPage = () => {
                 { openModal && renderModal() }
                 <Typography marginBottom="0.5rem" align="center" variant="h5">Contests</Typography>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
-                    <AdministrationFilters columns={filtersColumns} location="allContests" />
-                    <AdministrationSorting columns={sortingColumns} />
+                    <AdministrationFilters columns={filtersColumns} location="all-contests" />
+                    <AdministrationSorting columns={sortingColumns} location="all-contests" />
                 </div>
                 { error
                     ? <div>Error loading data</div>
