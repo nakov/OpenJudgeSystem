@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
@@ -117,7 +117,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
     const [ open, setOpen ] = useState(true);
-    const locationTitle = location.pathname.split('/')[location.pathname.split('/').length - 1].toUpperCase();
+    const [ locationTitle, setLocationTitle ] = useState('');
+
+    useEffect(() => {
+        const locationPathnameElements = location.pathname.split('/');
+        if (!/^\d+$/.test(locationPathnameElements[locationPathnameElements.length - 1])) {
+            setLocationTitle(locationPathnameElements[locationPathnameElements.length - 1].toUpperCase());
+        } else {
+            setLocationTitle(`${locationPathnameElements[locationPathnameElements.length - 2].toUpperCase()}
+             Id: ${locationPathnameElements[locationPathnameElements.length - 1]}`);
+        }
+    }, [ location.pathname ]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
