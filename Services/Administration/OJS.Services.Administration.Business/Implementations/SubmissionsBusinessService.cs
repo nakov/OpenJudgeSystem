@@ -195,9 +195,15 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public async Task<ServiceResult> Retest(int id)
         {
-            var submission = await this.submissionsData.OneById(id);
+            var submission = this.submissionsData.GetByIdQuery(id)
+                .Include(s => s.SubmissionType!)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.Checker)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.Tests)
+                .FirstOrDefault();
 
-            if (submission == null)
+            if (submission == null || submission.Id == 0)
             {
                 return new ServiceResult("Submission doesn't exist");
             }
