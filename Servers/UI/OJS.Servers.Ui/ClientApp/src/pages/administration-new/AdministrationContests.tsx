@@ -21,6 +21,8 @@ import AdministrationSorting, {
     mapGridColumnsToAdministrationSortingProps,
 } from './administration-sorting/AdministrationSorting';
 
+import styles from './AdministrationStyles.module.scss';
+
 const modalStyles = {
     position: 'absolute' as const,
     top: '50%',
@@ -61,6 +63,15 @@ const AdministrationContestsPage = () => {
     const onEditClick = (id: number) => {
         setOpenModal(true);
         setContestId(id);
+    };
+
+    const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
+        if (isDeleted) {
+            return styles.redGridRow;
+        } if (!isVisible) {
+            return styles.grayGridRow;
+        }
+        return '';
     };
 
     const renderModal = () => (
@@ -249,6 +260,15 @@ const AdministrationContestsPage = () => {
                               setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
                           }}
                           pageSize={queryParams.ItemsPerPage}
+                          getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
+                          initialState={{
+                              columns: {
+                                  columnVisibilityModel: {
+                                      isDeleted: false,
+                                      isVisible: false,
+                                  },
+                              },
+                          }}
                         />
                     )}
             </div>
