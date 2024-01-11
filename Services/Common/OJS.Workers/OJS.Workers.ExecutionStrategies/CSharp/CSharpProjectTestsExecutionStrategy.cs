@@ -11,7 +11,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -95,8 +94,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
 
         protected string NUnitConsoleRunnerPath { get; }
 
-        protected Func<CompilerType, string> GetCompilerPathFunc { get; }
-
         protected string SetupFixturePath { get; set; }
 
         protected List<string> TestNames { get; }
@@ -149,7 +146,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
 
             this.CorrectProjectReferences(project);
 
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType);
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
                 compilerPath,
