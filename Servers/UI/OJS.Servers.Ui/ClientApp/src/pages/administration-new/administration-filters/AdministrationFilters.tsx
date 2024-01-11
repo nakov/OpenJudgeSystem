@@ -112,8 +112,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             const operator = paramChunks[1];
             const value = paramChunks[2];
 
-            const column = columns.find((c) => c.columnName.toLowerCase() === columnValue);
-            const availableColumns = columns.filter((c) => !urlSelectedFilters.some((f) => f.column === c.columnName));
+            const column = columns.find((c) => c.columnName.toLowerCase() === columnValue) ||
+                { columnName: '', columnType: FilterColumnTypeEnum.STRING };
+            const availableColumns = columns.filter((c) => !selectedFilters.some((f) => f.column === c.columnName));
             const availableOperators = column?.columnType
                 ? DROPDOWN_OPERATORS[column.columnType]
                 : [];
@@ -123,7 +124,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                 operator,
                 value,
                 availableOperators,
-                availableColumns,
+                availableColumns: [ ...availableColumns, column ],
                 inputType: column?.columnType || FilterColumnTypeEnum.STRING,
             };
 
