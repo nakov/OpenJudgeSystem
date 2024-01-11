@@ -102,14 +102,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, [ adminContests, location ]);
 
     const mapUrlToFilters = (): IAdministrationFilter[] => {
-        const urlSelectedFilters: IAdministrationFilter[] = [ {
-            column: '',
-            operator: '',
-            value: '',
-            inputType: FilterColumnTypeEnum.STRING,
-            availableOperators: [],
-            availableColumns: columns,
-        } ];
+        const urlSelectedFilters: IAdministrationFilter[] = [];
 
         const filterParams = searchParams.get('filter') ?? '';
         const urlParams = filterParams.split('&').filter((param) => param);
@@ -147,7 +140,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
 
         const urlSelectedFilters = mapUrlToFilters();
-        dispatch(setAdminContestsFilters({ key: location, filters: urlSelectedFilters }));
+        if (urlSelectedFilters.length) {
+            dispatch(setAdminContestsFilters({ key: location, filters: urlSelectedFilters }));
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
