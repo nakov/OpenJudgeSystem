@@ -4,8 +4,9 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IDictionary, IKeyValuePair } from '../../../common/common-types';
+import { ISubmissionResponseModel } from '../../../common/types';
 import { useUrlParams } from '../../../hooks/common/use-url-params';
-import { ISubmissionResponseModel, usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
+import { usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { useAuth } from '../../../hooks/use-auth';
 import { usePages } from '../../../hooks/use-pages';
 import { format } from '../../../utils/number-utils';

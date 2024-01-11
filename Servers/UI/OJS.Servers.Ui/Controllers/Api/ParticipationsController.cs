@@ -23,12 +23,13 @@ public class ParticipationsController : BaseApiController
     /// <summary>
     /// Gets all user contest participations.
     /// </summary>
+    /// <param name="username">The username of the user.</param>
     /// <returns>A collection of contest participations.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ParticipationsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetAllForUser()
+    public async Task<IActionResult> GetAllForUser([FromQuery] string username)
         => await this.participationsBusiness
-            .GetParticipationsByUserId(this.User.GetId())
+            .GetParticipationsByUsername(username)
             .MapCollection<ParticipationsResponseModel>()
             .ToOkResult();
 }
