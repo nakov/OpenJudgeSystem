@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import isNil from 'lodash/isNil';
 
-import { useAuth } from '../../../hooks/use-auth';
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
 import { useUsers } from '../../../hooks/use-users';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { formatDate } from '../../../utils/dates';
 import { decodeUsernameFromUrlParam } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -49,8 +50,8 @@ const columns: GridColDef[] = [
 const ProfileContestParticipations = () => {
     const [ numberedRows, setNumberedRows ] =
         useState<Array<IParticipationType>>([]);
-    const { state: { user } } = useAuth();
-
+    const { internalUser: user } =
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const {
         state: { userParticipations },
         actions: { getUserParticipations },

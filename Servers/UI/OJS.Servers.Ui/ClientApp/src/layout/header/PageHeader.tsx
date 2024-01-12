@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
-import { useAuth } from '../../hooks/use-auth';
 import { useSearch } from '../../hooks/use-search';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import concatClassNames from '../../utils/class-names';
 import generateId from '../../utils/id-generator';
 import { getAdministrationNavigation } from '../../utils/urls';
@@ -15,12 +16,11 @@ import logo from './softuni-logo-horizontal.svg';
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
-    const { state: { user } } = useAuth();
-
     const { actions: { toggleVisibility } } = useSearch();
-
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const renderLinks = useCallback(() => {
-        const administrationLink = user.permissions.canAccessAdministration
+        const administrationLink = user.canAccessAdministration
             ? (
                 <LinkButton
                   type={LinkButtonType.plain}
@@ -51,7 +51,7 @@ const PageHeader = () => {
                 { administrationLink }
             </>
         );
-    }, [ user.permissions.canAccessAdministration ]);
+    }, [ user.canAccessAdministration ]);
 
     const btnId = useMemo(
         () => {

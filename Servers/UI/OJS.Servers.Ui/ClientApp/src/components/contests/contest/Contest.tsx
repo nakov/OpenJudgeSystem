@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { useProblemSubmissions } from '../../../hooks/submissions/use-problem-submissions';
-import { useAuth } from '../../../hooks/use-auth';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import { useProblems } from '../../../hooks/use-problems';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import concatClassNames from '../../../utils/class-names';
 import { convertToSecondsRemaining, getCurrentTimeInUTC } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -52,7 +53,8 @@ const Contest = () => {
         },
     } = useProblems();
     const { actions: { changePreviousProblemSubmissionsPage } } = useProblemSubmissions();
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { internalUser } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -125,10 +127,10 @@ const Contest = () => {
     const handleCountdownEnd = useCallback(
         () => {
             if (!isNil(endDateTimeForParticipantOrContest) && new Date(endDateTimeForParticipantOrContest) <= getCurrentTimeInUTC()) {
-                setIsSubmitAllowed(canAccessAdministration);
+                setIsSubmitAllowed(internalUser.canAccessAdministration);
             }
         },
-        [ canAccessAdministration, setIsSubmitAllowed, endDateTimeForParticipantOrContest ],
+        [ internalUser.canAccessAdministration, setIsSubmitAllowed, endDateTimeForParticipantOrContest ],
     );
 
     const renderTimeRemaining = useCallback(

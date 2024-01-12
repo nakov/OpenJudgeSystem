@@ -1,10 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-import { useAuth } from '../../hooks/use-auth';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 const HeaderGreeting = () => {
-    const { state: { user, isLoggedIn } } = useAuth();
-
+    const { isLoggedIn, internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const className = '';
 
     const text = isLoggedIn

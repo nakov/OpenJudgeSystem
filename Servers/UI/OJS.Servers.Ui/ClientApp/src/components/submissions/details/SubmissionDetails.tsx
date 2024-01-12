@@ -6,10 +6,10 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ISubmissionDetailsReduxState } from '../../../common/types';
-import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { setCurrentPage, setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
 import { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
@@ -28,7 +28,8 @@ import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { canAccessAdministration } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization.internalUser);
     const dispatch = useDispatch();
     const { currentSubmission, validationErrors, currentPage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);

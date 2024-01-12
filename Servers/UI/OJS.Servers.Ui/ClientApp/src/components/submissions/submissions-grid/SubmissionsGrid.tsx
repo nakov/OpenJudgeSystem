@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -7,8 +8,8 @@ import { IDictionary, IKeyValuePair } from '../../../common/common-types';
 import { ISubmissionResponseModel } from '../../../common/types';
 import { useUrlParams } from '../../../hooks/common/use-url-params';
 import { usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
-import { useAuth } from '../../../hooks/use-auth';
 import { usePages } from '../../../hooks/use-pages';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { format } from '../../../utils/number-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Button, { ButtonType } from '../../guidelines/buttons/Button';
@@ -74,7 +75,8 @@ const SubmissionsGrid = () => {
             clearPageInformation,
         },
     } = usePublicSubmissions();
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const {
         state: { params: urlParams },
         actions: { setParam, unsetParam },

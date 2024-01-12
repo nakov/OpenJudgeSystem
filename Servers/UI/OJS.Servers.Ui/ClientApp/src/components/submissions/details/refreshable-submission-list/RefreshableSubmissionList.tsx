@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { useAuth } from '../../../../hooks/use-auth';
+import { IAuthorizationReduxState } from '../../../../redux/features/authorizationSlice';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
 import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
@@ -29,7 +29,8 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
         },
         [ dispatch ],
     );
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { canAccessAdministration } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization.internalUser);
 
     const handleReloadClick = useCallback(
         async () => {

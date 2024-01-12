@@ -212,6 +212,7 @@ interface IUserType {
     permissions: IUserPermissionsType;
     isInRole: boolean;
     isAdmin: boolean;
+    canAccessAdministration: boolean;
 }
 
 interface IUserRoleType {
@@ -219,7 +220,7 @@ interface IUserRoleType {
     name: string;
 }
 
-interface IUserResponseType {
+ interface IUserResponseType {
     id: string;
     userName: string;
     email: string;
