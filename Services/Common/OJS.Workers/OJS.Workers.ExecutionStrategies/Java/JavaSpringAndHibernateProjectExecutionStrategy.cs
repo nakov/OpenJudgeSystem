@@ -28,7 +28,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private const string DependencyNodeXPathTemplate = @"//pomns:dependencies/pomns:dependency[pomns:groupId='##' and pomns:artifactId='!!']";
         private const string DependenciesNodeXPath = @"//pomns:dependencies";
         private const string MavenTestCommand = "test -f {0} -Dtest=\"{1}\"";
-        private const string MavenBuild = "compile";
+        private const string MavenBuild = "-o compile";
         private const string PomXmlBuildSettingsPattern = @"<build>(?s:.)*<\/build>";
         private const string TestsFolderPattern = @"src/test/java/*";
         private const string MainCodeFolderPattern = @"src/main/java/";
@@ -41,6 +41,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             ICompilerFactory compilerFactory,
             string javaExecutablePath,
             string javaLibrariesPath,
+            string javaSpringAndHibernateStrategyPomFilePath,
             string mavenPath,
             int baseTimeUsed,
             int baseMemoryUsed)
@@ -51,7 +52,10 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 javaLibrariesPath,
                 baseTimeUsed,
                 baseMemoryUsed)
-            => this.MavenPath = mavenPath;
+        {
+            this.MavenPath = mavenPath;
+            this.JavaSpringAndHibernateStrategyPomFilePath = javaSpringAndHibernateStrategyPomFilePath;
+        }
 
         // Property contains Dictionary<GroupId, Tuple<ArtifactId, Version>>
         public static Dictionary<string, Tuple<string, string>> Dependencies =>
@@ -78,6 +82,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
         protected string MavenPath { get; set; }
 
+        protected string JavaSpringAndHibernateStrategyPomFilePath { get; set; }
+
         protected string PackageName { get; set; }
 
         protected string MainClassFileName { get; set; }
@@ -103,8 +109,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 throw new FileNotFoundException("Pom.xml not found in submission!");
             }
 
-            AddBuildSettings(pomXmlFilePath);
-            AddDependencies(pomXmlFilePath);
+            ReplacePom(pomXmlFilePath);
+            // AddBuildSettings(pomXmlFilePath);
+            // AddDependencies(pomXmlFilePath);
             var mainClassFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
                 .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension)));
@@ -431,6 +438,14 @@ namespace OJS.Workers.ExecutionStrategies.Java
             var paths = FileHelpers.GetFilePathsFromZip(submissionFilePath).ToList();
 
             return paths.Any(x => x.StartsWith(MainCodeFolderPattern)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension));
+        }
+
+        private void ReplacePom(string pomXmlFilePath)
+        {
+            FileHelpers.DeleteFiles(pomXmlFilePath);
+
+            var newPomFileContent = File.ReadAllText(this.JavaSpringAndHibernateStrategyPomFilePath);
+            FileHelpers.WriteAllText(pomXmlFilePath, newPomFileContent);
         }
 
         private string ExtractEntryPointFromPomXml(string submissionFilePath)

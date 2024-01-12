@@ -168,6 +168,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.compilerFactory,
                         this.settings.JavaExecutablePath,
                         this.settings.JavaLibsPath,
+                        this.settings.JavaSpringAndHibernateStrategyPomFilePath,
                         this.settings.MavenPath,
                         this.settings.JavaBaseTimeUsedInMilliseconds,
                         this.settings.JavaBaseMemoryUsedInBytes);

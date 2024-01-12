@@ -62,6 +62,14 @@ RUN ./gradlew
 COPY ./java/build.gradle ./build.gradle
 RUN ./gradlew getDeps
 
+COPY ./java-spring-and-hibernate /judge-resources/java/java-spring-and-hibernate
+WORKDIR /judge-resources/java/java-spring-and-hibernate
+RUN mvn dependency:resolve
+# Needed 2 versions of this package, one in the strategy pom.xml, other one is istalled here
+# Otherwise maven resolves only 1 dependency
+# TODO: Fix this
+RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
+
 # JS and JS SPA
 COPY ./js /judge-resources/js
 WORKDIR /judge-resources/js
