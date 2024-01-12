@@ -7,4 +7,6 @@ public class
     SubmissionTypeForSubmissionDetailsResponseModel : IMapFrom<SubmissionTypeForSubmissionDetailsServiceModel>
 {
     public bool AllowBinaryFilesUpload { get; set; }
+
+    public string Name { get; set; } = null!;
 }
