@@ -29,8 +29,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             ICompilerFactory compilerFactory,
             StrategySettings settings)
             : base(processExecutorFactory, compilerFactory, settings)
-        {
-        }
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,

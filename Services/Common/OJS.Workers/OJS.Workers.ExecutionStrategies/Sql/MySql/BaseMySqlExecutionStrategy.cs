@@ -15,8 +15,9 @@
 
         protected BaseMySqlExecutionStrategy(StrategySettings settings)
             : base(settings)
-        {
-        }
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
@@ -122,7 +123,7 @@
             return workerDbConnectionString;
         }
 
-        public class StrategySettings : BaseSqlExecutionStrategySettings
+        public new class StrategySettings : BaseSqlExecutionStrategy.StrategySettings
         {
         }
     }

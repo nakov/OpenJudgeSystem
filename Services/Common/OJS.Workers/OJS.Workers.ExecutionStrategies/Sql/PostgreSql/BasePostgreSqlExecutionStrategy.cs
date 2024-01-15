@@ -21,7 +21,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         protected BasePostgreSqlExecutionStrategy(StrategySettings settings)
             : base(settings)
-            => this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_do_not_delete";
+        {
+            this.Settings = settings;
+            this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_do_not_delete";
+        }
+
+        protected override StrategySettings Settings { get; }
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";
 
@@ -262,7 +267,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             return this.currentConnection;
         }
 
-        public class StrategySettings : BaseSqlExecutionStrategySettings
+        public new class StrategySettings : BaseSqlExecutionStrategy.StrategySettings
         {
             public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
         }

@@ -173,7 +173,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             return executor;
         }
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
         {
             public string DotNetCoreRuntimeVersion { get; set; } = string.Empty;
         }

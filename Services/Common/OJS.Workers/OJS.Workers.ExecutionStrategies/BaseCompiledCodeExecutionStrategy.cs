@@ -14,9 +14,14 @@
         protected BaseCompiledCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            BaseCodeExecutionStrategySettings settings)
+            StrategySettings settings)
             : base(processExecutorFactory, settings)
-            => this.CompilerFactory = compilerFactory;
+        {
+            this.CompilerFactory = compilerFactory;
+            this.Settings = settings;
+        }
+
+        protected override StrategySettings Settings { get; }
 
         protected ICompilerFactory CompilerFactory { get; }
 
@@ -111,6 +116,10 @@
             var compilerResult = compiler.Compile(compilerPath, submissionFilePath, compilerArguments, useWorkingDirectoryForProcess);
 
             return compilerResult;
+        }
+
+        public new class StrategySettings : BaseCodeExecutionStrategy.StrategySettings
+        {
         }
     }
 }

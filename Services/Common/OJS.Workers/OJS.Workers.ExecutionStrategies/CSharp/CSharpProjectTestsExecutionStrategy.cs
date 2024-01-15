@@ -68,28 +68,12 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             StrategySettings settings)
             : base(processExecutorFactory, compilerFactory, settings)
         {
+            this.Settings = settings;
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();
         }
 
-        public CSharpProjectTestsExecutionStrategy(
-            IProcessExecutorFactory processExecutorFactory,
-            ICompilerFactory compilerFactory,
-            StrategySettings settings,
-            string nUnitConsoleRunnerPath)
-            : base(processExecutorFactory, compilerFactory, settings)
-        {
-            if (!File.Exists(nUnitConsoleRunnerPath))
-            {
-                throw new ArgumentException(
-                    $"NUnitConsole not found in: {nUnitConsoleRunnerPath}",
-                    nameof(nUnitConsoleRunnerPath));
-            }
-
-            this.NUnitConsoleRunnerPath = nUnitConsoleRunnerPath;
-            this.TestNames = new List<string>();
-            this.TestPaths = new List<string>();
-        }
+        protected override StrategySettings Settings { get; }
 
         protected string NUnitConsoleRunnerPath { get; }
 
@@ -315,7 +299,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             CsProjFileSearchPattern,
             f => new FileInfo(f).Length);
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
         {
         }
     }

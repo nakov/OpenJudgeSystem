@@ -20,7 +20,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         protected static readonly Type DateTimeType = typeof(DateTime);
         protected static readonly Type TimeSpanType = typeof(TimeSpan);
 
-        protected BaseSqlExecutionStrategy(BaseSqlExecutionStrategySettings settings)
+        protected BaseSqlExecutionStrategy(StrategySettings settings)
             : base(settings)
         {
             if (string.IsNullOrWhiteSpace(settings.MasterDbConnectionString))
@@ -42,7 +42,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql
             this.RestrictedUserId = settings.RestrictedUserId;
         }
 
-        protected override BaseSqlExecutionStrategySettings Settings { get; }
+        protected override StrategySettings Settings { get; }
 
         protected virtual string RestrictedUserId { get; }
 
@@ -218,6 +218,13 @@ namespace OJS.Workers.ExecutionStrategies.Sql
                     return sqlTestResult;
                 }
             }
+        }
+
+        public class StrategySettings : IExecutionStrategySettings
+        {
+            public string MasterDbConnectionString { get; set; } = string.Empty;
+            public string RestrictedUserId { get; set; } = string.Empty;
+            public string RestrictedUserPassword { get; set; } = string.Empty;
         }
     }
 }

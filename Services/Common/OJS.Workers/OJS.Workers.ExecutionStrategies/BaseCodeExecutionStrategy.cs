@@ -21,14 +21,14 @@
 
         protected BaseCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            BaseCodeExecutionStrategySettings settings)
+            StrategySettings settings)
             : base(settings)
         {
             this.ProcessExecutorFactory = processExecutorFactory;
             this.Settings = settings;
         }
 
-        protected override BaseCodeExecutionStrategySettings Settings { get; }
+        protected override StrategySettings Settings { get; }
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)
         {
@@ -108,5 +108,11 @@
             => string.IsNullOrEmpty(executionContext.AllowedFileExtensions)
                 ? FileHelpers.SaveStringToTempFile(this.WorkingDirectory, executionContext.Code)
                 : FileHelpers.SaveByteArrayToTempFile(this.WorkingDirectory, executionContext.FileContent);
+
+        public class StrategySettings : IExecutionStrategySettings
+        {
+            public int BaseTimeUsed { get; set; }
+            public int BaseMemoryUsed { get; set; }
+        }
     }
 }

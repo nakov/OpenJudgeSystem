@@ -278,7 +278,7 @@ process.stdin.on('end', function() {
                 executionContext.MemoryLimit,
                 new[] { LatestEcmaScriptFeaturesEnabledFlag, codeSavePath });
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseInterpretedCodeExecutionStrategy.StrategySettings
         {
             public string NodeJsExecutablePath { get; set; } = string.Empty;
             public string UnderscoreModulePath { get; set; } = string.Empty;

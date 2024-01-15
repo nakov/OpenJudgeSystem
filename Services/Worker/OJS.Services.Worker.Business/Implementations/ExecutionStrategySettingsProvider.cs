@@ -62,7 +62,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.CheckOnly => new
-                BaseCodeExecutionStrategySettings
+                CheckOnlyExecutionStrategy.StrategySettings
                 {
                     BaseTimeUsed = 0, BaseMemoryUsed = 0,
                 }

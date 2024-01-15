@@ -383,7 +383,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             return compilerResult;
         }
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
         {
             public string JavaExecutablePath { get; set; } = string.Empty;
             public string JavaLibrariesPath { get; set; } = string.Empty;

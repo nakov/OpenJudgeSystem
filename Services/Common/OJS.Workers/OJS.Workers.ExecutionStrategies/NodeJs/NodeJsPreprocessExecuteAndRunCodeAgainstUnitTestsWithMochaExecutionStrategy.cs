@@ -21,7 +21,12 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
             IProcessExecutorFactory processExecutorFactory,
             StrategySettings settings)
             : base(processExecutorFactory, settings)
-            => this.Random = new Random();
+        {
+            this.Settings = settings;
+            this.Random = new Random();
+        }
+
+        protected override StrategySettings Settings { get; }
 
         protected override string JsCodePreevaulationCode => @"
 chai.use(sinonChai);

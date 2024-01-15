@@ -119,7 +119,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 false,
                 true);
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseInterpretedCodeExecutionStrategy.StrategySettings
         {
             public string PythonExecutablePath { get; set; } = string.Empty;
         }

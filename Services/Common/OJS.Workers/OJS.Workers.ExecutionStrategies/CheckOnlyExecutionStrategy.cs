@@ -42,7 +42,7 @@
             return Task.FromResult(result);
         }
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseCodeExecutionStrategy.StrategySettings
         {
         }
     }

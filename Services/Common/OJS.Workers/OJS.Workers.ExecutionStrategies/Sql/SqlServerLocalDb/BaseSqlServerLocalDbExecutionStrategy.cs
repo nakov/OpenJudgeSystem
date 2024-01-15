@@ -121,7 +121,7 @@
             return base.GetDataRecordFieldValue(dataRecord, index);
         }
 
-        public class StrategySettings : BaseSqlExecutionStrategySettings
+        public new class StrategySettings : BaseSqlExecutionStrategy.StrategySettings
         {
         }
     }

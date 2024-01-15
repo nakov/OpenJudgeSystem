@@ -12,8 +12,9 @@
             ICompilerFactory compilerFactory,
             StrategySettings settings)
             : base(processExecutorFactory, compilerFactory, settings)
-        {
-        }
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -51,7 +52,7 @@
             return result;
         }
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
         {
         }
     }

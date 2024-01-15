@@ -17,7 +17,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 
         protected BaseSqlServerSingleDatabaseExecutionStrategy(StrategySettings settings)
             : base(settings)
-            => this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
+        {
+            this.Settings = settings;
+            this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
+        }
+
+        protected override StrategySettings Settings { get; }
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{this.Settings.RestrictedUserId}";
 

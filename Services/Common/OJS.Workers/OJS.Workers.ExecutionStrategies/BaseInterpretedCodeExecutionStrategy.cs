@@ -2,7 +2,6 @@
 {
     using System;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
@@ -11,10 +10,11 @@
     {
         protected BaseInterpretedCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            BaseCodeExecutionStrategySettings settings)
+            StrategySettings settings)
             : base(processExecutorFactory, settings)
-        {
-        }
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected static string PrepareTestInput(string testInput)
             => string.Join(
@@ -28,6 +28,10 @@
             result.IsCompiledSuccessfully = true;
 
             return base.InternalExecute(executionContext, result);
+        }
+
+        public new class StrategySettings : BaseCodeExecutionStrategy.StrategySettings
+        {
         }
     }
 }

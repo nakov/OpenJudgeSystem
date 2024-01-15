@@ -8,7 +8,6 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -23,8 +22,9 @@
             ICompilerFactory compilerFactory,
             StrategySettings settings)
             : base(processExecutorFactory, compilerFactory, settings)
-        {
-        }
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -106,7 +106,7 @@
             return pathsToHeadersAndCppFiles;
         }
 
-        public class StrategySettings : BaseCodeExecutionStrategySettings
+        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
         {
         }
     }
