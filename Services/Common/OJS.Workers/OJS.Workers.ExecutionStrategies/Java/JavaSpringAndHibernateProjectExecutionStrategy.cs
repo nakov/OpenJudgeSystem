@@ -95,7 +95,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected override string ClassPathArgument
             => $"-cp {this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
 
-        protected static void PreparePomXml(string submissionFilePath)
+        protected void PreparePomXml(string submissionFilePath)
         {
             var extractionDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
 
@@ -109,7 +109,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 throw new FileNotFoundException("Pom.xml not found in submission!");
             }
 
-            ReplacePom(pomXmlFilePath);
+            this.ReplacePom(pomXmlFilePath);
             // AddBuildSettings(pomXmlFilePath);
             // AddDependencies(pomXmlFilePath);
             var mainClassFolderPathInZip = Path.GetDirectoryName(FileHelpers
@@ -219,7 +219,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.OverwriteApplicationProperties(submissionFilePath);
             this.RemovePropertySourceAnnotationsFromMainClass(submissionFilePath);
             this.AddTestsToUserSubmission(context, submissionFilePath);
-            PreparePomXml(submissionFilePath);
+            this.PreparePomXml(submissionFilePath);
 
             return submissionFilePath;
         }
