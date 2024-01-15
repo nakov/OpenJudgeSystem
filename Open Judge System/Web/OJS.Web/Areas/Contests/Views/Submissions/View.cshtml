@@ -196,7 +196,7 @@ else
         }
 
         var displayShowInputButton = Model.UserHasAdminPermission ||
-            (!testResult.HideInput &&
+            (!testResult.HideInput && testResult.ResultType != TestRunResultType.CorrectAnswer &&
                 (testResult.IsTrialTest || testResult.IsOpenTest || Model.ShowDetailedFeedback));
 
         var displayExecutionComment = !string.IsNullOrWhiteSpace(testResult.ExecutionComment) &&
@@ -277,7 +277,7 @@ else
 
         if (displayCheckerComment)
         {
-            if (displayShowInputButton && testResult.ResultType != TestRunResultType.CorrectAnswer)
+            if (displayShowInputButton)
             {
                 <div class="diff">
                     @if (!string.IsNullOrWhiteSpace(testResult.CheckerComment))
