@@ -149,6 +149,7 @@ const AdministrationContestsPage = () => {
             headerName: 'Limit Between Submissions',
             flex: 0,
             type: 'number',
+            align: 'center',
             filterable: false,
             sortable: false,
         },

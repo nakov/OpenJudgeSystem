@@ -11,14 +11,14 @@ import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import styles from './ContestDeleteButton.module.scss';
 
 interface IContestDeleteButtonProps {
-onSuccess?: () => void;
-contestId: number;
-contestName: string;
-
+    onSuccess?: () => void;
+    contestId: number;
+    contestName: string;
+    style?: object;
 }
 
 const ContestDeleteButton = (props:IContestDeleteButtonProps) => {
-    const { onSuccess, contestId, contestName } = props;
+    const { onSuccess, contestId, contestName, style } = props;
     const [ deleteContest, { data, isLoading, isSuccess, error } ] = useDeleteContestMutation();
     const [ showConfirmDelete, setShowConfirmDelete ] = useState<boolean>(false);
     const [ message, setMessage ] = useState<string | null>(null);
@@ -44,7 +44,10 @@ const ContestDeleteButton = (props:IContestDeleteButtonProps) => {
         isLoading
             ? <SpinningLoader />
             : (
-                <>
+                <div style={style
+                    ? { ...style }
+                    : {}}
+                >
                     { message && (
                     <Alert
                       variant={AlertVariant.Filled}
@@ -69,7 +72,7 @@ const ContestDeleteButton = (props:IContestDeleteButtonProps) => {
                       confirmFunction={() => deleteContest({ id: Number(contestId) })}
                     />
                     )}
-                </>
+                </div>
             )
     );
 };

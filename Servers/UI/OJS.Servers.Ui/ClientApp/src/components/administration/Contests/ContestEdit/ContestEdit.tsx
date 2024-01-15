@@ -1,17 +1,22 @@
-/* eslint-disable max-len */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-case-declarations */
 /* eslint-disable prefer-destructuring */
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
 import { isNaN } from 'lodash';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { IContestAdministration, IContestCategories } from '../../../../common/types';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import ContestDeleteButton from '../../delete/ContestDeleteButton';
@@ -194,25 +199,25 @@ const ContestEdit = (props:IContestEditProps) => {
         case 'startTime':
             startTime = null;
             if (value) {
-                startTime = value;
+                startTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
             }
             break;
         case 'endTime':
             endTime = null;
             if (value) {
-                endTime = value;
+                endTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
             }
             break;
         case 'practiceStartTime':
             practiceStartTime = null;
             if (value) {
-                practiceStartTime = value;
+                practiceStartTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
             }
             break;
         case 'practiceEndTime':
             practiceEndTime = null;
             if (value) {
-                practiceEndTime = value;
+                practiceEndTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
             }
             break;
         case 'isVisible':
@@ -277,11 +282,6 @@ const ContestEdit = (props:IContestEditProps) => {
         if (isValidForm) {
             console.log('Send Request');
         }
-    };
-
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return date.toISOString().split('T')[0];
     };
 
     return (
@@ -417,6 +417,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         >
                             <InputLabel id="contest-type">Type</InputLabel>
                             <Select
+                              sx={{ width: '100%' }}
                               variant="standard"
                               value={contest.type}
                               className={styles.inputRow}
@@ -451,8 +452,9 @@ const ContestEdit = (props:IContestEditProps) => {
                               onChange={(e) => onChange(e)}
                             />
                         </FormControl>
-                        <FormControl className={styles.textArea}>
+                        <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
                             <Autocomplete
+                              sx={{ width: '100%' }}
                               className={styles.inputRow}
                               onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
                               value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
@@ -467,58 +469,48 @@ const ContestEdit = (props:IContestEditProps) => {
                             />
                         </FormControl>
                         <div className={styles.row}>
-                            <TextField
-                              className={styles.inputRow}
-                              label="Start Time"
-                              variant="standard"
-                              type="date"
-                              onChange={(e) => onChange(e)}
-                              name="startTime"
-                              value={contest.startTime
-                                  ? formatDate(contest.startTime)
-                                  : ''}
-                              InputLabelProps={{ shrink: true }}
-                            />
-                            <TextField
-                              style={{ marginLeft: '30px' }}
-                              className={styles.inputRow}
-                              label="End Time"
-                              variant="standard"
-                              type="date"
-                              name="endTime"
-                              onChange={(e) => onChange(e)}
-                              value={contest.endTime
-                                  ? formatDate(contest.endTime)
-                                  : ''}
-                              InputLabelProps={{ shrink: true }}
-                            />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                  sx={{ width: '48%' }}
+                                  name="startTime"
+                                  label="Start Time"
+                                  value={contest.startTime
+                                      ? dayjs(contest.startTime)
+                                      : ''}
+                                  onChange={(e) => onChange(e)}
+                                />
+                                <DateTimePicker
+                                  sx={{ width: '48%' }}
+                                  name="endTime"
+                                  label="End Time"
+                                  value={contest.endTime
+                                      ? dayjs(contest.endTime)
+                                      : ''}
+                                  onChange={(e) => onChange(e)}
+                                />
+                            </LocalizationProvider>
                         </div>
                         <div className={styles.row}>
-                            <TextField
-                              className={styles.inputRow}
-                              label="Practice Start Time"
-                              variant="standard"
-                              type="date"
-                              name="practiceStartTime"
-                              onChange={(e) => onChange(e)}
-                              value={contest.practiceStartTime
-                                  ? formatDate(contest.practiceStartTime)
-                                  : ''}
-                              InputLabelProps={{ shrink: true }}
-                            />
-                            <TextField
-                              style={{ marginLeft: '30px' }}
-                              className={styles.inputRow}
-                              label="Practice End Time"
-                              variant="standard"
-                              type="date"
-                              name="practiceEndTime"
-                              onChange={(e) => onChange(e)}
-                              value={contest.practiceEndTime
-                                  ? formatDate(contest.practiceEndTime)
-                                  : ''}
-                              InputLabelProps={{ shrink: true }}
-                            />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                  sx={{ width: '48%', margin: '20px 0' }}
+                                  name="practiceStartTime"
+                                  label="Practice Start Time"
+                                  value={contest.practiceStartTime
+                                      ? dayjs(contest.practiceStartTime)
+                                      : ''}
+                                  onChange={(e) => onChange(e)}
+                                />
+                                <DateTimePicker
+                                  sx={{ width: '48%', margin: '20px 0' }}
+                                  name="practiceEndTime"
+                                  label="Practice End Time"
+                                  value={contest.practiceEndTime
+                                      ? dayjs(contest.practiceEndTime)
+                                      : ''}
+                                  onChange={(e) => onChange(e)}
+                                />
+                            </LocalizationProvider>
                         </div>
                         <Box className={styles.checkboxes}>
                             <FormControlLabel
@@ -552,16 +544,34 @@ const ContestEdit = (props:IContestEditProps) => {
                     {isEditMode
                         ? (
                             <div className={styles.buttonsWrapper}>
-                                <Button variant="contained" onClick={() => edit()} className={styles.button} disabled={!isValidForm}>Edit</Button>
+                                <Button
+                                  variant="contained"
+                                  onClick={() => edit()}
+                                  className={styles.button}
+                                  disabled={!isValidForm}
+                                >
+                                    Edit
+                                </Button>
                             </div>
                         )
                         : (
                             <div className={styles.buttonsWrapper}>
-                                <Button variant="contained" onClick={() => create()} className={styles.button} disabled={!isValidForm}>Create</Button>
+                                <Button
+                                  variant="contained"
+                                  onClick={() => create()}
+                                  className={styles.button}
+                                  disabled={!isValidForm}
+                                >
+                                    Create
+                                </Button>
                             </div>
                         )}
                     <Box sx={{ alignSelf: 'flex-end' }}>
-                        <ContestDeleteButton contestId={contestId!} contestName={contest.name} onSuccess={() => navigate('/administration-new/contests')} />
+                        <ContestDeleteButton
+                          contestId={contestId!}
+                          contestName={contest.name}
+                          onSuccess={() => navigate('/administration-new/contests')}
+                        />
                     </Box>
                 </div>
             )
