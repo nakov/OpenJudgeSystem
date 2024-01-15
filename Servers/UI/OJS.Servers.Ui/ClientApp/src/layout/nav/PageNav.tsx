@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 import styles from './PageNav.module.scss';
-import { useNavigate } from 'react-router';
 
 interface IRouteType {
     name: string;
