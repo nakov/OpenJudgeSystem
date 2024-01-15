@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -34,26 +34,18 @@ const orderByOptions = [
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
     const { columns, shouldUpdateUrl = true, location } = props;
+    const defaultSorter = {
+        columnName: '',
+        orderBy: SortingEnum.ASC,
+        availableColumns: columns,
+    };
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const adminContests = useSelector((state: IRootStore) => state.adminContests);
+    const selectedSorters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedSorters) ?? [ defaultSorter ];
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchor);
-
-    const defaultSorter = useMemo((): IAdministrationSorter => ({
-        columnName: '',
-        orderBy: SortingEnum.ASC,
-        availableColumns: columns,
-    }), [ columns ]);
-
-    const selectedSorters = useMemo(() => {
-        if (adminContests[location]) {
-            return adminContests[location]?.selectedSorters || [ defaultSorter ];
-        }
-        return [ defaultSorter ];
-    }, [ defaultSorter, adminContests, location ]);
 
     const mapUrlToSorters = (): IAdministrationSorter[] => {
         const urlSelectedSorters: IAdministrationSorter[] = [];
@@ -85,10 +77,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     useEffect(() => {
-        if (!adminContests[location]?.selectedSorters) {
-            dispatch(setAdminContestsSorters({ key: location, sorters: [ defaultSorter ] }));
-        }
-
         if (!shouldUpdateUrl) {
             return;
         }
@@ -115,6 +103,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
         const sorterFormattedArray = selectedSorters.map(formatSorterToString).filter((sorter) => sorter);
         if (!sorterFormattedArray.length) {
+            searchParams.delete('sorting');
+            setSearchParams(searchParams);
             return;
         }
         const resultString = `${sorterFormattedArray.join('&')}`;
@@ -141,11 +131,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
     const addSorter = () => {
         const availableColumns = columns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
-        const newSortersArray = [ {
-            columnName: '',
-            availableColumns,
-            orderBy: SortingEnum.ASC,
-        }, ...selectedSorters ];
+        const newSortersArray = [ { ...defaultSorter, availableColumns }, ...selectedSorters ];
         dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
     };
 
@@ -228,7 +214,14 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                         { selectedSorters.map((sorter, idx) => renderSorter(idx))}
                     </div>
                     <div className={styles.buttonsSection}>
-                        <Button onClick={addSorter} disabled={!selectedSorters[selectedSorters.length - 1].columnName}>Add Sorter</Button>
+                        <Button
+                          onClick={addSorter}
+                          disabled={selectedSorters.length
+                              ? !selectedSorters[0].columnName
+                              : true}
+                        >
+                            Add Sorter
+                        </Button>
                         <Button onClick={removeAllSorters}>Remove All</Button>
                     </div>
                 </div>
@@ -237,12 +230,24 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     );
 };
 
+const mapSorterParamsToQueryString = (selectedSorters: IAdministrationSorter[]) => {
+    const queryString: string[] = [];
+    selectedSorters.forEach((sorter: IAdministrationSorter) => {
+        if (!sorter.columnName) {
+            return;
+        }
+        queryString.push(`${sorter.columnName.replace(' ', '').toLowerCase()}=${sorter.orderBy}`);
+    });
+    return queryString.filter((el) => el).join('&') ?? '';
+};
+
 const mapGridColumnsToAdministrationSortingProps =
     (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName?.replace(/\s/g, '') ?? '').filter((el) => el);
 
 export {
     type IAdministrationSorter,
     mapGridColumnsToAdministrationSortingProps,
+    mapSorterParamsToQueryString,
 };
 
 export default AdministrationSorting;

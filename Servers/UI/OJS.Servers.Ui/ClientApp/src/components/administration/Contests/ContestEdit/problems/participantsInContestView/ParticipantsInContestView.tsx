@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import AdministrationFilters, { mapGridColumnsToAdministrationFilterProps } from '../../../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationSorting, { mapGridColumnsToAdministrationSortingProps } from '../../../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IRootStore } from '../../../../../../common/types';
+import AdministrationFilters, {
+    mapFilterParamsToQueryString,
+    mapGridColumnsToAdministrationFilterProps,
+} from '../../../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationSorting, {
+    mapGridColumnsToAdministrationSortingProps,
+    mapSorterParamsToQueryString,
+} from '../../../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import { useGetByContestIdQuery } from '../../../../../../redux/services/admin/participantsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../../../../../utils/constants';
 
@@ -16,8 +24,33 @@ interface IParticipantsInContestView {
 
 const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     const { contestId } = props;
-    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: '', sorting: '' });
+    const filtersAndSortersLocation = `contest-details-participants-${contestId}`;
+
+    const selectedFilters =
+        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
+    const selectedSorters =
+        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ queryParams, setQueryParams ] = useState({
+        page: 1,
+        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        filter: mapFilterParamsToQueryString(selectedFilters),
+        sorting: mapSorterParamsToQueryString(selectedSorters),
+    });
     const { data, error } = useGetByContestIdQuery({ contestId: Number(contestId), ...queryParams });
+
+    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
+
+    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
+
+    useEffect(() => {
+        setQueryParams({ ...queryParams, filter: filtersQueryParams });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ filtersQueryParams ]);
+
+    useEffect(() => {
+        setQueryParams({ ...queryParams, sorting: sortersQueryParams });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {
         // setOpenModal(true);
@@ -113,12 +146,12 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
                     <AdministrationFilters
                       columns={filtersColumns}
                       shouldUpdateUrl={false}
-                      location={`contest-details-participants-${contestId}`}
+                      location={filtersAndSortersLocation}
                     />
                     <AdministrationSorting
                       columns={sortingColumns}
                       shouldUpdateUrl={false}
-                      location={`contest-details-participants-${contestId}`}
+                      location={filtersAndSortersLocation}
                     />
                 </div>
                 { error

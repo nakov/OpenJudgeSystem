@@ -5,8 +5,8 @@ import { IAdministrationSorter } from '../../../pages/administration-new/adminis
 
 interface IContestsAdminSlice {
     [key: string]: null | {
-        selectedFilters: IAdministrationFilter[];
-        selectedSorters: IAdministrationSorter[];
+        selectedFilters: null | IAdministrationFilter[];
+        selectedSorters: null | IAdministrationSorter[];
     };
 }
 
@@ -28,7 +28,7 @@ export const contestsAdminSlice = createSlice({
                 state[key].selectedFilters = filters;
             } else {
                 // eslint-disable-next-line no-param-reassign
-                state[key] = { selectedFilters: filters, selectedSorters: [] };
+                state[key] = { selectedFilters: filters, selectedSorters: null };
             }
         },
         setAdminContestsSorters: (state, action) => {
@@ -42,7 +42,7 @@ export const contestsAdminSlice = createSlice({
                 state[key].selectedSorters = sorters;
             } else {
                 // eslint-disable-next-line no-param-reassign
-                state[key] = { selectedFilters: [], selectedSorters: sorters };
+                state[key] = { selectedFilters: null, selectedSorters: sorters };
             }
         },
     },

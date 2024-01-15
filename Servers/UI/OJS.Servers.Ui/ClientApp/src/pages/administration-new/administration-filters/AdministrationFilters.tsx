@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -77,28 +77,21 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, shouldUpdateUrl = true, location } = props;
+    const defaultFilter = {
+        column: '',
+        operator: '',
+        value: '',
+        availableOperators: [],
+        availableColumns: columns,
+        inputType: FilterColumnTypeEnum.STRING,
+    };
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const adminContests = useSelector((state: IRootStore) => state.adminContests);
+    const selectedFilters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedFilters) ?? [ defaultFilter ];
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchor);
-
-    const selectedFilters = useMemo(() => {
-        const defaultFilter = {
-            column: '',
-            operator: '',
-            value: '',
-            inputType: FilterColumnTypeEnum.STRING,
-            availableOperators: [],
-            availableColumns: columns,
-        };
-        if (adminContests[location]) {
-            return adminContests[location]?.selectedFilters || [ defaultFilter ];
-        }
-        return [ defaultFilter ];
-    }, [ columns, adminContests, location ]);
 
     const mapUrlToFilters = (): IAdministrationFilter[] => {
         const urlSelectedFilters: IAdministrationFilter[] = [];
@@ -147,23 +140,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, []);
 
     useEffect(() => {
-        if (!adminContests[location]?.selectedFilters) {
-            dispatch(setAdminContestsFilters({
-                key: location,
-                filters: [ {
-                    column: '',
-                    operator: '',
-                    value: '',
-                    inputType: FilterColumnTypeEnum.STRING,
-                    availableOperators: [],
-                    availableColumns: columns,
-                } ],
-            }));
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
         if (!shouldUpdateUrl) {
             return;
         }
@@ -179,6 +155,8 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
         const filtersFormattedArray = selectedFilters.map(formatFilterToString).filter((filter) => filter);
         if (!filtersFormattedArray.length) {
+            searchParams.delete('filter');
+            setSearchParams(searchParams);
             return;
         }
         const resultString = `${filtersFormattedArray.join('&')}`;
@@ -205,14 +183,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     const addFilter = () => {
         const availableColumns = columns.filter((column) => !selectedFilters.some((f) => f.column === column.columnName));
-        const newFiltersArray = [ {
-            column: '',
-            operator: '',
-            value: '',
-            availableOperators: [],
-            availableColumns,
-            inputType: FilterColumnTypeEnum.STRING,
-        }, ...selectedFilters ];
+        const newFiltersArray = [ { ...defaultFilter, availableColumns }, ...selectedFilters ];
         dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
     };
 
@@ -221,20 +192,14 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         setSearchParams(searchParams);
         dispatch(setAdminContestsFilters({
             key: location,
-            filters: [ {
-                column: '',
-                operator: '',
-                value: '',
-                availableOperators: [],
-                availableColumns: columns,
-                inputType: FilterColumnTypeEnum.STRING,
-            } ],
+            filters: [ defaultFilter ],
         }));
     };
 
     const removeSingleFilter = (idx: number) => {
         const newFiltersArray = [ ...selectedFilters ];
         newFiltersArray.splice(idx, 1);
+        // available columns should be rearranged
         dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
     };
 
@@ -368,13 +333,31 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                         { selectedFilters.map((filter, idx) => renderFilter(idx))}
                     </div>
                     <div className={styles.buttonsSection}>
-                        <Button onClick={addFilter} disabled={!selectedFilters[0].value}>Add filter</Button>
+                        <Button
+                          onClick={addFilter}
+                          disabled={selectedFilters.length
+                              ? !selectedFilters[0].value
+                              : false}
+                        >
+                            Add filter
+                        </Button>
                         <Button onClick={removeAllFilters}>Remove All</Button>
                     </div>
                 </div>
             </BasePopup>
         </div>
     );
+};
+
+const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) => {
+    const queryString: string[] = [];
+    selectedFilters.forEach((filter: IAdministrationFilter) => {
+        if (!filter.column || !filter.operator || !filter.value) {
+            return;
+        }
+        queryString.push(`${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`);
+    });
+    return queryString.filter((el) => el).join('&') ?? '';
 };
 
 const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
@@ -386,6 +369,7 @@ export {
     type IAdministrationFilter,
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
+    mapFilterParamsToQueryString,
 };
 
 export default AdministrationFilters;
