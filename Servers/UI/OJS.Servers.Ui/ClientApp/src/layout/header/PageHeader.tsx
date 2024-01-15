@@ -1,11 +1,12 @@
-import React, { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
+import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import concatClassNames from '../../utils/class-names';
 import generateId from '../../utils/id-generator';
 import { getAdministrationNavigation } from '../../utils/urls';
@@ -17,6 +18,8 @@ import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const { actions: { toggleVisibility } } = useSearch();
+    const { data, isSuccess } = useGetUserinfoQuery(null);
+    const dispatch = useDispatch();
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const renderLinks = useCallback(() => {
@@ -60,6 +63,15 @@ const PageHeader = () => {
         },
         [],
     );
+    useEffect(() => {
+        if (isSuccess && data) {
+            dispatch(setInternalUser(data));
+            dispatch(setIsLoggedIn(true));
+        } else {
+            dispatch(resetInInternalUser());
+            dispatch(setIsLoggedIn(false));
+        }
+    }, [ isSuccess, data, dispatch ]);
 
     const handleSearchClick = useCallback(
         () => toggleVisibility(),

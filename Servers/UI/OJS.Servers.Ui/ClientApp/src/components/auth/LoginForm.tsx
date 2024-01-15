@@ -32,10 +32,9 @@ const LoginPage = () => {
     const [ passwordFormError, setPasswordFormError ] = useState('');
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
-    const [ shouldSkipUserInfo, setShouldSkipUserInfo ] = useState<boolean>(true);
 
-    const [ login, { isLoading, isSuccess } ] = useLoginMutation();
-    const { data, isSuccess: isGetInfoSuccessfull } = useGetUserinfoQuery(null, { skip: shouldSkipUserInfo });
+    const [ login, { isLoading, isSuccess, error, isError } ] = useLoginMutation();
+    const { data, isSuccess: isGetInfoSuccessfull, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const dispatch = useDispatch();
@@ -84,9 +83,13 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            setShouldSkipUserInfo(false);
+            refetch();
+            return;
         }
-    }, [ isSuccess ]);
+        if (error && 'error' in error) {
+            setLoginErrorMessage(error.data as string);
+        }
+    }, [ isSuccess, isError ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
