@@ -33,7 +33,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => executionStrategyType switch
         {
             ExecutionStrategyType.CompileExecuteAndCheck => new
-                CompileExecuteAndCheckExecutionStrategy.StrategySettings
+                CompileExecuteAndCheckExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.MsBuildBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.MsBuildBaseMemoryUsedInBytes,
@@ -41,7 +41,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck => new
-                NodeJsPreprocessExecuteAndCheckExecutionStrategy.StrategySettings
+                NodeJsPreprocessExecuteAndCheckExecutionStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     UnderscoreModulePath = this.settings.UnderscoreModulePath,
@@ -51,7 +51,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck => new
-                JavaPreprocessCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
                 {
                     JavaExecutablePath = this.settings.JavaExecutablePath,
                     JavaLibrariesPath = this.settings.JavaLibsPath,
@@ -62,14 +62,14 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.CheckOnly => new
-                CheckOnlyExecutionStrategy.StrategySettings
+                CheckOnlyExecutionStrategySettings
                 {
                     BaseTimeUsed = 0, BaseMemoryUsed = 0,
                 }
 
                 as TSettings,
             ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck => new
-                JavaZipFileCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
                 {
                     JavaExecutablePath = this.settings.JavaExecutablePath,
                     JavaLibrariesPath = this.settings.JavaLibsPath,
@@ -79,7 +79,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonExecuteAndCheck => new
-                PythonExecuteAndCheckExecutionStrategy.StrategySettings
+                PythonExecuteAndCheckExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
                     BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
@@ -88,7 +88,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha => new
-                NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy.StrategySettings
+                NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     MochaModulePath = this.settings.MochaModulePath,
@@ -102,7 +102,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests => new
-                NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy.StrategySettings
+                NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     MochaModulePath = this.settings.MochaModulePath,
@@ -119,7 +119,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries => new
-                MySqlPrepareDatabaseAndRunQueriesExecutionStrategy.StrategySettings
+                MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.MySqlSysDbConnectionString,
                     RestrictedUserId = this.settings.MySqlRestrictedUserId,
@@ -128,7 +128,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.MySqlRunQueriesAndCheckDatabase => new
-                MySqlRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings
+                MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.MySqlSysDbConnectionString,
                     RestrictedUserId = this.settings.MySqlRestrictedUserId,
@@ -137,7 +137,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.MySqlRunSkeletonRunQueriesAndCheckDatabase => new
-                MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings
+                MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.MySqlSysDbConnectionString,
                     RestrictedUserId = this.settings.MySqlRestrictedUserId,
@@ -146,7 +146,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy => new
-                NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy.StrategySettings
+                NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     MochaModulePath = this.settings.MochaModulePath,
@@ -163,7 +163,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha => new
-                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy.StrategySettings
+                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     MochaModulePath = this.settings.MochaModulePath,
@@ -183,7 +183,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy => new
-                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy.StrategySettings
+                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     MochaModulePath = this.settings.MochaModulePath,
@@ -206,7 +206,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
-                NodeJsZipExecuteHtmlAndCssStrategy.StrategySettings
+                NodeJsZipExecuteHtmlAndCssStrategySettings
                 {
                     NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
                     MochaModulePath = this.settings.MochaModulePath,
@@ -224,7 +224,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy => new
-                JavaProjectTestsExecutionStrategy.StrategySettings
+                JavaProjectTestsExecutionStrategySettings
                 {
                     JavaExecutablePath = this.settings.JavaExecutablePath,
                     JavaLibrariesPath = this.settings.JavaLibsPath,
@@ -234,7 +234,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.CPlusPlusZipFileExecutionStrategy => new
-                CPlusPlusZipFileExecutionStrategy.StrategySettings
+                CPlusPlusZipFileExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.GPlusPlusBaseMemoryUsedInBytes,
@@ -242,7 +242,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaUnitTestsExecutionStrategy => new
-                JavaUnitTestsExecutionStrategy.StrategySettings
+                JavaUnitTestsExecutionStrategySettings
                 {
                     JavaExecutablePath = this.settings.JavaExecutablePath,
                     JavaLibrariesPath = this.settings.JavaLibsPath,
@@ -252,7 +252,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy => new
-                CPlusPlusCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                CPlusPlusCompileExecuteAndCheckExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.GPlusPlusBaseMemoryUsedInBytes,
@@ -260,7 +260,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy => new
-                JavaSpringAndHibernateProjectExecutionStrategy.StrategySettings
+                JavaSpringAndHibernateProjectExecutionStrategySettings
                 {
                     JavaExecutablePath = this.settings.JavaExecutablePath,
                     JavaLibrariesPath = this.settings.JavaLibsPath,
@@ -271,7 +271,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectExecutionStrategy => new
-                DotNetCoreProjectExecutionStrategy.StrategySettings
+                DotNetCoreProjectExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
@@ -279,7 +279,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy => new
-                DotNetCoreProjectTestsExecutionStrategy.StrategySettings
+                DotNetCoreProjectTestsExecutionStrategySettings
                 {
                     TargetFrameworkName = "netcoreapp3.1",
                     MicrosoftEntityFrameworkCoreInMemoryVersion = "3.1.4",
@@ -290,7 +290,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => new
-                DotNetCoreCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
                 {
                     DotNetCoreRuntimeVersion = this.settings.DotNetCore3RuntimeVersion,
                     BaseTimeUsed = this.settings.DotNetCscBaseTimeUsedInMilliseconds,
@@ -299,7 +299,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreUnitTestsExecutionStrategy => new
-                DotNetCoreUnitTestsExecutionStrategy.StrategySettings
+                DotNetCoreUnitTestsExecutionStrategySettings
                 {
                     TargetFrameworkName = "netcoreapp3.1",
                     MicrosoftEntityFrameworkCoreInMemoryVersion = "3.1.4",
@@ -310,7 +310,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonUnitTests => new
-                PythonProjectUnitTestsExecutionStrategy.StrategySettings
+                PythonProjectUnitTestsExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
                     BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
@@ -319,7 +319,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonCodeExecuteAgainstUnitTests => new
-                PythonCodeExecuteAgainstUnitTestsExecutionStrategy.StrategySettings
+                PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
                     BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
@@ -328,7 +328,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectTests => new
-                PythonProjectUnitTestsExecutionStrategy.StrategySettings
+                PythonProjectUnitTestsExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
                     BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
@@ -337,7 +337,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectUnitTests => new
-                PythonProjectUnitTestsExecutionStrategy.StrategySettings
+                PythonProjectUnitTestsExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
                     BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
@@ -346,7 +346,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.SqlServerSingleDatabasePrepareDatabaseAndRunQueries => new
-                SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy.StrategySettings
+                SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.SqlServerLocalDbMasterDbConnectionString,
                     RestrictedUserId = this.settings.SqlServerLocalDbRestrictedUserId,
@@ -356,7 +356,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.SqlServerSingleDatabaseRunQueriesAndCheckDatabase => new
-                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings
+                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.SqlServerLocalDbMasterDbConnectionString,
                     RestrictedUserId = this.settings.SqlServerLocalDbRestrictedUserId,
@@ -366,7 +366,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabase => new
-                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings
+                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.SqlServerLocalDbMasterDbConnectionString,
                     RestrictedUserId = this.settings.SqlServerLocalDbRestrictedUserId,
@@ -376,7 +376,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy => new
-                RunSpaAndExecuteMochaTestsExecutionStrategy.StrategySettings
+                RunSpaAndExecuteMochaTestsExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
                     JsProjNodeModulesPath = this.settings.JsProjNodeModules,
@@ -390,7 +390,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.GolangCompileExecuteAndCheck => new
-                GolangCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                GolangCompileExecuteAndCheckExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.GolangBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.GolangBaseMemoryUsedInBytes,
@@ -398,7 +398,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6ProjectTestsExecutionStrategy => new
-                DotNetCoreProjectTestsExecutionStrategy.StrategySettings
+                DotNetCoreProjectTestsExecutionStrategySettings
                 {
                     TargetFrameworkName = "net6.0",
                     MicrosoftEntityFrameworkCoreInMemoryVersion = "6.0.1",
@@ -409,7 +409,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy => new
-                DotNetCoreProjectTestsExecutionStrategy.StrategySettings
+                DotNetCoreProjectTestsExecutionStrategySettings
                 {
                     TargetFrameworkName = "net5.0",
                     MicrosoftEntityFrameworkCoreInMemoryVersion = "5.0.13",
@@ -420,7 +420,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => new
-                DotNetCoreCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
                 {
                     DotNetCoreRuntimeVersion = this.settings.DotNetCore5RuntimeVersion,
                     BaseTimeUsed = this.settings.DotNetCscBaseTimeUsedInMilliseconds,
@@ -429,7 +429,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6CompileExecuteAndCheck => new
-                DotNetCoreCompileExecuteAndCheckExecutionStrategy.StrategySettings
+                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
                 {
                     DotNetCoreRuntimeVersion = this.settings.DotNetCore6RuntimeVersion,
                     BaseTimeUsed = this.settings.DotNetCscBaseTimeUsedInMilliseconds,
@@ -438,7 +438,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5UnitTestsExecutionStrategy => new
-                DotNetCoreUnitTestsExecutionStrategy.StrategySettings
+                DotNetCoreUnitTestsExecutionStrategySettings
                 {
                     TargetFrameworkName = "net5.0",
                     MicrosoftEntityFrameworkCoreInMemoryVersion = "5.0.13",
@@ -449,7 +449,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6UnitTestsExecutionStrategy => new
-                DotNetCoreUnitTestsExecutionStrategy.StrategySettings
+                DotNetCoreUnitTestsExecutionStrategySettings
                 {
                     TargetFrameworkName = "net6.0",
                     MicrosoftEntityFrameworkCoreInMemoryVersion = "6.0.1",
@@ -460,7 +460,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5ProjectExecutionStrategy => new
-                DotNetCoreProjectExecutionStrategy.StrategySettings
+                DotNetCoreProjectExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
@@ -468,7 +468,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6ProjectExecutionStrategy => new
-                DotNetCoreProjectExecutionStrategy.StrategySettings
+                DotNetCoreProjectExecutionStrategySettings
                 {
                     BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
@@ -476,7 +476,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries => new
-                PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy.StrategySettings
+                PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.PostgreSqlMasterDbConnectionString,
                     RestrictedUserId = this.settings.PostgreSqlRestrictedUserId,
@@ -486,7 +486,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlRunQueriesAndCheckDatabase => new
-                PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings
+                PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.PostgreSqlMasterDbConnectionString,
                     RestrictedUserId = this.settings.PostgreSqlRestrictedUserId,
@@ -496,7 +496,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase => new
-                PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings
+                PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
                 {
                     MasterDbConnectionString = this.settings.PostgreSqlMasterDbConnectionString,
                     RestrictedUserId = this.settings.PostgreSqlRestrictedUserId,
@@ -506,7 +506,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonDjangoOrmExecutionStrategy => new
-                PythonDjangoOrmExecutionStrategy.StrategySettings
+                PythonDjangoOrmExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePathV311,
                     PipExecutablePath = this.settings.PipExecutablePathV311,
@@ -516,7 +516,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.DoNothing => null,
+            ExecutionStrategyType.DoNothing => new DoNothingExecutionStrategySettings() as TSettings,
             ExecutionStrategyType.NotFound => throw new ArgumentException(
                 $"Cannot get settings for {ExecutionStrategyType.NotFound} strategy.",
                 nameof(executionStrategyType)),

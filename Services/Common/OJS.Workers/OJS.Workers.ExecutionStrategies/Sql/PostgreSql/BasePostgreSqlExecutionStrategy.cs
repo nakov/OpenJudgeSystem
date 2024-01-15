@@ -9,7 +9,8 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public abstract class BasePostgreSqlExecutionStrategy : BaseSqlExecutionStrategy
+    public abstract class BasePostgreSqlExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
+        where TSettings : BasePostgreSqlExecutionStrategySettings
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         private const string TimeSpanFormat = @"hh\:mm\:ss";
@@ -19,14 +20,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         private IDbConnection currentConnection;
         private bool isDisposed;
 
-        protected BasePostgreSqlExecutionStrategy(StrategySettings settings)
-            : base(settings)
-        {
-            this.Settings = settings;
-            this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_do_not_delete";
-        }
-
-        protected override StrategySettings Settings { get; }
+        protected BasePostgreSqlExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+            => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_do_not_delete";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";
 
@@ -266,10 +262,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             this.isDisposed = false;
             return this.currentConnection;
         }
+    }
 
-        public new class StrategySettings : BaseSqlExecutionStrategy.StrategySettings
-        {
-            public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class BasePostgreSqlExecutionStrategySettings : BaseSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
     }
 }

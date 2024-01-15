@@ -6,16 +6,16 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class CPlusPlusCompileExecuteAndCheckExecutionStrategy : CompileExecuteAndCheckExecutionStrategy
+    public class CPlusPlusCompileExecuteAndCheckExecutionStrategy<TSettings> : CompileExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : CPlusPlusCompileExecuteAndCheckExecutionStrategySettings
     {
         public CPlusPlusCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -30,9 +30,11 @@
                 useSystemEncoding: false,
                 dependOnExitCodeForRunTimeError: true);
         }
+    }
 
-        public new class StrategySettings : CompileExecuteAndCheckExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class CPlusPlusCompileExecuteAndCheckExecutionStrategySettings : CompileExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

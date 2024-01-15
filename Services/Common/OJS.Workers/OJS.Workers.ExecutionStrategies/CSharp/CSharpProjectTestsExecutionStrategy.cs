@@ -18,7 +18,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
 
-    public class CSharpProjectTestsExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class CSharpProjectTestsExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : CSharpProjectTestsExecutionStrategySettings
     {
         protected const string SetupFixtureTemplate = @"
         using System;
@@ -65,15 +66,12 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
         public CSharpProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
         {
-            this.Settings = settings;
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected string NUnitConsoleRunnerPath { get; }
 
@@ -298,9 +296,11 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             this.WorkingDirectory,
             CsProjFileSearchPattern,
             f => new FileInfo(f).Length);
+    }
 
-        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class CSharpProjectTestsExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

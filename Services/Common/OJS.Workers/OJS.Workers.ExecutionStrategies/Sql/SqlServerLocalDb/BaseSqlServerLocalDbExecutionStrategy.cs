@@ -6,15 +6,16 @@
     using System.Globalization;
     using System.Text.RegularExpressions;
 
-    public abstract class BaseSqlServerLocalDbExecutionStrategy : BaseSqlExecutionStrategy
+    public abstract class BaseSqlServerLocalDbExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
+        where TSettings : BaseSqlServerLocalDbExecutionStrategySettings
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
         private const string DateTimeOffsetFormat = "yyyy-MM-dd HH:mm:ss.fffffff zzz";
         private const string TimeSpanFormat = "HH:mm:ss.fffffff";
         private static readonly Type DateTimeOffsetType = typeof(DateTimeOffset);
 
-        protected BaseSqlServerLocalDbExecutionStrategy(StrategySettings settings)
-            : base(settings)
+        protected BaseSqlServerLocalDbExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
         {
         }
 
@@ -120,9 +121,11 @@
 
             return base.GetDataRecordFieldValue(dataRecord, index);
         }
+    }
 
-        public new class StrategySettings : BaseSqlExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class BaseSqlServerLocalDbExecutionStrategySettings : BaseSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

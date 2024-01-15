@@ -11,7 +11,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Executors;
     using System.Text.RegularExpressions;
 
-    public class DotNetCoreUnitTestsExecutionStrategy : DotNetCoreProjectTestsExecutionStrategy
+    public class DotNetCoreUnitTestsExecutionStrategy<TSettings> : DotNetCoreProjectTestsExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreUnitTestsExecutionStrategySettings
     {
         private readonly IEnumerable<string> packageNamesToRemoveFromUserCsProjFile = new[]
         {
@@ -27,11 +28,10 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         public DotNetCoreUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -190,9 +190,11 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             return csProjPath;
         }
+    }
 
-        public new class StrategySettings : DotNetCoreProjectTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class DotNetCoreUnitTestsExecutionStrategySettings : DotNetCoreProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

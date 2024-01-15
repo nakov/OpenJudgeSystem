@@ -14,19 +14,15 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using static OJS.Workers.Common.Constants;
 
-    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy :
-        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy
+    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<TSettings> :
+        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
+        where TSettings : NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings
     {
         public NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-        {
-            this.Settings = settings;
-            this.Random = new Random();
-        }
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+            => this.Random = new Random();
 
         protected override string JsCodePreevaulationCode => @"
 chai.use(sinonChai);
@@ -244,9 +240,11 @@ describe('Test {i} ', function(){{
 
             return processedCode;
         }
+    }
 
-        public new class StrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

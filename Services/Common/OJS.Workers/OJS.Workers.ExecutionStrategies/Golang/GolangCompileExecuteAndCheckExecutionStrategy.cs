@@ -6,18 +6,18 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class GolangCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class GolangCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : GolangCompileExecuteAndCheckExecutionStrategySettings
     {
         private const string CodeSaveFileName = "main.go";
 
         public GolangCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -34,9 +34,11 @@
             => FileHelpers.SaveStringToFile(
                 executionContext.Code,
                 FileHelpers.BuildPath(this.WorkingDirectory, CodeSaveFileName));
+    }
 
-        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class GolangCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

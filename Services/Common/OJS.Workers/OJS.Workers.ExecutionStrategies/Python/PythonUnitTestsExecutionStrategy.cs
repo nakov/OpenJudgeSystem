@@ -10,7 +10,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class PythonUnitTestsExecutionStrategy : PythonCodeExecuteAgainstUnitTestsExecutionStrategy
+    public class PythonUnitTestsExecutionStrategy<TSettings> : PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings>
+        where TSettings : PythonUnitTestsExecutionStrategySettings
     {
         private const string ClassNamePlaceholder = "# class_name ";
         private const string ImportTargetClassRegexPattern = @"^(from\s+{0}\s+import\s.*)|^(import\s+{0}(?=\s|$).*)";
@@ -21,11 +22,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> RunTests(
             string codeSavePath,
@@ -148,9 +148,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
             return className;
         }
+    }
 
-        public new class StrategySettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class PythonUnitTestsExecutionStrategySettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

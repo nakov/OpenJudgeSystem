@@ -14,7 +14,8 @@
 
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaPreprocessCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class JavaPreprocessCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
     {
         protected const string TimeMeasurementFileName = "_$time.txt";
         protected const string SandboxExecutorClassName = "_$SandboxExecutor";
@@ -25,22 +26,20 @@
         public JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
         {
-            if (!File.Exists(settings.JavaExecutablePath))
+            if (!File.Exists(this.Settings.JavaExecutablePath))
             {
-                throw new ArgumentException($"Java not found in: {settings.JavaExecutablePath}!", nameof(settings.JavaExecutablePath));
+                throw new ArgumentException($"Java not found in: {this.Settings.JavaExecutablePath}!", nameof(this.Settings.JavaExecutablePath));
             }
 
-            if (!Directory.Exists(settings.JavaLibrariesPath))
+            if (!Directory.Exists(this.Settings.JavaLibrariesPath))
             {
                 throw new ArgumentException(
-                    $"Java libraries not found in: {settings.JavaLibrariesPath}",
-                    nameof(settings.JavaLibrariesPath));
+                    $"Java libraries not found in: {this.Settings.JavaLibrariesPath}",
+                    nameof(this.Settings.JavaLibrariesPath));
             }
-
-            this.Settings = settings;
         }
 
         protected static string SandboxExecutorCode
@@ -158,8 +157,6 @@ class _$SandboxSecurityManager extends SecurityManager {
         throw new UnsupportedOperationException();
     }
 }";
-
-        protected override StrategySettings Settings { get; }
 
         protected string SandboxExecutorSourceFilePath
             => $"{Path.Combine(this.WorkingDirectory, SandboxExecutorClassName)}{Constants.javaSourceFileExtension}";
@@ -382,12 +379,14 @@ class _$SandboxSecurityManager extends SecurityManager {
 
             return compilerResult;
         }
+    }
 
-        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
-        {
-            public string JavaExecutablePath { get; set; } = string.Empty;
-            public string JavaLibrariesPath { get; set; } = string.Empty;
-            public int BaseUpdateTimeOffset { get; set; }
-        }
+#pragma warning disable SA1402
+    public class JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string JavaExecutablePath { get; set; } = string.Empty;
+        public string JavaLibrariesPath { get; set; } = string.Empty;
+        public int BaseUpdateTimeOffset { get; set; }
     }
 }

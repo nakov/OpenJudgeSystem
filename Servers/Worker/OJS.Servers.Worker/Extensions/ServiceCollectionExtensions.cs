@@ -8,6 +8,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Worker.Business.Implementations;
 using OJS.Services.Worker.Models.Configuration;
 using OJS.Workers.Compilers;
+using OJS.Workers.ExecutionStrategies;
 using ApplicationConfig = OJS.Services.Worker.Models.Configuration.ApplicationConfig;
 
 internal static class ServiceCollectionExtensions
@@ -20,6 +21,7 @@ internal static class ServiceCollectionExtensions
             .AddHttpContextServices()
             .AddScoped<DbContext, OjsDbContext>()
             .AddTransient<ICompilerFactory, CompilerFactory>()
+            .AddTransient<IExecutionStrategySettingsProvider, ExecutionStrategySettingsProvider>()
             .AddMemoryCache()
             .AddMessageQueue<Program>(configuration)
             .AddLogging()

@@ -5,6 +5,7 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
     using System.Runtime.CompilerServices;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.CodeSanitizers;
     using OJS.Workers.ExecutionStrategies.CPlusPlus;
     using OJS.Workers.ExecutionStrategies.CSharp.DotNetCore;
@@ -29,13 +30,13 @@ namespace OJS.Workers.ExecutionStrategies.Extensions
 
             switch (callerClassName)
             {
-                case nameof(DotNetCoreProjectTestsExecutionStrategy):
-                case nameof(DotNetCoreProjectExecutionStrategy):
-                case nameof(DotNetCoreUnitTestsExecutionStrategy):
+                case nameof(DotNetCoreProjectTestsExecutionStrategy<DotNetCoreProjectTestsExecutionStrategySettings>):
+                case nameof(DotNetCoreProjectExecutionStrategy<DotNetCoreProjectExecutionStrategySettings>):
+                case nameof(DotNetCoreUnitTestsExecutionStrategy<DotNetCoreUnitTestsExecutionStrategySettings>):
                     new DotNetCoreSanitizer().Sanitize(executionContext);
                     break;
-                case nameof(CPlusPlusCompileExecuteAndCheckExecutionStrategy):
-                case nameof(CPlusPlusZipFileExecutionStrategy):
+                case nameof(CPlusPlusCompileExecuteAndCheckExecutionStrategy<CPlusPlusCompileExecuteAndCheckExecutionStrategySettings>):
+                case nameof(CPlusPlusZipFileExecutionStrategy<CPlusPlusZipFileExecutionStrategySettings>):
                     new CPlusPlusSanitizer().Sanitize(executionContext);
                     break;
             }

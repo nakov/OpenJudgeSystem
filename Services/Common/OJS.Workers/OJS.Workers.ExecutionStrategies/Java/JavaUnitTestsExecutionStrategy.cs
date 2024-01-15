@@ -18,7 +18,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaUnitTestsExecutionStrategy : JavaZipFileCompileExecuteAndCheckExecutionStrategy
+    public class JavaUnitTestsExecutionStrategy<TSettings> : JavaZipFileCompileExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : JavaUnitTestsExecutionStrategySettings
     {
         protected const string IncorrectTestFormat =
             "The problem's tests were not uploaded as an archive of zips. Reupload the tests in the correct format.";
@@ -34,14 +35,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-        {
-            this.Settings = settings;
-            this.TestNames = new List<string>();
-        }
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            => this.TestNames = new List<string>();
 
         protected string JUnitTestRunnerSourceFilePath =>
             FileHelpers.BuildPath(this.WorkingDirectory, $"{JUnitRunnerClassName}{javaSourceFileExtension}");
@@ -323,9 +319,11 @@ public class _$TestRunner {{
                 combinedArguments,
                 this.WorkingDirectory);
         }
+    }
 
-        public new class StrategySettings : JavaZipFileCompileExecuteAndCheckExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class JavaUnitTestsExecutionStrategySettings : JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

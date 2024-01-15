@@ -11,43 +11,40 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy
-        : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy
+    public class NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
+        : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<TSettings>
+        where TSettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
     {
         public NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings) // TODO: make this modular by getting requires from test
-            : base(processExecutorFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider) // TODO: make this modular by getting requires from test
+            : base(processExecutorFactory, settingsProvider)
         {
-            if (!Directory.Exists(settings.JsDomModulePath))
+            if (!Directory.Exists(this.Settings.JsDomModulePath))
             {
                 throw new ArgumentException(
-                    $"jsDom not found in: {settings.JsDomModulePath}",
-                    nameof(settings.JsDomModulePath));
+                    $"jsDom not found in: {this.Settings.JsDomModulePath}",
+                    nameof(this.Settings.JsDomModulePath));
             }
 
-            if (!Directory.Exists(settings.JQueryModulePath))
+            if (!Directory.Exists(this.Settings.JQueryModulePath))
             {
                 throw new ArgumentException(
-                    $"jQuery not found in: {settings.JQueryModulePath}",
-                    nameof(settings.JQueryModulePath));
+                    $"jQuery not found in: {this.Settings.JQueryModulePath}",
+                    nameof(this.Settings.JQueryModulePath));
             }
 
-            if (!Directory.Exists(settings.HandlebarsModulePath))
+            if (!Directory.Exists(this.Settings.HandlebarsModulePath))
             {
                 throw new ArgumentException(
-                    $"Handlebars not found in: {settings.HandlebarsModulePath}",
-                    nameof(settings.HandlebarsModulePath));
+                    $"Handlebars not found in: {this.Settings.HandlebarsModulePath}",
+                    nameof(this.Settings.HandlebarsModulePath));
             }
 
-            settings.JsDomModulePath = FileHelpers.ProcessModulePath(settings.JsDomModulePath);
-            settings.JQueryModulePath = FileHelpers.ProcessModulePath(settings.JQueryModulePath);
-            settings.HandlebarsModulePath = FileHelpers.ProcessModulePath(settings.HandlebarsModulePath);
-
-            this.Settings = settings;
+            this.Settings.JsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.JsDomModulePath);
+            this.Settings.JQueryModulePath = FileHelpers.ProcessModulePath(this.Settings.JQueryModulePath);
+            this.Settings.HandlebarsModulePath = FileHelpers.ProcessModulePath(this.Settings.HandlebarsModulePath);
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
     jsdom = require('" + this.Settings.JsDomModulePath + @"'),
@@ -182,12 +179,14 @@ it('Test{testsCount++}', function(done) {{
                 .Replace(UserInputPlaceholder, code);
             return processedCode;
         }
+    }
 
-        public new class StrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy.StrategySettings
-        {
-            public string JsDomModulePath { get; set; } = string.Empty;
-            public string JQueryModulePath { get; set; } = string.Empty;
-            public string HandlebarsModulePath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string JsDomModulePath { get; set; } = string.Empty;
+        public string JQueryModulePath { get; set; } = string.Empty;
+        public string HandlebarsModulePath { get; set; } = string.Empty;
     }
 }

@@ -4,13 +4,14 @@
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy : BasePostgreSqlExecutionStrategy
+    public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy<TSettings> : BasePostgreSqlExecutionStrategy<TSettings>
+        where TSettings : PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
     {
-        public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(StrategySettings settings)
-            : base(settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+        public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -55,9 +56,11 @@
             var rollback = @"ROLLBACK;";
             this.ExecuteNonQuery(connection, rollback);
         }
+    }
 
-        public new class StrategySettings : BasePostgreSqlExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings : BasePostgreSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

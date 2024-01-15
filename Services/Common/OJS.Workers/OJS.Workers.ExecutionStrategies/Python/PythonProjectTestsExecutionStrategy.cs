@@ -13,7 +13,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
-    public class PythonProjectTestsExecutionStrategy : PythonCodeExecuteAgainstUnitTestsExecutionStrategy
+    public class PythonProjectTestsExecutionStrategy<TSettings> : PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings>
+        where TSettings : PythonProjectTestsExecutionStrategySettings
     {
 #pragma warning disable SA1306
 #pragma warning disable SA1401
@@ -24,11 +25,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected override IEnumerable<string> ExecutionArguments
             => new[]
@@ -104,9 +104,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 this.TestPaths[i] = testSavePath;
             }
         }
+    }
 
-        public new class StrategySettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class PythonProjectTestsExecutionStrategySettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

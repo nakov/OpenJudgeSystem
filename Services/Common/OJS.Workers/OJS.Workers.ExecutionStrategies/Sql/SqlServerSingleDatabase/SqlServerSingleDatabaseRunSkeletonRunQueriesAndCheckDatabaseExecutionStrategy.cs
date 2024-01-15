@@ -3,14 +3,15 @@
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy
-        : BaseSqlServerSingleDatabaseExecutionStrategy
+    public class SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<TSettings>
+        : BaseSqlServerSingleDatabaseExecutionStrategy<TSettings>
+        where TSettings : SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
-        public SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
-            : base(settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+        public SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -25,9 +26,11 @@
                     var sqlTestResult = this.ExecuteReader(connection, test.Input);
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
+    }
 
-        public new class StrategySettings : BaseSqlServerSingleDatabaseExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings : BaseSqlServerSingleDatabaseExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

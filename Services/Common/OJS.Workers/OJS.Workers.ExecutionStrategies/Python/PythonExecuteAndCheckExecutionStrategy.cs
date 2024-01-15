@@ -7,27 +7,23 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using FluentExtensions.Extensions;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
-    public class PythonExecuteAndCheckExecutionStrategy : BaseInterpretedCodeExecutionStrategy
+    public class PythonExecuteAndCheckExecutionStrategy<TSettings> : BaseInterpretedCodeExecutionStrategy<TSettings>
+        where TSettings : PythonExecuteAndCheckExecutionStrategySettings
     {
         public PythonExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
         {
-            if (!FileHelpers.FileExists(settings.PythonExecutablePath))
+            if (!FileHelpers.FileExists(this.Settings.PythonExecutablePath))
             {
-                throw new ArgumentException($"Python not found in: {settings.PythonExecutablePath}", nameof(settings.PythonExecutablePath));
+                throw new ArgumentException($"Python not found in: {this.Settings.PythonExecutablePath}", nameof(this.Settings.PythonExecutablePath));
             }
-
-            this.Settings = settings;
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected virtual IEnumerable<string> ExecutionArguments
             => new[] { IsolatedModeArgument, OptimizeAndDiscardDocstringsArgument };
@@ -118,10 +114,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 directory,
                 false,
                 true);
+    }
 
-        public new class StrategySettings : BaseInterpretedCodeExecutionStrategy.StrategySettings
-        {
-            public string PythonExecutablePath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class PythonExecuteAndCheckExecutionStrategySettings : BaseInterpretedCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string PythonExecutablePath { get; set; } = string.Empty;
     }
 }

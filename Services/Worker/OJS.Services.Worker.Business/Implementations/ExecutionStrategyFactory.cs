@@ -40,206 +40,206 @@ namespace OJS.Services.Worker.Business.Implementations
             switch (type)
             {
                 case ExecutionStrategyType.CompileExecuteAndCheck:
-                    executionStrategy = new CompileExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new CompileExecuteAndCheckExecutionStrategy<CompileExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<CompileExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy:
-                    executionStrategy = new CPlusPlusCompileExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new CPlusPlusCompileExecuteAndCheckExecutionStrategy<CPlusPlusCompileExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<CPlusPlusCompileExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.CPlusPlusZipFileExecutionStrategy:
-                    executionStrategy = new CPlusPlusZipFileExecutionStrategy(
+                    executionStrategy = new CPlusPlusZipFileExecutionStrategy<CPlusPlusZipFileExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<CPlusPlusZipFileExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck:
                 case ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck:
                 case ExecutionStrategyType.DotNetCore6CompileExecuteAndCheck:
-                    executionStrategy = new DotNetCoreCompileExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new DotNetCoreCompileExecuteAndCheckExecutionStrategy<DotNetCoreCompileExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<DotNetCoreCompileExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.GolangCompileExecuteAndCheck:
-                    executionStrategy = new GolangCompileExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new GolangCompileExecuteAndCheckExecutionStrategy<GolangCompileExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<GolangCompileExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.DotNetCoreUnitTestsExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore5UnitTestsExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore6UnitTestsExecutionStrategy:
-                    executionStrategy = new DotNetCoreUnitTestsExecutionStrategy(
+                    executionStrategy = new DotNetCoreUnitTestsExecutionStrategy<DotNetCoreUnitTestsExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<DotNetCoreUnitTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.DotNetCoreProjectExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore5ProjectExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore6ProjectExecutionStrategy:
-                    executionStrategy = new DotNetCoreProjectExecutionStrategy(
+                    executionStrategy = new DotNetCoreProjectExecutionStrategy<DotNetCoreProjectExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<DotNetCoreProjectExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy:
                 case ExecutionStrategyType.DotNetCore6ProjectTestsExecutionStrategy:
-                    executionStrategy = new DotNetCoreProjectTestsExecutionStrategy(
+                    executionStrategy = new DotNetCoreProjectTestsExecutionStrategy<DotNetCoreProjectTestsExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<DotNetCoreProjectTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
-                    executionStrategy = new JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new JavaPreprocessCompileExecuteAndCheckExecutionStrategy<JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<JavaPreprocessCompileExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
-                    executionStrategy = new JavaZipFileCompileExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new JavaZipFileCompileExecuteAndCheckExecutionStrategy<JavaZipFileCompileExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<JavaZipFileCompileExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
-                    executionStrategy = new JavaProjectTestsExecutionStrategy(
+                    executionStrategy = new JavaProjectTestsExecutionStrategy<JavaProjectTestsExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<JavaProjectTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
-                    executionStrategy = new JavaUnitTestsExecutionStrategy(
+                    executionStrategy = new JavaUnitTestsExecutionStrategy<JavaUnitTestsExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<JavaUnitTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy:
-                    executionStrategy = new JavaSpringAndHibernateProjectExecutionStrategy(
+                    executionStrategy = new JavaSpringAndHibernateProjectExecutionStrategy<JavaSpringAndHibernateProjectExecutionStrategySettings>(
                         processExecutorFactory,
                         this.compilerFactory,
-                        this.executionStrategySettingsProvider.GetSettings<JavaSpringAndHibernateProjectExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck:
-                    executionStrategy = new NodeJsPreprocessExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new NodeJsPreprocessExecuteAndCheckExecutionStrategy<NodeJsPreprocessExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsPreprocessExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha:
-                    executionStrategy = new NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy(
+                    executionStrategy = new NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha:
-                    executionStrategy = new NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy(
+                    executionStrategy = new NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy<NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests:
-                    executionStrategy = new NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
+                    executionStrategy = new NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
-                    executionStrategy = new NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy(
+                    executionStrategy = new NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy:
-                    executionStrategy = new NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy(
+                    executionStrategy = new NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy:
-                    executionStrategy = new NodeJsZipExecuteHtmlAndCssStrategy(
+                    executionStrategy = new NodeJsZipExecuteHtmlAndCssStrategy<NodeJsZipExecuteHtmlAndCssStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<NodeJsZipExecuteHtmlAndCssStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy:
-                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategy(
+                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategy<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<RunSpaAndExecuteMochaTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonExecuteAndCheck:
-                    executionStrategy = new PythonExecuteAndCheckExecutionStrategy(
+                    executionStrategy = new PythonExecuteAndCheckExecutionStrategy<PythonExecuteAndCheckExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<PythonExecuteAndCheckExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonUnitTests:
-                    executionStrategy = new PythonUnitTestsExecutionStrategy(
+                    executionStrategy = new PythonUnitTestsExecutionStrategy<PythonUnitTestsExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<PythonUnitTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonCodeExecuteAgainstUnitTests:
-                    executionStrategy = new PythonCodeExecuteAgainstUnitTestsExecutionStrategy(
+                    executionStrategy = new PythonCodeExecuteAgainstUnitTestsExecutionStrategy<PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<PythonCodeExecuteAgainstUnitTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonProjectTests:
-                    executionStrategy = new PythonProjectTestsExecutionStrategy(
+                    executionStrategy = new PythonProjectTestsExecutionStrategy<PythonProjectTestsExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<PythonProjectTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonProjectUnitTests:
-                    executionStrategy = new PythonProjectUnitTestsExecutionStrategy(
+                    executionStrategy = new PythonProjectUnitTestsExecutionStrategy<PythonProjectUnitTestsExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<PythonProjectUnitTestsExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.SqlServerSingleDatabasePrepareDatabaseAndRunQueries:
-                    executionStrategy = new SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy<SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.SqlServerSingleDatabaseRunQueriesAndCheckDatabase:
-                    executionStrategy = new SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabase:
-                    executionStrategy = new SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries:
-                    executionStrategy = new MySqlPrepareDatabaseAndRunQueriesExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<MySqlPrepareDatabaseAndRunQueriesExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new MySqlPrepareDatabaseAndRunQueriesExecutionStrategy<MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.MySqlRunQueriesAndCheckDatabase:
-                    executionStrategy = new MySqlRunQueriesAndCheckDatabaseExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<MySqlRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new MySqlRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.MySqlRunSkeletonRunQueriesAndCheckDatabase:
-                    executionStrategy = new MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.DoNothing:
-                    executionStrategy = new DoNothingExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<IExecutionStrategySettings>(type));
+                    executionStrategy = new DoNothingExecutionStrategy<DoNothingExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.CheckOnly:
-                    executionStrategy = new CheckOnlyExecutionStrategy(
+                    executionStrategy = new CheckOnlyExecutionStrategy<CheckOnlyExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<CheckOnlyExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries:
-                    executionStrategy = new PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy<PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PostgreSqlRunQueriesAndCheckDatabase:
-                    executionStrategy = new PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(
-                        this.executionStrategySettingsProvider.GetSettings<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings>(type) !);
+                    executionStrategy = new PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings>(
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase:
                     executionStrategy =
-                        new PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-                            this.executionStrategySettingsProvider.GetSettings<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy.StrategySettings>(type) !);
+                        new PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings>(
+                            this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonDjangoOrmExecutionStrategy:
-                    executionStrategy = new PythonDjangoOrmExecutionStrategy(
+                    executionStrategy = new PythonDjangoOrmExecutionStrategy<PythonDjangoOrmExecutionStrategySettings>(
                         processExecutorFactory,
-                        this.executionStrategySettingsProvider.GetSettings<PythonDjangoOrmExecutionStrategy.StrategySettings>(type) !);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.NotFound:
                 default:

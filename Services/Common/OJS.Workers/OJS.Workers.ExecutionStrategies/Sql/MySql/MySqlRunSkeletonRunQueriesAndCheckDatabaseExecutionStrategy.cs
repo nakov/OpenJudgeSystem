@@ -3,13 +3,14 @@
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy : BaseMySqlExecutionStrategy
+    public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseMySqlExecutionStrategy<TSettings>
+        where TSettings : MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
-        public MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
-            : base(settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+        public MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -24,9 +25,11 @@
                     var sqlTestResult = this.ExecuteReader(connection, test.Input);
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
+    }
 
-        public new class StrategySettings : BaseMySqlExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings : BaseMySqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

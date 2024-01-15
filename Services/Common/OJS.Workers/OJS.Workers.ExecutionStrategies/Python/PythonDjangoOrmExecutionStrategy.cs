@@ -11,7 +11,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class PythonDjangoOrmExecutionStrategy : PythonProjectTestsExecutionStrategy
+    public class PythonDjangoOrmExecutionStrategy<TSettings> : PythonProjectTestsExecutionStrategy<TSettings>
+        where TSettings : PythonDjangoOrmExecutionStrategySettings
     {
         private const string ProjectSettingsFolder = "orm_skeleton";
         private const string SettingsFileName = "settings.py";
@@ -31,11 +32,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonDjangoOrmExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected override Regex TestsRegex => new Regex(TestResultsRegexPattern, RegexOptions.Multiline);
 
@@ -228,11 +228,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 this.WorkingDirectory,
                 false,
                 true);
+    }
 
-        public new class StrategySettings : PythonProjectTestsExecutionStrategy.StrategySettings
-        {
-            public string PipExecutablePath { get; set; } = string.Empty;
-            public int InstallPackagesTimeUsed { get; set; }
-        }
+#pragma warning disable SA1402
+    public class PythonDjangoOrmExecutionStrategySettings : PythonProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string PipExecutablePath { get; set; } = string.Empty;
+        public int InstallPackagesTimeUsed { get; set; }
     }
 }

@@ -8,21 +8,17 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
     using OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb;
 
 #pragma warning disable CA1001
-    public abstract class BaseSqlServerSingleDatabaseExecutionStrategy : BaseSqlServerLocalDbExecutionStrategy
+    public abstract class BaseSqlServerSingleDatabaseExecutionStrategy<TSettings> : BaseSqlServerLocalDbExecutionStrategy<TSettings>
+        where TSettings : BaseSqlServerSingleDatabaseExecutionStrategySettings
 #pragma warning restore CA1001
     {
         private readonly string databaseNameForSubmissionProcessor;
 
         private TransactionScope transactionScope;
 
-        protected BaseSqlServerSingleDatabaseExecutionStrategy(StrategySettings settings)
-            : base(settings)
-        {
-            this.Settings = settings;
-            this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
-        }
-
-        protected override StrategySettings Settings { get; }
+        protected BaseSqlServerSingleDatabaseExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+            => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{this.Settings.RestrictedUserId}";
 
@@ -92,10 +88,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 
             this.WorkerDbConnectionString = this.BuildWorkerDbConnectionString(databaseName);
         }
+    }
 
-        public new class StrategySettings : BaseSqlServerLocalDbExecutionStrategy.StrategySettings
-        {
-            public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class BaseSqlServerSingleDatabaseExecutionStrategySettings : BaseSqlServerLocalDbExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
     }
 }

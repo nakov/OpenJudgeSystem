@@ -11,67 +11,64 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy :
-        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy
+    public class NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<TSettings> :
+        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
+        where TSettings : NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings
     {
         public NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
         {
-            if (!File.Exists(settings.SinonJsDomModulePath))
+            if (!File.Exists(this.Settings.SinonJsDomModulePath))
             {
                 throw new ArgumentException(
-                    $"SinonPackaged not found in: {settings.SinonJsDomModulePath}",
-                    nameof(settings.SinonJsDomModulePath));
+                    $"SinonPackaged not found in: {this.Settings.SinonJsDomModulePath}",
+                    nameof(this.Settings.SinonJsDomModulePath));
             }
 
-            if (!Directory.Exists(settings.BabelCoreModulePath))
+            if (!Directory.Exists(this.Settings.BabelCoreModulePath))
             {
                 throw new ArgumentException(
-                    $"Babel-Core not found in: {settings.BabelCoreModulePath}",
-                    nameof(settings.BabelCoreModulePath));
+                    $"Babel-Core not found in: {this.Settings.BabelCoreModulePath}",
+                    nameof(this.Settings.BabelCoreModulePath));
             }
 
-            if (!Directory.Exists(settings.ReactJsxPluginPath))
+            if (!Directory.Exists(this.Settings.ReactJsxPluginPath))
             {
                 throw new ArgumentException(
-                    $"React JSX Plugin not found in: {settings.ReactJsxPluginPath}",
-                    nameof(settings.ReactJsxPluginPath));
+                    $"React JSX Plugin not found in: {this.Settings.ReactJsxPluginPath}",
+                    nameof(this.Settings.ReactJsxPluginPath));
             }
 
-            if (!Directory.Exists(settings.ReactModulePath))
+            if (!Directory.Exists(this.Settings.ReactModulePath))
             {
                 throw new ArgumentException(
-                    $"React Module not found in: {settings.ReactModulePath}",
-                    nameof(settings.ReactModulePath));
+                    $"React Module not found in: {this.Settings.ReactModulePath}",
+                    nameof(this.Settings.ReactModulePath));
             }
 
-            if (!Directory.Exists(settings.ReactDomModulePath))
+            if (!Directory.Exists(this.Settings.ReactDomModulePath))
             {
                 throw new ArgumentException(
-                    $"ReactDOM Module not found in: {settings.ReactDomModulePath}",
-                    nameof(settings.ReactDomModulePath));
+                    $"ReactDOM Module not found in: {this.Settings.ReactDomModulePath}",
+                    nameof(this.Settings.ReactDomModulePath));
             }
 
-            if (!Directory.Exists(settings.NodeFetchModulePath))
+            if (!Directory.Exists(this.Settings.NodeFetchModulePath))
             {
                 throw new ArgumentException(
-                    $"node-fetch Module not found in: {settings.NodeFetchModulePath}",
-                    nameof(settings.NodeFetchModulePath));
+                    $"node-fetch Module not found in: {this.Settings.NodeFetchModulePath}",
+                    nameof(this.Settings.NodeFetchModulePath));
             }
 
-            settings.SinonJsDomModulePath = FileHelpers.ProcessModulePath(settings.SinonJsDomModulePath);
-            settings.BabelCoreModulePath = FileHelpers.ProcessModulePath(settings.BabelCoreModulePath);
-            settings.ReactJsxPluginPath = FileHelpers.ProcessModulePath(settings.ReactJsxPluginPath);
-            settings.ReactModulePath = FileHelpers.ProcessModulePath(settings.ReactModulePath);
-            settings.ReactDomModulePath = FileHelpers.ProcessModulePath(settings.ReactDomModulePath);
-            settings.NodeFetchModulePath = FileHelpers.ProcessModulePath(settings.NodeFetchModulePath);
-
-            this.Settings = settings;
+            this.Settings.SinonJsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.SinonJsDomModulePath);
+            this.Settings.BabelCoreModulePath = FileHelpers.ProcessModulePath(this.Settings.BabelCoreModulePath);
+            this.Settings.ReactJsxPluginPath = FileHelpers.ProcessModulePath(this.Settings.ReactJsxPluginPath);
+            this.Settings.ReactModulePath = FileHelpers.ProcessModulePath(this.Settings.ReactModulePath);
+            this.Settings.ReactDomModulePath = FileHelpers.ProcessModulePath(this.Settings.ReactDomModulePath);
+            this.Settings.NodeFetchModulePath = FileHelpers.ProcessModulePath(this.Settings.NodeFetchModulePath);
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected override string JsCodeTemplate =>
     RequiredModules + $@";
@@ -234,15 +231,17 @@ it('Test{testsCount++}', function(done) {{
                 .Replace(UserInputPlaceholder, code);
             return processedCode;
         }
+    }
 
-        public new class StrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy.StrategySettings
-        {
-            public string SinonJsDomModulePath { get; set; } = string.Empty;
-            public string BabelCoreModulePath { get; set; } = string.Empty;
-            public string ReactJsxPluginPath { get; set; } = string.Empty;
-            public string ReactModulePath { get; set; } = string.Empty;
-            public string ReactDomModulePath { get; set; } = string.Empty;
-            public string NodeFetchModulePath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string SinonJsDomModulePath { get; set; } = string.Empty;
+        public string BabelCoreModulePath { get; set; } = string.Empty;
+        public string ReactJsxPluginPath { get; set; } = string.Empty;
+        public string ReactModulePath { get; set; } = string.Empty;
+        public string ReactDomModulePath { get; set; } = string.Empty;
+        public string NodeFetchModulePath { get; set; } = string.Empty;
     }
 }

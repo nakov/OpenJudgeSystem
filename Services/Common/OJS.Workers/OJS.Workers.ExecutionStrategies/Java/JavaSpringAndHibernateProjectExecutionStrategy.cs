@@ -16,7 +16,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaSpringAndHibernateProjectExecutionStrategy : JavaProjectTestsExecutionStrategy
+    public class JavaSpringAndHibernateProjectExecutionStrategy<TSettings> : JavaProjectTestsExecutionStrategy<TSettings>
+        where TSettings : JavaSpringAndHibernateProjectExecutionStrategySettings
     {
         private const string PomXmlFileNameAndExtension = "pom.xml";
         private const string ApplicationPropertiesFileName = "application.properties";
@@ -39,9 +40,10 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaSpringAndHibernateProjectExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         // Property contains Dictionary<GroupId, Tuple<ArtifactId, Version>>
         public static Dictionary<string, Tuple<string, string>> Dependencies =>
@@ -65,8 +67,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
                     </plugin>
                 </plugins>
             </build>";
-
-        protected override StrategySettings Settings { get; }
 
         protected string PackageName { get; set; }
 
@@ -450,10 +450,12 @@ namespace OJS.Workers.ExecutionStrategies.Java
             FileHelpers.DeleteFiles(pomXmlPath);
             return packageName.InnerText.Trim();
         }
+    }
 
-        public new class StrategySettings : JavaProjectTestsExecutionStrategy.StrategySettings
-        {
-            public string MavenPath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class JavaSpringAndHibernateProjectExecutionStrategySettings : JavaProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string MavenPath { get; set; } = string.Empty;
     }
 }

@@ -4,15 +4,15 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class CheckOnlyExecutionStrategy : BaseCodeExecutionStrategy
+    public class CheckOnlyExecutionStrategy<TSettings> : BaseCodeExecutionStrategy<TSettings>
+        where TSettings : CheckOnlyExecutionStrategySettings
     {
         public CheckOnlyExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -41,9 +41,11 @@
 
             return Task.FromResult(result);
         }
+    }
 
-        public new class StrategySettings : BaseCodeExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class CheckOnlyExecutionStrategySettings : BaseCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

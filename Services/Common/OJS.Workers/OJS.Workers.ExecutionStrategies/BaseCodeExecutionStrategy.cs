@@ -9,7 +9,8 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class BaseCodeExecutionStrategy : BaseExecutionStrategy
+    public class BaseCodeExecutionStrategy<TSettings> : BaseExecutionStrategy<TSettings>
+        where TSettings : BaseCodeExecutionStrategySettings
     {
         protected const string RemoveMacFolderPattern = "__MACOSX/*";
 
@@ -21,14 +22,9 @@
 
         protected BaseCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(settings)
-        {
-            this.ProcessExecutorFactory = processExecutorFactory;
-            this.Settings = settings;
-        }
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+            => this.ProcessExecutorFactory = processExecutorFactory;
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)
         {
@@ -108,11 +104,13 @@
             => string.IsNullOrEmpty(executionContext.AllowedFileExtensions)
                 ? FileHelpers.SaveStringToTempFile(this.WorkingDirectory, executionContext.Code)
                 : FileHelpers.SaveByteArrayToTempFile(this.WorkingDirectory, executionContext.FileContent);
+    }
 
-        public class StrategySettings : IExecutionStrategySettings
-        {
-            public int BaseTimeUsed { get; set; }
-            public int BaseMemoryUsed { get; set; }
-        }
+#pragma warning disable SA1402
+    public class BaseCodeExecutionStrategySettings : BaseExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public int BaseTimeUsed { get; set; }
+        public int BaseMemoryUsed { get; set; }
     }
 }

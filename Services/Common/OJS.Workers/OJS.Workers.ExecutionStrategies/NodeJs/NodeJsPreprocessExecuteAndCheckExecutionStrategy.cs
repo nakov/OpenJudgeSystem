@@ -7,13 +7,13 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
-    public class NodeJsPreprocessExecuteAndCheckExecutionStrategy : BaseInterpretedCodeExecutionStrategy
+    public class NodeJsPreprocessExecuteAndCheckExecutionStrategy<TSettings> : BaseInterpretedCodeExecutionStrategy<TSettings>
+        where TSettings : NodeJsPreprocessExecuteAndCheckExecutionStrategySettings
     {
         protected const string UserInputPlaceholder = "#userInput#";
         protected const string RequiredModules = "#requiredModule#";
@@ -27,39 +27,35 @@
 
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
         {
-            if (!File.Exists(settings.NodeJsExecutablePath))
+            if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {
                 throw new ArgumentException(
-                    $"NodeJS not found in: {settings.NodeJsExecutablePath}",
-                    nameof(settings.NodeJsExecutablePath));
+                    $"NodeJS not found in: {this.Settings.NodeJsExecutablePath}",
+                    nameof(this.Settings.NodeJsExecutablePath));
             }
 
-            if (!Directory.Exists(settings.UnderscoreModulePath))
+            if (!Directory.Exists(this.Settings.UnderscoreModulePath))
             {
                 throw new ArgumentException(
-                    $"Underscore not found in: {settings.UnderscoreModulePath}",
-                    nameof(settings.UnderscoreModulePath));
+                    $"Underscore not found in: {this.Settings.UnderscoreModulePath}",
+                    nameof(this.Settings.UnderscoreModulePath));
             }
 
-            if (settings.BaseTimeUsed < 0)
+            if (this.Settings.BaseTimeUsed < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(settings.BaseTimeUsed));
+                throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseTimeUsed));
             }
 
-            if (settings.BaseMemoryUsed < 0)
+            if (this.Settings.BaseMemoryUsed < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(settings.BaseMemoryUsed));
+                throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseMemoryUsed));
             }
 
-            settings.UnderscoreModulePath = FileHelpers.ProcessModulePath(settings.UnderscoreModulePath);
-
-            this.Settings = settings;
+            this.Settings.UnderscoreModulePath = FileHelpers.ProcessModulePath(this.Settings.UnderscoreModulePath);
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected virtual string JsCodeRequiredModules => $@"
 var EOL = require('os').EOL,
@@ -277,11 +273,13 @@ process.stdin.on('end', function() {
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
                 new[] { LatestEcmaScriptFeaturesEnabledFlag, codeSavePath });
+    }
 
-        public new class StrategySettings : BaseInterpretedCodeExecutionStrategy.StrategySettings
-        {
-            public string NodeJsExecutablePath { get; set; } = string.Empty;
-            public string UnderscoreModulePath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class NodeJsPreprocessExecuteAndCheckExecutionStrategySettings : BaseInterpretedCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string NodeJsExecutablePath { get; set; } = string.Empty;
+        public string UnderscoreModulePath { get; set; } = string.Empty;
     }
 }

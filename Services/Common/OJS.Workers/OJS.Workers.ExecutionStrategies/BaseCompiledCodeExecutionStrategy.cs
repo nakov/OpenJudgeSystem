@@ -9,19 +9,15 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public abstract class BaseCompiledCodeExecutionStrategy : BaseCodeExecutionStrategy
+    public abstract class BaseCompiledCodeExecutionStrategy<TSettings> : BaseCodeExecutionStrategy<TSettings>
+        where TSettings : BaseCompiledCodeExecutionStrategySettings
     {
         protected BaseCompiledCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-        {
-            this.CompilerFactory = compilerFactory;
-            this.Settings = settings;
-        }
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+            => this.CompilerFactory = compilerFactory;
 
         protected ICompilerFactory CompilerFactory { get; }
 
@@ -117,9 +113,11 @@
 
             return compilerResult;
         }
+    }
 
-        public new class StrategySettings : BaseCodeExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class BaseCompiledCodeExecutionStrategySettings : BaseCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

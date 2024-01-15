@@ -15,7 +15,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
-    public class PythonProjectUnitTestsExecutionStrategy : PythonUnitTestsExecutionStrategy
+    public class PythonProjectUnitTestsExecutionStrategy<TSettings> : PythonUnitTestsExecutionStrategy<TSettings>
+        where TSettings : PythonProjectUnitTestsExecutionStrategySettings
     {
         private const string ProjectFolderName = "project";
         private const string ProjectFilesCountPlaceholder = "# project_files_count ";
@@ -39,11 +40,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonProjectUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected override IEnumerable<string> ExecutionArguments
             => new[]
@@ -221,9 +221,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
             return FileHelpers.BuildPath(pathArguments.ToArray());
         }
+    }
 
-        public new class StrategySettings : PythonUnitTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class PythonProjectUnitTestsExecutionStrategySettings : PythonUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

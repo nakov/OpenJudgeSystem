@@ -11,7 +11,8 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class DotNetCoreProjectTestsExecutionStrategy : CSharpProjectTestsExecutionStrategy
+    public class DotNetCoreProjectTestsExecutionStrategy<TSettings> : CSharpProjectTestsExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreProjectTestsExecutionStrategySettings
     {
         protected new const string AdditionalExecutionArguments = "--noresult";
         protected const string CsProjFileExtension = ".csproj";
@@ -43,11 +44,10 @@
         public DotNetCoreProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected string NUnitLiteConsoleAppDirectory =>
             Path.Combine(this.WorkingDirectory, NUnitLiteConsoleAppFolderName);
@@ -152,12 +152,14 @@
 
             return consoleAppCsProjPath;
         }
+    }
 
-        public new class StrategySettings : CSharpProjectTestsExecutionStrategy.StrategySettings
-        {
-            public string TargetFrameworkName { get; set; } = string.Empty;
-            public string MicrosoftEntityFrameworkCoreInMemoryVersion { get; set; } = string.Empty;
-            public string MicrosoftEntityFrameworkCoreProxiesVersion { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class DotNetCoreProjectTestsExecutionStrategySettings : CSharpProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string TargetFrameworkName { get; set; } = string.Empty;
+        public string MicrosoftEntityFrameworkCoreInMemoryVersion { get; set; } = string.Empty;
+        public string MicrosoftEntityFrameworkCoreProxiesVersion { get; set; } = string.Empty;
     }
 }

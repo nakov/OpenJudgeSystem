@@ -8,16 +8,16 @@
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public abstract class BaseMySqlExecutionStrategy : BaseSqlExecutionStrategy
+    public abstract class BaseMySqlExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
+        where TSettings : BaseMySqlExecutionStrategySettings
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         private const string TimeSpanFormat = "HH:mm:ss";
 
-        protected BaseMySqlExecutionStrategy(StrategySettings settings)
-            : base(settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+        protected BaseMySqlExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+        {
+        }
 
         protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
@@ -122,9 +122,11 @@
 
             return workerDbConnectionString;
         }
+    }
 
-        public new class StrategySettings : BaseSqlExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class BaseMySqlExecutionStrategySettings : BaseSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

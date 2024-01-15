@@ -5,16 +5,16 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class CompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class CompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : CompileExecuteAndCheckExecutionStrategySettings
     {
         public CompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -51,9 +51,11 @@
 
             return result;
         }
+    }
 
-        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class CompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

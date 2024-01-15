@@ -4,13 +4,14 @@
     using OJS.Workers.Common;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy : BasePostgreSqlExecutionStrategy
+    public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BasePostgreSqlExecutionStrategy<TSettings>
+        where TSettings : PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
-        public PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
-            : base(settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+        public PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(settingsProvider)
+        {
+        }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -27,9 +28,11 @@
         protected override void ExecuteBeforeTests(IDbConnection connection, IExecutionContext<TestsInputModel>
             executionContext)
             => this.ExecuteNonQuery(connection, executionContext.Code, executionContext.TimeLimit);
+    }
 
-        public new class StrategySettings : BasePostgreSqlExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings : BasePostgreSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

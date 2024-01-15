@@ -11,7 +11,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
     using static OJS.Workers.Common.Constants;
 
-    public class PythonCodeExecuteAgainstUnitTestsExecutionStrategy : PythonExecuteAndCheckExecutionStrategy
+    public class PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings> : PythonExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
     {
         private const string ErrorInTestRegexPattern = @"^ERROR:[\s\S]+(^\w*Error:[\s\S]+)(?=^-{2,})";
         private const string FailedTestRegexPattern = @"^FAIL:[\s\S]+(^\w*Error:[\s\S]+)(?=^-{2,})";
@@ -20,11 +21,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonCodeExecuteAgainstUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected virtual Regex TestsRegex => new Regex(TestResultsRegexPattern, RegexOptions.Singleline);
 
@@ -113,9 +113,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 processExecutionResult.Type = ProcessExecutionResultType.Success;
             }
         }
+    }
 
-        public new class StrategySettings : PythonExecuteAndCheckExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings : PythonExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

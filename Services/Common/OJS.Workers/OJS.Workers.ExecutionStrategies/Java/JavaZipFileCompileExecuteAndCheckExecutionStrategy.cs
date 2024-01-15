@@ -10,18 +10,18 @@
     using OJS.Workers.Compilers;
     using OJS.Workers.Executors;
 
-    public class JavaZipFileCompileExecuteAndCheckExecutionStrategy : JavaPreprocessCompileExecuteAndCheckExecutionStrategy
+    public class JavaZipFileCompileExecuteAndCheckExecutionStrategy<TSettings> : JavaPreprocessCompileExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
     {
         protected const string SubmissionFileName = "_$submission";
 
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected override string CreateSubmissionFile<TInput>(IExecutionContext<TInput> executionContext)
         {
@@ -71,9 +71,11 @@
                 zipFile.Save();
             }
         }
+    }
 
-        public new class StrategySettings : JavaPreprocessCompileExecuteAndCheckExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class JavaZipFileCompileExecuteAndCheckExecutionStrategySettings : JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

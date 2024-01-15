@@ -16,7 +16,8 @@ namespace OJS.Workers.ExecutionStrategies
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
 
-    public class RunSpaAndExecuteMochaTestsExecutionStrategy : PythonExecuteAndCheckExecutionStrategy
+    public class RunSpaAndExecuteMochaTestsExecutionStrategy<TSettings> : PythonExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : RunSpaAndExecuteMochaTestsExecutionStrategySettings
     {
         private const string UserApplicationHttpPortPlaceholder = "#userApplicationHttpPort#";
         private const string ContainerNamePlaceholder = "#containerNamePlaceholder#";
@@ -30,11 +31,10 @@ namespace OJS.Workers.ExecutionStrategies
 
         public RunSpaAndExecuteMochaTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         private static string NginxFileContent => @"
 worker_processes  1;
@@ -487,14 +487,16 @@ finally:
         }
 
         private string BuildTestPath(int testId) => FileHelpers.BuildPath(this.TestsPath, $"{testId}{JavaScriptFileExtension}");
+    }
 
-        public new class StrategySettings : PythonExecuteAndCheckExecutionStrategy.StrategySettings
-        {
-            public string JsProjNodeModulesPath { get; set; } = string.Empty;
-            public string MochaModulePath { get; set; } = string.Empty;
-            public string ChaiModulePath { get; set; } = string.Empty;
-            public string PlaywrightChromiumModulePath { get; set; } = string.Empty;
-            public int PortNumber { get; set; }
-        }
+#pragma warning disable SA1402
+    public class RunSpaAndExecuteMochaTestsExecutionStrategySettings : PythonExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string JsProjNodeModulesPath { get; set; } = string.Empty;
+        public string MochaModulePath { get; set; } = string.Empty;
+        public string ChaiModulePath { get; set; } = string.Empty;
+        public string PlaywrightChromiumModulePath { get; set; } = string.Empty;
+        public int PortNumber { get; set; }
     }
 }

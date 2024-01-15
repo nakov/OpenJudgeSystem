@@ -6,15 +6,15 @@
 
     using static OJS.Workers.Common.Constants;
 
-    public class BaseInterpretedCodeExecutionStrategy : BaseCodeExecutionStrategy
+    public class BaseInterpretedCodeExecutionStrategy<TSettings> : BaseCodeExecutionStrategy<TSettings>
+        where TSettings : BaseInterpretedCodeExecutionStrategySettings
     {
         protected BaseInterpretedCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
+        {
+        }
 
         protected static string PrepareTestInput(string testInput)
             => string.Join(
@@ -29,9 +29,11 @@
 
             return base.InternalExecute(executionContext, result);
         }
+    }
 
-        public new class StrategySettings : BaseCodeExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class BaseInterpretedCodeExecutionStrategySettings : BaseCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

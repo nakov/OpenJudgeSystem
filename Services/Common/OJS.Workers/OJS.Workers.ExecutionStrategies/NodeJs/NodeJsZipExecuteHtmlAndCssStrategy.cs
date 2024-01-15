@@ -12,53 +12,50 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class NodeJsZipExecuteHtmlAndCssStrategy : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy
+    public class NodeJsZipExecuteHtmlAndCssStrategy<TSettings> : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<TSettings>
+        where TSettings : NodeJsZipExecuteHtmlAndCssStrategySettings
     {
         protected const string EntryFileName = "*.html";
         protected const string UserBaseDirectoryPlaceholder = "#userBaseDirectoryPlaceholder#";
 
         public NodeJsZipExecuteHtmlAndCssStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
         {
-            if (!Directory.Exists(settings.JsDomModulePath))
+            if (!Directory.Exists(this.Settings.JsDomModulePath))
             {
                 throw new ArgumentException(
-                    $"jsDom not found in: {settings.JsDomModulePath}",
-                    nameof(settings.JsDomModulePath));
+                    $"jsDom not found in: {this.Settings.JsDomModulePath}",
+                    nameof(this.Settings.JsDomModulePath));
             }
 
-            if (!Directory.Exists(settings.JQueryModulePath))
+            if (!Directory.Exists(this.Settings.JQueryModulePath))
             {
                 throw new ArgumentException(
-                    $"jQuery not found in: {settings.JQueryModulePath}",
-                    nameof(settings.JQueryModulePath));
+                    $"jQuery not found in: {this.Settings.JQueryModulePath}",
+                    nameof(this.Settings.JQueryModulePath));
             }
 
-            if (!File.Exists(settings.BootstrapModulePath))
+            if (!File.Exists(this.Settings.BootstrapModulePath))
             {
                 throw new ArgumentException(
-                    $"Bootstrap Module not found in: {settings.BootstrapModulePath}",
-                    nameof(settings.BootstrapModulePath));
+                    $"Bootstrap Module not found in: {this.Settings.BootstrapModulePath}",
+                    nameof(this.Settings.BootstrapModulePath));
             }
 
-            if (!File.Exists(settings.BootstrapCssPath))
+            if (!File.Exists(this.Settings.BootstrapCssPath))
             {
                 throw new ArgumentException(
-                    $"Bootstrap CSS not found in: {settings.BootstrapCssPath}",
-                    nameof(settings.BootstrapCssPath));
+                    $"Bootstrap CSS not found in: {this.Settings.BootstrapCssPath}",
+                    nameof(this.Settings.BootstrapCssPath));
             }
 
-            settings.JsDomModulePath = FileHelpers.ProcessModulePath(settings.JsDomModulePath);
-            settings.JQueryModulePath = FileHelpers.ProcessModulePath(settings.JQueryModulePath);
-            settings.BootstrapModulePath = FileHelpers.ProcessModulePath(settings.BootstrapModulePath);
-            settings.BootstrapCssPath = FileHelpers.ProcessModulePath(settings.BootstrapCssPath);
-
-            this.Settings = settings;
+            this.Settings.JsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.JsDomModulePath);
+            this.Settings.JQueryModulePath = FileHelpers.ProcessModulePath(this.Settings.JQueryModulePath);
+            this.Settings.BootstrapModulePath = FileHelpers.ProcessModulePath(this.Settings.BootstrapModulePath);
+            this.Settings.BootstrapCssPath = FileHelpers.ProcessModulePath(this.Settings.BootstrapCssPath);
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected string ProgramEntryPath { get; set; }
 
@@ -251,13 +248,15 @@ describe('TestDOMScope', function() {{
 
             return processedCode;
         }
+    }
 
-        public new class StrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy.StrategySettings
-        {
-            public string JsDomModulePath { get; set; } = string.Empty;
-            public string JQueryModulePath { get; set; } = string.Empty;
-            public string BootstrapModulePath { get; set; } = string.Empty;
-            public string BootstrapCssPath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class NodeJsZipExecuteHtmlAndCssStrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string JsDomModulePath { get; set; } = string.Empty;
+        public string JQueryModulePath { get; set; } = string.Empty;
+        public string BootstrapModulePath { get; set; } = string.Empty;
+        public string BootstrapCssPath { get; set; } = string.Empty;
     }
 }

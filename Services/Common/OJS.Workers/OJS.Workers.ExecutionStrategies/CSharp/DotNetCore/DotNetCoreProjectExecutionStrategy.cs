@@ -6,18 +6,18 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class DotNetCoreProjectExecutionStrategy : CSharpProjectTestsExecutionStrategy
+    public class DotNetCoreProjectExecutionStrategy<TSettings> : CSharpProjectTestsExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreProjectExecutionStrategySettings
     {
         protected new const string AdditionalExecutionArguments = "--no-build --no-restore";
 
         public DotNetCoreProjectExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -76,9 +76,11 @@
 
             return result;
         }
+    }
 
-        public new class StrategySettings : CSharpProjectTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class DotNetCoreProjectExecutionStrategySettings : CSharpProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

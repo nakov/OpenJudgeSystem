@@ -17,7 +17,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaProjectTestsExecutionStrategy : JavaUnitTestsExecutionStrategy
+    public class JavaProjectTestsExecutionStrategy<TSettings> : JavaUnitTestsExecutionStrategy<TSettings>
+        where TSettings : JavaProjectTestsExecutionStrategySettings
     {
         private const string TestRanPrefix = "Test Ran. Successful:";
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
@@ -25,14 +26,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-        {
-            this.Settings = settings;
-            this.UserClassNames = new List<string>();
-        }
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            => this.UserClassNames = new List<string>();
 
         protected List<string> UserClassNames { get; }
 
@@ -341,9 +337,11 @@ class Classes{{
 
             return errorsByFiles;
         }
+    }
 
-        public new class StrategySettings : JavaUnitTestsExecutionStrategy.StrategySettings
-        {
-        }
+#pragma warning disable SA1402
+    public class JavaProjectTestsExecutionStrategySettings : JavaUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

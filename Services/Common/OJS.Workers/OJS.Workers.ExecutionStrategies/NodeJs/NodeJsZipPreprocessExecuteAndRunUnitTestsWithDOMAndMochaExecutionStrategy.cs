@@ -15,45 +15,42 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
-    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy :
-        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy
+    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy<TSettings> :
+        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
+        where TSettings : NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings
     {
         protected const string AppJsFileName = "app.js";
 
         public NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, settings)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, settingsProvider)
         {
-            if (!Directory.Exists(settings.BrowserifyModulePath))
+            if (!Directory.Exists(this.Settings.BrowserifyModulePath))
             {
                 throw new ArgumentException(
-                    $"Browsrify not found in: {settings.BrowserifyModulePath}",
-                    nameof(settings.BrowserifyModulePath));
+                    $"Browsrify not found in: {this.Settings.BrowserifyModulePath}",
+                    nameof(this.Settings.BrowserifyModulePath));
             }
 
-            if (!Directory.Exists(settings.BabelifyModulePath))
+            if (!Directory.Exists(this.Settings.BabelifyModulePath))
             {
                 throw new ArgumentException(
-                    $"Babel not found in: {settings.BabelifyModulePath}",
-                    nameof(settings.BabelifyModulePath));
+                    $"Babel not found in: {this.Settings.BabelifyModulePath}",
+                    nameof(this.Settings.BabelifyModulePath));
             }
 
-            if (!Directory.Exists(settings.EcmaScriptImportPluginPath))
+            if (!Directory.Exists(this.Settings.EcmaScriptImportPluginPath))
             {
                 throw new ArgumentException(
-                    $"ECMAScript2015ImportPluginPath not found in: {settings.EcmaScriptImportPluginPath}",
-                    nameof(settings.EcmaScriptImportPluginPath));
+                    $"ECMAScript2015ImportPluginPath not found in: {this.Settings.EcmaScriptImportPluginPath}",
+                    nameof(this.Settings.EcmaScriptImportPluginPath));
             }
 
-            settings.BrowserifyModulePath = FileHelpers.ProcessModulePath(settings.BrowserifyModulePath);
-            settings.BabelifyModulePath = FileHelpers.ProcessModulePath(settings.BabelifyModulePath);
-            settings.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(settings.EcmaScriptImportPluginPath);
-
-            this.Settings = settings;
+            this.Settings.BrowserifyModulePath = FileHelpers.ProcessModulePath(this.Settings.BrowserifyModulePath);
+            this.Settings.BabelifyModulePath = FileHelpers.ProcessModulePath(this.Settings.BabelifyModulePath);
+            this.Settings.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(this.Settings.EcmaScriptImportPluginPath);
         }
-
-        protected override StrategySettings Settings { get; }
 
         protected string ProgramEntryPath { get; set; }
 
@@ -202,12 +199,14 @@ function afterBundling() {
 
             return processedCode;
         }
+    }
 
-        public new class StrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy.StrategySettings
-        {
-            public string BrowserifyModulePath { get; set; } = string.Empty;
-            public string BabelifyModulePath { get; set; } = string.Empty;
-            public string EcmaScriptImportPluginPath { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string BrowserifyModulePath { get; set; } = string.Empty;
+        public string BabelifyModulePath { get; set; } = string.Empty;
+        public string EcmaScriptImportPluginPath { get; set; } = string.Empty;
     }
 }

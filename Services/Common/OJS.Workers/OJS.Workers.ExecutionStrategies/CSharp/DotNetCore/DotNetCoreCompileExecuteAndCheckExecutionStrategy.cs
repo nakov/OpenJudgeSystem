@@ -12,18 +12,18 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
 
-    public class DotNetCoreCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class DotNetCoreCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
     {
         private const string DotNetCoreCodeStringTemplate = "{0}{1}{2}";
 
         public DotNetCoreCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            StrategySettings settings)
-            : base(processExecutorFactory, compilerFactory, settings)
-            => this.Settings = settings;
-
-        protected override StrategySettings Settings { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         private static IEnumerable<string> DotNetSixDefaultUsingNamespaces
             => new List<string>
@@ -172,10 +172,12 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 
             return executor;
         }
+    }
 
-        public new class StrategySettings : BaseCompiledCodeExecutionStrategy.StrategySettings
-        {
-            public string DotNetCoreRuntimeVersion { get; set; } = string.Empty;
-        }
+#pragma warning disable SA1402
+    public class DotNetCoreCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string DotNetCoreRuntimeVersion { get; set; } = string.Empty;
     }
 }
