@@ -10,9 +10,8 @@
         public CompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
         }
 
@@ -50,6 +49,10 @@
             result.Results.Add(GetOutputResult(processExecutionResult));
 
             return result;
+        }
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
         }
     }
 }

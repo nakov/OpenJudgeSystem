@@ -22,33 +22,25 @@
 
         private const double NanosecondsInOneMillisecond = 1000000;
 
-        private readonly int baseUpdateTimeOffset;
-
         public JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            int baseUpdateTimeOffset = 0)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
-            if (!File.Exists(javaExecutablePath))
+            if (!File.Exists(settings.JavaExecutablePath))
             {
-                throw new ArgumentException($"Java not found in: {javaExecutablePath}!", nameof(javaExecutablePath));
+                throw new ArgumentException($"Java not found in: {settings.JavaExecutablePath}!", nameof(settings.JavaExecutablePath));
             }
 
-            if (!Directory.Exists(javaLibrariesPath))
+            if (!Directory.Exists(settings.JavaLibrariesPath))
             {
                 throw new ArgumentException(
-                    $"Java libraries not found in: {javaLibrariesPath}",
-                    nameof(javaLibrariesPath));
+                    $"Java libraries not found in: {settings.JavaLibrariesPath}",
+                    nameof(settings.JavaLibrariesPath));
             }
 
-            this.JavaExecutablePath = javaExecutablePath;
-            this.JavaLibrariesPath = javaLibrariesPath;
-            this.baseUpdateTimeOffset = baseUpdateTimeOffset;
+            this.Settings = settings;
         }
 
         protected static string SandboxExecutorCode
@@ -167,15 +159,13 @@ class _$SandboxSecurityManager extends SecurityManager {
     }
 }";
 
-        protected string JavaExecutablePath { get; }
-
-        protected string JavaLibrariesPath { get; }
+        protected override StrategySettings Settings { get; }
 
         protected string SandboxExecutorSourceFilePath
             => $"{Path.Combine(this.WorkingDirectory, SandboxExecutorClassName)}{Constants.javaSourceFileExtension}";
 
         protected virtual string ClassPathArgument
-            => $@" -cp ""{this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}"" ";
+            => $@" -cp ""{this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}"" ";
 
         protected static void UpdateExecutionTime(
             string timeMeasurementFilePath,
@@ -317,7 +307,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             };
 
             var processExecutionResult = await executor.Execute(
-                    this.JavaExecutablePath,
+                    this.Settings.JavaExecutablePath,
                     input,
                     executionContext.TimeLimit * 2, // Java virtual machine takes more time to start up
                     executionContext.MemoryLimit,
@@ -330,7 +320,7 @@ class _$SandboxSecurityManager extends SecurityManager {
                 timeMeasurementFilePath,
                 processExecutionResult,
                 executionContext.TimeLimit,
-                this.baseUpdateTimeOffset);
+                this.Settings.BaseUpdateTimeOffset);
 
             return processExecutionResult;
         }
@@ -391,6 +381,13 @@ class _$SandboxSecurityManager extends SecurityManager {
             compilerResult.CompilerComment = compilerComment.Length > 0 ? compilerComment : null;
 
             return compilerResult;
+        }
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
+            public string JavaExecutablePath { get; set; } = string.Empty;
+            public string JavaLibrariesPath { get; set; } = string.Empty;
+            public int BaseUpdateTimeOffset { get; set; }
         }
     }
 }

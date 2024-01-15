@@ -19,13 +19,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         private IDbConnection currentConnection;
         private bool isDisposed;
 
-        protected BasePostgreSqlExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword)
-            => this.databaseNameForSubmissionProcessor = $"worker_{submissionProcessorIdentifier}_do_not_delete";
+        protected BasePostgreSqlExecutionStrategy(StrategySettings settings)
+            : base(settings)
+            => this.databaseNameForSubmissionProcessor = $"worker_{settings.SubmissionProcessorIdentifier}_do_not_delete";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";
 
@@ -55,13 +51,13 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             var userIdRegex = new Regex("UserId=.*?;");
             var passwordRegex = new Regex("Password=.*?;");
 
-            var createdDbConnectionString = this.MasterDbConnectionString;
+            var createdDbConnectionString = this.Settings.MasterDbConnectionString;
 
             createdDbConnectionString =
                 userIdRegex.Replace(createdDbConnectionString, $"User Id={this.RestrictedUserId};");
 
             createdDbConnectionString =
-                passwordRegex.Replace(createdDbConnectionString, $"Password={this.RestrictedUserPassword}");
+                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
 
             createdDbConnectionString += $";Database={databaseName};";
 
@@ -216,7 +212,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         private void EnsureDatabaseIsSetup()
         {
             var databaseName = this.GetDatabaseName();
-            var connectionString = this.MasterDbConnectionString;
+            var connectionString = this.Settings.MasterDbConnectionString;
 
             using (var connection = new NpgsqlConnection(connectionString))
             {
@@ -226,7 +222,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
                     $$
                     BEGIN
                       IF NOT EXISTS (SELECT * FROM pg_user WHERE usename = '{this.RestrictedUserId}') THEN
-                        CREATE USER {this.RestrictedUserId} WITH PASSWORD '{this.RestrictedUserPassword}';
+                        CREATE USER {this.RestrictedUserId} WITH PASSWORD '{this.Settings.RestrictedUserPassword}';
                       end if;
                     end
                     $$
@@ -264,6 +260,11 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             this.currentConnection = connection;
             this.isDisposed = false;
             return this.currentConnection;
+        }
+
+        public class StrategySettings : BaseSqlExecutionStrategySettings
+        {
+            public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
         }
     }
 }

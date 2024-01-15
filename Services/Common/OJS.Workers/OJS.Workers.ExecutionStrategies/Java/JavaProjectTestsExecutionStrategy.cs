@@ -25,23 +25,19 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed) =>
-                    this.UserClassNames = new List<string>();
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
+        {
+            this.Settings = settings;
+            this.UserClassNames = new List<string>();
+        }
+
+        protected override StrategySettings Settings { get; }
 
         protected List<string> UserClassNames { get; }
 
         protected override string ClassPathArgument
-            => $@" -classpath ""{this.WorkingDirectory}{ClassPathArgumentSeparator}{this.JavaLibrariesPath}*""";
+            => $@" -classpath ""{this.WorkingDirectory}{ClassPathArgumentSeparator}{this.Settings.JavaLibrariesPath}*""";
 
         protected override string JUnitTestRunnerCode
             => $@"
@@ -162,7 +158,7 @@ class Classes{{
                 preprocessArguments.AddRange(this.UserClassNames);
 
                 var preprocessExecutionResult = await preprocessExecutor.Execute(
-                    this.JavaExecutablePath,
+                    this.Settings.JavaExecutablePath,
                     string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -210,7 +206,7 @@ class Classes{{
             arguments.AddRange(this.UserClassNames);
 
             var processExecutionResult = await executor.Execute(
-                this.JavaExecutablePath,
+                this.Settings.JavaExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -344,6 +340,10 @@ class Classes{{
             }
 
             return errorsByFiles;
+        }
+
+        public new class StrategySettings : JavaUnitTestsExecutionStrategy.StrategySettings
+        {
         }
     }
 }

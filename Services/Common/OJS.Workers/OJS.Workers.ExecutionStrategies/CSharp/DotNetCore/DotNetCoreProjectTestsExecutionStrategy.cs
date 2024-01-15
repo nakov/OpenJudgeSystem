@@ -43,17 +43,11 @@
         public DotNetCoreProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            string targetFrameworkName,
-            string microsoftEntityFrameworkCoreInMemoryVersion,
-            string microsoftEntityFrameworkCoreProxiesVersion)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
-        {
-            this.TargetFrameworkName = targetFrameworkName;
-            this.MicrosoftEntityFrameworkCoreInMemoryVersion = microsoftEntityFrameworkCoreInMemoryVersion;
-            this.MicrosoftEntityFrameworkCoreProxiesVersion = microsoftEntityFrameworkCoreProxiesVersion;
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected string NUnitLiteConsoleAppDirectory =>
             Path.Combine(this.WorkingDirectory, NUnitLiteConsoleAppFolderName);
@@ -61,22 +55,16 @@
         protected string UserProjectDirectory =>
             Path.Combine(this.WorkingDirectory, UserSubmissionFolderName);
 
-        private string TargetFrameworkName { get; }
-
-        private string MicrosoftEntityFrameworkCoreInMemoryVersion { get; }
-
-        private string MicrosoftEntityFrameworkCoreProxiesVersion { get; }
-
         private string NUnitLiteConsoleAppCsProjTemplate => $@"
             <Project Sdk=""Microsoft.NET.Sdk"">
                 <PropertyGroup>
                     <OutputType>Exe</OutputType>
-                    <TargetFramework>{this.TargetFrameworkName}</TargetFramework>
+                    <TargetFramework>{this.Settings.TargetFrameworkName}</TargetFramework>
                 </PropertyGroup>
                 <ItemGroup>
                     <PackageReference Include=""NUnitLite"" Version=""3.13.2"" />
-                    <PackageReference Include=""Microsoft.EntityFrameworkCore.InMemory"" Version=""{this.MicrosoftEntityFrameworkCoreInMemoryVersion}"" />
-                    <PackageReference Include=""Microsoft.EntityFrameworkCore.Proxies"" Version=""{this.MicrosoftEntityFrameworkCoreProxiesVersion}"" />
+                    <PackageReference Include=""Microsoft.EntityFrameworkCore.InMemory"" Version=""{this.Settings.MicrosoftEntityFrameworkCoreInMemoryVersion}"" />
+                    <PackageReference Include=""Microsoft.EntityFrameworkCore.Proxies"" Version=""{this.Settings.MicrosoftEntityFrameworkCoreProxiesVersion}"" />
                 </ItemGroup>
                 <ItemGroup>
                     {ProjectReferencesPlaceholder}
@@ -163,6 +151,13 @@
             File.WriteAllText(consoleAppCsProjPath, csProjTemplate);
 
             return consoleAppCsProjPath;
+        }
+
+        public new class StrategySettings : CSharpProjectTestsExecutionStrategy.StrategySettings
+        {
+            public string TargetFrameworkName { get; set; } = string.Empty;
+            public string MicrosoftEntityFrameworkCoreInMemoryVersion { get; set; } = string.Empty;
+            public string MicrosoftEntityFrameworkCoreProxiesVersion { get; set; } = string.Empty;
         }
     }
 }

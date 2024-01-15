@@ -13,7 +13,6 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
     public class PythonDjangoOrmExecutionStrategy : PythonProjectTestsExecutionStrategy
     {
-        private const string VirtualEnvName = "env";
         private const string ProjectSettingsFolder = "orm_skeleton";
         private const string SettingsFileName = "settings.py";
         private const string PyenvAppFileName = "pyenv";
@@ -30,21 +29,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string SqlLiteConfig =
             "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.sqlite3',\n        'NAME': 'db.sqlite3',\n    }\n}\n";
 
-        private readonly string pipExecutablePath;
-        private readonly int installPackagesTimeUsed;
-
         public PythonDjangoOrmExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            string pipExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            int installPackagesTimeUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
-        {
-            this.pipExecutablePath = pipExecutablePath ?? throw new ArgumentNullException(nameof(pipExecutablePath));
-            this.installPackagesTimeUsed = installPackagesTimeUsed;
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Regex TestsRegex => new Regex(TestResultsRegexPattern, RegexOptions.Multiline);
 
@@ -137,7 +128,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             string testPath)
         {
             var processExecutionResult = await this.Execute(
-                this.PythonExecutablePath,
+                this.Settings.PythonExecutablePath,
                 this.ExecutionArguments.Concat(new[]
                 {
                     $"manage.py test --pattern=\"{testPath.Split(Path.DirectorySeparatorChar).Last()}\"",
@@ -208,7 +199,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private async Task ApplyMigrations(IExecutor executor, IExecutionContext<TestsInputModel> executionContext)
         {
             var result = await this.Execute(
-                this.PythonExecutablePath,
+                this.Settings.PythonExecutablePath,
                 this.ExecutionArguments.Concat(new[] { "manage.py migrate" }),
                 executor,
                 executionContext);
@@ -237,5 +228,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 this.WorkingDirectory,
                 false,
                 true);
+
+        public new class StrategySettings : PythonProjectTestsExecutionStrategy.StrategySettings
+        {
+            public string PipExecutablePath { get; set; } = string.Empty;
+            public int InstallPackagesTimeUsed { get; set; }
+        }
     }
 }

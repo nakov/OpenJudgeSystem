@@ -7,6 +7,7 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -26,47 +27,43 @@
 
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string underscoreModulePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
         {
-            if (!File.Exists(nodeJsExecutablePath))
+            if (!File.Exists(settings.NodeJsExecutablePath))
             {
                 throw new ArgumentException(
-                    $"NodeJS not found in: {nodeJsExecutablePath}",
-                    nameof(nodeJsExecutablePath));
+                    $"NodeJS not found in: {settings.NodeJsExecutablePath}",
+                    nameof(settings.NodeJsExecutablePath));
             }
 
-            if (!Directory.Exists(underscoreModulePath))
+            if (!Directory.Exists(settings.UnderscoreModulePath))
             {
                 throw new ArgumentException(
-                    $"Underscore not found in: {underscoreModulePath}",
-                    nameof(underscoreModulePath));
+                    $"Underscore not found in: {settings.UnderscoreModulePath}",
+                    nameof(settings.UnderscoreModulePath));
             }
 
-            if (baseTimeUsed < 0)
+            if (settings.BaseTimeUsed < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(baseTimeUsed));
+                throw new ArgumentOutOfRangeException(nameof(settings.BaseTimeUsed));
             }
 
-            if (baseMemoryUsed < 0)
+            if (settings.BaseMemoryUsed < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(baseMemoryUsed));
+                throw new ArgumentOutOfRangeException(nameof(settings.BaseMemoryUsed));
             }
 
-            this.NodeJsExecutablePath = nodeJsExecutablePath;
-            this.UnderscoreModulePath = FileHelpers.ProcessModulePath(underscoreModulePath);
+            settings.UnderscoreModulePath = FileHelpers.ProcessModulePath(settings.UnderscoreModulePath);
+
+            this.Settings = settings;
         }
 
-        protected string NodeJsExecutablePath { get; }
-
-        protected string UnderscoreModulePath { get; }
+        protected override StrategySettings Settings { get; }
 
         protected virtual string JsCodeRequiredModules => $@"
 var EOL = require('os').EOL,
-_ = require('{this.UnderscoreModulePath}')";
+_ = require('{this.Settings.UnderscoreModulePath}')";
 
         protected virtual string JsNodeDisableCode => @"
 // DataView = undefined;
@@ -275,10 +272,16 @@ process.stdin.on('end', function() {
             string codeSavePath,
             string input)
             => executor.Execute(
-                this.NodeJsExecutablePath,
+                this.Settings.NodeJsExecutablePath,
                 input,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
                 new[] { LatestEcmaScriptFeaturesEnabledFlag, codeSavePath });
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
+            public string NodeJsExecutablePath { get; set; } = string.Empty;
+            public string UnderscoreModulePath { get; set; } = string.Empty;
+        }
     }
 }

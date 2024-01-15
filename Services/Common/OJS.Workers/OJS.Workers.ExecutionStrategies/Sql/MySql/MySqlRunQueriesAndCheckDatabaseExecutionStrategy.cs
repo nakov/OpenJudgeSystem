@@ -5,13 +5,11 @@
 
     public class MySqlRunQueriesAndCheckDatabaseExecutionStrategy : BaseMySqlExecutionStrategy
     {
-        public MySqlRunQueriesAndCheckDatabaseExecutionStrategy(
-            string sysDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
-            : base(sysDbConnectionString, restrictedUserId, restrictedUserPassword)
-        {
-        }
+        public MySqlRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
+            : base(settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -25,5 +23,9 @@
                     var sqlTestResult = this.ExecuteReader(connection, test.Input);
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
+
+        public new class StrategySettings : BaseMySqlExecutionStrategy.StrategySettings
+        {
+        }
     }
 }

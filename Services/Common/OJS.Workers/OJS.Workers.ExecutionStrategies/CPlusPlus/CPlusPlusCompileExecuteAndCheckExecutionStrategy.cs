@@ -11,9 +11,8 @@
         public CPlusPlusCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
         }
 
@@ -29,6 +28,10 @@
                 this.CreateExecutor(),
                 useSystemEncoding: false,
                 dependOnExitCodeForRunTimeError: true);
+        }
+
+        public new class StrategySettings : CompileExecuteAndCheckExecutionStrategy.StrategySettings
+        {
         }
     }
 }

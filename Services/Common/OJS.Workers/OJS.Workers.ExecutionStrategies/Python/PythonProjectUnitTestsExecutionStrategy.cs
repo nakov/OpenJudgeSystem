@@ -39,12 +39,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonProjectUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
-        {
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override IEnumerable<string> ExecutionArguments
             => new[]
@@ -221,6 +220,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             pathArguments.Add(GetFileNameWithExtensionForClass(className));
 
             return FileHelpers.BuildPath(pathArguments.ToArray());
+        }
+
+        public new class StrategySettings : PythonUnitTestsExecutionStrategy.StrategySettings
+        {
         }
     }
 }

@@ -39,19 +39,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaSpringAndHibernateProjectExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            string mavenPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed)
-            => this.MavenPath = mavenPath;
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
+            => this.Settings = settings;
 
         // Property contains Dictionary<GroupId, Tuple<ArtifactId, Version>>
         public static Dictionary<string, Tuple<string, string>> Dependencies =>
@@ -76,7 +66,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 </plugins>
             </build>";
 
-        protected string MavenPath { get; set; }
+        protected override StrategySettings Settings { get; }
 
         protected string PackageName { get; set; }
 
@@ -87,7 +77,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected string ProjectTestDirectoryInSubmissionZip { get; set; }
 
         protected override string ClassPathArgument
-            => $"-cp {this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
+            => $"-cp {this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
 
         protected static void PreparePomXml(string submissionFilePath)
         {
@@ -146,7 +136,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             var mavenExecutor = this.CreateExecutor();
 
             var packageExecutionResult = await mavenExecutor.Execute(
-              this.MavenPath,
+              this.Settings.MavenPath,
               string.Empty,
               executionContext.TimeLimit,
               executionContext.MemoryLimit,
@@ -174,7 +164,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 mavenArgs = new[] { string.Format(MavenTestCommand, pomXmlPath, testFile) };
 
                 var processExecutionResult = await executor.Execute(
-                this.MavenPath,
+                this.Settings.MavenPath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -459,6 +449,11 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
             FileHelpers.DeleteFiles(pomXmlPath);
             return packageName.InnerText.Trim();
+        }
+
+        public new class StrategySettings : JavaProjectTestsExecutionStrategy.StrategySettings
+        {
+            public string MavenPath { get; set; } = string.Empty;
         }
     }
 }

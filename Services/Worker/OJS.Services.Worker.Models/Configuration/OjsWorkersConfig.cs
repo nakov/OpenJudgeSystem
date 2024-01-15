@@ -210,44 +210,12 @@ public class OjsWorkersConfig : BaseConfig
 
     public int JavaZipCompilerProcessExitTimeOutMultiplier { get; set; } = 1;
 
-    public static string DotNetCoreTargetFrameworkName(ExecutionStrategyType type)
-        => type switch
-        {
-            ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy => "netcoreapp3.1",
-            ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy => "net5.0",
-            _ => "net6.0",
-        };
-
-    public static string MicrosoftEntityFrameworkCoreInMemoryVersion(ExecutionStrategyType type)
-        => type switch
-        {
-            ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy => "3.1.4",
-            ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy => "5.0.13",
-            _ => "6.0.1",
-        };
-
-    public static string MicrosoftEntityFrameworkCoreProxiesVersion(ExecutionStrategyType type)
-        => type switch
-        {
-            ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy => "3.1.4",
-            ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy => "5.0.13",
-            _ => "6.0.1",
-        };
-
     public string CSharpDotNetCoreCompilerPath(ExecutionStrategyType type)
         => type switch
         {
             ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => this.CSharpDotNet3CoreCompilerPath,
             ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => this.CSharpDotNetCore5CompilerPath,
             _ => this.CSharpDotNetCore6CompilerPath,
-        };
-
-    public string DotNetCoreRuntimeVersion(ExecutionStrategyType type)
-        => type switch
-        {
-            ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => this.DotNetCore3RuntimeVersion,
-            ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => this.DotNetCore5RuntimeVersion,
-            _ => this.DotNetCore6RuntimeVersion,
         };
 
     public string DotNetCoreSharedAssembliesPath(ExecutionStrategyType type)

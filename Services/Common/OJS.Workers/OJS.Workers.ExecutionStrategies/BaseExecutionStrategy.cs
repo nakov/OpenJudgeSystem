@@ -16,7 +16,11 @@ namespace OJS.Workers.ExecutionStrategies
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy));
 
+        protected BaseExecutionStrategy(IExecutionStrategySettings settings) => this.Settings = settings;
+
         public ExecutionStrategyType Type { get; set; }
+
+        protected virtual IExecutionStrategySettings Settings { get; }
 
         protected string WorkingDirectory { get; set; }
 

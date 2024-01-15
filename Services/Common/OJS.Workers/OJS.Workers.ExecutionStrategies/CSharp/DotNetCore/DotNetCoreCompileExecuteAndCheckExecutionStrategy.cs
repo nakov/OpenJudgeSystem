@@ -15,16 +15,15 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     public class DotNetCoreCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
     {
         private const string DotNetCoreCodeStringTemplate = "{0}{1}{2}";
-        private readonly string dotNetCoreRuntimeVersion;
 
         public DotNetCoreCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string dotNetCoreRuntimeVersion,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
-            => this.dotNetCoreRuntimeVersion = dotNetCoreRuntimeVersion;
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         private static IEnumerable<string> DotNetSixDefaultUsingNamespaces
             => new List<string>
@@ -43,7 +42,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 	            ""runtimeOptions"": {{
                     ""framework"": {{
                         ""name"": ""Microsoft.NETCore.App"",
-                        ""version"": ""{this.dotNetCoreRuntimeVersion}""
+                        ""version"": ""{this.Settings.DotNetCoreRuntimeVersion}""
                     }}
                 }}
             }}";
@@ -172,6 +171,11 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             CreateRuntimeConfigJsonFile(this.WorkingDirectory, this.RuntimeConfigJsonTemplate);
 
             return executor;
+        }
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
+            public string DotNetCoreRuntimeVersion { get; set; } = string.Empty;
         }
     }
 }

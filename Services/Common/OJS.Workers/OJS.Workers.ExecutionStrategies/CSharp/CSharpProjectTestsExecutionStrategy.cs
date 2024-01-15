@@ -65,9 +65,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
         public CSharpProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();
@@ -76,10 +75,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
         public CSharpProjectTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string nUnitConsoleRunnerPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings,
+            string nUnitConsoleRunnerPath)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
             if (!File.Exists(nUnitConsoleRunnerPath))
             {
@@ -316,5 +314,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             this.WorkingDirectory,
             CsProjFileSearchPattern,
             f => new FileInfo(f).Length);
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
+        }
     }
 }

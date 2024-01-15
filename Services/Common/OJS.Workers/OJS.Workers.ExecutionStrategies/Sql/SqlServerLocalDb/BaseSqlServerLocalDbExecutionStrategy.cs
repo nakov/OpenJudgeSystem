@@ -13,11 +13,8 @@
         private const string TimeSpanFormat = "HH:mm:ss.fffffff";
         private static readonly Type DateTimeOffsetType = typeof(DateTimeOffset);
 
-        protected BaseSqlServerLocalDbExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword)
+        protected BaseSqlServerLocalDbExecutionStrategy(StrategySettings settings)
+            : base(settings)
         {
         }
 
@@ -25,7 +22,7 @@
         {
             var databaseFilePath = $"{this.WorkingDirectory}\\{databaseName}.mdf";
 
-            await using (var connection = new SqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new SqlConnection(this.Settings.MasterDbConnectionString))
             {
                 await connection.OpenAsync();
 
@@ -35,7 +32,7 @@
                 var createLoginQuery = $@"
                     IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name=N'{this.RestrictedUserId}')
                     BEGIN
-                    CREATE LOGIN [{this.RestrictedUserId}] WITH PASSWORD=N'{this.RestrictedUserPassword}',
+                    CREATE LOGIN [{this.RestrictedUserId}] WITH PASSWORD=N'{this.Settings.RestrictedUserPassword}',
                     DEFAULT_DATABASE=[master],
                     DEFAULT_LANGUAGE=[us_english],
                     CHECK_EXPIRATION=OFF,
@@ -64,7 +61,7 @@
 
         protected override async Task DropDatabase(string databaseName)
         {
-            await using var connection = new SqlConnection(this.MasterDbConnectionString);
+            await using var connection = new SqlConnection(this.Settings.MasterDbConnectionString);
             await connection.OpenAsync();
 
             var dropDatabaseQuery = $@"
@@ -82,13 +79,13 @@
             var userIdRegex = new Regex("User Id=.*?;");
             var passwordRegex = new Regex("Password=.*?;");
 
-            var createdDbConnectionString = this.MasterDbConnectionString;
+            var createdDbConnectionString = this.Settings.MasterDbConnectionString;
 
             createdDbConnectionString =
                 userIdRegex.Replace(createdDbConnectionString, $"User Id={this.RestrictedUserId};");
 
             createdDbConnectionString =
-                passwordRegex.Replace(createdDbConnectionString, $"Password={this.RestrictedUserPassword}");
+                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
 
             createdDbConnectionString += $";Database={databaseName};Pooling=False;";
 
@@ -122,6 +119,10 @@
             }
 
             return base.GetDataRecordFieldValue(dataRecord, index);
+        }
+
+        public class StrategySettings : BaseSqlExecutionStrategySettings
+        {
         }
     }
 }

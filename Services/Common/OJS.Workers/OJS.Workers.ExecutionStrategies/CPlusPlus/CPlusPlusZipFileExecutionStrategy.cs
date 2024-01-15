@@ -8,6 +8,7 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -20,9 +21,8 @@
         public CPlusPlusZipFileExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
         }
 
@@ -104,6 +104,10 @@
             }
 
             return pathsToHeadersAndCppFiles;
+        }
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
         }
     }
 }

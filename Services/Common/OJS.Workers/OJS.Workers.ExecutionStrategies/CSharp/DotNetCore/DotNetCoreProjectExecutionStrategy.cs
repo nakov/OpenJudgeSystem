@@ -13,9 +13,8 @@
         public DotNetCoreProjectExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
         }
 
@@ -75,6 +74,10 @@
             }
 
             return result;
+        }
+
+        public new class StrategySettings : CSharpProjectTestsExecutionStrategy.StrategySettings
+        {
         }
     }
 }

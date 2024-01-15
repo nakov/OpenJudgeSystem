@@ -27,19 +27,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         public DotNetCoreUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            string targetFrameworkName,
-            string microsoftEntityFrameworkCoreInMemoryVersion,
-            string microsoftEntityFrameworkCoreProxiesVersion)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                baseTimeUsed,
-                baseMemoryUsed,
-                targetFrameworkName,
-                microsoftEntityFrameworkCoreInMemoryVersion,
-                microsoftEntityFrameworkCoreProxiesVersion)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
         }
 
@@ -199,6 +188,10 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 this.packageNamesToRemoveFromUserCsProjFile);
 
             return csProjPath;
+        }
+
+        public new class StrategySettings : DotNetCoreProjectTestsExecutionStrategy.StrategySettings
+        {
         }
     }
 }

@@ -6,14 +6,11 @@
 
     public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy : BasePostgreSqlExecutionStrategy
     {
-        public PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
-        {
-        }
+        public PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
+            : base(settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -30,5 +27,9 @@
         protected override void ExecuteBeforeTests(IDbConnection connection, IExecutionContext<TestsInputModel>
             executionContext)
             => this.ExecuteNonQuery(connection, executionContext.Code, executionContext.TimeLimit);
+
+        public new class StrategySettings : BasePostgreSqlExecutionStrategy.StrategySettings
+        {
+        }
     }
 }

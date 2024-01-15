@@ -9,7 +9,6 @@ namespace OJS.Workers.ExecutionStrategies
     using System.Text.RegularExpressions;
     using Ionic.Zip;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -31,26 +30,11 @@ namespace OJS.Workers.ExecutionStrategies
 
         public RunSpaAndExecuteMochaTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            string jsProjNodeModulesPath,
-            string mochaNodeModulePath,
-            string chaiNodeModulePath,
-            string playwrightChromiumModulePath,
-            int portNumber,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                  processExecutorFactory,
-                  pythonExecutablePath,
-                  baseTimeUsed,
-                  baseMemoryUsed)
-        {
-            this.JsProjNodeModulesPath = jsProjNodeModulesPath;
-            this.MochaModulePath = mochaNodeModulePath;
-            this.ChaiModulePath = chaiNodeModulePath;
-            this.PlaywrightChromiumModulePath = playwrightChromiumModulePath;
-            this.PortNumber = portNumber;
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         private static string NginxFileContent => @"
 worker_processes  1;
@@ -83,16 +67,6 @@ http {{
     }}
 }}";
 
-        private int PortNumber { get; set; }
-
-        private string MochaModulePath { get; }
-
-        private string ChaiModulePath { get; }
-
-        private string PlaywrightChromiumModulePath { get; }
-
-        private string JsProjNodeModulesPath { get; }
-
         private string TestsPath => FileHelpers.BuildPath(this.WorkingDirectory, TestsDirectoryName);
 
         private string UserApplicationPath => FileHelpers.BuildPath(this.WorkingDirectory, UserApplicationDirectoryName);
@@ -113,7 +87,7 @@ from datetime import datetime, timezone
 image_name = 'nginx'
 path_to_project = '{this.UserApplicationPath}'
 path_to_nginx_conf = '{this.NginxConfFileDirectory}/nginx.conf'
-path_to_node_modules = '{this.JsProjNodeModulesPath}'
+path_to_node_modules = '{this.Settings.JsProjNodeModulesPath}'
 
 
 class DockerExecutor:
@@ -230,7 +204,7 @@ import docker
 import subprocess
 
 
-mocha_path = '{this.MochaModulePath}'
+mocha_path = '{this.Settings.MochaModulePath}'
 tests_path = '{TestFilePathPlaceholder}'
 container_name = '{ContainerNamePlaceholder}'
 kill_container = {KillContainerPlaceholder}
@@ -281,7 +255,7 @@ finally:
             var match = Regex.Match(preExecutionResult.ReceivedOutput, @"Container port: (\d+);Container name: ([a-zA-Z-_]+);");
             if (match.Success)
             {
-                this.PortNumber = int.Parse(match.Groups[1].Value);
+                this.Settings.PortNumber = int.Parse(match.Groups[1].Value);
                 this.ContainerName = match.Groups[2].Value;
             }
             else
@@ -492,11 +466,11 @@ finally:
             switch (name)
             {
                 case "mocha":
-                    return this.MochaModulePath;
+                    return this.Settings.MochaModulePath;
                 case "chai":
-                    return this.ChaiModulePath;
+                    return this.Settings.ChaiModulePath;
                 case "playwright-chromium":
-                    return this.PlaywrightChromiumModulePath;
+                    return this.Settings.PlaywrightChromiumModulePath;
                 default:
                     return null;
             }
@@ -505,7 +479,7 @@ finally:
         private string PreprocessTestInput(string testInput)
         {
             testInput = this.ReplaceNodeModulesRequireStatementsInTests(testInput)
-                .Replace(UserApplicationHttpPortPlaceholder, this.PortNumber.ToString());
+                .Replace(UserApplicationHttpPortPlaceholder, this.Settings.PortNumber.ToString());
 
             return OsPlatformHelpers.IsDocker()
                 ? testInput.Replace("localhost", "host.docker.internal")
@@ -513,5 +487,14 @@ finally:
         }
 
         private string BuildTestPath(int testId) => FileHelpers.BuildPath(this.TestsPath, $"{testId}{JavaScriptFileExtension}");
+
+        public new class StrategySettings : PythonExecuteAndCheckExecutionStrategy.StrategySettings
+        {
+            public string JsProjNodeModulesPath { get; set; } = string.Empty;
+            public string MochaModulePath { get; set; } = string.Empty;
+            public string ChaiModulePath { get; set; } = string.Empty;
+            public string PlaywrightChromiumModulePath { get; set; } = string.Empty;
+            public int PortNumber { get; set; }
+        }
     }
 }

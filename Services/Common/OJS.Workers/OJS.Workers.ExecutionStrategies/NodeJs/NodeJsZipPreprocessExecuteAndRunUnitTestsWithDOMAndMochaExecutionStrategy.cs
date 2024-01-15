@@ -22,65 +22,38 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
         public NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string mochaModulePath,
-            string chaiModulePath,
-            string jsdomModulePath,
-            string jqueryModulePath,
-            string handlebarsModulePath,
-            string sinonModulePath,
-            string sinonChaiModulePath,
-            string underscoreModulePath,
-            string browserifyModulePath,
-            string babelifyModulePath,
-            string ecmaScriptImportPluginPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                nodeJsExecutablePath,
-                mochaModulePath,
-                chaiModulePath,
-                jsdomModulePath,
-                jqueryModulePath,
-                handlebarsModulePath,
-                sinonModulePath,
-                sinonChaiModulePath,
-                underscoreModulePath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
         {
-            if (!Directory.Exists(browserifyModulePath))
+            if (!Directory.Exists(settings.BrowserifyModulePath))
             {
                 throw new ArgumentException(
-                    $"Browsrify not found in: {browserifyModulePath}",
-                    nameof(browserifyModulePath));
+                    $"Browsrify not found in: {settings.BrowserifyModulePath}",
+                    nameof(settings.BrowserifyModulePath));
             }
 
-            if (!Directory.Exists(babelifyModulePath))
+            if (!Directory.Exists(settings.BabelifyModulePath))
             {
                 throw new ArgumentException(
-                    $"Babel not found in: {babelifyModulePath}",
-                    nameof(babelifyModulePath));
+                    $"Babel not found in: {settings.BabelifyModulePath}",
+                    nameof(settings.BabelifyModulePath));
             }
 
-            if (!Directory.Exists(ecmaScriptImportPluginPath))
+            if (!Directory.Exists(settings.EcmaScriptImportPluginPath))
             {
                 throw new ArgumentException(
-                    $"ECMAScript2015ImportPluginPath not found in: {ecmaScriptImportPluginPath}",
-                    nameof(ecmaScriptImportPluginPath));
+                    $"ECMAScript2015ImportPluginPath not found in: {settings.EcmaScriptImportPluginPath}",
+                    nameof(settings.EcmaScriptImportPluginPath));
             }
 
-            this.BrowserifyModulePath = FileHelpers.ProcessModulePath(browserifyModulePath);
-            this.BabelifyModulePath = FileHelpers.ProcessModulePath(babelifyModulePath);
-            this.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(ecmaScriptImportPluginPath);
+            settings.BrowserifyModulePath = FileHelpers.ProcessModulePath(settings.BrowserifyModulePath);
+            settings.BabelifyModulePath = FileHelpers.ProcessModulePath(settings.BabelifyModulePath);
+            settings.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(settings.EcmaScriptImportPluginPath);
+
+            this.Settings = settings;
         }
 
-        protected string BrowserifyModulePath { get; }
-
-        protected string BabelifyModulePath { get; }
-
-        protected string EcmaScriptImportPluginPath { get; }
+        protected override StrategySettings Settings { get; }
 
         protected string ProgramEntryPath { get; set; }
 
@@ -88,7 +61,7 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
             => new[] { DelayFlag }.Concat(base.AdditionalExecutionArguments);
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
-    browserify = require('" + this.BrowserifyModulePath + @"'),
+    browserify = require('" + this.Settings.BrowserifyModulePath + @"'),
     streamJs = require('stream'),
     stream = new streamJs.PassThrough();";
 
@@ -109,7 +82,7 @@ stream.on('end', function(){
     run();
 });
 browserify('" + UserInputPlaceholder + @"')
-    .transform('" + this.BabelifyModulePath + @"', { plugins: ['" + this.EcmaScriptImportPluginPath + @"']})
+    .transform('" + this.Settings.BabelifyModulePath + @"', { plugins: ['" + this.Settings.EcmaScriptImportPluginPath + @"']})
     .bundle()
     .pipe(stream);
 
@@ -213,7 +186,7 @@ function afterBundling() {
             return testsCode;
         }
 
-        protected virtual string PreprocessJsSubmission(
+        protected string PreprocessJsSubmission(
             string template,
             IExecutionContext<TestsInputModel> context,
             string pathToFile)
@@ -228,6 +201,13 @@ function afterBundling() {
                     .Replace(TestsPlaceholder, this.BuildTests(context.Input.Tests));
 
             return processedCode;
+        }
+
+        public new class StrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy.StrategySettings
+        {
+            public string BrowserifyModulePath { get; set; } = string.Empty;
+            public string BabelifyModulePath { get; set; } = string.Empty;
+            public string EcmaScriptImportPluginPath { get; set; } = string.Empty;
         }
     }
 }

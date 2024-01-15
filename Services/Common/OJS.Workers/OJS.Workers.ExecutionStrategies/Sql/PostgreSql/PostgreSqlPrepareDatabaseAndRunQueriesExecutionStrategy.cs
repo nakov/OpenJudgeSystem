@@ -6,14 +6,11 @@
 
     public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy : BasePostgreSqlExecutionStrategy
     {
-        public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
-        {
-        }
+        public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(StrategySettings settings)
+            : base(settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -57,6 +54,10 @@
         {
             var rollback = @"ROLLBACK;";
             this.ExecuteNonQuery(connection, rollback);
+        }
+
+        public new class StrategySettings : BasePostgreSqlExecutionStrategy.StrategySettings
+        {
         }
     }
 }

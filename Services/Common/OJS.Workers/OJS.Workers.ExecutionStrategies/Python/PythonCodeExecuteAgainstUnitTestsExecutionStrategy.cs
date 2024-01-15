@@ -20,12 +20,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
         public PythonCodeExecuteAgainstUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
-        {
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected virtual Regex TestsRegex => new Regex(TestResultsRegexPattern, RegexOptions.Singleline);
 
@@ -113,6 +112,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 processExecutionResult.ErrorOutput = string.Empty;
                 processExecutionResult.Type = ProcessExecutionResultType.Success;
             }
+        }
+
+        public new class StrategySettings : PythonExecuteAndCheckExecutionStrategy.StrategySettings
+        {
         }
     }
 }

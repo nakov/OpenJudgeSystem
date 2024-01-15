@@ -2,6 +2,7 @@
 {
     using System;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
@@ -10,9 +11,8 @@
     {
         protected BaseInterpretedCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            BaseCodeExecutionStrategySettings settings)
+            : base(processExecutorFactory, settings)
         {
         }
 

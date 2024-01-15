@@ -5,14 +5,11 @@
 
     public class SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy : BaseSqlServerSingleDatabaseExecutionStrategy
     {
-        public SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
-        {
-        }
+        public SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
+            : base(settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -26,5 +23,9 @@
                     var sqlTestResult = this.ExecuteReader(connection, test.Input);
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
+
+        public new class StrategySettings : BaseSqlServerSingleDatabaseExecutionStrategy.StrategySettings
+        {
+        }
     }
 }

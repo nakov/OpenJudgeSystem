@@ -34,25 +34,21 @@ namespace OJS.Workers.ExecutionStrategies.Java
         public JavaUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed)
-            => this.TestNames = new List<string>();
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
+        {
+            this.Settings = settings;
+            this.TestNames = new List<string>();
+        }
+
+        protected override StrategySettings Settings { get; }
 
         protected string JUnitTestRunnerSourceFilePath =>
             FileHelpers.BuildPath(this.WorkingDirectory, $"{JUnitRunnerClassName}{javaSourceFileExtension}");
 
         protected List<string> TestNames { get; }
 
-        protected override string ClassPathArgument => $@" -classpath ""{this.JavaLibrariesPath}*""";
+        protected override string ClassPathArgument => $@" -classpath ""{this.Settings.JavaLibrariesPath}*""";
 
         protected virtual string JUnitTestRunnerCode =>
             $@"
@@ -157,7 +153,7 @@ public class _$TestRunner {{
                     return result;
                 }
 
-                var classPathWithCompiledFile = $@" -classpath ""{this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{compilerResult.OutputFile}""";
+                var classPathWithCompiledFile = $@" -classpath ""{this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{compilerResult.OutputFile}""";
 
                 var arguments = new List<string>
                 {
@@ -168,7 +164,7 @@ public class _$TestRunner {{
 
                 // Process the submission and check each test
                 var processExecutionResult = await executor.Execute(
-                    this.JavaExecutablePath,
+                    this.Settings.JavaExecutablePath,
                     string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -326,6 +322,10 @@ public class _$TestRunner {{
                 this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
                 combinedArguments,
                 this.WorkingDirectory);
+        }
+
+        public new class StrategySettings : JavaZipFileCompileExecuteAndCheckExecutionStrategy.StrategySettings
+        {
         }
     }
 }

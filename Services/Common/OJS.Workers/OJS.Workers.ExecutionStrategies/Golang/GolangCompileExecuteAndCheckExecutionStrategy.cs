@@ -2,6 +2,7 @@
 {
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -13,9 +14,8 @@
         public GolangCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
         {
         }
 
@@ -34,5 +34,9 @@
             => FileHelpers.SaveStringToFile(
                 executionContext.Code,
                 FileHelpers.BuildPath(this.WorkingDirectory, CodeSaveFileName));
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
+        }
     }
 }

@@ -17,19 +17,11 @@
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibsPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                javaExecutablePath,
-                javaLibsPath,
-                baseTimeUsed,
-                baseMemoryUsed)
-        {
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, compilerFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override string CreateSubmissionFile<TInput>(IExecutionContext<TInput> executionContext)
         {
@@ -78,6 +70,10 @@
 
                 zipFile.Save();
             }
+        }
+
+        public new class StrategySettings : JavaPreprocessCompileExecuteAndCheckExecutionStrategy.StrategySettings
+        {
         }
     }
 }

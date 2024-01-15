@@ -18,62 +18,50 @@
 
         public NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string mochaModulePath,
-            string chaiModulePath,
-            string sinonModulePath,
-            string sinonChaiModulePath,
-            string underscoreModulePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, nodeJsExecutablePath, underscoreModulePath, baseTimeUsed, baseMemoryUsed)
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
         {
-            if (!File.Exists(mochaModulePath))
+            if (!File.Exists(settings.MochaModulePath))
             {
                 throw new ArgumentException(
-                    $"Mocha not found in: {mochaModulePath}",
-                    nameof(mochaModulePath));
+                    $"Mocha not found in: {settings.MochaModulePath}",
+                    nameof(settings.MochaModulePath));
             }
 
-            if (!Directory.Exists(chaiModulePath))
+            if (!Directory.Exists(settings.ChaiModulePath))
             {
                 throw new ArgumentException(
-                    $"Chai not found in: {chaiModulePath}",
-                    nameof(chaiModulePath));
+                    $"Chai not found in: {settings.ChaiModulePath}",
+                    nameof(settings.ChaiModulePath));
             }
 
-            if (!Directory.Exists(sinonModulePath))
+            if (!Directory.Exists(settings.SinonModulePath))
             {
                 throw new ArgumentException(
-                    $"Sinon not found in: {sinonModulePath}",
-                    nameof(sinonModulePath));
+                    $"Sinon not found in: {settings.SinonModulePath}",
+                    nameof(settings.SinonModulePath));
             }
 
-            if (!Directory.Exists(sinonChaiModulePath))
+            if (!Directory.Exists(settings.SinonChaiModulePath))
             {
                 throw new ArgumentException(
-                    $"Sinon-chai not found in: {sinonChaiModulePath}",
-                    nameof(sinonChaiModulePath));
+                    $"Sinon-chai not found in: {settings.SinonChaiModulePath}",
+                    nameof(settings.SinonChaiModulePath));
             }
 
-            this.MochaModulePath = mochaModulePath;
-            this.ChaiModulePath = FileHelpers.ProcessModulePath(chaiModulePath);
-            this.SinonModulePath = FileHelpers.ProcessModulePath(sinonModulePath);
-            this.SinonChaiModulePath = FileHelpers.ProcessModulePath(sinonChaiModulePath);
+            settings.ChaiModulePath = FileHelpers.ProcessModulePath(settings.ChaiModulePath);
+            settings.SinonModulePath = FileHelpers.ProcessModulePath(settings.SinonModulePath);
+            settings.SinonChaiModulePath = FileHelpers.ProcessModulePath(settings.SinonChaiModulePath);
+
+            this.Settings = settings;
         }
 
-        protected string MochaModulePath { get; }
-
-        protected string ChaiModulePath { get; }
-
-        protected string SinonModulePath { get; }
-
-        protected string SinonChaiModulePath { get; }
+        protected override StrategySettings Settings { get; }
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
-    chai = require('" + this.ChaiModulePath + @"'),
-    sinon = require('" + this.SinonModulePath + @"'),
-    sinonChai = require('" + this.SinonChaiModulePath + @"'),
+    chai = require('" + this.Settings.ChaiModulePath + @"'),
+    sinon = require('" + this.Settings.SinonModulePath + @"'),
+    sinonChai = require('" + this.Settings.SinonChaiModulePath + @"'),
 	assert = chai.assert,
 	expect = chai.expect,
 	should = chai.should()";
@@ -135,14 +123,14 @@ describe('TestScope', function() {
             var testResults = new List<TestResult>();
 
             var arguments = new List<string>();
-            arguments.Add(this.MochaModulePath);
+            arguments.Add(this.Settings.MochaModulePath);
             arguments.Add(codeSavePath);
             arguments.AddRange(this.AdditionalExecutionArguments);
 
             foreach (var test in executionContext.Input.Tests)
             {
                 var processExecutionResult = await executor.Execute(
-                    this.NodeJsExecutablePath,
+                    this.Settings.NodeJsExecutablePath,
                     test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -169,6 +157,14 @@ describe('TestScope', function() {
             }
 
             return testResults;
+        }
+
+        public new class StrategySettings : NodeJsPreprocessExecuteAndCheckExecutionStrategy.StrategySettings
+        {
+            public string MochaModulePath { get; set; } = string.Empty;
+            public string ChaiModulePath { get; set; } = string.Empty;
+            public string SinonModulePath { get; set; } = string.Empty;
+            public string SinonChaiModulePath { get; set; } = string.Empty;
         }
     }
 }

@@ -7,14 +7,11 @@
     public class PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy
         : BasePostgreSqlExecutionStrategy
     {
-        public PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
-        {
-        }
+        public PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(StrategySettings settings)
+            : base(settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -34,6 +31,10 @@
         {
             this.ExecuteNonQuery(connection, executionContext.Input.TaskSkeletonAsString);
             this.ExecuteNonQuery(connection, executionContext.Code, executionContext.TimeLimit);
+        }
+
+        public new class StrategySettings : BasePostgreSqlExecutionStrategy.StrategySettings
+        {
         }
     }
 }

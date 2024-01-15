@@ -8,11 +8,11 @@
     {
         public CheckOnlyExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
-        {
-        }
+            StrategySettings settings)
+            : base(processExecutorFactory, settings)
+            => this.Settings = settings;
+
+        protected override StrategySettings Settings { get; }
 
         protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
@@ -40,6 +40,10 @@
             }
 
             return Task.FromResult(result);
+        }
+
+        public class StrategySettings : BaseCodeExecutionStrategySettings
+        {
         }
     }
 }

@@ -16,66 +16,45 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     {
         public NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string mochaModulePath,
-            string chaiModulePath,
-            string jsdomModulePath,
-            string jqueryModulePath,
-            string handlebarsModulePath,
-            string sinonModulePath,
-            string sinonChaiModulePath,
-            string underscoreModulePath,
-            int baseTimeUsed,
-            int baseMemoryUsed) // TODO: make this modular by getting requires from test
-            : base(
-                processExecutorFactory,
-                nodeJsExecutablePath,
-                mochaModulePath,
-                chaiModulePath,
-                sinonModulePath,
-                sinonChaiModulePath,
-                underscoreModulePath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            StrategySettings settings) // TODO: make this modular by getting requires from test
+            : base(processExecutorFactory, settings)
         {
-            if (!Directory.Exists(jsdomModulePath))
+            if (!Directory.Exists(settings.JsDomModulePath))
             {
                 throw new ArgumentException(
-                    $"jsDom not found in: {jsdomModulePath}",
-                    nameof(jsdomModulePath));
+                    $"jsDom not found in: {settings.JsDomModulePath}",
+                    nameof(settings.JsDomModulePath));
             }
 
-            if (!Directory.Exists(jqueryModulePath))
+            if (!Directory.Exists(settings.JQueryModulePath))
             {
                 throw new ArgumentException(
-                    $"jQuery not found in: {jqueryModulePath}",
-                    nameof(jqueryModulePath));
+                    $"jQuery not found in: {settings.JQueryModulePath}",
+                    nameof(settings.JQueryModulePath));
             }
 
-            if (!Directory.Exists(handlebarsModulePath))
+            if (!Directory.Exists(settings.HandlebarsModulePath))
             {
                 throw new ArgumentException(
-                    $"Handlebars not found in: {handlebarsModulePath}",
-                    nameof(handlebarsModulePath));
+                    $"Handlebars not found in: {settings.HandlebarsModulePath}",
+                    nameof(settings.HandlebarsModulePath));
             }
 
-            this.JsDomModulePath = FileHelpers.ProcessModulePath(jsdomModulePath);
-            this.JQueryModulePath = FileHelpers.ProcessModulePath(jqueryModulePath);
-            this.HandlebarsModulePath = FileHelpers.ProcessModulePath(handlebarsModulePath);
+            settings.JsDomModulePath = FileHelpers.ProcessModulePath(settings.JsDomModulePath);
+            settings.JQueryModulePath = FileHelpers.ProcessModulePath(settings.JQueryModulePath);
+            settings.HandlebarsModulePath = FileHelpers.ProcessModulePath(settings.HandlebarsModulePath);
+
+            this.Settings = settings;
         }
 
-        protected string JsDomModulePath { get; }
-
-        protected string JQueryModulePath { get; }
-
-        protected string HandlebarsModulePath { get; }
+        protected override StrategySettings Settings { get; }
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
-    jsdom = require('" + this.JsDomModulePath + @"'),
-    jq = require('" + this.JQueryModulePath + @"'),
-    sinon = require('" + this.SinonModulePath + @"'),
-    sinonChai = require('" + this.SinonChaiModulePath + @"'),
-    handlebars = require('" + this.HandlebarsModulePath + @"')";
+    jsdom = require('" + this.Settings.JsDomModulePath + @"'),
+    jq = require('" + this.Settings.JQueryModulePath + @"'),
+    sinon = require('" + this.Settings.SinonModulePath + @"'),
+    sinonChai = require('" + this.Settings.SinonChaiModulePath + @"'),
+    handlebars = require('" + this.Settings.HandlebarsModulePath + @"')";
 
         protected override string JsCodePreevaulationCode => @"
 chai.use(sinonChai);
@@ -153,12 +132,12 @@ it('Test{testsCount++}', function(done) {{
         {
             var testResults = new List<TestResult>();
             var arguments = new List<string>();
-            arguments.Add(this.MochaModulePath);
+            arguments.Add(this.Settings.MochaModulePath);
             arguments.Add(codeSavePath);
             arguments.AddRange(this.AdditionalExecutionArguments);
 
             var processExecutionResult = await executor.Execute(
-                this.NodeJsExecutablePath,
+                this.Settings.NodeJsExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -202,6 +181,13 @@ it('Test{testsCount++}', function(done) {{
                 .Replace(TestsPlaceholder, this.BuildTests((context.Input as TestsInputModel)?.Tests))
                 .Replace(UserInputPlaceholder, code);
             return processedCode;
+        }
+
+        public new class StrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy.StrategySettings
+        {
+            public string JsDomModulePath { get; set; } = string.Empty;
+            public string JQueryModulePath { get; set; } = string.Empty;
+            public string HandlebarsModulePath { get; set; } = string.Empty;
         }
     }
 }

@@ -20,36 +20,31 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         protected static readonly Type DateTimeType = typeof(DateTime);
         protected static readonly Type TimeSpanType = typeof(TimeSpan);
 
-        protected BaseSqlExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
+        protected BaseSqlExecutionStrategy(BaseSqlExecutionStrategySettings settings)
+            : base(settings)
         {
-            if (string.IsNullOrWhiteSpace(masterDbConnectionString))
+            if (string.IsNullOrWhiteSpace(settings.MasterDbConnectionString))
             {
-                throw new ArgumentException("Invalid master DB connection string!", nameof(masterDbConnectionString));
+                throw new ArgumentException("Invalid master DB connection string!", nameof(settings.MasterDbConnectionString));
             }
 
-            if (string.IsNullOrWhiteSpace(restrictedUserId))
+            if (string.IsNullOrWhiteSpace(settings.RestrictedUserId))
             {
-                throw new ArgumentException("Invalid restricted user ID!", nameof(restrictedUserId));
+                throw new ArgumentException("Invalid restricted user ID!", nameof(settings.RestrictedUserId));
             }
 
-            if (string.IsNullOrWhiteSpace(restrictedUserPassword))
+            if (string.IsNullOrWhiteSpace(settings.RestrictedUserPassword))
             {
-                throw new ArgumentException("Invalid restricted user password!", nameof(restrictedUserPassword));
+                throw new ArgumentException("Invalid restricted user password!", nameof(settings.RestrictedUserPassword));
             }
 
-            this.MasterDbConnectionString = masterDbConnectionString;
-            this.RestrictedUserId = restrictedUserId;
-            this.RestrictedUserPassword = restrictedUserPassword;
+            this.Settings = settings;
+            this.RestrictedUserId = settings.RestrictedUserId;
         }
 
-        protected string MasterDbConnectionString { get; }
+        protected override BaseSqlExecutionStrategySettings Settings { get; }
 
         protected virtual string RestrictedUserId { get; }
-
-        protected string RestrictedUserPassword { get; }
 
         protected static void ProcessSqlResult(
             SqlResult sqlResult,

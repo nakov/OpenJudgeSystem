@@ -21,17 +21,14 @@
 
         protected BaseCodeExecutionStrategy(
             IProcessExecutorFactory processExecutorFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
+            BaseCodeExecutionStrategySettings settings)
+            : base(settings)
         {
             this.ProcessExecutorFactory = processExecutorFactory;
-            this.BaseTimeUsed = baseTimeUsed;
-            this.BaseMemoryUsed = baseMemoryUsed;
+            this.Settings = settings;
         }
 
-        protected int BaseTimeUsed { get; }
-
-        protected int BaseMemoryUsed { get; }
+        protected override BaseCodeExecutionStrategySettings Settings { get; }
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)
         {
@@ -105,7 +102,7 @@
 
         protected IExecutor CreateExecutor(ProcessExecutorType processExecutorType = ProcessExecutorType.Default)
             => this.ProcessExecutorFactory
-                .CreateProcessExecutor(this.BaseTimeUsed, this.BaseMemoryUsed, processExecutorType);
+                .CreateProcessExecutor(this.Settings.BaseTimeUsed, this.Settings.BaseMemoryUsed, processExecutorType);
 
         protected virtual string SaveCodeToTempFile<TINput>(IExecutionContext<TINput> executionContext)
             => string.IsNullOrEmpty(executionContext.AllowedFileExtensions)
