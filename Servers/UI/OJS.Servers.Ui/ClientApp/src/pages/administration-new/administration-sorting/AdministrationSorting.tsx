@@ -98,7 +98,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             }
 
             // eslint-disable-next-line consistent-return
-            return `${sorter.columnName.replace(' ', '').toLowerCase()}=${sorter.orderBy}`;
+            return `${sorter.columnName.replace(/\s/g, '').toLowerCase()}=${sorter.orderBy}`;
         };
 
         const sorterFormattedArray = selectedSorters.map(formatSorterToString).filter((sorter) => sorter);
@@ -236,7 +236,7 @@ const mapSorterParamsToQueryString = (selectedSorters: IAdministrationSorter[]) 
         if (!sorter.columnName) {
             return;
         }
-        queryString.push(`${sorter.columnName.replace(' ', '').toLowerCase()}=${sorter.orderBy}`);
+        queryString.push(`${sorter.columnName.replace(/\s/g, '').toLowerCase()}=${sorter.orderBy}`);
     });
     return queryString.filter((el) => el).join('&') ?? '';
 };
