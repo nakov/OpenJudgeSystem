@@ -4,8 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { authorizationServiceName } from '../../common/reduxNames';
-import { IUserResponseType } from '../../common/types';
-import { ILoginDetailsType } from '../../hooks/use-auth';
+import { ILoginDetailsType, IUserResponseType } from '../../common/types';
 
 export const authorizationService = createApi({
     reducerPath: authorizationServiceName,

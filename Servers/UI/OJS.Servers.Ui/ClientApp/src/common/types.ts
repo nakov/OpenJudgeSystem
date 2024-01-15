@@ -214,7 +214,11 @@ interface IUserType {
     isAdmin: boolean;
     canAccessAdministration: boolean;
 }
-
+interface ILoginDetailsType {
+    Username: string;
+    Password?: string;
+    RememberMe: boolean;
+}
 interface IUserRoleType {
     id: string;
     name: string;
@@ -259,4 +263,5 @@ export type {
     IContestDetailsProblemType,
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
+    ILoginDetailsType,
 };
