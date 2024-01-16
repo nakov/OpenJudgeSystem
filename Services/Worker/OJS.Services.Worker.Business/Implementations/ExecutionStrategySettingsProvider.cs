@@ -50,11 +50,12 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck => new
+            ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
+            ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck => new
                 JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
                 {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
+                    JavaExecutablePath = this.GetJavaExecutablePath(executionStrategyType),
+                    JavaLibrariesPath = this.GetJavaLibsPath(executionStrategyType),
                     BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
                     BaseUpdateTimeOffset = this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
@@ -68,11 +69,12 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck => new
+            ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck or
+            ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck => new
                 JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
                 {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
+                    JavaExecutablePath = this.GetJavaExecutablePath(executionStrategyType),
+                    JavaLibrariesPath = this.GetJavaLibsPath(executionStrategyType),
                     BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
                 }
@@ -223,13 +225,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.JavaProjectTestsExecutionStrategy => new
+            ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
+            ExecutionStrategyType.Java17ProjectTestsExecutionStrategy => new
                 JavaProjectTestsExecutionStrategySettings
                 {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
+                    JavaExecutablePath = this.GetJavaExecutablePath(executionStrategyType),
+                    JavaLibrariesPath = this.GetJavaLibsPath(executionStrategyType),
                     BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
+                    BaseUpdateTimeOffset = this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
                 }
 
                 as TSettings,
@@ -241,11 +245,12 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.JavaUnitTestsExecutionStrategy => new
+            ExecutionStrategyType.JavaUnitTestsExecutionStrategy or
+            ExecutionStrategyType.Java17UnitTestsExecutionStrategy => new
                 JavaUnitTestsExecutionStrategySettings
                 {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
+                    JavaExecutablePath = this.GetJavaExecutablePath(executionStrategyType),
+                    JavaLibrariesPath = this.GetJavaLibsPath(executionStrategyType),
                     BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
                 }
@@ -259,11 +264,12 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy => new
+            ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy or
+            ExecutionStrategyType.Java17SpringAndHibernateProjectExecution => new
                 JavaSpringAndHibernateProjectExecutionStrategySettings
                 {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
+                    JavaExecutablePath = this.GetJavaExecutablePath(executionStrategyType),
+                    JavaLibrariesPath = this.GetJavaLibsPath(executionStrategyType),
                     MavenPath = this.settings.MavenPath,
                     BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
                     BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
@@ -522,4 +528,26 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 nameof(executionStrategyType)),
             _ => throw new ArgumentOutOfRangeException(nameof(executionStrategyType), executionStrategyType, null),
         };
+
+    private static bool IsJava17(ExecutionStrategyType type)
+        => type.ToString().Contains("17");
+
+    private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
+        => IsJava17(strategyType)
+            ? this.settings.Java17ExecutablePath
+            : this.settings.JavaExecutablePath;
+
+    private string GetJavaLibsPath(ExecutionStrategyType strategyType)
+        => IsJava17(strategyType)
+            ? this.settings.Java17LibsPath
+            : this.settings.JavaLibsPath;
+
+    private string GetJavaCompilerPath(ExecutionStrategyType strategyType)
+    {
+        var isJava17 = strategyType.ToString().Contains("17");
+
+        return isJava17
+            ? this.settings.Java17CompilerPath
+            : this.settings.JavaCompilerPath;
+    }
 }
