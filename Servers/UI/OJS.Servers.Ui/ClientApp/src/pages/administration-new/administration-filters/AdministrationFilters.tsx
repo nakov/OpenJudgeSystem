@@ -12,6 +12,7 @@ import debounce from 'lodash/debounce';
 import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IFilterColumn, IRootStore } from '../../../common/types';
 import { setAdminContestsFilters } from '../../../redux/features/admin/contestsAdminSlice';
+import { mapSorterParamsToQueryString } from '../administration-sorting/AdministrationSorting';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -88,6 +89,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const selectedFilters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedFilters) ?? [ defaultFilter ];
+    const selectedSorters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedSorters);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -159,12 +161,14 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             setSearchParams(searchParams);
             return;
         }
-        const resultString = `${filtersFormattedArray.join('&')}`;
+        const sortersUrl = mapSorterParamsToQueryString(selectedSorters || []);
+        const resultString = `filters=${filtersFormattedArray.join('&')}${sortersUrl
+            ? `&sorting=${sortersUrl}`
+            : ''}`;
 
         const delayedSetOfSearch = debounce(() => {
-            searchParams.set('filter', resultString);
-            setSearchParams(searchParams);
-        }, 500);
+            setSearchParams(resultString);
+        }, 300);
 
         delayedSetOfSearch();
 
