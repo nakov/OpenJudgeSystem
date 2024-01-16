@@ -53,7 +53,7 @@ const Contest = () => {
         },
     } = useProblems();
     const { actions: { changePreviousProblemSubmissionsPage } } = useProblemSubmissions();
-    const { internalUser } =
+    const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -127,10 +127,10 @@ const Contest = () => {
     const handleCountdownEnd = useCallback(
         () => {
             if (!isNil(endDateTimeForParticipantOrContest) && new Date(endDateTimeForParticipantOrContest) <= getCurrentTimeInUTC()) {
-                setIsSubmitAllowed(internalUser.canAccessAdministration);
+                setIsSubmitAllowed(user.canAccessAdministration);
             }
         },
-        [ internalUser.canAccessAdministration, setIsSubmitAllowed, endDateTimeForParticipantOrContest ],
+        [ user.canAccessAdministration, setIsSubmitAllowed, endDateTimeForParticipantOrContest ],
     );
 
     const renderTimeRemaining = useCallback(
