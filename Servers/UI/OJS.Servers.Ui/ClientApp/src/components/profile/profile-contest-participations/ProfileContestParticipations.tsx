@@ -81,7 +81,7 @@ const ProfileContestParticipations = () => {
 
     return (
         <>
-            <Heading type={HeadingType.secondary}>Participations:</Heading>
+            <Heading type={HeadingType.primary}>Participations:</Heading>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid
                   getRowId={(row) => row.id}
