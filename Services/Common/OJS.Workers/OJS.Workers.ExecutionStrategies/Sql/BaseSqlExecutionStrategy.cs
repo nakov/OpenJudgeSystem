@@ -21,8 +21,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         protected static readonly Type DateTimeType = typeof(DateTime);
         protected static readonly Type TimeSpanType = typeof(TimeSpan);
 
-        protected BaseSqlExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+        protected BaseSqlExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
             if (string.IsNullOrWhiteSpace(this.Settings.MasterDbConnectionString))
             {

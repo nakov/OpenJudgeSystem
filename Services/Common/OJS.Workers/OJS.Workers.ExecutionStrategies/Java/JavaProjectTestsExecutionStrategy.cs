@@ -10,6 +10,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -24,10 +25,11 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
 
         public JavaProjectTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
             => this.UserClassNames = new List<string>();
 
         protected List<string> UserClassNames { get; }

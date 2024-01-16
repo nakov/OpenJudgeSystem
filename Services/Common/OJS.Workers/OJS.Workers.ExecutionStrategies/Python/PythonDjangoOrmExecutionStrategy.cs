@@ -8,6 +8,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using System.Text.RegularExpressions;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -31,9 +32,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.sqlite3',\n        'NAME': 'db.sqlite3',\n    }\n}\n";
 
         public PythonDjangoOrmExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 

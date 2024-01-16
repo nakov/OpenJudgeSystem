@@ -24,10 +24,11 @@
         private const double NanosecondsInOneMillisecond = 1000000;
 
         public JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
             if (!File.Exists(this.Settings.JavaExecutablePath))
             {

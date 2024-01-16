@@ -1,13 +1,16 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.MySql
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class MySqlRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseMySqlExecutionStrategy<TSettings>
         where TSettings : MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
-        public MySqlRunQueriesAndCheckDatabaseExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+        public MySqlRunQueriesAndCheckDatabaseExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 

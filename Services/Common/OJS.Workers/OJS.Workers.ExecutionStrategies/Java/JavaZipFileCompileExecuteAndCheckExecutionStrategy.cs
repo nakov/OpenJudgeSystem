@@ -7,6 +7,7 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.Executors;
 
@@ -16,10 +17,11 @@
         protected const string SubmissionFileName = "_$submission";
 
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

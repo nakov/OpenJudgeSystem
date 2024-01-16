@@ -30,9 +30,10 @@ namespace OJS.Workers.ExecutionStrategies
         private readonly Regex testTimeoutRegex = new Regex(@"Timeout (?:of )?\d+ms exceeded\.");
 
         public RunSpaAndExecuteMochaTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 

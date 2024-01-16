@@ -16,10 +16,15 @@
     {
         private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy<>));
 
-        protected BaseExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            => this.Settings = settingsProvider.GetSettings<TSettings>(this.Type) !;
+        protected BaseExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+        {
+            this.Type = type;
+            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type) !;
+        }
 
-        public ExecutionStrategyType Type { get; set; }
+        protected ExecutionStrategyType Type { get; }
 
         protected TSettings Settings { get; }
 

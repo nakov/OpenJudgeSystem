@@ -1,14 +1,16 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy<TSettings> : BaseSqlServerSingleDatabaseExecutionStrategy<TSettings>
         where TSettings : SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings
     {
         public SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategy(
+            ExecutionStrategyType type,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 

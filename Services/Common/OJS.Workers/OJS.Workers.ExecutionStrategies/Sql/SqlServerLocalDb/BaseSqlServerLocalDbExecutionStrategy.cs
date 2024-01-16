@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb
 {
+    using OJS.Workers.Common.Models;
     using System;
     using System.Data;
     using System.Data.SqlClient;
@@ -14,8 +15,10 @@
         private const string TimeSpanFormat = "HH:mm:ss.fffffff";
         private static readonly Type DateTimeOffsetType = typeof(DateTimeOffset);
 
-        protected BaseSqlServerLocalDbExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+        protected BaseSqlServerLocalDbExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 

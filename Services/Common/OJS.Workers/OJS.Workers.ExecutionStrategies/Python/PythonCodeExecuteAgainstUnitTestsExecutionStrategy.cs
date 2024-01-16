@@ -6,6 +6,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -20,9 +21,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string TestResultsRegexPattern = @"^([.FE]+)\s*.+(?<=\r\n|\r|\n)(OK|FAILED\s\(.+\))(?=\s*?$)";
 
         public PythonCodeExecuteAgainstUnitTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 

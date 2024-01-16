@@ -2,14 +2,16 @@
 {
     using System.Data;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BasePostgreSqlExecutionStrategy<TSettings>
         where TSettings : PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(
+            ExecutionStrategyType type,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 

@@ -7,6 +7,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
     using System.Text.RegularExpressions;
     using Npgsql;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public abstract class BasePostgreSqlExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
@@ -20,8 +21,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         private IDbConnection currentConnection;
         private bool isDisposed;
 
-        protected BasePostgreSqlExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+        protected BasePostgreSqlExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
             => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_do_not_delete";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";

@@ -1,6 +1,7 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -12,10 +13,11 @@
         protected new const string AdditionalExecutionArguments = "--no-build --no-restore";
 
         public DotNetCoreProjectExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

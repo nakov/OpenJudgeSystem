@@ -2,6 +2,7 @@
 {
     using System;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
@@ -10,9 +11,10 @@
         where TSettings : BaseInterpretedCodeExecutionStrategySettings
     {
         protected BaseInterpretedCodeExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 

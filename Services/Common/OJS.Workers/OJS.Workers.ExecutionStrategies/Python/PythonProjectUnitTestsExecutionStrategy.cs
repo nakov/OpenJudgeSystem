@@ -8,6 +8,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -39,9 +40,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private int expectedProjectFilesCount;
 
         public PythonProjectUnitTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 

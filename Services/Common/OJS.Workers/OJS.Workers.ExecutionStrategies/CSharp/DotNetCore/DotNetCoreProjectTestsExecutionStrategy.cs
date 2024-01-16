@@ -6,6 +6,7 @@
     using System.Linq;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -42,10 +43,11 @@
             $@"<ProjectReference Include=""{ProjectPathPlaceholder}"" />";
 
         public DotNetCoreProjectTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

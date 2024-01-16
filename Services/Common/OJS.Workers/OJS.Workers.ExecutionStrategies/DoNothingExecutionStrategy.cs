@@ -2,12 +2,15 @@
 namespace OJS.Workers.ExecutionStrategies
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
 
     public class DoNothingExecutionStrategy<TSettings> : BaseExecutionStrategy<TSettings>
         where TSettings : DoNothingExecutionStrategySettings
     {
-        public DoNothingExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+        public DoNothingExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 

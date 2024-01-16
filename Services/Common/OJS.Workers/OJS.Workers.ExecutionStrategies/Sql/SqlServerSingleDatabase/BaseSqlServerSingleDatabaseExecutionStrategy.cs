@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
+    using OJS.Workers.Common.Models;
     using System.Data;
     using System.Data.SqlClient;
     using System.Transactions;
@@ -16,8 +17,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 
         private TransactionScope transactionScope;
 
-        protected BaseSqlServerSingleDatabaseExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+        protected BaseSqlServerSingleDatabaseExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
             => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{this.Settings.RestrictedUserId}";

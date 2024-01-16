@@ -7,6 +7,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using FluentExtensions.Extensions;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
@@ -15,9 +16,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         where TSettings : PythonExecuteAndCheckExecutionStrategySettings
     {
         public PythonExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
             if (!FileHelpers.FileExists(this.Settings.PythonExecutablePath))
             {

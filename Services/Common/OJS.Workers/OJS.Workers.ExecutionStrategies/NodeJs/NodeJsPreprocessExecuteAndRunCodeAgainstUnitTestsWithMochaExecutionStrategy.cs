@@ -9,6 +9,7 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -19,9 +20,10 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         where TSettings : NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings
     {
         public NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
             => this.Random = new Random();
 
         protected override string JsCodePreevaulationCode => @"

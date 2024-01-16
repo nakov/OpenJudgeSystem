@@ -10,6 +10,7 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -22,9 +23,10 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         protected const string AppJsFileName = "app.js";
 
         public NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
             if (!Directory.Exists(this.Settings.BrowserifyModulePath))
             {

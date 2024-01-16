@@ -1,6 +1,7 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -9,10 +10,11 @@
         where TSettings : CompileExecuteAndCheckExecutionStrategySettings
     {
         public CompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, compilerFactory, settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

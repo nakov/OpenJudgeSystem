@@ -21,9 +21,10 @@
 #pragma warning restore SA1401
 
         protected BaseCodeExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
+            : base(type, settingsProvider)
             => this.ProcessExecutorFactory = processExecutorFactory;
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)

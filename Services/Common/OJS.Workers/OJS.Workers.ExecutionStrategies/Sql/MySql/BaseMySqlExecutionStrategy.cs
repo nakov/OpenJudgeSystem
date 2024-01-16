@@ -6,6 +6,7 @@
     using System.Text.RegularExpressions;
     using global::MySql.Data.MySqlClient;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public abstract class BaseMySqlExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
@@ -14,10 +15,12 @@
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         private const string TimeSpanFormat = "HH:mm:ss";
 
-        protected BaseMySqlExecutionStrategy(IExecutionStrategySettingsProvider settingsProvider)
-            : base(settingsProvider)
-        {
-        }
+        protected BaseMySqlExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
+            {
+            }
 
         protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {

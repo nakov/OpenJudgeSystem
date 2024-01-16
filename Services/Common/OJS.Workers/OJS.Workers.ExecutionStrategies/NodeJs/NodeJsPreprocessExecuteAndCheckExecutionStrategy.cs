@@ -7,6 +7,7 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -26,9 +27,10 @@
         private const string DefaultAdapterFunctionCode = "(input, code) => code(input);";
 
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(processExecutorFactory, settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
             if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {
