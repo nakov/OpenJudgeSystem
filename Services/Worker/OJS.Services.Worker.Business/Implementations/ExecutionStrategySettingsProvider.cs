@@ -541,13 +541,4 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => IsJava17(strategyType)
             ? this.settings.Java17LibsPath
             : this.settings.JavaLibsPath;
-
-    private string GetJavaCompilerPath(ExecutionStrategyType strategyType)
-    {
-        var isJava17 = strategyType.ToString().Contains("17");
-
-        return isJava17
-            ? this.settings.Java17CompilerPath
-            : this.settings.JavaCompilerPath;
-    }
 }
