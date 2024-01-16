@@ -6,21 +6,22 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ISubmissionDetailsReduxState } from '../../../common/types';
-import { useAuth } from '../../../hooks/use-auth';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { setCurrentPage, setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
-import { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
+import { setCurrentPage,
+    setCurrentSubmissionResults,
+    setRetestIsSuccess,
+    setSubmission } from '../../../redux/features/submissionDetailsSlice';
+import { useGetCurrentSubmissionQuery,
+    useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { getAdministrationRetestSubmissionInternalUrl } from '../../../utils/urls';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionResults from '../submission-results/SubmissionResults';
 
-import RefreshableSubmissionList from './refreshable-submission-list/RefreshableSubmissionList';
+import RefreshableSubmissionList from './retest-btn/RefreshableSubmissionList';
 import SubmissionResultsDetails from './submission-result-details/SubmissionResultsDetails';
 import SubmissionDetailsCodeEditor from './submissionDetails-codeEditor/SubmissionDetailsCodeEditor';
 
@@ -28,14 +29,22 @@ import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const { actions: { setPageTitle } } = usePageTitles();
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
     const { currentSubmission, validationErrors, currentPage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const { submissionId } = useParams();
-    const { data: currentSubmissionData, isFetching, refetch } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
-    const { data: allSubmissionsData, isFetching: isLoadingResults, refetch: refetchResults } =
-    useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
+
+    const {
+        data: currentSubmissionData,
+        isFetching,
+        refetch: refetchCurrentSubmission,
+    } = useGetCurrentSubmissionQuery({ submissionId: Number(submissionId) });
+
+    const {
+        data: allSubmissionsData,
+        isFetching: isLoadingResults,
+        refetch: refetchResults,
+    } = useGetSubmissionResultsQuery({ submissionId: Number(submissionId), page: currentPage });
 
     useEffect(() => () => {
         dispatch(setCurrentPage(1));
@@ -53,10 +62,12 @@ const SubmissionDetails = () => {
         },
         [ currentSubmission, setPageTitle ],
     );
+
     const reloadPage = useCallback(() => {
-        refetch();
+        refetchCurrentSubmission();
         refetchResults();
-    }, [ refetch, refetchResults ]);
+        dispatch(setRetestIsSuccess(false));
+    }, [ dispatch, refetchCurrentSubmission, refetchResults ]);
 
     const detailsHeadingText = useMemo(
         () => (
@@ -75,26 +86,6 @@ const SubmissionDetails = () => {
         submissionsDetails,
     );
 
-    const renderRetestButton = useCallback(
-        () => {
-            if (!canAccessAdministration || isNil(currentSubmission)) {
-                return null;
-            }
-
-            return (
-                <LinkButton
-                  type={LinkButtonType.secondary}
-                  size={ButtonSize.medium}
-                  to={getAdministrationRetestSubmissionInternalUrl({ id: currentSubmission.id })}
-                  text="Retest"
-                  className={styles.retestButton}
-                  isToExternal
-                />
-            );
-        },
-        [ canAccessAdministration, currentSubmission ],
-    );
-
     const submissionResults = useCallback(
         () => (isFetching
             ? (
@@ -105,8 +96,8 @@ const SubmissionDetails = () => {
             : (
                 <div className={submissionDetailsClassName}>
                     <Heading type={HeadingType.secondary}>{detailsHeadingText}</Heading>
-                    {isNil(currentSubmission)
-                        ? ''
+                    { isNil(currentSubmission) || !currentSubmission.isProcessed
+                        ? <span>Submission is not processed yet.</span>
                         : (
                             <SubmissionResults
                               testRuns={currentSubmission.testRuns}
@@ -115,8 +106,9 @@ const SubmissionDetails = () => {
                             />
                         )}
                 </div>
-            )),
-        [ currentSubmission, detailsHeadingText, submissionDetailsClassName, isFetching ],
+            )
+        ),
+        [ isFetching, submissionDetailsClassName, detailsHeadingText, currentSubmission ],
     );
 
     const renderErrorMessage = useCallback(
@@ -157,14 +149,15 @@ const SubmissionDetails = () => {
     return (
         <>
             <div className={styles.detailsWrapper}>
-                <RefreshableSubmissionList
-                  renderRetestButton={renderRetestButton}
-                  reload={reloadPage}
-                />
-                <SubmissionDetailsCodeEditor renderRetestButton={renderRetestButton} />
+                <RefreshableSubmissionList reload={reloadPage} />
+                <SubmissionDetailsCodeEditor />
                 {submissionResults()}
             </div>
-            <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+            {
+                currentSubmission?.isProcessed
+                    ? <SubmissionResultsDetails testRuns={currentSubmission?.testRuns} />
+                    : null
+            }
         </>
     );
 };

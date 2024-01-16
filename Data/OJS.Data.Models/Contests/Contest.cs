@@ -7,7 +7,6 @@ namespace OJS.Data.Models.Contests
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
     using SoftUni.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
