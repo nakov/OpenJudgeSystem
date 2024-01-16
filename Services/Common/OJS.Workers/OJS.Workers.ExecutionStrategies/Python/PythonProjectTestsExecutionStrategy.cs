@@ -6,6 +6,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -13,7 +14,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
-    public class PythonProjectTestsExecutionStrategy : PythonCodeExecuteAgainstUnitTestsExecutionStrategy
+    public class PythonProjectTestsExecutionStrategy<TSettings> : PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings>
+        where TSettings : PythonProjectTestsExecutionStrategySettings
     {
 #pragma warning disable SA1306
 #pragma warning disable SA1401
@@ -23,11 +25,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string TestsFolderName = "tests";
 
         public PythonProjectTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 
@@ -105,5 +106,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 this.TestPaths[i] = testSavePath;
             }
         }
+    }
+
+#pragma warning disable SA1402
+    public class PythonProjectTestsExecutionStrategySettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

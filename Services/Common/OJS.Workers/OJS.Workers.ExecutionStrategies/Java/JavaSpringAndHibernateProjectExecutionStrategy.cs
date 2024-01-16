@@ -1,6 +1,6 @@
-﻿namespace OJS.Workers.ExecutionStrategies.Java
+﻿#nullable disable
+namespace OJS.Workers.ExecutionStrategies.Java
 {
-#nullable disable
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -17,7 +17,8 @@
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaSpringAndHibernateProjectExecutionStrategy : JavaProjectTestsExecutionStrategy
+    public class JavaSpringAndHibernateProjectExecutionStrategy<TSettings> : JavaProjectTestsExecutionStrategy<TSettings>
+        where TSettings : JavaSpringAndHibernateProjectExecutionStrategySettings
     {
         private const string PomXmlFileNameAndExtension = "pom.xml";
         private const string ApplicationPropertiesFileName = "application.properties";
@@ -38,23 +39,13 @@
             $@"\[ERROR\]";
 
         public JavaSpringAndHibernateProjectExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            Func<ExecutionStrategyType, string> getCompilerPathFunc,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            string mavenPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                getCompilerPathFunc,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed)
-            => this.MavenPath = mavenPath;
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         // Property contains Dictionary<GroupId, Tuple<ArtifactId, Version>>
         public static Dictionary<string, Tuple<string, string>> Dependencies =>
@@ -79,8 +70,6 @@
                 </plugins>
             </build>";
 
-        protected string MavenPath { get; set; }
-
         protected string PackageName { get; set; }
 
         protected string MainClassFileName { get; set; }
@@ -90,7 +79,7 @@
         protected string ProjectTestDirectoryInSubmissionZip { get; set; }
 
         protected override string ClassPathArgument
-            => $"-cp {this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
+            => $"-cp {this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
 
         protected static void PreparePomXml(string submissionFilePath)
         {
@@ -149,7 +138,7 @@
             var mavenExecutor = this.CreateExecutor();
 
             var packageExecutionResult = await mavenExecutor.Execute(
-              this.MavenPath,
+              this.Settings.MavenPath,
               string.Empty,
               executionContext.TimeLimit,
               executionContext.MemoryLimit,
@@ -177,7 +166,7 @@
                 mavenArgs = new[] { string.Format(MavenTestCommand, pomXmlPath, testFile) };
 
                 var processExecutionResult = await executor.Execute(
-                this.MavenPath,
+                this.Settings.MavenPath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -463,5 +452,12 @@
             FileHelpers.DeleteFiles(pomXmlPath);
             return packageName.InnerText.Trim();
         }
+    }
+
+#pragma warning disable SA1402
+    public class JavaSpringAndHibernateProjectExecutionStrategySettings : JavaProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string MavenPath { get; set; } = string.Empty;
     }
 }

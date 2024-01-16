@@ -18,7 +18,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaUnitTestsExecutionStrategy : JavaZipFileCompileExecuteAndCheckExecutionStrategy
+    public class JavaUnitTestsExecutionStrategy<TSettings> : JavaZipFileCompileExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : JavaUnitTestsExecutionStrategySettings
     {
         protected const string IncorrectTestFormat =
             "The problem's tests were not uploaded as an archive of zips. Reupload the tests in the correct format.";
@@ -32,21 +33,11 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected const string TestResultsRegex = @"Total Tests: (\d+) Successful: (\d+) Failed: (\d+)";
 
         public JavaUnitTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            Func<ExecutionStrategyType, string> getCompilerPathFunc,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                getCompilerPathFunc,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
             => this.TestNames = new List<string>();
 
         protected string JUnitTestRunnerSourceFilePath =>
@@ -54,7 +45,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
 
         protected List<string> TestNames { get; }
 
-        protected override string ClassPathArgument => $@" -classpath ""{this.JavaLibrariesPath}*""";
+        protected override string ClassPathArgument => $@" -classpath ""{this.Settings.JavaLibrariesPath}*""";
 
         protected virtual string JUnitTestRunnerCode =>
             $@"
@@ -159,7 +150,7 @@ public class _$TestRunner {{
                     return result;
                 }
 
-                var classPathWithCompiledFile = $@" -classpath ""{this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{compilerResult.OutputFile}""";
+                var classPathWithCompiledFile = $@" -classpath ""{this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{compilerResult.OutputFile}""";
 
                 var arguments = new List<string>
                 {
@@ -170,7 +161,7 @@ public class _$TestRunner {{
 
                 // Process the submission and check each test
                 var processExecutionResult = await executor.Execute(
-                    this.JavaExecutablePath,
+                    this.Settings.JavaExecutablePath,
                     string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -233,7 +224,7 @@ public class _$TestRunner {{
                 throw new ArgumentException($"Compiler not found in: {compilerPath}", nameof(compilerPath));
             }
 
-            var compiler = this.CompilerFactory.CreateCompiler(compilerType);
+            var compiler = this.CompilerFactory.CreateCompiler(compilerType, this.Type);
             var compilerResult = compiler.Compile(compilerPath, submissionFilePath, compilerArguments);
             return compilerResult;
         }
@@ -321,15 +312,19 @@ public class _$TestRunner {{
 
         private CompileResult CompileProject(IExecutionContext<TestsInputModel> executionContext)
         {
-            var compilerPath = this.GetCompilerPathFunc(this.Type);
-
             var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
             return this.Compile(
                 executionContext.CompilerType,
-                compilerPath,
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 combinedArguments,
                 this.WorkingDirectory);
         }
+    }
+
+#pragma warning disable SA1402
+    public class JavaUnitTestsExecutionStrategySettings : JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

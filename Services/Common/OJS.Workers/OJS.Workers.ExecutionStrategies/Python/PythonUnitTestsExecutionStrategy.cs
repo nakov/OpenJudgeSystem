@@ -6,11 +6,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class PythonUnitTestsExecutionStrategy : PythonCodeExecuteAgainstUnitTestsExecutionStrategy
+    public class PythonUnitTestsExecutionStrategy<TSettings> : PythonCodeExecuteAgainstUnitTestsExecutionStrategy<TSettings>
+        where TSettings : PythonUnitTestsExecutionStrategySettings
     {
         private const string ClassNamePlaceholder = "# class_name ";
         private const string ImportTargetClassRegexPattern = @"^(from\s+{0}\s+import\s.*)|^(import\s+{0}(?=\s|$).*)";
@@ -20,11 +22,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             $"Class name not found in Solution Skeleton. Expecting \"{ClassNamePlaceholder}\" followed by the test class's name.";
 
         public PythonUnitTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 
@@ -149,5 +150,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
             return className;
         }
+    }
+
+#pragma warning disable SA1402
+    public class PythonUnitTestsExecutionStrategySettings : PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

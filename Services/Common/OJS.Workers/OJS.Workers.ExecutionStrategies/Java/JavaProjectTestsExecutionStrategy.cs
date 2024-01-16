@@ -1,11 +1,12 @@
-﻿namespace OJS.Workers.ExecutionStrategies.Java
+﻿#nullable disable
+namespace OJS.Workers.ExecutionStrategies.Java
 {
-#nullable disable
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
+
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
@@ -13,36 +14,28 @@
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
+
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaProjectTestsExecutionStrategy : JavaUnitTestsExecutionStrategy
+    public class JavaProjectTestsExecutionStrategy<TSettings> : JavaUnitTestsExecutionStrategy<TSettings>
+        where TSettings : JavaProjectTestsExecutionStrategySettings
     {
         private const string TestRanPrefix = "Test Ran. Successful:";
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
 
         public JavaProjectTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            Func<ExecutionStrategyType, string> getCompilerPathFunc,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                getCompilerPathFunc,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed) =>
-                    this.UserClassNames = new List<string>();
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            => this.UserClassNames = new List<string>();
 
         protected List<string> UserClassNames { get; }
 
         protected override string ClassPathArgument
-            => $@" -classpath ""{this.WorkingDirectory}{ClassPathArgumentSeparator}{this.JavaLibrariesPath}*""";
+            => $@" -classpath ""{this.WorkingDirectory}{ClassPathArgumentSeparator}{this.Settings.JavaLibrariesPath}*""";
 
         protected override string JUnitTestRunnerCode
             => $@"
@@ -124,8 +117,6 @@ class Classes{{
                 return result;
             }
 
-            var compilerPath = this.GetCompilerPathFunc(this.Type);
-
             var combinedArguments = executionContext.AdditionalCompilerArguments + this.ClassPathArgument;
 
             var executor = this.CreateExecutor();
@@ -144,7 +135,7 @@ class Classes{{
 
                 var preprocessCompileResult = this.Compile(
                     executionContext.CompilerType,
-                    compilerPath,
+                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                     combinedArguments,
                     submissionFilePath);
 
@@ -165,7 +156,7 @@ class Classes{{
                 preprocessArguments.AddRange(this.UserClassNames);
 
                 var preprocessExecutionResult = await preprocessExecutor.Execute(
-                    this.JavaExecutablePath,
+                    this.Settings.JavaExecutablePath,
                     string.Empty,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -192,7 +183,7 @@ class Classes{{
 
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 combinedArguments,
                 submissionFilePath);
 
@@ -213,7 +204,7 @@ class Classes{{
             arguments.AddRange(this.UserClassNames);
 
             var processExecutionResult = await executor.Execute(
-                this.JavaExecutablePath,
+                this.Settings.JavaExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -348,5 +339,11 @@ class Classes{{
 
             return errorsByFiles;
         }
+    }
+
+#pragma warning disable SA1402
+    public class JavaProjectTestsExecutionStrategySettings : JavaUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

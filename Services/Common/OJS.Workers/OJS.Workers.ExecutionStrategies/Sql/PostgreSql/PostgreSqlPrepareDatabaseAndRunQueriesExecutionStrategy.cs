@@ -2,16 +2,16 @@
 {
     using System.Data;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy : BasePostgreSqlExecutionStrategy
+    public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy<TSettings> : BasePostgreSqlExecutionStrategy<TSettings>
+        where TSettings : PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
     {
         public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 
@@ -58,5 +58,11 @@
             var rollback = @"ROLLBACK;";
             this.ExecuteNonQuery(connection, rollback);
         }
+    }
+
+#pragma warning disable SA1402
+    public class PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings : BasePostgreSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import isNil from 'lodash/isNil';
 
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
@@ -8,17 +9,20 @@ import styles from './AlertBox.module.scss';
 
 enum AlertBoxType {
     error = 1,
-    info = 2
+    info = 2,
+    success = 3
 }
 
 const alertBoxTypeToDefaultClassName = {
     [AlertBoxType.error]: styles.error,
     [AlertBoxType.info]: styles.info,
+    [AlertBoxType.success]: styles.success,
 };
 
 interface IAlertBoxProps extends IHaveOptionalClassName {
     message: string;
     type: AlertBoxType;
+    delay?: number;
     isClosable?: boolean;
     onClose?: () => void;
 }
@@ -26,6 +30,7 @@ interface IAlertBoxProps extends IHaveOptionalClassName {
 const AlertBox = ({
     message,
     type,
+    delay = 0,
     className,
     isClosable = true,
     onClose,
@@ -72,14 +77,25 @@ const AlertBox = ({
         [ handleOnClickClose, isClosable ],
     );
 
-    return (
-        <div className={internalClassName}>
-            <span>{message}</span>
-            {closeButton()}
-        </div>
-    );
-};
+    useEffect(() => {
+        if (isNil(delay) || delay === 0) {
+            return;
+        }
 
+        setTimeout(() => {
+            setIsHidden(true);
+        }, delay);
+    }, [ delay ]);
+
+    return isHidden
+        ? null
+        : (
+            <div className={internalClassName}>
+                <span>{message}</span>
+                {closeButton()}
+            </div>
+        );
+};
 export default AlertBox;
 
 export {

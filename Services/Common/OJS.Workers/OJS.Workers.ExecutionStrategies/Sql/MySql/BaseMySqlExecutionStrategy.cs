@@ -6,24 +6,25 @@
     using System.Text.RegularExpressions;
     using global::MySql.Data.MySqlClient;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public abstract class BaseMySqlExecutionStrategy : BaseSqlExecutionStrategy
+    public abstract class BaseMySqlExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
+        where TSettings : BaseMySqlExecutionStrategySettings
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
         private const string TimeSpanFormat = "HH:mm:ss";
 
         protected BaseMySqlExecutionStrategy(
-            string sysDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
-            : base(sysDbConnectionString, restrictedUserId, restrictedUserPassword)
-        {
-        }
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
+            {
+            }
 
         protected override async Task<IDbConnection> GetOpenConnection(string databaseName)
         {
-            await using (var connection = new MySqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new MySqlConnection(this.Settings.MasterDbConnectionString))
             {
                 await connection.OpenAsync();
 
@@ -31,7 +32,7 @@
 
                 var createUserQuery = $@"
                     CREATE USER IF NOT EXISTS '{this.RestrictedUserId}'@'%';
-                    ALTER USER '{this.RestrictedUserId}' IDENTIFIED BY '{this.RestrictedUserPassword}'";
+                    ALTER USER '{this.RestrictedUserId}' IDENTIFIED BY '{this.Settings.RestrictedUserPassword}'";
                     /* SET PASSWORD FOR '{this.restrictedUserId}'@'%'=PASSWORD('{this.restrictedUserPassword}')"; */
 
                 var grandPrivilegesToUserQuery = $@"
@@ -54,7 +55,7 @@
 
         protected override async Task DropDatabase(string databaseName)
         {
-            await using var connection = new MySqlConnection(this.MasterDbConnectionString);
+            await using var connection = new MySqlConnection(this.Settings.MasterDbConnectionString);
             await connection.OpenAsync();
 
             this.ExecuteNonQuery(connection, $"DROP DATABASE IF EXISTS `{databaseName}`;");
@@ -112,17 +113,23 @@
             var userIdRegex = new Regex("UID=.*?;");
             var passwordRegex = new Regex("Password=.*?;");
 
-            var workerDbConnectionString = this.MasterDbConnectionString;
+            var workerDbConnectionString = this.Settings.MasterDbConnectionString;
 
             workerDbConnectionString =
                 userIdRegex.Replace(workerDbConnectionString, $"UID={this.RestrictedUserId};");
 
             workerDbConnectionString =
-                passwordRegex.Replace(workerDbConnectionString, $"Password={this.RestrictedUserPassword}");
+                passwordRegex.Replace(workerDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
 
             workerDbConnectionString += $";Database={databaseName};Pooling=False;";
 
             return workerDbConnectionString;
         }
+    }
+
+#pragma warning disable SA1402
+    public class BaseMySqlExecutionStrategySettings : BaseSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

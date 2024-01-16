@@ -193,6 +193,24 @@ namespace OJS.Services.Administration.Business.Implementations
             return result;
         }
 
+        public async Task<ServiceResult> Retest(int id)
+        {
+            var submission = this.submissionsData.GetByIdQuery(id)
+                .Include(s => s.SubmissionType!)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.Checker)
+                .Include(s => s.Problem)
+                    .ThenInclude(p => p.Tests)
+                .FirstOrDefault();
+
+            if (submission == null || submission.Id == 0)
+            {
+                return new ServiceResult("Submission doesn't exist");
+            }
+
+            return await this.Retest(submission!);
+        }
+
         public async Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId)
         {
             var bestScore = await this.participantScoresData.GetByParticipantIdAndProblemId(participantId, problemId);
