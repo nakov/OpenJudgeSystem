@@ -162,49 +162,6 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha => new
-                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    HandlebarsModulePath = this.settings.HandlebarsModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BrowserifyModulePath = this.settings.BrowserifyModulePath,
-                    BabelifyModulePath = this.settings.BabelifyModulePath,
-                    EcmaScriptImportPluginPath = this.settings.Es2015ImportPluginPath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
-
-                as TSettings,
-            ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy => new
-                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    HandlebarsModulePath = this.settings.HandlebarsModulePath,
-                    SinonJsDomModulePath = this.settings.SinonJsDomModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BabelCoreModulePath = this.settings.BabelCoreModulePath,
-                    ReactJsxPluginPath = this.settings.ReactJsxPluginPath,
-                    ReactModulePath = this.settings.ReactModulePath,
-                    ReactDomModulePath = this.settings.ReactDomModulePath,
-                    NodeFetchModulePath = this.settings.NodeFetchModulePath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
-
-                as TSettings,
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
                 NodeJsZipExecuteHtmlAndCssStrategySettings
                 {
