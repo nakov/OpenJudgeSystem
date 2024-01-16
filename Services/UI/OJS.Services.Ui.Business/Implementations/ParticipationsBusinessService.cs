@@ -16,9 +16,9 @@
         public ParticipationsBusinessService(IParticipantsDataService participantsData)
             => this.participantsData = participantsData;
 
-        public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId)
+        public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUsername(string username)
             => await this.participantsData
-                .GetAllWithContestSubmissionsAndProblemsByUser(userId)
+                .GetAllWithContestAndProblemsByUsername(username)
                 .MapCollection<ParticipantForContestParticipations>()
                 .ToList()
                 .GroupBy(x => x.Contest)

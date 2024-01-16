@@ -1,16 +1,16 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy : BaseSqlServerSingleDatabaseExecutionStrategy
+    public class SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseSqlServerSingleDatabaseExecutionStrategy<TSettings>
+        where TSettings : SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 
@@ -26,5 +26,11 @@
                     var sqlTestResult = this.ExecuteReader(connection, test.Input);
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
+    }
+
+#pragma warning disable SA1402
+    public class SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings : BaseSqlServerSingleDatabaseExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

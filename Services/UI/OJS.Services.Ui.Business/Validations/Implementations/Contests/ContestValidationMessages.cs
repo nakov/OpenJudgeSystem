@@ -54,6 +54,10 @@ public static class ValidationMessages
         public const string NoContentToDownload = "There is no content to download.";
 
         public const string UserHasNotProcessedSubmissionForContest = "You have unprocessed submission for this contest. Please wait until the submission is processed.";
+
+        public const string NoPrivilegesForThisSubmission = "You do not have priviledges for this submission";
+
+        public const string NotEligibleForRetest = "Submission is not eligible for retest";
     }
 
     public static class Problem

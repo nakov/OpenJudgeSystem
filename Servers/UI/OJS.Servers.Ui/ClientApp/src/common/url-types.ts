@@ -3,6 +3,10 @@ import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
 
 import { IFilter, ISort } from './contest-types';
 
+interface IUserInfoUrlParams {
+    username: string;
+}
+
 interface IContestDetailsUrlParams {
     id: number;
 }
@@ -108,6 +112,7 @@ interface IGetSearchResultsParams {
 }
 
 export type {
+    IUserInfoUrlParams,
     IRegisterForContestUrlParams,
     ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,

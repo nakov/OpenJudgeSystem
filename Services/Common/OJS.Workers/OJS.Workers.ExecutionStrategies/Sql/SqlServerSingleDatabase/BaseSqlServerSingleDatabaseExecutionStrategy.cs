@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
+    using OJS.Workers.Common.Models;
     using System.Data;
     using System.Data.SqlClient;
     using System.Transactions;
@@ -8,7 +9,8 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
     using OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb;
 
 #pragma warning disable CA1001
-    public abstract class BaseSqlServerSingleDatabaseExecutionStrategy : BaseSqlServerLocalDbExecutionStrategy
+    public abstract class BaseSqlServerSingleDatabaseExecutionStrategy<TSettings> : BaseSqlServerLocalDbExecutionStrategy<TSettings>
+        where TSettings : BaseSqlServerSingleDatabaseExecutionStrategySettings
 #pragma warning restore CA1001
     {
         private readonly string databaseNameForSubmissionProcessor;
@@ -16,14 +18,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
         private TransactionScope transactionScope;
 
         protected BaseSqlServerSingleDatabaseExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword)
-            => this.databaseNameForSubmissionProcessor = $"worker_{submissionProcessorIdentifier}_DO_NOT_DELETE";
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
+            => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
 
-        protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";
+        protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{this.Settings.RestrictedUserId}";
 
         private string WorkerDbConnectionString { get; set; }
 
@@ -56,7 +56,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
         {
             var databaseName = this.GetDatabaseName();
 
-            await using (var connection = new SqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new SqlConnection(this.Settings.MasterDbConnectionString))
             {
                 await connection.OpenAsync();
 
@@ -69,7 +69,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
                          FROM master.sys.server_principals
                          WHERE name = '{this.RestrictedUserId}')
                         BEGIN
-                            CREATE LOGIN [{this.RestrictedUserId}] WITH PASSWORD=N'{this.RestrictedUserPassword}',
+                            CREATE LOGIN [{this.RestrictedUserId}] WITH PASSWORD=N'{this.Settings.RestrictedUserPassword}',
                             DEFAULT_DATABASE=[master],
                             DEFAULT_LANGUAGE=[us_english],
                             CHECK_EXPIRATION=OFF,
@@ -91,5 +91,12 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 
             this.WorkerDbConnectionString = this.BuildWorkerDbConnectionString(databaseName);
         }
+    }
+
+#pragma warning disable SA1402
+    public class BaseSqlServerSingleDatabaseExecutionStrategySettings : BaseSqlServerLocalDbExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
     }
 }

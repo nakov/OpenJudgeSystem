@@ -7,6 +7,6 @@
 
     public interface IParticipationsBusinessService : IService
     {
-        Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId);
+        Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUsername(string username);
     }
 }

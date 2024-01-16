@@ -7,27 +7,21 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.Executors;
 
-    public class JavaZipFileCompileExecuteAndCheckExecutionStrategy : JavaPreprocessCompileExecuteAndCheckExecutionStrategy
+    public class JavaZipFileCompileExecuteAndCheckExecutionStrategy<TSettings> : JavaPreprocessCompileExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
     {
         protected const string SubmissionFileName = "_$submission";
 
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibsPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                javaExecutablePath,
-                javaLibsPath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 
@@ -54,7 +48,7 @@
             // Compile the zip file with user code and sandbox executor
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 executionContext.AdditionalCompilerArguments + this.ClassPathArgument,
                 submissionFilePath);
 
@@ -79,5 +73,11 @@
                 zipFile.Save();
             }
         }
+    }
+
+#pragma warning disable SA1402
+    public class JavaZipFileCompileExecuteAndCheckExecutionStrategySettings : JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

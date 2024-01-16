@@ -9,80 +9,55 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class NodeJsZipExecuteHtmlAndCssStrategy : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy
+    public class NodeJsZipExecuteHtmlAndCssStrategy<TSettings> : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<TSettings>
+        where TSettings : NodeJsZipExecuteHtmlAndCssStrategySettings
     {
         protected const string EntryFileName = "*.html";
         protected const string UserBaseDirectoryPlaceholder = "#userBaseDirectoryPlaceholder#";
 
         public NodeJsZipExecuteHtmlAndCssStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string mochaModulePath,
-            string chaiModulePath,
-            string sinonModulePath,
-            string sinonChaiModulePath,
-            string jsdomModulePath,
-            string jqueryModulePath,
-            string underscoreModulePath,
-            string bootsrapModulePath,
-            string bootstrapCssPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                nodeJsExecutablePath,
-                mochaModulePath,
-                chaiModulePath,
-                sinonModulePath,
-                sinonChaiModulePath,
-                underscoreModulePath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
-            if (!Directory.Exists(jsdomModulePath))
+            if (!Directory.Exists(this.Settings.JsDomModulePath))
             {
                 throw new ArgumentException(
-                    $"jsDom not found in: {jsdomModulePath}",
-                    nameof(jsdomModulePath));
+                    $"jsDom not found in: {this.Settings.JsDomModulePath}",
+                    nameof(this.Settings.JsDomModulePath));
             }
 
-            if (!Directory.Exists(jqueryModulePath))
+            if (!Directory.Exists(this.Settings.JQueryModulePath))
             {
                 throw new ArgumentException(
-                    $"jQuery not found in: {jqueryModulePath}",
-                    nameof(jqueryModulePath));
+                    $"jQuery not found in: {this.Settings.JQueryModulePath}",
+                    nameof(this.Settings.JQueryModulePath));
             }
 
-            if (!File.Exists(bootsrapModulePath))
+            if (!File.Exists(this.Settings.BootstrapModulePath))
             {
                 throw new ArgumentException(
-                    $"Bootstrap Module not found in: {bootsrapModulePath}",
-                    nameof(bootsrapModulePath));
+                    $"Bootstrap Module not found in: {this.Settings.BootstrapModulePath}",
+                    nameof(this.Settings.BootstrapModulePath));
             }
 
-            if (!File.Exists(bootstrapCssPath))
+            if (!File.Exists(this.Settings.BootstrapCssPath))
             {
                 throw new ArgumentException(
-                    $"Bootstrap CSS not found in: {bootstrapCssPath}",
-                    nameof(bootstrapCssPath));
+                    $"Bootstrap CSS not found in: {this.Settings.BootstrapCssPath}",
+                    nameof(this.Settings.BootstrapCssPath));
             }
 
-            this.JsDomModulePath = FileHelpers.ProcessModulePath(jsdomModulePath);
-            this.JQueryModulePath = FileHelpers.ProcessModulePath(jqueryModulePath);
-            this.BootstrapModulePath = FileHelpers.ProcessModulePath(bootsrapModulePath);
-            this.BootstrapCssPath = FileHelpers.ProcessModulePath(bootstrapCssPath);
+            this.Settings.JsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.JsDomModulePath);
+            this.Settings.JQueryModulePath = FileHelpers.ProcessModulePath(this.Settings.JQueryModulePath);
+            this.Settings.BootstrapModulePath = FileHelpers.ProcessModulePath(this.Settings.BootstrapModulePath);
+            this.Settings.BootstrapCssPath = FileHelpers.ProcessModulePath(this.Settings.BootstrapCssPath);
         }
-
-        protected string JsDomModulePath { get; }
-
-        protected string JQueryModulePath { get; }
-
-        protected string BootstrapModulePath { get; }
-
-        protected string BootstrapCssPath { get; }
 
         protected string ProgramEntryPath { get; set; }
 
@@ -91,10 +66,10 @@ fs = undefined;";
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + $@",
     fs = require('fs'),
-    jsdom = require('{this.JsDomModulePath}'),
-    jq = require('{this.JQueryModulePath}'),
-    bootstrap = fs.readFileSync('{this.BootstrapModulePath}','utf-8'),
-    bootstrapCss = fs.readFileSync('{this.BootstrapCssPath}','utf-8'),
+    jsdom = require('{this.Settings.JsDomModulePath}'),
+    jq = require('{this.Settings.JQueryModulePath}'),
+    bootstrap = fs.readFileSync('{this.Settings.BootstrapModulePath}','utf-8'),
+    bootstrapCss = fs.readFileSync('{this.Settings.BootstrapCssPath}','utf-8'),
     userCode = fs.readFileSync('{UserInputPlaceholder}','utf-8')";
 
         protected override string JsCodeTemplate =>
@@ -217,12 +192,12 @@ before(function(done) {{
         {
             var testResults = new List<TestResult>();
             var arguments = new List<string>();
-            arguments.Add(this.MochaModulePath);
+            arguments.Add(this.Settings.MochaModulePath);
             arguments.Add(codeSavePath);
             arguments.AddRange(this.AdditionalExecutionArguments);
 
             var processExecutionResult = await executor.Execute(
-                this.NodeJsExecutablePath,
+                this.Settings.NodeJsExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -274,5 +249,15 @@ before(function(done) {{
 
             return processedCode;
         }
+    }
+
+#pragma warning disable SA1402
+    public class NodeJsZipExecuteHtmlAndCssStrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string JsDomModulePath { get; set; } = string.Empty;
+        public string JQueryModulePath { get; set; } = string.Empty;
+        public string BootstrapModulePath { get; set; } = string.Empty;
+        public string BootstrapCssPath { get; set; } = string.Empty;
     }
 }

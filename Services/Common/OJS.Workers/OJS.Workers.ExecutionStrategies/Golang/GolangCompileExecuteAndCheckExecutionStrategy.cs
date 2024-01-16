@@ -2,20 +2,22 @@
 {
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class GolangCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class GolangCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : GolangCompileExecuteAndCheckExecutionStrategySettings
     {
         private const string CodeSaveFileName = "main.go";
 
         public GolangCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 
@@ -34,5 +36,11 @@
             => FileHelpers.SaveStringToFile(
                 executionContext.Code,
                 FileHelpers.BuildPath(this.WorkingDirectory, CodeSaveFileName));
+    }
+
+#pragma warning disable SA1402
+    public class GolangCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

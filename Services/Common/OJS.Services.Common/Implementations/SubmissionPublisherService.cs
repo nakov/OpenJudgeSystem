@@ -21,6 +21,13 @@ public class SubmissionPublisherService : ISubmissionPublisherService
         return this.publisher.Publish(pubSubModel);
     }
 
+    public Task PublishRetest(int id)
+    {
+        var pubSubModel = new RetestSubmissionPubSubModel { Id = id };
+
+        return this.publisher.Publish(pubSubModel);
+    }
+
     public Task PublishMultiple(IEnumerable<SubmissionServiceModel> submissions)
     {
         var pubSubModels = submissions.MapCollection<SubmissionForProcessingPubSubModel>();
