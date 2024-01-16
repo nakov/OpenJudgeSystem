@@ -18,7 +18,7 @@ import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const { actions: { toggleVisibility } } = useSearch();
-    const { data, isSuccess } = useGetUserinfoQuery(null);
+    const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
     const dispatch = useDispatch();
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
@@ -64,14 +64,14 @@ const PageHeader = () => {
         [],
     );
     useEffect(() => {
-        if (isSuccess && data) {
-            dispatch(setInternalUser(data));
+        if (isSuccessfullRequest && userData) {
+            dispatch(setInternalUser(userData));
             dispatch(setIsLoggedIn(true));
         } else {
             dispatch(resetInInternalUser());
             dispatch(setIsLoggedIn(false));
         }
-    }, [ isSuccess, data, dispatch ]);
+    }, [ isSuccessfullRequest, userData, dispatch ]);
 
     const handleSearchClick = useCallback(
         () => toggleVisibility(),

@@ -6,6 +6,13 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { IUserType } from '../../common/types';
 
+interface IAuthorizationReduxState {
+    internalUser: IUserType;
+    defaultLoginErrorMessage: string;
+    isLoggedIn: boolean;
+
+}
+
 const initialState: IAuthorizationReduxState = {
     internalUser: {
         id: '',
