@@ -15,6 +15,7 @@ const initialState: ISubmissionDetailsReduxState = {
     validationErrors: [],
     downloadErrorMessage: null,
     currentPage: 1,
+    retestIsSuccess: false,
 };
 
 const submissionDetailsSlice = createSlice({
@@ -41,17 +42,29 @@ const submissionDetailsSlice = createSlice({
             // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentPage = action.payload;
         },
+        setRetestIsSuccess: (state:ISubmissionDetailsReduxState, action) => {
+            // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
+            // eslint-disable-next-line prefer-destructuring, no-param-reassign
+            state.retestIsSuccess = action.payload;
+        },
     },
 });
 
 // eslint-disable-next-line prefer-destructuring
-const { setSubmission, setCurrentSubmissionResults, setDownloadErrorMessage, setCurrentPage } = submissionDetailsSlice.actions;
+const {
+    setSubmission,
+    setCurrentSubmissionResults,
+    setDownloadErrorMessage,
+    setCurrentPage,
+    setRetestIsSuccess,
+} = submissionDetailsSlice.actions;
 
 export {
     setSubmission,
     setCurrentSubmissionResults,
     setDownloadErrorMessage,
     setCurrentPage,
+    setRetestIsSuccess,
 };
 
 export default submissionDetailsSlice.reducer;
