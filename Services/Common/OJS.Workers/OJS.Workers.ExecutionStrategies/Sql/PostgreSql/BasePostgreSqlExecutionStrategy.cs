@@ -256,9 +256,18 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         {
             await using var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
-            connection.Disposed += (sender, args) =>
+            // connection.Disposed += (sender, args) =>
+            // {
+            //     this.isDisposed = true;
+            // };
+
+            connection.StateChange += (sender, args) =>
             {
-                this.isDisposed = true;
+                if (args.CurrentState == ConnectionState.Closed ||
+                    args.CurrentState == ConnectionState.Broken)
+                {
+                    this.isDisposed = true;
+                }
             };
 
             this.currentConnection = connection;
