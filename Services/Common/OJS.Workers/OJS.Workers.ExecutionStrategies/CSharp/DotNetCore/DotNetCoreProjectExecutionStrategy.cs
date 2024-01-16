@@ -31,7 +31,7 @@
 
             var csProjFilePath = this.GetCsProjFilePath();
 
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType);
 
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
