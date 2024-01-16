@@ -224,7 +224,7 @@ public class _$TestRunner {{
                 throw new ArgumentException($"Compiler not found in: {compilerPath}", nameof(compilerPath));
             }
 
-            var compiler = this.CompilerFactory.CreateCompiler(compilerType);
+            var compiler = this.CompilerFactory.CreateCompiler(compilerType, this.Type);
             var compilerResult = compiler.Compile(compilerPath, submissionFilePath, compilerArguments);
             return compilerResult;
         }
@@ -316,7 +316,7 @@ public class _$TestRunner {{
 
             return this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 combinedArguments,
                 this.WorkingDirectory);
         }

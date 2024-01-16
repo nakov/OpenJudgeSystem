@@ -5,9 +5,7 @@ using OJS.Workers.Common.Models;
 
 public interface ICompilerFactory
 {
-    string GetCompilerPath(CompilerType type);
+    string GetCompilerPath(CompilerType compilerType, ExecutionStrategyType strategyType);
 
-    ICompiler CreateCompiler(
-        CompilerType compilerType,
-        ExecutionStrategyType type = ExecutionStrategyType.DoNothing);
+    ICompiler CreateCompiler(CompilerType compilerType, ExecutionStrategyType strategyType);
 }

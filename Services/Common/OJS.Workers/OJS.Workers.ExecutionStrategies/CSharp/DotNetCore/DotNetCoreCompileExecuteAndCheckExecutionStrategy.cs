@@ -70,7 +70,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             foreach (var test in executionContext.Input.Tests)
             {
                 var processExecutionResult = await executor.Execute(
-                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                     test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -107,7 +107,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 out var arguments);
 
             var processExecutionResult = await executor.Execute(
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,

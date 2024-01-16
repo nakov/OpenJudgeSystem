@@ -135,7 +135,7 @@ class Classes{{
 
                 var preprocessCompileResult = this.Compile(
                     executionContext.CompilerType,
-                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                     combinedArguments,
                     submissionFilePath);
 
@@ -183,7 +183,7 @@ class Classes{{
 
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 combinedArguments,
                 submissionFilePath);
 

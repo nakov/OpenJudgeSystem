@@ -274,7 +274,7 @@ class _$SandboxSecurityManager extends SecurityManager {
             // Compile all source files - sandbox executor and submission file
             var compilerResult = this.CompileSourceFiles(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 executionContext.AdditionalCompilerArguments,
                 new[] { this.SandboxExecutorSourceFilePath, submissionFilePath });
 

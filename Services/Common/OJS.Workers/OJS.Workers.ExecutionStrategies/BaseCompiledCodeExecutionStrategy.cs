@@ -81,7 +81,7 @@
 
             var compileResult = this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 executionContext.AdditionalCompilerArguments,
                 submissionFilePath,
                 useWorkingDirectoryForProcess);

@@ -128,7 +128,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
 
             this.CorrectProjectReferences(project);
 
-            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
                 compilerPath,
