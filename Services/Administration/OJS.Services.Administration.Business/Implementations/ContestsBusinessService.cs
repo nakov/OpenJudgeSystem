@@ -14,9 +14,7 @@ using OJS.Data.Models;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
-using OJS.Common.Enumerations;
-using OJS.Services.Administration.Business.Validation.Helpers;
-using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Exceptions;
 
 public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
 {
@@ -26,7 +24,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IParticipantsDataService participantsData;
-    // private readonly IContestsValidationHelper contestsValidationHelper;
     public ContestsBusinessService(
         IContestsDataService contestsData,
         Business.IUserProviderService userProvider,
@@ -34,7 +31,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         IIpsDataService ipsData,
         IContestsActivityService activityService,
         IParticipantsDataService participantsData)
-        // IContestsValidationHelper contestsValidationHelper
         : base(contestsData)
     {
         this.contestsData = contestsData;
@@ -43,7 +39,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.participantsData = participantsData;
-        // this.contestsValidationHelper = contestsValidationHelper;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -88,8 +83,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         }
 
         model.Id = id;
-        // await this.contestsValidationHelper.ValidateActiveContestCannotEditDurationTypeOnEdit(
-        //     oldContest, model);
 
         if (!model.IsOnlineExam && model.Duration != null)
         {
@@ -106,7 +99,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             AddProblemGroupsToContest(contest, model.NumberOfProblemGroups);
         }
 
-        //TODO check what is happening here.
         contest.IpsInContests.Clear();
         await this.AddIpsToContest(contest, model.AllowedIps);
 
@@ -121,10 +113,14 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();
         if (contest is null)
         {
-            throw new ArgumentNullException();
+            throw new BusinessServiceException($"Contest with Id:{id} not found.");
         }
 
-        // await this.contestsValidationHelper.ValidateContestIsNotActive(contest).VerifyResult();
+        if (await this.IsContestActive(contest))
+        {
+            throw new BusinessServiceException("Cannot delete active contest.");
+        }
+
         this.contestsData.Delete(contest);
         await this.contestsData.SaveChanges();
     }
@@ -144,7 +140,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     {
         if (!string.IsNullOrWhiteSpace(mergedIps))
         {
-            var ipValues = mergedIps.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var ipValues = mergedIps.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var ipValue in ipValues)
             {
                 var ip = await this.ipsData.GetByValue(ipValue) ?? new Ip { Value = ipValue };
@@ -170,5 +166,12 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         {
             await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id!.Value, isOfficial: false);
         }
+    }
+
+    private async Task<bool> IsContestActive(Contest contest)
+    {
+        var isActive = await this.activityService.IsContestActive(contest.Map<ContestForActivityServiceModel>());
+
+        return isActive;
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-case-declarations */
@@ -13,7 +14,7 @@ import dayjs from 'dayjs';
 import { isNaN } from 'lodash';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { IContestAdministration, IContestCategories } from '../../../../common/types';
+import { ExceptionData, IContestAdministration, IContestCategories } from '../../../../common/types';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
@@ -33,7 +34,8 @@ const ContestEdit = (props:IContestEditProps) => {
     const { contestId, isEditMode = true } = props;
 
     const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
-    const [ message, setMessage ] = useState<string | null>(null);
+    const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
     // eslint-disable-next-line max-len
     const [ updateContest, { data: updateData, isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
@@ -48,17 +50,17 @@ const ContestEdit = (props:IContestEditProps) => {
         categoryName: '',
         contestPassword: '',
         description: null,
-        endTime: '',
+        endTime: null,
         name: '',
         id: 0,
         isVisible: false,
         limitBetweenSubmissions: 0,
         newIpPassword: '',
         orderBy: 0,
-        practiceEndTime: '',
+        practiceEndTime: null,
         practicePassword: '',
-        practiceStartTime: '',
-        startTime: '',
+        practiceStartTime: null,
+        startTime: null,
         type: 'Exercise',
     });
     const [ contestValidations, setContestValidations ] = useState({
@@ -84,18 +86,19 @@ const ContestEdit = (props:IContestEditProps) => {
     );
 
     useEffect(() => {
-        setMessage(null);
+        setErrorMessages([]);
         if (isSuccesfullyUpdated) {
-            setMessage(updateData as string);
+            setSuccessMessage(updateData as string);
+            setErrorMessages([]);
         }
     }, [ isSuccesfullyUpdated, updateData ]);
 
     useEffect(() => {
         if (updateError && !isSuccesfullyUpdated) {
-            // The data by default is of type unknown
-            setMessage(updateError.data as string);
+            setSuccessMessage(null);
+            setErrorMessages(updateError as Array<ExceptionData>);
         } else {
-            setMessage(null);
+            setErrorMessages([]);
         }
     }, [ isSuccesfullyUpdated, updateError ]);
 
@@ -199,25 +202,25 @@ const ContestEdit = (props:IContestEditProps) => {
         case 'startTime':
             startTime = null;
             if (value) {
-                startTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
+                startTime = new Date(dayjs(e.target.value).format(DEFAULT_DATE_FORMAT));
             }
             break;
         case 'endTime':
             endTime = null;
             if (value) {
-                endTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
+                endTime = new Date(dayjs(e.target.value).format(DEFAULT_DATE_FORMAT));
             }
             break;
         case 'practiceStartTime':
             practiceStartTime = null;
             if (value) {
-                practiceStartTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
+                practiceStartTime = new Date(dayjs(e.target.value).format(DEFAULT_DATE_FORMAT));
             }
             break;
         case 'practiceEndTime':
             practiceEndTime = null;
             if (value) {
-                practiceEndTime = dayjs(e).format(DEFAULT_DATE_FORMAT);
+                practiceEndTime = new Date(dayjs(e.target.value).format(DEFAULT_DATE_FORMAT));
             }
             break;
         case 'isVisible':
@@ -272,6 +275,16 @@ const ContestEdit = (props:IContestEditProps) => {
         onChange(event);
     };
 
+    const handleDateTimePickerChange = (name: string, newValue:any) => {
+        const event = {
+            target: {
+                name,
+                value: newValue.toString(),
+            },
+        };
+        onChange(event);
+    };
+
     const edit = () => {
         if (isValidForm) {
             updateContest(contest);
@@ -289,16 +302,26 @@ const ContestEdit = (props:IContestEditProps) => {
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
-                    { message && (
-                    <Alert
-                      variant={AlertVariant.Filled}
-                      vertical={AlertVerticalOrientation.Top}
-                      horizontal={AlertHorizontalOrientation.Right}
-                      severity={updateError
-                          ? AlertSeverity.Error
-                          : AlertSeverity.Success}
-                      message={message}
-                    />
+                    {errorMessages.map((x, i) => (
+                        <Alert
+                          key={x.name}
+                          variant={AlertVariant.Filled}
+                          vertical={AlertVerticalOrientation.Top}
+                          horizontal={AlertHorizontalOrientation.Right}
+                          severity={AlertSeverity.Error}
+                          message={x.message}
+                          styles={{ marginTop: `${i * 4}rem` }}
+                        />
+                    ))}
+                    {successMessage && (
+                        <Alert
+                          variant={AlertVariant.Filled}
+                          autoHideDuration={3000}
+                          vertical={AlertVerticalOrientation.Top}
+                          horizontal={AlertHorizontalOrientation.Right}
+                          severity={AlertSeverity.Success}
+                          message={successMessage}
+                        />
                     )}
                     <Typography className={styles.centralize} variant="h4">
                         {contest.name || 'Contest form'}
@@ -476,8 +499,8 @@ const ContestEdit = (props:IContestEditProps) => {
                                   label="Start Time"
                                   value={contest.startTime
                                       ? dayjs(contest.startTime)
-                                      : ''}
-                                  onChange={(e) => onChange(e)}
+                                      : null}
+                                  onChange={(newValue) => handleDateTimePickerChange('startTime', newValue)}
                                 />
                                 <DateTimePicker
                                   sx={{ width: '48%' }}
@@ -485,8 +508,8 @@ const ContestEdit = (props:IContestEditProps) => {
                                   label="End Time"
                                   value={contest.endTime
                                       ? dayjs(contest.endTime)
-                                      : ''}
-                                  onChange={(e) => onChange(e)}
+                                      : null}
+                                  onChange={(newValue) => handleDateTimePickerChange('endTime', newValue)}
                                 />
                             </LocalizationProvider>
                         </div>
@@ -498,8 +521,8 @@ const ContestEdit = (props:IContestEditProps) => {
                                   label="Practice Start Time"
                                   value={contest.practiceStartTime
                                       ? dayjs(contest.practiceStartTime)
-                                      : ''}
-                                  onChange={(e) => onChange(e)}
+                                      : null}
+                                  onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue)}
                                 />
                                 <DateTimePicker
                                   sx={{ width: '48%', margin: '20px 0' }}
@@ -507,8 +530,8 @@ const ContestEdit = (props:IContestEditProps) => {
                                   label="Practice End Time"
                                   value={contest.practiceEndTime
                                       ? dayjs(contest.practiceEndTime)
-                                      : ''}
-                                  onChange={(e) => onChange(e)}
+                                      : null}
+                                  onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue)}
                                 />
                             </LocalizationProvider>
                         </div>

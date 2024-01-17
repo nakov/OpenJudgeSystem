@@ -11,6 +11,7 @@ interface IAlertProps {
     autoHideDuration?:number;
     vertical:AlertVerticalOrientation;
     horizontal:AlertHorizontalOrientation;
+    styles?: React.CSSProperties;
 }
 
  enum AlertVariant{
@@ -36,7 +37,7 @@ enum AlertHorizontalOrientation {
     Center = 'center',
 }
 const Alert = (props:IAlertProps) => {
-    const { message, severity, variant, onClose, autoHideDuration, vertical, horizontal } = props;
+    const { message, severity, variant, onClose, autoHideDuration, vertical, horizontal, styles } = props;
     const [ open, setOpen ] = useState<boolean>(true);
 
     const alertClass = `${severity === AlertSeverity.Success}`
@@ -64,6 +65,7 @@ const Alert = (props:IAlertProps) => {
                   variant={variant}
                   onClose={onClose}
                   sx={{ display: 'flex', alignItems: 'center' }}
+                  style={styles || {}}
                 >
                     {message}
                     <Button className="alert-button" color="inherit" size="small">Close</Button>

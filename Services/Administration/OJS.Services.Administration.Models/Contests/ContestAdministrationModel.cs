@@ -5,20 +5,22 @@ using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
-using OJS.Data.Validation;
 using OJS.Common.Enumerations;
 using System.Linq;
+using FluentValidation;
+using OJS.Services.Common.Validation;
+using OJS.Services.Common;
+using Microsoft.EntityFrameworkCore;
+using OJS.Services.Common.Models.Contests;
+using OJS.Services.Ui.Data;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Threading.Tasks;
 
 public class ContestAdministrationModel : IMapExplicitly
 {
     public int? Id { get; set; }
-
-    [StringLength(
-        ConstraintConstants.Contest.NameMaxLength,
-        MinimumLength = ConstraintConstants.Contest.NameMinLength)]
     public string Name { get; set; } = null!;
 
-    [Required]
     public string? Type { get; set; }
 
     public int? CategoryId { get; set; }
@@ -166,5 +168,80 @@ public class ContestAdministrationModel : IMapExplicitly
                 => opt.Ignore())
             .ForMember(crm => crm.ModifiedOn, opt
                 => opt.Ignore());
+    }
+}
+
+public class ContestAdministrationModelValidator : BaseValidator<ContestAdministrationModel>
+{
+    private readonly IContestsActivityService activityService;
+    private readonly IContestsDataService contestService;
+
+    public ContestAdministrationModelValidator(
+        IContestsActivityService activityService,
+        IContestsDataService contestService)
+    {
+        this.activityService = activityService;
+        this.contestService = contestService;
+        this.RuleFor(model => model.Name)
+            .Length(4, 100);
+
+        this.RuleFor(model => model.EndTime)
+            .GreaterThan(model => model.StartTime)
+            .When(model => model.StartTime.HasValue)
+            .WithMessage("End Time must be greater than Start Time");
+
+        this.RuleFor(model => model.PracticeEndTime).GreaterThan(model => model.PracticeStartTime)
+            .When(model => model.PracticeStartTime.HasValue)
+            .WithMessage("Practice end time must be greater than Practice start time");
+
+        this.RuleFor(model => model.Type)
+            .NotNull()
+            .NotEmpty()
+            .Must(this.BeAValidContestType)
+            .WithMessage("There is no contest type with this value");
+
+        this.RuleFor(model => model)
+            .MustAsync(async (model, cancellation)
+                => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
+            .When(model => model.Id.HasValue)
+            .NotNull()
+            .WithMessage("Cannot change duration or type in an active contest.");
+    }
+
+    private async Task<bool> ValidateActiveContestCannotEditDurationTypeOnEdit(ContestAdministrationModel model)
+    {
+        if (!model.Id.HasValue)
+        {
+            return false;
+        }
+
+        var contest = await this.contestService.GetByIdQuery(model.Id.Value).FirstOrDefaultAsync();
+        if (contest is null)
+        {
+            return false;
+        }
+
+        var isActive = await this.activityService.IsContestActive(contest.Map<ContestForActivityServiceModel>());
+
+        if (string.IsNullOrEmpty(model.Type))
+        {
+            return false;
+        }
+
+        var isValid = Enum.TryParse(model.Type, true, out ContestType contestType);
+        if (!isValid)
+        {
+            return false;
+        }
+
+        return !isActive ||
+               (contest.Duration == model.Duration &&
+                contest.Type == contestType);
+    }
+
+    private bool BeAValidContestType(string? type)
+    {
+        var isValid = Enum.TryParse<ContestType>(type, true, out _);
+        return isValid;
     }
 }

@@ -7,6 +7,9 @@ using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common.Models.Pagination;
 using System;
+using System.Linq;
+using OJS.Services.Common.Validation;
+using FluentValidation;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,9 +18,17 @@ using System;
 public class ContestsController : ControllerBase
 {
     private readonly IContestsBusinessService contestsBusinessServiceService;
-
-    public ContestsController(IContestsBusinessService contestsBusinessServiceService)
-        => this.contestsBusinessServiceService = contestsBusinessServiceService;
+    private readonly IFluentValidationService<ContestAdministrationModel> validationService;
+    private readonly ContestAdministrationModelValidator validator;
+    public ContestsController(
+        IContestsBusinessService contestsBusinessServiceService,
+        IFluentValidationService<ContestAdministrationModel> validationService,
+        ContestAdministrationModelValidator validator)
+    {
+        this.contestsBusinessServiceService = contestsBusinessServiceService;
+        this.validator = validator;
+        this.validationService = validationService;
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
@@ -49,9 +60,12 @@ public class ContestsController : ControllerBase
     public async Task<IActionResult> Update(ContestAdministrationModel model, [FromRoute] int id)
     {
         //TODO: Note should there be check if user is admin or lecturer for the contest.
-        if (!IsValidContest(model))
+        model.Id = id;
+        var validations = await this.validationService.ValidateAsync(this.validator, model);
+
+        if (validations.Errors.Any())
         {
-            return this.BadRequest("Contest configuration is not valid.");
+            return this.BadRequest(validations.Errors);
         }
 
         await this.contestsBusinessServiceService.Edit(model, id);
@@ -75,16 +89,9 @@ public class ContestsController : ControllerBase
         return this.Ok(contest);
     }
 
-    private static bool IsValidContest(ContestAdministrationModel model)
-    {
-        var isStartTimeValid = !(model.StartTime >= model.EndTime);
-
-        var isPracticeTimeValid = !(model.PracticeStartTime >= model.PracticeEndTime);
-
-        var validateCategoryIsSet = !model.CategoryId.HasValue || model.CategoryId != default(int);
-
-        //TODO add validation for online contest problem groups;
-
-        return isStartTimeValid && isPracticeTimeValid && validateCategoryIsSet;
-    }
+    // private static bool IsValidContest(ContestAdministrationModel model)
+    // {
+    //
+    //     //TODO add validation for online contest problem groups;
+    // }
 }

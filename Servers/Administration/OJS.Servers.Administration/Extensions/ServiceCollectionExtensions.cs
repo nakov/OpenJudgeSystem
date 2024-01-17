@@ -22,6 +22,7 @@ internal static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
         => services
+            .AddValidators()
             .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName)

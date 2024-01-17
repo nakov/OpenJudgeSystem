@@ -9,6 +9,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Reflection;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using FluentValidation;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
@@ -29,6 +30,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.OpenApi.Models;
     using OJS.Common;
     using OJS.Common.Enumerations;
+    using OJS.Services.Administration.Models.Contests;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
@@ -299,6 +301,9 @@ namespace OJS.Servers.Infrastructure.Extensions
                         .AllowAnyHeader()
                         .AllowCredentials());
         });
+
+        public static IServiceCollection AddValidators(this IServiceCollection services) =>
+            services.AddValidatorsFromAssemblyContaining<ContestAdministrationModelValidator>(ServiceLifetime.Transient);
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {

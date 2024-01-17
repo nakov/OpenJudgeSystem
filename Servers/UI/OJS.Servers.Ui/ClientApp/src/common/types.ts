@@ -293,10 +293,10 @@ interface IContestAdministration {
     categoryId: number;
     categoryName: string;
     description: string | null;
-    startTime: string | null;
-    endTime: string | null;
-    practiceStartTime: string | null;
-    practiceEndTime: string | null;
+    startTime: Date | null;
+    endTime: Date | null;
+    practiceStartTime: Date | null;
+    practiceEndTime: Date | null;
     contestPassword: string | null;
     practicePassword: string | null;
     limitBetweenSubmissions: number;
@@ -336,7 +336,10 @@ interface IContestsAdminSlice {
 interface IRootStore {
     adminContests: IContestsAdminSlice;
 }
-
+type ExceptionData = {
+    name: string;
+    message: string;
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -370,4 +373,5 @@ export type {
     IContestsAdminSlice,
     IRootStore,
     IContestCategories,
+    ExceptionData,
 };

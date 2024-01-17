@@ -3,7 +3,7 @@
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { IAdministrationContestProblems, IContestAdministration, IGetAllAdminParams,
+import { ExceptionData, IAdministrationContestProblems, IContestAdministration, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
@@ -11,10 +11,8 @@ import { IContestDetailsUrlParams } from '../../../common/url-types';
 type ExtraOptionsType = {
 // Add extra options if needed
 }
-type DataType = {
-    errors: object;
-    title:string;
-    detail:string;
+type ResultError = {
+    data: Array<ExceptionData>;
 }
 const errorStatusCodes = [ 400, 401, 403, 500 ];
 const succesfullStatusCodes = [ 200, 204 ];
@@ -30,17 +28,9 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 
     const result = await baseQuery(args, api, extraOptions);
     const response = result.meta?.response;
-    if (result.error && response && errorStatusCodes.some((status) => status === Number(result.error.status))) {
-        const contentType = response.headers.get('Content-Type');
-        if (contentType && !contentType.includes('application/json')) {
-            const receivedData = await await result.error.data as DataType;
-            const errorText = receivedData.title;
-            return { error: { status: 400, data: errorText as string } };
-        }
-
-        const receivedData = await await result.error.data as DataType;
-        const errorText = receivedData.detail;
-        return { error: { status: 400, data: errorText as string } };
+    if (response && errorStatusCodes.some((status) => status === Number(response.status))) {
+        const errorsArray = result.error as ResultError;
+        return { error: errorsArray.data as Array<ExceptionData> };
     }
 
     if (response && succesfullStatusCodes.some((status) => status === Number(response!.status))) {
