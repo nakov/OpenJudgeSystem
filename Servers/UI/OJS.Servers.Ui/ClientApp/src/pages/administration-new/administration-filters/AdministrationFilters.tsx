@@ -182,7 +182,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     const addFilter = () => {
         const availableColumns = columns.filter((column) => !selectedFilters.some((f) => f.column === column.columnName));
-        const newFiltersArray = [ { ...defaultFilter, availableColumns }, ...selectedFilters ];
+        const newFiltersArray = [ { ...defaultFilter, availableColumns }, ...selectedFilters.map((filter) => ({
+            ...filter,
+            availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
+        })) ];
         dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
     };
 
@@ -198,11 +201,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const removeSingleFilter = (idx: number) => {
         // eslint-disable-next-line prefer-destructuring
         const deletedFilter = selectedFilters[idx];
-        const newFiltersArray = [ ...selectedFilters ];
-        const availableColumnsCopy = [ ...newFiltersArray[0].availableColumns ];
-        const filtersColumn : IFilterColumn = { columnName: deletedFilter.column, columnType: deletedFilter.inputType };
-        availableColumnsCopy.unshift(filtersColumn);
-        newFiltersArray[0] = { ...newFiltersArray[0], availableColumns: availableColumnsCopy };
+        const newFiltersArray = [ ...selectedFilters.map((filter) => ({
+            ...filter,
+            availableColumns: [ ...filter.availableColumns, { columnName: deletedFilter.column, columnType: deletedFilter.inputType } ],
+        })) ];
         newFiltersArray.splice(idx, 1);
         dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
         if (newFiltersArray.length === 1) {

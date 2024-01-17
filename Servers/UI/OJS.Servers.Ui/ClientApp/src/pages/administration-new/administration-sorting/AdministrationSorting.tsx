@@ -131,7 +131,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
     const addSorter = () => {
         const availableColumns = columns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
-        const newSortersArray = [ { ...defaultSorter, availableColumns }, ...selectedSorters ];
+        const newSortersArray = [ { ...defaultSorter, availableColumns }, ...selectedSorters.map((sorter) => ({
+            ...sorter,
+            availableColumns: [ ...availableColumns, sorter.columnName ],
+        })) ];
         dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
     };
 
@@ -144,10 +147,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     const removeSingleSorter = (idx: number) => {
         // eslint-disable-next-line prefer-destructuring
         const deletedSorter = selectedSorters[idx];
-        const newSortersArray = [ ...selectedSorters ];
-        const availableColumnsCopy = [ ...newSortersArray[0].availableColumns ];
-        availableColumnsCopy.unshift(deletedSorter.columnName);
-        newSortersArray[0] = { ...newSortersArray[0], availableColumns: availableColumnsCopy };
+        const newSortersArray = [ ...selectedSorters.map((sorter) => ({
+            ...sorter,
+            availableColumns: [ ...sorter.availableColumns, deletedSorter.columnName ],
+        })) ];
         newSortersArray.splice(idx, 1);
         dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
         if (newSortersArray.length === 1) {
