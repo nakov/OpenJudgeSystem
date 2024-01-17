@@ -37,13 +37,15 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets all user submissions. Prepared for the user's profile page.
     /// </summary>
-    /// <returns>Collection of user submissions.</returns>
+    /// <param name="username">Username of the profile's owner.</param>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<SubmissionForProfileResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetForProfile()
+    public async Task<IActionResult> GetForProfile([FromQuery] string username, [FromQuery]int page)
         => await this.submissionsBusiness
-            .GetForProfileByUser(this.User.Identity?.Name)
-            .MapCollection<SubmissionForProfileResponseModel>()
+            .GetForProfileByUser(username, page)
+            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
             .ToOkResult();
 
     /// <summary>

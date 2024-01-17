@@ -1,14 +1,300 @@
-const x = () => x;
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
-export default x;
+import { IKeyValuePair } from '../../common/common-types';
+import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
+import {
+    IGetSubmissionsByContestIdParams,
+    IGetUserSubmissionsForProfileUrlParams,
+    IUserInfoUrlParams,
+} from '../../common/url-types';
+import { IHaveChildrenProps } from '../../components/common/Props';
+import isNilOrEmpty from '../../utils/check-utils';
+import {
+    decodeUsernameFromUrlParam,
+    getAllParticipationsForUserUrl,
+    getSubmissionsByContestIdUrl, getSubmissionsForProfileUrl,
+} from '../../utils/urls';
+import { useAuth } from '../use-auth';
+import { useHttp } from '../use-http';
+import { usePages } from '../use-pages';
+import { IParticipationType } from '../use-participations';
 
-// const {
-//     get: getSubmissionsForProfileRequest,
-//     data: getSubmissionsForProfileData,
-// } = useHttp(getSubmissionsForProfileUrl);
+interface IProfileSubmissionsContext {
+    state: {
+        usernameForProfile : string;
+        userSubmissions: ISubmissionResponseModel[];
+        userSubmissionsLoading: boolean;
+        userByContestSubmissions: ISubmissionResponseModel[];
+        userSubmissionUrlParams?: IPage;
+        submissionsByContestParams?: IGetSubmissionsByContestIdParams;
+        menuItems: IKeyValuePair<string>[];
+    };
+    actions : {
+        initiateSubmissionsByContestForProfileQuery: (contestId: string, submissionsPage: number) => void;
+        initiateUserSubmissionsForProfileQuery: (username: string, submissionsPage: number) => void;
+        getDecodedUsernameFromProfile : () => string;
+        setUsernameForProfile : (username: string) => void;
+    };
+}
 
-// const getUserSubmissions = useCallback(async () => {
-//     startLoading();
-//     await getSubmissionsForProfileRequest();
-//     stopLoading();
-// }, [ getSubmissionsForProfileRequest, startLoading, stopLoading ]);
+const defaultState = {
+    state: {
+        usernameForProfile: '',
+        userSubmissions: [] as ISubmissionResponseModel[],
+        userByContestSubmissions: [] as ISubmissionResponseModel[],
+        submissionsByContestParams: { page: 1, contestId: '' },
+        menuItems: [] as IKeyValuePair<string>[],
+    },
+};
+
+const ProfileSubmissionsContext = createContext<IProfileSubmissionsContext>(defaultState as IProfileSubmissionsContext);
+type IProfileSubmissionsProviderProps = IHaveChildrenProps
+const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderProps) => {
+    const [ usernameForProfile, setUsernameForProfile ] = useState(defaultState.state.usernameForProfile);
+    const [ userSubmissions, setUserSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
+    const [
+        userByContestSubmissions,
+        setUserByContestSubmissions,
+    ] = useState<ISubmissionResponseModel[]>(defaultState.state.userByContestSubmissions);
+    const [
+        getUserSubmissionsForProfileUrlParams,
+        setUserSubmissionsForProfileUrlParams,
+    ] = useState<IGetUserSubmissionsForProfileUrlParams | null>(null);
+    const [
+        getSubmissionsByContestIdParams,
+        setGetSubmissionsByContestIdParams,
+    ] = useState<IGetSubmissionsByContestIdParams | null>(defaultState.state.submissionsByContestParams);
+    const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
+    const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrlParam ] =
+        useState<IUserInfoUrlParams | null>();
+
+    const { state: { user } } = useAuth();
+    const location = useLocation();
+    const { pathname } = location;
+    const { populatePageInformation } = usePages();
+
+    const {
+        isLoading: userSubmissionsLoading,
+        get: getUserSubmissions,
+        data: userSubmissionsData,
+    } = useHttp<
+        IGetUserSubmissionsForProfileUrlParams,
+        IPagedResultType<ISubmissionResponseModel>>({
+            url: getSubmissionsForProfileUrl,
+            parameters: getUserSubmissionsForProfileUrlParams,
+        });
+
+    const {
+        get: getUserByContestSubmissions,
+        data: userByContestSubmissionsData,
+    } = useHttp<
+        IGetSubmissionsByContestIdParams,
+        IPagedResultType<ISubmissionResponseModel>>({
+            url: getSubmissionsByContestIdUrl,
+            parameters: getSubmissionsByContestIdParams,
+        });
+
+    const {
+        get: getUserParticipations,
+        data: userParticipationsData,
+    } = useHttp<IUserInfoUrlParams, IParticipationType[]>({
+        url: getAllParticipationsForUserUrl,
+        parameters: getParticipationsForProfileUrlParam,
+    });
+
+    const initiateUserSubmissionsForProfileQuery = useCallback(
+        (username : string, submissionsPage: number) => {
+            setUserSubmissionsForProfileUrlParams({ username, page: submissionsPage });
+        },
+        [],
+    );
+
+    const getDecodedUsernameFromProfile = useCallback(
+        () => decodeUsernameFromUrlParam(usernameForProfile),
+        [ usernameForProfile ],
+    );
+
+    const initiateSubmissionsByContestForProfileQuery = useCallback(
+        (contestId: string, submissionsPage: number) => {
+            const queryParams = {
+                contestId,
+                page: submissionsPage,
+            };
+
+            setGetSubmissionsByContestIdParams(queryParams);
+        },
+        [ ],
+    );
+
+    const processSubmissionsQueryResult = useCallback(
+        (
+            queryResult: IPagedResultType<ISubmissionResponseModel>,
+            handleSetData: (submissions: ISubmissionResponseModel[]) => void,
+        ) => {
+            const newSubmissionsData = queryResult.items as ISubmissionResponseModel[];
+            const {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            } = queryResult;
+
+            const newPagesInfo = {
+                pageNumber,
+                itemsPerPage,
+                pagesCount,
+                totalItemsCount,
+            };
+
+            handleSetData(newSubmissionsData);
+            populatePageInformation(newPagesInfo);
+        },
+        [ populatePageInformation ],
+    );
+
+    useEffect(
+        () => {
+            const mappedMenuItems = (userParticipationsData ||
+                []).map((item: IParticipationType) => ({
+                key: item.id.toString(),
+                value: item.contestName,
+            }));
+
+            setSelectMenuItems(mappedMenuItems);
+        },
+        [ userParticipationsData ],
+    );
+
+    useEffect(
+        () => {
+            if (isNilOrEmpty(userSubmissionsData) || !isEmpty(getParticipationsForProfileUrlParam)) {
+                return;
+            }
+
+            const pathSegments = pathname.split('/').filter(Boolean);
+
+            if (pathSegments.length > 1) {
+                const decodedUsername = decodeUsernameFromUrlParam(pathSegments[1]);
+                setParticipationsForProfileUrlParam({ username: decodedUsername });
+                return;
+            }
+
+            const { username } = user;
+            setParticipationsForProfileUrlParam({ username });
+        },
+        [ getUserParticipations, user, userSubmissionsData, getParticipationsForProfileUrlParam, pathname ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(getParticipationsForProfileUrlParam)) {
+                return;
+            }
+
+            (async () => {
+                await getUserParticipations();
+            })();
+        },
+        [ getParticipationsForProfileUrlParam, getUserParticipations ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(userSubmissionsData) || isEmpty(userSubmissionsData)) {
+                return;
+            }
+
+            processSubmissionsQueryResult(userSubmissionsData, setUserSubmissions);
+        },
+        [ processSubmissionsQueryResult, userSubmissionsData ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(userByContestSubmissionsData) || isEmpty(userByContestSubmissionsData)) {
+                return;
+            }
+
+            processSubmissionsQueryResult(userByContestSubmissionsData, setUserByContestSubmissions);
+        },
+        [ userByContestSubmissionsData, setUserByContestSubmissions, processSubmissionsQueryResult ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(getUserSubmissionsForProfileUrlParams)) {
+                return;
+            }
+
+            (async () => {
+                await getUserSubmissions();
+            })();
+        },
+        [ getUserSubmissions, getUserSubmissionsForProfileUrlParams ],
+    );
+
+    useEffect(
+        () => {
+            if (isNil(getSubmissionsByContestIdParams)) {
+                return;
+            }
+
+            const { contestId } = getSubmissionsByContestIdParams;
+
+            if (isNil(contestId) || isEmpty(contestId)) {
+                return;
+            }
+
+            (async () => {
+                await getUserByContestSubmissions();
+            })();
+        },
+        [ getSubmissionsByContestIdParams, getUserByContestSubmissions ],
+    );
+
+    const value = useMemo(
+        () => ({
+            state: {
+                usernameForProfile,
+                userSubmissions,
+                userByContestSubmissions,
+                userSubmissionsLoading,
+                menuItems: selectMenuItems,
+            },
+            actions: {
+                initiateUserSubmissionsForProfileQuery,
+                initiateSubmissionsByContestForProfileQuery,
+                getDecodedUsernameFromProfile,
+                setUsernameForProfile,
+            },
+        }),
+        [
+            userSubmissions,
+            usernameForProfile,
+            userByContestSubmissions,
+            userSubmissionsLoading,
+            setUsernameForProfile,
+            initiateUserSubmissionsForProfileQuery,
+            initiateSubmissionsByContestForProfileQuery,
+            selectMenuItems,
+            getDecodedUsernameFromProfile,
+        ],
+    );
+
+    return (
+        <ProfileSubmissionsContext.Provider value={value}>
+            {children}
+        </ProfileSubmissionsContext.Provider>
+    );
+};
+
+const useUserProfileSubmissions = () => useContext(ProfileSubmissionsContext);
+
+export default ProfileSubmissionsProvider;
+
+export {
+    useUserProfileSubmissions,
+};

@@ -61,6 +61,11 @@ interface IGetUserSubmissionsUrlParams {
     page: number;
 }
 
+interface IGetUserSubmissionsForProfileUrlParams {
+    username: string;
+    page: number;
+}
+
 interface IGetSubmissionsByContestIdParams {
     page: number;
     contestId: string | string[] | undefined;
@@ -130,6 +135,7 @@ export type {
     IRetestSubmissionUrlParams,
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
+    IGetUserSubmissionsForProfileUrlParams,
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,

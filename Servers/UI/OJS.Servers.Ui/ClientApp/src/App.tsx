@@ -8,6 +8,7 @@ import RouteUrlParamsProvider from './hooks/common/use-route-url-params';
 import UrlParamsProvider from './hooks/common/use-url-params';
 import CurrentContestResultsProvider from './hooks/contests/use-current-contest-results';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
+import ProfileSubmissionsProvider from './hooks/submissions/use-profile-submissions';
 import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
 import AuthProvider from './hooks/use-auth';
@@ -58,6 +59,7 @@ const App = () => {
         SubmissionsProvider,
         HomeStatisticsProvider,
         PublicSubmissionsProvider,
+        ProfileSubmissionsProvider,
         SearchProvider,
     ] as ProviderType[];
 

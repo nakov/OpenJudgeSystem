@@ -7,6 +7,8 @@ import Heading from '../../components/guidelines/headings/Heading';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
+import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
+import { useUserProfileSubmissions } from '../../hooks/submissions/use-profile-submissions';
 import { useAuth } from '../../hooks/use-auth';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useUsers } from '../../hooks/use-users';
@@ -15,10 +17,8 @@ import { decodeUsernameFromUrlParam } from '../../utils/urls';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+
 // import Tabs from '../../components/guidelines/tabs/Tabs';
-// import ProfileContestParticipations
-//     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
-// import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions'
 
 const ProfilePage = () => {
     const {
@@ -31,6 +31,8 @@ const ProfilePage = () => {
             clearUserProfileInformation,
         },
     } = useUsers();
+
+    const { actions: { setUsernameForProfile } } = useUserProfileSubmissions();
     const { state: { user: { username: myUsername } } } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
     const { username } = useParams();
@@ -45,9 +47,10 @@ const ProfilePage = () => {
                 ? username
                 : myUsername;
 
+            setUsernameForProfile(usernameParam);
             getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ getProfile, myProfile, myProfile.userName, myUsername, username ],
+        [ getProfile, myProfile, myProfile.userName, myUsername, setUsernameForProfile, username ],
     );
 
     useEffect(
@@ -97,6 +100,7 @@ const ProfilePage = () => {
                     <>
                         {renderUsernameHeading()}
                         <ProfileAboutInfo value={myProfile} />
+                        <ProfileSubmissions />
                         <ProfileContestParticipations />
                         {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
@@ -108,7 +112,7 @@ const ProfilePage = () => {
                     </>
                 )
         ),
-        [ myProfile, renderUsernameHeading, isProfileInfoLoaded ],
+        [ myProfile, isProfileInfoLoaded, renderUsernameHeading ],
     );
 
     return renderPage();
