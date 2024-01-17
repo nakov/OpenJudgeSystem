@@ -1,15 +1,16 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.MySql
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy : BaseMySqlExecutionStrategy
+    public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseMySqlExecutionStrategy<TSettings>
+        where TSettings : MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-            string sysDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
-            : base(sysDbConnectionString, restrictedUserId, restrictedUserPassword)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 
@@ -26,5 +27,11 @@
                     var sqlTestResult = this.ExecuteReader(connection, test.Input);
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
+    }
+
+#pragma warning disable SA1402
+    public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings : BaseMySqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

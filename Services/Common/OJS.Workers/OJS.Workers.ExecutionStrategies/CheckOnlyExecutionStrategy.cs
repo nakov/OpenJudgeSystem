@@ -1,16 +1,18 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class CheckOnlyExecutionStrategy : BaseCodeExecutionStrategy
+    public class CheckOnlyExecutionStrategy<TSettings> : BaseCodeExecutionStrategy<TSettings>
+        where TSettings : CheckOnlyExecutionStrategySettings
     {
         public CheckOnlyExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 
@@ -41,5 +43,11 @@
 
             return Task.FromResult(result);
         }
+    }
+
+#pragma warning disable SA1402
+    public class CheckOnlyExecutionStrategySettings : BaseCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

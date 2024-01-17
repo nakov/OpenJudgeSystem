@@ -36,6 +36,10 @@
 
         public bool IsProcessed { get; set; }
 
+        public bool IsEligibleForRetest { get; set; }
+
+        public bool UserIsInRoleForContest { get; set; }
+
         public string CompilerComment { get; set; } = null!;
 
         public DateTime CreatedOn { get; set; }
@@ -89,6 +93,8 @@
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s =>
                     s.Problem != null
                         ? s.Problem.ProblemGroup.ContestId
-                        : 0));
+                        : 0))
+                .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
+                .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore());
     }
 }

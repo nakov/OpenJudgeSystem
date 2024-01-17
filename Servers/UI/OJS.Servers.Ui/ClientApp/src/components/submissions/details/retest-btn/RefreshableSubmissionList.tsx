@@ -1,28 +1,31 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
+import {
+    isRegularUserParticipantAndNotInRole, isUserNotParticipantAndNotInRole,
+} from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { useAuth } from '../../../../hooks/use-auth';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
-import Button, { ButtonType } from '../../../guidelines/buttons/Button';
+import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
+import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import PaginationControls from '../../../guidelines/pagination/PaginationControls';
 import SubmissionsList from '../../submissions-list/SubmissionsList';
+import RetestButton from '../refreshable-submission-list/RetestButton';
 
 import styles from './RefreshableSubmissionList.module.scss';
 
 interface IRefreshableSubmissionListProps {
     reload: () => void;
-
- renderRetestButton: () => ReactNode;
 }
-const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableSubmissionListProps) => {
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) => {
     const dispatch = useDispatch();
-    const { currentSubmission, currentSubmissionResults } =
-    useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
+    const {
+        currentSubmission,
+        currentSubmissionResults,
+    } = useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
     const handlePageChange = useCallback(
         (page: number) => {
             dispatch(setCurrentPage(page));
@@ -45,25 +48,51 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
               type={ButtonType.secondary}
               className={styles.submissionReloadBtn}
             />
-            {renderRetestButton()}
+            { currentSubmission?.userIsInRoleForContest
+                ? <RetestButton />
+                : null}
         </div>
-    ), [ handleReloadClick, renderRetestButton ]);
+    ), [ currentSubmission?.userIsInRoleForContest, handleReloadClick ]);
 
     const renderSubmissionInfo = useCallback(
         () => {
-            if (!canAccessAdministration || isNil(currentSubmission)) {
+            if (isNil(currentSubmission)) {
                 return null;
             }
 
-            const { createdOn, modifiedOn, startedExecutionOn, completedExecutionOn, user: { userName } } = currentSubmission;
+            const { user: { userName } } = currentSubmission;
+
+            if (isUserNotParticipantAndNotInRole(currentSubmission, userName)) {
+                return null;
+            }
+
+            const { createdOn } = currentSubmission;
+
+            const createdOnSection = (
+                <p className={styles.submissionInfoParagraph}>
+                    Created on:
+                    {' '}
+                    {preciseFormatDate(createdOn)}
+                </p>
+            );
+
+            if (isRegularUserParticipantAndNotInRole(currentSubmission, userName)) {
+                return (
+                    <div className={styles.submissionInfo}>
+                        {createdOnSection}
+                    </div>
+                );
+            }
+
+            const {
+                modifiedOn,
+                startedExecutionOn,
+                completedExecutionOn,
+            } = currentSubmission;
 
             return (
                 <div className={styles.submissionInfo}>
-                    <p className={styles.submissionInfoParagraph}>
-                        Created on:
-                        {' '}
-                        {preciseFormatDate(createdOn)}
-                    </p>
+                    {createdOnSection}
                     <p className={styles.submissionInfoParagraph}>
                         Modified on:
                         {' '}
@@ -88,12 +117,18 @@ const RefreshableSubmissionList = ({ renderRetestButton, reload }: IRefreshableS
                     <p className={styles.submissionInfoParagraph}>
                         Username:
                         {' '}
-                        {userName}
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(userName))}
+                          text={userName}
+                          internalClassName={styles.redirectButton}
+                        />
                     </p>
                 </div>
             );
         },
-        [ currentSubmission, canAccessAdministration ],
+        [ currentSubmission ],
     );
 
     return (

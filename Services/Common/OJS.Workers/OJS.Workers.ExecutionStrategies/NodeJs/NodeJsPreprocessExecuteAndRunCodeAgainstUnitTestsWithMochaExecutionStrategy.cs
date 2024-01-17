@@ -9,41 +9,22 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
 
-    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy :
-        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy
+    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<TSettings> :
+        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
+        where TSettings : NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings
     {
         public NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string mochaModulePath,
-            string chaiModulePath,
-            string jsdomModulePath,
-            string jqueryModulePath,
-            string handlebarsModulePath,
-            string sinonModulePath,
-            string sinonChaiModulePath,
-            string underscoreModulePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                nodeJsExecutablePath,
-                mochaModulePath,
-                chaiModulePath,
-                jsdomModulePath,
-                jqueryModulePath,
-                handlebarsModulePath,
-                sinonModulePath,
-                sinonChaiModulePath,
-                underscoreModulePath,
-                baseTimeUsed,
-                baseMemoryUsed) =>
-                    this.Random = new Random();
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
+            => this.Random = new Random();
 
         protected override string JsCodePreevaulationCode => @"
 chai.use(sinonChai);
@@ -167,13 +148,13 @@ describe('Test {i} ', function(){{
             var testResults = new List<TestResult>();
 
             var arguments = new List<string>();
-            arguments.Add(this.MochaModulePath);
+            arguments.Add(this.Settings.MochaModulePath);
             arguments.Add(codeSavePath);
             arguments.AddRange(this.AdditionalExecutionArguments);
 
             var testCount = 0;
             var processExecutionResult = await executor.Execute(
-                this.NodeJsExecutablePath,
+                this.Settings.NodeJsExecutablePath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -261,5 +242,11 @@ describe('Test {i} ', function(){{
 
             return processedCode;
         }
+    }
+
+#pragma warning disable SA1402
+    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

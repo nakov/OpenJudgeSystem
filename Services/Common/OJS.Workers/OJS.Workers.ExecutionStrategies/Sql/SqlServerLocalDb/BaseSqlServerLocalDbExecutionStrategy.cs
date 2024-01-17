@@ -1,12 +1,14 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb
 {
+    using OJS.Workers.Common.Models;
     using System;
     using System.Data;
     using System.Data.SqlClient;
     using System.Globalization;
     using System.Text.RegularExpressions;
 
-    public abstract class BaseSqlServerLocalDbExecutionStrategy : BaseSqlExecutionStrategy
+    public abstract class BaseSqlServerLocalDbExecutionStrategy<TSettings> : BaseSqlExecutionStrategy<TSettings>
+        where TSettings : BaseSqlServerLocalDbExecutionStrategySettings
     {
         private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
         private const string DateTimeOffsetFormat = "yyyy-MM-dd HH:mm:ss.fffffff zzz";
@@ -14,10 +16,9 @@
         private static readonly Type DateTimeOffsetType = typeof(DateTimeOffset);
 
         protected BaseSqlServerLocalDbExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 
@@ -25,7 +26,7 @@
         {
             var databaseFilePath = $"{this.WorkingDirectory}\\{databaseName}.mdf";
 
-            await using (var connection = new SqlConnection(this.MasterDbConnectionString))
+            await using (var connection = new SqlConnection(this.Settings.MasterDbConnectionString))
             {
                 await connection.OpenAsync();
 
@@ -35,7 +36,7 @@
                 var createLoginQuery = $@"
                     IF NOT EXISTS (SELECT name FROM master.sys.server_principals WHERE name=N'{this.RestrictedUserId}')
                     BEGIN
-                    CREATE LOGIN [{this.RestrictedUserId}] WITH PASSWORD=N'{this.RestrictedUserPassword}',
+                    CREATE LOGIN [{this.RestrictedUserId}] WITH PASSWORD=N'{this.Settings.RestrictedUserPassword}',
                     DEFAULT_DATABASE=[master],
                     DEFAULT_LANGUAGE=[us_english],
                     CHECK_EXPIRATION=OFF,
@@ -64,7 +65,7 @@
 
         protected override async Task DropDatabase(string databaseName)
         {
-            await using var connection = new SqlConnection(this.MasterDbConnectionString);
+            await using var connection = new SqlConnection(this.Settings.MasterDbConnectionString);
             await connection.OpenAsync();
 
             var dropDatabaseQuery = $@"
@@ -82,13 +83,13 @@
             var userIdRegex = new Regex("User Id=.*?;");
             var passwordRegex = new Regex("Password=.*?;");
 
-            var createdDbConnectionString = this.MasterDbConnectionString;
+            var createdDbConnectionString = this.Settings.MasterDbConnectionString;
 
             createdDbConnectionString =
                 userIdRegex.Replace(createdDbConnectionString, $"User Id={this.RestrictedUserId};");
 
             createdDbConnectionString =
-                passwordRegex.Replace(createdDbConnectionString, $"Password={this.RestrictedUserPassword}");
+                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
 
             createdDbConnectionString += $";Database={databaseName};Pooling=False;";
 
@@ -123,5 +124,11 @@
 
             return base.GetDataRecordFieldValue(dataRecord, index);
         }
+    }
+
+#pragma warning disable SA1402
+    public class BaseSqlServerLocalDbExecutionStrategySettings : BaseSqlExecutionStrategySettings
+#pragma warning restore SA1402
+    {
     }
 }

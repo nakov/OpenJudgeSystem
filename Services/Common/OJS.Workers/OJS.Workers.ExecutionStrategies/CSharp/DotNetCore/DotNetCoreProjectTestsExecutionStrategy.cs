@@ -6,12 +6,14 @@
     using System.Linq;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class DotNetCoreProjectTestsExecutionStrategy : CSharpProjectTestsExecutionStrategy
+    public class DotNetCoreProjectTestsExecutionStrategy<TSettings> : CSharpProjectTestsExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreProjectTestsExecutionStrategySettings
     {
         protected new const string AdditionalExecutionArguments = "--noresult";
         protected const string CsProjFileExtension = ".csproj";
@@ -41,18 +43,12 @@
             $@"<ProjectReference Include=""{ProjectPathPlaceholder}"" />";
 
         public DotNetCoreProjectTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            string targetFrameworkName,
-            string microsoftEntityFrameworkCoreInMemoryVersion,
-            string microsoftEntityFrameworkCoreProxiesVersion)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
-            this.TargetFrameworkName = targetFrameworkName;
-            this.MicrosoftEntityFrameworkCoreInMemoryVersion = microsoftEntityFrameworkCoreInMemoryVersion;
-            this.MicrosoftEntityFrameworkCoreProxiesVersion = microsoftEntityFrameworkCoreProxiesVersion;
         }
 
         protected string NUnitLiteConsoleAppDirectory =>
@@ -61,22 +57,16 @@
         protected string UserProjectDirectory =>
             Path.Combine(this.WorkingDirectory, UserSubmissionFolderName);
 
-        private string TargetFrameworkName { get; }
-
-        private string MicrosoftEntityFrameworkCoreInMemoryVersion { get; }
-
-        private string MicrosoftEntityFrameworkCoreProxiesVersion { get; }
-
         private string NUnitLiteConsoleAppCsProjTemplate => $@"
             <Project Sdk=""Microsoft.NET.Sdk"">
                 <PropertyGroup>
                     <OutputType>Exe</OutputType>
-                    <TargetFramework>{this.TargetFrameworkName}</TargetFramework>
+                    <TargetFramework>{this.Settings.TargetFrameworkName}</TargetFramework>
                 </PropertyGroup>
                 <ItemGroup>
                     <PackageReference Include=""NUnitLite"" Version=""3.13.2"" />
-                    <PackageReference Include=""Microsoft.EntityFrameworkCore.InMemory"" Version=""{this.MicrosoftEntityFrameworkCoreInMemoryVersion}"" />
-                    <PackageReference Include=""Microsoft.EntityFrameworkCore.Proxies"" Version=""{this.MicrosoftEntityFrameworkCoreProxiesVersion}"" />
+                    <PackageReference Include=""Microsoft.EntityFrameworkCore.InMemory"" Version=""{this.Settings.MicrosoftEntityFrameworkCoreInMemoryVersion}"" />
+                    <PackageReference Include=""Microsoft.EntityFrameworkCore.Proxies"" Version=""{this.Settings.MicrosoftEntityFrameworkCoreProxiesVersion}"" />
                 </ItemGroup>
                 <ItemGroup>
                     {ProjectReferencesPlaceholder}
@@ -103,7 +93,7 @@
 
             var nUnitLiteConsoleApp = this.CreateNUnitLiteConsoleApp(userCsProjPaths);
 
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
 
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
@@ -164,5 +154,14 @@
 
             return consoleAppCsProjPath;
         }
+    }
+
+#pragma warning disable SA1402
+    public class DotNetCoreProjectTestsExecutionStrategySettings : CSharpProjectTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string TargetFrameworkName { get; set; } = string.Empty;
+        public string MicrosoftEntityFrameworkCoreInMemoryVersion { get; set; } = string.Empty;
+        public string MicrosoftEntityFrameworkCoreProxiesVersion { get; set; } = string.Empty;
     }
 }

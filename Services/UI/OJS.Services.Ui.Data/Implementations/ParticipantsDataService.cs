@@ -28,10 +28,12 @@ namespace OJS.Services.Ui.Data.Implementations
         public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
             => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .Include(p => p.Contest)
-                    .ThenInclude(c => c.ProblemGroups)
-                        .ThenInclude(pg => pg.Problems)
-                            .ThenInclude(p => p.SubmissionTypesInProblems)
-                                .ThenInclude(sp => sp.SubmissionType)
+                    .ThenInclude(c => c.Category)
+                .Include(p => p.Contest)
+                        .ThenInclude(c => c.ProblemGroups)
+                            .ThenInclude(pg => pg.Problems)
+                                .ThenInclude(p => p.SubmissionTypesInProblems)
+                                    .ThenInclude(sp => sp.SubmissionType)
                 .Include(p => p.ProblemsForParticipants)
                 .FirstOrDefaultAsync();
 
@@ -45,9 +47,9 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.DbSet
                 .Where(p => p.UserId == userId);
 
-        public IQueryable<Participant> GetAllWithContestSubmissionsAndProblemsByUser(string? userId)
+        public IQueryable<Participant> GetAllWithContestAndProblemsByUsername(string username)
             => this.DbSet
-                .Where(p => p.UserId == userId)
+                .Where(p => p.User.UserName == username)
                 .Include(p => p.Contest)
                     .ThenInclude(c => c.ProblemGroups)
                         .ThenInclude(pg => pg.Problems);

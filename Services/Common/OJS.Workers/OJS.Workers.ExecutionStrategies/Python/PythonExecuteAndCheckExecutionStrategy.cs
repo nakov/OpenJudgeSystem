@@ -7,29 +7,24 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using FluentExtensions.Extensions;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
-    public class PythonExecuteAndCheckExecutionStrategy : BaseInterpretedCodeExecutionStrategy
+    public class PythonExecuteAndCheckExecutionStrategy<TSettings> : BaseInterpretedCodeExecutionStrategy<TSettings>
+        where TSettings : PythonExecuteAndCheckExecutionStrategySettings
     {
-#pragma warning disable SA1401
-        protected readonly string PythonExecutablePath;
-#pragma warning restore SA1401
-
         public PythonExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
-            if (!FileHelpers.FileExists(pythonExecutablePath))
+            if (!FileHelpers.FileExists(this.Settings.PythonExecutablePath))
             {
-                throw new ArgumentException($"Python not found in: {pythonExecutablePath}", nameof(pythonExecutablePath));
+                throw new ArgumentException($"Python not found in: {this.Settings.PythonExecutablePath}", nameof(this.Settings.PythonExecutablePath));
             }
-
-            this.PythonExecutablePath = pythonExecutablePath;
         }
 
         protected virtual IEnumerable<string> ExecutionArguments
@@ -113,7 +108,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
             string input,
             string directory = null)
             => executor.Execute(
-                this.PythonExecutablePath,
+                this.Settings.PythonExecutablePath,
                 input,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -121,5 +116,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 directory,
                 false,
                 true);
+    }
+
+#pragma warning disable SA1402
+    public class PythonExecuteAndCheckExecutionStrategySettings : BaseInterpretedCodeExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string PythonExecutablePath { get; set; } = string.Empty;
     }
 }

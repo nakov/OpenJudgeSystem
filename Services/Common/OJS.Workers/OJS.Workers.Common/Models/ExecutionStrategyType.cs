@@ -23,7 +23,7 @@
         NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy = 21,
         NodeJsZipExecuteHtmlAndCssStrategy = 22,
         // CSharpUnitTestsExecutionStrategy = 23,
-        CSharpProjectTestsExecutionStrategy = 24,
+        // CSharpProjectTestsExecutionStrategy = 24,
         JavaProjectTestsExecutionStrategy = 25,
         CPlusPlusZipFileExecutionStrategy = 26,
         JavaUnitTestsExecutionStrategy = 27,

@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Business;
 
-using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
+using SoftUni.Services.Infrastructure;
 
 public interface ILecturersInContestsBusinessService : IService
 {

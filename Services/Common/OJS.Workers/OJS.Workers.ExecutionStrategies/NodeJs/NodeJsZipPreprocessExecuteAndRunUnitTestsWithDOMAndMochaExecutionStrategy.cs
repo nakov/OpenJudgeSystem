@@ -10,77 +10,49 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
-    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy :
-        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy
+    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy<TSettings> :
+        NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
+        where TSettings : NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings
     {
         protected const string AppJsFileName = "app.js";
 
         public NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string mochaModulePath,
-            string chaiModulePath,
-            string jsdomModulePath,
-            string jqueryModulePath,
-            string handlebarsModulePath,
-            string sinonModulePath,
-            string sinonChaiModulePath,
-            string underscoreModulePath,
-            string browserifyModulePath,
-            string babelifyModulePath,
-            string ecmaScriptImportPluginPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                nodeJsExecutablePath,
-                mochaModulePath,
-                chaiModulePath,
-                jsdomModulePath,
-                jqueryModulePath,
-                handlebarsModulePath,
-                sinonModulePath,
-                sinonChaiModulePath,
-                underscoreModulePath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
-            if (!Directory.Exists(browserifyModulePath))
+            if (!Directory.Exists(this.Settings.BrowserifyModulePath))
             {
                 throw new ArgumentException(
-                    $"Browsrify not found in: {browserifyModulePath}",
-                    nameof(browserifyModulePath));
+                    $"Browsrify not found in: {this.Settings.BrowserifyModulePath}",
+                    nameof(this.Settings.BrowserifyModulePath));
             }
 
-            if (!Directory.Exists(babelifyModulePath))
+            if (!Directory.Exists(this.Settings.BabelifyModulePath))
             {
                 throw new ArgumentException(
-                    $"Babel not found in: {babelifyModulePath}",
-                    nameof(babelifyModulePath));
+                    $"Babel not found in: {this.Settings.BabelifyModulePath}",
+                    nameof(this.Settings.BabelifyModulePath));
             }
 
-            if (!Directory.Exists(ecmaScriptImportPluginPath))
+            if (!Directory.Exists(this.Settings.EcmaScriptImportPluginPath))
             {
                 throw new ArgumentException(
-                    $"ECMAScript2015ImportPluginPath not found in: {ecmaScriptImportPluginPath}",
-                    nameof(ecmaScriptImportPluginPath));
+                    $"ECMAScript2015ImportPluginPath not found in: {this.Settings.EcmaScriptImportPluginPath}",
+                    nameof(this.Settings.EcmaScriptImportPluginPath));
             }
 
-            this.BrowserifyModulePath = FileHelpers.ProcessModulePath(browserifyModulePath);
-            this.BabelifyModulePath = FileHelpers.ProcessModulePath(babelifyModulePath);
-            this.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(ecmaScriptImportPluginPath);
+            this.Settings.BrowserifyModulePath = FileHelpers.ProcessModulePath(this.Settings.BrowserifyModulePath);
+            this.Settings.BabelifyModulePath = FileHelpers.ProcessModulePath(this.Settings.BabelifyModulePath);
+            this.Settings.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(this.Settings.EcmaScriptImportPluginPath);
         }
-
-        protected string BrowserifyModulePath { get; }
-
-        protected string BabelifyModulePath { get; }
-
-        protected string EcmaScriptImportPluginPath { get; }
 
         protected string ProgramEntryPath { get; set; }
 
@@ -88,7 +60,7 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
             => new[] { DelayFlag }.Concat(base.AdditionalExecutionArguments);
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
-    browserify = require('" + this.BrowserifyModulePath + @"'),
+    browserify = require('" + this.Settings.BrowserifyModulePath + @"'),
     streamJs = require('stream'),
     stream = new streamJs.PassThrough();";
 
@@ -109,7 +81,7 @@ stream.on('end', function(){
     run();
 });
 browserify('" + UserInputPlaceholder + @"')
-    .transform('" + this.BabelifyModulePath + @"', { plugins: ['" + this.EcmaScriptImportPluginPath + @"']})
+    .transform('" + this.Settings.BabelifyModulePath + @"', { plugins: ['" + this.Settings.EcmaScriptImportPluginPath + @"']})
     .bundle()
     .pipe(stream);
 
@@ -213,7 +185,7 @@ function afterBundling() {
             return testsCode;
         }
 
-        protected virtual string PreprocessJsSubmission(
+        protected string PreprocessJsSubmission(
             string template,
             IExecutionContext<TestsInputModel> context,
             string pathToFile)
@@ -229,5 +201,14 @@ function afterBundling() {
 
             return processedCode;
         }
+    }
+
+#pragma warning disable SA1402
+    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
+#pragma warning restore SA1402
+    {
+        public string BrowserifyModulePath { get; set; } = string.Empty;
+        public string BabelifyModulePath { get; set; } = string.Empty;
+        public string EcmaScriptImportPluginPath { get; set; } = string.Empty;
     }
 }
