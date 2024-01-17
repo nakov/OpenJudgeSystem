@@ -187,16 +187,10 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
-                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests(
+                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
+                        type,
                         processExecutorFactory,
-                        this.settings.PythonExecutablePath,
-                        this.settings.JsProjNodeModules,
-                        this.settings.MochaModulePath,
-                        this.settings.ChaiModulePath,
-                        this.settings.PlaywrightChromiumModulePath,
-                        this.settings.JsProjDefaultApplicationPortNumber,
-                        this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                        this.settings.NodeJsBaseMemoryUsedInBytes);
+                        this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.PythonExecuteAndCheck:
                     executionStrategy = new PythonExecuteAndCheckExecutionStrategy<PythonExecuteAndCheckExecutionStrategySettings>(

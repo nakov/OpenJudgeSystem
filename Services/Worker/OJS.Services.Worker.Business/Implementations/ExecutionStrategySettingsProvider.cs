@@ -375,7 +375,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 }
 
                 as TSettings,
-            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy => new
+            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy or
+            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests => new
                 RunSpaAndExecuteMochaTestsExecutionStrategySettings
                 {
                     PythonExecutablePath = this.settings.PythonExecutablePath,
