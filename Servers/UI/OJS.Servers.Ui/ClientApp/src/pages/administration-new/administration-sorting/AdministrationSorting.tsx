@@ -63,12 +63,13 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             const orderBy = sorterOrderBy === 'ASC'
                 ? SortingEnum.ASC
                 : SortingEnum.DESC;
-            const availableColumns = columns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column));
+            const availableColumns = columns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column) &&
+                !selectedSorters.some((ss) => ss.columnName === column));
 
             const sorter: IAdministrationSorter = {
                 columnName,
                 orderBy,
-                availableColumns,
+                availableColumns: [ ...availableColumns, columnName ],
             };
 
             urlSelectedSorters.push(sorter);
