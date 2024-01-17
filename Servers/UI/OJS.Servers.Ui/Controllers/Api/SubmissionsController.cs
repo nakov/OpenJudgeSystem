@@ -49,6 +49,22 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     /// <summary>
+    /// Gets user latest submissions for contest.
+    /// </summary>
+    /// /// <param name="username">Username of the profile's owner.</param>
+    /// <param name="page">The current page number.</param>
+    /// <param name="contestId">Contest for which the submissions will be retrieved.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForProfileResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissionsForProfileByContest([FromQuery] string username, [FromQuery] int page, [FromQuery] int contestId)
+        => await this.submissionsBusiness
+            .GetForProfileByUserAndContest(username, page, contestId)
+            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
     /// Gets the submitted file.
     /// </summary>
     /// <param name="id">Id of the submission.</param>

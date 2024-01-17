@@ -317,21 +317,32 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     //     return Task.CompletedTask;
     // }
 
-    public async Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username)
+    public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page)
     {
         var user = await this.usersBusiness.GetUserProfileByUsername(username);
-        var data = await this.submissionsData
-            .GetQuery()
-            .Include(s => s.Problem)
-            .Include(s => s.TestRuns)
-            .Include(s => s.SubmissionType)
-            .Where(s => s.Participant!.UserId == user!.Id)
-            .Take(40)
-            .OrderByDescending(s => s.CreatedOn)
-            .MapCollection<SubmissionForProfileServiceModel>()
-            .ToListAsync();
 
-        return data;
+        var userParticipantsIds = await this.participantsDataService
+            .GetAllByUser(user!.Id)
+            .Select(p => p.Id)
+                .ToEnumerableAsync();
+
+        return await this.submissionsData
+            .GetLatestSubmissionsByUserParticipations<SubmissionForProfileServiceModel>(
+                userParticipantsIds.MapCollection<int?>(),
+                DefaultSubmissionsPerPage,
+                page);
+    }
+
+    public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId)
+    {
+        var user = await this.usersBusiness.GetUserProfileByUsername(username);
+
+        return await this.submissionsData
+            .GetAllForUserByContest(
+                contestId,
+                user!.Id)
+            .MapCollection<SubmissionForProfileServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
     public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(

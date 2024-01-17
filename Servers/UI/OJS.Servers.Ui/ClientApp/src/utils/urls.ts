@@ -24,6 +24,7 @@ import {
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsByContestIdParams,
     IGetSubmissionsUrlParams,
+    IGetUserSubmissionsForProfileByContestUrlParams,
     IGetUserSubmissionsForProfileUrlParams,
     IGetUserSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
@@ -91,10 +92,16 @@ const getUserProfileInfoUrlByUsername = (username: string) => `/profile/${userna
 const getProfileInfoUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Users/GetProfileInfo?username=${username}`;
 const getSubmissionsForProfileUrl = ({ username, page } : IGetUserSubmissionsForProfileUrlParams) => {
     const usernameQuery = `username=${username}`;
-
     const pageQuery = `page=${page}`;
 
     return `${baseApiUrl}/Submissions/GetForProfile/?${usernameQuery}&${pageQuery}`;
+};
+const getSubmissionsForProfileByContestUrl = ({ username, page, contestId } : IGetUserSubmissionsForProfileByContestUrlParams) => {
+    const usernameQuery = `username=${username}`;
+    const pageQuery = `page=${page}`;
+    const contestQuery = `contestId=${contestId}`;
+
+    return `${baseApiUrl}/Submissions/GetUserSubmissionsForProfileByContest/?${usernameQuery}&${pageQuery}&${contestQuery}`;
 };
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 // eslint-disable-next-line max-len
@@ -286,6 +293,7 @@ export {
     getRegisterForContestUrl,
     getStartContestParticipationUrl,
     getContestParticipantScoresForParticipantUrl,
+    getSubmissionsForProfileByContestUrl,
     getContestResultsUrl,
     getContestResultsApiUrl,
     getCategoriesTreeUrl,

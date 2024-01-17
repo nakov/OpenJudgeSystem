@@ -22,7 +22,9 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
+        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page);
+
+        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
