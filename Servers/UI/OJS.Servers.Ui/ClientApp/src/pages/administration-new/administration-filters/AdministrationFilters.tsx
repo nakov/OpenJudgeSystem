@@ -162,7 +162,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return;
         }
         const sortersUrl = mapSorterParamsToQueryString(selectedSorters || []);
-        const resultString = `filters=${filtersFormattedArray.join('&')}${sortersUrl
+        const resultString = `filter=${filtersFormattedArray.join('&')}${sortersUrl
             ? `&sorting=${sortersUrl}`
             : ''}`;
 
