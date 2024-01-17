@@ -12,7 +12,6 @@ import debounce from 'lodash/debounce';
 import { SortingEnum } from '../../../common/enums';
 import { IRootStore } from '../../../common/types';
 import { setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
-import { mapFilterParamsToQueryString } from '../administration-filters/AdministrationFilters';
 
 import styles from './AdministrationSorting.module.scss';
 
@@ -44,8 +43,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     const [ searchParams, setSearchParams ] = useSearchParams();
     const selectedSorters =
         useSelector((state: IRootStore) => state.adminContests[location]?.selectedSorters) ?? [ defaultSorter ];
-    const selectedFilters =
-        useSelector((state: IRootStore) => state.adminContests[location]?.selectedFilters);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -111,13 +108,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             setSearchParams(searchParams);
             return;
         }
-        const filtersUrl = mapFilterParamsToQueryString(selectedFilters || []);
-        const resultString = `sorting=${sorterFormattedArray.join('&')}${filtersUrl
-            ? `&filter=${filtersUrl}`
-            : ''}`;
 
         const delayedSetOfSearch = debounce(() => {
-            setSearchParams(resultString);
+            searchParams.set('sorting', sorterFormattedArray.join('&'));
+            setSearchParams(searchParams);
         }, 500);
 
         delayedSetOfSearch();
@@ -148,9 +142,18 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     const removeSingleSorter = (idx: number) => {
+        // eslint-disable-next-line prefer-destructuring
+        const deletedSorter = selectedSorters[idx];
         const newSortersArray = [ ...selectedSorters ];
+        const availableColumnsCopy = [ ...newSortersArray[0].availableColumns ];
+        availableColumnsCopy.unshift(deletedSorter.columnName);
+        newSortersArray[0] = { ...newSortersArray[0], availableColumns: availableColumnsCopy };
         newSortersArray.splice(idx, 1);
         dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
+        if (newSortersArray.length === 1) {
+            searchParams.delete('sorting');
+            setSearchParams(searchParams);
+        }
     };
 
     const updateSorterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {

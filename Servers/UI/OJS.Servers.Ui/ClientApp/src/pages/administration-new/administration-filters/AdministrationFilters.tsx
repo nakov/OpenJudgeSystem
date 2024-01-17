@@ -12,7 +12,6 @@ import debounce from 'lodash/debounce';
 import { FilterColumnTypeEnum } from '../../../common/enums';
 import { IFilterColumn, IRootStore } from '../../../common/types';
 import { setAdminContestsFilters } from '../../../redux/features/admin/contestsAdminSlice';
-import { mapSorterParamsToQueryString } from '../administration-sorting/AdministrationSorting';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -89,7 +88,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const selectedFilters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedFilters) ?? [ defaultFilter ];
-    const selectedSorters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedSorters);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -161,13 +159,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             setSearchParams(searchParams);
             return;
         }
-        const sortersUrl = mapSorterParamsToQueryString(selectedSorters || []);
-        const resultString = `filter=${filtersFormattedArray.join('&')}${sortersUrl
-            ? `&sorting=${sortersUrl}`
-            : ''}`;
 
         const delayedSetOfSearch = debounce(() => {
-            setSearchParams(resultString);
+            searchParams.set('filter', filtersFormattedArray.join('&'));
+            setSearchParams(searchParams);
         }, 300);
 
         delayedSetOfSearch();
@@ -201,10 +196,19 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const removeSingleFilter = (idx: number) => {
+        // eslint-disable-next-line prefer-destructuring
+        const deletedFilter = selectedFilters[idx];
         const newFiltersArray = [ ...selectedFilters ];
+        const availableColumnsCopy = [ ...newFiltersArray[0].availableColumns ];
+        const filtersColumn : IFilterColumn = { columnName: deletedFilter.column, columnType: deletedFilter.inputType };
+        availableColumnsCopy.unshift(filtersColumn);
+        newFiltersArray[0] = { ...newFiltersArray[0], availableColumns: availableColumnsCopy };
         newFiltersArray.splice(idx, 1);
-        // available columns should be rearranged
         dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
+        if (newFiltersArray.length === 1) {
+            searchParams.delete('filter');
+            setSearchParams(searchParams);
+        }
     };
 
     const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
