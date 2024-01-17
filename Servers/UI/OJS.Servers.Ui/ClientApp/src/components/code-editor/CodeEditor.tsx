@@ -2,34 +2,25 @@ import React, { lazy, useEffect, useState } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ISubmissionTypeType } from '../../common/types';
+import { fullStrategyNameToStrategyType, strategyTypeToMonacoLanguage } from '../../utils/strategy-type-utils';
 
 import styles from './CodeEditor.module.scss';
 
-const MonacoEditor = lazy(() => import('react-monaco-editor'));
-
-const possibleLanguages = [
-    'python',
-    'javascript',
-    'csharp',
-    'java',
-    'cpp',
-    'go',
-    'php',
-];
+const Editor = lazy(() => import('@monaco-editor/react'));
 
 const getMonacoLanguage = (submissionTypeName: string | null) => {
     if (submissionTypeName == null) {
         return 'javascript';
     }
 
-    return possibleLanguages.find((x) => submissionTypeName.toLowerCase().indexOf(x) >= 0);
+    return strategyTypeToMonacoLanguage(fullStrategyNameToStrategyType(submissionTypeName));
 };
 
 interface ICodeEditorProps {
     readOnly?: boolean;
     code?: string;
     selectedSubmissionType?: ISubmissionTypeType | null;
-    onCodeChange?: (newValue: string) => void;
+    onCodeChange?: (newValue: string | undefined) => void;
 }
 
 const CodeEditor = ({
@@ -56,11 +47,12 @@ const CodeEditor = ({
     /* eslint-disable @typescript-eslint/no-empty-function */
     return (
         <div className={styles.editor}>
-            <MonacoEditor
-              language={getMonacoLanguage(selectedSubmissionTypeName)}
+            <Editor
+              language={getMonacoLanguage(selectedSubmissionTypeName) ?? 'javascript'}
               theme="vs-dark"
               value={code}
               className={styles.editor}
+              defaultValue=""
               options={{
                   readOnly,
                   selectOnLineNumbers: true,
@@ -71,7 +63,7 @@ const CodeEditor = ({
                   scrollbar: { vertical: 'hidden' },
               }}
               onChange={onCodeChange}
-              editorWillUnmount={() => {}}
+              keepCurrentModel={false}
             />
         </div>
     );

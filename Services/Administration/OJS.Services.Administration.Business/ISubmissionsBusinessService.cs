@@ -14,6 +14,8 @@
 
         Task<ServiceResult> Retest(Submission submission);
 
+        Task<ServiceResult> Retest(int id);
+
         Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId);
     }
 }

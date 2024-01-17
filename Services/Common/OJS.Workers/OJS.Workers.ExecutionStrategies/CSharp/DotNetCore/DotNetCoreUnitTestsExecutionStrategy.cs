@@ -86,7 +86,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             var additionalExecutionArgumentsArray = additionalExecutionArguments
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType);
             var testedCodePath = FileHelpers.BuildPath(
                 this.NUnitLiteConsoleAppDirectory,
                 UnitTestStrategiesHelper.testedCodeFileNameWithExtension);
