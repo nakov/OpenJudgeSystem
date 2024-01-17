@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -33,9 +33,18 @@ const ProfilePage = () => {
     } = useUsers();
 
     const { actions: { setUsernameForProfile } } = useUserProfileSubmissions();
-    const { state: { user: { username: myUsername } } } = useAuth();
+    const {
+        state: {
+            user:
+        {
+            permissions: { canAccessAdministration: canSeeProfileSubmissions },
+            username: myUsername,
+        },
+        },
+    } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
     const { username } = useParams();
+    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
 
     useEffect(
         () => {
@@ -48,6 +57,7 @@ const ProfilePage = () => {
                 : myUsername;
 
             setUsernameForProfile(usernameParam);
+            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameParam) === myUsername);
             getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
         [ getProfile, myProfile, myProfile.userName, myUsername, setUsernameForProfile, username ],
@@ -99,8 +109,12 @@ const ProfilePage = () => {
                 : (
                     <>
                         {renderUsernameHeading()}
-                        <ProfileAboutInfo value={myProfile} />
-                        <ProfileSubmissions />
+                        <ProfileAboutInfo
+                          userProfile={myProfile}
+                          isUserAdmin={canSeeProfileSubmissions}
+                          isUserProfileOwner={currentUserIsProfileOwner}
+                        />
+                        {(canSeeProfileSubmissions || currentUserIsProfileOwner) && <ProfileSubmissions />}
                         <ProfileContestParticipations />
                         {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
@@ -112,7 +126,7 @@ const ProfilePage = () => {
                     </>
                 )
         ),
-        [ myProfile, isProfileInfoLoaded, renderUsernameHeading ],
+        [ myProfile, isProfileInfoLoaded, renderUsernameHeading, canSeeProfileSubmissions, currentUserIsProfileOwner ],
     );
 
     return renderPage();

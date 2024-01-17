@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 import { IKeyValuePair } from '../../common/common-types';
 import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
 import {
-    IGetSubmissionsByContestIdParams,
+    IGetSubmissionsByContestIdParams, IGetUserSubmissionsForProfileByContestUrlParams,
     IGetUserSubmissionsForProfileUrlParams,
     IUserInfoUrlParams,
 } from '../../common/url-types';
@@ -29,7 +29,7 @@ interface IProfileSubmissionsContext {
         userSubmissionsLoading: boolean;
         userByContestSubmissions: ISubmissionResponseModel[];
         userSubmissionUrlParams?: IPage;
-        submissionsByContestParams?: IGetSubmissionsByContestIdParams;
+        submissionsByContestParams?: IGetUserSubmissionsForProfileByContestUrlParams;
         menuItems: IKeyValuePair<string>[];
     };
     actions : {
