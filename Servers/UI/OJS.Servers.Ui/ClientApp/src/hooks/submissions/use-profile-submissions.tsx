@@ -33,7 +33,7 @@ interface IProfileSubmissionsContext {
         menuItems: IKeyValuePair<string>[];
     };
     actions : {
-        initiateSubmissionsByContestForProfileQuery: (contestId: string, submissionsPage: number) => void;
+        initiateSubmissionsByContestForProfileQuery: (username:string, submissionsPage: number, contestId: string) => void;
         initiateUserSubmissionsForProfileQuery: (username: string, submissionsPage: number) => void;
         getDecodedUsernameFromProfile : () => string;
         setUsernameForProfile : (username: string) => void;
@@ -45,7 +45,7 @@ const defaultState = {
         usernameForProfile: '',
         userSubmissions: [] as ISubmissionResponseModel[],
         userByContestSubmissions: [] as ISubmissionResponseModel[],
-        submissionsByContestParams: { page: 1, contestId: '' },
+        submissionsByContestParams: { username: '', page: 1, contestId: '' },
         menuItems: [] as IKeyValuePair<string>[],
     },
 };
@@ -60,12 +60,12 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         setUserByContestSubmissions,
     ] = useState<ISubmissionResponseModel[]>(defaultState.state.userByContestSubmissions);
     const [
-        getUserSubmissionsForProfileUrlParams,
+        userSubmissionsForProfileUrlParams,
         setUserSubmissionsForProfileUrlParams,
     ] = useState<IGetUserSubmissionsForProfileUrlParams | null>(null);
     const [
-        getSubmissionsByContestIdParams,
-        setGetSubmissionsByContestIdParams,
+        submissionsByContestIdParams,
+        setSubmissionsByContestIdParams,
     ] = useState<IGetSubmissionsByContestIdParams | null>(defaultState.state.submissionsByContestParams);
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
     const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrlParam ] =
@@ -84,7 +84,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         IGetUserSubmissionsForProfileUrlParams,
         IPagedResultType<ISubmissionResponseModel>>({
             url: getSubmissionsForProfileUrl,
-            parameters: getUserSubmissionsForProfileUrlParams,
+            parameters: userSubmissionsForProfileUrlParams,
         });
 
     const {
@@ -94,7 +94,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         IGetSubmissionsByContestIdParams,
         IPagedResultType<ISubmissionResponseModel>>({
             url: getSubmissionsByContestIdUrl,
-            parameters: getSubmissionsByContestIdParams,
+            parameters: submissionsByContestIdParams,
         });
 
     const {
@@ -118,13 +118,14 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     );
 
     const initiateSubmissionsByContestForProfileQuery = useCallback(
-        (contestId: string, submissionsPage: number) => {
+        (username : string, submissionsPage: number, contestId: string) => {
             const queryParams = {
+                username,
                 contestId,
                 page: submissionsPage,
             };
 
-            setGetSubmissionsByContestIdParams(queryParams);
+            setSubmissionsByContestIdParams(queryParams);
         },
         [ ],
     );
@@ -225,7 +226,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
 
     useEffect(
         () => {
-            if (isNil(getUserSubmissionsForProfileUrlParams)) {
+            if (isNil(userSubmissionsForProfileUrlParams)) {
                 return;
             }
 
@@ -233,16 +234,16 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
                 await getUserSubmissions();
             })();
         },
-        [ getUserSubmissions, getUserSubmissionsForProfileUrlParams ],
+        [ getUserSubmissions, userSubmissionsForProfileUrlParams ],
     );
 
     useEffect(
         () => {
-            if (isNil(getSubmissionsByContestIdParams)) {
+            if (isNil(submissionsByContestIdParams)) {
                 return;
             }
 
-            const { contestId } = getSubmissionsByContestIdParams;
+            const { contestId } = submissionsByContestIdParams;
 
             if (isNil(contestId) || isEmpty(contestId)) {
                 return;
@@ -252,7 +253,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
                 await getUserByContestSubmissions();
             })();
         },
-        [ getSubmissionsByContestIdParams, getUserByContestSubmissions ],
+        [ submissionsByContestIdParams, getUserByContestSubmissions ],
     );
 
     const value = useMemo(
