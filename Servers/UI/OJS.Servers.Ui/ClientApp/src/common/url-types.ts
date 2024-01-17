@@ -73,7 +73,6 @@ interface IGetUserSubmissionsForProfileByContestUrlParams {
 }
 
 interface IGetSubmissionsByContestIdParams {
-    username: string;
     page: number;
     contestId: string | string[] | undefined;
 }
