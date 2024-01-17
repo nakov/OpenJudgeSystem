@@ -17,41 +17,58 @@ using FluentValidation;
 [AllowAnonymous]
 public class ContestsController : ControllerBase
 {
-    private readonly IContestsBusinessService contestsBusinessServiceService;
+    private readonly IContestsBusinessService contestsBusinessService;
     private readonly IFluentValidationService<ContestAdministrationModel> validationService;
     private readonly ContestAdministrationModelValidator validator;
+    private readonly IUserProviderService userProvider;
     public ContestsController(
-        IContestsBusinessService contestsBusinessServiceService,
+        IContestsBusinessService contestsBusinessService,
         IFluentValidationService<ContestAdministrationModel> validationService,
-        ContestAdministrationModelValidator validator)
+        ContestAdministrationModelValidator validator,
+        IUserProviderService userProvider)
     {
-        this.contestsBusinessServiceService = contestsBusinessServiceService;
+        this.contestsBusinessService = contestsBusinessService;
         this.validator = validator;
+        this.userProvider = userProvider;
         this.validationService = validationService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
-        var contest = await this.contestsBusinessServiceService.GetAll<ContestInListModel>(model);
+        var contest = await this.contestsBusinessService.GetAll<ContestInListModel>(model);
         return this.Ok(contest);
     }
 
     [HttpPost]
-    [Route("create")]
-    public Task<IActionResult> Create(ContestAdministrationModel model)
-        => Task.FromResult<IActionResult>(this.BadRequest(new NotImplementedException()));
+    public async Task<IActionResult> Create(ContestAdministrationModel model)
+    {
+        var validations = await this.validationService.ValidateAsync(this.validator, model);
+
+        if (validations.Errors.Any())
+        {
+            return this.BadRequest(validations.Errors);
+        }
+
+        await this.contestsBusinessService.Create(model);
+        return this.Ok("Contest create successfully.");
+    }
 
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
+        if (!await this.HasContestPermission(id))
+        {
+            return this.Unauthorized();
+        }
+
         if (id <= 0)
         {
             return this.BadRequest("Invalid contest id.");
         }
 
-        await this.contestsBusinessServiceService.Delete(id);
+        await this.contestsBusinessService.Delete(id);
         return this.Ok("Contest was successfully marked as deleted.");
     }
 
@@ -59,7 +76,11 @@ public class ContestsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> Update(ContestAdministrationModel model, [FromRoute] int id)
     {
-        //TODO: Note should there be check if user is admin or lecturer for the contest.
+        if (!await this.HasContestPermission(id))
+        {
+            return this.Unauthorized();
+        }
+
         model.Id = id;
         var validations = await this.validationService.ValidateAsync(this.validator, model);
 
@@ -68,7 +89,7 @@ public class ContestsController : ControllerBase
             return this.BadRequest(validations.Errors);
         }
 
-        await this.contestsBusinessServiceService.Edit(model, id);
+        await this.contestsBusinessService.Edit(model, id);
 
         return this.Ok("Contest was successfully updated.");
     }
@@ -77,21 +98,35 @@ public class ContestsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> ById(int id)
     {
-        var contest = await this.contestsBusinessServiceService.ById(id);
+        if (!await this.HasContestPermission(id))
+        {
+            return this.Unauthorized();
+        }
+
+        var contest = await this.contestsBusinessService.ById(id);
         return this.Ok(contest);
     }
 
     [HttpGet]
-    [Route("problems/{id}")]
+    [Route("Problems/{id}")]
     public async Task<IActionResult> Problems(int id)
     {
-        var contest = await this.contestsBusinessServiceService.GetContestProblems(id);
+        if (!await this.HasContestPermission(id))
+        {
+            return this.Unauthorized();
+        }
+
+        var contest = await this.contestsBusinessService.GetContestProblems(id);
         return this.Ok(contest);
     }
 
-    // private static bool IsValidContest(ContestAdministrationModel model)
-    // {
-    //
-    //     //TODO add validation for online contest problem groups;
-    // }
+    private async Task<bool> HasContestPermission(int? contestId)
+    {
+        var user = this.userProvider.GetCurrentUser();
+
+        return await this.contestsBusinessService.UserHasContestPermissions(
+            contestId!.Value,
+            user.Id,
+            user.IsAdmin);
+    }
 }

@@ -106,7 +106,7 @@ public class ContestAdministrationModel : IMapExplicitly
             .ForMember(crm => crm.NumberOfProblemGroups, opt
                 => opt.MapFrom(c => c.ProblemGroups.Count))
             .ForMember(crm => crm.AllowedIps, opt
-                => opt.MapFrom(c => string.Join(',', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
+                => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
 
         configuration.CreateMap<ContestAdministrationModel, Contest>()
             .ForMember(crm => crm.Name, opt
@@ -173,9 +173,9 @@ public class ContestAdministrationModel : IMapExplicitly
 
 public class ContestAdministrationModelValidator : BaseValidator<ContestAdministrationModel>
 {
+    private const int ProblemGroupsCountLimit = 40;
     private readonly IContestsActivityService activityService;
     private readonly IContestsDataService contestService;
-
     public ContestAdministrationModelValidator(
         IContestsActivityService activityService,
         IContestsDataService contestService)
@@ -203,19 +203,41 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
         this.RuleFor(model => model)
             .MustAsync(async (model, cancellation)
                 => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
-            .When(model => model.Id.HasValue)
+            .When(model => model.Id > 0)
+            .WithName("Duration")
             .NotNull()
             .WithMessage("Cannot change duration or type in an active contest.");
+
+        this.RuleFor(model => model)
+            .Must((model, cancellation)
+                => ValidateOnlineContestProblemGroups(model))
+            .When(model => model.Id > 0)
+            .WithName("Number of problem groups")
+            .NotNull()
+            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
+    }
+
+    private static bool ValidateOnlineContestProblemGroups(ContestAdministrationModel model)
+    {
+        if (model.IsOnlineExam)
+        {
+            if (model.NumberOfProblemGroups <= 0)
+            {
+                return false;
+            }
+
+            if (model.NumberOfProblemGroups > ProblemGroupsCountLimit)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private async Task<bool> ValidateActiveContestCannotEditDurationTypeOnEdit(ContestAdministrationModel model)
     {
-        if (!model.Id.HasValue)
-        {
-            return false;
-        }
-
-        var contest = await this.contestService.GetByIdQuery(model.Id.Value).FirstOrDefaultAsync();
+        var contest = await this.contestService.GetByIdQuery(model.Id!.Value).FirstOrDefaultAsync();
         if (contest is null)
         {
             return false;

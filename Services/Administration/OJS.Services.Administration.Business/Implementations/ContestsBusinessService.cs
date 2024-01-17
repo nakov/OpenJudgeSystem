@@ -125,6 +125,17 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         await this.contestsData.SaveChanges();
     }
 
+    public async Task Create(ContestAdministrationModel model)
+    {
+        var contest = model.Map<Contest>();
+
+        AddProblemGroupsToContest(contest, model.NumberOfProblemGroups);
+        await this.AddIpsToContest(contest, model.AllowedIps);
+
+        await this.contestsData.Add(contest);
+        await this.contestsData.SaveChanges();
+    }
+
     private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)
     {
         for (var i = 1; i <= problemGroupsCount; i++)

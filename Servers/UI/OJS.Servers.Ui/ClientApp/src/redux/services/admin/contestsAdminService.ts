@@ -64,6 +64,7 @@ export const contestService = createApi({
         getContestProblems: builder.query<Array<IAdministrationContestProblems>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Problems/${id}` }), keepUnusedDataFor: 0 }),
         deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
         updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
+        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/', method: 'POST', body: contestAdministrationModel }) }),
     }),
 });
 
@@ -74,5 +75,6 @@ export const {
     useGetContestProblemsQuery,
     useDeleteContestMutation,
     useUpdateContestMutation,
+    useCreateContestMutation,
 } = contestService;
 export default contestService;

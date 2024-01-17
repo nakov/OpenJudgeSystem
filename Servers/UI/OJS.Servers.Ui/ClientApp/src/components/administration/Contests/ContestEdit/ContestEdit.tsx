@@ -1,9 +1,7 @@
-/* eslint-disable array-callback-return */
 /* eslint-disable no-restricted-imports */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-case-declarations */
 /* eslint-disable prefer-destructuring */
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-case-declarations */
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -16,7 +14,7 @@ import { isNaN } from 'lodash';
 import { ContestVariation } from '../../../../common/contest-types';
 import { ExceptionData, IContestAdministration, IContestCategories } from '../../../../common/types';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { useCreateContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -33,14 +31,10 @@ interface IContestEditProps {
 const ContestEdit = (props:IContestEditProps) => {
     const { contestId, isEditMode = true } = props;
 
-    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
+    const navigate = useNavigate();
     const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
-    // eslint-disable-next-line max-len
-    const [ updateContest, { data: updateData, isLoading: isUpdating, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateContestMutation();
-    const navigate = useNavigate();
-    const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -76,6 +70,26 @@ const ContestEdit = (props:IContestEditProps) => {
         isNewIpPasswordValid: true,
     });
 
+    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
+    const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
+
+    const [
+        updateContest, {
+            data: updateData,
+            isLoading: isUpdating,
+            isSuccess:
+        isSuccesfullyUpdated,
+            error: updateError,
+        } ] = useUpdateContestMutation();
+
+    const [
+        createContest, {
+            data: createData,
+            isSuccess: isSuccesfullyCreated,
+            error: createError,
+            isLoading: isCreating,
+        } ] = useCreateContestMutation();
+
     useEffect(
         () => {
             if (data) {
@@ -90,17 +104,23 @@ const ContestEdit = (props:IContestEditProps) => {
         if (isSuccesfullyUpdated) {
             setSuccessMessage(updateData as string);
             setErrorMessages([]);
+        } if (isSuccesfullyCreated) {
+            setSuccessMessage(createData as string);
+            setErrorMessages([]);
         }
-    }, [ isSuccesfullyUpdated, updateData ]);
+    }, [ isSuccesfullyUpdated, updateData, createData, isSuccesfullyCreated ]);
 
     useEffect(() => {
         if (updateError && !isSuccesfullyUpdated) {
             setSuccessMessage(null);
             setErrorMessages(updateError as Array<ExceptionData>);
+        } else if (createError && !isSuccesfullyCreated) {
+            setSuccessMessage(null);
+            setErrorMessages(createError as Array<ExceptionData>);
         } else {
             setErrorMessages([]);
         }
-    }, [ isSuccesfullyUpdated, updateError ]);
+    }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
@@ -293,12 +313,12 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const create = () => {
         if (isValidForm) {
-            console.log('Send Request');
+            createContest(contest);
         }
     };
 
     return (
-        isFetching || isLoading || isGettingCategories || isUpdating
+        isFetching || isLoading || isGettingCategories || isUpdating || isCreating
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
@@ -427,7 +447,7 @@ const ContestEdit = (props:IContestEditProps) => {
                                   type="text"
                                   label="Allowed Ips"
                                   variant="standard"
-                                  placeholder="Split by ,"
+                                  placeholder="Split by ;"
                                   value={contest.allowedIps}
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}

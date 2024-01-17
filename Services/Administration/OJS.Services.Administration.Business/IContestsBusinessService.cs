@@ -22,4 +22,6 @@ public interface IContestsBusinessService : IGridDataService<Contest>, IService
     Task Edit(ContestAdministrationModel model, int id);
 
     Task Delete(int id);
+
+    Task Create(ContestAdministrationModel model);
 }
