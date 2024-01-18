@@ -29,6 +29,7 @@ interface ISubmissionDetailsState {
     currentSubmissionResults:IPagedResultType<ISubmissionResults>;
     validationErrors: IErrorDataType[];
     downloadErrorMessage: string | null;
+    retestIsSuccess: boolean;
 }
 interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     currentPage: number;

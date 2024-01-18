@@ -6,7 +6,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { IUserType } from '../../common/types';
 
-interface IAuthorizationReduxState {
+export interface IAuthorizationReduxState {
     internalUser: IUserType;
     defaultLoginErrorMessage: string;
     isLoggedIn: boolean;
