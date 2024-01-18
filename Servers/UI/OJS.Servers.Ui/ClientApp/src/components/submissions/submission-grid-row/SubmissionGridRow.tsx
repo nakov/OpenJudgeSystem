@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { ISubmissionResponseModel } from '../../../common/types';
 import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
-import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import { encodeUsernameAsUrlParam,
@@ -48,15 +49,8 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const {
-        state: {
-            user: {
-                username: loggedInUsername,
-                isAdmin,
-            },
-        },
-    } = useAuth();
-
+    const { internalUser: user } =
+    useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const participationType = contestParticipationType(isOfficial);
 
     const handleDetailsButtonSubmit = useCallback(
@@ -82,7 +76,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (username === loggedInUsername || isAdmin) {
+            if (username === user.userName || user.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -92,7 +86,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, isAdmin, loggedInUsername, username ],
+        [ handleDetailsButtonSubmit, user.isAdmin, user.userName, username ],
     );
 
     const renderStrategyIcon = useCallback(

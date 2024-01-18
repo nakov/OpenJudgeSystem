@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -11,6 +12,7 @@ import {
     IUserInfoUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../utils/check-utils';
 import {
     getAllParticipationsForUserUrl,
@@ -20,7 +22,6 @@ import {
     getSubmissionsUrl,
     getUserSubmissionsUrl,
 } from '../../utils/urls';
-import { useAuth } from '../use-auth';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
 import { IParticipationType } from '../use-participations';
@@ -97,7 +98,8 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrlParam ] =
         useState<IUserInfoUrlParams | null>();
 
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const {
         state: { currentPage },
         populatePageInformation,
@@ -298,7 +300,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 return;
             }
 
-            const { username } = user;
+            const { userName: username } = user;
             setParticipationsForProfileUrlParam({ username });
         },
         [ getUserParticipations, user, userSubmissionsData, getParticipationsForProfileUrlParam ],

@@ -1,4 +1,5 @@
 import React, { FC, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import {
     Navigate,
     useLocation,
@@ -6,26 +7,16 @@ import {
 
 import { Anything } from '../../common/common-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { useAuth } from '../../hooks/use-auth';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
-    const {
-        state: {
-            isLoggedIn,
-            hasCompletedGetAuthInfo,
-        },
-    } = useAuth();
     const location = useLocation();
+    const { isLoggedIn } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const renderPageOrRedirectToLogin = useCallback(() => {
-        // Do not render if has not attempted to load user
-        if (!hasCompletedGetAuthInfo) {
-            // User still not loaded in state
-            return <p>Loading user data...</p>;
-        }
-
         if (!isLoggedIn) {
             const state = { from: location };
 
@@ -34,7 +25,7 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
 
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
-    }, [ hasCompletedGetAuthInfo, location, isLoggedIn, children ]);
+    }, [ location, isLoggedIn, children ]);
 
     return renderPageOrRedirectToLogin();
 };

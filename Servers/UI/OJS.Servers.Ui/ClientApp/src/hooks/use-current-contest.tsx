@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 import sum from 'lodash/sum';
 
@@ -16,6 +17,7 @@ import {
     ISubmitContestPasswordUrlParams,
 } from '../common/url-types';
 import { IHaveChildrenProps } from '../components/common/Props';
+import { IAuthorizationReduxState } from '../redux/features/authorizationSlice';
 import {
     getContestDetailsUrl,
     getContestParticipantScoresForParticipantUrl,
@@ -24,7 +26,6 @@ import {
     getSubmitContestPasswordUrl,
 } from '../utils/urls';
 
-import { useAuth } from './use-auth';
 import { IErrorDataType, useHttp } from './use-http';
 
 interface IStartContestArgs {
@@ -140,7 +141,9 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         userHasConfirmedModal,
         setUserHasConfirmedModal,
     ] = useState<boolean>(defaultState.state.userHasConfirmedModal);
-    const { state: { user } } = useAuth();
+
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const [ contestDetails, setContestDetails ] = useState<IContestDetailsResponseType | null>(defaultState.state.contestDetails);
     const [ contestDetailsParams, setContestDetailsParams ] = useState<IContestDetailsUrlParams | null>(null);
 
@@ -194,15 +197,6 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
         url: getContestParticipantScoresForParticipantUrl,
         parameters: getCurrentParticipantParticipantScoresParams,
     });
-
-    const isUserAdmin = useMemo(
-        () => {
-            const { permissions: { canAccessAdministration } } = user;
-
-            return canAccessAdministration;
-        },
-        [ user ],
-    );
 
     const getContestDetails = useCallback(({ id }: IContestDetailsUrlParams) => {
         setContestDetailsParams({ id });
@@ -341,14 +335,14 @@ const CurrentContestsProvider = ({ children }: ICurrentContestsProviderProps) =>
             } as IContestType);
 
             const { participantId: registerParticipantId } = registerForContestData;
-            if (!isNil(registerParticipantId) || isUserAdmin) {
+            if (!isNil(registerParticipantId) || user.isAdmin) {
                 setUserHasConfirmedModal(true);
             }
 
             setRequirePassword(responseRequirePassword);
             setContestError(null);
         },
-        [ registerForContestData, registerContestError, isUserAdmin ],
+        [ registerForContestData, registerContestError, user.isAdmin ],
     );
 
     useEffect(() => {

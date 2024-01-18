@@ -1,4 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable max-len */
+/* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -8,7 +12,8 @@ import {
     PasswordLengthErrorMessage,
     UsernameFormatErrorMessage, UsernameLengthErrorMessage,
 } from '../../common/constants';
-import { useAuth } from '../../hooks/use-auth';
+import { IAuthorizationReduxState, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
@@ -19,25 +24,20 @@ import SpinningLoader from '../guidelines/spinning-loader/SpinningLoader';
 import styles from './LoginForm.module.scss';
 
 const LoginPage = () => {
-    const {
-        state: {
-            loginErrorMessage,
-            isLoggingIn,
-            isLoggedIn,
-        },
-        actions: {
-            setUsername,
-            setPassword,
-            signIn,
-            setLoginErrorMessage,
-        },
-    } = useAuth();
-
+    const [ userName, setUsername ] = useState<string>('');
+    const [ password, setPassword ] = useState<string>('');
+    const [ rememberMe, setRememberMe ] = useState<boolean>(false);
+    const [ loginErrorMessage, setLoginErrorMessage ] = useState<string>('');
     const [ usernameFormError, setUsernameFormError ] = useState('');
     const [ passwordFormError, setPasswordFormError ] = useState('');
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
+    const [ login, { isLoading, isSuccess, error, isError } ] = useLoginMutation();
+    const { data, isSuccess: isGetInfoSuccessfull, refetch } = useGetUserinfoQuery(null);
+    const { isLoggedIn } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const dispatch = useDispatch();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
@@ -60,6 +60,13 @@ const LoginPage = () => {
             : value as string);
     }, [ setUsername ]);
 
+    useEffect(() => {
+        if (isGetInfoSuccessfull && data) {
+            dispatch(setInternalUser(data));
+            dispatch(setIsLoggedIn(true));
+        }
+    }, [ isGetInfoSuccessfull, data ]);
+
     const handleOnChangeUpdatePassword = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
             setPasswordFormError(EmptyPasswordErrorMessage);
@@ -73,6 +80,16 @@ const LoginPage = () => {
             ? ''
             : value as string);
     }, [ setPassword ]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            refetch();
+            return;
+        }
+        if (error && 'error' in error) {
+            setLoginErrorMessage(error.data as string);
+        }
+    }, [ isSuccess, isError ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
@@ -91,7 +108,7 @@ const LoginPage = () => {
         setDisableLoginButton(false);
     }, [ usernameFormError, passwordFormError, setLoginErrorMessage, hasPressedLoginBtn ]);
 
-    const handleLoginClick = useCallback(async () => {
+    const handleLoginClick = () => {
         /* TODO:  Add message to notify the admin if SULS is not working.
          Get the message from legacy Judge.
         */
@@ -102,8 +119,8 @@ const LoginPage = () => {
             return;
         }
 
-        await signIn();
-    }, [ passwordFormError, signIn, usernameFormError ]);
+        login({ Username: userName, Password: password, RememberMe: rememberMe });
+    };
 
     const renderLoginErrorMessage = useCallback(
         () => (!isNil(loginErrorMessage)
@@ -112,81 +129,73 @@ const LoginPage = () => {
         [ loginErrorMessage ],
     );
 
-    const renderLoginForm = useCallback(
-        (shouldHideButton : boolean) => (
-            <Form
-              className={styles.loginForm}
-              onSubmit={() => handleLoginClick()}
-              submitText="Login"
-              hideFormButton={shouldHideButton}
-              disableButton={disableLoginButton}
-            >
-                <header className={styles.loginFormHeader}>
-                    <Heading type={HeadingType.primary}>Login</Heading>
-                    <span className={styles.registerHeader}>
-                        { 'You don\'t have an account yet? '}
-                        <LinkButton
-                          to="/register"
-                          type={LinkButtonType.plain}
-                          className={styles.loginFormLink}
-                        >
-                            Register
-                        </LinkButton>
-                    </span>
-                    { renderLoginErrorMessage() }
-                </header>
-                <FormControl
-                  id={usernameFieldName.toLowerCase()}
-                  name={usernameFieldName}
-                  labelText={usernameFieldName}
-                  type={FormControlType.input}
-                  onChange={handleOnChangeUpdateUsername}
-                  value=""
-                  showPlaceholder={false}
-                />
-                <FormControl
-                  id={passwordFieldName.toLowerCase()}
-                  name={passwordFieldName}
-                  labelText={passwordFieldName}
-                  type={FormControlType.password}
-                  onChange={handleOnChangeUpdatePassword}
-                  value=""
-                  showPlaceholder={false}
-                />
-                <div className={styles.loginFormControls}>
-                    <FormControl
-                      id="auth-password-checkbox"
-                      name="RememberMe"
-                      labelText="Remember Me"
-                      type={FormControlType.checkbox}
-                    />
-                    <div>
-                        <LinkButton
-                          type={LinkButtonType.plain}
-                          to="/Account/ExternalNotify"
-                          className={styles.loginFormLink}
-                        >
-                            Forgotten password
-                        </LinkButton>
-                    </div>
-                </div>
-                {isLoggingIn && (
-                    <div className={styles.loginFormLoader}>
-                        <div style={{ ...flexCenterObjectStyles }}>
-                            <SpinningLoader />
-                        </div>
-                    </div>
-                )}
-            </Form>
-        ),
-        [ disableLoginButton, handleLoginClick, handleOnChangeUpdatePassword, handleOnChangeUpdateUsername,
-            isLoggingIn, renderLoginErrorMessage ],
-    );
-
     return (
-        isLoggingIn || isLoggedIn
-            ? renderLoginForm(true)
-            : renderLoginForm(false)
+        <Form
+          className={styles.loginForm}
+          onSubmit={() => handleLoginClick()}
+          submitText="Login"
+          hideFormButton={isLoading || isLoggedIn}
+          disableButton={disableLoginButton}
+        >
+            <header className={styles.loginFormHeader}>
+                <Heading type={HeadingType.primary}>Login</Heading>
+                <span className={styles.registerHeader}>
+                    { 'You don\'t have an account yet? '}
+                    <LinkButton
+                      to="/register"
+                      type={LinkButtonType.plain}
+                      className={styles.loginFormLink}
+                    >
+                        Register
+                    </LinkButton>
+                </span>
+                { renderLoginErrorMessage() }
+            </header>
+            <FormControl
+              id={usernameFieldName.toLowerCase()}
+              name={usernameFieldName}
+              labelText={usernameFieldName}
+              type={FormControlType.input}
+              onChange={handleOnChangeUpdateUsername}
+              value=""
+              showPlaceholder={false}
+            />
+            <FormControl
+              id={passwordFieldName.toLowerCase()}
+              name={passwordFieldName}
+              labelText={passwordFieldName}
+              type={FormControlType.password}
+              onChange={handleOnChangeUpdatePassword}
+              value=""
+              showPlaceholder={false}
+            />
+            <div className={styles.loginFormControls}>
+                <FormControl
+                  id="auth-password-checkbox"
+                  name="RememberMe"
+                  labelText="Remember Me"
+                  type={FormControlType.checkbox}
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />
+                <div>
+                    <LinkButton
+                      type={LinkButtonType.plain}
+                      to="/Account/ExternalNotify"
+                      className={styles.loginFormLink}
+                    >
+                        Forgotten password
+                    </LinkButton>
+                </div>
+            </div>
+            {isLoading && (
+            <div className={styles.loginFormLoader}>
+                <div style={{ ...flexCenterObjectStyles }}>
+                    <SpinningLoader />
+                </div>
+            </div>
+            )}
+        </Form>
     );
 };
 

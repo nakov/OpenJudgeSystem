@@ -9,12 +9,8 @@ import { ISubmissionDetailsReduxState } from '../../../common/types';
 import { IErrorDataType } from '../../../hooks/use-http';
 import { usePageTitles } from '../../../hooks/use-page-titles';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { setCurrentPage,
-    setCurrentSubmissionResults,
-    setRetestIsSuccess,
-    setSubmission } from '../../../redux/features/submissionDetailsSlice';
-import { useGetCurrentSubmissionQuery,
-    useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
+import { setCurrentPage, setCurrentSubmissionResults, setSubmission } from '../../../redux/features/submissionDetailsSlice';
+import { useGetCurrentSubmissionQuery, useGetSubmissionResultsQuery } from '../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -29,6 +25,7 @@ import styles from './SubmissionDetails.module.scss';
 
 const SubmissionDetails = () => {
     const { actions: { setPageTitle } } = usePageTitles();
+
     const dispatch = useDispatch();
     const { currentSubmission, validationErrors, currentPage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
@@ -66,8 +63,7 @@ const SubmissionDetails = () => {
     const reloadPage = useCallback(() => {
         refetchCurrentSubmission();
         refetchResults();
-        dispatch(setRetestIsSuccess(false));
-    }, [ dispatch, refetchCurrentSubmission, refetchResults ]);
+    }, [ refetchCurrentSubmission, refetchResults ]);
 
     const detailsHeadingText = useMemo(
         () => (
