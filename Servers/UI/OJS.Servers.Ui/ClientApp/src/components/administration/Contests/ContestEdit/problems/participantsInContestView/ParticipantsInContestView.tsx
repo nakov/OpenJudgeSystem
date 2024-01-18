@@ -15,6 +15,7 @@ import AdministrationSorting, {
     mapGridColumnsToAdministrationSortingProps,
     mapSorterParamsToQueryString,
 } from '../../../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../../../redux/features/admin/contestsAdminSlice';
 import { useGetByContestIdQuery } from '../../../../../../redux/services/admin/participantsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../../../../../utils/constants';
 
@@ -144,11 +145,15 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
             <div style={{ height: '100vh' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
                     <AdministrationFilters
+                      selectedFilters={selectedFilters || []}
+                      setStateAction={setAdminContestsFilters}
                       columns={filtersColumns}
                       shouldUpdateUrl={false}
                       location={filtersAndSortersLocation}
                     />
                     <AdministrationSorting
+                      selectedSorters={selectedSorters || []}
+                      setStateAction={setAdminContestsSorters}
                       columns={sortingColumns}
                       shouldUpdateUrl={false}
                       location={filtersAndSortersLocation}

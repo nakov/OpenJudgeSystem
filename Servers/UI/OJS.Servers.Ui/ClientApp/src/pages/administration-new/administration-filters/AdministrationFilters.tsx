@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -7,11 +8,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
-import { IFilterColumn, IRootStore } from '../../../common/types';
-import { setAdminContestsFilters } from '../../../redux/features/admin/contestsAdminSlice';
+import { IFilterColumn } from '../../../common/types';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -24,6 +25,9 @@ interface IAdministrationFilterProps {
     columns: IFilterColumn[];
     location: string;
     shouldUpdateUrl?: boolean;
+
+    selectedFilters: Array<IAdministrationFilter>;
+    setStateAction: ActionCreatorWithPayload<unknown, string>;
 }
 
 interface IAdministrationFilter {
@@ -76,7 +80,8 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 };
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, shouldUpdateUrl = true, location } = props;
+    const { columns, shouldUpdateUrl = true, location, selectedFilters, setStateAction } = props;
+    const dispatch = useDispatch();
     const defaultFilter = {
         column: '',
         operator: '',
@@ -85,9 +90,14 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
     };
-    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (selectedFilters.length <= 0) {
+            dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
+        }
+    }, [ ]);
+
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const selectedFilters = useSelector((state: IRootStore) => state.adminContests[location]?.selectedFilters) ?? [ defaultFilter ];
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -135,7 +145,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
         const urlSelectedFilters = mapUrlToFilters();
         if (urlSelectedFilters.length) {
-            dispatch(setAdminContestsFilters({ key: location, filters: urlSelectedFilters }));
+            dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -187,13 +197,13 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             ...filter,
             availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
         })) ];
-        dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
+        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
     };
 
     const removeAllFilters = () => {
         searchParams.delete('filter');
         setSearchParams(searchParams);
-        dispatch(setAdminContestsFilters({
+        dispatch(setStateAction({
             key: location,
             filters: [ defaultFilter ],
         }));
@@ -207,7 +217,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             availableColumns: [ ...filter.availableColumns, { columnName: deletedFilter.column, columnType: deletedFilter.inputType } ],
         })) ];
         newFiltersArray.splice(idx, 1);
-        dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
+        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
         if (newFiltersArray.length === 1) {
             searchParams.delete('filter');
             setSearchParams(searchParams);
@@ -240,7 +250,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        dispatch(setAdminContestsFilters({ key: location, filters: newFiltersArray }));
+        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
     };
 
     const renderInputField = (idx: number) => {
@@ -382,5 +392,4 @@ export {
     mapGridColumnsToAdministrationFilterProps,
     mapFilterParamsToQueryString,
 };
-
 export default AdministrationFilters;

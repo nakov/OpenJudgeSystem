@@ -1,57 +1,47 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable max-len */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton, Modal, Slide, Tooltip } from '@mui/material';
+import { IconButton, Modal, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { IGetAllAdminParams, IRootStore } from '../../common/types';
 import ContestEdit from '../../components/administration/Contests/ContestEdit/ContestEdit';
 import ContestDeleteButton from '../../components/administration/delete/ContestDeleteButton';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
+import { setAdminContestsFilters, setAdminContestsSorters } from '../../redux/features/admin/contestsAdminSlice';
 import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
-import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
+import { flexCenterObjectStyles, modalStyles } from '../../utils/object-utils';
 
-import AdministrationFilters, {
-    mapGridColumnsToAdministrationFilterProps,
-} from './administration-filters/AdministrationFilters';
-import AdministrationSorting, {
-    mapGridColumnsToAdministrationSortingProps,
-} from './administration-sorting/AdministrationSorting';
-
-import styles from './AdministrationStyles.module.scss';
-
-const modalStyles = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '50%',
-    height: '90%',
-    bgcolor: 'background.paper',
-    borderRadius: 3,
-    boxShadow: '0px 0px 19px -4px rgba(0,0,0,0.75)',
-    p: 4,
-    fontFamily: 'Roboto, Helvetica , Arial',
-    overflow: 'auto',
-};
+import AdministrationGridView from './AdministrationGridView';
 
 const AdministrationContestsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openEditContestModal, setOpenEditContestModal ] = useState(false);
     const [ openShowCreateContestModal, setOpenShowCreateContestModal ] = useState<boolean>(false);
     const [ contestId, setContestId ] = useState<number>();
-    const [ queryParams, setQueryParams ] = useState({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
+    const selectedFilters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedFilters);
+    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedSorters);
+
     const {
         data,
         error,
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
+
+    const onEditClick = (id: number) => {
+        setOpenEditContestModal(true);
+        setContestId(id);
+    };
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
@@ -63,20 +53,6 @@ const AdministrationContestsPage = () => {
     useEffect(() => {
         setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
     }, [ sortingParams ]);
-
-    const onEditClick = (id: number) => {
-        setOpenEditContestModal(true);
-        setContestId(id);
-    };
-
-    const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
-        if (isDeleted) {
-            return styles.redGridRow;
-        } if (!isVisible) {
-            return styles.grayGridRow;
-        }
-        return '';
-    };
 
     const dataColumns: GridColDef[] = [
         {
@@ -210,12 +186,9 @@ const AdministrationContestsPage = () => {
         },
     ];
 
-    const sortingColumns = mapGridColumnsToAdministrationSortingProps(dataColumns);
-
-    const filtersColumns = mapGridColumnsToAdministrationFilterProps(dataColumns);
-
-    const renderEditContestModal = () => (
+    const renderEditContestModal = (index: number) => (
         <Modal
+          key={index}
           open={openEditContestModal}
           onClose={() => setOpenEditContestModal(false)}
         >
@@ -225,48 +198,30 @@ const AdministrationContestsPage = () => {
         </Modal>
     );
 
-    const renderCreateContestModal = () => (
-        <Modal open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
+    const renderCreateContestModal = (index: number) => (
+        <Modal key={index} open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
             <Box sx={modalStyles}>
                 <ContestEdit contestId={null} isEditMode={false} />
             </Box>
         </Modal>
     );
 
-    const renderGridSettings = () => (
+    const renderGridActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <div>
-                <Tooltip title="Create new contest">
-                    <IconButton
-                      onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-                    >
-                        <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Create new contest with details">
-                    <IconButton
-                      onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-                    >
-                        <CreateNewFolderIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                    </IconButton>
-                </Tooltip>
-            </div>
-            <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between', width: '450px' }}>
-                <AdministrationFilters columns={filtersColumns} location="all-contests" />
-                <AdministrationSorting columns={sortingColumns} location="all-contests" />
-            </div>
-            <Box className={styles.legendBox}>
-                <Box className={styles.rowColorBox}>
-                    <Box className={`${styles.colorBox} ${styles.deleted}`} />
-                    <p className={styles.colorSeparator}>-</p>
-                    <p>Contest is deleted.</p>
-                </Box>
-                <Box className={styles.rowColorBox}>
-                    <Box className={`${styles.colorBox} ${styles.visible}`} />
-                    <p className={styles.colorSeparator}>-</p>
-                    <p>Contest is not visible.</p>
-                </Box>
-            </Box>
+            <Tooltip title="Create new contest">
+                <IconButton
+                  onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
+                >
+                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title="Create new contest with details">
+                <IconButton
+                  onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
+                >
+                    <CreateNewFolderIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+                </IconButton>
+            </Tooltip>
         </div>
     );
 
@@ -275,40 +230,24 @@ const AdministrationContestsPage = () => {
     }
 
     return (
-        <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
-            <div style={{ height: '745px' }}>
-                { openEditContestModal && renderEditContestModal() }
-                { openShowCreateContestModal && renderCreateContestModal() }
-                { renderGridSettings() }
-                { error
-                    ? <div className={styles.errorText}>Error loading data</div>
-                    : (
-                        <DataGrid
-                          columns={[ ...dataColumns, ...nonFilterableColumns ]}
-                          rows={data?.items ?? []}
-                          rowCount={data?.totalCount ?? 0}
-                          paginationMode="server"
-                          onPageChange={(e) => {
-                              setQueryParams({ ...queryParams, page: e + 1 });
-                          }}
-                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                          onPageSizeChange={(itemsPerRow: number) => {
-                              setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
-                          }}
-                          pageSize={queryParams.ItemsPerPage}
-                          getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
-                          initialState={{
-                              columns: {
-                                  columnVisibilityModel: {
-                                      isDeleted: false,
-                                      isVisible: false,
-                                  },
-                              },
-                          }}
-                        />
-                    )}
-            </div>
-        </Slide>
+        <AdministrationGridView
+          data={data}
+          error={error}
+          filterableGridColumnDef={dataColumns}
+          notFilterableGridColumnDef={nonFilterableColumns}
+          renderActionButtons={renderGridActions}
+          queryParams={queryParams}
+          setQueryParams={setQueryParams}
+          selectedFilters={selectedFilters || []}
+          selectedSorters={selectedSorters || []}
+          setSorterStateAction={setAdminContestsSorters}
+          setFilterStateAction={setAdminContestsFilters}
+          location="all-contests"
+          modals={[
+              { showModal: openShowCreateContestModal, modal: (i) => renderCreateContestModal(i) },
+              { showModal: openEditContestModal, modal: (i) => renderEditContestModal(i) },
+          ]}
+        />
     );
 };
 

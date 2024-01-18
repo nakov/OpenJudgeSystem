@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -7,11 +8,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { SortingEnum } from '../../../common/enums';
-import { IRootStore } from '../../../common/types';
-import { setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
 
 import styles from './AdministrationSorting.module.scss';
 
@@ -19,6 +19,8 @@ interface IAdministrationSortProps {
     columns: string[];
     location: string;
     shouldUpdateUrl?: boolean;
+    selectedSorters: Array<IAdministrationSorter>;
+    setStateAction: ActionCreatorWithPayload<unknown, string>;
 }
 
 interface IAdministrationSorter {
@@ -33,7 +35,7 @@ const orderByOptions = [
 ];
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns, shouldUpdateUrl = true, location } = props;
+    const { columns, shouldUpdateUrl = true, location, selectedSorters, setStateAction } = props;
     const defaultSorter = {
         columnName: '',
         orderBy: SortingEnum.ASC,
@@ -41,10 +43,14 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const selectedSorters =
-        useSelector((state: IRootStore) => state.adminContests[location]?.selectedSorters) ?? [ defaultSorter ];
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
+
+    useEffect(() => {
+        if (selectedSorters.length <= 0) {
+            dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
+        }
+    }, [ ]);
 
     const open = Boolean(anchor);
 
@@ -85,7 +91,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
         const urlSelectedSorters = mapUrlToSorters();
         if (urlSelectedSorters.length) {
-            dispatch(setAdminContestsSorters({ key: location, sorters: urlSelectedSorters }));
+            dispatch(setStateAction({ key: location, sorters: urlSelectedSorters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -136,13 +142,13 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             ...sorter,
             availableColumns: [ ...availableColumns, sorter.columnName ],
         })) ];
-        dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
+        dispatch(setStateAction({ key: location, sorters: newSortersArray }));
     };
 
     const removeAllSorters = () => {
         searchParams.delete('sorting');
         setSearchParams(searchParams);
-        dispatch(setAdminContestsSorters({ key: location, sorters: [ defaultSorter ] }));
+        dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
     };
 
     const removeSingleSorter = (idx: number) => {
@@ -153,7 +159,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             availableColumns: [ ...sorter.availableColumns, deletedSorter.columnName ],
         })) ];
         newSortersArray.splice(idx, 1);
-        dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
+        dispatch(setStateAction({ key: location, sorters: newSortersArray }));
         if (newSortersArray.length === 1) {
             searchParams.delete('sorting');
             setSearchParams(searchParams);
@@ -170,7 +176,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             return element;
         });
 
-        dispatch(setAdminContestsSorters({ key: location, sorters: newSortersArray }));
+        dispatch(setStateAction({ key: location, sorters: newSortersArray }));
     };
 
     const renderSorter = (idx: number) => (

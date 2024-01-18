@@ -58,10 +58,10 @@ public class ContestsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        if (!await this.HasContestPermission(id))
-        {
-            return this.Unauthorized();
-        }
+        // if (!await this.HasContestPermission(id))
+        // {
+        //     return this.Unauthorized();
+        // }
 
         if (id <= 0)
         {
@@ -76,10 +76,10 @@ public class ContestsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> Update(ContestAdministrationModel model, [FromRoute] int id)
     {
-        if (!await this.HasContestPermission(id))
-        {
-            return this.Unauthorized();
-        }
+        // if (!await this.HasContestPermission(id))
+        // {
+        //     return this.Unauthorized();
+        // }
 
         model.Id = id;
         var validations = await this.validationService.ValidateAsync(this.validator, model);
@@ -98,10 +98,10 @@ public class ContestsController : ControllerBase
     [Route("{id}")]
     public async Task<IActionResult> ById(int id)
     {
-        if (!await this.HasContestPermission(id))
-        {
-            return this.Unauthorized();
-        }
+        // if (!await this.HasContestPermission(id))
+        // {
+        //     return this.Unauthorized();
+        // }
 
         var contest = await this.contestsBusinessService.ById(id);
         return this.Ok(contest);
@@ -111,10 +111,10 @@ public class ContestsController : ControllerBase
     [Route("Problems/{id}")]
     public async Task<IActionResult> Problems(int id)
     {
-        if (!await this.HasContestPermission(id))
-        {
-            return this.Unauthorized();
-        }
+        // if (!await this.HasContestPermission(id))
+        // {
+        //     return this.Unauthorized();
+        // }
 
         var contest = await this.contestsBusinessService.GetContestProblems(id);
         return this.Ok(contest);
