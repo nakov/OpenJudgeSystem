@@ -9,7 +9,7 @@ const HeaderGreeting = () => {
     const className = '';
 
     const text = isLoggedIn
-        ? `Hello, ${user.username}`
+        ? `Hello, ${user.userName}`
         : '';
 
     return (

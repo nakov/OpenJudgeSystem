@@ -71,7 +71,7 @@ const ProfileContestParticipations = () => {
 
             getUserParticipations(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ isProfileInfoLoaded, getUserParticipations, user.username, myProfile.userName, username ],
+        [ isProfileInfoLoaded, getUserParticipations, user.userName, myProfile.userName, username ],
     );
 
     useEffect(

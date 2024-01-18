@@ -16,7 +16,7 @@ interface IAuthorizationReduxState {
 const initialState: IAuthorizationReduxState = {
     internalUser: {
         id: '',
-        username: '',
+        userName: '',
         email: '',
         permissions: { canAccessAdministration: false },
         isInRole: false,

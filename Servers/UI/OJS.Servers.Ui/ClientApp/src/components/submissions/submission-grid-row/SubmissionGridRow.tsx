@@ -76,7 +76,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (username === user.username || user.isAdmin) {
+            if (username === user.userName || user.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -86,7 +86,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, user.isAdmin, user.username, username ],
+        [ handleDetailsButtonSubmit, user.isAdmin, user.userName, username ],
     );
 
     const renderStrategyIcon = useCallback(

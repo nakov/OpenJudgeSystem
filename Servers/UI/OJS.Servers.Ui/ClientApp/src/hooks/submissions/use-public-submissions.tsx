@@ -300,7 +300,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
                 return;
             }
 
-            const { username } = user;
+            const { userName: username } = user;
             setParticipationsForProfileUrlParam({ username });
         },
         [ getUserParticipations, user, userSubmissionsData, getParticipationsForProfileUrlParam ],

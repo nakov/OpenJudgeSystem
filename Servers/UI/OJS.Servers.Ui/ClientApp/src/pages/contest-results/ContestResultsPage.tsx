@@ -166,7 +166,7 @@ const ContestResultsPage = () => {
             const bestSubmission = problemResult?.bestSubmission;
 
             // User is admin or lecturer for contest or is the participant of the submission
-            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.username) && !isNil(bestSubmission)
+            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.userName) && !isNil(bestSubmission)
                 ? (
                     <LinkButton
                       className={styles.pointsResult}

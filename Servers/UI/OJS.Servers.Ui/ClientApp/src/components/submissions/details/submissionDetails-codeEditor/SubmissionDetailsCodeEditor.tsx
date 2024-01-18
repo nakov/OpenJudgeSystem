@@ -77,7 +77,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
             }
 
             const { submissionType: { allowBinaryFilesUpload }, user: { userName: submissionUserName } } = currentSubmission;
-            const { username: loggedInUserName } = user;
+            const { userName: loggedInUserName } = user;
 
             if ((!user.canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
                 return null;
