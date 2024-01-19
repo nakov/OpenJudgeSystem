@@ -52,6 +52,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         var contestResultsModel = new ContestResultsModel
         {
             Contest = contest,
+            CategoryId = contest.CategoryId.GetValueOrDefault(),
             Official = official,
             IsUserAdminOrLecturer = user.IsAdminOrLecturer,
             IsFullResults = full,
@@ -62,7 +63,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
 
         var results = this.contestResultsAggregator.GetContestResults(contestResultsModel);
 
-        results.UserIsInRoleForContest = this.lecturersInContestsBusinessService.IsUserAdminOrLecturerInContest(contest);
+        results.UserIsInRoleForContest = await this.lecturersInContestsBusinessService.IsCurrentUserAdminOrLecturerInContest(contest.Id);
 
         return results;
     }

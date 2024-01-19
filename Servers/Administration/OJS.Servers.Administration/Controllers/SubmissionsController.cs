@@ -19,6 +19,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OJS.Servers.Administration.Extensions;
@@ -132,7 +133,13 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     {
         var submissionId = this.GetEntityIdFromQuery<int>(complexId);
 
-        var submission = await this.submissionsData.GetByIdQuery(submissionId).FirstOrDefaultAsync();
+        var submission = await this.submissionsData.GetByIdQuery(submissionId)
+            .Include(s => s.SubmissionType)
+            .Include(x => x.Problem)
+                .ThenInclude(x => x.Checker)
+            .Include(x => x.Problem)
+                .ThenInclude(x => x.Tests)
+            .FirstOrDefaultAsync();
 
         if (submission is null || !submission.ParticipantId.HasValue)
         {

@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
 using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -13,7 +14,7 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
     private readonly IContestCategoriesDataService contestCategoriesData;
 
     public ContestCategoriesBusinessService(IContestCategoriesDataService contestCategoriesData)
-       => this.contestCategoriesData = contestCategoriesData;
+        => this.contestCategoriesData = contestCategoriesData;
 
     public async Task<IEnumerable<ContestCategoryTreeViewModel>> GetTree()
     {
@@ -73,6 +74,29 @@ public class ContestCategoriesBusinessService : IContestCategoriesBusinessServic
         categories.Reverse();
 
         return categories;
+    }
+
+    public bool IsCategoryChildOfInvisibleParentRecursive(int? categoryId)
+    {
+        if (categoryId == null)
+        {
+            return false;
+        }
+
+        var categoryWithParent = this.contestCategoriesData
+            .GetByIdQuery(categoryId.Value).Include(c => c.Parent).FirstOrDefault();
+
+        if (categoryWithParent?.Parent != null)
+        {
+            if (categoryWithParent.Parent.IsVisible == false)
+            {
+                return true;
+            }
+
+            return this.IsCategoryChildOfInvisibleParentRecursive(categoryWithParent.Parent.Id);
+        }
+
+        return false;
     }
 
     private static IEnumerable<ContestCategoryTreeViewModel> FillChildren(

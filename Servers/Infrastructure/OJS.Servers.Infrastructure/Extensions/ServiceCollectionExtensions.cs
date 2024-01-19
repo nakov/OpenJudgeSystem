@@ -40,7 +40,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
-    using OJS.Workers.SubmissionProcessors.Formatters;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Enumerations;
     using SoftUni.Data.Infrastructure.Extensions;
@@ -106,8 +105,6 @@ namespace OJS.Servers.Infrastructure.Extensions
                 {
                     var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
                     options.UseSqlServer(connectionString);
-                    // TODO: refactor app to not use lazy loading globally and make navigational properties non virtual
-                    options.UseLazyLoadingProxies();
                 })
                 .AddScoped<DbContext, TDbContext>()
                 .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
@@ -263,13 +260,6 @@ namespace OJS.Servers.Infrastructure.Extensions
                     }));
                 });
             });
-
-            return services;
-        }
-
-        public static IServiceCollection AddSoftUniJudgeCommonServices(this IServiceCollection services)
-        {
-            services.AddFrom(typeof(IFormatterServiceFactory).Assembly);
 
             return services;
         }

@@ -4,7 +4,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using OJS.Services.Ui.Data;
+    using OJS.Services.Ui.Models.Participants;
     using OJS.Services.Ui.Models.Participations;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using X.PagedList;
 
     public class ParticipationsBusinessService : IParticipationsBusinessService
@@ -14,9 +16,10 @@
         public ParticipationsBusinessService(IParticipantsDataService participantsData)
             => this.participantsData = participantsData;
 
-        public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUserId(string? userId)
+        public async Task<IEnumerable<ParticipationServiceModel>> GetParticipationsByUsername(string username)
             => await this.participantsData
-                .GetAllByUser(userId)
+                .GetAllWithContestAndProblemsByUsername(username)
+                .MapCollection<ParticipantForContestParticipations>()
                 .ToList()
                 .GroupBy(x => x.Contest)
                 .Select(c => new ParticipationServiceModel

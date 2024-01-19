@@ -197,6 +197,16 @@ interface IGetContestsForIndexResponseType {
     pastContests: IIndexContestsType[];
 }
 
+interface IIndexProblemsType {
+    id: number;
+    name: string;
+    group: number;
+    groupType: string;
+    practiceTests: number;
+    competeTetsts: number;
+    isDeleted: boolean;
+}
+
 interface IRegisterForContestResponseType {
     id: number;
     name: string;
@@ -262,6 +272,7 @@ interface IUserType {
     permissions: IUserPermissionsType;
     isInRole: boolean;
     isAdmin: boolean;
+    canAccessAdministration: boolean;
 }
 
 interface IUserRoleType {
@@ -307,6 +318,7 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
 }
+
 interface IContestCategories {
     id: number;
     name: string;
@@ -326,7 +338,7 @@ interface IFilterColumn {
     columnType: FilterColumnTypeEnum;
 }
 
-interface IContestsAdminSlice {
+interface IAdminSlice {
     [key: string]: null | {
         selectedFilters: IAdministrationFilter[];
         selectedSorters: IAdministrationSorter[];
@@ -334,7 +346,8 @@ interface IContestsAdminSlice {
 }
 
 interface IRootStore {
-    adminContests: IContestsAdminSlice;
+    adminContests: IAdminSlice;
+    adminProblems: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -370,8 +383,9 @@ export type {
     IAdministrationContestProblems,
     IFilterColumn,
     IParticiapntsInContestView,
-    IContestsAdminSlice,
+    IAdminSlice,
     IRootStore,
     IContestCategories,
     ExceptionData,
+    IIndexProblemsType,
 };

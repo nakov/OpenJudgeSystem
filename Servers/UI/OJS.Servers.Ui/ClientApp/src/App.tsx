@@ -11,7 +11,6 @@ import CurrentContestResultsProvider from './hooks/contests/use-current-contest-
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
-import AuthProvider from './hooks/use-auth';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
@@ -44,7 +43,6 @@ const App = () => {
         PageProvider,
         NotificationsProvider,
         PageWithTitleProvider,
-        AuthProvider,
         UsersProvider,
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,

@@ -1,17 +1,19 @@
 import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { ISubmissionResponseModel, PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
-import { useAuth } from '../../../hooks/use-auth';
+import { ISubmissionResponseModel } from '../../../common/types';
+import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useProblems } from '../../../hooks/use-problems';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
-import {
+import { encodeUsernameAsUrlParam,
     getContestDetailsAppUrl,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
-} from '../../../utils/urls';
+    getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import ExecutionResult from '../execution-result/ExecutionResult';
@@ -47,8 +49,8 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const { state: loggedInUser } = useAuth();
-
+    const { internalUser: user } =
+    useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const participationType = contestParticipationType(isOfficial);
 
     const handleDetailsButtonSubmit = useCallback(
@@ -74,14 +76,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
 
     const renderDetailsBtn = useCallback(
         () => {
-            const {
-                user: {
-                    username: loggedInUsername,
-                    isAdmin,
-                },
-            } = loggedInUser;
-
-            if (username === loggedInUsername || isAdmin) {
+            if (username === user.userName || user.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -91,7 +86,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, loggedInUser, username ],
+        [ handleDetailsButtonSubmit, user.isAdmin, user.userName, username ],
     );
 
     const renderStrategyIcon = useCallback(
@@ -127,6 +122,19 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
             );
         },
         [ state, maxPoints, points ],
+    );
+
+    const renderUsername = useCallback(
+        () => (
+            <LinkButton
+              type={LinkButtonType.plain}
+              size={ButtonSize.none}
+              to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(username))}
+              text={username}
+              internalClassName={styles.redirectButton}
+            />
+        ),
+        [ username ],
     );
 
     const renderProblemInformation = useCallback(
@@ -193,7 +201,7 @@ const SubmissionGridRow = ({ submission }: ISubmissionGridRowProps) => {
                         {' '}
                         by
                         {' '}
-                        {username}
+                        {renderUsername()}
                     </span>
                 </div>
             </div>

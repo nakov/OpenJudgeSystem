@@ -11,11 +11,11 @@ namespace OJS.Services.Ui.Business
 
     public interface IParticipantsBusinessService : IService
     {
-        Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdmin(
+        Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
             Contest contest,
             string userId,
             bool isOfficial,
-            bool isAdmin);
+            bool isAdminOrLecturer);
 
         Task<ServiceResult<string>> UpdateParticipationEndTimeByIdAndTimeInMinutes(int id, int minutes);
 

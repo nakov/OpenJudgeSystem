@@ -1,4 +1,4 @@
-﻿@use 'src/styles/colors';
+@use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 
@@ -58,17 +58,17 @@
     display: flex;
     font-size: variables.$f-size-20;
     gap: 20px;
-    
+
     .testIdColor {
       color: colors.$primary-green;
-      
+
       &:hover {
         text-decoration: underline;
       }
     }
-    
+
     .testRunIdColor {
-      color: colors.$text-light-gray-color
+      color: colors.$text-light-gray-color;
     }
   }
 }

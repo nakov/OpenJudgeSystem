@@ -6,11 +6,15 @@ import storage from 'redux-persist/lib/storage';
 
 // features
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
+import authorizationReducer from './features/authorizationSlice';
 import submissionDetailsReducer from './features/submissionDetailsSlice';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // services
 import contestsAdminService from './services/admin/contestsAdminService';
 import participantsAdminService from './services/admin/participantsAdminService';
+// features
+import authorizationService from './services/authorizationService';
+// services
 import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
@@ -21,6 +25,8 @@ const rootReducer = combineReducers({
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
+    [authorizationService.reducerPath]: authorizationService.reducer,
+    authorization: authorizationReducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -32,6 +38,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 // list reducers with data to be persisted here
 const reducersToPersist = [
     contestsAdminSlice.name,
+    'authorization',
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -43,6 +50,7 @@ const store = configureStore({
         contestsAdminService.middleware,
         participantsAdminService.middleware,
         contestCategoriesAdminService.middleware,
+        authorizationService.middleware,
     ]),
 });
 

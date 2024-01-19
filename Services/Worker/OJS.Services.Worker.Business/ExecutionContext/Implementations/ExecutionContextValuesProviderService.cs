@@ -15,9 +15,6 @@ public class ExecutionContextValuesProviderService : IExecutionContextValuesProv
     {
         switch (executionStrategyType)
         {
-            case ExecutionStrategyType.CompileExecuteAndCheck:
-                return CompilerType.CSharp;
-
             case ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck:
             case ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck:
             case ExecutionStrategyType.DotNetCore6CompileExecuteAndCheck:
@@ -54,9 +51,6 @@ public class ExecutionContextValuesProviderService : IExecutionContextValuesProv
     {
         switch (compilerType)
         {
-            case CompilerType.CSharp:
-                return "/optimize+ /nologo /reference:System.Numerics.dll /reference:PowerCollections.dll";
-
             case CompilerType.CSharpDotNetCore:
                 return "-nologo";
 

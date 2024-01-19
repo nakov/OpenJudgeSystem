@@ -5,6 +5,7 @@ using Infrastructure.Cache;
 using Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using FluentExtensions.Extensions;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
@@ -28,7 +29,9 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
 
     public async Task ClearContestCategory(int categoryId)
     {
-        var contestCategory = await this.contestCategoriesData.OneById(categoryId);
+        var contestCategory = await this.contestCategoriesData.GetByIdQuery(categoryId)
+            .Include(cc => cc.Children)
+            .FirstOrDefaultAsync();
 
         if (contestCategory == null)
         {

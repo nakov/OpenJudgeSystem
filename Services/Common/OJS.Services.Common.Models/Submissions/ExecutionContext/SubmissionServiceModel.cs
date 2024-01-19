@@ -5,8 +5,8 @@
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+    using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
-    using OJS.Workers.SubmissionProcessors.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class SubmissionServiceModel : IMapExplicitly

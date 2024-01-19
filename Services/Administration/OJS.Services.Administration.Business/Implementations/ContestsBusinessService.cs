@@ -46,7 +46,7 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         string? userId,
         bool isUserAdmin)
         => !string.IsNullOrWhiteSpace(userId) &&
-           (isUserAdmin || await this.contestsData.IsUserLecturerInByContestAndUser(contestId, userId));
+           (isUserAdmin || await this.contestsData.IsUserLecturerInContestByContestAndUser(contestId, userId));
 
     public async Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>()
         where TServiceModel : class

@@ -3,7 +3,7 @@ import React, { FormEvent, useCallback, useMemo } from 'react';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
-import { Button, ButtonType } from '../buttons/Button';
+import { Button, ButtonState, ButtonType } from '../buttons/Button';
 
 interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
@@ -11,6 +11,7 @@ interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName 
     id?: string;
     submitButtonClassName?: string;
     disableButton?: boolean;
+    hideFormButton?: boolean;
 }
 
 const Form = ({
@@ -21,6 +22,7 @@ const Form = ({
     className = '',
     submitButtonClassName = '',
     disableButton = false,
+    hideFormButton = false,
 }: IFormProps) => {
     const handleSubmit = useCallback(
         async (ev: FormEvent) => {
@@ -52,7 +54,16 @@ const Form = ({
                       className={internalSubmitButtonClassName}
                     />
                 )
-                : null
+                : (
+                    <Button
+                      id={btnId}
+                      onClick={(ev) => handleSubmit(ev)}
+                      text={submitText}
+                      type={ButtonType.submit}
+                      className={internalSubmitButtonClassName}
+                      state={ButtonState.disabled}
+                    />
+                )
         ),
         [ btnId, handleSubmit, disableButton, internalSubmitButtonClassName, submitText ],
     );
@@ -64,7 +75,7 @@ const Form = ({
           className={internalClassName}
         >
             {children}
-            {renderButton()}
+            {!hideFormButton && renderButton()}
         </form>
     );
 };

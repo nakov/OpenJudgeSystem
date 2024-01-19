@@ -1,7 +1,9 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
+    using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
+    using System.Collections.Generic;
     using OJS.Data.Models;
     using OJS.Services.Common.Data.Implementations;
     using System.Threading.Tasks;
@@ -16,5 +18,15 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<Ip?> GetByValue(string value)
             => this.DbSet
                 .FirstOrDefaultAsync(ip => ip.Value == value);
+
+        public async Task DeleteIps(IEnumerable<IpInContest> ips)
+        {
+            ips.ForEach(ip =>
+            {
+                this.Delete(ip.Ip);
+            });
+
+            await this.SaveChanges();
+        }
     }
 }

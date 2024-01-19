@@ -1,11 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { DataGrid, getGridNumericOperators, getGridStringOperators, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { contestParticipationType } from '../../common/contest-helpers';
+import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
 import {
     IContestResultsParticipationProblemType,
@@ -14,8 +18,12 @@ import {
     IContestResultsType,
 } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
-import { useAuth } from '../../hooks/use-auth';
+import { useContestCategories } from '../../hooks/use-contest-categories';
+import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { getContestDetailsAppUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -106,12 +114,15 @@ const totalResultColumn: GridColDef = {
 
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const { contestId, participationType: participationUrlType, resultType } = params;
-
+    const { state: { categoriesFlat, isLoaded }, actions: { load: loadCategories } } = useContestCategories();
+    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
     const [ numberedRows, setNumberedRows ] = useState<Array<IContestResultsTypeWithRowNumber>>([]);
+    const [ isCategoriesRequestSent, setIsCategoriesRequestSent ] = useState(false);
 
     const participationType = contestParticipationType(official);
 
@@ -155,7 +166,7 @@ const ContestResultsPage = () => {
             const bestSubmission = problemResult?.bestSubmission;
 
             // User is admin or lecturer for contest or is the participant of the submission
-            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.username) && !isNil(bestSubmission)
+            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.userName) && !isNil(bestSubmission)
                 ? (
                     <LinkButton
                       className={styles.pointsResult}
@@ -175,11 +186,37 @@ const ContestResultsPage = () => {
         [ contestResults ],
     );
 
+    useEffect(() => () => {
+        setIsCategoriesRequestSent(false);
+    }, []);
+
     useEffect(
         () => {
             setPageTitle(contestResultsPageTitle);
         },
-        [ contestResultsPageTitle, setPageTitle ],
+        [ contestResultsPageTitle, setPageTitle, categoriesFlat, loadCategories, contestId ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(categoriesFlat) && !isCategoriesRequestSent) {
+                setIsCategoriesRequestSent(true);
+                (async () => {
+                    await loadCategories();
+                })();
+            }
+        },
+        [ categoriesFlat, isCategoriesRequestSent, loadCategories ],
+    );
+
+    useEffect(
+        () => {
+            if (areContestResultsLoaded && !isEmpty(categoriesFlat)) {
+                const category = categoriesFlat.find(({ id }) => id.toString() === contestResults?.categoryId.toString());
+                updateBreadcrumb(category, categoriesFlat);
+            }
+        },
+        [ categoriesFlat, contestResults, areContestResultsLoaded, updateBreadcrumb ],
     );
 
     const getColumns = useCallback(
@@ -205,15 +242,23 @@ const ContestResultsPage = () => {
     const renderElements = useMemo(
         () => (
             <>
+                <div className={styles.breadcrumbContainer}>
+                    <ContestBreadcrumb />
+                </div>
                 <Heading
                   type={HeadingType.primary}
                   className={styles.contestResultsHeading}
                 >
                     {participationType}
                     {' '}
-                    results for contests -
+                    results for contest -
                     {' '}
-                    {contestResults?.name}
+                    <LinkButton
+                      to={getContestDetailsAppUrl(contestId)}
+                      text={contestResults?.name}
+                      type={LinkButtonType.plain}
+                      className={styles.contestName}
+                    />
                 </Heading>
                 <DataGrid
                   rows={numberedRows}
@@ -229,7 +274,7 @@ const ContestResultsPage = () => {
                 />
             </>
         ),
-        [ contestResults, getColumns, participationType, numberedRows ],
+        [ participationType, contestId, contestResults, numberedRows, getColumns ],
     );
 
     const renderErrorHeading = useCallback(
@@ -260,9 +305,13 @@ const ContestResultsPage = () => {
 
     return (
         isNil(contestResultsError)
-            ? areContestResultsLoaded
+            ? areContestResultsLoaded && isLoaded
                 ? renderElements
-                : <div>Loading data</div>
+                : (
+                    <div style={{ ...flexCenterObjectStyles }}>
+                        <SpinningLoader />
+                    </div>
+                )
             : renderErrorMessage()
     );
 };

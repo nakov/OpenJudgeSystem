@@ -10,7 +10,7 @@ namespace OJS.Services.Ui.Data
 
     public interface IParticipantScoresDataService : IDataService<ParticipantScore>
     {
-        Task<IEnumerable<ParticipantScore>> GetByParticipantId(int participantId);
+        Task<IEnumerable<ParticipantScore>> GetWithSubmissionsAndTestsByParticipantId(int participantId);
 
         Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId);
 

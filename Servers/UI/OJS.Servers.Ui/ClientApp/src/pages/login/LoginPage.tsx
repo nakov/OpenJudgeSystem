@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import LoginForm from '../../components/auth/LoginForm';
-import { useAuth } from '../../hooks/use-auth';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 const LoginPage = () => {
-    const { state: { user, isLoggedIn } } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-
+    const { isLoggedIn, internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     useEffect(() => {
         if (isLoggedIn) {
             // Needed ignore...

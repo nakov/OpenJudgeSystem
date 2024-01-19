@@ -34,7 +34,6 @@ internal static class ServiceCollectionExtensions
                 Enumerable.Empty<GlobalQueryFilterType>())
             .AddMemoryCache()
             .AddDistributedCaching(configuration)
-            .AddSoftUniJudgeCommonServices()
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
