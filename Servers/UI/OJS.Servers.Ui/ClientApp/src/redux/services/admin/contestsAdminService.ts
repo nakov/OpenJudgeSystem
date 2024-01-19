@@ -19,6 +19,7 @@ const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
+        credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/contests`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');

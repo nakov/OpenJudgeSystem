@@ -7,6 +7,7 @@ import { IContestCategories } from '../../../common/types';
 export const contestCategoriesAdminService = createApi({
     reducerPath: 'contestCategories',
     baseQuery: fetchBaseQuery({
+        credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/contestCategories`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');

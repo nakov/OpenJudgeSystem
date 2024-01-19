@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
+import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
-// import { useAuth } from '../../hooks/use-auth';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -27,6 +27,7 @@ import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 import styles from './PageContent.module.scss';
 
@@ -146,7 +147,8 @@ const adminRoutes = [
 ];
 
 const PageContent = () => {
-    // const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const renderRoute = (path: string, Element: FC, title: string | undefined, isAdminRoute: boolean) => {
         let WrappedElement = asPage(withTitle(Element, title));
@@ -162,7 +164,7 @@ const PageContent = () => {
         <main className={styles.main}>
             <Routes>
                 {routes.map(({ path, Element, title }) => renderRoute(path, Element, title, false))}
-                {adminRoutes.map(({ path, Element, title }) => renderRoute(path, Element, title, true))}
+                {user.canAccessAdministration && adminRoutes.map(({ path, Element, title }) => renderRoute(path, Element, title, true))}
             </Routes>
         </main>
     );

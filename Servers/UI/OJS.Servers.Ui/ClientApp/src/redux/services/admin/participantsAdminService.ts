@@ -10,6 +10,7 @@ import { IGetParticipantsByContestId } from '../../../common/url-types';
 export const participantsAdminService = createApi({
     reducerPath: 'participants',
     baseQuery: fetchBaseQuery({
+        credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/participants`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');

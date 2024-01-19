@@ -30,6 +30,7 @@ const PageHeader = () => {
 
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+
     const renderLinks = useCallback(() => {
         const administrationLink = user.canAccessAdministration
             ? (
