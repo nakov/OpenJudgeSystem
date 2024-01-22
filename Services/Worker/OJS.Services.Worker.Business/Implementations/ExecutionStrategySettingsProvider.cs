@@ -46,12 +46,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.UnderscoreModulePath)
 
                 as TSettings,
-            ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck => new
+            ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
+            ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck => new
                 JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
-                    this.settings.JavaExecutablePath,
-                    this.settings.JavaLibsPath,
+                    this.GetJavaExecutablePath(executionStrategyType),
+                    this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
@@ -59,12 +60,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 CheckOnlyExecutionStrategySettings(0, 0)
 
                 as TSettings,
-            ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck => new
+            ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck or
+            ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck => new
                 JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
-                    this.settings.JavaExecutablePath,
-                    this.settings.JavaLibsPath,
+                    this.GetJavaExecutablePath(executionStrategyType),
+                    this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
@@ -154,12 +156,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.BootstrapCssPath)
 
                 as TSettings,
-            ExecutionStrategyType.JavaProjectTestsExecutionStrategy => new
+            ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
+            ExecutionStrategyType.Java17ProjectTestsExecutionStrategy => new
                 JavaProjectTestsExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
-                    this.settings.JavaExecutablePath,
-                    this.settings.JavaLibsPath,
+                    this.GetJavaExecutablePath(executionStrategyType),
+                    this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
@@ -169,12 +172,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.GPlusPlusBaseMemoryUsedInBytes)
 
                 as TSettings,
-            ExecutionStrategyType.JavaUnitTestsExecutionStrategy => new
+            ExecutionStrategyType.JavaUnitTestsExecutionStrategy or
+            ExecutionStrategyType.Java17UnitTestsExecutionStrategy => new
                 JavaUnitTestsExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
-                    this.settings.JavaExecutablePath,
-                    this.settings.JavaLibsPath,
+                    this.GetJavaExecutablePath(executionStrategyType),
+                    this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
@@ -184,12 +188,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.GPlusPlusBaseMemoryUsedInBytes)
 
                 as TSettings,
-            ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy => new
+            ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy or
+            ExecutionStrategyType.Java17SpringAndHibernateProjectExecution => new
                 JavaSpringAndHibernateProjectExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
-                    this.settings.JavaExecutablePath,
-                    this.settings.JavaLibsPath,
+                    this.GetJavaExecutablePath(executionStrategyType),
+                    this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
                     this.settings.MavenPath)
 
@@ -395,4 +400,17 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 nameof(executionStrategyType)),
             _ => throw new ArgumentOutOfRangeException(nameof(executionStrategyType), executionStrategyType, null),
         };
+
+    private static bool IsJava17(ExecutionStrategyType type)
+        => type.ToString().Contains("17");
+
+    private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
+        => IsJava17(strategyType)
+            ? this.settings.Java17ExecutablePath
+            : this.settings.JavaExecutablePath;
+
+    private string GetJavaLibsPath(ExecutionStrategyType strategyType)
+        => IsJava17(strategyType)
+            ? this.settings.Java17LibsPath
+            : this.settings.JavaLibsPath;
 }
