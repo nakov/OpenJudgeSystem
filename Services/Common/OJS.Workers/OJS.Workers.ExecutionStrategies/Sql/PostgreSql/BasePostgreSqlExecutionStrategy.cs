@@ -64,6 +64,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
                 passwordRegex.Replace(createdDbConnectionString, $"Password={this.RestrictedUserPassword}");
 
             createdDbConnectionString += $";Database={databaseName};";
+            createdDbConnectionString += "Timeout=15";
 
             return createdDbConnectionString;
         }
@@ -74,7 +75,8 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
             try
             {
-                using var connection = await this.GetOpenConnection(this.GetDatabaseName());
+                await using var connection = new NpgsqlConnection("Server=postgres;Port=5432;User Id=worker_1_do_not_delete_ojs_user;Password=1123QwER;Database=worker_1_do_not_delete;");
+                await connection.OpenAsync();
                 this.ExecuteBeforeTests(connection, executionContext);
 
                 foreach (var test in executionContext.Input.Tests)
@@ -90,7 +92,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             {
                 if (!string.IsNullOrWhiteSpace(this.GetDatabaseName()))
                 {
-                    using var connection = await this.GetOpenConnection(this.GetDatabaseName());
+                    await using var connection = new NpgsqlConnection("Server=postgres;Port=5432;User Id=worker_1_do_not_delete_ojs_user;Password=1123QwER;Database=worker_1_do_not_delete;");
+                    await connection.OpenAsync();
+                    // using var connection = await this.GetOpenConnection(this.GetDatabaseName());
                     this.CleanUpDb(connection);
                 }
 
@@ -142,7 +146,8 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             int timeLimit = DefaultTimeLimit)
         {
             var sqlTestResult = new SqlResult { Completed = true };
-
+            commandText = commandText.Replace("TABLE_SCHEMA", "TABLE_CATALOG");
+            commandText = commandText.Replace("public", this.databaseNameForSubmissionProcessor);
             try
             {
                 using var command = connection.CreateCommand();
@@ -254,7 +259,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         private async Task<IDbConnection> CreateConnection()
         {
-            await using var connection = new NpgsqlConnection(this.workerDbConnectionString);
+            var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
             // connection.Disposed += (sender, args) =>
             // {

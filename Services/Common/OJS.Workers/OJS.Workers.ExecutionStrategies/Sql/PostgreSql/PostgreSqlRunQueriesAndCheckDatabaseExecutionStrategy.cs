@@ -15,10 +15,10 @@
         {
         }
 
-        protected override Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
+        protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
-            => this.Execute(
+            => await this.Execute(
                 executionContext,
                 result,
                 (connection, test) =>
