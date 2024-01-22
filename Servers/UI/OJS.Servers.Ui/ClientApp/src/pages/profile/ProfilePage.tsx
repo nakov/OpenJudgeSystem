@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -32,9 +32,9 @@ const ProfilePage = () => {
             clearUserProfileInformation,
         },
     } = useUsers();
-    const { userName: myUsername, permissions: { canAccessAdministration: canSeeProfileSubmissions } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization.internalUser);
-    const { actions: { setUsernameForProfile } } = useUserProfileSubmissions();
+    const { internalUser } =
+        useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
+    const { state: { usernameForProfile }, actions: { setUsernameForProfile } } = useUserProfileSubmissions();
     const { actions: { setPageTitle } } = usePageTitles();
     const { username } = useParams();
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
@@ -47,13 +47,13 @@ const ProfilePage = () => {
 
             const usernameParam = !isNil(username)
                 ? username
-                : myUsername;
+                : internalUser.userName;
 
             setUsernameForProfile(usernameParam);
-            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameParam) === myUsername);
+            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameParam) === internalUser.userName);
             getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ getProfile, myProfile, myProfile.userName, myUsername, setUsernameForProfile, username ],
+        [ getProfile, myProfile, myProfile.userName, internalUser.userName, setUsernameForProfile, username ],
     );
 
     useEffect(
@@ -62,9 +62,9 @@ const ProfilePage = () => {
                 return;
             }
 
-            setPageTitle(`${myProfile.userName}'s profile`);
+            setPageTitle(`${usernameForProfile}'s profile`);
         },
-        [ setPageTitle, myProfile, isProfileInfoLoaded ],
+        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
     );
 
     useEffect(
@@ -104,10 +104,10 @@ const ProfilePage = () => {
                         {renderUsernameHeading()}
                         <ProfileAboutInfo
                           userProfile={myProfile}
-                          isUserAdmin={canSeeProfileSubmissions}
+                          isUserAdmin={internalUser.canAccessAdministration}
                           isUserProfileOwner={currentUserIsProfileOwner}
                         />
-                        {(canSeeProfileSubmissions || currentUserIsProfileOwner) && <ProfileSubmissions />}
+                        {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
                         <ProfileContestParticipations />
                         {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
@@ -119,7 +119,7 @@ const ProfilePage = () => {
                     </>
                 )
         ),
-        [ myProfile, isProfileInfoLoaded, renderUsernameHeading, canSeeProfileSubmissions, currentUserIsProfileOwner ],
+        [ myProfile, isProfileInfoLoaded, renderUsernameHeading, currentUserIsProfileOwner, internalUser.canAccessAdministration ],
     );
 
     return renderPage();

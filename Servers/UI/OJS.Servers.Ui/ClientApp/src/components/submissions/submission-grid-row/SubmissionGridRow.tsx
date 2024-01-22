@@ -94,7 +94,7 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName ],
+        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, userameFromSubmission ],
     );
 
     const renderStrategyIcon = useCallback(

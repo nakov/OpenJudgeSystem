@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -11,13 +12,13 @@ import {
     IUserInfoUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../utils/check-utils';
 import {
     decodeUsernameFromUrlParam,
     getAllParticipationsForUserUrl,
     getSubmissionsByContestIdUrl, getSubmissionsForProfileUrl,
 } from '../../utils/urls';
-import { useAuth } from '../use-auth';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
 import { IParticipationType } from '../use-participations';
@@ -71,7 +72,8 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrlParam ] =
         useState<IUserInfoUrlParams | null>();
 
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+        useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const location = useLocation();
     const { pathname } = location;
     const { populatePageInformation } = usePages();
@@ -183,8 +185,8 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
                 return;
             }
 
-            const { username } = user;
-            setParticipationsForProfileUrlParam({ username });
+            const { userName } = user;
+            setParticipationsForProfileUrlParam({ username: userName });
         },
         [ getUserParticipations, user, userSubmissionsData, getParticipationsForProfileUrlParam, pathname ],
     );

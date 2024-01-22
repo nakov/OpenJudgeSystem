@@ -20,3 +20,11 @@
   margin-top: 25px;
   margin-left: 10px;
 }
+
+.submissionRow {
+  border-bottom: 1px solid colors.$bottom-border-color;
+
+  &:last-of-type {
+    margin-bottom: 20px;
+  }
+}
