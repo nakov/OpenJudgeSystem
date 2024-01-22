@@ -1,22 +1,33 @@
 @use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
 
-.container {
+.contestsContainer {
   display: flex;
-}
-
-.mainHeader {
-  flex: 4;
-  width: 100%;
 }
 
 .contestsListContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-left: 50px;
 }
 
 .contestsList {
   display: flex;
   justify-content: center;
   margin-left: 10px;
+}
+
+.headingWrapper {
+  @extend %font-family-roboto;
+  font-size: variables.$f-size-24;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: spacings.$sp-64;
+  margin-bottom: spacings.$sp-24;
+  margin-top: spacings.$sp-24;
 }

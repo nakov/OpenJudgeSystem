@@ -88,11 +88,24 @@ const List = <TValue, >({
             if (isNil(values) || isEmpty(values)) {
                 return null;
             }
-            return values.map((value) => (
-                <li key={keyFunc(value)} className={itemClassNameCombined}>
-                    {itemFunc(value)}
-                </li>
-            ));
+
+            return values.map((value, idx) => {
+                const isLast = idx === values.length - 1;
+                return (
+                    <li
+                      key={keyFunc(value)}
+                      className={itemClassNameCombined}
+                      style={{
+                          width: '100%',
+                          marginBottom: isLast
+                              ? 0
+                              : 20,
+                      }}
+                    >
+                        {itemFunc(value)}
+                    </li>
+                );
+            });
         },
         [ itemClassNameCombined, itemFunc, keyFunc, values ],
     );
