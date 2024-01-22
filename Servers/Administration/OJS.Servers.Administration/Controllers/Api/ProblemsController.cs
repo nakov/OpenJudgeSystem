@@ -15,9 +15,18 @@ using OJS.Common;
 public class ProblemsController : ControllerBase
 {
     private readonly IProblemsBusinessService problemsBusinessService;
+    private readonly IContestsBusinessService contestsBusinessService;
+    private readonly IUserProviderService userProvider;
 
-    public ProblemsController(IProblemsBusinessService problemsBusinessService)
-        => this.problemsBusinessService = problemsBusinessService;
+    public ProblemsController(
+        IProblemsBusinessService problemsBusinessService,
+        IContestsBusinessService contestsBusinessService,
+        IUserProviderService userProvider)
+    {
+        this.problemsBusinessService = problemsBusinessService;
+        this.contestsBusinessService = contestsBusinessService;
+        this.userProvider = userProvider;
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
@@ -38,5 +47,36 @@ public class ProblemsController : ControllerBase
         var problem = await this.problemsBusinessService.ById(id);
 
         return this.Ok(problem);
+    }
+
+    [HttpPatch]
+    [Route("{id}")]
+    public async Task<IActionResult> Edit(ProblemAdministrationModel model)
+    {
+        var contest = await this.contestsBusinessService.ById(model.ContestId);
+
+        if (contest is null)
+        {
+            return this.NotFound($"Cannot update problem: Contest with id {model.ContestId} not found");
+        }
+
+        if (!await this.HasContestPermission(contest.Id))
+        {
+            return this.Unauthorized();
+        }
+
+        await this.problemsBusinessService.Edit(model);
+
+        return this.Ok("Problem successfully updated.");
+    }
+
+    private async Task<bool> HasContestPermission(int? contestId)
+    {
+        var user = this.userProvider.GetCurrentUser();
+
+        return await this.contestsBusinessService.UserHasContestPermissions(
+            contestId!.Value,
+            user.Id,
+            user.IsAdmin);
     }
 }

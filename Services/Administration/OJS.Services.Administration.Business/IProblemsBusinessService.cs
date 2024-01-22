@@ -22,5 +22,7 @@ namespace OJS.Services.Administration.Business
         Task ReevaluateProblemsOrder(int contestId, Problem problem);
 
         Task<ProblemAdministrationModel> ById(int id);
+
+        Task Edit(ProblemAdministrationModel model);
     }
 }

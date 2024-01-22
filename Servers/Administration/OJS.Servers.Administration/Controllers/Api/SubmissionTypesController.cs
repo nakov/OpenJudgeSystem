@@ -16,6 +16,8 @@ public class SubmissionTypesController : ControllerBase
     public SubmissionTypesController(ISubmissionTypesBusinessService submissionTypesBusinessService)
         => this.submissionTypesBusinessService = submissionTypesBusinessService;
 
+    [HttpGet]
+    [Route("problemView")]
     public async Task<IActionResult> GetForProblem()
         => this.Ok(await this.submissionTypesBusinessService.GetForProblem());
 }

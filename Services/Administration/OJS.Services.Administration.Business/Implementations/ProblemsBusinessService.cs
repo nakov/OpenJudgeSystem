@@ -1,12 +1,14 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Helpers;
+    using OJS.Data.Models;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
@@ -35,6 +37,8 @@ namespace OJS.Services.Administration.Business.Implementations
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+        private readonly IProblemGroupsDataService problemGroupsDataService;
+
         public ProblemsBusinessService(
             IContestsDataService contestsData,
             IParticipantScoresDataService participantScoresData,
@@ -46,7 +50,8 @@ namespace OJS.Services.Administration.Business.Implementations
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
-            ISubmissionsCommonBusinessService submissionsCommonBusinessService)
+            ISubmissionsCommonBusinessService submissionsCommonBusinessService,
+            IProblemGroupsDataService problemGroupsDataService)
             : base(problemsData)
         {
             this.contestsData = contestsData;
@@ -60,6 +65,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.contestsBusiness = contestsBusiness;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+            this.problemGroupsDataService = problemGroupsDataService;
         }
 
         public async Task DeleteById(int id)
@@ -150,6 +156,7 @@ namespace OJS.Services.Administration.Business.Implementations
             var problem = await this.problemsData.GetByIdQuery(id)
                 .Include(stp => stp.SubmissionTypesInProblems)
                 .ThenInclude(stp => stp.SubmissionType)
+                .Include(p => p.ProblemGroup)
                 .FirstOrDefaultAsync();
             if (problem is null)
             {
@@ -157,6 +164,38 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             return problem.Map<ProblemAdministrationModel>();
+        }
+
+        public async Task Edit(ProblemAdministrationModel model)
+        {
+            if (!model.Id.HasValue)
+            {
+                throw new ArgumentNullException("Problem must have an Id");
+            }
+
+            var problem = await this.problemsData.GetByIdQuery(model.Id)
+                .Include(s => s.SubmissionTypesInProblems)
+                .Include(s => s.ProblemGroup)
+                .FirstOrDefaultAsync();
+
+            if (problem is null)
+            {
+                throw new ArgumentNullException($"Problem with id {model.Id} not found");
+            }
+
+            problem.MapFrom(model);
+            problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id) !;
+            problem.ProblemGroup.Type = model.ProblemGroupType;
+
+            if (!problem.ProblemGroup.Contest.IsOnlineExam)
+            {
+                problem.ProblemGroup.OrderBy = model.OrderBy;
+            }
+
+            AddSubmissionTypes(problem, model);
+
+            this.problemsData.Update(problem);
+            await this.problemsData.SaveChanges();
         }
 
         public async Task RetestById(int id)
@@ -179,6 +218,43 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
+        }
+
+        private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
+        {
+            var submissionTypesToRemove = new HashSet<SubmissionTypeInProblem>();
+            foreach (var submissionType in problem.SubmissionTypesInProblems)
+            {
+                if (model.SubmissionTypes.Any(st => st.Id == submissionType.ProblemId))
+                {
+                    continue;
+                }
+
+                submissionTypesToRemove.Add(submissionType);
+            }
+
+            submissionTypesToRemove.ForEach(sttr => problem.SubmissionTypesInProblems.Remove(sttr));
+
+            foreach (var submissionType in model.SubmissionTypes)
+            {
+                var problemSubmissionType =
+                    problem.SubmissionTypesInProblems.FirstOrDefault(x => x.SubmissionTypeId == submissionType.Id);
+                if (problemSubmissionType is null)
+                {
+                    problem.SubmissionTypesInProblems.Add(new SubmissionTypeInProblem()
+                    {
+                        ProblemId = problem.Id,
+                        SubmissionTypeId = submissionType.Id,
+                        // SolutionSkeleton = submissionType.SolutionSkeleton != null && string.IsNullOrEmpty((submissionType.SolutionSkeleton.Length > 0).ToString())
+                        // ? FluentExtensions.Extensions.(submissionType.SolutionSkeleton)
+                        // : Array.Empty<byte>()
+                    });
+                }
+                else
+                {
+                    problemSubmissionType.SolutionSkeleton = submissionType.SolutionSkeleton ?? Array.Empty<byte>();
+                }
+            }
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

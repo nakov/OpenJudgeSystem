@@ -16,6 +16,10 @@ interface ISubmissionTypeType {
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
 }
+interface ISubmissionTypeInProblem {
+    id: number;
+    name: string;
+}
 interface IPublicSubmissionContest {
     id: number;
     name: string;
@@ -281,7 +285,7 @@ interface IProblemAdministration {
     sourceCodeSizeLimit: number;
     orderBy: number;
     showResults: boolean;
-    showDetailsFeedback: boolean;
+    showDetailedFeedback: boolean;
     checker: string;
     probleGroupType:string;
     contestId: number;
@@ -372,7 +376,7 @@ type ExceptionData = {
 interface IProblemSubmissionType{
     id: number;
     name: string;
-    skeleton: string;
+    skeleton: string | null;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -412,4 +416,5 @@ export type {
     IIndexProblemsType,
     IProblemAdministration,
     IProblemSubmissionType,
+    ISubmissionTypeInProblem,
 };

@@ -1,10 +1,11 @@
 ﻿namespace OJS.Services.Administration.Business;
 
-using OJS.Data.Models;
 using System.Threading.Tasks;
 using SoftUni.Services.Infrastructure;
+using OJS.Services.Administration.Models.SubmissionTypes;
+using System.Collections.Generic;
 
 public interface ISubmissionTypesBusinessService : IService
 {
-    Task<SubmissionTypeInProblem> GetForProblem();
+    Task<List<SubmissionTypesInProblemView>> GetForProblem();
 }

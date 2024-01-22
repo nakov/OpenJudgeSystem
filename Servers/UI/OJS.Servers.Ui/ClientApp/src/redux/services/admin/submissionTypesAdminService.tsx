@@ -3,8 +3,7 @@
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { ExceptionData, IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
-import { IProblemUrlById } from '../../../common/url-types';
+import { ExceptionData, ISubmissionTypeInProblem } from '../../../common/types';
 
 type ExtraOptionsType = {
 // Add extra options if needed
@@ -17,7 +16,7 @@ const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/problems`,
+        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/SubmissionTypes`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
@@ -43,32 +42,12 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 };
 
 // eslint-disable-next-line import/group-exports
-export const problemsAdminService = createApi({
-    reducerPath: 'problems',
+export const submissionTypesAdminService = createApi({
+    reducerPath: 'submissionTypes',
     baseQuery: customBaseQuery,
-    endpoints: (builder) => ({
-        getAllAdminProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
-                url: '',
-                params: {
-                    filter,
-                    page,
-                    ItemsPerPage,
-                    sorting,
-                },
-            }),
-            keepUnusedDataFor: 10,
-        }),
-        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 0 }),
-        deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
-    }),
+    endpoints: (builder) => ({ getForProblem: builder.query<Array<ISubmissionTypeInProblem>, null>({ query: () => ({ url: '/problemView' }), keepUnusedDataFor: 0 }) }),
 });
 
 // eslint-disable-next-line import/group-exports
-export const {
-    useGetAllAdminProblemsQuery,
-    useGetProblemByIdQuery,
-    useDeleteProblemMutation,
-
-} = problemsAdminService;
-export default problemsAdminService;
+export const { useGetForProblemQuery } = submissionTypesAdminService;
+export default submissionTypesAdminService;

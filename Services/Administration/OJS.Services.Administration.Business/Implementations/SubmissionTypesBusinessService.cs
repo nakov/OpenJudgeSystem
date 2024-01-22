@@ -1,9 +1,11 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations;
 
-using OJS.Data.Models;
 using OJS.Services.Administration.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
+using OJS.Services.Administration.Models.SubmissionTypes;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
@@ -12,6 +14,6 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
     public SubmissionTypesBusinessService(ISubmissionTypesDataService submissionTypesDataService)
         => this.submissionTypesDataService = submissionTypesDataService;
 
-    public async Task<SubmissionTypeInProblem> GetForProblem() =>
-        await this.submissionTypesDataService.All().Map<SubmissionTypeInProblem>();
+    public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
+        await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
 }

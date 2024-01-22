@@ -11,6 +11,7 @@ import { Box, IconButton, Modal, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import DeleteProblem from '../../../components/administration/Problems/delete/DeleteProblem';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
 import { useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
@@ -144,7 +145,13 @@ const AdministrationProblemsPage = () => {
                     <Link to={`/administration-new/problems/${Number(params.row.id)}`}>
                         <ShortcutIcon color="primary" />
                     </Link>
-                    <></>
+                    <Tooltip title="Delete">
+                        <DeleteProblem
+                          problemId={Number(params.row.id)}
+                          problemName={params.row.name}
+                          style={{ alignSelf: 'flex-end' }}
+                        />
+                    </Tooltip>
                 </div>
             ),
         },
