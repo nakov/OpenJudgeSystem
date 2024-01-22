@@ -12,7 +12,10 @@ on:
     inputs:
       docker_image_tag:
         required: true
-        default: "latest"
+        type: string
+      branch_name:
+        description: 'The branch that will be deployed'
+        required: false
         type: string
 jobs:
   check-user-access:
@@ -35,6 +38,7 @@ jobs:
       docker_image_name: judge_worker
       dockerfile_name: Dockerfile.worker
       docker_tag: ${{ inputs.docker_image_tag }}
+      branch_name: ${{ inputs.branch_name || 'v2' }}
     secrets: inherit
   deploy:
     needs: [build-and-push]
