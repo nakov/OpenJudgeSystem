@@ -1,6 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import InitProviders, { ProviderType } from './components/common/InitProviders';
 import HashUrlParamProvider from './hooks/common/use-hash-url-params';
@@ -11,7 +12,6 @@ import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissi
 import ProfileSubmissionsProvider from './hooks/submissions/use-profile-submissions';
 import PublicSubmissionsProvider from './hooks/submissions/use-public-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
-import AuthProvider from './hooks/use-auth';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
@@ -31,7 +31,7 @@ import PageContent from './layout/content/PageContent';
 import PageFooter from './layout/footer/PageFooter';
 import PageHeader from './layout/header/PageHeader';
 import SearchBar from './layout/search-bar/SearchBar';
-import store from './redux/store';
+import store, { persistor } from './redux/store';
 
 import './styles/global.scss';
 
@@ -44,7 +44,6 @@ const App = () => {
         PageProvider,
         NotificationsProvider,
         PageWithTitleProvider,
-        AuthProvider,
         UsersProvider,
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
@@ -65,14 +64,16 @@ const App = () => {
 
     return (
         <Provider store={store}>
-            <Router>
-                <InitProviders providers={providers}>
-                    <PageHeader />
-                    <SearchBar />
-                    <PageContent />
-                    <PageFooter />
-                </InitProviders>
-            </Router>
+            <PersistGate persistor={persistor}>
+                <Router>
+                    <InitProviders providers={providers}>
+                        <PageHeader />
+                        <SearchBar />
+                        <PageContent />
+                        <PageFooter />
+                    </InitProviders>
+                </Router>
+            </PersistGate>
         </Provider>
     );
 };

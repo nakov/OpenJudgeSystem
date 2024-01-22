@@ -21,6 +21,8 @@
 
         public UserProfileResponseModel User { get; set; } = null!;
 
+        public bool UserIsInRoleForContest { get; set; }
+
         public SubmissionTypeForSubmissionDetailsResponseModel SubmissionType { get; set; } = null!;
 
         public double MaxUsedTime { get; set; }
@@ -30,6 +32,8 @@
         public bool IsOfficial { get; set; }
 
         public bool IsCompiledSuccessfully { get; set; }
+
+        public bool IsEligibleForRetest { get; set; }
 
         public string CompilerComment { get; set; } = null!;
 

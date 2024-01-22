@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
@@ -9,9 +10,9 @@ import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
 import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
 import { useUserProfileSubmissions } from '../../hooks/submissions/use-profile-submissions';
-import { useAuth } from '../../hooks/use-auth';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useUsers } from '../../hooks/use-users';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../utils/check-utils';
 import { decodeUsernameFromUrlParam } from '../../utils/urls';
 import NotFoundPage from '../not-found/NotFoundPage';
@@ -31,17 +32,9 @@ const ProfilePage = () => {
             clearUserProfileInformation,
         },
     } = useUsers();
-
+    const { userName: myUsername, permissions: { canAccessAdministration: canSeeProfileSubmissions } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization.internalUser);
     const { actions: { setUsernameForProfile } } = useUserProfileSubmissions();
-    const {
-        state: {
-            user:
-        {
-            permissions: { canAccessAdministration: canSeeProfileSubmissions },
-            username: myUsername,
-        },
-        },
-    } = useAuth();
     const { actions: { setPageTitle } } = usePageTitles();
     const { username } = useParams();
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);

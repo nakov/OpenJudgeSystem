@@ -29,6 +29,7 @@ interface ISubmissionDetailsState {
     currentSubmissionResults:IPagedResultType<ISubmissionResults>;
     validationErrors: IErrorDataType[];
     downloadErrorMessage: string | null;
+    retestIsSuccess: boolean;
 }
 interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     currentPage: number;
@@ -207,19 +208,24 @@ interface IPage {
 
 interface IUserType {
     id: string;
-    username: string;
+    userName: string;
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;
     isAdmin: boolean;
+    canAccessAdministration: boolean;
 }
-
+interface ILoginDetailsType {
+    Username: string;
+    Password?: string;
+    RememberMe: boolean;
+}
 interface IUserRoleType {
     id: string;
     name: string;
 }
 
-interface IUserResponseType {
+ interface IUserResponseType {
     id: string;
     userName: string;
     email: string;
@@ -258,4 +264,5 @@ export type {
     IContestDetailsProblemType,
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
+    ILoginDetailsType,
 };

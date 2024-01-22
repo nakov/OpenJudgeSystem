@@ -1,12 +1,13 @@
 import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
 import { ISubmissionResponseModel } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
-import { useAuth } from '../../../hooks/use-auth';
 import { useProblems } from '../../../hooks/use-problems';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import { encodeUsernameAsUrlParam,
@@ -50,15 +51,8 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const {
-        state: {
-            user: {
-                username: loggedInUsername,
-                isAdmin,
-            },
-        },
-    } = useAuth();
-
+    const { internalUser } =
+    useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
 
     const userameFromSubmission = isNil(user)
@@ -90,7 +84,7 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (userameFromSubmission === loggedInUsername || isAdmin) {
+            if (userameFromSubmission === internalUser.userName || internalUser.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -100,7 +94,7 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, isAdmin, loggedInUsername, userameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName ],
     );
 
     const renderStrategyIcon = useCallback(
