@@ -1,14 +1,13 @@
 import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
-import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import Form from '../../components/guidelines/forms/Form';
 import FormControl, {
     FormControlType,
     IFormControlOnChangeValueType,
 } from '../../components/guidelines/forms/FormControl';
-import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
+import useTheme from '../../hooks/use-theme';
 import { getSearchPageURL } from '../../utils/urls';
 
 import styles from './SearchBar.module.scss';
@@ -36,6 +35,7 @@ const defaultState = {
 };
 
 const SearchBar = () => {
+    const { themeColors } = useTheme();
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
 
@@ -110,70 +110,64 @@ const SearchBar = () => {
     );
 
     return (
-        isVisible
-            ? (
-                <div className={styles.searchContainer}>
-                    <Form
-                      className={styles.search}
-                      onSubmit={handleSubmit}
-                      submitButtonClassName={styles.searchButton}
-                      hideFormButton
-                    >
-                        <FormControl
-                          className={styles.searchInput}
-                          name={FieldNameType.search}
-                          type={FormControlType.input}
-                          labelText={FieldNameType.search}
-                          onChange={handleOnChangeUpdateSearch}
-                          value={searchParam}
-                          shouldDisableLabel
-                        />
-                        <Button
-                          onClick={handleSubmit}
-                          type={ButtonType.submit}
-                          internalClassName={styles.searchButton}
-                        >
-                            <SearchIcon />
-                        </Button>
-                        <div className={styles.checkboxContainer}>
-                            <FormControl
-                              className={styles.checkbox}
-                              name={FieldNameType.checkbox}
-                              type={FormControlType.checkbox}
-                              value={CheckboxSearchValues.contests}
-                              checked={selectedTerms.includes(CheckboxSearchValues.contests)}
-                              onClick={handleSelectedCheckboxValue}
-                            />
-                            <span className={styles.checkboxText}>
-                                Contests
-                            </span>
-                            <FormControl
-                              className={styles.checkbox}
-                              name={FieldNameType.checkbox}
-                              type={FormControlType.checkbox}
-                              value={CheckboxSearchValues.problems}
-                              checked={selectedTerms.includes(CheckboxSearchValues.problems)}
-                              onClick={handleSelectedCheckboxValue}
-                            />
-                            <span className={styles.checkboxText}>
-                                Problems
-                            </span>
-                            <FormControl
-                              className={styles.checkbox}
-                              name={FieldNameType.checkbox}
-                              type={FormControlType.checkbox}
-                              value={CheckboxSearchValues.users}
-                              checked={selectedTerms.includes(CheckboxSearchValues.users)}
-                              onClick={handleSelectedCheckboxValue}
-                            />
-                            <span className={styles.checkboxText}>
-                                Users
-                            </span>
-                        </div>
-                    </Form>
+        <div
+          style={{ backgroundColor: themeColors.baseColor200 }}
+          className={`${styles.searchContainer} ${isVisible
+              ? `${styles.show}`
+              : ''}`}
+        >
+            <Form
+              className={styles.search}
+              onSubmit={handleSubmit}
+              hideFormButton
+            >
+                <FormControl
+                  className={styles.searchInput}
+                  name={FieldNameType.search}
+                  type={FormControlType.input}
+                  labelText={FieldNameType.search}
+                  onChange={handleOnChangeUpdateSearch}
+                  value={searchParam}
+                  shouldDisableLabel
+                />
+                <i style={{ color: themeColors.textColor }} className={`fas fa-search ${styles.searchIcon}`} onClick={handleSubmit} />
+                <div className={styles.checkboxContainer}>
+                    <FormControl
+                      className={styles.checkbox}
+                      name={FieldNameType.checkbox}
+                      type={FormControlType.checkbox}
+                      value={CheckboxSearchValues.contests}
+                      checked={selectedTerms.includes(CheckboxSearchValues.contests)}
+                      onClick={handleSelectedCheckboxValue}
+                    />
+                    <span className={styles.checkboxText} style={{ color: themeColors.textColor }}>
+                        Contests
+                    </span>
+                    <FormControl
+                      className={styles.checkbox}
+                      name={FieldNameType.checkbox}
+                      type={FormControlType.checkbox}
+                      value={CheckboxSearchValues.problems}
+                      checked={selectedTerms.includes(CheckboxSearchValues.problems)}
+                      onClick={handleSelectedCheckboxValue}
+                    />
+                    <span className={styles.checkboxText} style={{ color: themeColors.textColor }}>
+                        Problems
+                    </span>
+                    <FormControl
+                      className={styles.checkbox}
+                      name={FieldNameType.checkbox}
+                      type={FormControlType.checkbox}
+                      value={CheckboxSearchValues.users}
+                      checked={selectedTerms.includes(CheckboxSearchValues.users)}
+                      onClick={handleSelectedCheckboxValue}
+                    />
+                    <span className={styles.checkboxText} style={{ color: themeColors.textColor }}>
+                        Users
+                    </span>
                 </div>
-            )
-            : null
+            </Form>
+        </div>
     );
 };
 export default SearchBar;

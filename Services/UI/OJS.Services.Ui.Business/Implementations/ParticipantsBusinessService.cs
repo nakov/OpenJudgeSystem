@@ -37,12 +37,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
         this.scoresDataService = scoresDataService;
     }
 
-    public Task<int> GetPracticeParticipantsCount(int contestId)
-        => this.participantsData.GetAllByContestAndIsOfficial(contestId, false).CountAsync();
-
-    public Task<int> GetCompeteParticipantsCount(int contestId)
-        => this.participantsData.GetAllByContestAndIsOfficial(contestId, true).CountAsync();
-
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
         Contest contest,
         string userId,

@@ -24,8 +24,6 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Participant> GetAllOfficialByContest(int contestId);
 
-        IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial);
-
         IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(
             int contestId,
             DateTime participationStartTimeRangeStart,
@@ -38,6 +36,8 @@ namespace OJS.Services.Ui.Data
         Task<bool> ExistsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial);
 
         Task<bool> IsOfficialById(int id);
+
+        Task<IDictionary<int, int>> GetParticipantsCountInContests(IEnumerable<int> contestIds, bool isOfficial);
 
         Task Update(
             IQueryable<Participant> participantsQuery,

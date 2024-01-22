@@ -93,6 +93,14 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Select(p => p.IsOfficial)
                 .FirstOrDefaultAsync();
 
+        public async Task<IDictionary<int, int>> GetParticipantsCountInContests(IEnumerable<int> contestIds, bool isOfficial)
+            => await this.DbSet
+                .AsNoTracking()
+                .Where(p => contestIds.Contains(p.ContestId) && p.IsOfficial == isOfficial)
+                .GroupBy(p => p.ContestId)
+                .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
+                .ToDictionaryAsync(p => p.ContestId, p => p.ParticipantsCount);
+
         public Task Update(
             IQueryable<Participant> participantsQuery,
             Expression<Func<Participant, Participant>> updateExpression)

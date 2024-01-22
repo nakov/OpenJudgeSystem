@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import isNil from 'lodash/isNil';
 
+import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import defaultKeyFunc from '../../common/colcollection-key-utils';
@@ -23,6 +24,7 @@ const Breadcrumb = <TValue, >({
     keyFunc = defaultKeyFunc,
     className = '',
 }: IBreadcrumbProps<TValue>) => {
+    const { themeColors } = useTheme();
     const breadcrumbClassName = concatClassNames(
         styles.breadcrumb,
         className,
@@ -44,7 +46,11 @@ const Breadcrumb = <TValue, >({
     );
 
     return (
-        <Breadcrumbs id={id} className={breadcrumbClassName}>
+        <Breadcrumbs
+          id={id}
+          className={breadcrumbClassName}
+          style={{ color: themeColors.textColor, backgroundColor: themeColors.baseColor300 }}
+        >
             {renderItems()}
         </Breadcrumbs>
     );
