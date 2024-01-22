@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { BsFillMoonFill } from 'react-icons/bs';
+import { RiSunLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
+import useTheme from '../../hooks/use-theme';
 import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import concatClassNames from '../../utils/class-names';
@@ -20,8 +24,20 @@ const PageHeader = () => {
     const { actions: { toggleVisibility } } = useSearch();
     const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
     const dispatch = useDispatch();
+    const { toggleSelectedTheme } = useTheme();
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const { mode } = useSelector((state: any) => state.theme);
+
+    const toggleButtonSxProps = {
+        width: 50,
+        transition: 'background-color 0.1s ease-in-out',
+        '&.Mui-selected': {
+            backgroundColor: '#42abf8',
+            color: 'white',
+        },
+        '&.Mui-selected:hover': { backgroundColor: { backgroundColor: '#1597f6' } },
+    };
     const renderLinks = useCallback(() => {
         const administrationLink = user.canAccessAdministration
             ? (
@@ -120,6 +136,22 @@ const PageHeader = () => {
                     <PageNav />
                 </div>
             </div>
+            <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
+                <ToggleButton
+                  sx={{ ...toggleButtonSxProps }}
+                  value="light"
+                  onClick={toggleSelectedTheme}
+                >
+                    <RiSunLine />
+                </ToggleButton>
+                <ToggleButton
+                  sx={{ ...toggleButtonSxProps }}
+                  value="dark"
+                  onClick={toggleSelectedTheme}
+                >
+                    <BsFillMoonFill />
+                </ToggleButton>
+            </ToggleButtonGroup>
         </header>
     );
 };

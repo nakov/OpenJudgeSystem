@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage';
 import authorizationReducer from './features/authorizationSlice';
 // features
 import submissionDetailsReducer from './features/submissionDetailsSlice';
+import themeReducer from './features/themeSlice';
 import authorizationService from './services/authorizationService';
 // services
 import submissionDetailsService from './services/submissionDetailsService';
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
     submissionDetails: submissionDetailsReducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
     authorization: authorizationReducer,
+    theme: themeReducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -27,6 +29,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 // list reducers with data to be persisted here
 const reducersToPersist = [
     'authorization',
+    'theme',
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
