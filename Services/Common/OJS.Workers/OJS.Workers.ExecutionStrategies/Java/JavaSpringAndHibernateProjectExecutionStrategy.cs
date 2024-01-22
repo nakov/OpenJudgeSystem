@@ -364,7 +364,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 var dependencyNode = rootNode
                     .SelectSingleNode(
                      DependencyNodeXPathTemplate
-                    .Replace("##", groupIdArtifactId.Key).Replace("!!", groupIdArtifactId.Value.Item1), namespaceManager);
+                        .Replace("##", groupIdArtifactId.Key)
+                        .Replace("!!", groupIdArtifactId.Value.Item1),
+                     namespaceManager);
 
                 if (dependencyNode == null)
                 {

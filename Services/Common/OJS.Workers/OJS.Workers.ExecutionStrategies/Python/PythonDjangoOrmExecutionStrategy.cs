@@ -134,7 +134,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 this.ExecutionArguments.Concat(new[]
                 {
                     $"manage.py test --pattern=\"{testPath.Split(Path.DirectorySeparatorChar).Last()}\"",
-                }), executor,
+                }),
+                executor,
                 executionContext);
 
             this.FixReceivedOutput(processExecutionResult);

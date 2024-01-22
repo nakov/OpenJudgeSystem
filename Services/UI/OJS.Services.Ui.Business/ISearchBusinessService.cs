@@ -3,7 +3,7 @@
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 using SoftUni.Common.Models;
-using Models.Search;
+using OJS.Services.Ui.Models.Search;
 
 public interface ISearchBusinessService : IService
 {

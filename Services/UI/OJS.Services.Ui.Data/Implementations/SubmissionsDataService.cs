@@ -1,7 +1,7 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;

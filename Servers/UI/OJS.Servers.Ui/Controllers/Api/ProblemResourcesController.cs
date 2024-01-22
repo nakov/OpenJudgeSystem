@@ -1,15 +1,15 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Services.Ui.Business;
 using OJS.Servers.Infrastructure.Controllers;
-using static OJS.Common.GlobalConstants.HeaderValues;
-using static OJS.Common.GlobalConstants.HeaderKeys;
-using static OJS.Common.GlobalConstants.MimeTypes;
+using OJS.Services.Ui.Business;
+using System;
+using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OJS.Common.GlobalConstants.HeaderKeys;
+using static OJS.Common.GlobalConstants.HeaderValues;
+using static OJS.Common.GlobalConstants.MimeTypes;
 
 public class ProblemResourcesController : BaseApiController
 {

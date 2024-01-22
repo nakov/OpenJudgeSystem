@@ -10,7 +10,7 @@
         public T? Data { get; private set; }
 
         public static new ServiceResult<T> Success(T data)
-            => new (null)
+            => new(null)
             {
                 Data = data,
             };
