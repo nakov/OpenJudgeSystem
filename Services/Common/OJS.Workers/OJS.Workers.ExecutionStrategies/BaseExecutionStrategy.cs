@@ -103,9 +103,7 @@
             => executionContext.Code;
     }
 
-#pragma warning disable SA1402
-    public abstract class BaseExecutionStrategySettings : IExecutionStrategySettings
-#pragma warning restore SA1402
+    public abstract record BaseExecutionStrategySettings : IExecutionStrategySettings
     {
     }
 }

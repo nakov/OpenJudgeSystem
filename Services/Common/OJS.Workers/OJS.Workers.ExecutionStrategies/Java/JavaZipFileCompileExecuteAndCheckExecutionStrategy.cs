@@ -75,9 +75,11 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class JavaZipFileCompileExecuteAndCheckExecutionStrategySettings : JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string JavaExecutablePath,
+        string JavaLibrariesPath,
+        int BaseUpdateTimeOffset) : JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
+        BaseTimeUsed, BaseMemoryUsed, JavaExecutablePath, JavaLibrariesPath, BaseUpdateTimeOffset);
 }

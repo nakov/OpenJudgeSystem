@@ -244,9 +244,19 @@ describe('Test {i} ', function(){{
         }
     }
 
-#pragma warning disable SA1402
-    public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string SinonModulePath,
+        string SinonChaiModulePath,
+        string JsDomModulePath,
+        string JQueryModulePath,
+        string HandlebarsModulePath)
+        : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed,
+            NodeJsExecutablePath, UnderscoreModulePath, MochaModulePath, ChaiModulePath, SinonModulePath,
+            SinonChaiModulePath, JsDomModulePath, JQueryModulePath, HandlebarsModulePath);
 }

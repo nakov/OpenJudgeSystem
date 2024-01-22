@@ -126,9 +126,9 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class BaseSqlServerLocalDbExecutionStrategySettings : BaseSqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public abstract record BaseSqlServerLocalDbExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseSqlExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword);
 }

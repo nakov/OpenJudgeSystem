@@ -80,9 +80,8 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class DotNetCoreProjectExecutionStrategySettings : CSharpProjectTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record DotNetCoreProjectExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : CSharpProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }
