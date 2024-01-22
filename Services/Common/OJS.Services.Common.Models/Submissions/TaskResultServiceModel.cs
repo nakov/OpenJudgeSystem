@@ -21,5 +21,5 @@ public class TaskResultServiceModel : IMapExplicitly
                 opt => opt.Ignore())
             .ForMember(
                 nameof(this.TestResults),
-                opt => opt.MapFrom(src => ((src as ExecutionResult<TestResult>) !).Results));
+                opt => opt.MapFrom(src => ((src as ExecutionResult<TestResult>)!).Results));
 }

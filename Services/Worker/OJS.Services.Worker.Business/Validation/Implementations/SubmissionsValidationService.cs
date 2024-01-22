@@ -1,15 +1,14 @@
 ﻿namespace OJS.Services.Worker.Business.Validation.Implementations;
 
-using System.Linq;
-using System.Collections.Generic;
-using OJS.Workers.Common.Models;
+using OJS.Common.Constants;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-using OJS.Common.Constants;
-
+using OJS.Workers.Common.Models;
+using System.Collections.Generic;
+using System.Linq;
+using static OJS.Services.Worker.Business.Validation.ValidationConstants;
 using ValidationResult = OJS.Services.Common.Models.ValidationResult;
-using static ValidationConstants;
 
 public class SubmissionsValidationService : ISubmissionsValidationService
 {

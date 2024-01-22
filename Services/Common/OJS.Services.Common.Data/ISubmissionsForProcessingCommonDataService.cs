@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
-using Models.Submissions;
+using OJS.Services.Common.Models.Submissions;
 
 public interface ISubmissionsForProcessingCommonDataService : IDataService<SubmissionForProcessing>
 {

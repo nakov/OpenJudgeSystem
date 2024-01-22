@@ -11,6 +11,13 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+public enum StateResultForPublicSubmissionsServiceModel
+{
+    Ready = 1,
+    Processing = 2,
+    Queued = 3,
+}
+
 public class UserForPublicSubmissionsServiceModel
     : IMapExplicitly
 {
@@ -57,13 +64,6 @@ public class ResultForPublicSubmissionsServiceModel
     public int Points { get; set; }
 
     public int MaxPoints { get; set; }
-}
-
-public enum StateResultForPublicSubmissionsServiceModel
-{
-    Ready = 1,
-    Processing = 2,
-    Queued = 3,
 }
 
 public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly

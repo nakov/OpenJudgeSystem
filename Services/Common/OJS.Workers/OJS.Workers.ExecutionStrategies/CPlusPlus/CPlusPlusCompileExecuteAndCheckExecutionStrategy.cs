@@ -1,19 +1,21 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CPlusPlus
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class CPlusPlusCompileExecuteAndCheckExecutionStrategy : CompileExecuteAndCheckExecutionStrategy
+    public class CPlusPlusCompileExecuteAndCheckExecutionStrategy<TSettings> : CompileExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : CPlusPlusCompileExecuteAndCheckExecutionStrategySettings
     {
         public CPlusPlusCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 
@@ -31,4 +33,7 @@
                 dependOnExitCodeForRunTimeError: true);
         }
     }
+
+    public record CPlusPlusCompileExecuteAndCheckExecutionStrategySettings(int BaseTimeUsed, int BaseMemoryUsed)
+        : CompileExecuteAndCheckExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

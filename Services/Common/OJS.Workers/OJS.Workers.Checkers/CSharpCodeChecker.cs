@@ -15,7 +15,7 @@
         protected override Type CompileCheckerAssembly(string sourceCode)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
-            var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location) !;
+            var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
 
             var references = new List<MetadataReference>
             {

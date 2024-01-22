@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace OJS.Workers.ExecutionStrategies
+﻿namespace OJS.Workers.ExecutionStrategies
 {
     using System;
     using System.Threading.Tasks;
@@ -12,13 +11,24 @@ namespace OJS.Workers.ExecutionStrategies
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public abstract class BaseExecutionStrategy : IExecutionStrategy
+    public abstract class BaseExecutionStrategy<TSettings> : IExecutionStrategy
+        where TSettings : BaseExecutionStrategySettings
     {
-        private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy));
+        private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy<>));
 
-        public ExecutionStrategyType Type { get; set; }
+        protected BaseExecutionStrategy(
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+        {
+            this.Type = type;
+            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)!;
+        }
 
-        protected string WorkingDirectory { get; set; }
+        protected ExecutionStrategyType Type { get; }
+
+        protected TSettings Settings { get; }
+
+        protected string WorkingDirectory { get; set; } = string.Empty;
 
         public Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
             where TResult : ISingleCodeRunResult, new()
@@ -91,5 +101,9 @@ namespace OJS.Workers.ExecutionStrategies
         protected virtual string PreprocessCode<TInput>(
             IExecutionContext<TInput> executionContext)
             => executionContext.Code;
+    }
+
+    public abstract record BaseExecutionStrategySettings : IExecutionStrategySettings
+    {
     }
 }

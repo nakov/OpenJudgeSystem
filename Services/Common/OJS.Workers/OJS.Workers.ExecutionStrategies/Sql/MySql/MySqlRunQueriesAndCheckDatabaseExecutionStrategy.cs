@@ -1,15 +1,16 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.MySql
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class MySqlRunQueriesAndCheckDatabaseExecutionStrategy : BaseMySqlExecutionStrategy
+    public class MySqlRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseMySqlExecutionStrategy<TSettings>
+        where TSettings : MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public MySqlRunQueriesAndCheckDatabaseExecutionStrategy(
-            string sysDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
-            : base(sysDbConnectionString, restrictedUserId, restrictedUserPassword)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 
@@ -26,4 +27,10 @@
                     ProcessSqlResult(sqlTestResult, executionContext, test, result);
                 });
     }
+
+    public record MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseMySqlExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword);
 }

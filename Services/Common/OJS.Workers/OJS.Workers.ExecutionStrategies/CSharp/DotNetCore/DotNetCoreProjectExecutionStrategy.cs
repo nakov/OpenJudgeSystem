@@ -1,21 +1,23 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 {
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class DotNetCoreProjectExecutionStrategy : CSharpProjectTestsExecutionStrategy
+    public class DotNetCoreProjectExecutionStrategy<TSettings> : CSharpProjectTestsExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreProjectExecutionStrategySettings
     {
         protected new const string AdditionalExecutionArguments = "--no-build --no-restore";
 
         public DotNetCoreProjectExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 
@@ -29,7 +31,7 @@
 
             var csProjFilePath = this.GetCsProjFilePath();
 
-            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
 
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
@@ -77,4 +79,9 @@
             return result;
         }
     }
+
+    public record DotNetCoreProjectExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : CSharpProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

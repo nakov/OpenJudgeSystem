@@ -4,7 +4,7 @@ namespace OJS.Services.Common.Models
     {
         public ServiceResult(string? error) => this.Error = error;
 
-        public static ServiceResult Success => new (null);
+        public static ServiceResult Success => new(null);
 
         public string? Error { get; }
 
