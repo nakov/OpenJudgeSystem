@@ -67,3 +67,11 @@
 .navbarContainer {
   display: flex;
 }
+
+.themeSwitchWrapper {
+  height: 40px;
+  position: absolute;
+  top: 15px;
+  right: 30px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
+}
