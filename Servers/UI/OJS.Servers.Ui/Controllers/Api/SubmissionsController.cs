@@ -1,22 +1,22 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
-using OJS.Servers.Ui.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
+using OJS.Servers.Infrastructure.Controllers;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Servers.Ui.Models;
+using OJS.Servers.Ui.Models.Submissions.Details;
+using OJS.Servers.Ui.Models.Submissions.Profile;
+using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
+using OJS.Services.Ui.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Ui.Business;
-using OJS.Services.Common.Models.Submissions;
-using OJS.Servers.Infrastructure.Extensions;
-using OJS.Servers.Ui.Models.Submissions.Profile;
-using OJS.Servers.Ui.Models.Submissions.Details;
-using Microsoft.AspNetCore.Authorization;
-using OJS.Servers.Infrastructure.Controllers;
-using static OJS.Common.GlobalConstants.Roles;
 using static Microsoft.AspNetCore.Http.StatusCodes;
+using static OJS.Common.GlobalConstants.Roles;
 
 public class SubmissionsController : BaseApiController
 {

@@ -159,7 +159,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contest,
                 id,
                 user,
-                official) !);
+                official)!);
 
             if (!validationResult.IsValid)
             {
@@ -220,7 +220,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contest,
                 model.ContestId,
                 user,
-                model.IsOfficial) !);
+                model.IsOfficial)!);
 
             if (!validationResult.IsValid)
             {

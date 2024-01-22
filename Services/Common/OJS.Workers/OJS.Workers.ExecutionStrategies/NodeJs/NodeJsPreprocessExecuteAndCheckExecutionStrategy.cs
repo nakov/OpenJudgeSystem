@@ -55,8 +55,6 @@
             {
                 throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseMemoryUsed));
             }
-
-            this.Settings.UnderscoreModulePath = FileHelpers.ProcessModulePath(this.Settings.UnderscoreModulePath);
         }
 
         protected virtual string JsCodeRequiredModules => $@"
@@ -277,11 +275,10 @@ process.stdin.on('end', function() {
                 new[] { LatestEcmaScriptFeaturesEnabledFlag, codeSavePath });
     }
 
-#pragma warning disable SA1402
-    public class NodeJsPreprocessExecuteAndCheckExecutionStrategySettings : BaseInterpretedCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string NodeJsExecutablePath { get; set; } = string.Empty;
-        public string UnderscoreModulePath { get; set; } = string.Empty;
-    }
+    public record NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath)
+        : BaseInterpretedCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

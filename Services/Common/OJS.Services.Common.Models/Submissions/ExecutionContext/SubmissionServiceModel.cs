@@ -30,7 +30,7 @@
 
         public TestsExecutionDetailsServiceModel? TestsExecutionDetails { get; set; }
 
-        public ExecutionOptionsServiceModel ExecutionOptions { get; set; } = new ();
+        public ExecutionOptionsServiceModel ExecutionOptions { get; set; } = new();
 
         public void RegisterMappings(IProfileExpression configuration)
         {

@@ -109,9 +109,8 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class CPlusPlusZipFileExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record CPlusPlusZipFileExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

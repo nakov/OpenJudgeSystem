@@ -5,7 +5,7 @@ import isNil from 'lodash/isNil';
 import { isRegularUserInRoleForSubmission } from '../../../../common/submission-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { ISubmissionResults } from '../../../../hooks/submissions/types';
-import { useAuth } from '../../../../hooks/use-auth';
+import { IAuthorizationReduxState } from '../../../../redux/features/authorizationSlice';
 import {
     setCurrentSubmissionResults,
     setRetestIsSuccess,
@@ -20,7 +20,8 @@ interface IRetestButtonProps {
     onSuccessfulRetest?: () => void;
 }
 const RetestButton = ({ onSuccessfulRetest }: IRetestButtonProps) => {
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const [ shouldNotRetestOnLoad, setShouldNotRetestOnLoad ] = useState(true);
 
@@ -99,7 +100,7 @@ const RetestButton = ({ onSuccessfulRetest }: IRetestButtonProps) => {
     // and if the submission can be retested
     return currentSubmission?.userIsInRoleForContest ||
             (!isNil(currentSubmission) &&
-            isRegularUserInRoleForSubmission(currentSubmission, user.username) &&
+            isRegularUserInRoleForSubmission(currentSubmission, user.userName) &&
             currentSubmission.isEligibleForRetest)
         ? (
             <Button

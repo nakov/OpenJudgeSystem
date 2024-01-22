@@ -7,7 +7,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -63,13 +62,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
                     $"node-fetch Module not found in: {this.Settings.NodeFetchModulePath}",
                     nameof(this.Settings.NodeFetchModulePath));
             }
-
-            this.Settings.SinonJsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.SinonJsDomModulePath);
-            this.Settings.BabelCoreModulePath = FileHelpers.ProcessModulePath(this.Settings.BabelCoreModulePath);
-            this.Settings.ReactJsxPluginPath = FileHelpers.ProcessModulePath(this.Settings.ReactJsxPluginPath);
-            this.Settings.ReactModulePath = FileHelpers.ProcessModulePath(this.Settings.ReactModulePath);
-            this.Settings.ReactDomModulePath = FileHelpers.ProcessModulePath(this.Settings.ReactDomModulePath);
-            this.Settings.NodeFetchModulePath = FileHelpers.ProcessModulePath(this.Settings.NodeFetchModulePath);
         }
 
         protected override string JsCodeTemplate =>
@@ -235,15 +227,25 @@ it('Test{testsCount++}', function(done) {{
         }
     }
 
-#pragma warning disable SA1402
-    public class NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string SinonJsDomModulePath { get; set; } = string.Empty;
-        public string BabelCoreModulePath { get; set; } = string.Empty;
-        public string ReactJsxPluginPath { get; set; } = string.Empty;
-        public string ReactModulePath { get; set; } = string.Empty;
-        public string ReactDomModulePath { get; set; } = string.Empty;
-        public string NodeFetchModulePath { get; set; } = string.Empty;
-    }
+    public record NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string SinonModulePath,
+        string SinonChaiModulePath,
+        string JsDomModulePath,
+        string JQueryModulePath,
+        string HandlebarsModulePath,
+        string SinonJsDomModulePath,
+        string BabelCoreModulePath,
+        string ReactJsxPluginPath,
+        string ReactModulePath,
+        string ReactDomModulePath,
+        string NodeFetchModulePath)
+        : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed,
+            NodeJsExecutablePath, UnderscoreModulePath, MochaModulePath, ChaiModulePath, SinonModulePath,
+            SinonChaiModulePath, JsDomModulePath, JQueryModulePath, HandlebarsModulePath);
 }

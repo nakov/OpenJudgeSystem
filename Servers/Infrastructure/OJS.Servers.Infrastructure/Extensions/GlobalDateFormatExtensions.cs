@@ -2,7 +2,7 @@ namespace OJS.Servers.Infrastructure.Extensions;
 
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
-using static Common.GlobalConstants;
+using static OJS.Common.GlobalConstants;
 
 public static class GlobalDateFormatExtensions
 {

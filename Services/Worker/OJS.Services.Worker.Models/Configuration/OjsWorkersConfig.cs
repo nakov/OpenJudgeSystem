@@ -132,8 +132,6 @@ public class OjsWorkersConfig : BaseConfig
     [Required]
     public string PostgreSqlRestrictedUserPassword { get; set; } = string.Empty;
 
-    public int JsProjDefaultApplicationPortNumber { get; set; } = 9636;
-
     public int NodeJsBaseTimeUsedInMilliseconds { get; set; }
 
     public int NodeJsBaseMemoryUsedInBytes { get; set; }

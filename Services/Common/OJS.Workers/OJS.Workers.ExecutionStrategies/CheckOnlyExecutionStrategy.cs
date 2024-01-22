@@ -45,9 +45,6 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class CheckOnlyExecutionStrategySettings : BaseCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record CheckOnlyExecutionStrategySettings(int BaseTimeUsed, int BaseMemoryUsed)
+        : BaseCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

@@ -38,9 +38,8 @@
                 FileHelpers.BuildPath(this.WorkingDirectory, CodeSaveFileName));
     }
 
-#pragma warning disable SA1402
-    public class GolangCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record GolangCompileExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

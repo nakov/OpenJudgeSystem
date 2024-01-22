@@ -1,9 +1,9 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
+    using Microsoft.Data.SqlClient;
     using OJS.Workers.Common.Models;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Transactions;
 
     using OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb;
@@ -93,10 +93,11 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
         }
     }
 
-#pragma warning disable SA1402
-    public class BaseSqlServerSingleDatabaseExecutionStrategySettings : BaseSqlServerLocalDbExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
-    }
+    public abstract record BaseSqlServerSingleDatabaseExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword,
+        string SubmissionProcessorIdentifier)
+        : BaseSqlServerLocalDbExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId,
+            RestrictedUserPassword);
 }

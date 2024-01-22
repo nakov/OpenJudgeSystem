@@ -127,9 +127,9 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class BaseMySqlExecutionStrategySettings : BaseSqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public abstract record BaseMySqlExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseSqlExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword);
 }

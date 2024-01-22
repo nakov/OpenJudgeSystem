@@ -175,10 +175,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         }
     }
 
-#pragma warning disable SA1402
-    public class DotNetCoreCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string DotNetCoreRuntimeVersion { get; set; } = string.Empty;
-    }
+    public record DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string DotNetCoreRuntimeVersion)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

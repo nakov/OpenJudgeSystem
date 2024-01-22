@@ -28,9 +28,10 @@
                 });
     }
 
-#pragma warning disable SA1402
-    public class SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings : BaseSqlServerSingleDatabaseExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword,
+        string SubmissionProcessorIdentifier) : BaseSqlServerSingleDatabaseExecutionStrategySettings(
+        MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword, SubmissionProcessorIdentifier);
 }

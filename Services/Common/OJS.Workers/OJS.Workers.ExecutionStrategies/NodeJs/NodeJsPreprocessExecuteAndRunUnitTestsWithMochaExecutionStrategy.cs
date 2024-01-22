@@ -5,7 +5,6 @@
     using System.IO;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -51,10 +50,6 @@
                     $"Sinon-chai not found in: {this.Settings.SinonChaiModulePath}",
                     nameof(this.Settings.SinonChaiModulePath));
             }
-
-            this.Settings.ChaiModulePath = FileHelpers.ProcessModulePath(this.Settings.ChaiModulePath);
-            this.Settings.SinonModulePath = FileHelpers.ProcessModulePath(this.Settings.SinonModulePath);
-            this.Settings.SinonChaiModulePath = FileHelpers.ProcessModulePath(this.Settings.SinonChaiModulePath);
         }
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
@@ -159,13 +154,18 @@ describe('TestScope', function() {
         }
     }
 
-#pragma warning disable SA1402
-    public class NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndCheckExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string MochaModulePath { get; set; } = string.Empty;
-        public string ChaiModulePath { get; set; } = string.Empty;
-        public string SinonModulePath { get; set; } = string.Empty;
-        public string SinonChaiModulePath { get; set; } = string.Empty;
-    }
+    public record NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string SinonModulePath,
+        string SinonChaiModulePath)
+        : NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
+            BaseTimeUsed,
+            BaseMemoryUsed,
+            NodeJsExecutablePath,
+            UnderscoreModulePath);
 }

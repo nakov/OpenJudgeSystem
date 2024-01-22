@@ -37,9 +37,10 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings : BasePostgreSqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword,
+        string SubmissionProcessorIdentifier) : BasePostgreSqlExecutionStrategySettings(MasterDbConnectionString,
+        RestrictedUserId, RestrictedUserPassword, SubmissionProcessorIdentifier);
 }

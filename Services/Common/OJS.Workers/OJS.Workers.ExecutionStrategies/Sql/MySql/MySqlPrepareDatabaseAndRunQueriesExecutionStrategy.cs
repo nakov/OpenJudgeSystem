@@ -28,9 +28,9 @@
                 });
     }
 
-#pragma warning disable SA1402
-    public class MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings : BaseMySqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseMySqlExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword);
 }

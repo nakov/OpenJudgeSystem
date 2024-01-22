@@ -267,10 +267,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         }
     }
 
-#pragma warning disable SA1402
-    public class BasePostgreSqlExecutionStrategySettings : BaseSqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string SubmissionProcessorIdentifier { get; set; } = string.Empty;
-    }
+    public abstract record BasePostgreSqlExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword,
+        string SubmissionProcessorIdentifier)
+        : BaseSqlExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword);
 }
