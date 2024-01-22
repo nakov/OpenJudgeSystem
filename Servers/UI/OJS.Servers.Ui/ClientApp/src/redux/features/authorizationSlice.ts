@@ -28,7 +28,7 @@ const initialState: IAuthorizationReduxState = {
 
 };
 
-export const authorizationSlide = createSlice({
+export const authorizationSlice = createSlice({
     name: 'authorization',
     initialState,
     reducers: {
@@ -47,6 +47,8 @@ export const authorizationSlide = createSlice({
     },
 });
 
-export const { setInternalUser, setIsLoggedIn, resetInInternalUser } = authorizationSlide.actions;
+export const { setInternalUser, setIsLoggedIn, resetInInternalUser } = authorizationSlice.actions;
 
-export default authorizationSlide.reducer;
+export const authorizationSliceName = authorizationSlice.name;
+
+export default authorizationSlice.reducer;

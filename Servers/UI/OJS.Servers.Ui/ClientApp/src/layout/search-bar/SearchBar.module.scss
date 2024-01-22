@@ -2,37 +2,48 @@
 @use 'src/styles/variables';
 @use 'src/styles/components';
 @use 'src/styles/fonts';
+@use 'src/styles/spacings';
 
 .searchContainer {
-  @extend %contentSize;
-
-  background-color: colors.$white-color;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
   display: flex;
-  margin-top: 80px;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: colors.$white-color;
+  top: -100%;
+  position: absolute;
+  left:0;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
+  margin-top: 78px;
   width: 100%;
+  z-index: 2;
+  transition: top 0.3s ease-in-out;
 }
-
+.show {
+  top: 0 !important;
+}
 .search {
   display: flex;
-  padding: 0 30px;
+  align-items: center;
+  margin-right: 30px;
 }
 
-.searchButton {
-  background-color: colors.$white-color;
-  border: 0;
+.searchIcon {
   cursor: pointer;
-  margin: 10px;
-  padding: 0;
+  font-size: variables.$f-size-24;
+  margin-right: spacings.$sp-48;
+  margin-left: spacings.$sp-12;
+  transition: all .1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .searchInput {
   font-size: variables.$f-size-16;
   margin-bottom: 15px;
-  margin-right: 10px;
-  margin-top: 10px;
   transition: transform 250ms ease-in-out, 250ms ease-in-out;
-  width: 250px;
+  width: 300px;
 
   &::placeholder {
     opacity: 1;
@@ -40,28 +51,23 @@
 
   &:focus {
     border: 1px transparent;
-    border-bottom: 1px solid colors.$background-color-btn-primary;
-    border-radius: 0;
     outline: 0;
-    padding-left: 10px;
-    padding-right: 10px;
   }
 }
 
 .checkboxContainer {
   display: flex;
-  margin: auto;
 }
 
 .checkboxText {
   @extend %font-family-lato;
 
   color: colors.$text-dark-gray-color;
-  font-size: 1rem;
+  font-size: variables.$f-size-16;
   font-weight: 400;
   line-height: 1.5;
-  margin-left: 5px;
-  margin-right: 5px;
+  margin-left: spacings.$sp-4;
+  margin-right: spacings.$sp-24;
 }
 
 .checkbox {

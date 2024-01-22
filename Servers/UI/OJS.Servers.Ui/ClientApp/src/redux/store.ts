@@ -3,6 +3,10 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
+import authorizationReducer, { authorizationSliceName } from './features/authorizationSlice';
+import { contestSlice } from './features/contestsSlice';
+import submissionDetailsReducer from './features/submissionDetailsSlice';
+import themeReducer, { themeSliceName } from './features/themeSlice';
 // features
 import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
@@ -25,6 +29,8 @@ import submissionsForProcessingAdminService from './services/admin/submissionsFo
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 // features
 import authorizationService from './services/authorizationService';
+import { contestsService } from './services/contestsService';
+import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
@@ -40,7 +46,13 @@ const rootReducer = combineReducers({
 
     // services
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
+    [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
+    submissionDetails: submissionDetailsReducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
+    [contestsService.reducerPath]: contestsService.reducer,
+    authorization: authorizationReducer,
+    theme: themeReducer,
+    [contestSlice.name]: contestSlice.reducer,
 
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
@@ -61,6 +73,8 @@ const persistConfig = (reducersToPersist: string[]) => ({
 
 // list reducers with data to be persisted here
 const reducersToPersist = [
+    authorizationSliceName,
+    themeSliceName,
     contestsAdminSlice.name,
     authorizationSlide.name,
     problemsAdminSlice.name,
@@ -79,6 +93,8 @@ const store = configureStore({
         problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
         authorizationService.middleware,
+        contestsService.middleware,
+        homeStatisticsService.middleware,
         problemsAdminService.middleware,
         submissionsAdminService.middleware,
         submissionsForProcessingAdminService.middleware,

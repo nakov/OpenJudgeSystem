@@ -35,6 +35,10 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
 
     public int NumberOfProblems { get; set; }
 
+    public int CompeteResults { get; set; }
+
+    public int PracticeResults { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
             .ForMember(
@@ -48,5 +52,7 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
                 opt => opt.MapFrom(src =>
                     src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue) ? (src.EndTime - src.StartTime) : null)))
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
-            .ForMember(d => d.CanBePracticed, opt => opt.Ignore());
+            .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
+            .ForMember(d => d.CompeteResults, opt => opt.Ignore())
+            .ForMember(d => d.PracticeResults, opt => opt.Ignore());
 }

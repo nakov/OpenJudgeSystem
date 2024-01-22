@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { contestParticipationType } from '../../common/contest-helpers';
-import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
+import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -243,7 +243,7 @@ const ContestResultsPage = () => {
         () => (
             <>
                 <div className={styles.breadcrumbContainer}>
-                    <ContestBreadcrumb />
+                    <ContestBreadcrumbs />
                 </div>
                 <Heading
                   type={HeadingType.primary}
