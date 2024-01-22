@@ -1,9 +1,9 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
+    using Microsoft.Data.SqlClient;
     using OJS.Workers.Common.Models;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Transactions;
 
     using OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb;

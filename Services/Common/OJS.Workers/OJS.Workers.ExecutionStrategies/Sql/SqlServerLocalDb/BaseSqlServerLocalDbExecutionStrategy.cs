@@ -1,9 +1,9 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb
 {
+    using Microsoft.Data.SqlClient;
     using OJS.Workers.Common.Models;
     using System;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Text.RegularExpressions;
 
