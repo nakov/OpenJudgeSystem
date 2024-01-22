@@ -138,45 +138,6 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.HandlebarsModulePath)
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha => new
-                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.HandlebarsModulePath,
-                    this.settings.BrowserifyModulePath,
-                    this.settings.BabelifyModulePath,
-                    this.settings.Es2015ImportPluginPath)
-
-                as TSettings,
-            ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy => new
-                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.HandlebarsModulePath,
-                    this.settings.SinonJsDomModulePath,
-                    this.settings.BabelCoreModulePath,
-                    this.settings.ReactJsxPluginPath,
-                    this.settings.ReactModulePath,
-                    this.settings.ReactDomModulePath,
-                    this.settings.NodeFetchModulePath)
-
-                as TSettings,
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
                 NodeJsZipExecuteHtmlAndCssStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,

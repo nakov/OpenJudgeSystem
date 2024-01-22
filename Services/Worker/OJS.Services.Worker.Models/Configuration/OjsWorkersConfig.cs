@@ -43,8 +43,6 @@ public class OjsWorkersConfig : BaseConfig
     [Required]
     public string CPlusPlusGccCompilerPath { get; set; } = string.Empty;
 
-    public string? NUnitConsoleRunnerPath { get; set; }
-
     [Required]
     public string GolangCompilerPath { get; set; } = string.Empty;
 
@@ -91,22 +89,6 @@ public class OjsWorkersConfig : BaseConfig
 
     [Required]
     public string UnderscoreModulePath { get; set; } = string.Empty;
-
-    public string? BrowserifyModulePath { get; set; }
-
-    public string? BabelifyModulePath { get; set; }
-
-    public string? Es2015ImportPluginPath { get; set; }
-
-    public string? BabelCoreModulePath { get; set; }
-
-    public string? ReactJsxPluginPath { get; set; }
-
-    public string? ReactModulePath { get; set; }
-
-    public string? ReactDomModulePath { get; set; }
-
-    public string? NodeFetchModulePath { get; set; }
 
     [Required]
     public string BootstrapModulePath { get; set; } = string.Empty;
