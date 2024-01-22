@@ -322,9 +322,11 @@ public class _$TestRunner {{
         }
     }
 
-#pragma warning disable SA1402
-    public class JavaUnitTestsExecutionStrategySettings : JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record JavaUnitTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string JavaExecutablePath,
+        string JavaLibrariesPath,
+        int BaseUpdateTimeOffset) : JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
+        BaseTimeUsed, BaseMemoryUsed, JavaExecutablePath, JavaLibrariesPath, BaseUpdateTimeOffset);
 }

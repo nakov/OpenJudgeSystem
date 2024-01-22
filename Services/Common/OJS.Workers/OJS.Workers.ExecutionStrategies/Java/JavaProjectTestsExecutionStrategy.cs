@@ -341,9 +341,11 @@ class Classes{{
         }
     }
 
-#pragma warning disable SA1402
-    public class JavaProjectTestsExecutionStrategySettings : JavaUnitTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record JavaProjectTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string JavaExecutablePath,
+        string JavaLibrariesPath,
+        int BaseUpdateTimeOffset) : JavaUnitTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed,
+        JavaExecutablePath, JavaLibrariesPath, BaseUpdateTimeOffset);
 }

@@ -221,12 +221,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         }
     }
 
-#pragma warning disable SA1402
-    public class BaseSqlExecutionStrategySettings : BaseExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string MasterDbConnectionString { get; set; } = string.Empty;
-        public string RestrictedUserId { get; set; } = string.Empty;
-        public string RestrictedUserPassword { get; set; } = string.Empty;
-    }
+    public abstract record BaseSqlExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseExecutionStrategySettings;
 }

@@ -21,7 +21,7 @@
             IExecutionStrategySettingsProvider settingsProvider)
         {
             this.Type = type;
-            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type) !;
+            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)!;
         }
 
         protected ExecutionStrategyType Type { get; }
@@ -103,9 +103,7 @@
             => executionContext.Code;
     }
 
-#pragma warning disable SA1402
-    public abstract class BaseExecutionStrategySettings : IExecutionStrategySettings
-#pragma warning restore SA1402
+    public abstract record BaseExecutionStrategySettings : IExecutionStrategySettings
     {
     }
 }

@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Helpers;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
-using Infrastructure.Exceptions;
-using Data;
-using Models.Submissions;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Submissions;
 using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
@@ -31,7 +30,7 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
 using Microsoft.Extensions.Logging;
-using static Constants.PublicSubmissions;
+using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -163,7 +162,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
 
         var validationResult =
-            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest) !);
+            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest));
 
         if (!validationResult.IsValid)
         {
@@ -418,7 +417,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             (participant?.Contest,
                 participant?.ContestId,
                 currentUser,
-                model.Official) !);
+                model.Official)!);
 
         var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
             participant!.Id,

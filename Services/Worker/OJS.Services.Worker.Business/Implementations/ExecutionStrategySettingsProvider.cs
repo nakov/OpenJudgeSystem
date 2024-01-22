@@ -33,488 +33,400 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => executionStrategyType switch
         {
             ExecutionStrategyType.CompileExecuteAndCheck => new
-                CompileExecuteAndCheckExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.MsBuildBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.MsBuildBaseMemoryUsedInBytes,
-                }
+                CompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.MsBuildBaseTimeUsedInMilliseconds,
+                    this.settings.MsBuildBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck => new
-                NodeJsPreprocessExecuteAndCheckExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds * 2,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds * 2,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath)
 
                 as TSettings,
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck => new
-                JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
-                    BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
-                    BaseUpdateTimeOffset = this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
-                }
+                JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.JavaBaseTimeUsedInMilliseconds,
+                    this.settings.JavaBaseMemoryUsedInBytes,
+                    this.settings.JavaExecutablePath,
+                    this.settings.JavaLibsPath,
+                    this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
             ExecutionStrategyType.CheckOnly => new
-                CheckOnlyExecutionStrategySettings
-                {
-                    BaseTimeUsed = 0, BaseMemoryUsed = 0,
-                }
+                CheckOnlyExecutionStrategySettings(0, 0)
 
                 as TSettings,
             ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck => new
-                JavaZipFileCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
-                    BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
-                }
+                JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.JavaBaseTimeUsedInMilliseconds,
+                    this.settings.JavaBaseMemoryUsedInBytes,
+                    this.settings.JavaExecutablePath,
+                    this.settings.JavaLibsPath,
+                    this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
             ExecutionStrategyType.PythonExecuteAndCheck => new
-                PythonExecuteAndCheckExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePath,
-                    BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.PythonBaseMemoryUsedInBytes,
-                }
+                PythonExecuteAndCheckExecutionStrategySettings(
+                    this.settings.PythonBaseTimeUsedInMilliseconds,
+                    this.settings.PythonBaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha => new
-                NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.SinonModulePath,
+                    this.settings.SinonChaiModulePath)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests => new
-                NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    HandlebarsModulePath = this.settings.HandlebarsModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.SinonModulePath,
+                    this.settings.SinonChaiModulePath,
+                    this.settings.JsDomModulePath,
+                    this.settings.JQueryModulePath,
+                    this.settings.HandlebarsModulePath)
 
                 as TSettings,
             ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries => new
-                MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.MySqlSysDbConnectionString,
-                    RestrictedUserId = this.settings.MySqlRestrictedUserId,
-                    RestrictedUserPassword = this.settings.MySqlRestrictedUserPassword,
-                }
+                MySqlPrepareDatabaseAndRunQueriesExecutionStrategySettings(
+                    this.settings.MySqlSysDbConnectionString,
+                    this.settings.MySqlRestrictedUserId,
+                    this.settings.MySqlRestrictedUserPassword)
 
                 as TSettings,
             ExecutionStrategyType.MySqlRunQueriesAndCheckDatabase => new
-                MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.MySqlSysDbConnectionString,
-                    RestrictedUserId = this.settings.MySqlRestrictedUserId,
-                    RestrictedUserPassword = this.settings.MySqlRestrictedUserPassword,
-                }
+                MySqlRunQueriesAndCheckDatabaseExecutionStrategySettings(
+                    this.settings.MySqlSysDbConnectionString,
+                    this.settings.MySqlRestrictedUserId,
+                    this.settings.MySqlRestrictedUserPassword)
 
                 as TSettings,
             ExecutionStrategyType.MySqlRunSkeletonRunQueriesAndCheckDatabase => new
-                MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.MySqlSysDbConnectionString,
-                    RestrictedUserId = this.settings.MySqlRestrictedUserId,
-                    RestrictedUserPassword = this.settings.MySqlRestrictedUserPassword,
-                }
+                MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings(
+                    this.settings.MySqlSysDbConnectionString,
+                    this.settings.MySqlRestrictedUserId,
+                    this.settings.MySqlRestrictedUserPassword)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy => new
-                NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    HandlebarsModulePath = this.settings.HandlebarsModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.SinonModulePath,
+                    this.settings.SinonChaiModulePath,
+                    this.settings.JsDomModulePath,
+                    this.settings.JQueryModulePath,
+                    this.settings.HandlebarsModulePath)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha => new
-                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    HandlebarsModulePath = this.settings.HandlebarsModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BrowserifyModulePath = this.settings.BrowserifyModulePath,
-                    BabelifyModulePath = this.settings.BabelifyModulePath,
-                    EcmaScriptImportPluginPath = this.settings.Es2015ImportPluginPath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.SinonModulePath,
+                    this.settings.SinonChaiModulePath,
+                    this.settings.JsDomModulePath,
+                    this.settings.JQueryModulePath,
+                    this.settings.HandlebarsModulePath,
+                    this.settings.BrowserifyModulePath,
+                    this.settings.BabelifyModulePath,
+                    this.settings.Es2015ImportPluginPath)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy => new
-                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    HandlebarsModulePath = this.settings.HandlebarsModulePath,
-                    SinonJsDomModulePath = this.settings.SinonJsDomModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BabelCoreModulePath = this.settings.BabelCoreModulePath,
-                    ReactJsxPluginPath = this.settings.ReactJsxPluginPath,
-                    ReactModulePath = this.settings.ReactModulePath,
-                    ReactDomModulePath = this.settings.ReactDomModulePath,
-                    NodeFetchModulePath = this.settings.NodeFetchModulePath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.SinonModulePath,
+                    this.settings.SinonChaiModulePath,
+                    this.settings.JsDomModulePath,
+                    this.settings.JQueryModulePath,
+                    this.settings.HandlebarsModulePath,
+                    this.settings.SinonJsDomModulePath,
+                    this.settings.BabelCoreModulePath,
+                    this.settings.ReactJsxPluginPath,
+                    this.settings.ReactModulePath,
+                    this.settings.ReactDomModulePath,
+                    this.settings.NodeFetchModulePath)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
-                NodeJsZipExecuteHtmlAndCssStrategySettings
-                {
-                    NodeJsExecutablePath = this.settings.NodeJsExecutablePath,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    SinonModulePath = this.settings.SinonModulePath,
-                    SinonChaiModulePath = this.settings.SinonChaiModulePath,
-                    JsDomModulePath = this.settings.JsDomModulePath,
-                    JQueryModulePath = this.settings.JQueryModulePath,
-                    UnderscoreModulePath = this.settings.UnderscoreModulePath,
-                    BootstrapModulePath = this.settings.BootstrapModulePath,
-                    BootstrapCssPath = this.settings.BootstrapCssPath,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                NodeJsZipExecuteHtmlAndCssStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.NodeJsExecutablePath,
+                    this.settings.UnderscoreModulePath,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.SinonModulePath,
+                    this.settings.SinonChaiModulePath,
+                    this.settings.JsDomModulePath,
+                    this.settings.JQueryModulePath,
+                    this.settings.BootstrapModulePath,
+                    this.settings.BootstrapCssPath)
 
                 as TSettings,
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy => new
-                JavaProjectTestsExecutionStrategySettings
-                {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
-                    BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
-                }
+                JavaProjectTestsExecutionStrategySettings(
+                    this.settings.JavaBaseTimeUsedInMilliseconds,
+                    this.settings.JavaBaseMemoryUsedInBytes,
+                    this.settings.JavaExecutablePath,
+                    this.settings.JavaLibsPath,
+                    this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
             ExecutionStrategyType.CPlusPlusZipFileExecutionStrategy => new
-                CPlusPlusZipFileExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.GPlusPlusBaseMemoryUsedInBytes,
-                }
+                CPlusPlusZipFileExecutionStrategySettings(
+                    this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
+                    this.settings.GPlusPlusBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.JavaUnitTestsExecutionStrategy => new
-                JavaUnitTestsExecutionStrategySettings
-                {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
-                    BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
-                }
+                JavaUnitTestsExecutionStrategySettings(
+                    this.settings.JavaBaseTimeUsedInMilliseconds,
+                    this.settings.JavaBaseMemoryUsedInBytes,
+                    this.settings.JavaExecutablePath,
+                    this.settings.JavaLibsPath,
+                    this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
 
                 as TSettings,
             ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy => new
-                CPlusPlusCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.GPlusPlusBaseMemoryUsedInBytes,
-                }
+                CPlusPlusCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
+                    this.settings.GPlusPlusBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy => new
-                JavaSpringAndHibernateProjectExecutionStrategySettings
-                {
-                    JavaExecutablePath = this.settings.JavaExecutablePath,
-                    JavaLibrariesPath = this.settings.JavaLibsPath,
-                    MavenPath = this.settings.MavenPath,
-                    BaseTimeUsed = this.settings.JavaBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.JavaBaseMemoryUsedInBytes,
-                }
+                JavaSpringAndHibernateProjectExecutionStrategySettings(
+                    this.settings.JavaBaseTimeUsedInMilliseconds,
+                    this.settings.JavaBaseMemoryUsedInBytes,
+                    this.settings.JavaExecutablePath,
+                    this.settings.JavaLibsPath,
+                    this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
+                    this.settings.MavenPath)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectExecutionStrategy => new
-                DotNetCoreProjectExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreProjectExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy => new
-                DotNetCoreProjectTestsExecutionStrategySettings
-                {
-                    TargetFrameworkName = "netcoreapp3.1",
-                    MicrosoftEntityFrameworkCoreInMemoryVersion = "3.1.4",
-                    MicrosoftEntityFrameworkCoreProxiesVersion = "3.1.4",
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreProjectTestsExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    "netcoreapp3.1",
+                    "3.1.4",
+                    "3.1.4")
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => new
-                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    DotNetCoreRuntimeVersion = this.settings.DotNetCore3RuntimeVersion,
-                    BaseTimeUsed = this.settings.DotNetCscBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCscBaseMemoryUsedInBytes,
-                }
+                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.DotNetCscBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCscBaseMemoryUsedInBytes,
+                    this.settings.DotNetCore3RuntimeVersion)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreUnitTestsExecutionStrategy => new
-                DotNetCoreUnitTestsExecutionStrategySettings
-                {
-                    TargetFrameworkName = "netcoreapp3.1",
-                    MicrosoftEntityFrameworkCoreInMemoryVersion = "3.1.4",
-                    MicrosoftEntityFrameworkCoreProxiesVersion = "3.1.4",
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreUnitTestsExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    "netcoreapp3.1",
+                    "3.1.4",
+                    "3.1.4")
 
                 as TSettings,
             ExecutionStrategyType.PythonUnitTests => new
-                PythonProjectUnitTestsExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePath,
-                    BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.PythonBaseMemoryUsedInBytes,
-                }
+                PythonProjectUnitTestsExecutionStrategySettings(
+                    this.settings.PythonBaseTimeUsedInMilliseconds,
+                    this.settings.PythonBaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.PythonCodeExecuteAgainstUnitTests => new
-                PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePath,
-                    BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.PythonBaseMemoryUsedInBytes,
-                }
+                PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings(
+                    this.settings.PythonBaseTimeUsedInMilliseconds,
+                    this.settings.PythonBaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectTests => new
-                PythonProjectUnitTestsExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePath,
-                    BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.PythonBaseMemoryUsedInBytes,
-                }
+                PythonProjectUnitTestsExecutionStrategySettings(
+                    this.settings.PythonBaseTimeUsedInMilliseconds,
+                    this.settings.PythonBaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectUnitTests => new
-                PythonProjectUnitTestsExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePath,
-                    BaseTimeUsed = this.settings.PythonBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.PythonBaseMemoryUsedInBytes,
-                }
+                PythonProjectUnitTestsExecutionStrategySettings(
+                    this.settings.PythonBaseTimeUsedInMilliseconds,
+                    this.settings.PythonBaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.SqlServerSingleDatabasePrepareDatabaseAndRunQueries => new
-                SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.SqlServerLocalDbMasterDbConnectionString,
-                    RestrictedUserId = this.settings.SqlServerLocalDbRestrictedUserId,
-                    RestrictedUserPassword = this.settings.SqlServerLocalDbRestrictedUserPassword,
-                    SubmissionProcessorIdentifier = this.submissionProcessorIdentifier,
-                }
+                SqlServerSingleDatabasePrepareDatabaseAndRunQueriesExecutionStrategySettings(
+                    this.settings.SqlServerLocalDbMasterDbConnectionString,
+                    this.settings.SqlServerLocalDbRestrictedUserId,
+                    this.settings.SqlServerLocalDbRestrictedUserPassword,
+                    this.submissionProcessorIdentifier)
 
                 as TSettings,
             ExecutionStrategyType.SqlServerSingleDatabaseRunQueriesAndCheckDatabase => new
-                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.SqlServerLocalDbMasterDbConnectionString,
-                    RestrictedUserId = this.settings.SqlServerLocalDbRestrictedUserId,
-                    RestrictedUserPassword = this.settings.SqlServerLocalDbRestrictedUserPassword,
-                    SubmissionProcessorIdentifier = this.submissionProcessorIdentifier,
-                }
+                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings(
+                    this.settings.SqlServerLocalDbMasterDbConnectionString,
+                    this.settings.SqlServerLocalDbRestrictedUserId,
+                    this.settings.SqlServerLocalDbRestrictedUserPassword,
+                    this.submissionProcessorIdentifier)
 
                 as TSettings,
             ExecutionStrategyType.SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabase => new
-                SqlServerSingleDatabaseRunQueriesAndCheckDatabaseExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.SqlServerLocalDbMasterDbConnectionString,
-                    RestrictedUserId = this.settings.SqlServerLocalDbRestrictedUserId,
-                    RestrictedUserPassword = this.settings.SqlServerLocalDbRestrictedUserPassword,
-                    SubmissionProcessorIdentifier = this.submissionProcessorIdentifier,
-                }
+                SqlServerSingleDatabaseRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings(
+                    this.settings.SqlServerLocalDbMasterDbConnectionString,
+                    this.settings.SqlServerLocalDbRestrictedUserId,
+                    this.settings.SqlServerLocalDbRestrictedUserPassword,
+                    this.submissionProcessorIdentifier)
 
                 as TSettings,
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy or
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests => new
-                RunSpaAndExecuteMochaTestsExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePath,
-                    JsProjNodeModulesPath = this.settings.JsProjNodeModules,
-                    MochaModulePath = this.settings.MochaModulePath,
-                    ChaiModulePath = this.settings.ChaiModulePath,
-                    PlaywrightChromiumModulePath = this.settings.PlaywrightChromiumModulePath,
-                    PortNumber = this.settings.JsProjDefaultApplicationPortNumber,
-                    BaseTimeUsed = this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.NodeJsBaseMemoryUsedInBytes,
-                }
+                RunSpaAndExecuteMochaTestsExecutionStrategySettings(
+                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
+                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePath,
+                    this.settings.JsProjNodeModules,
+                    this.settings.MochaModulePath,
+                    this.settings.ChaiModulePath,
+                    this.settings.PlaywrightChromiumModulePath)
 
                 as TSettings,
             ExecutionStrategyType.GolangCompileExecuteAndCheck => new
-                GolangCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.GolangBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.GolangBaseMemoryUsedInBytes,
-                }
+                GolangCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.GolangBaseTimeUsedInMilliseconds,
+                    this.settings.GolangBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6ProjectTestsExecutionStrategy => new
-                DotNetCoreProjectTestsExecutionStrategySettings
-                {
-                    TargetFrameworkName = "net6.0",
-                    MicrosoftEntityFrameworkCoreInMemoryVersion = "6.0.1",
-                    MicrosoftEntityFrameworkCoreProxiesVersion = "6.0.1",
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreProjectTestsExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    "net6.0",
+                    "6.0.1",
+                    "6.0.1")
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy => new
-                DotNetCoreProjectTestsExecutionStrategySettings
-                {
-                    TargetFrameworkName = "net5.0",
-                    MicrosoftEntityFrameworkCoreInMemoryVersion = "5.0.13",
-                    MicrosoftEntityFrameworkCoreProxiesVersion = "5.0.13",
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreProjectTestsExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    "net5.0",
+                    "5.0.13",
+                    "5.0.13")
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => new
-                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    DotNetCoreRuntimeVersion = this.settings.DotNetCore5RuntimeVersion,
-                    BaseTimeUsed = this.settings.DotNetCscBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCscBaseMemoryUsedInBytes,
-                }
+                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.DotNetCscBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCscBaseMemoryUsedInBytes,
+                    this.settings.DotNetCore5RuntimeVersion)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6CompileExecuteAndCheck => new
-                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
-                {
-                    DotNetCoreRuntimeVersion = this.settings.DotNetCore6RuntimeVersion,
-                    BaseTimeUsed = this.settings.DotNetCscBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCscBaseMemoryUsedInBytes,
-                }
+                DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
+                    this.settings.DotNetCscBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCscBaseMemoryUsedInBytes,
+                    this.settings.DotNetCore6RuntimeVersion)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5UnitTestsExecutionStrategy => new
-                DotNetCoreUnitTestsExecutionStrategySettings
-                {
-                    TargetFrameworkName = "net5.0",
-                    MicrosoftEntityFrameworkCoreInMemoryVersion = "5.0.13",
-                    MicrosoftEntityFrameworkCoreProxiesVersion = "5.0.13",
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreUnitTestsExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    "net5.0",
+                    "5.0.13",
+                    "5.0.13")
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6UnitTestsExecutionStrategy => new
-                DotNetCoreUnitTestsExecutionStrategySettings
-                {
-                    TargetFrameworkName = "net6.0",
-                    MicrosoftEntityFrameworkCoreInMemoryVersion = "6.0.1",
-                    MicrosoftEntityFrameworkCoreProxiesVersion = "6.0.1",
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreUnitTestsExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    "net6.0",
+                    "6.0.1",
+                    "6.0.1")
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5ProjectExecutionStrategy => new
-                DotNetCoreProjectExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreProjectExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6ProjectExecutionStrategy => new
-                DotNetCoreProjectExecutionStrategySettings
-                {
-                    BaseTimeUsed = this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.DotNetCliBaseMemoryUsedInBytes,
-                }
+                DotNetCoreProjectExecutionStrategySettings(
+                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
+                    this.settings.DotNetCliBaseMemoryUsedInBytes)
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries => new
-                PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.PostgreSqlMasterDbConnectionString,
-                    RestrictedUserId = this.settings.PostgreSqlRestrictedUserId,
-                    RestrictedUserPassword = this.settings.PostgreSqlRestrictedUserPassword,
-                    SubmissionProcessorIdentifier = this.submissionProcessorIdentifier,
-                }
+                PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings(
+                    this.settings.PostgreSqlMasterDbConnectionString,
+                    this.settings.PostgreSqlRestrictedUserId,
+                    this.settings.PostgreSqlRestrictedUserPassword,
+                    this.submissionProcessorIdentifier)
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlRunQueriesAndCheckDatabase => new
-                PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.PostgreSqlMasterDbConnectionString,
-                    RestrictedUserId = this.settings.PostgreSqlRestrictedUserId,
-                    RestrictedUserPassword = this.settings.PostgreSqlRestrictedUserPassword,
-                    SubmissionProcessorIdentifier = this.submissionProcessorIdentifier,
-                }
+                PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings(
+                    this.settings.PostgreSqlMasterDbConnectionString,
+                    this.settings.PostgreSqlRestrictedUserId,
+                    this.settings.PostgreSqlRestrictedUserPassword,
+                    this.submissionProcessorIdentifier)
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlRunSkeletonRunQueriesAndCheckDatabase => new
-                PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
-                {
-                    MasterDbConnectionString = this.settings.PostgreSqlMasterDbConnectionString,
-                    RestrictedUserId = this.settings.PostgreSqlRestrictedUserId,
-                    RestrictedUserPassword = this.settings.PostgreSqlRestrictedUserPassword,
-                    SubmissionProcessorIdentifier = this.submissionProcessorIdentifier,
-                }
+                PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings(
+                    this.settings.PostgreSqlMasterDbConnectionString,
+                    this.settings.PostgreSqlRestrictedUserId,
+                    this.settings.PostgreSqlRestrictedUserPassword,
+                    this.submissionProcessorIdentifier)
 
                 as TSettings,
             ExecutionStrategyType.PythonDjangoOrmExecutionStrategy => new
-                PythonDjangoOrmExecutionStrategySettings
-                {
-                    PythonExecutablePath = this.settings.PythonExecutablePathV311,
-                    PipExecutablePath = this.settings.PipExecutablePathV311,
-                    BaseTimeUsed = this.settings.PythonV311BaseTimeUsedInMilliseconds,
-                    BaseMemoryUsed = this.settings.PythonV311BaseMemoryUsedInBytes,
-                    InstallPackagesTimeUsed = this.settings.PythonV311InstallPackagesTimeUsedInMilliseconds,
-                }
+                PythonDjangoOrmExecutionStrategySettings(
+                    this.settings.PythonV311BaseTimeUsedInMilliseconds,
+                    this.settings.PythonV311BaseMemoryUsedInBytes,
+                    this.settings.PythonExecutablePathV311,
+                    this.settings.PipExecutablePathV311,
+                    this.settings.PythonV311InstallPackagesTimeUsedInMilliseconds)
 
                 as TSettings,
             ExecutionStrategyType.DoNothing => new DoNothingExecutionStrategySettings() as TSettings,

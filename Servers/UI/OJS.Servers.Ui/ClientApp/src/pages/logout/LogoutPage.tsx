@@ -1,20 +1,31 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { useAuth } from '../../hooks/use-auth';
+import { resetInInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { useLogOutMutation } from '../../redux/services/authorizationService';
 import { wait } from '../../utils/promise-utils';
 
 import styles from './LogoutPage.module.scss';
 
 const LogoutPage = () => {
-    const { actions: { signOut } } = useAuth();
+    const [ logout, { isSuccess } ] = useLogOutMutation();
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (isSuccess) {
+            dispatch(resetInInternalUser());
+            dispatch(setIsLoggedIn(false));
+        }
+    }, [ isSuccess ]);
 
     useEffect(() => {
         (async () => {
-            await signOut();
+            await logout(null);
             await wait(0.7);
             window.location.href = '/';
         })();
-    }, [ signOut ]);
+    }, [ logout ]);
 
     return (
         <div className={styles.logout}>

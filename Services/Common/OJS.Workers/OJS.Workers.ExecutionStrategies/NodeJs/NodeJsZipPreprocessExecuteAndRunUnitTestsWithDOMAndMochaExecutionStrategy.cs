@@ -48,10 +48,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
                     $"ECMAScript2015ImportPluginPath not found in: {this.Settings.EcmaScriptImportPluginPath}",
                     nameof(this.Settings.EcmaScriptImportPluginPath));
             }
-
-            this.Settings.BrowserifyModulePath = FileHelpers.ProcessModulePath(this.Settings.BrowserifyModulePath);
-            this.Settings.BabelifyModulePath = FileHelpers.ProcessModulePath(this.Settings.BabelifyModulePath);
-            this.Settings.EcmaScriptImportPluginPath = FileHelpers.ProcessModulePath(this.Settings.EcmaScriptImportPluginPath);
         }
 
         protected string ProgramEntryPath { get; set; }
@@ -203,12 +199,31 @@ function afterBundling() {
         }
     }
 
-#pragma warning disable SA1402
-    public class NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string BrowserifyModulePath { get; set; } = string.Empty;
-        public string BabelifyModulePath { get; set; } = string.Empty;
-        public string EcmaScriptImportPluginPath { get; set; } = string.Empty;
-    }
+    public record NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string SinonModulePath,
+        string SinonChaiModulePath,
+        string JsDomModulePath,
+        string JQueryModulePath,
+        string HandlebarsModulePath,
+        string BrowserifyModulePath,
+        string BabelifyModulePath,
+        string EcmaScriptImportPluginPath)
+        : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(
+            BaseTimeUsed,
+            BaseMemoryUsed,
+            NodeJsExecutablePath,
+            UnderscoreModulePath,
+            MochaModulePath,
+            ChaiModulePath,
+            SinonModulePath,
+            SinonChaiModulePath,
+            JsDomModulePath,
+            JQueryModulePath,
+            HandlebarsModulePath);
 }

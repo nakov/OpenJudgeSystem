@@ -7,7 +7,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -42,10 +41,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
                     $"Handlebars not found in: {this.Settings.HandlebarsModulePath}",
                     nameof(this.Settings.HandlebarsModulePath));
             }
-
-            this.Settings.JsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.JsDomModulePath);
-            this.Settings.JQueryModulePath = FileHelpers.ProcessModulePath(this.Settings.JQueryModulePath);
-            this.Settings.HandlebarsModulePath = FileHelpers.ProcessModulePath(this.Settings.HandlebarsModulePath);
         }
 
         protected override string JsCodeRequiredModules => base.JsCodeRequiredModules + @",
@@ -183,12 +178,25 @@ it('Test{testsCount++}', function(done) {{
         }
     }
 
-#pragma warning disable SA1402
-    public class NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string JsDomModulePath { get; set; } = string.Empty;
-        public string JQueryModulePath { get; set; } = string.Empty;
-        public string HandlebarsModulePath { get; set; } = string.Empty;
-    }
+    public record NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string SinonModulePath,
+        string SinonChaiModulePath,
+        string JsDomModulePath,
+        string JQueryModulePath,
+        string HandlebarsModulePath)
+        : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(
+            BaseTimeUsed,
+            BaseMemoryUsed,
+            NodeJsExecutablePath,
+            UnderscoreModulePath,
+            MochaModulePath,
+            ChaiModulePath,
+            SinonModulePath,
+            SinonChaiModulePath);
 }

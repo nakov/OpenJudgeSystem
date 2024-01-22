@@ -382,12 +382,11 @@ class _$SandboxSecurityManager extends SecurityManager {
         }
     }
 
-#pragma warning disable SA1402
-    public class JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string JavaExecutablePath { get; set; } = string.Empty;
-        public string JavaLibrariesPath { get; set; } = string.Empty;
-        public int BaseUpdateTimeOffset { get; set; }
-    }
+    public record JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string JavaExecutablePath,
+        string JavaLibrariesPath,
+        int BaseUpdateTimeOffset)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

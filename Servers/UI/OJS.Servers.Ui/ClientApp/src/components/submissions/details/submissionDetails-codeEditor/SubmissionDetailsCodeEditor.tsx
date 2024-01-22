@@ -4,8 +4,8 @@ import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
+import { IAuthorizationReduxState } from '../../../../redux/features/authorizationSlice';
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
 import { useSaveAttachmentQuery } from '../../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../../utils/class-names';
@@ -25,11 +25,10 @@ const SubmissionDetailsCodeEditor = () => {
     const [ shouldFetch, setShouldFetch ] = useState<boolean>(true);
     const [ testsChangedBoxClosed, setTestsChangedBoxClosed ] = useState<boolean>(false);
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const { currentSubmission, downloadErrorMessage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
-
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
 
     const { retestIsSuccess } =
@@ -84,9 +83,9 @@ const SubmissionDetailsCodeEditor = () => {
             }
 
             const { submissionType: { allowBinaryFilesUpload }, user: { userName: submissionUserName } } = currentSubmission;
-            const { username: loggedInUserName } = user;
+            const { userName: loggedInUserName } = user;
 
-            if ((!canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
+            if ((!user.canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
                 return null;
             }
 
@@ -102,7 +101,7 @@ const SubmissionDetailsCodeEditor = () => {
                 </div>
             );
         },
-        [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
+        [ handleDownloadSubmissionFile, user, currentSubmission ],
     );
 
     const problemNameHeadingText = useMemo(

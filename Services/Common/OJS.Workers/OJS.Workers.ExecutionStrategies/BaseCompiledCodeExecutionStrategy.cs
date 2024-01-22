@@ -116,9 +116,10 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class BaseCompiledCodeExecutionStrategySettings : BaseCodeExecutionStrategySettings
-#pragma warning restore SA1402
+    public abstract record BaseCompiledCodeExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed)
     {
     }
 }

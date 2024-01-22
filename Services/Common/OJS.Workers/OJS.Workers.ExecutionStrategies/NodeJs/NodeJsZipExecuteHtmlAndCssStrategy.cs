@@ -52,11 +52,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
                     $"Bootstrap CSS not found in: {this.Settings.BootstrapCssPath}",
                     nameof(this.Settings.BootstrapCssPath));
             }
-
-            this.Settings.JsDomModulePath = FileHelpers.ProcessModulePath(this.Settings.JsDomModulePath);
-            this.Settings.JQueryModulePath = FileHelpers.ProcessModulePath(this.Settings.JQueryModulePath);
-            this.Settings.BootstrapModulePath = FileHelpers.ProcessModulePath(this.Settings.BootstrapModulePath);
-            this.Settings.BootstrapCssPath = FileHelpers.ProcessModulePath(this.Settings.BootstrapCssPath);
         }
 
         protected string ProgramEntryPath { get; set; }
@@ -252,13 +247,20 @@ describe('TestDOMScope', function() {{
         }
     }
 
-#pragma warning disable SA1402
-    public class NodeJsZipExecuteHtmlAndCssStrategySettings : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string JsDomModulePath { get; set; } = string.Empty;
-        public string JQueryModulePath { get; set; } = string.Empty;
-        public string BootstrapModulePath { get; set; } = string.Empty;
-        public string BootstrapCssPath { get; set; } = string.Empty;
-    }
+    public record NodeJsZipExecuteHtmlAndCssStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string SinonModulePath,
+        string SinonChaiModulePath,
+        string JsDomModulePath,
+        string JQueryModulePath,
+        string BootstrapModulePath,
+        string BootstrapCssPath)
+        : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed,
+            NodeJsExecutablePath, UnderscoreModulePath, MochaModulePath, ChaiModulePath, SinonModulePath,
+            SinonChaiModulePath);
 }
