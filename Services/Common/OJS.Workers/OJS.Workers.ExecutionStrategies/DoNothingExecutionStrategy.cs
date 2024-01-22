@@ -25,9 +25,7 @@ namespace OJS.Workers.ExecutionStrategies
         }
     }
 
-#pragma warning disable SA1402
-    public class DoNothingExecutionStrategySettings : BaseExecutionStrategySettings
-#pragma warning restore SA1402
+    public record DoNothingExecutionStrategySettings : BaseExecutionStrategySettings
     {
     }
 }

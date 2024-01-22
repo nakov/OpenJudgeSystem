@@ -1,7 +1,7 @@
 namespace OJS.Services.Common.Validation.Helpers.Implementations;
 
 using OJS.Services.Common.Models;
-using static ValidationConstants;
+using static OJS.Services.Common.Validation.ValidationConstants;
 
 public class NotDefaultValueValidationHelper : INotDefaultValueValidationHelper
 {

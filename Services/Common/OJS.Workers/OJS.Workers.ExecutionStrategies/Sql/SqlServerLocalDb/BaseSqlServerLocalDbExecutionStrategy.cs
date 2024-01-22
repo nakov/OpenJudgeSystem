@@ -1,9 +1,9 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb
 {
+    using Microsoft.Data.SqlClient;
     using OJS.Workers.Common.Models;
     using System;
     using System.Data;
-    using System.Data.SqlClient;
     using System.Globalization;
     using System.Text.RegularExpressions;
 
@@ -126,9 +126,9 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class BaseSqlServerLocalDbExecutionStrategySettings : BaseSqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public abstract record BaseSqlServerLocalDbExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseSqlExecutionStrategySettings(MasterDbConnectionString, RestrictedUserId, RestrictedUserPassword);
 }

@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Validation.Implementations.ContestCategories;
 
-using Models.Contests.Categories;
+using OJS.Services.Administration.Models.Contests.Categories;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Models;
 

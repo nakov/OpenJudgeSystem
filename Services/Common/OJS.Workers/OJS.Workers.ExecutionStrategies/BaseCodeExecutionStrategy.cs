@@ -107,11 +107,7 @@
                 : FileHelpers.SaveByteArrayToTempFile(this.WorkingDirectory, executionContext.FileContent);
     }
 
-#pragma warning disable SA1402
-    public class BaseCodeExecutionStrategySettings : BaseExecutionStrategySettings
-#pragma warning restore SA1402
+    public abstract record BaseCodeExecutionStrategySettings(int BaseTimeUsed, int BaseMemoryUsed) : BaseExecutionStrategySettings
     {
-        public int BaseTimeUsed { get; set; }
-        public int BaseMemoryUsed { get; set; }
     }
 }

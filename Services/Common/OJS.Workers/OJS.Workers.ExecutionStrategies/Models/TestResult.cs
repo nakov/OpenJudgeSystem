@@ -12,7 +12,7 @@ namespace OJS.Workers.ExecutionStrategies.Models
 
         public TestRunResultType ResultType { get; set; }
 
-        public CheckerDetails CheckerDetails { get; set; } = new ();
+        public CheckerDetails CheckerDetails { get; set; } = new();
 
         public bool IsTrialTest { get; set; }
 

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -12,8 +13,8 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ContestModal from '../../components/modal/ContestModal';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { useAuth } from '../../hooks/use-auth';
 import { useCurrentContest } from '../../hooks/use-current-contest';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
@@ -45,16 +46,8 @@ const ContestPage = () => {
         },
     } = useCurrentContest();
 
-    const { state: { user } } = useAuth();
-
-    const isUserAdmin = useMemo(
-        () => {
-            const { permissions: { canAccessAdministration } } = user;
-
-            return canAccessAdministration;
-        },
-        [ user ],
-    );
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const contestIdToNumber = useMemo(
         () => Number(contestId),
@@ -134,19 +127,11 @@ const ContestPage = () => {
                         <SpinningLoader />
                     </div>
                 )
-                : contest?.isOnline && isParticipationOfficial && !userHasConfirmedModal && !isUserAdmin
+                : contest?.isOnline && isParticipationOfficial && !userHasConfirmedModal && !user.isAdmin
                     ? <ContestModal showModal contest={modalContest} />
                     : <Contest />
             : renderErrorMessage(),
-        [
-            contestError,
-            renderErrorMessage,
-            userHasConfirmedModal,
-            isParticipationOfficial,
-            modalContest,
-            isUserAdmin,
-            contest,
-        ],
+        [ contestError, contest, isParticipationOfficial, userHasConfirmedModal, user.isAdmin, modalContest, renderErrorMessage ],
     );
 
     useEffect(

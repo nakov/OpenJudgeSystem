@@ -34,9 +34,6 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class CPlusPlusCompileExecuteAndCheckExecutionStrategySettings : CompileExecuteAndCheckExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record CPlusPlusCompileExecuteAndCheckExecutionStrategySettings(int BaseTimeUsed, int BaseMemoryUsed)
+        : CompileExecuteAndCheckExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

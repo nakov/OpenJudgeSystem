@@ -59,5 +59,5 @@ public class ProblemResultPairViewModel
 
     public int MaximumPoints { get; set; }
 
-    public BestSubmissionViewModel BestSubmission { get; set; } = new ();
+    public BestSubmissionViewModel BestSubmission { get; set; } = new();
 }

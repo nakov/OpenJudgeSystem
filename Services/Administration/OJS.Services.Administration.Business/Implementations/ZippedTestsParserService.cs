@@ -250,7 +250,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
 
             foreach (var output in outOutputs)
             {
-                var inputFileName = inputFileSignature + output.Name[output.Name.LastIndexOf('.') ..];
+                var inputFileName = inputFileSignature + output.Name[output.Name.LastIndexOf('.')..];
 
                 var input = GetUniqueInputByFileName(zipFile, inputFileName);
 
@@ -265,7 +265,7 @@ public class ZippedTestsParserService : IZippedTestsParserService
         ZipArchiveEntry output,
         string extension)
     {
-        var fileName = output.Name[.. (output.Name.Length - extension.Length - 1)] + extension;
+        var fileName = output.Name[..(output.Name.Length - extension.Length - 1)] + extension;
 
         return GetUniqueInputByFileName(zipFile, fileName);
     }

@@ -134,7 +134,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 this.ExecutionArguments.Concat(new[]
                 {
                     $"manage.py test --pattern=\"{testPath.Split(Path.DirectorySeparatorChar).Last()}\"",
-                }), executor,
+                }),
+                executor,
                 executionContext);
 
             this.FixReceivedOutput(processExecutionResult);
@@ -232,11 +233,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 true);
     }
 
-#pragma warning disable SA1402
-    public class PythonDjangoOrmExecutionStrategySettings : PythonProjectTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string PipExecutablePath { get; set; } = string.Empty;
-        public int InstallPackagesTimeUsed { get; set; }
-    }
+    public record PythonDjangoOrmExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath,
+        string PipExecutablePath,
+        int InstallPackagesTimeUsed)
+        : PythonProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, PythonExecutablePath);
 }

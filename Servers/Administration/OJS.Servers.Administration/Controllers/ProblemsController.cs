@@ -517,7 +517,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         EntityAction action,
         IDictionary<string, string> entityDict)
     {
-        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
+        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id)!;
         await this.contestsValidationHelper
             .ValidatePermissionsOfCurrentUser(GetContestId(entity, entityDict))
             .VerifyResult();
@@ -525,7 +525,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     protected override async Task BeforeEntitySaveAsync(Problem entity, AdminActionContext actionContext)
     {
-        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id) !;
+        entity.ProblemGroup = this.problemGroupsData.GetByProblem(entity.Id)!;
         entity.SubmissionTypesInProblems = await this.problemsData.GetByIdQuery(entity.Id)
             .SelectMany(p => p.SubmissionTypesInProblems)
             .ToListAsync();
@@ -564,7 +564,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
         Problem newEntity,
         AdminActionContext actionContext)
     {
-        originalEntity.ProblemGroup = this.problemGroupsData.GetByProblem(originalEntity.Id) !;
+        originalEntity.ProblemGroup = this.problemGroupsData.GetByProblem(originalEntity.Id)!;
         newEntity.ProblemGroup.Type = actionContext.GetProblemGroupType().GetValidTypeOrNull();
 
         if (!originalEntity.ProblemGroup.Contest.IsOnlineExam)
@@ -671,9 +671,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .Select(x => new SubmissionTypeInProblem
             {
                 ProblemId = problem.Id,
-                SubmissionTypeId = int.Parse(x.Value!.ToString() !),
+                SubmissionTypeId = int.Parse(x.Value!.ToString()!),
                 SolutionSkeleton = x.Expand != null
-                    ? x.Expand!.Value!.ToString() !.Compress()
+                    ? x.Expand!.Value!.ToString()!.Compress()
                     : Array.Empty<byte>(),
             });
 
@@ -742,9 +742,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
-            new () { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
-            new () { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
+            new() { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
+            new() { Name = "Delete all", Action = nameof(this.DeleteAll), RouteValues = routeValues, },
+            new() { Name = "Copy all", Action = nameof(this.CopyAll), RouteValues = routeValues, },
         };
     }
 }

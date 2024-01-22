@@ -75,7 +75,7 @@ public class ContestsExportController : BaseAdminViewController
         {
             SubmissionExportType.BestSubmissions => this.GetBestSubmission,
             SubmissionExportType.LastSubmissions => this.GetLastSubmission,
-            _ => null
+            _ => null,
         };
 
         var files = this.ZipParticipantsSolutions(participants, problems, getSubmissionFunc).ToList();

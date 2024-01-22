@@ -55,9 +55,6 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class CompileExecuteAndCheckExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record CompileExecuteAndCheckExecutionStrategySettings(int BaseTimeUsed, int BaseMemoryUsed)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

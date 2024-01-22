@@ -225,9 +225,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
         }
     }
 
-#pragma warning disable SA1402
-    public class PythonProjectUnitTestsExecutionStrategySettings : PythonUnitTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record PythonProjectUnitTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath)
+        : PythonUnitTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, PythonExecutablePath);
 }

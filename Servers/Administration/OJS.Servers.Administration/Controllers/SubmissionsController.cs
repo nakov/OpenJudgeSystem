@@ -85,12 +85,12 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     protected override IEnumerable<CustomGridColumn<Submission>> CustomColumns
         => new CustomGridColumn<Submission>[]
         {
-            new ()
+            new()
             {
                 Name = nameof(Contest),
                 ValueFunc = s => s.Problem!.ProblemGroup.Contest.Name ?? string.Empty,
             },
-            new ()
+            new()
             {
                 Name = "Contest Id",
                 ValueFunc = s => s.Problem!.ProblemGroup.ContestId.ToString(),

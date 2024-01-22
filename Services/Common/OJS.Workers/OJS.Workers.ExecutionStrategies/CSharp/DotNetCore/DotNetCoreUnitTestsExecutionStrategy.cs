@@ -194,9 +194,13 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         }
     }
 
-#pragma warning disable SA1402
-    public class DotNetCoreUnitTestsExecutionStrategySettings : DotNetCoreProjectTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record DotNetCoreUnitTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string TargetFrameworkName,
+        string MicrosoftEntityFrameworkCoreInMemoryVersion,
+        string MicrosoftEntityFrameworkCoreProxiesVersion)
+        : DotNetCoreProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed,
+            TargetFrameworkName, MicrosoftEntityFrameworkCoreInMemoryVersion,
+            MicrosoftEntityFrameworkCoreProxiesVersion);
 }

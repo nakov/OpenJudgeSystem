@@ -32,9 +32,10 @@
             => this.ExecuteNonQuery(connection, executionContext.Code, executionContext.TimeLimit);
     }
 
-#pragma warning disable SA1402
-    public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings : BasePostgreSqlExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword,
+        string SubmissionProcessorIdentifier) : BasePostgreSqlExecutionStrategySettings(MasterDbConnectionString,
+        RestrictedUserId, RestrictedUserPassword, SubmissionProcessorIdentifier);
 }

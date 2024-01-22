@@ -364,7 +364,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 var dependencyNode = rootNode
                     .SelectSingleNode(
                      DependencyNodeXPathTemplate
-                    .Replace("##", groupIdArtifactId.Key).Replace("!!", groupIdArtifactId.Value.Item1), namespaceManager);
+                        .Replace("##", groupIdArtifactId.Key)
+                        .Replace("!!", groupIdArtifactId.Value.Item1),
+                     namespaceManager);
 
                 if (dependencyNode == null)
                 {
@@ -454,10 +456,13 @@ namespace OJS.Workers.ExecutionStrategies.Java
         }
     }
 
-#pragma warning disable SA1402
-    public class JavaSpringAndHibernateProjectExecutionStrategySettings : JavaProjectTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string MavenPath { get; set; } = string.Empty;
-    }
+    public record JavaSpringAndHibernateProjectExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string JavaExecutablePath,
+        string JavaLibrariesPath,
+        int BaseUpdateTimeOffset,
+        string MavenPath)
+        : JavaProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, JavaExecutablePath, JavaLibrariesPath,
+            BaseUpdateTimeOffset);
 }

@@ -156,12 +156,11 @@
         }
     }
 
-#pragma warning disable SA1402
-    public class DotNetCoreProjectTestsExecutionStrategySettings : CSharpProjectTestsExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string TargetFrameworkName { get; set; } = string.Empty;
-        public string MicrosoftEntityFrameworkCoreInMemoryVersion { get; set; } = string.Empty;
-        public string MicrosoftEntityFrameworkCoreProxiesVersion { get; set; } = string.Empty;
-    }
+    public record DotNetCoreProjectTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string TargetFrameworkName,
+        string MicrosoftEntityFrameworkCoreInMemoryVersion,
+        string MicrosoftEntityFrameworkCoreProxiesVersion)
+        : CSharpProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

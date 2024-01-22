@@ -68,6 +68,8 @@ http {{
     }}
 }}";
 
+        private int PortNumber { get; set; }
+
         private string TestsPath => FileHelpers.BuildPath(this.WorkingDirectory, TestsDirectoryName);
 
         private string UserApplicationPath => FileHelpers.BuildPath(this.WorkingDirectory, UserApplicationDirectoryName);
@@ -256,7 +258,7 @@ finally:
             var match = Regex.Match(preExecutionResult.ReceivedOutput, @"Container port: (\d+);Container name: ([a-zA-Z-_]+);");
             if (match.Success)
             {
-                this.Settings.PortNumber = int.Parse(match.Groups[1].Value);
+                this.PortNumber = int.Parse(match.Groups[1].Value);
                 this.ContainerName = match.Groups[2].Value;
             }
             else
@@ -480,7 +482,7 @@ finally:
         private string PreprocessTestInput(string testInput)
         {
             testInput = this.ReplaceNodeModulesRequireStatementsInTests(testInput)
-                .Replace(UserApplicationHttpPortPlaceholder, this.Settings.PortNumber.ToString());
+                .Replace(UserApplicationHttpPortPlaceholder, this.PortNumber.ToString());
 
             return OsPlatformHelpers.IsDocker()
                 ? testInput.Replace("localhost", "host.docker.internal")
@@ -490,14 +492,13 @@ finally:
         private string BuildTestPath(int testId) => FileHelpers.BuildPath(this.TestsPath, $"{testId}{JavaScriptFileExtension}");
     }
 
-#pragma warning disable SA1402
-    public class RunSpaAndExecuteMochaTestsExecutionStrategySettings : PythonExecuteAndCheckExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string JsProjNodeModulesPath { get; set; } = string.Empty;
-        public string MochaModulePath { get; set; } = string.Empty;
-        public string ChaiModulePath { get; set; } = string.Empty;
-        public string PlaywrightChromiumModulePath { get; set; } = string.Empty;
-        public int PortNumber { get; set; }
-    }
+    public record RunSpaAndExecuteMochaTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath,
+        string JsProjNodeModulesPath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string PlaywrightChromiumModulePath)
+        : PythonExecuteAndCheckExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, PythonExecutablePath);
 }

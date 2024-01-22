@@ -118,10 +118,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 true);
     }
 
-#pragma warning disable SA1402
-    public class PythonExecuteAndCheckExecutionStrategySettings : BaseInterpretedCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-        public string PythonExecutablePath { get; set; } = string.Empty;
-    }
+    public record PythonExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath)
+        : BaseInterpretedCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

@@ -297,9 +297,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             f => new FileInfo(f).Length);
     }
 
-#pragma warning disable SA1402
-    public class CSharpProjectTestsExecutionStrategySettings : BaseCompiledCodeExecutionStrategySettings
-#pragma warning restore SA1402
-    {
-    }
+    public record CSharpProjectTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

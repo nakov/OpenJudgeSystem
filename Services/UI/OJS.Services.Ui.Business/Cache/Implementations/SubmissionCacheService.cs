@@ -1,11 +1,6 @@
 namespace OJS.Services.Ui.Business.Cache.Implementations;
 
-using OJS.Data.Models.Submissions;
-using System.Linq;
-using X.PagedList;
-using Models.Submissions;
 using OJS.Services.Ui.Data;
-using System.Collections.Generic;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 
