@@ -282,7 +282,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.submissionProcessorIdentifier)
 
                 as TSettings,
-            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy => new
+            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy or
+            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests => new
                 RunSpaAndExecuteMochaTestsExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
