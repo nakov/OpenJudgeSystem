@@ -65,6 +65,9 @@ public class OjsWorkersConfig : BaseConfig
     public string Java17ExecutablePath { get; set; } = string.Empty;
 
     [Required]
+    public string JavaSpringAndHibernateStrategyPomFilePath { get; set; } = string.Empty;
+
+    [Required]
     public string NodeJsExecutablePath { get; set; } = string.Empty;
 
     [Required]
