@@ -31,7 +31,7 @@
                     ContestCompeteMaximumPoints = c.Key.ProblemGroups
                         .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
                         .AsEnumerable()
-                        .Sum(pg => pg.Problems.FirstOrDefault() !.MaximumPoints),
+                        .Sum(pg => pg.Problems.FirstOrDefault()!.MaximumPoints),
                     ContestPracticeMaximumPoints = c.Key.ProblemGroups
                         .SelectMany(pg => pg.Problems)
                         .Where(x => !x.IsDeleted)

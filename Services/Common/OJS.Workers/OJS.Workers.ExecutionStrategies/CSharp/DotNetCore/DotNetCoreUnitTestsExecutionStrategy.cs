@@ -4,6 +4,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Helpers;
@@ -11,7 +12,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Executors;
     using System.Text.RegularExpressions;
 
-    public class DotNetCoreUnitTestsExecutionStrategy : DotNetCoreProjectTestsExecutionStrategy
+    public class DotNetCoreUnitTestsExecutionStrategy<TSettings> : DotNetCoreProjectTestsExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreUnitTestsExecutionStrategySettings
     {
         private readonly IEnumerable<string> packageNamesToRemoveFromUserCsProjFile = new[]
         {
@@ -25,21 +27,11 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         private string nUnitLiteConsoleAppCsProjTemplate;
 
         public DotNetCoreUnitTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            string targetFrameworkName,
-            string microsoftEntityFrameworkCoreInMemoryVersion,
-            string microsoftEntityFrameworkCoreProxiesVersion)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                baseTimeUsed,
-                baseMemoryUsed,
-                targetFrameworkName,
-                microsoftEntityFrameworkCoreInMemoryVersion,
-                microsoftEntityFrameworkCoreProxiesVersion)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 
@@ -86,7 +78,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             var additionalExecutionArgumentsArray = additionalExecutionArguments
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            var compilerPath = this.GetCompilerPathFunc(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
             var testedCodePath = FileHelpers.BuildPath(
                 this.NUnitLiteConsoleAppDirectory,
                 UnitTestStrategiesHelper.testedCodeFileNameWithExtension);
@@ -201,4 +193,14 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             return csProjPath;
         }
     }
+
+    public record DotNetCoreUnitTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string TargetFrameworkName,
+        string MicrosoftEntityFrameworkCoreInMemoryVersion,
+        string MicrosoftEntityFrameworkCoreProxiesVersion)
+        : DotNetCoreProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed,
+            TargetFrameworkName, MicrosoftEntityFrameworkCoreInMemoryVersion,
+            MicrosoftEntityFrameworkCoreProxiesVersion);
 }

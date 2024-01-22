@@ -1,17 +1,44 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { persistReducer, persistStore } from 'redux-persist';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import storage from 'redux-persist/lib/storage';
 
+import authorizationReducer from './features/authorizationSlice';
+// features
 import submissionDetailsReducer from './features/submissionDetailsSlice';
+import authorizationService from './services/authorizationService';
+// services
 import submissionDetailsService from './services/submissionDetailsService';
 
-const store = configureStore({
-    reducer: {
-        [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
-        submissionDetails: submissionDetailsReducer,
-    },
-
-    /* Serialized check is turned off because for cases like blobs it gives exception.
-    Even when it is not serializable we want to receive the response. */
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat(submissionDetailsService.middleware),
+const rootReducer = combineReducers({
+    [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
+    submissionDetails: submissionDetailsReducer,
+    [authorizationService.reducerPath]: authorizationService.reducer,
+    authorization: authorizationReducer,
 });
+
+const persistConfig = (reducersToPersist: string[]) => ({
+    key: 'root',
+    storage,
+    whitelist: reducersToPersist,
+});
+
+// list reducers with data to be persisted here
+const reducersToPersist = [
+    'authorization',
+];
+
+const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
+
+const store = configureStore({
+    reducer: persistRootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat([
+        submissionDetailsService.middleware,
+        authorizationService.middleware,
+    ]),
+});
+
+export const persistor = persistStore(store);
 
 export default store;

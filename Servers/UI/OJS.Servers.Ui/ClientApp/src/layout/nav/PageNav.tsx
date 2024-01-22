@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 import { Button, ButtonType } from '../../components/guidelines/buttons/Button';
 import List, { Orientation } from '../../components/guidelines/lists/List';
-import { useAuth } from '../../hooks/use-auth';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 import styles from './PageNav.module.scss';
 
@@ -22,10 +24,11 @@ const anonymousRoutes = [
     { name: 'Login', link: '/login', isPrimary: false, id: 'anonymous-login-link' },
     { name: 'Register', link: '/register', isPrimary: true, id: 'anonymous-register-link' },
 ];
-
 const PageNav = () => {
-    const { state: { isLoggedIn } } = useAuth();
+    const { isLoggedIn } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const [ routes, setRoutes ] = useState(anonymousRoutes);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setRoutes(isLoggedIn
@@ -39,7 +42,7 @@ const PageNav = () => {
             : ButtonType.secondary;
 
         const handleButtonClick = () => {
-            window.location.href = link;
+            navigate(link);
         };
 
         return (

@@ -10,13 +10,15 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using System.Xml;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Helpers.JavaStrategiesHelper;
 
-    public class JavaSpringAndHibernateProjectExecutionStrategy : JavaProjectTestsExecutionStrategy
+    public class JavaSpringAndHibernateProjectExecutionStrategy<TSettings> : JavaProjectTestsExecutionStrategy<TSettings>
+        where TSettings : JavaSpringAndHibernateProjectExecutionStrategySettings
     {
         private const string PomXmlFileNameAndExtension = "pom.xml";
         private const string ApplicationPropertiesFileName = "application.properties";
@@ -37,24 +39,12 @@ namespace OJS.Workers.ExecutionStrategies.Java
             $@"\[ERROR\]";
 
         public JavaSpringAndHibernateProjectExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string javaExecutablePath,
-            string javaLibrariesPath,
-            string javaSpringAndHibernateStrategyPomFilePath,
-            string mavenPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                processExecutorFactory,
-                compilerFactory,
-                javaExecutablePath,
-                javaLibrariesPath,
-                baseTimeUsed,
-                baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
-            this.MavenPath = mavenPath;
-            this.JavaSpringAndHibernateStrategyPomFilePath = javaSpringAndHibernateStrategyPomFilePath;
         }
 
         // Property contains Dictionary<GroupId, Tuple<ArtifactId, Version>>
@@ -80,10 +70,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 </plugins>
             </build>";
 
-        protected string MavenPath { get; set; }
-
-        protected string JavaSpringAndHibernateStrategyPomFilePath { get; set; }
-
         protected string PackageName { get; set; }
 
         protected string MainClassFileName { get; set; }
@@ -93,7 +79,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected string ProjectTestDirectoryInSubmissionZip { get; set; }
 
         protected override string ClassPathArgument
-            => $"-cp {this.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
+            => $"-cp {this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
 
         protected void PreparePomXml(string submissionFilePath)
         {
@@ -153,7 +139,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             var mavenExecutor = this.CreateExecutor();
 
             var packageExecutionResult = await mavenExecutor.Execute(
-              this.MavenPath,
+              this.Settings.MavenPath,
               string.Empty,
               executionContext.TimeLimit,
               executionContext.MemoryLimit,
@@ -181,7 +167,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 mavenArgs = new[] { string.Format(MavenTestCommand, pomXmlPath, testFile) };
 
                 var processExecutionResult = await executor.Execute(
-                this.MavenPath,
+                this.Settings.MavenPath,
                 string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -379,7 +365,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 var dependencyNode = rootNode
                     .SelectSingleNode(
                      DependencyNodeXPathTemplate
-                    .Replace("##", groupIdArtifactId.Key).Replace("!!", groupIdArtifactId.Value.Item1), namespaceManager);
+                    .Replace("##", groupIdArtifactId.Key)
+                    .Replace("!!", groupIdArtifactId.Value.Item1),
+                     namespaceManager);
 
                 if (dependencyNode == null)
                 {
@@ -444,7 +432,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         {
             FileHelpers.DeleteFiles(pomXmlFilePath);
 
-            var newPomFileContent = File.ReadAllText(this.JavaSpringAndHibernateStrategyPomFilePath);
+            var newPomFileContent = File.ReadAllText(this.Settings.JavaSpringAndHibernateStrategyPomFilePath);
             FileHelpers.WriteAllText(pomXmlFilePath, newPomFileContent);
         }
 
@@ -476,4 +464,15 @@ namespace OJS.Workers.ExecutionStrategies.Java
             return packageName.InnerText.Trim();
         }
     }
+
+    public record JavaSpringAndHibernateProjectExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string JavaExecutablePath,
+        string JavaLibrariesPath,
+        int BaseUpdateTimeOffset,
+        string MavenPath,
+        string JavaSpringAndHibernateStrategyPomFilePath)
+        : JavaProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, JavaExecutablePath, JavaLibrariesPath,
+            BaseUpdateTimeOffset);
 }

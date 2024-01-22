@@ -56,7 +56,7 @@ public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]
         {
-            new () { Action = nameof(this.Users) },
+            new() { Action = nameof(this.Users) },
         };
 
     public IActionResult Users([FromQuery] IDictionary<string, string> complexId)

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { DataGrid, getGridNumericOperators, getGridStringOperators, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -17,10 +18,10 @@ import {
     IContestResultsType,
 } from '../../hooks/contests/types';
 import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
-import { useAuth } from '../../hooks/use-auth';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { getContestDetailsAppUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
@@ -113,7 +114,8 @@ const totalResultColumn: GridColDef = {
 
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const { contestId, participationType: participationUrlType, resultType } = params;
     const { state: { categoriesFlat, isLoaded }, actions: { load: loadCategories } } = useContestCategories();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -164,7 +166,7 @@ const ContestResultsPage = () => {
             const bestSubmission = problemResult?.bestSubmission;
 
             // User is admin or lecturer for contest or is the participant of the submission
-            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.username) && !isNil(bestSubmission)
+            return (results.userIsInRoleForContest || cellParams.row.participantUsername === user.userName) && !isNil(bestSubmission)
                 ? (
                     <LinkButton
                       className={styles.pointsResult}

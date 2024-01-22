@@ -1,13 +1,14 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../../common/contest-helpers';
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
-import { useAuth } from '../../../../hooks/use-auth';
 import { useProblems } from '../../../../hooks/use-problems';
+import { IAuthorizationReduxState } from '../../../../redux/features/authorizationSlice';
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
 import { useSaveAttachmentQuery } from '../../../../redux/services/submissionDetailsService';
+import concatClassNames from '../../../../utils/class-names';
 import { getParticipateInContestUrl } from '../../../../utils/urls';
 import CodeEditor from '../../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../../guidelines/alert-box/AlertBox';
@@ -15,22 +16,27 @@ import Button, { ButtonSize, ButtonState, ButtonType } from '../../../guidelines
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import IconSize from '../../../guidelines/icons/common/icon-sizes';
 import LeftArrowIcon from '../../../guidelines/icons/LeftArrowIcon';
+import RetestButton from '../refreshable-submission-list/RetestButton';
 
 import styles from './SubmissionDetailsCodeEditor.module.scss';
 
-interface ISubmissionDetailsCodeEditorProps {
-    renderRetestButton: () => ReactNode;
-}
-const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsCodeEditorProps) => {
+const SubmissionDetailsCodeEditor = () => {
     const [ submissionId, setSubmissionId ] = useState<number | null>(null);
     const [ shouldFetch, setShouldFetch ] = useState<boolean>(true);
+    const [ testsChangedBoxClosed, setTestsChangedBoxClosed ] = useState<boolean>(false);
     const { actions: { initiateRedirectionToProblem } } = useProblems();
-    const { state: { user } } = useAuth();
+    const { internalUser: user } =
+    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const { currentSubmission, downloadErrorMessage } =
     useSelector((state: {submissionDetails: ISubmissionDetailsReduxState}) => state.submissionDetails);
-    const { state: { user: { permissions: { canAccessAdministration } } } } = useAuth();
     const dispatch = useDispatch();
-    const { data, error } = useSaveAttachmentQuery({ id: submissionId }, { skip: shouldFetch });
+
+    const { retestIsSuccess } =
+        useSelector((state: {
+            submissionDetails: ISubmissionDetailsReduxState;
+        }) => state.submissionDetails);
+
+    const { data, error } = useSaveAttachmentQuery({ id: submissionId! }, { skip: shouldFetch });
 
     useEffect(() => {
         if (error && 'error' in error) {
@@ -77,9 +83,9 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
             }
 
             const { submissionType: { allowBinaryFilesUpload }, user: { userName: submissionUserName } } = currentSubmission;
-            const { username: loggedInUserName } = user;
+            const { userName: loggedInUserName } = user;
 
-            if ((!canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
+            if ((!user.canAccessAdministration && submissionUserName !== loggedInUserName) || !allowBinaryFilesUpload) {
                 return null;
             }
 
@@ -95,7 +101,7 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                 </div>
             );
         },
-        [ handleDownloadSubmissionFile, canAccessAdministration, currentSubmission, user ],
+        [ handleDownloadSubmissionFile, user, currentSubmission ],
     );
 
     const problemNameHeadingText = useMemo(
@@ -110,16 +116,30 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
     );
 
     const { submissionType } = currentSubmission || {};
-    const renderTestsChangeMessage = useCallback(() => (
-        currentSubmission?.testRuns.length === 0 &&
-        currentSubmission.isCompiledSuccessfully &&
-        currentSubmission.totalTests > 0 &&
-        !currentSubmission.processingComment &&
-        currentSubmission.isProcessed
+
+    const renderRetestSuccessMessage = useCallback(
+        () => !isNil(retestIsSuccess) && retestIsSuccess
             ? (
-                <div className={styles.testChangesWrapper}>
+                <AlertBox
+                  className={styles.tenPixelsMarginUnder}
+                  message="Submission retested successfully."
+                  delay={3500}
+                  type={AlertBoxType.success}
+                />
+            )
+            : null,
+        [ retestIsSuccess ],
+    );
+
+    const renderTestsChangeMessage = useCallback(() => (
+        !isNil(currentSubmission) &&
+        currentSubmission.isProcessed &&
+        currentSubmission.isEligibleForRetest &&
+        !testsChangedBoxClosed
+            ? (
+                <div className={concatClassNames(styles.testChangesWrapper, styles.tenPixelsMarginUnder)}>
                     <p>
-                        The input/output data changed. Your (
+                        The input/output data changed and your (
                         {currentSubmission.points}
                         /
                         {currentSubmission.problem.maximumPoints}
@@ -128,11 +148,24 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                         Click &quot;Retest&quot; to resubmit your solution for re-evaluation against the new test cases.
                         Your score may change.
                     </p>
-                    {renderRetestButton()}
+                    <RetestButton
+                      onSuccessfulRetest={() => setTestsChangedBoxClosed(true)}
+                    />
                 </div>
             )
             : ''
-    ), [ currentSubmission, renderRetestButton ]);
+    ), [ currentSubmission, testsChangedBoxClosed ]);
+
+    const renderInQueueMessage = useCallback(() => !currentSubmission?.isProcessed
+        ? (
+            <AlertBox
+              className={styles.alertBox}
+              message="The submission is in queue and will be processed shortly. Please wait."
+              type={AlertBoxType.info}
+              isClosable={false}
+            />
+        )
+        : null, [ currentSubmission?.isProcessed ]);
 
     const backButtonState = useMemo(
         () => isNil(currentSubmission?.contestId)
@@ -183,21 +216,11 @@ const SubmissionDetailsCodeEditor = ({ renderRetestButton }: ISubmissionDetailsC
                     {problemNameHeadingText}
                 </div>
             </Heading>
-            <div>
+            <div className={styles.messagesWrapper}>
+                {renderRetestSuccessMessage()}
                 {renderTestsChangeMessage()}
+                {renderInQueueMessage()}
             </div>
-            {
-                !currentSubmission?.isProcessed
-                    ? (
-                        <AlertBox
-                          className={styles.alertBox}
-                          message="The submission is in queue and will be processed shortly. Please wait."
-                          type={AlertBoxType.info}
-                          isClosable={false}
-                        />
-                    )
-                    : null
-            }
             {submissionType?.allowBinaryFilesUpload
                 ? (
                     <div className={styles.resourceWrapper}>

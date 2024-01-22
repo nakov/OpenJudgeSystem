@@ -37,7 +37,8 @@ public static class AdminActionContextExtensions
         => int.TryParse(
             entityDict
                 .FirstOrDefault(x => x.Key.Equals(typeof(TEntity).Name + "Id", StringComparison.OrdinalIgnoreCase))
-                .Value, out var id)
+                .Value,
+            out var id)
             ? id
             : null;
 }

@@ -4,7 +4,7 @@ using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
-using Common;
+using OJS.Common;
 using Microsoft.Extensions.Options;
 using OJS.Data.Models;
 using OJS.Servers.Administration.Extensions;
@@ -169,7 +169,7 @@ public class UsersInExamGroupsController : BaseAutoCrudAdminController<UserInExa
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new ()
+            new()
             {
                 Name = "Add new",
                 Action = nameof(this.Create),

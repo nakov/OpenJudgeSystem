@@ -9,7 +9,7 @@ using OJS.Data.Models.Submissions;
 using FluentExtensions.Extensions;
 using OJS.Common;
 using OJS.Common.Helpers;
-using Models.Submissions;
+using OJS.Services.Common.Models.Submissions;
 
 public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
 {

@@ -8,12 +8,13 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using System.Text.RegularExpressions;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class PythonDjangoOrmExecutionStrategy : PythonProjectTestsExecutionStrategy
+    public class PythonDjangoOrmExecutionStrategy<TSettings> : PythonProjectTestsExecutionStrategy<TSettings>
+        where TSettings : PythonDjangoOrmExecutionStrategySettings
     {
-        private const string VirtualEnvName = "env";
         private const string ProjectSettingsFolder = "orm_skeleton";
         private const string SettingsFileName = "settings.py";
         private const string PyenvAppFileName = "pyenv";
@@ -30,20 +31,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string SqlLiteConfig =
             "DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.sqlite3',\n        'NAME': 'db.sqlite3',\n    }\n}\n";
 
-        private readonly string pipExecutablePath;
-        private readonly int installPackagesTimeUsed;
-
         public PythonDjangoOrmExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            string pipExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed,
-            int installPackagesTimeUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
-            this.pipExecutablePath = pipExecutablePath ?? throw new ArgumentNullException(nameof(pipExecutablePath));
-            this.installPackagesTimeUsed = installPackagesTimeUsed;
         }
 
         protected override Regex TestsRegex => new Regex(TestResultsRegexPattern, RegexOptions.Multiline);
@@ -137,11 +130,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
             string testPath)
         {
             var processExecutionResult = await this.Execute(
-                this.PythonExecutablePath,
+                this.Settings.PythonExecutablePath,
                 this.ExecutionArguments.Concat(new[]
                 {
                     $"manage.py test --pattern=\"{testPath.Split(Path.DirectorySeparatorChar).Last()}\"",
-                }), executor,
+                }),
+                executor,
                 executionContext);
 
             this.FixReceivedOutput(processExecutionResult);
@@ -208,7 +202,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private async Task ApplyMigrations(IExecutor executor, IExecutionContext<TestsInputModel> executionContext)
         {
             var result = await this.Execute(
-                this.PythonExecutablePath,
+                this.Settings.PythonExecutablePath,
                 this.ExecutionArguments.Concat(new[] { "manage.py migrate" }),
                 executor,
                 executionContext);
@@ -238,4 +232,12 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 false,
                 true);
     }
+
+    public record PythonDjangoOrmExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath,
+        string PipExecutablePath,
+        int InstallPackagesTimeUsed)
+        : PythonProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, PythonExecutablePath);
 }
