@@ -14,6 +14,7 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Data.Models;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {

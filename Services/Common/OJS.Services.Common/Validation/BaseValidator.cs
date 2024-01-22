@@ -17,11 +17,7 @@ public abstract class BaseValidator<T> : AbstractValidator<T>
 
         foreach (var failure in validationResult.Errors)
         {
-            response.Errors.Add(new ExceptionResponseModel
-            {
-                Name = failure.PropertyName,
-                Message = failure.ErrorMessage,
-            });
+            response.Errors.Add(new ExceptionResponseModel(failure.PropertyName, failure.ErrorMessage));
         }
 
         return response;

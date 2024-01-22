@@ -289,10 +289,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Type = typeof(TestTypeEnum),
             Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
             Value = entity.IsOpenTest
-                ? TestTypeEnum.OpenTest
+                ? TestTypeEnum.Compete
                 : entity.IsTrialTest
-                    ? TestTypeEnum.TrialTest
-                    : TestTypeEnum.Compete,
+                    ? TestTypeEnum.Practice
+                    : TestTypeEnum.Standard,
         };
 
         if (action == EntityAction.Delete)
@@ -367,15 +367,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
         switch (testType)
         {
-            case TestTypeEnum.TrialTest:
+            case TestTypeEnum.Practice:
                 entity.IsTrialTest = true;
                 entity.IsOpenTest = false;
                 break;
-            case TestTypeEnum.OpenTest:
+            case TestTypeEnum.Compete:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
                 break;
-            case TestTypeEnum.Compete:
+            case TestTypeEnum.Standard:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = false;
                 break;

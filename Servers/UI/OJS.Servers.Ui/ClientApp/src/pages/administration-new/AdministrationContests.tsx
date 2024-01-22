@@ -14,7 +14,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../common/types';
 import ContestEdit from '../../components/administration/Contests/ContestEdit/ContestEdit';
-import ContestDeleteButton from '../../components/administration/delete/ContestDeleteButton';
+import ContestDeleteButton from '../../components/administration/Contests/delete/ContestDeleteButton';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../redux/features/admin/contestsAdminSlice';
 import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
@@ -58,10 +58,11 @@ const AdministrationContestsPage = () => {
         {
             field: 'id',
             headerName: 'Id',
-            width: 10,
-            type: 'number',
+            flex: 0.5,
+            type: 'string',
             filterable: false,
             sortable: false,
+            valueFormatter: (params) => params.value.toString(),
         },
         {
             field: 'name',
@@ -75,7 +76,6 @@ const AdministrationContestsPage = () => {
         {
             field: 'category',
             headerName: 'Category',
-            width: 250,
             type: 'string',
             filterable: false,
             sortable: false,
@@ -84,7 +84,7 @@ const AdministrationContestsPage = () => {
         {
             field: 'categoryId',
             headerName: 'Category Id',
-            width: 60,
+            flex: 0.5,
             align: 'left',
             type: 'number',
             filterable: false,
@@ -177,7 +177,7 @@ const AdministrationContestsPage = () => {
                     <IconButton onClick={() => onEditClick(params.row.id)}>
                         <EditIcon color="warning" />
                     </IconButton>
-                    <Link to={`/administration-new/contests/${params.row.id}`}>
+                    <Link to={`/administration-new/contests/${Number(params.row.id)}`}>
                         <ShortcutIcon color="primary" />
                     </Link>
                     <ContestDeleteButton contestId={Number(params.row.id)} contestName={params.row.name} />

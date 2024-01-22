@@ -20,6 +20,8 @@ public class ContestViewProblemModel : IMapExplicitly
 
     public int CompeteTests { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Problem, ContestViewProblemModel>()
             .ForMember(cvp => cvp.Id, opt
@@ -33,5 +35,7 @@ public class ContestViewProblemModel : IMapExplicitly
             .ForMember(cvp => cvp.PracticeTests, opt
                 => opt.MapFrom(x => x.Tests.Count(t => t.IsTrialTest)))
             .ForMember(cvp => cvp.CompeteTests, opt
-                => opt.MapFrom(x => x.Tests.Count(t => t.IsOpenTest)));
+                => opt.MapFrom(x => x.Tests.Count(t => t.IsOpenTest)))
+            .ForMember(cvp => cvp.IsDeleted, opt
+                => opt.MapFrom(x => x.IsDeleted));
 }

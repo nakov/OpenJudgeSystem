@@ -2,7 +2,7 @@
 
 public enum TestTypeEnum
 {
-    Compete = 0,
-    TrialTest = 1,
-    OpenTest = 2,
+    Standard = 0,
+    Practice = 1,
+    Compete = 2,
 }

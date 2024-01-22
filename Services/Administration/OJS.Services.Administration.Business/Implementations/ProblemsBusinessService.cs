@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Business.Implementations
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -9,16 +10,19 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
+    using OJS.Services.Administration.Models.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
+    using OJS.Services.Common.Data.Pagination;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure.Exceptions;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
-    public class ProblemsBusinessService : IProblemsBusinessService
+    public class ProblemsBusinessService : GridDataService<Problem>, IProblemsBusinessService
     {
         private readonly IContestsDataService contestsData;
         private readonly IParticipantScoresDataService participantScoresData;
@@ -43,6 +47,7 @@ namespace OJS.Services.Administration.Business.Implementations
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService)
+            : base(problemsData)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -139,6 +144,20 @@ namespace OJS.Services.Administration.Business.Implementations
 
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
+
+        public async Task<ProblemAdministrationModel> ById(int id)
+        {
+            var problem = await this.problemsData.GetByIdQuery(id)
+                .Include(stp => stp.SubmissionTypesInProblems)
+                .ThenInclude(stp => stp.SubmissionType)
+                .FirstOrDefaultAsync();
+            if (problem is null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return problem.Map<ProblemAdministrationModel>();
+        }
 
         public async Task RetestById(int id)
         {

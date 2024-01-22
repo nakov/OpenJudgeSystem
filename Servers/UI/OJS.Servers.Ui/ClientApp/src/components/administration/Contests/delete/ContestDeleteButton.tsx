@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton } from '@mui/material';
 
-import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../guidelines/alert/Alert';
-import ConfirmDialog from '../../guidelines/dialog/ConfirmDialog';
-import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+import { useDeleteContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
+import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
+import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestDeleteButton.module.scss';
 

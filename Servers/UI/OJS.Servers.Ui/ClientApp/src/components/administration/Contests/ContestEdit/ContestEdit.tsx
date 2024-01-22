@@ -18,7 +18,7 @@ import { useCreateContestMutation, useGetContestByIdQuery, useUpdateContestMutat
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import ContestDeleteButton from '../../delete/ContestDeleteButton';
+import ContestDeleteButton from '../delete/ContestDeleteButton';
 
 // eslint-disable-next-line import/no-unresolved
 import styles from './ContestEdit.module.scss';

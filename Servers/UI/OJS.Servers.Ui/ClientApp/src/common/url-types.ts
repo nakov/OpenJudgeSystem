@@ -96,6 +96,10 @@ interface IContestProblemsUrlParams {
     id: number;
 }
 
+interface IProblemUrlById {
+    id: number;
+}
+
 interface IContestEditUrlParams {
     id: number;
 }
@@ -140,4 +144,5 @@ export type {
     IContestEditUrlParams,
     IGetSubmissionsByContestIdParams,
     IGetParticipantsByContestId,
+    IProblemUrlById,
 };

@@ -16,7 +16,6 @@ interface ISubmissionTypeType {
     allowBinaryFilesUpload: boolean;
     allowedFileExtensions: string[];
 }
-
 interface IPublicSubmissionContest {
     id: number;
     name: string;
@@ -275,6 +274,22 @@ interface IUserType {
     canAccessAdministration: boolean;
 }
 
+interface IProblemAdministration {
+    id: number;
+    name: string;
+    maximumPoints: number;
+    sourceCodeSizeLimit: number;
+    orderBy: number;
+    showResults: boolean;
+    showDetailsFeedback: boolean;
+    checker: string;
+    probleGroupType:string;
+    contestId: number;
+    submissionTypes: Array<IProblemSubmissionType>;
+    timeLimit: number;
+    memoryLimit: number;
+}
+
 interface IUserRoleType {
     id: string;
     name: string;
@@ -353,6 +368,13 @@ type ExceptionData = {
     name: string;
     message: string;
 }
+
+interface IProblemSubmissionType{
+    id: number;
+    name: string;
+    skeleton: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -388,4 +410,6 @@ export type {
     IContestCategories,
     ExceptionData,
     IIndexProblemsType,
+    IProblemAdministration,
+    IProblemSubmissionType,
 };

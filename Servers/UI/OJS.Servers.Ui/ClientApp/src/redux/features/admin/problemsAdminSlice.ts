@@ -1,24 +1,15 @@
-/* eslint-disable import/exports-last */
 import { createSlice } from '@reduxjs/toolkit';
 
-import { IAdministrationFilter } from '../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../../../pages/administration-new/administration-sorting/AdministrationSorting';
-
-export interface IAdminSlice {
-    [key: string]: null | {
-        selectedFilters: null | IAdministrationFilter[];
-        selectedSorters: null | IAdministrationSorter[];
-    };
-}
+import { IAdminSlice } from './contestsAdminSlice';
 
 const initialState: IAdminSlice = {};
 
 // eslint-disable-next-line import/group-exports
-export const contestsAdminSlice = createSlice({
-    name: 'adminContests',
+export const problemsAdminSlice = createSlice({
+    name: 'adminProblems',
     initialState,
     reducers: {
-        setAdminContestsFilters: (state, action) => {
+        setAdminProblemsFilters: (state, action) => {
             // eslint-disable-next-line prefer-destructuring
             const { key, filters } = action.payload;
 
@@ -32,7 +23,7 @@ export const contestsAdminSlice = createSlice({
                 state[key] = { selectedFilters: filters, selectedSorters: null };
             }
         },
-        setAdminContestsSorters: (state, action) => {
+        setAdminProblemsSorters: (state, action) => {
             // eslint-disable-next-line prefer-destructuring
             const { key, sorters } = action.payload;
 
@@ -51,8 +42,8 @@ export const contestsAdminSlice = createSlice({
 
 // eslint-disable-next-line prefer-destructuring,import/group-exports
 export const {
-    setAdminContestsFilters,
-    setAdminContestsSorters,
-} = contestsAdminSlice.actions;
+    setAdminProblemsFilters,
+    setAdminProblemsSorters,
+} = problemsAdminSlice.actions;
 
-export default contestsAdminSlice.reducer;
+export default problemsAdminSlice.reducer;

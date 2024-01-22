@@ -6,15 +6,17 @@ import storage from 'redux-persist/lib/storage';
 
 // features
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
+import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import authorizationReducer from './features/authorizationSlice';
 import submissionDetailsReducer from './features/submissionDetailsSlice';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // services
 import contestsAdminService from './services/admin/contestsAdminService';
 import participantsAdminService from './services/admin/participantsAdminService';
+// services
+import problemsAdminService from './services/admin/problemsAdminService';
 // features
 import authorizationService from './services/authorizationService';
-// services
 import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
@@ -23,10 +25,12 @@ const rootReducer = combineReducers({
     // admin reducers
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
-    [contestsAdminSlice.name]: contestsAdminSlice.reducer,
+    [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
     authorization: authorizationReducer,
+    [contestsAdminSlice.name]: contestsAdminSlice.reducer,
+    [problemsAdminSlice.name]: problemsAdminSlice.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -39,6 +43,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 const reducersToPersist = [
     contestsAdminSlice.name,
     'authorization',
+    problemsAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -51,6 +56,7 @@ const store = configureStore({
         participantsAdminService.middleware,
         contestCategoriesAdminService.middleware,
         authorizationService.middleware,
+        problemsAdminService.middleware,
     ]),
 });
 
