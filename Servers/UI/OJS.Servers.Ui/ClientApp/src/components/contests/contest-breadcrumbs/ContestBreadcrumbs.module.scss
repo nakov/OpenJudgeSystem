@@ -1,0 +1,17 @@
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/shadows';
+
+.breadcrumbsWrapper {
+  @extend %font-family-roboto;
+  font-size: variables.$f-size-18;
+  padding: spacings.$sp-4 spacings.$sp-8;
+  cursor: pointer;
+  position: absolute;
+  top: 105px;
+  width: 87%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
