@@ -9,7 +9,8 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class BaseCodeExecutionStrategy : BaseExecutionStrategy
+    public class BaseCodeExecutionStrategy<TSettings> : BaseExecutionStrategy<TSettings>
+        where TSettings : BaseCodeExecutionStrategySettings
     {
         protected const string RemoveMacFolderPattern = "__MACOSX/*";
 
@@ -20,18 +21,11 @@
 #pragma warning restore SA1401
 
         protected BaseCodeExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-        {
-            this.ProcessExecutorFactory = processExecutorFactory;
-            this.BaseTimeUsed = baseTimeUsed;
-            this.BaseMemoryUsed = baseMemoryUsed;
-        }
-
-        protected int BaseTimeUsed { get; }
-
-        protected int BaseMemoryUsed { get; }
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
+            => this.ProcessExecutorFactory = processExecutorFactory;
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)
         {
@@ -105,11 +99,15 @@
 
         protected IExecutor CreateExecutor(ProcessExecutorType processExecutorType = ProcessExecutorType.Default)
             => this.ProcessExecutorFactory
-                .CreateProcessExecutor(this.BaseTimeUsed, this.BaseMemoryUsed, processExecutorType);
+                .CreateProcessExecutor(this.Settings.BaseTimeUsed, this.Settings.BaseMemoryUsed, processExecutorType);
 
         protected virtual string SaveCodeToTempFile<TINput>(IExecutionContext<TINput> executionContext)
             => string.IsNullOrEmpty(executionContext.AllowedFileExtensions)
                 ? FileHelpers.SaveStringToTempFile(this.WorkingDirectory, executionContext.Code)
                 : FileHelpers.SaveByteArrayToTempFile(this.WorkingDirectory, executionContext.FileContent);
+    }
+
+    public abstract record BaseCodeExecutionStrategySettings(int BaseTimeUsed, int BaseMemoryUsed) : BaseExecutionStrategySettings
+    {
     }
 }

@@ -8,6 +8,7 @@ namespace OJS.Workers.ExecutionStrategies.Python
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -15,7 +16,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using static OJS.Workers.Common.Constants;
     using static OJS.Workers.ExecutionStrategies.Python.PythonConstants;
 
-    public class PythonProjectUnitTestsExecutionStrategy : PythonUnitTestsExecutionStrategy
+    public class PythonProjectUnitTestsExecutionStrategy<TSettings> : PythonUnitTestsExecutionStrategy<TSettings>
+        where TSettings : PythonProjectUnitTestsExecutionStrategySettings
     {
         private const string ProjectFolderName = "project";
         private const string ProjectFilesCountPlaceholder = "# project_files_count ";
@@ -38,11 +40,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private int expectedProjectFilesCount;
 
         public PythonProjectUnitTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, pythonExecutablePath, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 
@@ -223,4 +224,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             return FileHelpers.BuildPath(pathArguments.ToArray());
         }
     }
+
+    public record PythonProjectUnitTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath)
+        : PythonUnitTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, PythonExecutablePath);
 }

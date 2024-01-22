@@ -237,7 +237,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
     private static IEnumerable<FormControlViewModel> GetAdditionalFormControls()
         => new List<FormControlViewModel>
         {
-            new () { Name = AdditionalFormFields.File.ToString(), Type = typeof(IFormFile), },
+            new() { Name = AdditionalFormFields.File.ToString(), Type = typeof(IFormFile), },
         };
 
     private static string GetResourceFileNameForDownload(ProblemResourceDownloadServiceModel resource)
@@ -267,7 +267,7 @@ public class ProblemResourcesController : BaseAutoCrudAdminController<ProblemRes
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
+            new() { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
         };
     }
 }

@@ -1,6 +1,6 @@
 namespace OJS.Services.Common;
 
-using Models.Submissions.ExecutionContext;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using System.Collections.Generic;
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;

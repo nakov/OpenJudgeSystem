@@ -2,14 +2,14 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
-using System.Threading.Tasks;
 using OJS.Servers.Ui.Models.Users;
 using OJS.Services.Ui.Business;
-using OJS.Servers.Infrastructure.Controllers;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using static Microsoft.AspNetCore.Http.StatusCodes;
 using OJS.Services.Ui.Models.Users;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 [Authorize]
 public class UsersController : BaseApiController

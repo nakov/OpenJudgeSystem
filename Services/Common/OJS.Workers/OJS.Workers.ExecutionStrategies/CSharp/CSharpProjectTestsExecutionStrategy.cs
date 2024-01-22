@@ -11,13 +11,15 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
 
-    public class CSharpProjectTestsExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class CSharpProjectTestsExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : CSharpProjectTestsExecutionStrategySettings
     {
         protected const string SetupFixtureTemplate = @"
         using System;
@@ -62,32 +64,12 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             @"((?:\d+|\d+-\d+)\) (?:Failed|Error)\s:\s(.*)\.(.*))\r?\n((?:.*)\r?\n(?:.*))";
 
         public CSharpProjectTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
-            this.TestNames = new List<string>();
-            this.TestPaths = new List<string>();
-        }
-
-        public CSharpProjectTestsExecutionStrategy(
-            IProcessExecutorFactory processExecutorFactory,
-            ICompilerFactory compilerFactory,
-            string nUnitConsoleRunnerPath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
-        {
-            if (!File.Exists(nUnitConsoleRunnerPath))
-            {
-                throw new ArgumentException(
-                    $"NUnitConsole not found in: {nUnitConsoleRunnerPath}",
-                    nameof(nUnitConsoleRunnerPath));
-            }
-
-            this.NUnitConsoleRunnerPath = nUnitConsoleRunnerPath;
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();
         }
@@ -146,7 +128,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
 
             this.CorrectProjectReferences(project);
 
-            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType);
+            var compilerPath = this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type);
             var compilerResult = this.Compile(
                 executionContext.CompilerType,
                 compilerPath,
@@ -314,4 +296,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             CsProjFileSearchPattern,
             f => new FileInfo(f).Length);
     }
+
+    public record CSharpProjectTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

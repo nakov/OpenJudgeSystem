@@ -10,7 +10,8 @@ namespace OJS.Workers.ExecutionStrategies.Sql
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public abstract class BaseSqlExecutionStrategy : BaseExecutionStrategy
+    public abstract class BaseSqlExecutionStrategy<TSettings> : BaseExecutionStrategy<TSettings>
+        where TSettings : BaseSqlExecutionStrategySettings
     {
         protected const int DefaultTimeLimit = 2 * 60 * 1000;
         protected static readonly Type DecimalType = typeof(decimal);
@@ -21,35 +22,29 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         protected static readonly Type TimeSpanType = typeof(TimeSpan);
 
         protected BaseSqlExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
-            if (string.IsNullOrWhiteSpace(masterDbConnectionString))
+            if (string.IsNullOrWhiteSpace(this.Settings.MasterDbConnectionString))
             {
-                throw new ArgumentException("Invalid master DB connection string!", nameof(masterDbConnectionString));
+                throw new ArgumentException("Invalid master DB connection string!", nameof(this.Settings.MasterDbConnectionString));
             }
 
-            if (string.IsNullOrWhiteSpace(restrictedUserId))
+            if (string.IsNullOrWhiteSpace(this.Settings.RestrictedUserId))
             {
-                throw new ArgumentException("Invalid restricted user ID!", nameof(restrictedUserId));
+                throw new ArgumentException("Invalid restricted user ID!", nameof(this.Settings.RestrictedUserId));
             }
 
-            if (string.IsNullOrWhiteSpace(restrictedUserPassword))
+            if (string.IsNullOrWhiteSpace(this.Settings.RestrictedUserPassword))
             {
-                throw new ArgumentException("Invalid restricted user password!", nameof(restrictedUserPassword));
+                throw new ArgumentException("Invalid restricted user password!", nameof(this.Settings.RestrictedUserPassword));
             }
 
-            this.MasterDbConnectionString = masterDbConnectionString;
-            this.RestrictedUserId = restrictedUserId;
-            this.RestrictedUserPassword = restrictedUserPassword;
+            this.RestrictedUserId = this.Settings.RestrictedUserId;
         }
 
-        protected string MasterDbConnectionString { get; }
-
         protected virtual string RestrictedUserId { get; }
-
-        protected string RestrictedUserPassword { get; }
 
         protected static void ProcessSqlResult(
             SqlResult sqlResult,
@@ -225,4 +220,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql
             }
         }
     }
+
+    public abstract record BaseSqlExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword)
+        : BaseExecutionStrategySettings;
 }

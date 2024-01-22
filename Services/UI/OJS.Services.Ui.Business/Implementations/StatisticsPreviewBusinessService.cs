@@ -27,7 +27,7 @@ public class StatisticsPreviewBusinessService : IStatisticsPreviewBusinessServic
     }
 
     public async Task<HomeStatisticsServiceModel> GetForHome()
-        => new ()
+        => new()
         {
             ContestsCount = await this.contestsData.GetCount(),
             UsersCount = await this.usersProfileData.GetCount(),
