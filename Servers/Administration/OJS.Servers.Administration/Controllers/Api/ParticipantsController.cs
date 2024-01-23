@@ -7,11 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Contests.Participants;
 
-[ApiController]
-[Route("api/[controller]")]
-//TODO Replace with admin authorization
-[AllowAnonymous]
-public class ParticipantsController : ControllerBase
+public class ParticipantsController : ApiControllerBase
 {
     private readonly IParticipantsBusinessService participantsBusinessService;
 

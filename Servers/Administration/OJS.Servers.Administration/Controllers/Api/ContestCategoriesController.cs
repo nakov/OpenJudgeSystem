@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ContestCategoriesController : ControllerBase
+public class ContestCategoriesController : ApiControllerBase
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;
 
