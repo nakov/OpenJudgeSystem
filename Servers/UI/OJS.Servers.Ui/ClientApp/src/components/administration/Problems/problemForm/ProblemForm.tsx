@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable max-len */
@@ -13,7 +14,8 @@ import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlL
 import { isNaN } from 'lodash';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
-import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
+import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
+import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
 import { useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
@@ -32,7 +34,7 @@ const ProblemForm = (props: IProblemFormProps) => {
     const { problemId, isEditMode, contestId } = props;
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
-        checker: '',
+        checkerId: 0,
         contestId: !isEditMode && contestId
             ? contestId
             : -1,
@@ -52,8 +54,8 @@ const ProblemForm = (props: IProblemFormProps) => {
     const navigate = useNavigate();
     const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) });
     const { data: submissionTypes } = useGetForProblemQuery(null);
-    // const { data: problemGroupsTypes } = useGetProblemGroupsForProblemQuery(null);
-    const [ updateProblem ] = useUpdateProblemMutation();
+    const { data: checkers } = useGetCheckersForProblemQuery(null);
+    const [ updateProblem, { data: updateData, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateProblemMutation();
     useEffect(() => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
@@ -72,9 +74,14 @@ const ProblemForm = (props: IProblemFormProps) => {
             ...prevState,
             [name]: type === 'checkbox'
                 ? checked
-                : value,
+                : type === 'number'
+                    ? value === ''
+                        ? ''
+                        : Number(value)
+                    : value,
         }));
     };
+
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {
         if (submissionType === null) {
             return;
@@ -140,21 +147,29 @@ const ProblemForm = (props: IProblemFormProps) => {
             submissionTypes: newSubmissionTypes,
         }));
     };
+    const renderAlert = (message: string, severity:AlertSeverity) => (
+        <Alert
+          variant={AlertVariant.Filled}
+          vertical={AlertVerticalOrientation.Top}
+          horizontal={AlertHorizontalOrientation.Right}
+          severity={severity}
+          message={message}
+        />
+    );
 
     return (
         isGettingData
             ? <SpinningLoader />
             : (
                 <>
-                    {gettingDataError && (
-                    <Alert
-                      variant={AlertVariant.Filled}
-                      vertical={AlertVerticalOrientation.Top}
-                      horizontal={AlertHorizontalOrientation.Right}
-                      severity={AlertSeverity.Error}
-                      message={gettingDataError.data}
-                    />
-                    )}
+                    {gettingDataError &&
+                   renderAlert(gettingDataError.data[0].message, AlertSeverity.Error)}
+                    {updateError?.data.map((x:ExceptionData) => {
+                        renderAlert(x.message, AlertSeverity.Error);
+                    })}
+                    {
+                        isSuccesfullyUpdated && renderAlert(updateData, AlertSeverity.Success)
+                    }
                     <Typography sx={{ textAlign: 'center' }} variant="h3">{currentProblem?.name}</Typography>
 
                     <form style={{ display: 'flex', flexDirection: 'column' }}>
@@ -254,7 +269,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                                 </FormControl>
                             </FormGroup>
                         </Box>
-                        <FormGroup sx={{ margin: '3rem 0', width: '92%', alignSelf: 'center' }}>
+                        <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
                             <InputLabel id="problemGroupType">Problem Group Type</InputLabel>
                             <Select
                               onChange={(e) => onChange(e)}
@@ -269,6 +284,45 @@ const ProblemForm = (props: IProblemFormProps) => {
                                     </MenuItem>
                                 ))}
                             </Select>
+                        </FormGroup>
+                        <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                            <InputLabel id="problemGroupType">Checker</InputLabel>
+                            <Select
+                              onChange={(e) => onChange(e)}
+                              onBlur={(e) => onChange(e)}
+                              labelId="checkerId"
+                              value={Number(currentProblem.checkerId) || ''}
+                              name="checkerId"
+                            >
+                                {checkers?.map((c) => (
+                                    <MenuItem key={c.id} value={Number(c.id)}>
+                                        {c.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormGroup>
+                        <FormGroup sx={{ width: '45%' }}>
+                            <FormControl>
+                                <TextField
+                                  type="file"
+                                  label="Additional files"
+                                  name="additionalFiles"
+                                  variant="standard"
+                                  sx={{ width: '45%', margin: '1rem' }}
+                                  InputLabelProps={{ shrink: true }}
+                                  onChange={(e) => onChange(e)}
+                                  value={currentProblem.additionalFiles}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <TextField
+                                  type="file"
+                                  label="Tests"
+                                  variant="standard"
+                                  sx={{ width: '45%', margin: '1rem' }}
+                                  InputLabelProps={{ shrink: true }}
+                                />
+                            </FormControl>
                         </FormGroup>
                         <FormGroup sx={{ marginLeft: '4rem' }}>
                             <FormControlLabel

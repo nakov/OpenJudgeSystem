@@ -6,7 +6,7 @@ import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
-import { FilterColumnTypeEnum, ProblemGroupTypes } from './enums';
+import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -286,7 +286,7 @@ interface IProblemAdministration {
     orderBy: number;
     showResults: boolean;
     showDetailedFeedback: boolean;
-    checker: string;
+    checkerId: number;
     problemGroupType: string;
     contestId: number;
     submissionTypes: Array<IProblemSubmissionType>;

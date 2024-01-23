@@ -17,7 +17,7 @@ const succesfullStatusCodes = [ 200, 204 ];
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
         credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/problemGroups`,
+        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/checkers`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
@@ -42,12 +42,12 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 };
 
 // eslint-disable-next-line import/group-exports
-export const problemGroupsAdminService = createApi({
-    reducerPath: 'problemGroupsAdmin',
+export const checkerAdminService = createApi({
+    reducerPath: 'checkersAdmin',
     baseQuery: customBaseQuery,
-    endpoints: (builder) => ({ getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/forProblem' }) }) }),
+    endpoints: (builder) => ({ getCheckersForProblem: builder.query<Array<{id: number; name: string}>, null>({ query: () => ({ url: '/forProblem' }) }) }),
 });
 
 // eslint-disable-next-line import/group-exports
-export const { useGetProblemGroupsForProblemQuery } = problemGroupsAdminService;
-export default problemGroupsAdminService;
+export const { useGetCheckersForProblemQuery } = checkerAdminService;
+export default checkerAdminService;

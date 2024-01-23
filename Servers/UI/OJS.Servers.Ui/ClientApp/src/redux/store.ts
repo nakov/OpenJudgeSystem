@@ -9,6 +9,7 @@ import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import authorizationReducer from './features/authorizationSlice';
 import submissionDetailsReducer from './features/submissionDetailsSlice';
+import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // services
 import contestsAdminService from './services/admin/contestsAdminService';
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: submissionTypesAdminService.reducer,
+    [checkerAdminService.reducerPath]: checkerAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -63,6 +65,7 @@ const store = configureStore({
         problemsAdminService.middleware,
         submissionTypesAdminService.middleware,
         problemGroupsAdminService.middleware,
+        checkerAdminService.middleware,
     ]),
 });
 
