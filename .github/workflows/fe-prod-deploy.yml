@@ -12,7 +12,10 @@ on:
     inputs:
       docker_image_tag:
         required: true
-        default: "latest"
+        type: string
+      branch_name:
+        description: 'The branch that will be deployed'
+        required: false
         type: string
 jobs:
   check-user-access:
@@ -35,6 +38,7 @@ jobs:
       docker_image_name: judge_web_fe
       dockerfile_name: Dockerfile.fe
       docker_tag: ${{ inputs.docker_image_tag }}
+      branch_name: ${{ inputs.branch_name || 'v2' }}
       build_args: YARN_BUILD_COMMAND=build
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
