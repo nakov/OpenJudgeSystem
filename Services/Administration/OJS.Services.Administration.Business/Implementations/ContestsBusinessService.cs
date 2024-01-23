@@ -77,11 +77,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     {
         var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();
 
-        if (contest is null)
-        {
-            throw new ArgumentNullException($"Contest with Id:{id} not found");
-        }
-
         model.Id = id;
 
         if (!model.IsOnlineExam && model.Duration != null)
@@ -89,8 +84,8 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
             model.Duration = null;
         }
 
-        var originalContestPassword = contest.ContestPassword;
-        var originalPracticePassword = contest.PracticePassword;
+        var originalContestPassword = contest!.ContestPassword;
+        var originalPracticePassword = contest!.PracticePassword;
 
         contest.MapFrom(model);
 
