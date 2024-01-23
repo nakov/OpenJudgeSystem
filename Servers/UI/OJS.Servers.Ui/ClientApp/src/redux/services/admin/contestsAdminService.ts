@@ -14,7 +14,7 @@ type ExtraOptionsType = {
 type ResultError = {
     data: Array<ExceptionData>;
 }
-const errorStatusCodes = [ 400, 401, 403, 500 ];
+const errorStatusCodes = [ 400, 401, 403, 422, 500 ];
 const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {

@@ -2,18 +2,13 @@
 
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common.Models.Pagination;
 using System.Linq;
 using OJS.Services.Common.Validation;
-using OJS.Common;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
-public class ContestsController : ControllerBase
+public class ContestsController : ApiControllerBase
 {
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly IFluentValidationService<ContestAdministrationModel> validationService;
@@ -45,7 +40,7 @@ public class ContestsController : ControllerBase
 
         if (validations.Errors.Any())
         {
-            return this.BadRequest(validations.Errors);
+            return this.UnprocessableEntity(validations.Errors);
         }
 
         await this.contestsBusinessService.Create(model);
@@ -63,7 +58,7 @@ public class ContestsController : ControllerBase
 
         if (id <= 0)
         {
-            return this.BadRequest("Invalid contest id.");
+            return this.UnprocessableEntity("Invalid contest id.");
         }
 
         await this.contestsBusinessService.Delete(id);
@@ -84,7 +79,7 @@ public class ContestsController : ControllerBase
 
         if (validations.Errors.Any())
         {
-            return this.BadRequest(validations.Errors);
+            return this.UnprocessableEntity(validations.Errors);
         }
 
         await this.contestsBusinessService.Edit(model, id);

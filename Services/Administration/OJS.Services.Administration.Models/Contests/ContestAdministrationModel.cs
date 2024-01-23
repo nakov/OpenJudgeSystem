@@ -215,6 +215,14 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
             .WithName("Number of problem groups")
             .NotNull()
             .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
+
+        this.RuleFor(model => model)
+            .Must((model, cancellation)
+                => ValidateOnlineContestProblemGroups(model))
+            .When(model => model.Id > 0)
+            .WithName("Number of problem groups")
+            .NotNull()
+            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
     }
 
     private static bool ValidateOnlineContestProblemGroups(ContestAdministrationModel model)
@@ -259,6 +267,16 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
         return !isActive ||
                (contest.Duration == model.Duration &&
                 contest.Type == contestType);
+    }
+
+    private async Task ValidateContestExists(ContestAdministrationModel model)
+    {
+        var contest = await this.contestService.GetByIdQuery(model.Id!.Value).FirstOrDefaultAsync();
+
+        if (contest is null)
+        {
+            throw new ArgumentNullException($"Contest with Id:{model.Id!.Value} not found");
+        }
     }
 
     private bool BeAValidContestType(string? type)
