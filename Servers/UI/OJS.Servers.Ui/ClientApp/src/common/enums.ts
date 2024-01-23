@@ -10,7 +10,12 @@ enum SortingEnum {
     DESC = 'DESC',
 }
 
+enum ProblemGroupTypes {
+    None = 0,
+    ExcludedFromHomework = 1,
+}
 export {
     FilterColumnTypeEnum,
     SortingEnum,
+    ProblemGroupTypes,
 };

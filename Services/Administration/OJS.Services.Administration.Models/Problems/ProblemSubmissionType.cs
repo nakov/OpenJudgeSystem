@@ -9,7 +9,7 @@ public class ProblemSubmissionType : IMapExplicitly
 
     public string? Name { get; set; }
 
-    public byte[]? SolutionSkeleton { get; set; }
+    public string? SolutionSkeleton { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<SubmissionTypeInProblem, ProblemSubmissionType>()
@@ -18,5 +18,5 @@ public class ProblemSubmissionType : IMapExplicitly
             .ForMember(pam => pam.Name, opt
                 => opt.MapFrom(p => p.SubmissionType.Name))
             .ForMember(pam => pam.SolutionSkeleton, opt
-                => opt.MapFrom(p => p.SolutionSkeleton));
+                => opt.MapFrom(p => System.Text.Encoding.UTF8.GetString(p.SolutionSkeleton)));
 }

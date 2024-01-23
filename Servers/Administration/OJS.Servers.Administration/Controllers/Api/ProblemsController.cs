@@ -9,10 +9,7 @@ using OJS.Common.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using OJS.Common;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
-public class ProblemsController : ControllerBase
+public class ProblemsController : ApiControllerBase
 {
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IContestsBusinessService contestsBusinessService;

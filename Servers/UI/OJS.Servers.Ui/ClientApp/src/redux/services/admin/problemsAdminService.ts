@@ -59,8 +59,15 @@ export const problemsAdminService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 0 }),
+        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/${id}` }) }),
         deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
+        updateProblem: builder.mutation({
+            query: (problem) => ({
+                url: `/${problem.id}`,
+                method: 'PATCH',
+                body: problem,
+            }),
+        }),
     }),
 });
 
@@ -69,6 +76,7 @@ export const {
     useGetAllAdminProblemsQuery,
     useGetProblemByIdQuery,
     useDeleteProblemMutation,
+    useUpdateProblemMutation,
 
 } = problemsAdminService;
 export default problemsAdminService;

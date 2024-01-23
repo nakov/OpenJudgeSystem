@@ -7,6 +7,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Enumerations;
     using OJS.Common.Helpers;
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
@@ -185,7 +186,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
             problem.MapFrom(model);
             problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id) !;
-            problem.ProblemGroup.Type = model.ProblemGroupType;
+            problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)
             {
@@ -245,14 +246,19 @@ namespace OJS.Services.Administration.Business.Implementations
                     {
                         ProblemId = problem.Id,
                         SubmissionTypeId = submissionType.Id,
-                        // SolutionSkeleton = submissionType.SolutionSkeleton != null && string.IsNullOrEmpty((submissionType.SolutionSkeleton.Length > 0).ToString())
-                        // ? FluentExtensions.Extensions.(submissionType.SolutionSkeleton)
-                        // : Array.Empty<byte>()
+                        SolutionSkeleton = submissionType.SolutionSkeleton != null && string.IsNullOrEmpty((submissionType.SolutionSkeleton.Length > 0).ToString())
+                        ? System.Text.Encoding.UTF8.GetBytes(submissionType.SolutionSkeleton)
+                        : Array.Empty<byte>(),
                     });
                 }
                 else
                 {
-                    problemSubmissionType.SolutionSkeleton = submissionType.SolutionSkeleton ?? Array.Empty<byte>();
+                    problemSubmissionType.SolutionSkeleton =
+                        submissionType.SolutionSkeleton != null && string.IsNullOrEmpty(
+                                                                 (submissionType.SolutionSkeleton.Length > 0)
+                                                                 .ToString())
+                        ? System.Text.Encoding.UTF8.GetBytes(submissionType.SolutionSkeleton)
+                        : Array.Empty<byte>();
                 }
             }
         }

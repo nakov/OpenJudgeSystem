@@ -3,7 +3,8 @@
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { ExceptionData, ISubmissionTypeInProblem } from '../../../common/types';
+import { ProblemGroupTypes } from '../../../common/enums';
+import { ExceptionData } from '../../../common/types';
 
 type ExtraOptionsType = {
 // Add extra options if needed
@@ -11,17 +12,17 @@ type ExtraOptionsType = {
 type ResultError = {
     data: Array<ExceptionData>;
 }
-const errorStatusCodes = [ 400, 401, 403, 500 ];
+const errorStatusCodes = [ 400, 401, 403, 422, 500 ];
 const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/SubmissionTypes`,
+        credentials: 'include',
+        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/problemGroups`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
-        credentials: 'include',
     });
 
     const result = await baseQuery(args, api, extraOptions);
@@ -42,12 +43,12 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 };
 
 // eslint-disable-next-line import/group-exports
-export const submissionTypesAdminService = createApi({
-    reducerPath: 'submissionTypes',
+export const problemGroupsAdminService = createApi({
+    reducerPath: 'problemGroupsAdmin',
     baseQuery: customBaseQuery,
-    endpoints: (builder) => ({ getForProblem: builder.query<Array<ISubmissionTypeInProblem>, null>({ query: () => ({ url: '/problemView' }) }) }),
+    endpoints: (builder) => ({ getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/forProblem' }) }) }),
 });
 
 // eslint-disable-next-line import/group-exports
-export const { useGetForProblemQuery } = submissionTypesAdminService;
-export default submissionTypesAdminService;
+export const { useGetProblemGroupsForProblemQuery } = problemGroupsAdminService;
+export default problemGroupsAdminService;

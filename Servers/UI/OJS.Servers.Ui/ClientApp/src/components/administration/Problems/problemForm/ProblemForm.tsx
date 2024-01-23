@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-imports */
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable max-len */
 /* eslint-disable no-undefined */
 /* eslint-disable prefer-destructuring */
@@ -7,10 +9,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, MenuItem, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { isNaN } from 'lodash';
 
+import { ProblemGroupTypes } from '../../../../common/enums';
 import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
-import { useGetProblemByIdQuery } from '../../../../redux/services/admin/problemsAdminService';
+import { useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -37,7 +41,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         memoryLimit: 0,
         name: '',
         orderBy: 0,
-        probleGroupType: '',
+        problemGroupType: 'None',
         showDetailedFeedback: false,
         showResults: false,
         sourceCodeSizeLimit: 0,
@@ -48,7 +52,8 @@ const ProblemForm = (props: IProblemFormProps) => {
     const navigate = useNavigate();
     const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) });
     const { data: submissionTypes } = useGetForProblemQuery(null);
-
+    // const { data: problemGroupsTypes } = useGetProblemGroupsForProblemQuery(null);
+    const [ updateProblem ] = useUpdateProblemMutation();
     useEffect(() => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
@@ -62,10 +67,12 @@ const ProblemForm = (props: IProblemFormProps) => {
     }, [ problemData ]);
 
     const onChange = (e: any) => {
-        const { name, value } = e.target;
+        const { name, type, value, checked } = e.target;
         setCurrentProblem((prevState) => ({
             ...prevState,
-            [name]: value,
+            [name]: type === 'checkbox'
+                ? checked
+                : value,
         }));
     };
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {
@@ -83,7 +90,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                 problemSubmissionTypes.push({
                     id: submissionType.id,
                     name: removedSubmissionType.name,
-                    skeleton: null,
+                    solutionSkeleton: null,
                 });
 
                 newSubmissionTypes = newSubmissionTypes.filter((x) => x.id !== submissionType.id);
@@ -121,12 +128,11 @@ const ProblemForm = (props: IProblemFormProps) => {
             }
         }
     };
-
     const onSkeletonChange = (value: string, submissionTypeId: number) => {
         const index = currentProblem.submissionTypes.findIndex((st) => st.id === submissionTypeId);
 
         const newSubmissionTypes = currentProblem.submissionTypes.map((item, idx) => idx === index
-            ? { ...item, skeleton: value }
+            ? { ...item, solutionSkeleton: value }
             : item);
 
         setCurrentProblem((prevState) => ({
@@ -248,6 +254,22 @@ const ProblemForm = (props: IProblemFormProps) => {
                                 </FormControl>
                             </FormGroup>
                         </Box>
+                        <FormGroup sx={{ margin: '3rem 0', width: '92%', alignSelf: 'center' }}>
+                            <InputLabel id="problemGroupType">Problem Group Type</InputLabel>
+                            <Select
+                              onChange={(e) => onChange(e)}
+                              onBlur={(e) => onChange(e)}
+                              labelId="problemGroupType"
+                              value={currentProblem.problemGroupType}
+                              name="problemGroupType"
+                            >
+                                {Object.keys(ProblemGroupTypes).filter((key) => isNaN(Number(key))).map((key) => (
+                                    <MenuItem key={key} value={key}>
+                                        {key}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormGroup>
                         <FormGroup sx={{ marginLeft: '4rem' }}>
                             <FormControlLabel
                               control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
@@ -318,7 +340,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                         <TextareaAutosize
                           placeholder="Enter skeleton here...."
                           minRows={10}
-                          value={st.skeleton ?? ''}
+                          value={st.solutionSkeleton ?? ''}
                           name="description"
                           onChange={(e) => onSkeletonChange(e.target.value, st.id)}
                         />
@@ -330,7 +352,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                             {isEditMode
                                 ? (
                                     <>
-                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} variant="contained">Edit</Button>
+                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={() => updateProblem(currentProblem)} variant="contained">Edit</Button>
                                         <DeleteProblem
                                           problemId={problemId}
                                           problemName={currentProblem.name}

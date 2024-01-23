@@ -8,6 +8,7 @@ using FluentValidation;
 using OJS.Data.Validation;
 using OJS.Services.Common.Validation;
 using OJS.Common.Enumerations;
+using System;
 
 public class ProblemAdministrationModel : IMapExplicitly
 {
@@ -35,11 +36,12 @@ public class ProblemAdministrationModel : IMapExplicitly
 
     public int TimeLimit { get; set; }
 
-    public ProblemGroupType ProblemGroupType { get; set; }
+    public string? ProblemGroupType { get; set; }
     public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
 
-    public void RegisterMappings(IProfileExpression configuration) =>
-        configuration.CreateMap<Problem, ProblemAdministrationModel>()
+    public void RegisterMappings(IProfileExpression configuration)
+    {
+         configuration.CreateMap<Problem, ProblemAdministrationModel>()
             .ForMember(pam => pam.Id, opt
                 => opt.MapFrom(p => p.Id))
             .ForMember(pam => pam.Name, opt
@@ -67,30 +69,62 @@ public class ProblemAdministrationModel : IMapExplicitly
             .ForMember(pam => pam.TimeLimit, opt
                 => opt.MapFrom(p => p.TimeLimit))
             .ForMember(pam => pam.ProblemGroupType, opt
-                => opt.MapFrom(p => p.ProblemGroup.Type));
-    // configuration.CreateMap<ProblemAdministrationModel, Problem>()
-    //     .ForMember(pam => pam.Id, opt
-    //         => opt.MapFrom(p => p.Id))
-    //     .ForMember(pam => pam.Name, opt
-    //         => opt.MapFrom(p => p.Name))
-    //     .ForMember(pam => pam.MaximumPoints, opt
-    //         => opt.MapFrom(p => p.MaximumPoints))
-    //     .ForMember(pam => pam.SourceCodeSizeLimit, opt
-    //         => opt.MapFrom(p => p.SourceCodeSizeLimit))
-    //     .ForMember(pam => pam.OrderBy, opt
-    //         => opt.MapFrom(p => p.OrderBy))
-    //     .ForMember(pam => pam.ShowResults, opt
-    //         => opt.MapFrom(p => p.ShowResults))
-    //     .ForMember(pam => pam.ShowDetailedFeedback, opt
-    //         => opt.MapFrom(p => p.ShowDetailedFeedback))
-    //     .ForMember(pam => pam.CheckerId, opt
-    //         => opt.MapFrom(p => p.CheckerId))
-    //     .ForMember(pam => pam.ProblemGroupId, opt
-    //         => opt.MapFrom(p => p.ProblemGroupId))
-    //     .ForMember(pam => pam.MemoryLimit, opt
-    //         => opt.MapFrom(p => p.MemoryLimit))
-    //     .ForMember(pam => pam.TimeLimit, opt
-    //         => opt.MapFrom(p => p.TimeLimit));
+                => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)));
+
+         configuration.CreateMap<ProblemAdministrationModel, Problem>()
+             .ForMember(pam => pam.Id, opt
+                 => opt.MapFrom(p => p.Id))
+             .ForMember(pam => pam.Name, opt
+                 => opt.MapFrom(p => p.Name))
+             .ForMember(pam => pam.MaximumPoints, opt
+                 => opt.MapFrom(p => p.MaximumPoints))
+             .ForMember(pam => pam.SourceCodeSizeLimit, opt
+                 => opt.MapFrom(p => p.SourceCodeSizeLimit))
+             .ForMember(pam => pam.OrderBy, opt
+                 => opt.MapFrom(p => p.OrderBy))
+             .ForMember(pam => pam.ShowResults, opt
+                 => opt.MapFrom(p => p.ShowResults))
+             .ForMember(pam => pam.ShowDetailedFeedback, opt
+                 => opt.MapFrom(p => p.ShowDetailedFeedback))
+             .ForMember(pam => pam.CheckerId, opt
+                 => opt.MapFrom(p => p.CheckerId))
+             .ForMember(pam => pam.ProblemGroupId, opt
+                 => opt.MapFrom(p => p.ProblemGroupId))
+             .ForMember(pam => pam.MemoryLimit, opt
+                 => opt.MapFrom(p => p.MemoryLimit))
+             .ForMember(pam => pam.TimeLimit, opt
+                 => opt.MapFrom(p => p.TimeLimit))
+             .ForMember(pam => pam.SubmissionTypesInProblems, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.ProblemGroup, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.Checker, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.SolutionSkeleton, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.AdditionalFiles, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.Tests, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.Resources, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.Submissions, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.TagsInProblems, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.ParticipantScores, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.ProblemsForParticipants, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.IsDeleted, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.DeletedOn, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.CreatedOn, opt
+                 => opt.Ignore())
+             .ForMember(pam => pam.ModifiedOn, opt
+                 => opt.Ignore());
+    }
 }
 
 public class ProblemAdministrationModelValidator : BaseValidator<ProblemAdministrationModel>
