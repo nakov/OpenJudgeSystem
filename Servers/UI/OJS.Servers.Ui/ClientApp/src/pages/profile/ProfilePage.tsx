@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
@@ -8,6 +8,8 @@ import Heading from '../../components/guidelines/headings/Heading';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
+import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
+import { useUserProfileSubmissions } from '../../hooks/submissions/use-profile-submissions';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useUsers } from '../../hooks/use-users';
 import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
@@ -16,10 +18,8 @@ import { decodeUsernameFromUrlParam } from '../../utils/urls';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+
 // import Tabs from '../../components/guidelines/tabs/Tabs';
-// import ProfileContestParticipations
-//     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
-// import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions'
 
 const ProfilePage = () => {
     const {
@@ -32,10 +32,12 @@ const ProfilePage = () => {
             clearUserProfileInformation,
         },
     } = useUsers();
-    const { userName: myUsername } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization.internalUser);
+    const { internalUser } =
+        useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
+    const { state: { usernameForProfile }, actions: { setUsernameForProfile } } = useUserProfileSubmissions();
     const { actions: { setPageTitle } } = usePageTitles();
     const { username } = useParams();
+    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
 
     useEffect(
         () => {
@@ -45,11 +47,13 @@ const ProfilePage = () => {
 
             const usernameParam = !isNil(username)
                 ? username
-                : myUsername;
+                : internalUser.userName;
 
+            setUsernameForProfile(usernameParam);
+            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameParam) === internalUser.userName);
             getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ getProfile, myProfile, myProfile.userName, myUsername, username ],
+        [ getProfile, myProfile, myProfile.userName, internalUser.userName, setUsernameForProfile, username ],
     );
 
     useEffect(
@@ -58,9 +62,9 @@ const ProfilePage = () => {
                 return;
             }
 
-            setPageTitle(`${myProfile.userName}'s profile`);
+            setPageTitle(`${usernameForProfile}'s profile`);
         },
-        [ setPageTitle, myProfile, isProfileInfoLoaded ],
+        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
     );
 
     useEffect(
@@ -98,7 +102,12 @@ const ProfilePage = () => {
                 : (
                     <>
                         {renderUsernameHeading()}
-                        <ProfileAboutInfo value={myProfile} />
+                        <ProfileAboutInfo
+                          userProfile={myProfile}
+                          isUserAdmin={internalUser.canAccessAdministration}
+                          isUserProfileOwner={currentUserIsProfileOwner}
+                        />
+                        {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
                         <ProfileContestParticipations />
                         {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
@@ -110,7 +119,7 @@ const ProfilePage = () => {
                     </>
                 )
         ),
-        [ myProfile, renderUsernameHeading, isProfileInfoLoaded ],
+        [ myProfile, isProfileInfoLoaded, renderUsernameHeading, currentUserIsProfileOwner, internalUser.canAccessAdministration ],
     );
 
     return renderPage();

@@ -15,6 +15,8 @@ interface IUserProfileType {
     lastName: string;
     email: string;
     isGetUserLoading: boolean;
+    city?: string;
+    age?: number;
 }
 
 interface IUsersContext {
