@@ -223,44 +223,17 @@ namespace OJS.Services.Administration.Business.Implementations
 
         private static void AddSubmissionTypes(Problem problem, ProblemAdministrationModel model)
         {
-            var submissionTypesToRemove = new HashSet<SubmissionTypeInProblem>();
-            foreach (var submissionType in problem.SubmissionTypesInProblems)
-            {
-                if (model.SubmissionTypes.Any(st => st.Id == submissionType.ProblemId))
+            var newSubmissionTypes = model.SubmissionTypes
+                .Select(x => new SubmissionTypeInProblem
                 {
-                    continue;
-                }
-
-                submissionTypesToRemove.Add(submissionType);
-            }
-
-            submissionTypesToRemove.ForEach(sttr => problem.SubmissionTypesInProblems.Remove(sttr));
-
-            foreach (var submissionType in model.SubmissionTypes)
-            {
-                var problemSubmissionType =
-                    problem.SubmissionTypesInProblems.FirstOrDefault(x => x.SubmissionTypeId == submissionType.Id);
-                if (problemSubmissionType is null)
-                {
-                    problem.SubmissionTypesInProblems.Add(new SubmissionTypeInProblem()
-                    {
-                        ProblemId = problem.Id,
-                        SubmissionTypeId = submissionType.Id,
-                        SolutionSkeleton = submissionType.SolutionSkeleton != null && string.IsNullOrEmpty((submissionType.SolutionSkeleton.Length > 0).ToString())
-                        ? System.Text.Encoding.UTF8.GetBytes(submissionType.SolutionSkeleton)
+                    ProblemId = problem.Id,
+                    SubmissionTypeId = x.Id,
+                    SolutionSkeleton = x.SolutionSkeleton != null
+                        ? x.SolutionSkeleton.ToString().Compress()
                         : Array.Empty<byte>(),
-                    });
-                }
-                else
-                {
-                    problemSubmissionType.SolutionSkeleton =
-                        submissionType.SolutionSkeleton != null && string.IsNullOrEmpty(
-                                                                 (submissionType.SolutionSkeleton.Length > 0)
-                                                                 .ToString())
-                        ? System.Text.Encoding.UTF8.GetBytes(submissionType.SolutionSkeleton)
-                        : Array.Empty<byte>();
-                }
-            }
+                });
+
+            problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);
         }
 
         private async Task CopyProblemToContest(Problem? problem, int contestId, int? problemGroupId)

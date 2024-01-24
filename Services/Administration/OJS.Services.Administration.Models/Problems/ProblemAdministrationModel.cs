@@ -39,7 +39,7 @@ public class ProblemAdministrationModel : IMapExplicitly
 
     public string? ProblemGroupType { get; set; }
 
-    public byte[]? AdditionalFiles { get; set; }
+    // public byte[]? AdditionalFiles { get; set; }
     public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -71,8 +71,8 @@ public class ProblemAdministrationModel : IMapExplicitly
                 => opt.MapFrom(p => p.MemoryLimit))
             .ForMember(pam => pam.TimeLimit, opt
                 => opt.MapFrom(p => p.TimeLimit))
-            .ForMember(pam => pam.AdditionalFiles, opt
-                => opt.MapFrom(p => p.AdditionalFiles))
+            // .ForMember(pam => pam.AdditionalFiles, opt
+            //     => opt.MapFrom(p => p.AdditionalFiles))
             .ForMember(pam => pam.ProblemGroupType, opt
                 => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)));
 
@@ -108,7 +108,7 @@ public class ProblemAdministrationModel : IMapExplicitly
              .ForMember(pam => pam.SolutionSkeleton, opt
                  => opt.Ignore())
              .ForMember(pam => pam.AdditionalFiles, opt
-                 => opt.MapFrom(p => p.AdditionalFiles))
+                 => opt.Ignore())
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
              .ForMember(pam => pam.Resources, opt

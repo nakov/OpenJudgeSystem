@@ -3,6 +3,8 @@
 using AutoMapper;
 using OJS.Data.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using FluentExtensions.Extensions;
+
 public class ProblemSubmissionType : IMapExplicitly
 {
     public int Id { get; set; }
@@ -18,5 +20,5 @@ public class ProblemSubmissionType : IMapExplicitly
             .ForMember(pam => pam.Name, opt
                 => opt.MapFrom(p => p.SubmissionType.Name))
             .ForMember(pam => pam.SolutionSkeleton, opt
-                => opt.MapFrom(p => System.Text.Encoding.UTF8.GetString(p.SolutionSkeleton)));
+                => opt.MapFrom(p => p.SolutionSkeleton.Decompress().ToString()));
 }

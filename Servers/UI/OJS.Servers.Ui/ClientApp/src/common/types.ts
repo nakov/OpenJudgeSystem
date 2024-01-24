@@ -292,6 +292,7 @@ interface IProblemAdministration {
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
+    // additionalFiles: File | null;
 }
 
 interface IUserRoleType {

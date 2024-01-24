@@ -49,6 +49,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         sourceCodeSizeLimit: 0,
         submissionTypes: [],
         timeLimit: 0,
+        // additionalFiles: null,
     });
 
     const navigate = useNavigate();
@@ -156,6 +157,13 @@ const ProblemForm = (props: IProblemFormProps) => {
           message={message}
         />
     );
+
+    const handleAdditionalFilesChange = (event:any) => {
+        setCurrentProblem({
+            ...currentProblem,
+            additionalFiles: event.target.files[0],
+        });
+    };
 
     return (
         isGettingData
@@ -310,11 +318,10 @@ const ProblemForm = (props: IProblemFormProps) => {
                                   variant="standard"
                                   sx={{ width: '45%', margin: '1rem' }}
                                   InputLabelProps={{ shrink: true }}
-                                  onChange={(e) => onChange(e)}
-                                  value={currentProblem.additionalFiles}
+                                  onChange={(e) => handleAdditionalFilesChange(e)}
                                 />
                             </FormControl>
-                            <FormControl>
+                            {/* <FormControl>
                                 <TextField
                                   type="file"
                                   label="Tests"
@@ -322,7 +329,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                                   sx={{ width: '45%', margin: '1rem' }}
                                   InputLabelProps={{ shrink: true }}
                                 />
-                            </FormControl>
+                            </FormControl> */}
                         </FormGroup>
                         <FormGroup sx={{ marginLeft: '4rem' }}>
                             <FormControlLabel
@@ -406,7 +413,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                             {isEditMode
                                 ? (
                                     <>
-                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={() => updateProblem(currentProblem)} variant="contained">Edit</Button>
+                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={(e) => updateProblem(currentProblem)} variant="contained">Edit</Button>
                                         <DeleteProblem
                                           problemId={problemId}
                                           problemName={currentProblem.name}
