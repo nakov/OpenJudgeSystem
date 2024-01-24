@@ -1,4 +1,9 @@
-﻿namespace OJS.Web.Areas.Administration.Controllers
+﻿using System;
+using System.Collections.Generic;
+using OJS.Web.Common.Helpers;
+using OJS.Workers.Common.Models;
+
+namespace OJS.Web.Areas.Administration.Controllers
 {
     using System.Collections;
     using System.Linq;
@@ -137,7 +142,7 @@
                     using (var scope = TransactionsHelper.CreateTransactionScope())
                     {
                         this.BaseCreate(entity);
-                        this.submissionsForProcessingData.AddOrUpdateBySubmission(model.Id.Value);
+                        this.submissionsForProcessingData.AddOrUpdateBySubmission(entity);
 
                         scope.Complete();
                     }
@@ -173,6 +178,8 @@
             }
 
             this.ViewBag.SubmissionAction = "Update";
+            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypes();
+            
             return this.View(submission);
         }
 
@@ -189,6 +196,8 @@
                 }
 
                 var submission = this.Data.Submissions.GetById(model.Id.Value);
+                submission.WorkerTypeToExecuteOn = model.WorkerType;
+                
                 if (model.SubmissionTypeId.HasValue)
                 {
                     var submissionType = this.Data.SubmissionTypes.GetById(model.SubmissionTypeId.Value);
@@ -233,7 +242,7 @@
                         {
                             submission.Processed = false;
 
-                            this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id);
+                            this.submissionsForProcessingData.AddOrUpdateBySubmission(submission);
 
                             var submissionIsBestSubmission = this.IsBestSubmission(
                                 submissionProblemId,
@@ -262,6 +271,7 @@
             }
 
             this.ViewBag.SubmissionAction = "Update";
+            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypes();
             return this.View(model);
         }
 
@@ -483,8 +493,11 @@
                 using (var scope = TransactionsHelper.CreateTransactionScope())
                 {
                     submission.Processed = false;
+                    submission.WorkerEndpoint = null;
+                    submission.StartedExecutionOn = null;
+                    submission.CompletedExecutionOn = null;
 
-                    this.submissionsForProcessingData.AddOrUpdateBySubmission(submission.Id);
+                    this.submissionsForProcessingData.AddOrUpdateBySubmission(submission);
 
                     var submissionIsBestSubmission = this.IsBestSubmission(
                         submissionProblemId,

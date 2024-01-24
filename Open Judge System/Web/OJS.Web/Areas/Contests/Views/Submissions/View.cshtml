@@ -83,21 +83,28 @@
 }
 else
 {
-    if (Model.UserHasAdminPermission)
+    <div class="clearfix"></div>
+    if (!string.IsNullOrWhiteSpace(Model.ExecutionComment))
     {
-        <div class="clearfix"></div>
-        if (!string.IsNullOrWhiteSpace(Model.ProcessingComment))
+        <h2>@Resource.Execution_result:</h2>
+        if (Model.ExceptionType == ExceptionType.UnprocessableSubmission)
         {
-            <h2>@Resource.Execution_result:</h2>
-            <pre>@Model.ProcessingComment</pre>
-            if (Model.UserHasAdminPermission)
-            {
-                <pre>@Resource.Exception_type: @Model.ExceptionType  
-                     @Model.ExecutionComment
-                </pre>
-            }
+            <pre>The submission cannot be processed at the moment.</pre>
+        }
+        else
+        {
+            <pre>Unexpected error.</pre>
+        }
+        <pre>Please contact an Administrator.</pre>
+        
+        if (Model.UserHasAdminPermission)
+        {
+            <pre>@Resource.Exception_type: @Model.ExceptionType  
+             @Model.ExecutionComment
+        </pre>
         }
     }
+
     if (!Model.IsCompiledSuccessfully)
     {
         <div class="alert alert-danger top-buffer">@Resource.Compile_time_error_occured</div>
@@ -118,7 +125,7 @@ else
         <h2 class="text-success top-buffer">@Resource.Compiled_successfully</h2>
     }
 
-    if (!Model.HasTestRuns && Model.IsCompiledSuccessfully && string.IsNullOrEmpty(Model.ProcessingComment) && Model.TotalTests > 0)
+    if (!Model.HasTestRuns && Model.IsCompiledSuccessfully && string.IsNullOrEmpty(Model.ExecutionComment) && Model.TotalTests > 0)
     {
         var message = @Html.Raw(string.Format(@Resource.User_retest_prompt, Model.Points, Model.MaxPoints));
 
@@ -189,7 +196,7 @@ else
         }
 
         var displayShowInputButton = Model.UserHasAdminPermission ||
-            (!testResult.HideInput &&
+            (!testResult.HideInput && testResult.ResultType != TestRunResultType.CorrectAnswer &&
                 (testResult.IsTrialTest || testResult.IsOpenTest || Model.ShowDetailedFeedback));
 
         var displayExecutionComment = !string.IsNullOrWhiteSpace(testResult.ExecutionComment) &&
@@ -357,6 +364,8 @@ else
     <p><strong>@AdministrationResource.Started_execution_on</strong>: @Model.StartedExecutionOn</p>
     <p><strong>@AdministrationResource.Completed_execution_on</strong>: @Model.CompletedExecutionOn</p>
     <p><strong>Submission Type Name:</strong> @Model.SubmissionType.ExecutionStrategyType</p>
+    <p><strong>Worker Type:</strong> @Model.WorkerType</p>
+    <p><strong>Worker endpoint:</strong> @Model.WorkerEndpoint</p>
 }
 <p><strong>Submission Type:</strong> @Model.SubmissionType.Name</p>
 

@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Data.SubmissionsForProcessing
+﻿using OJS.Common.Models;
+
+namespace OJS.Services.Data.SubmissionsForProcessing
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -16,7 +18,7 @@
 
         void AddOrUpdateBySubmissionIds(ICollection<int> submissionIds);
 
-        void AddOrUpdateBySubmission(int submissionId);
+        void AddOrUpdateBySubmission(Submission submission);
 
         void RemoveBySubmission(int submissionId);
 

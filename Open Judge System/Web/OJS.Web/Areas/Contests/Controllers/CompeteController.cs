@@ -488,13 +488,14 @@
                                 (!participant.IsOfficial && contest.PracticePassword == null)) &&
                             contest.Visible &&
                             !contest.IsDeleted &&
-                            problem.ShowResults
+                            problem.ShowResults,
+                Problem = problem
             };
 
             this.Data.Submissions.Add(newSubmission);
             this.Data.SaveChanges();
 
-            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id);
+            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission);
 
             return this.Json(participantSubmission.ProblemId);
         }
@@ -573,7 +574,7 @@
             this.Data.Submissions.Add(newSubmission);
             this.Data.SaveChanges();
 
-            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission.Id);
+            this.submissionsForProcessingData.AddOrUpdateBySubmission(newSubmission);
 
             this.TempData.Add(GlobalConstants.InfoMessage, Resource.ContestsGeneral.Solution_uploaded);
             return this.Redirect(string.Format("/Contests/{2}/Index/{0}#{1}", problem.ProblemGroup.ContestId, returnProblem ?? 0, official ? CompeteActionName : PracticeActionName));

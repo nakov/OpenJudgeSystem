@@ -1,6 +1,7 @@
 ﻿namespace OJS.LocalWorker
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Data.Models;
     using OJS.Services.Business.ParticipantScores.Models;
@@ -10,6 +11,7 @@
     using OJS.Services.Data.SubmissionsForProcessing;
     using OJS.Services.Data.TestRuns;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
     using Workers.ExecutionStrategies.Models;
     using Workers.SubmissionProcessors;
@@ -23,7 +25,7 @@
         private readonly IParticipantsDataService participantsData;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly ISubmissionsForProcessingDataService submissionsForProcessingData;
-
+        
         private Submission submission;
         private SubmissionForProcessing submissionForProcessing;
 
@@ -41,14 +43,15 @@
             this.submissionsForProcessingData = submissionsForProcessingData;
         }
 
-        public override IOjsSubmission RetrieveSubmission()
+        public override IOjsSubmission RetrieveSubmission(List<WorkerType> workerTypes)
         {
-            lock (this.SubmissionsForProcessing)
+            lock (this.SharedLockObject)
             {
                 if (this.SubmissionsForProcessing.IsEmpty)
                 {
                     this.submissionsForProcessingData
                         .GetAllUnprocessed()
+                        .Where(s => workerTypes.Contains(s.WorkerType))
                         .OrderBy(x => x.Id)
                         .Select(x => x.SubmissionId)
                         .ToList()
@@ -62,7 +65,7 @@
                     return null;
                 }
 
-                this.Logger.InfoFormat($"Submission #{submissionId} retrieved from data store successfully");
+                this.Logger.InfoFormat($"Submission #{submissionId} retrieved from data store successfully for {string.Join(",", workerTypes.Select(wt => wt.ToString()))} worker.");
 
                 this.submission = this.submissionsData.GetById(submissionId);
 
@@ -82,24 +85,31 @@
 
         public override void BeforeExecute()
         {
-            this.submission.ProcessingComment = null;
             this.submission.ExceptionType = ExceptionType.None;
             this.submission.CompilerComment = null;
             this.submission.ExecutionComment = null;
             this.testRunsData.DeleteBySubmission(this.submission.Id);
         }
 
-        public override void OnError(IOjsSubmission submissionModel, Exception ex)
+        public override void OnProcessingSubmissionError(IOjsSubmission submissionModel, Exception ex)
         {
-            this.submission.ProcessingComment = submissionModel.ProcessingComment;
-            this.submission.ExecutionComment = $"{ex.Message} {ex.InnerException} \n" + $"{ex.StackTrace}";
-            this.submission.ExceptionType = submissionModel.ExceptionType;
+            this.submission.ExecutionComment = $"{ex.GetAllMessages()}{Environment.NewLine}{ex.StackTrace}";
             this.submission.StartedExecutionOn = submissionModel.StartedExecutionOn;
             this.submission.CompletedExecutionOn = submissionModel.CompletedExecutionOn;
-
+            this.submission.WorkerEndpoint = submissionModel.WorkerEndpoint;
+            this.submission.ExceptionType = submissionModel.ExceptionType != ExceptionType.None
+                ? submissionModel.ExceptionType
+                : ExceptionType.Strategy;
             this.UpdateResults();
         }
 
+        public override void OnRetrieveSubmissionError(IOjsSubmission submissionModel, string message)
+        {
+            this.submission.ExecutionComment = message;
+            this.submission.ExceptionType = ExceptionType.UnprocessableSubmission;
+            this.SetSubmissionToProcessed();
+        }
+        
         public override void SetSubmissionToProcessing()
         {
             try
@@ -118,12 +128,16 @@
             }
         }
 
+        public override int GetSubmissionForProcessingFailureCount()
+            => this.submissionForProcessing.ExecutionFailuresCount;
+
         public override void ReleaseSubmission()
         {
             try
             {
                 this.submissionForProcessing.Processed = false;
                 this.submissionForProcessing.Processing = false;
+                this.submissionForProcessing.ExecutionFailuresCount += 1;
                 this.submissionsForProcessingData.Update(this.submissionForProcessing);
             }
             catch (Exception ex)
@@ -135,6 +149,27 @@
             }
         }
 
+        public override void SetSubmissionToProcessed()
+        {
+            try
+            {
+                this.submission.WorkerTypeLastExecutedOn = this.submissionForProcessing.WorkerType;
+                this.submission.Processed = true;
+                this.submissionForProcessing.Processed = true;
+                this.submissionForProcessing.Processing = false;
+
+                this.submissionsData.Update(this.submission);
+                this.submissionsForProcessingData.Update(this.submissionForProcessing);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.ErrorFormat(
+                    "Unable to save changes to the submission #{0}! Exception: {1}",
+                    this.submission.Id,
+                    ex);
+            }
+        }
+        
         protected override void ProcessTestsExecutionResult(IExecutionResult<TestResult> executionResult)
         {
             this.submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
@@ -142,6 +177,7 @@
 
             this.submission.StartedExecutionOn = executionResult.StartedExecutionOn;
             this.submission.CompletedExecutionOn = executionResult.CompletedExecutionOn;
+            this.submission.WorkerEndpoint = executionResult.WorkerEndpoint;
             
             if (!executionResult.IsCompiledSuccessfully)
             {
@@ -210,7 +246,8 @@
                     this.submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in CalculatePointsForSubmission: {ex.Message}";
+                this.submission.ExecutionComment = $"Exception in CalculatePointsForSubmission: {ex.Message} {Environment.NewLine}"
+                    + this.submission.ExecutionComment;
             }
         }
 
@@ -270,27 +307,8 @@
                     this.submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in SaveParticipantScore: {ex.Message}";
-            }
-        }
-
-        private void SetSubmissionToProcessed()
-        {
-            try
-            {
-                this.submission.Processed = true;
-                this.submissionForProcessing.Processed = true;
-                this.submissionForProcessing.Processing = false;
-
-                this.submissionsData.Update(this.submission);
-                this.submissionsForProcessingData.Update(this.submissionForProcessing);
-            }
-            catch (Exception ex)
-            {
-                this.Logger.ErrorFormat(
-                    "Unable to save changes to the submission #{0}! Exception: {1}",
-                    this.submission.Id,
-                    ex);
+                this.submission.ExecutionComment = $"Exception in SaveParticipantScore: {ex.Message}{Environment.NewLine}"
+                    + this.submission.ExecutionComment;
             }
         }
 
@@ -307,7 +325,8 @@
                     this.submission.Id,
                     ex);
 
-                this.submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
+                this.submission.ExecutionComment = $"Exception in CacheTestRuns: {ex.Message}{Environment.NewLine}"
+                    + this.submission.ExecutionComment;
             }
         }
 

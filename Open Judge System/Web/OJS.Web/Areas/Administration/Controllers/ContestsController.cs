@@ -1,4 +1,6 @@
 ﻿using OJS.Services.Data.Settings;
+using OJS.Web.Common.Helpers;
+using OJS.Workers.Common.Models;
 
 namespace OJS.Web.Areas.Administration.Controllers
 {
@@ -139,7 +141,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             }
 
             var contest = model.GetEntityModel();
-
+            contest.DefaultWorkerType = model.DefaultWorkerType;
             this.AddProblemGroupsToContest(contest, model.ProblemGroupsCount);
 
             this.AddIpsToContest(contest, model.AllowedIps);
@@ -246,6 +248,7 @@ namespace OJS.Web.Areas.Administration.Controllers
             contest.AllowedIps.Clear();
             this.AddIpsToContest(contest, model.AllowedIps);
 
+            contest.DefaultWorkerType = model.DefaultWorkerType;
             this.contestsData.Update(contest);
             this.cacheItemsProvider.ClearContests();
 
@@ -643,6 +646,8 @@ namespace OJS.Web.Areas.Administration.Controllers
         {
             this.ViewBag.TypeData = DropdownViewModel.GetEnumValues<ContestType>();
             this.ViewBag.SubmissionExportTypes = DropdownViewModel.GetEnumValues<SubmissionExportType>();
+
+            this.ViewBag.WorkersType = WorkerTypesHelper.GetWorkerTypes();
 
             if (contestId.HasValue)
             {
