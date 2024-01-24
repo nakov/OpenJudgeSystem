@@ -64,8 +64,8 @@ const SubmissionBox = () => {
     );
 
     const handleCodeChanged = useCallback(
-        (newValue: string | File) => {
-            updateSubmissionCode(newValue);
+        (newValue: string | undefined) => {
+            updateSubmissionCode(newValue ?? '');
         },
         [ updateSubmissionCode ],
     );

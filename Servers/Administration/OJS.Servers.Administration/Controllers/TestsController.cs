@@ -91,15 +91,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     protected override IEnumerable<CustomGridColumn<Test>> CustomColumns
         => new CustomGridColumn<Test>[]
         {
-            new ()
+            new()
             {
                 Name = AdditionalFormFields.Input.ToString(),
-                ValueFunc = t => t.InputDataAsString.ToEllipsis(TestInputMaxLengthInGrid) !,
+                ValueFunc = t => t.InputDataAsString.ToEllipsis(TestInputMaxLengthInGrid)!,
             },
-            new ()
+            new()
             {
                 Name = AdditionalFormFields.Output.ToString(),
-                ValueFunc = t => t.OutputDataAsString.ToEllipsis(TestInputMaxLengthInGrid) !,
+                ValueFunc = t => t.OutputDataAsString.ToEllipsis(TestInputMaxLengthInGrid)!,
             },
         };
 
@@ -396,16 +396,16 @@ public class TestsController : BaseAutoCrudAdminController<Test>
     private static IEnumerable<FormControlViewModel> GetFormControlsForImportTests(int problemId)
         => new FormControlViewModel[]
         {
-            new ()
+            new()
             {
                 Name = nameof(TestsImportRequestModel.ProblemId),
                 Type = typeof(int),
                 IsHidden = true,
                 Value = problemId,
             },
-            new () { Name = nameof(TestsImportRequestModel.Tests), Type = typeof(IFormFile), },
-            new () { Name = nameof(TestsImportRequestModel.RetestProblem), Type = typeof(bool), Value = false, },
-            new () { Name = nameof(TestsImportRequestModel.DeleteOldTests), Type = typeof(bool), Value = true, },
+            new() { Name = nameof(TestsImportRequestModel.Tests), Type = typeof(IFormFile), },
+            new() { Name = nameof(TestsImportRequestModel.RetestProblem), Type = typeof(bool), Value = false, },
+            new() { Name = nameof(TestsImportRequestModel.DeleteOldTests), Type = typeof(bool), Value = true, },
         };
 
     private IEnumerable<AutoCrudAdminGridToolbarActionViewModel> GetCustomToolbarActions(int problemId)
@@ -414,9 +414,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
 
         return new AutoCrudAdminGridToolbarActionViewModel[]
         {
-            new () { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
-            new () { Name = "Export Zip", Action = nameof(this.ExportZip), RouteValues = routeValues, },
-            new ()
+            new() { Name = "Add new", Action = nameof(this.Create), RouteValues = routeValues, },
+            new() { Name = "Export Zip", Action = nameof(this.ExportZip), RouteValues = routeValues, },
+            new()
             {
                 Name = "Import tests",
                 Action = nameof(this.Import),

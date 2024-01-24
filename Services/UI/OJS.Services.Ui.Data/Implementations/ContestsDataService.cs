@@ -7,9 +7,8 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Data.Implementations;
-using OJS.Services.Common.Models.Contests;
-using Infrastructure;
-using Models.Contests;
+using OJS.Services.Infrastructure;
+using OJS.Services.Ui.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;
 using SoftUni.Common.Models;
@@ -39,6 +38,13 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
             .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync();
+
+    public async Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId)
+        => await this.DbSet
+            .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
+            .Include(c => c.Category)
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 

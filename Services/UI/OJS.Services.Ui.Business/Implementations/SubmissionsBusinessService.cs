@@ -6,14 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Helpers;
-using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Data;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
-using Infrastructure.Exceptions;
-using Data;
-using Models.Submissions;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Submissions;
 using SoftUni.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
@@ -31,7 +30,7 @@ using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
 using Microsoft.Extensions.Logging;
-using static Constants.PublicSubmissions;
+using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -40,9 +39,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-
     private readonly IParticipantsBusinessService participantsBusinessService;
-
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
 
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
@@ -56,7 +53,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
+    private readonly IRetestSubmissionValidationService retestSubmissionValidationService;
     private readonly ISubmissionPublisherService submissionPublisher;
+    private readonly ISubmissionsHelper submissionsHelper;
     private readonly ILogger<SubmissionsBusinessService> logger;
 
     public SubmissionsBusinessService(
@@ -75,9 +74,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
+        IRetestSubmissionValidationService retestSubmissionValidationService,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ISubmissionPublisherService submissionPublisher,
         IContestsDataService contestsDataService,
+        ISubmissionsHelper submissionsHelper,
         ILogger<SubmissionsBusinessService> logger)
     {
         this.submissionsData = submissionsData;
@@ -85,6 +86,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
         this.participantsBusinessService = participantsBusinessService;
+        this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
@@ -94,11 +96,40 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
+        this.retestSubmissionValidationService = retestSubmissionValidationService;
         this.submissionPublisher = submissionPublisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.contestsDataService = contestsDataService;
+        this.submissionsHelper = submissionsHelper;
         this.logger = logger;
-        this.lecturersInContestsBusiness = lecturersInContestsBusiness;
+    }
+
+    public async Task Retest(int id)
+    {
+        var user = this.userProviderService.GetCurrentUser();
+
+        var submission = this.submissionsData
+            .GetSubmissionById<SubmissionDetailsServiceModel>(id);
+
+        if (submission == null)
+        {
+            throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
+        }
+
+        var isUserInRoleForContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submission.ContestId);
+
+        var validationResult =
+            this.retestSubmissionValidationService.GetValidationResult((
+                submission,
+                user,
+                isUserInRoleForContest));
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        await this.submissionPublisher.PublishRetest(submission.Id);
     }
 
     public async Task<SubmissionDetailsServiceModel?> GetById(int submissionId)
@@ -121,16 +152,22 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
+        var contest = await this.contestsDataService
+            .GetWithCategoryByProblem<ContestServiceModel>(submissionDetailsServiceModel!.Problem.Id);
+
+        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest!.Id);
+
+        submissionDetailsServiceModel.UserIsInRoleForContest = userIsAdminOrLecturerInContest;
+        submissionDetailsServiceModel.IsEligibleForRetest =
+            this.submissionsHelper.IsEligibleForRetest(submissionDetailsServiceModel);
+
         var validationResult =
-            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser) !);
+            this.submissionDetailsValidationService.GetValidationResult((submissionDetailsServiceModel, currentUser, userIsAdminOrLecturerInContest));
 
         if (!validationResult.IsValid)
         {
             throw new BusinessServiceException(validationResult.Message);
         }
-
-        var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
 
         if (!userIsAdminOrLecturerInContest)
         {
@@ -380,7 +417,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             (participant?.Contest,
                 participant?.ContestId,
                 currentUser,
-                model.Official) !);
+                model.Official)!);
 
         var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
             participant!.Id,
@@ -491,7 +528,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.SaveParticipantScore(submission);
 
             await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
-            await this.submissionsData.SaveChanges();
             CacheTestRuns(submission);
         }
         else

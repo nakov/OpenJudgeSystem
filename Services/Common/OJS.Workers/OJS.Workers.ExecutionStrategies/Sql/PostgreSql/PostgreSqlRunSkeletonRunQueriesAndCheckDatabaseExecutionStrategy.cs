@@ -2,17 +2,17 @@
 {
     using System.Data;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
-    public class PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy
-        : BasePostgreSqlExecutionStrategy
+    public class PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<TSettings>
+        : BasePostgreSqlExecutionStrategy<TSettings>
+        where TSettings : PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-            string masterDbConnectionString,
-            string restrictedUserId,
-            string restrictedUserPassword,
-            string submissionProcessorIdentifier)
-            : base(masterDbConnectionString, restrictedUserId, restrictedUserPassword, submissionProcessorIdentifier)
+            ExecutionStrategyType type,
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, settingsProvider)
         {
         }
 
@@ -36,4 +36,11 @@
             this.ExecuteNonQuery(connection, executionContext.Code, executionContext.TimeLimit);
         }
     }
+
+    public record PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings(
+        string MasterDbConnectionString,
+        string RestrictedUserId,
+        string RestrictedUserPassword,
+        string SubmissionProcessorIdentifier) : BasePostgreSqlExecutionStrategySettings(MasterDbConnectionString,
+        RestrictedUserId, RestrictedUserPassword, SubmissionProcessorIdentifier);
 }

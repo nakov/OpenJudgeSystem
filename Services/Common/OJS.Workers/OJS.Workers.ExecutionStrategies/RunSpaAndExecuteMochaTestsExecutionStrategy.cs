@@ -9,7 +9,6 @@ namespace OJS.Workers.ExecutionStrategies
     using System.Text.RegularExpressions;
     using Ionic.Zip;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -17,7 +16,8 @@ namespace OJS.Workers.ExecutionStrategies
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
 
-    public class RunSpaAndExecuteMochaTestsExecutionStrategy : PythonExecuteAndCheckExecutionStrategy
+    public class RunSpaAndExecuteMochaTestsExecutionStrategy<TSettings> : PythonExecuteAndCheckExecutionStrategy<TSettings>
+        where TSettings : RunSpaAndExecuteMochaTestsExecutionStrategySettings
     {
         private const string UserApplicationHttpPortPlaceholder = "#userApplicationHttpPort#";
         private const string ContainerNamePlaceholder = "#containerNamePlaceholder#";
@@ -30,26 +30,11 @@ namespace OJS.Workers.ExecutionStrategies
         private readonly Regex testTimeoutRegex = new Regex(@"Timeout (?:of )?\d+ms exceeded\.");
 
         public RunSpaAndExecuteMochaTestsExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string pythonExecutablePath,
-            string jsProjNodeModulesPath,
-            string mochaNodeModulePath,
-            string chaiNodeModulePath,
-            string playwrightChromiumModulePath,
-            int portNumber,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(
-                  processExecutorFactory,
-                  pythonExecutablePath,
-                  baseTimeUsed,
-                  baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
-            this.JsProjNodeModulesPath = jsProjNodeModulesPath;
-            this.MochaModulePath = mochaNodeModulePath;
-            this.ChaiModulePath = chaiNodeModulePath;
-            this.PlaywrightChromiumModulePath = playwrightChromiumModulePath;
-            this.PortNumber = portNumber;
         }
 
         private static string NginxFileContent => @"
@@ -85,14 +70,6 @@ http {{
 
         private int PortNumber { get; set; }
 
-        private string MochaModulePath { get; }
-
-        private string ChaiModulePath { get; }
-
-        private string PlaywrightChromiumModulePath { get; }
-
-        private string JsProjNodeModulesPath { get; }
-
         private string TestsPath => FileHelpers.BuildPath(this.WorkingDirectory, TestsDirectoryName);
 
         private string UserApplicationPath => FileHelpers.BuildPath(this.WorkingDirectory, UserApplicationDirectoryName);
@@ -113,7 +90,7 @@ from datetime import datetime, timezone
 image_name = 'nginx'
 path_to_project = '{this.UserApplicationPath}'
 path_to_nginx_conf = '{this.NginxConfFileDirectory}/nginx.conf'
-path_to_node_modules = '{this.JsProjNodeModulesPath}'
+path_to_node_modules = '{this.Settings.JsProjNodeModulesPath}'
 
 
 class DockerExecutor:
@@ -230,7 +207,7 @@ import docker
 import subprocess
 
 
-mocha_path = '{this.MochaModulePath}'
+mocha_path = '{this.Settings.MochaModulePath}'
 tests_path = '{TestFilePathPlaceholder}'
 container_name = '{ContainerNamePlaceholder}'
 kill_container = {KillContainerPlaceholder}
@@ -492,11 +469,11 @@ finally:
             switch (name)
             {
                 case "mocha":
-                    return this.MochaModulePath;
+                    return this.Settings.MochaModulePath;
                 case "chai":
-                    return this.ChaiModulePath;
+                    return this.Settings.ChaiModulePath;
                 case "playwright-chromium":
-                    return this.PlaywrightChromiumModulePath;
+                    return this.Settings.PlaywrightChromiumModulePath;
                 default:
                     return null;
             }
@@ -514,4 +491,14 @@ finally:
 
         private string BuildTestPath(int testId) => FileHelpers.BuildPath(this.TestsPath, $"{testId}{JavaScriptFileExtension}");
     }
+
+    public record RunSpaAndExecuteMochaTestsExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string PythonExecutablePath,
+        string JsProjNodeModulesPath,
+        string MochaModulePath,
+        string ChaiModulePath,
+        string PlaywrightChromiumModulePath)
+        : PythonExecuteAndCheckExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, PythonExecutablePath);
 }

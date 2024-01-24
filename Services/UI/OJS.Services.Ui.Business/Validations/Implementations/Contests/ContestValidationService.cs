@@ -6,7 +6,7 @@ using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
-using Infrastructure;
+using OJS.Services.Infrastructure;
 
 public class ContestValidationService : IContestValidationService
 {

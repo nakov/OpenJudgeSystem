@@ -9,8 +9,8 @@ public class ValidationResult
     public string? PropertyName { get; set; } = null!;
 
     public static ValidationResult Valid()
-        => new () { IsValid = true };
+        => new() { IsValid = true };
 
     public static ValidationResult Invalid(string message, string? propertyName = null)
-        => new () { Message = message, PropertyName = propertyName };
+        => new() { Message = message, PropertyName = propertyName };
 }

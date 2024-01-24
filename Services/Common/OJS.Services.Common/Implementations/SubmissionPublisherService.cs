@@ -1,6 +1,6 @@
 namespace OJS.Services.Common.Implementations;
 
-using Models.Submissions.ExecutionContext;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -17,6 +17,13 @@ public class SubmissionPublisherService : ISubmissionPublisherService
     public Task Publish(SubmissionServiceModel submission)
     {
         var pubSubModel = submission.Map<SubmissionForProcessingPubSubModel>();
+
+        return this.publisher.Publish(pubSubModel);
+    }
+
+    public Task PublishRetest(int id)
+    {
+        var pubSubModel = new RetestSubmissionPubSubModel { Id = id };
 
         return this.publisher.Publish(pubSubModel);
     }

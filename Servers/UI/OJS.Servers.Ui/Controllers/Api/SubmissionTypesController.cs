@@ -1,14 +1,14 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using Models.SubmissionTypes;
+using OJS.Servers.Ui.Models.SubmissionTypes;
+using OJS.Servers.Infrastructure.Controllers;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Services.Ui.Business.Cache;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OJS.Services.Ui.Business.Cache;
-using OJS.Servers.Infrastructure.Extensions;
 using static Microsoft.AspNetCore.Http.StatusCodes;
-using OJS.Servers.Infrastructure.Controllers;
 
 public class SubmissionTypesController : BaseApiController
 {

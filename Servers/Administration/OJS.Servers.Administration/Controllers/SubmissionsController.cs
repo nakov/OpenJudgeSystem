@@ -19,6 +19,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OJS.Servers.Administration.Extensions;
@@ -84,12 +85,12 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     protected override IEnumerable<CustomGridColumn<Submission>> CustomColumns
         => new CustomGridColumn<Submission>[]
         {
-            new ()
+            new()
             {
                 Name = nameof(Contest),
                 ValueFunc = s => s.Problem!.ProblemGroup.Contest.Name ?? string.Empty,
             },
-            new ()
+            new()
             {
                 Name = "Contest Id",
                 ValueFunc = s => s.Problem!.ProblemGroup.ContestId.ToString(),

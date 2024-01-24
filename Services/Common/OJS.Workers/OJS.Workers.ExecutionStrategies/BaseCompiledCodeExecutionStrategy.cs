@@ -9,14 +9,15 @@
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public abstract class BaseCompiledCodeExecutionStrategy : BaseCodeExecutionStrategy
+    public abstract class BaseCompiledCodeExecutionStrategy<TSettings> : BaseCodeExecutionStrategy<TSettings>
+        where TSettings : BaseCompiledCodeExecutionStrategySettings
     {
         protected BaseCompiledCodeExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
             => this.CompilerFactory = compilerFactory;
 
         protected ICompilerFactory CompilerFactory { get; }
@@ -80,7 +81,7 @@
 
             var compileResult = this.Compile(
                 executionContext.CompilerType,
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 executionContext.AdditionalCompilerArguments,
                 submissionFilePath,
                 useWorkingDirectoryForProcess);
@@ -113,5 +114,12 @@
 
             return compilerResult;
         }
+    }
+
+    public abstract record BaseCompiledCodeExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed)
+    {
     }
 }

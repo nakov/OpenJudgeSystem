@@ -7,12 +7,14 @@
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
-    public class NodeJsPreprocessExecuteAndCheckExecutionStrategy : BaseInterpretedCodeExecutionStrategy
+    public class NodeJsPreprocessExecuteAndCheckExecutionStrategy<TSettings> : BaseInterpretedCodeExecutionStrategy<TSettings>
+        where TSettings : NodeJsPreprocessExecuteAndCheckExecutionStrategySettings
     {
         protected const string UserInputPlaceholder = "#userInput#";
         protected const string RequiredModules = "#requiredModule#";
@@ -25,48 +27,39 @@
         private const string DefaultAdapterFunctionCode = "(input, code) => code(input);";
 
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            string nodeJsExecutablePath,
-            string underscoreModulePath,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
-            if (!File.Exists(nodeJsExecutablePath))
+            if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {
                 throw new ArgumentException(
-                    $"NodeJS not found in: {nodeJsExecutablePath}",
-                    nameof(nodeJsExecutablePath));
+                    $"NodeJS not found in: {this.Settings.NodeJsExecutablePath}",
+                    nameof(this.Settings.NodeJsExecutablePath));
             }
 
-            if (!Directory.Exists(underscoreModulePath))
+            if (!Directory.Exists(this.Settings.UnderscoreModulePath))
             {
                 throw new ArgumentException(
-                    $"Underscore not found in: {underscoreModulePath}",
-                    nameof(underscoreModulePath));
+                    $"Underscore not found in: {this.Settings.UnderscoreModulePath}",
+                    nameof(this.Settings.UnderscoreModulePath));
             }
 
-            if (baseTimeUsed < 0)
+            if (this.Settings.BaseTimeUsed < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(baseTimeUsed));
+                throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseTimeUsed));
             }
 
-            if (baseMemoryUsed < 0)
+            if (this.Settings.BaseMemoryUsed < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(baseMemoryUsed));
+                throw new ArgumentOutOfRangeException(nameof(this.Settings.BaseMemoryUsed));
             }
-
-            this.NodeJsExecutablePath = nodeJsExecutablePath;
-            this.UnderscoreModulePath = FileHelpers.ProcessModulePath(underscoreModulePath);
         }
-
-        protected string NodeJsExecutablePath { get; }
-
-        protected string UnderscoreModulePath { get; }
 
         protected virtual string JsCodeRequiredModules => $@"
 var EOL = require('os').EOL,
-_ = require('{this.UnderscoreModulePath}')";
+_ = require('{this.Settings.UnderscoreModulePath}')";
 
         protected virtual string JsNodeDisableCode => @"
 // DataView = undefined;
@@ -275,10 +268,17 @@ process.stdin.on('end', function() {
             string codeSavePath,
             string input)
             => executor.Execute(
-                this.NodeJsExecutablePath,
+                this.Settings.NodeJsExecutablePath,
                 input,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
                 new[] { LatestEcmaScriptFeaturesEnabledFlag, codeSavePath });
     }
+
+    public record NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string NodeJsExecutablePath,
+        string UnderscoreModulePath)
+        : BaseInterpretedCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

@@ -6,7 +6,7 @@ using OJS.Services.Common.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Submissions;
+using OJS.Services.Ui.Models.Submissions;
 
 public class ContestDetailsServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
 {
