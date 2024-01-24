@@ -158,13 +158,6 @@ const ProblemForm = (props: IProblemFormProps) => {
         />
     );
 
-    const handleAdditionalFilesChange = (event:any) => {
-        setCurrentProblem({
-            ...currentProblem,
-            additionalFiles: event.target.files[0],
-        });
-    };
-
     return (
         isGettingData
             ? <SpinningLoader />
@@ -299,7 +292,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                               onChange={(e) => onChange(e)}
                               onBlur={(e) => onChange(e)}
                               labelId="checkerId"
-                              value={Number(currentProblem.checkerId) || ''}
+                              value={Number(currentProblem.checkerId)}
                               name="checkerId"
                             >
                                 {checkers?.map((c) => (
@@ -318,7 +311,6 @@ const ProblemForm = (props: IProblemFormProps) => {
                                   variant="standard"
                                   sx={{ width: '45%', margin: '1rem' }}
                                   InputLabelProps={{ shrink: true }}
-                                  onChange={(e) => handleAdditionalFilesChange(e)}
                                 />
                             </FormControl>
                             {/* <FormControl>

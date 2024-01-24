@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { Box, IconButton, Modal, Tooltip } from '@mui/material';
@@ -71,9 +70,19 @@ const AdministrationProblemsPage = () => {
             headerAlign: 'center',
         },
         {
+            field: 'contest',
+            headerName: 'Contest',
+            flex: 2,
+            type: 'string',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
             field: 'problemGroupId',
             headerName: 'Problem Group Id',
-            flex: 1,
+            flex: 0.5,
             type: 'number',
             filterable: false,
             sortable: false,
@@ -99,7 +108,7 @@ const AdministrationProblemsPage = () => {
         {
             field: 'practiceTestsCount',
             headerName: 'Practice Tests',
-            flex: 1,
+            flex: 0.5,
             type: 'number',
             filterable: false,
             sortable: false,
@@ -109,7 +118,7 @@ const AdministrationProblemsPage = () => {
         {
             field: 'competeTestsCount',
             headerName: 'Compete Tests',
-            flex: 1,
+            flex: 0.5,
             type: 'number',
             filterable: false,
             sortable: false,
@@ -120,7 +129,7 @@ const AdministrationProblemsPage = () => {
             field: 'isDeleted',
             headerName: 'Is Deleted',
             type: 'boolean',
-            flex: 1,
+            flex: 0.5,
             filterable: false,
             sortable: false,
             align: 'center',
@@ -177,15 +186,7 @@ const AdministrationProblemsPage = () => {
     );
 
     const renderGridSettings = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title="Create new problem">
-                <IconButton
-                  onClick={() => setOpenShowCreateProblemModal(!openSHowCreateProblemModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
-        </div>
+        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }} />
 
     );
 

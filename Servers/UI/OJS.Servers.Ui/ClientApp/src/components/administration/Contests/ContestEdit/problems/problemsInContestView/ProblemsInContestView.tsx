@@ -1,133 +1,224 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { useEffect, useState } from 'react';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import ClearIcon from '@mui/icons-material/Clear';
-import CloseIcon from '@mui/icons-material/Close';
-import CopyAllIcon from '@mui/icons-material/CopyAll';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import FileDownloadOffIcon from '@mui/icons-material/FileDownloadOff';
-import PublishIcon from '@mui/icons-material/Publish';
-import QuizIcon from '@mui/icons-material/Quiz';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { Box, IconButton, Slide, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material';
+import ShortcutIcon from '@mui/icons-material/Shortcut';
+import { Box, IconButton, Modal } from '@mui/material';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { IAdministrationContestProblems } from '../../../../../../common/types';
-import { useGetContestProblemsQuery } from '../../../../../../redux/services/admin/contestsAdminService';
+import { IGetAllAdminParams, IRootStore } from '../../../../../../common/types';
+import AdministrationGridView from '../../../../../../pages/administration-new/AdministrationGridView';
+import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../../../redux/features/admin/contestsAdminSlice';
+import { useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../../../redux/services/admin/problemsAdminService';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../../../../utils/constants';
+import { modalStyles } from '../../../../../../utils/object-utils';
+import { Alert, AlertSeverity, AlertVariant } from '../../../../../guidelines/alert/Alert';
+import SpinningLoader from '../../../../../guidelines/spinning-loader/SpinningLoader';
+import DeleteProblem from '../../../../Problems/delete/DeleteProblem';
+import ProblemForm from '../../../../Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
     contestId: number;
 }
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId } = props;
-    const [ contestProblems, setContestProblems ] = useState<Array<IAdministrationContestProblems>>([]);
-    const { data: problemsData } = useGetContestProblemsQuery({ id: Number(contestId) });
+    const filtersAndSortersLocation = `contest-details-problems-${contestId}`;
 
-    useEffect(
-        () => {
-            if (problemsData) {
-                setContestProblems(problemsData);
-            }
-        },
-        [ problemsData, setContestProblems ],
+    const selectedFilters =
+        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
+    const selectedSorters =
+        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+
+    const { data: problemsData, error } = useGetContestProblemsQuery({ id: Number(contestId) });
+    const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
+    const [ problemId, setProblemId ] = useState<number>(-1);
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
+        page: 1,
+        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        filter: '',
+        sorting: '',
+    });
+
+    const [ retestById, { data: retestData, isSuccess: isSuccessfullyRetest, isLoading: isRetesting } ] = useRetestByIdMutation();
+
+    const onEditClick = (id: number) => {
+        setOpenEditModal(true);
+        setProblemId(id);
+    };
+
+    const renderEditProblemModal = () => (
+        <Modal
+          open={openEditModal}
+          onClose={() => setOpenEditModal(false)}
+        >
+            <Box sx={modalStyles}>
+                <ProblemForm contestId={Number(contestId)} problemId={problemId} />
+            </Box>
+        </Modal>
     );
 
-    const onProblemEdit = (problemId: number) => console.log('edit problem with id => ', problemId);
+    const retestProblem = (currentProblemId: number) => {
+        const currentProblem = problemsData?.items?.find((x) => x.id === currentProblemId);
+        if (currentProblem) {
+            const problem = {
+                id: currentProblemId,
+                name: currentProblem.name,
+                contestName: currentProblem.contest,
+                contestId,
+            };
+            retestById(problem);
+        }
+    };
 
+    const renderAlert = (message: string, severity: AlertSeverity) => (
+        <Alert
+          severity={severity}
+          message={message}
+          variant={AlertVariant.Filled}
+        />
+    );
+    const filterableColumns: GridColDef[] = [
+        {
+            field: 'id',
+            headerName: 'Id',
+            flex: 0,
+            type: 'string',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+            valueFormatter: (params) => params.value.toString(),
+        },
+        {
+            field: 'name',
+            headerName: 'Name',
+            flex: 1,
+            type: 'string',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            field: 'contest',
+            headerName: 'Contest',
+            flex: 2,
+            type: 'string',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            field: 'problemGroupId',
+            headerName: 'Problem Group Id',
+            flex: 0.5,
+            type: 'number',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            field: 'problemGroup',
+            headerName: 'Problem Group',
+            flex: 1,
+            type: 'string',
+            filterable: false,
+            align: 'center',
+            sortable: false,
+            headerAlign: 'center',
+            valueFormatter: (params) => {
+                if (params.value === '') {
+                    return 'None';
+                }
+                return params.value.toString();
+            },
+        },
+        {
+            field: 'practiceTestsCount',
+            headerName: 'Practice Tests',
+            flex: 0.5,
+            type: 'number',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            field: 'competeTestsCount',
+            headerName: 'Compete Tests',
+            flex: 0.5,
+            type: 'number',
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+        {
+            field: 'isDeleted',
+            headerName: 'Is Deleted',
+            type: 'boolean',
+            flex: 0.5,
+            filterable: false,
+            sortable: false,
+            align: 'center',
+            headerAlign: 'center',
+        },
+    ];
+
+    const nonFilterableColumns: GridColDef[] = [
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 140,
+            headerAlign: 'center',
+            align: 'center',
+            filterable: false,
+            sortable: false,
+            renderCell: (params: GridRenderCellParams) => (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <IconButton onClick={() => onEditClick(Number(params.row.id))}>
+                        <EditIcon color="warning" />
+                    </IconButton>
+                    <Link to={`/administration-new/problems/${Number(params.row.id)}`}>
+                        <ShortcutIcon color="primary" />
+                    </Link>
+                    <DeleteProblem
+                      problemId={Number(params.row.id)}
+                      problemName={params.row.name}
+                      style={{ alignSelf: 'flex-end' }}
+                    />
+                    <IconButton onClick={() => retestProblem(Number(params.row.id))}>
+                        <ReplayIcon />
+                    </IconButton>
+                </div>
+            ),
+        },
+    ];
+    const renderActionButtons = () => <div />;
     return (
-        <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
-            <Box sx={{ marginTop: '2rem', width: '100%' }}>
-                <Tooltip title="Add new problem">
-                    <IconButton>
-                        <AddBoxIcon sx={{ height: '40px', width: '40px' }} />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete all problems">
-                    <IconButton>
-                        <ClearIcon sx={{ height: '40px', width: '40px' }} />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Export in excel">
-                    <IconButton>
-                        <FileDownloadOffIcon sx={{ height: '40px', width: '40px' }} />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Submit solution">
-                    <IconButton>
-                        <PublishIcon sx={{ height: '40px', width: '40px' }} />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Copy All">
-                    <IconButton>
-                        <FileCopyIcon sx={{ height: '40px', width: '40px' }} />
-                    </IconButton>
-                </Tooltip>
-                <TableContainer
-                  className="mt-1"
-                  sx={{
-                      border: '1px solid rgba(128,128,128,0.4)',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      borderRadius: 2,
-                  }}
-                >
-                    <Table stickyHeader>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell scope="head" variant="head">Problem Id</TableCell>
-                                <TableCell scope="head" variant="head">Name</TableCell>
-                                <TableCell scope="head" variant="head">Group</TableCell>
-                                <TableCell scope="head" variant="head">Group Type</TableCell>
-                                <TableCell scope="head" variant="head">Compete Tests</TableCell>
-                                <TableCell scope="head" variant="head">Practice Tests</TableCell>
-                                <TableCell scope="head" variant="head">Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {contestProblems.map((x) => (
-                                <TableRow key={x.id} hover>
-                                    <TableCell scope="row">{x.id}</TableCell>
-                                    <TableCell scope="row">{x.name}</TableCell>
-                                    <TableCell scope="row">{x.group}</TableCell>
-                                    <TableCell scope="row">{x.groupType}</TableCell>
-                                    <TableCell scope="row">{x.competeTests}</TableCell>
-                                    <TableCell scope="row">{x.practiceTests}</TableCell>
-                                    <TableCell scope="row">
-                                        <Box>
-                                            <Tooltip title="Edit">
-                                                <IconButton onClick={() => onProblemEdit(x.id)}>
-                                                    <EditIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Tests">
-                                                <IconButton onClick={() => onProblemEdit(x.id)}>
-                                                    <QuizIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Delete">
-                                                <IconButton onClick={() => onProblemEdit(x.id)}>
-                                                    <CloseIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Retest">
-                                                <IconButton onClick={() => onProblemEdit(x.id)}>
-                                                    <ReplayIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Copy">
-                                                <IconButton onClick={() => onProblemEdit(x.id)}>
-                                                    <CopyAllIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-        </Slide>
+        <div>
+            {isSuccessfullyRetest && renderAlert(retestData, AlertSeverity.Success)}
+            {isRetesting && <SpinningLoader />}
+            <AdministrationGridView
+              data={problemsData}
+              error={error}
+              filterableGridColumnDef={filterableColumns}
+              notFilterableGridColumnDef={nonFilterableColumns}
+              queryParams={queryParams}
+              location={filtersAndSortersLocation}
+              selectedFilters={selectedFilters}
+              selectedSorters={selectedSorters}
+              setQueryParams={setQueryParams}
+              modals={[]}
+              renderActionButtons={renderActionButtons}
+              setFilterStateAction={setAdminContestsFilters}
+              setSorterStateAction={setAdminContestsSorters}
+            />
+        </div>
     );
 };
 

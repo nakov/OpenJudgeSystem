@@ -1,23 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IRootStore } from '../../../../../../common/types';
-import AdministrationFilters, {
+import {
     mapFilterParamsToQueryString,
-    mapGridColumnsToAdministrationFilterProps,
 } from '../../../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import AdministrationSorting, {
-    mapGridColumnsToAdministrationSortingProps,
+import {
     mapSorterParamsToQueryString,
 } from '../../../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import AdministrationGridView from '../../../../../../pages/administration-new/AdministrationGridView';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../../../redux/features/admin/contestsAdminSlice';
 import { useGetByContestIdQuery } from '../../../../../../redux/services/admin/participantsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../../../../../utils/constants';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../../../../utils/constants';
 
 interface IParticipantsInContestView {
     contestId: number;
@@ -45,12 +45,10 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, sorting: sortersQueryParams });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {
@@ -104,6 +102,9 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
             filterable: false,
             sortable: false,
         },
+    ];
+
+    const notFilterableGridColumns: GridColDef[] = [
         {
             field: 'showModal',
             headerName: 'Quick Details',
@@ -119,6 +120,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
                 </IconButton>
             ),
         },
+
         {
             field: 'showDetails',
             headerName: 'Details',
@@ -136,48 +138,27 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
         },
     ];
 
-    const sortingColumns = mapGridColumnsToAdministrationSortingProps(dataColumns);
-
-    const filtersColumns = mapGridColumnsToAdministrationFilterProps(dataColumns);
-
+    // TODO when implement participants fill here the required actions
+    const renderActions = () => (
+        <div />
+    );
     return (
-        <div style={{ height: '100vh', marginTop: '1rem' }}>
-            <div style={{ height: '100vh' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '500px' }}>
-                    <AdministrationFilters
-                      selectedFilters={selectedFilters || []}
-                      setStateAction={setAdminContestsFilters}
-                      columns={filtersColumns}
-                      shouldUpdateUrl={false}
-                      location={filtersAndSortersLocation}
-                    />
-                    <AdministrationSorting
-                      selectedSorters={selectedSorters || []}
-                      setStateAction={setAdminContestsSorters}
-                      columns={sortingColumns}
-                      shouldUpdateUrl={false}
-                      location={filtersAndSortersLocation}
-                    />
-                </div>
-                { error
-                    ? <div>Error loading data</div>
-                    : (
-                        <DataGrid
-                          columns={dataColumns}
-                          rows={data?.items ?? []}
-                          rowCount={data?.totalCount ?? 0}
-                          paginationMode="server"
-                          onPageChange={(e) => {
-                              setQueryParams({ ...queryParams, page: e + 1 });
-                          }}
-                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                          onPageSizeChange={(itemsPerRow: number) => {
-                              setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
-                          }}
-                          pageSize={queryParams.ItemsPerPage}
-                        />
-                    )}
-            </div>
+        <div style={{ marginTop: '2rem' }}>
+            <AdministrationGridView
+              data={data}
+              error={error}
+              filterableGridColumnDef={dataColumns}
+              notFilterableGridColumnDef={notFilterableGridColumns}
+              location={filtersAndSortersLocation}
+              queryParams={queryParams}
+              renderActionButtons={renderActions}
+              selectedFilters={selectedFilters}
+              selectedSorters={selectedSorters}
+              setFilterStateAction={setAdminContestsFilters}
+              setSorterStateAction={setAdminContestsSorters}
+              modals={[]}
+              setQueryParams={setQueryParams}
+            />
         </div>
     );
 };

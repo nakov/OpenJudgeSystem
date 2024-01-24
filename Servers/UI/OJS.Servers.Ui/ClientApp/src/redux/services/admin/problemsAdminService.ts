@@ -4,7 +4,7 @@ import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/too
 
 import { defaultPathIdentifier } from '../../../common/constants';
 import { ExceptionData, IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
-import { IProblemUrlById } from '../../../common/url-types';
+import { IContestDetailsUrlParams, IProblemUrlById } from '../../../common/url-types';
 
 type ExtraOptionsType = {
 // Add extra options if needed
@@ -68,6 +68,14 @@ export const problemsAdminService = createApi({
                 body: problem,
             }),
         }),
+        getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Contest/${id}` }) }),
+        retestById: builder.mutation({
+            query: (problem) => ({
+                url: '/Retest',
+                method: 'POST',
+                body: problem,
+            }),
+        }),
     }),
 });
 
@@ -77,6 +85,8 @@ export const {
     useGetProblemByIdQuery,
     useDeleteProblemMutation,
     useUpdateProblemMutation,
+    useGetContestProblemsQuery,
+    useRetestByIdMutation,
 
 } = problemsAdminService;
 export default problemsAdminService;

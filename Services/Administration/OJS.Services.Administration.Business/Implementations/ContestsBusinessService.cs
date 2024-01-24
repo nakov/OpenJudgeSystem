@@ -63,16 +63,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     public async Task<ContestAdministrationModel> ById(int id)
         => await this.contestsData.GetByIdWithProblems(id).Map<ContestAdministrationModel>();
 
-    public async Task<IEnumerable<ContestViewProblemModel>> GetContestProblems(int id)
-    {
-        var contestProblems = await this.problemsDataService
-            .GetAllByContest(id)
-            .MapCollection<ContestViewProblemModel>()
-            .ToListAsync();
-
-        return contestProblems;
-    }
-
     public async Task Edit(ContestAdministrationModel model, int id)
     {
         var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();

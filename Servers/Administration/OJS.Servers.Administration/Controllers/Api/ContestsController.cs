@@ -100,19 +100,6 @@ public class ContestsController : ApiControllerBase
         return this.Ok(contest);
     }
 
-    [HttpGet]
-    [Route("Problems/{id}")]
-    public async Task<IActionResult> Problems(int id)
-    {
-        if (!await this.HasContestPermission(id))
-        {
-            return this.Unauthorized();
-        }
-
-        var contest = await this.contestsBusinessService.GetContestProblems(id);
-        return this.Ok(contest);
-    }
-
     private async Task<bool> HasContestPermission(int? contestId)
     {
         var user = this.userProvider.GetCurrentUser();

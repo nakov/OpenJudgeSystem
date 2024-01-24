@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import { Alert as MuiAlert, Button, Portal, Snackbar } from '@mui/material';
 
@@ -9,8 +10,8 @@ interface IAlertProps {
     onClose? :any;
     variant: AlertVariant;
     autoHideDuration?:number;
-    vertical:AlertVerticalOrientation;
-    horizontal:AlertHorizontalOrientation;
+    vertical?:AlertVerticalOrientation;
+    horizontal?:AlertHorizontalOrientation;
     styles?: React.CSSProperties;
 }
 
@@ -56,7 +57,7 @@ const Alert = (props:IAlertProps) => {
               open={open}
               onClose={handleClose}
               autoHideDuration={autoHideDuration}
-              anchorOrigin={{ vertical, horizontal }}
+              anchorOrigin={{ vertical: vertical ?? AlertVerticalOrientation.Top, horizontal: horizontal ?? AlertHorizontalOrientation.Right }}
               onClick={handleClose}
             >
                 <MuiAlert

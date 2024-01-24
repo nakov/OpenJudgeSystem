@@ -6,23 +6,26 @@ using System.Threading.Tasks;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Common.Exceptions;
-using Microsoft.AspNetCore.Authorization;
-using OJS.Common;
+using OJS.Services.Administration.Data;
+using OJS.Servers.Administration.Models.Problems;
 
 public class ProblemsController : ApiControllerBase
 {
     private readonly IProblemsBusinessService problemsBusinessService;
+    private readonly IProblemsDataService problemsDataService;
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly IUserProviderService userProvider;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
         IContestsBusinessService contestsBusinessService,
-        IUserProviderService userProvider)
+        IUserProviderService userProvider,
+        IProblemsDataService problemsDataService)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.contestsBusinessService = contestsBusinessService;
         this.userProvider = userProvider;
+        this.problemsDataService = problemsDataService;
     }
 
     [HttpGet]
@@ -65,6 +68,39 @@ public class ProblemsController : ApiControllerBase
         await this.problemsBusinessService.Edit(model);
 
         return this.Ok("Problem successfully updated.");
+    }
+
+    [HttpGet]
+    [Route("contest/{contestId}")]
+    public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
+    {
+        if (!await this.HasContestPermission(contestId))
+        {
+            return this.Unauthorized();
+        }
+
+        return this.Ok(
+            await this.problemsBusinessService
+                .GetAll<ProblemsInListModel>(model, this.problemsDataService.GetAllByContest(contestId)));
+    }
+
+    [HttpPost]
+    [Route("retest")]
+    public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
+    {
+        if (model == null || !await this.problemsDataService.ExistsById(model.Id))
+        {
+            return this.UnprocessableEntity();
+        }
+
+        if (!await this.HasContestPermission(model.ContestId))
+        {
+            return this.Unauthorized();
+        }
+
+        await this.problemsBusinessService.RetestById(model.Id);
+
+        return this.Ok("Problem successfully retested.");
     }
 
     private async Task<bool> HasContestPermission(int? contestId)

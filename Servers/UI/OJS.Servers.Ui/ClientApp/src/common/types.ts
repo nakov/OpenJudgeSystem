@@ -199,12 +199,12 @@ interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[];
     pastContests: IIndexContestsType[];
 }
-
 interface IIndexProblemsType {
     id: number;
     name: string;
     group: number;
     groupType: string;
+    contest: string;
     practiceTests: number;
     competeTetsts: number;
     isDeleted: boolean;
@@ -344,15 +344,6 @@ interface IContestCategories {
     name: string;
 }
 
-interface IAdministrationContestProblems {
-    id: number;
-    name: string;
-    group: number;
-    groupType: string;
-    practiceTests: number;
-    competeTests: number;
-}
-
 interface IFilterColumn {
     columnName: string;
     columnType: FilterColumnTypeEnum;
@@ -407,7 +398,6 @@ export type {
     IAdminPagedResultType,
     IAdminContestResponseType,
     IContestAdministration,
-    IAdministrationContestProblems,
     IFilterColumn,
     IParticiapntsInContestView,
     IAdminSlice,
