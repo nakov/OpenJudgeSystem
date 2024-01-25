@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import CloseIcon from '@mui/icons-material/Close';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
@@ -25,7 +27,8 @@ interface IAdministrationFilterProps {
     columns: IFilterColumn[];
     location: string;
     shouldUpdateUrl?: boolean;
-
+    searchParams?: URLSearchParams;
+    setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
     setStateAction: ActionCreatorWithPayload<unknown, string>;
 }
@@ -80,7 +83,7 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 };
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, shouldUpdateUrl = true, location, selectedFilters, setStateAction } = props;
+    const { columns, shouldUpdateUrl = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
     const dispatch = useDispatch();
     const defaultFilter = {
         column: '',
@@ -97,13 +100,14 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
     }, [ ]);
 
-    const [ searchParams, setSearchParams ] = useSearchParams();
-
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchor);
 
     const mapUrlToFilters = (): IAdministrationFilter[] => {
+        if (!setSearchParams || !searchParams) {
+            return [];
+        }
         const urlSelectedFilters: IAdministrationFilter[] = [];
 
         const filterParams = searchParams.get('filter') ?? '';
@@ -151,7 +155,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, []);
 
     useEffect(() => {
-        if (!shouldUpdateUrl) {
+        if (!shouldUpdateUrl || !searchParams || !setSearchParams) {
             return;
         }
 
@@ -201,8 +205,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const removeAllFilters = () => {
-        searchParams.delete('filter');
-        setSearchParams(searchParams);
+        if (searchParams && setSearchParams) {
+            searchParams.delete('filter');
+            setSearchParams(searchParams);
+        }
         dispatch(setStateAction({
             key: location,
             filters: [ defaultFilter ],
@@ -218,7 +224,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         })) ];
         newFiltersArray.splice(idx, 1);
         dispatch(setStateAction({ key: location, filters: newFiltersArray }));
-        if (newFiltersArray.length === 1) {
+        if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
             searchParams.delete('filter');
             setSearchParams(searchParams);
         }
@@ -265,7 +271,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                       value={selectedFilters[idx]?.value}
                       label="Value"
                       onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-                      disabled={!selectedFilters[idx].operator}
+                      disabled={!selectedFilters[idx].operator || idx > 0}
                     >
                         { BOOL_DROPDOWN_VALUES.map((column) => (
                             <MenuItem
@@ -288,7 +294,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
               type={inputType}
               value={selectedFilters[idx]?.value}
               onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-              disabled={!selectedFilters[idx].operator}
+              disabled={!selectedFilters[idx].operator || idx > 0}
             />
         );
     };
@@ -306,6 +312,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                   value={selectedFilters[idx]?.column}
                   label="Column"
                   onChange={(e) => updateFilterColumnData(idx, e, 'column')}
+                  disabled={idx > 0}
                 >
                     { selectedFilters[idx]?.availableColumns?.map((column) => (
                         <MenuItem
@@ -324,7 +331,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                   value={selectedFilters[idx]?.operator}
                   label="Operator"
                   onChange={(e) => updateFilterColumnData(idx, e, 'operator')}
-                  disabled={!selectedFilters[idx].column}
+                  disabled={!selectedFilters[idx].column || idx > 0}
                 >
                     { selectedFilters[idx].availableOperators?.map((operator) => (
                         <MenuItem key={`s-o-${operator.value}`} value={operator.value}>{operator.name}</MenuItem>)) }

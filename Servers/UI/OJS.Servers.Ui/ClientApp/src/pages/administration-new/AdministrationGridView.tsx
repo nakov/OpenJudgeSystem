@@ -6,6 +6,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable func-style */
 import React, { ReactNode } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Box, Slide } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
@@ -63,6 +64,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         setSorterStateAction,
         location,
     } = props;
+    const [ searchParams, setSearchParams ] = useSearchParams();
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return styles.redGridRow;
@@ -81,8 +83,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                 { renderActionButtons() }
                 {showFiltersAndSorters && (
                 <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between', width: '450px' }}>
-                    <AdministrationFilters setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
-                    <AdministrationSorting setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
+                    <AdministrationFilters searchParams={searchParams} setSearchParams={setSearchParams} setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
+                    <AdministrationSorting searchParams={searchParams} setSearchParams={setSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
                 </div>
                 )}
                 <Box className={styles.legendBox}>
