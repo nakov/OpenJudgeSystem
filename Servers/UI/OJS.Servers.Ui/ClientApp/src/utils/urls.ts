@@ -23,7 +23,10 @@ import {
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsByContestIdParams,
-    IGetSubmissionsUrlParams, IGetUserSubmissionsUrlParams,
+    IGetSubmissionsUrlParams,
+    IGetUserSubmissionsForProfileByContestUrlParams,
+    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -87,7 +90,19 @@ ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
 const getUserProfileInfoUrlByUsername = (username: string) => `/profile/${username}`;
 const getProfileInfoUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Users/GetProfileInfo?username=${username}`;
-const getSubmissionsForProfileUrl = () => `${baseApiUrl}/Submissions/GetForProfile`;
+const getSubmissionsForProfileUrl = ({ username, page } : IGetUserSubmissionsForProfileUrlParams) => {
+    const usernameQuery = `username=${username}`;
+    const pageQuery = `page=${page}`;
+
+    return `${baseApiUrl}/Submissions/GetForProfile/?${usernameQuery}&${pageQuery}`;
+};
+const getSubmissionsForProfileByContestUrl = ({ username, page, contestId } : IGetUserSubmissionsForProfileByContestUrlParams) => {
+    const usernameQuery = `username=${username}`;
+    const pageQuery = `page=${page}`;
+    const contestQuery = `contestId=${contestId}`;
+
+    return `${baseApiUrl}/Submissions/GetUserSubmissionsForProfileByContest/?${usernameQuery}&${pageQuery}&${contestQuery}`;
+};
 const getParticipationsForProfileUrl = () => `${baseApiUrl}/Participations/GetForProfile`;
 // eslint-disable-next-line max-len
 const getAllParticipationsForUserUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Participations/GetAllForUser?username=${username}`;
@@ -278,6 +293,7 @@ export {
     getRegisterForContestUrl,
     getStartContestParticipationUrl,
     getContestParticipantScoresForParticipantUrl,
+    getSubmissionsForProfileByContestUrl,
     getContestResultsUrl,
     getContestResultsApiUrl,
     getCategoriesTreeUrl,

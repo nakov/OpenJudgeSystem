@@ -33,17 +33,19 @@ namespace OJS.Workers.Common
             public const string JavaZipFileCode = "java-zip-file-code";
             public const string JavaSpringAndHibernateProjectExecutionStrategy = "run-java-spring-data-junit-tests";
 
+            public const string Java17ProjectTests = "java-17-project-tests";
+            public const string Java17PreprocessCompileExecuteAndCheck = "java-17-code";
+            public const string Java17ZipFileCode = "java-17-zip-file-code";
+            public const string Java17UnitTests = "java-17-unit-tests";
+            public const string Java17SpringAndHibernateProjectExecutionStrategy = "run-java17-spring-data-junit-tests";
+
             // JavaScript
-            public const string JavaScriptCode = "javascript-code";
-            public const string JavaScriptJsDomUnitTests = "javascript-js-dom-unit-tests";
-            public const string JavaScriptUnitTestsWithMocha = "javascript-unit-tests-with-mocha";
-            public const string JavaScriptAsyncJsDomTestsWithReact = "javascript-async-js-dom-tests-with-react";
+            public const string JavaScriptCode = "javascript-codeV20";
+            public const string JavaScriptJsDomUnitTests = "javascript-js-dom-unit-testsV20";
+            public const string JavaScriptUnitTestsWithMocha = "javascript-unit-tests-with-mochaV20";
 
             public const string JavaScriptCodeAgainstUnitTestsWithMocha =
-                "javascript-code-against-unit-tests-with-mocha";
-
-            public const string JavaScriptCodeAgainstUnitTestsWithDomAndMocha =
-                "javascript-code-against-unit-tests-with-dom-and-mocha";
+                "javascript-code-against-unit-tests-with-mochaV20";
 
             // Python
             public const string PythonCode = "python-code";
@@ -60,7 +62,7 @@ namespace OJS.Workers.Common
             // Go
             public const string GoCode = "go-code";
             // HTML and CSS
-            public const string HtmlAndCssZipFile = "html-and-css-zip-file";
+            public const string HtmlAndCssZipFile = "html-and-css-zip-fileV20";
 
             // C++
             public const string CppCode = "cpp-code";
@@ -81,6 +83,9 @@ namespace OJS.Workers.Common
 
             // Run SPA and Execute mocha tests
             public const string RunSpaAndExecuteMochaTestsExecutionStrategy = "run-spa-and-execute-mocha-tests";
+
+            // Run SPA and Execute mocha tests separate tests
+            public const string RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests = "run-spa-and-execute-mocha-tests-separate-tests";
 
             // PostgreSql
             public const string PostgreSqlPrepareDbAndRunQueries = "postgres-prepare-db-and-run-queries";
@@ -129,9 +134,7 @@ namespace OJS.Workers.Common
                     { ExecutionStrategyNames.JavaScriptCode, ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck },
                     { ExecutionStrategyNames.JavaScriptUnitTestsWithMocha, ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha },
                     { ExecutionStrategyNames.JavaScriptJsDomUnitTests, ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests },
-                    { ExecutionStrategyNames.JavaScriptAsyncJsDomTestsWithReact, ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy },
                     { ExecutionStrategyNames.JavaScriptCodeAgainstUnitTestsWithMocha, ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy },
-                    { ExecutionStrategyNames.JavaScriptCodeAgainstUnitTestsWithDomAndMocha, ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha },
 
                     // Java
                     { ExecutionStrategyNames.JavaCode, ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck },
@@ -139,6 +142,11 @@ namespace OJS.Workers.Common
                     { ExecutionStrategyNames.JavaZipFileCode, ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck },
                     { ExecutionStrategyNames.JavaUnitTests, ExecutionStrategyType.JavaUnitTestsExecutionStrategy },
                     { ExecutionStrategyNames.JavaSpringAndHibernateProjectExecutionStrategy, ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy },
+                    { ExecutionStrategyNames.Java17PreprocessCompileExecuteAndCheck, ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck },
+                    { ExecutionStrategyNames.Java17ProjectTests, ExecutionStrategyType.Java17ProjectTestsExecutionStrategy },
+                    { ExecutionStrategyNames.Java17ZipFileCode, ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck },
+                    { ExecutionStrategyNames.Java17UnitTests, ExecutionStrategyType.Java17UnitTestsExecutionStrategy },
+                    { ExecutionStrategyNames.Java17SpringAndHibernateProjectExecutionStrategy, ExecutionStrategyType.Java17SpringAndHibernateProjectExecution },
 
                     // Plain text
                     { ExecutionStrategyNames.PlainText, ExecutionStrategyType.CheckOnly },
@@ -158,6 +166,8 @@ namespace OJS.Workers.Common
 
                     // Run SPA and Execute mocha tests
                     { ExecutionStrategyNames.RunSpaAndExecuteMochaTestsExecutionStrategy, ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy },
+                    // Run SPA and Execute mocha tests
+                    { ExecutionStrategyNames.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests, ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests },
 
                     // PostgreSql
                     { ExecutionStrategyNames.PostgreSqlPrepareDbAndRunQueries, ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries },

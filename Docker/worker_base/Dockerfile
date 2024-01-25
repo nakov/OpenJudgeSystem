@@ -21,8 +21,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
-# Setup for installing Node.js 12 (LTS)
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+#Setup for installing Node.js 20 (LTS)
+RUN mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list;
 
 # Setup for installing .NET Core SDK
 RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
@@ -35,6 +37,7 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-3.1 \
       dotnet-sdk-5.0 \
       openjdk-11-jdk \
+      openjdk-17-jdk \
       nodejs \
       python3.8 \
       python3-pip \
@@ -52,6 +55,15 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /
       containerd.io && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Maven
+ENV MAVEN_VERSION 3.9.1
+RUN mkdir /judge-resources && \
+	cd /judge-resources && \
+    curl -O https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    tar -xzvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    ln -s /judge-resources/apache-maven-$MAVEN_VERSION/bin/mvn /usr/bin/mvn
+
 # Java setup
 WORKDIR /tmp/java
 COPY ./java/gradlew ./gradlew
@@ -60,7 +72,8 @@ COPY ./java/gradle ./gradle
 RUN ./gradlew
 
 COPY ./java/build.gradle ./build.gradle
-RUN ./gradlew getDeps
+RUN ./gradlew getDeps11
+RUN ./gradlew getDeps17
 
 # JS and JS SPA
 COPY ./js /judge-resources/js
@@ -73,6 +86,8 @@ RUN npm install && \
     bash /judge-resources/js/chromium-scripts/update-and-run.sh
 
 ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
+ENV JAVA17_LIBS_DIR=/judge-resources/java17Libs/
+
 ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
 
 # Python 11 with Django support
@@ -105,7 +120,18 @@ RUN curl https://pyenv.run | bash && \
 # Install Python packages from requirements.txt
 COPY ./python/requirements.txt /tmp/
 
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY ./java-spring-and-hibernate /judge-resources/java/java-spring-and-hibernate
+WORKDIR /judge-resources/java/java-spring-and-hibernate
+RUN mvn dependency:go-offline
+# Needed 2 versions of this package, one in the strategy pom.xml, other one is istalled here
+# Otherwise maven resolves only 1 dependency
+# TODO: Fix this
+RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
+RUN mvn clean install
 
 # Go
 ENV GO111MODULE=off

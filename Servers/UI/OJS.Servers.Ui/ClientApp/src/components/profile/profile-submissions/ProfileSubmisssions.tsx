@@ -1,92 +1,219 @@
 /* eslint-disable */
-import React from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import React, {useCallback, useMemo, useState} from 'react';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useSubmissions } from '../../../hooks/submissions/use-submissions';
-import { formatDate } from '../../../utils/dates';
 import styles from './ProfileSubmissions.module.scss';
+import {InputLabel, MenuItem, Select} from "@mui/material";
+import {IKeyValuePair} from "../../../common/common-types";
+import isNil from "lodash/isNil";
+import Heading, {HeadingType} from "../../guidelines/headings/Heading";
+import {flexCenterObjectStyles} from "../../../utils/object-utils";
+import SpinningLoader from "../../guidelines/spinning-loader/SpinningLoader";
+import List from "../../guidelines/lists/List";
+import isEmpty from "lodash/isEmpty";
+import {ISubmissionResponseModel} from "../../../common/types";
+import SubmissionGridRow from "../../submissions/submission-grid-row/SubmissionGridRow";
+import PaginationControls from "../../guidelines/pagination/PaginationControls";
+import Button, {ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
+import {usePages} from "../../../hooks/use-pages";
+import {useUserProfileSubmissions} from "../../../hooks/submissions/use-profile-submissions";
 
-// const columns: GridColDef[] = [
-//     { field: 'id', headerName: '№', minWidth: 70, flex: 1 },
-//     {
-//         field: 'submittedOn',
-//         headerName: 'Submitted On',
-//         minWidth: 160,
-//         flex: 1,
-//         sortable: true,
-//         valueGetter: (params: GridValueGetterParams) => `${formatDate(new Date(params.row.submittedOn))}`,
-//     },
-//     {
-//         field: 'problem',
-//         headerName: 'Task',
-//         minWidth: 150,
-//         flex: 1,
-//         sortable: true,
-//         renderCell: (params: GridValueGetterParams) => (
-//             <Link to={`/submissions/${params.row.id}`} className={styles.contestLink}>{params.row.problem.name}</Link>
-//         ),
-//     },
-//     {
-//         field: 'points',
-//         headerName: 'Points',
-//         type: 'number',
-//         minWidth: 70,
-//         flex: 1,
-//         sortable: true,
-//         valueGetter: (params: GridValueGetterParams) => `${params.row.points}/${params.row.problem.maximumPoints}`,
-//     },
-//     {
-//         field: 'maxUsedTime',
-//         headerName: 'Memory Used',
-//         type: 'string',
-//         minWidth: 70,
-//         flex: 1,
-//         hide: true,
-//         sortable: false,
-//     },
-//     {
-//         field: 'maxUsedMemory',
-//         headerName: 'Memory Used',
-//         type: 'string',
-//         minWidth: 70,
-//         hide: true,
-//         sortable: true,
-//     },
-//     {
-//         field: 'executionResult',
-//         headerName: 'Execution Result',
-//         type: 'string',
-//         minWidth: 250,
-//         flex: 1,
-//         sortable: false,
-//         renderCell: (params: GridValueGetterParams) => (
-//             <ExecutionResult testRuns={params.row.testRuns} />
-//         ),
-//     },
-// ];
+const defaultState = {
+    state: {
+        selectValue: { key: '', value: '' },
+        initialPage: 1,
+    },
+};
 
 const ProfileSubmissions = () => {
-    // const { submissions, getUserSubmissions } = useSubmissions();
-    //
-    // useEffect(() => {
-    //     getUserSubmissions();
-    // }, [ getUserSubmissions ]);
-    //
-    // return (
-    //     <div style={{ height: 400, width: '100%' }}>
-    //         <DataGrid
-    //           rows={submissions}
-    //           columns={columns}
-    //           pageSize={5}
-    //           rowsPerPageOptions={[ 5 ]}
-    //           disableSelectionOnClick
-    //         />
-    //     </div>
-    // );
+    const {
+        state: { usernameForProfile,
+            userSubmissions,
+            userByContestSubmissions,
+            userSubmissionsLoading,
+            menuItems},
+        actions: { initiateUserSubmissionsForProfileQuery,
+            initiateSubmissionsByContestForProfileQuery,
+        getDecodedUsernameFromProfile},
+    } = useUserProfileSubmissions();
 
-    const x = 5;
-    return (<h1>{x}</h1>);
+    const {
+        state: { pagesInfo },
+        clearPageValue,
+    } = usePages();
+
+    const [ selectValue, setSelectValue ] = useState<IKeyValuePair<string>>(defaultState.state.selectValue);
+    const [ submissionsPage, setSubmissionsPage ] = useState(defaultState.state.initialPage);
+
+    useEffect(() => {
+
+        if (isEmpty(usernameForProfile)){
+            return;
+        }
+
+        initiateUserSubmissionsForProfileQuery(getDecodedUsernameFromProfile(), defaultState.state.initialPage);
+    }, [ ]);
+
+    useEffect(() => {
+
+        if (isEmpty(usernameForProfile)){
+            return;
+        }
+
+        if(!isEmpty(selectValue.key)){
+            return;
+        }
+
+        initiateUserSubmissionsForProfileQuery(getDecodedUsernameFromProfile(), submissionsPage);
+    }, [ submissionsPage, usernameForProfile ]);
+
+    useEffect(() => {
+        if(isEmpty(selectValue.key)) {
+            return;
+        }
+
+        initiateSubmissionsByContestForProfileQuery(getDecodedUsernameFromProfile(), submissionsPage, selectValue.key);
+    }, [ selectValue, submissionsPage ]);
+
+    const handlePageChange = useCallback((newPage: number) => {
+        setSubmissionsPage(newPage);
+    }, []);
+
+
+    const handleMenuItemSelection = useCallback(
+        (value: string) => {
+            const item = menuItems.find((i) => i.value === value) as IKeyValuePair<string>;
+
+            if (isNil(item)) {
+                setSelectValue(defaultState.state.selectValue);
+                setSubmissionsPage(1);
+
+                return;
+            }
+
+            setSelectValue(item);
+        },
+        [ menuItems ],
+    );
+
+    const renderSubmissionsDropdown = useCallback(
+        () => (
+            <div>
+                <InputLabel id="contest-submissions-label">Choose Contest</InputLabel>
+                <Select
+                    sx={{
+                        width: 350,
+                        height: 40,
+                        border: '2px solid #42abf8',
+                        borderRadius: 2,
+                        transition: 'all .2s ease-in-out',
+                        '&& fieldset': { border: 'none' },
+                        '&:hover': { backgroundColor: '#e3f3fd' },
+                    }}
+                    defaultValue=""
+                    labelId="contest-submissions-label"
+                    autoWidth
+                    displayEmpty
+                    value={selectValue.value}
+                    onChange={(e) => handleMenuItemSelection(e.target.value)}
+                >
+                    <MenuItem key="contest-submissions-item-default" value="">Select contest</MenuItem>
+                    {menuItems.map((item: IKeyValuePair<string>) => (
+                        <MenuItem
+                            key={`contest-submissions-item-${item.key}`}
+                            value={item.value}
+                        >
+                            {item.value}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </div>
+        ),
+        [ selectValue, menuItems, handleMenuItemSelection ],
+    );
+
+    const renderSubmissionRow = useCallback(
+        (submission: ISubmissionResponseModel) => (
+            <SubmissionGridRow
+                submission={submission}
+                shouldDisplayUsername={false}
+            />
+        ),
+        [],
+    );
+
+    const currentSubmissions = useMemo(
+        () => isEmpty(selectValue.key)
+            ? userSubmissions
+            : userByContestSubmissions,
+        [ userByContestSubmissions, userSubmissions, selectValue ],
+    );
+
+    const handleClearFiltersClick = () => {
+        setSelectValue(defaultState.state.selectValue);
+        clearPageValue();
+        setSubmissionsPage(defaultState.state.initialPage);
+        initiateUserSubmissionsForProfileQuery(getDecodedUsernameFromProfile(), defaultState.state.initialPage);
+    };
+
+    const renderSubmissionsList = useCallback(
+        () => {
+            if (userSubmissionsLoading) {
+                return (
+                    <div style={{ ...flexCenterObjectStyles, marginTop: '10px' }}>
+                        <SpinningLoader />
+                    </div>
+                );
+            }
+
+            if (currentSubmissions.length === 0) {
+                return (
+                    <div className={styles.noSubmissionsFound}>
+                        No submissions found.
+                    </div>
+                );
+            }
+
+            return (
+                <List
+                    values={currentSubmissions}
+                    itemFunc={renderSubmissionRow}
+                    itemClassName={styles.submissionRow}
+                    fullWidth
+                />
+            );
+        },
+        [
+            currentSubmissions,
+            userSubmissions,
+            userByContestSubmissions,
+            userSubmissionsLoading,
+            renderSubmissionRow,
+        ],
+    );
+
+    return (
+        <>
+            <Heading type={HeadingType.primary}>Submissions:</Heading>
+            <div className={styles.filtersContainer}>
+                {renderSubmissionsDropdown()}
+                <div className={styles.clearFiltersBtn}>
+                    <Button
+                        type={ButtonType.secondary}
+                        onClick={() => handleClearFiltersClick()}
+                        className={styles.button}
+                        text="clear contest filter"
+                        size={ButtonSize.small}
+                    />
+                </div>
+            </div>
+            <PaginationControls
+                count={pagesInfo.pagesCount}
+                page={submissionsPage}
+                onChange={handlePageChange}
+            />
+                {renderSubmissionsList()}
+        </>
+    );
 };
 
 export default ProfileSubmissions;
