@@ -19,7 +19,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         private readonly string databaseNameForSubmissionProcessor;
         private string workerDbConnectionString;
-        private NpgsqlConnection currentConnection;
+        private IDbConnection currentConnection;
         private bool isDisposed;
 
         protected BasePostgreSqlExecutionStrategy(
@@ -65,7 +65,6 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
                 passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
 
             createdDbConnectionString += $";Database={databaseName};";
-            createdDbConnectionString += "Timeout=15";
 
             return createdDbConnectionString;
         }
@@ -199,23 +198,6 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             return base.GetDataRecordFieldValue(dataRecord, index);
         }
 
-        private async Task<NpgsqlConnection> GetConn()
-        {
-            var connection = new NpgsqlConnection(this.BuildWorkerDbConnectionString(this.databaseNameForSubmissionProcessor));
-            await connection.OpenAsync();
-
-            connection.StateChange += (sender, args) =>
-            {
-                if (args.CurrentState == ConnectionState.Closed ||
-                    args.CurrentState == ConnectionState.Broken)
-                {
-                    this.isDisposed = true;
-                }
-            };
-
-            return connection;
-        }
-
         private void CleanUpDb(IDbConnection connection)
         {
             var dropPublicScheme = @"
@@ -271,7 +253,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             this.workerDbConnectionString = this.BuildWorkerDbConnectionString(databaseName);
         }
 
-        private async Task<NpgsqlConnection> CreateConnection()
+        private async Task<IDbConnection> CreateConnection()
         {
             var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
