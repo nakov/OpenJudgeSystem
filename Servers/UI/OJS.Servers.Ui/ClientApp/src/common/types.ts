@@ -205,8 +205,8 @@ interface IIndexProblemsType {
     group: number;
     groupType: string;
     contest: string;
-    practiceTests: number;
-    competeTetsts: number;
+    practiceTestsCount: number;
+    competeTetstsCount: number;
     isDeleted: boolean;
 }
 
@@ -338,6 +338,10 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
 }
+interface IContestAutocomplete {
+    id: number;
+    name: string;
+}
 
 interface IContestCategories {
     id: number;
@@ -408,4 +412,5 @@ export type {
     IProblemAdministration,
     IProblemSubmissionType,
     ISubmissionTypeInProblem,
+    IContestAutocomplete,
 };

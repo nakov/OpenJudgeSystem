@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton, Modal, Tooltip } from '@mui/material';
@@ -30,8 +29,7 @@ const AdministrationContestsPage = () => {
     const [ contestId, setContestId ] = useState<number>();
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
     const selectedFilters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedSorters);
-
+    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedSorters);    
     const {
         data,
         error,
@@ -59,7 +57,7 @@ const AdministrationContestsPage = () => {
             field: 'id',
             headerName: 'Id',
             flex: 0.5,
-            type: 'string',
+            type: 'number',
             filterable: false,
             sortable: false,
             valueFormatter: (params) => params.value.toString(),
@@ -213,13 +211,6 @@ const AdministrationContestsPage = () => {
                   onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
                 >
                     <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title="Create new contest with details">
-                <IconButton
-                  onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-                >
-                    <CreateNewFolderIcon sx={{ width: '40px', height: '40px' }} color="primary" />
                 </IconButton>
             </Tooltip>
         </div>

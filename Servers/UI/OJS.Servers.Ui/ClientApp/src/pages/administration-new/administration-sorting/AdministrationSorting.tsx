@@ -18,9 +18,9 @@ import styles from './AdministrationSorting.module.scss';
 interface IAdministrationSortProps {
     columns: string[];
     location: string;
-    shouldUpdateUrl?: boolean;
     selectedSorters: Array<IAdministrationSorter>;
     setStateAction: ActionCreatorWithPayload<unknown, string>;
+    withSearchParams?: boolean;
 }
 
 interface IAdministrationSorter {
@@ -35,7 +35,7 @@ const orderByOptions = [
 ];
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns, shouldUpdateUrl = true, location, selectedSorters, setStateAction } = props;
+    const { columns, location, selectedSorters, setStateAction, withSearchParams = true } = props;
     const defaultSorter = {
         columnName: '',
         orderBy: SortingEnum.ASC,
@@ -85,10 +85,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     useEffect(() => {
-        if (!shouldUpdateUrl) {
-            return;
-        }
-
         const urlSelectedSorters = mapUrlToSorters();
         if (urlSelectedSorters.length) {
             dispatch(setStateAction({ key: location, sorters: urlSelectedSorters }));
@@ -97,9 +93,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     }, []);
 
     useEffect(() => {
-        if (!shouldUpdateUrl) {
-            return;
-        }
         const formatSorterToString = (sorter: IAdministrationSorter) => {
             if (!sorter?.columnName) {
                 return;
@@ -112,13 +105,17 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         const sorterFormattedArray = selectedSorters.map(formatSorterToString).filter((sorter) => sorter);
         if (!sorterFormattedArray.length) {
             searchParams.delete('sorting');
-            setSearchParams(searchParams);
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
             return;
         }
 
         const delayedSetOfSearch = debounce(() => {
             searchParams.set('sorting', sorterFormattedArray.join('&'));
-            setSearchParams(searchParams);
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
         }, 500);
 
         delayedSetOfSearch();
@@ -147,7 +144,9 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
     const removeAllSorters = () => {
         searchParams.delete('sorting');
-        setSearchParams(searchParams);
+        if (withSearchParams) {
+            setSearchParams(searchParams);
+        }
         dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
     };
 
@@ -162,7 +161,9 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         dispatch(setStateAction({ key: location, sorters: newSortersArray }));
         if (newSortersArray.length === 1) {
             searchParams.delete('sorting');
-            setSearchParams(searchParams);
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
         }
     };
 

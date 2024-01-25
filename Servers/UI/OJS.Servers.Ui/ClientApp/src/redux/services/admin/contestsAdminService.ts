@@ -3,7 +3,7 @@
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { ExceptionData, IContestAdministration, IGetAllAdminParams,
+import { ExceptionData, IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
@@ -65,6 +65,7 @@ export const contestService = createApi({
         deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
         updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
         createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/', method: 'POST', body: contestAdministrationModel }) }),
+        getCopyAll: builder.query<Array<IContestAutocomplete>, null>({ query: () => ({ url: '/copyAll' }), keepUnusedDataFor: 0 }),
     }),
 });
 
@@ -75,5 +76,6 @@ export const {
     useDeleteContestMutation,
     useUpdateContestMutation,
     useCreateContestMutation,
+    useGetCopyAllQuery,
 } = contestService;
 export default contestService;

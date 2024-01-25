@@ -158,6 +158,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
               setSorterStateAction={setAdminContestsSorters}
               modals={[]}
               setQueryParams={setQueryParams}
+              withSearchParams={false}
             />
         </div>
     );

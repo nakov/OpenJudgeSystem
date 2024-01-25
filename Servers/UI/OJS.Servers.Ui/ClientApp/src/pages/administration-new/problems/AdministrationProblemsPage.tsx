@@ -21,7 +21,6 @@ import AdministrationGridView from '../AdministrationGridView';
 const AdministrationProblemsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openEditProblemModal, setOpenEditProblemModal ] = useState(false);
-    const [ openSHowCreateProblemModal, setOpenShowCreateProblemModal ] = useState<boolean>(false);
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
@@ -52,7 +51,7 @@ const AdministrationProblemsPage = () => {
             field: 'id',
             headerName: 'Id',
             flex: 0,
-            type: 'string',
+            type: 'number',
             filterable: false,
             sortable: false,
             align: 'center',
@@ -165,14 +164,6 @@ const AdministrationProblemsPage = () => {
             ),
         },
     ];
-
-    const renderProblemsCreateModal = (index: number) => (
-        <Modal key={index} open={openSHowCreateProblemModal} onClose={() => setOpenShowCreateProblemModal(!openSHowCreateProblemModal)}>
-            <Box sx={modalStyles}>
-                <></>
-            </Box>
-        </Modal>
-    );
     const renderProblemsEditModal = (index: number) => (
         <Modal
           key={index}
@@ -208,7 +199,6 @@ const AdministrationProblemsPage = () => {
           setSorterStateAction={setAdminProblemsSorters}
           location="all-problems"
           modals={[
-              { showModal: openSHowCreateProblemModal, modal: (i) => renderProblemsCreateModal(i) },
               { showModal: openEditProblemModal, modal: (i) => renderProblemsEditModal(i) },
           ]}
         />

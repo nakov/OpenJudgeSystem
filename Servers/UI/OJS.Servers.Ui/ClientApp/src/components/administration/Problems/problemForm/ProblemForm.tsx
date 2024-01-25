@@ -23,7 +23,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteProblem from '../delete/DeleteProblem';
 
 interface IProblemFormProps {
-    problemId: number;
+    problemId: number | null;
 
     isEditMode?: boolean;
 
@@ -53,7 +53,7 @@ const ProblemForm = (props: IProblemFormProps) => {
     });
 
     const navigate = useNavigate();
-    const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) });
+    const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
     const { data: submissionTypes } = useGetForProblemQuery(null);
     const { data: checkers } = useGetCheckersForProblemQuery(null);
     const [ updateProblem, { data: updateData, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateProblemMutation();
@@ -405,9 +405,9 @@ const ProblemForm = (props: IProblemFormProps) => {
                             {isEditMode
                                 ? (
                                     <>
-                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={(e) => updateProblem(currentProblem)} variant="contained">Edit</Button>
+                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={() => updateProblem(currentProblem)} variant="contained">Edit</Button>
                                         <DeleteProblem
-                                          problemId={problemId}
+                                          problemId={problemId!}
                                           problemName={currentProblem.name}
                                           style={{ alignSelf: 'flex-end' }}
                                           onSuccess={(() => navigate('/administration-new/problems'))}

@@ -23,6 +23,8 @@ public class ProblemsInListModel : IMapExplicitly
 
     public short MaximumPoints { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Problem, ProblemsInListModel>()
             .ForMember(x => x.Id, opt
@@ -42,5 +44,7 @@ public class ProblemsInListModel : IMapExplicitly
             .ForMember(x => x.CompeteTestsCount, opt
                 => opt.MapFrom(p => p.Tests.Count(test => test.IsOpenTest)))
             .ForMember(x => x.MaximumPoints, opt
-                => opt.MapFrom(p => p.MaximumPoints));
+                => opt.MapFrom(p => p.MaximumPoints))
+            .ForMember(x => x.IsDeleted, opt
+                => opt.MapFrom(p => p.IsDeleted));
 }

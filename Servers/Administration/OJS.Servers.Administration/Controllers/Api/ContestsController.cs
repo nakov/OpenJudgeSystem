@@ -7,6 +7,7 @@ using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common.Models.Pagination;
 using System.Linq;
 using OJS.Services.Common.Validation;
+using OJS.Services.Administration.Models.Contests.Problems;
 
 public class ContestsController : ApiControllerBase
 {
@@ -98,6 +99,16 @@ public class ContestsController : ApiControllerBase
 
         var contest = await this.contestsBusinessService.ById(id);
         return this.Ok(contest);
+    }
+
+    [HttpGet]
+    [Route("CopyAll")]
+    public async Task<IActionResult> GetAllForProblem()
+    {
+        var contests =
+            await this.contestsBusinessService
+                .GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+        return this.Ok(contests);
     }
 
     private async Task<bool> HasContestPermission(int? contestId)

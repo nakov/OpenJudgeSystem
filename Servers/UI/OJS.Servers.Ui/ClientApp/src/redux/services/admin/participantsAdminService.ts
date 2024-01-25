@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
 import { IPagedResultType, IParticiapntsInContestView } from '../../../common/types';
-import { IGetParticipantsByContestId } from '../../../common/url-types';
+import { IGetByContestId } from '../../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
 export const participantsAdminService = createApi({
@@ -18,7 +18,7 @@ export const participantsAdminService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getByContestId: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetParticipantsByContestId>({ query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({ url: `/contest/${contestId}`,
+        getByContestId: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetByContestId>({ query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({ url: `/contest/${contestId}`,
             params: {
                 filter,
                 page,

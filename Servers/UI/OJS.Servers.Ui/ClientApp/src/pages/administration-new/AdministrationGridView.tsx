@@ -44,6 +44,7 @@ interface IAdministrationGridViewProps<T> {
    setSorterStateAction: ActionCreatorWithPayload<unknown, string>;
 
    location: string;
+   withSearchParams?: boolean;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -62,6 +63,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         setFilterStateAction,
         setSorterStateAction,
         location,
+        withSearchParams = true,
     } = props;
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
@@ -81,8 +83,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                 { renderActionButtons() }
                 {showFiltersAndSorters && (
                 <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between', width: '450px' }}>
-                    <AdministrationFilters setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
-                    <AdministrationSorting setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
+                    <AdministrationFilters withSearchParams={withSearchParams} setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
+                    <AdministrationSorting withSearchParams={withSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
                 </div>
                 )}
                 <Box className={styles.legendBox}>

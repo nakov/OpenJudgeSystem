@@ -4,7 +4,7 @@ import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/too
 
 import { defaultPathIdentifier } from '../../../common/constants';
 import { ExceptionData, IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
-import { IContestDetailsUrlParams, IProblemUrlById } from '../../../common/url-types';
+import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
 
 type ExtraOptionsType = {
 // Add extra options if needed
@@ -12,7 +12,7 @@ type ExtraOptionsType = {
 type ResultError = {
     data: Array<ExceptionData>;
 }
-const errorStatusCodes = [ 400, 401, 403, 500 ];
+const errorStatusCodes = [ 400, 401, 403, 500, 422 ];
 const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
@@ -68,12 +68,28 @@ export const problemsAdminService = createApi({
                 body: problem,
             }),
         }),
-        getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Contest/${id}` }) }),
+        getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
+            query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({
+                url: `/contest/${contestId}`,
+                params: {
+                    filter,
+                    page,
+                    ItemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
         retestById: builder.mutation({
             query: (problem) => ({
                 url: '/Retest',
                 method: 'POST',
                 body: problem,
+            }),
+        }),
+        deleteByContest: builder.mutation({
+            query: (contestId) => ({
+                url: `/contest/${contestId}`,
+                method: 'DELETE',
             }),
         }),
     }),
@@ -87,6 +103,7 @@ export const {
     useUpdateProblemMutation,
     useGetContestProblemsQuery,
     useRetestByIdMutation,
+    useDeleteByContestMutation,
 
 } = problemsAdminService;
 export default problemsAdminService;

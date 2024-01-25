@@ -24,10 +24,9 @@ interface IFiltersColumnOperators {
 interface IAdministrationFilterProps {
     columns: IFilterColumn[];
     location: string;
-    shouldUpdateUrl?: boolean;
-
     selectedFilters: Array<IAdministrationFilter>;
     setStateAction: ActionCreatorWithPayload<unknown, string>;
+    withSearchParams?: boolean;
 }
 
 interface IAdministrationFilter {
@@ -80,7 +79,7 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 };
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, shouldUpdateUrl = true, location, selectedFilters, setStateAction } = props;
+    const { columns, location, selectedFilters, setStateAction, withSearchParams = true } = props;
     const dispatch = useDispatch();
     const defaultFilter = {
         column: '',
@@ -139,10 +138,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     useEffect(() => {
-        if (!shouldUpdateUrl) {
-            return;
-        }
-
         const urlSelectedFilters = mapUrlToFilters();
         if (urlSelectedFilters.length) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
@@ -151,10 +146,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, []);
 
     useEffect(() => {
-        if (!shouldUpdateUrl) {
-            return;
-        }
-
         const formatFilterToString = (filter: IAdministrationFilter) => {
             if (!filter.column || !filter.operator || !filter.value) {
                 return;
@@ -167,13 +158,18 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         const filtersFormattedArray = selectedFilters.map(formatFilterToString).filter((filter) => filter);
         if (!filtersFormattedArray.length) {
             searchParams.delete('filter');
-            setSearchParams(searchParams);
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
+
             return;
         }
 
         const delayedSetOfSearch = debounce(() => {
             searchParams.set('filter', filtersFormattedArray.join('&'));
-            setSearchParams(searchParams);
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
         }, 300);
 
         delayedSetOfSearch();
@@ -202,7 +198,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     const removeAllFilters = () => {
         searchParams.delete('filter');
-        setSearchParams(searchParams);
+        if (withSearchParams) {
+            setSearchParams(searchParams);
+        }
         dispatch(setStateAction({
             key: location,
             filters: [ defaultFilter ],
@@ -220,7 +218,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         dispatch(setStateAction({ key: location, filters: newFiltersArray }));
         if (newFiltersArray.length === 1) {
             searchParams.delete('filter');
-            setSearchParams(searchParams);
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
         }
     };
 
