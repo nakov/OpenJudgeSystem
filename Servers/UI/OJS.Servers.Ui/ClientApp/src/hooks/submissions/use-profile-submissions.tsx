@@ -7,7 +7,7 @@ import isNil from 'lodash/isNil';
 import { IKeyValuePair } from '../../common/common-types';
 import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
 import {
-    IGetSubmissionsByContestIdParams, IGetUserSubmissionsForProfileByContestUrlParams,
+    IGetUserSubmissionsForProfileByContestUrlParams,
     IGetUserSubmissionsForProfileUrlParams,
     IUserInfoUrlParams,
 } from '../../common/url-types';
@@ -17,7 +17,8 @@ import isNilOrEmpty from '../../utils/check-utils';
 import {
     decodeUsernameFromUrlParam,
     getAllParticipationsForUserUrl,
-    getSubmissionsByContestIdUrl, getSubmissionsForProfileUrl,
+    getSubmissionsForProfileByContestUrl,
+    getSubmissionsForProfileUrl,
 } from '../../utils/urls';
 import { useHttp } from '../use-http';
 import { usePages } from '../use-pages';
@@ -56,6 +57,7 @@ type IProfileSubmissionsProviderProps = IHaveChildrenProps
 const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderProps) => {
     const [ usernameForProfile, setUsernameForProfile ] = useState(defaultState.state.usernameForProfile);
     const [ userSubmissions, setUserSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
+    const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
     const [
         userByContestSubmissions,
         setUserByContestSubmissions,
@@ -67,9 +69,9 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     const [
         submissionsByContestIdParams,
         setSubmissionsByContestIdParams,
-    ] = useState<IGetSubmissionsByContestIdParams | null>(defaultState.state.submissionsByContestParams);
-    const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
-    const [ getParticipationsForProfileUrlParam, setParticipationsForProfileUrlParam ] =
+    ] = useState<IGetUserSubmissionsForProfileByContestUrlParams | null>(defaultState.state.submissionsByContestParams);
+    const [ getParticipationsForProfileUrlParam,
+        setParticipationsForProfileUrlParam ] =
         useState<IUserInfoUrlParams | null>();
 
     const { internalUser: user } =
@@ -93,9 +95,9 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         get: getUserByContestSubmissions,
         data: userByContestSubmissionsData,
     } = useHttp<
-        IGetSubmissionsByContestIdParams,
+        IGetUserSubmissionsForProfileByContestUrlParams,
         IPagedResultType<ISubmissionResponseModel>>({
-            url: getSubmissionsByContestIdUrl,
+            url: getSubmissionsForProfileByContestUrl,
             parameters: submissionsByContestIdParams,
         });
 
@@ -193,7 +195,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
 
     useEffect(
         () => {
-            if (isNil(getParticipationsForProfileUrlParam)) {
+            if (isNil(getParticipationsForProfileUrlParam) || !isNil(userParticipationsData)) {
                 return;
             }
 
