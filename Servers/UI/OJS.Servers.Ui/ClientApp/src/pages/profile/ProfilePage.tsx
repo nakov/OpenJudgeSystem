@@ -56,7 +56,8 @@ const ProfilePage = () => {
             setUsernameForProfile(usernameParam);
             getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ getProfile, myProfile.userName, internalUser.userName, setUsernameForProfile, username ],
+        [ getProfile, myProfile.userName, internalUser.userName, setUsernameForProfile,
+            username, isGetProfileQueryInitiated, isProfileInfoLoading ],
     );
 
     useEffect(
@@ -78,7 +79,7 @@ const ProfilePage = () => {
 
             setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameForProfile) === internalUser.userName);
         },
-        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
+        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile, internalUser.userName ],
     );
 
     useEffect(
@@ -110,31 +111,29 @@ const ProfilePage = () => {
     );
 
     const renderPage = useCallback(
-        () =>
-            ( isEmpty(myProfile.userName)
-                    ? <NotFoundPage />
-                    : (
-                        <>
-                            {renderUsernameHeading()}
-                            <ProfileAboutInfo
-                              userProfile={myProfile}
-                              isUserAdmin={internalUser.isAdmin}
-                              isUserProfileOwner={currentUserIsProfileOwner}
-                            />
-                            {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
-                            <ProfileContestParticipations />
-                            {/* Tabs will be hidden for alpha version,
+        () => (isEmpty(myProfile.userName)
+            ? <NotFoundPage />
+            : (
+                <>
+                    {renderUsernameHeading()}
+                    <ProfileAboutInfo
+                      userProfile={myProfile}
+                      isUserAdmin={internalUser.isAdmin}
+                      isUserProfileOwner={currentUserIsProfileOwner}
+                    />
+                    {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
+                    <ProfileContestParticipations />
+                    {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
-                            {/* <Tabs */}
-                            {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
-                            {/*  contents={[ <ProfileSubmissions />, */}
-                            {/*  <ProfileContestParticipations /> ]} */}
-                            {/* /> */}
-                        </>
-                )
-            ),
-        [ isProfileInfoLoaded, isProfileInfoLoading, myProfile, renderUsernameHeading,
-            internalUser.canAccessAdministration, currentUserIsProfileOwner ],
+                    {/* <Tabs */}
+                    {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
+                    {/*  contents={[ <ProfileSubmissions />, */}
+                    {/*  <ProfileContestParticipations /> ]} */}
+                    {/* /> */}
+                </>
+            )
+        ),
+        [ myProfile, renderUsernameHeading, internalUser.isAdmin, internalUser.canAccessAdministration, currentUserIsProfileOwner ],
     );
 
     return isProfileInfoLoaded && !isProfileInfoLoading

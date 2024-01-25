@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
@@ -10,7 +11,6 @@ import { IAuthorizationReduxState } from '../../../redux/features/authorizationS
 import { formatDate } from '../../../utils/dates';
 import { decodeUsernameFromUrlParam } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import isEmpty from "lodash/isEmpty";
 
 const columns: GridColDef[] = [
     {

@@ -60,7 +60,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
                 return;
             }
 
-            if (isLoading || !isNil(apiParticipationsForProfile)){
+            if (isLoading || !isNil(apiParticipationsForProfile)) {
                 return;
             }
 
@@ -71,7 +71,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
 
             setParticipationsForProfileUrUrlParam(null);
         },
-        [ getParticipationsForProfileUrlParam, getParticipationsForProfile ],
+        [ getParticipationsForProfileUrlParam, getParticipationsForProfile, isLoading, apiParticipationsForProfile ],
     );
 
     useEffect(

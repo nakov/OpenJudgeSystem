@@ -203,7 +203,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
                 await getUserParticipations();
             })();
         },
-        [ getParticipationsForProfileUrlParam, getUserParticipations ],
+        [ getParticipationsForProfileUrlParam, getUserParticipations, userParticipationsData ],
     );
 
     useEffect(

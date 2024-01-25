@@ -144,7 +144,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
                 clearUserProfileInformation,
             },
         }),
-        [ myProfile, isSuccess, isLoading, isGetProfileQueryInitiated, getProfile, clearUserProfileInformation ],
+        [ myProfile, isProfileInfoLoaded, isLoading, isGetProfileQueryInitiated, getProfile, clearUserProfileInformation ],
     );
 
     return (
