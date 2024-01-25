@@ -28,7 +28,7 @@
 
         public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)
         {
-            bool isUserAdminOrProfileOwner = this.ShouldGetFullProfile(username);
+            bool isUserAdminOrProfileOwner = this.IsUserAdminOrProfileOwner(username);
 
             return isUserAdminOrProfileOwner
                 ? this.usersProfileData
@@ -85,7 +85,7 @@
             return profile?.Map<UserAuthInfoServiceModel>();
         }
 
-        private bool ShouldGetFullProfile(string? username)
+        private bool IsUserAdminOrProfileOwner(string? username)
         {
             var currentUser = this.userProvider.GetCurrentUser();
 
