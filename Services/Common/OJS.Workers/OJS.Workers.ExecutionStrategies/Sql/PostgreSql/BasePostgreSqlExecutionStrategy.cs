@@ -75,8 +75,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
             try
             {
-                await using var connection = new NpgsqlConnection("Server=postgres;Port=5432;User Id=worker_1_do_not_delete_ojs_user;Password=1123QwER;Database=worker_1_do_not_delete;");
-                await connection.OpenAsync();
+                // using var connection = await this.GetOpenConnection(this.databaseNameForSubmissionProcessor);
+                var connection = await this.GetConn();
+
                 this.ExecuteBeforeTests(connection, executionContext);
 
                 foreach (var test in executionContext.Input.Tests)
@@ -92,9 +93,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             {
                 if (!string.IsNullOrWhiteSpace(this.GetDatabaseName()))
                 {
-                    await using var connection = new NpgsqlConnection("Server=postgres;Port=5432;User Id=worker_1_do_not_delete_ojs_user;Password=1123QwER;Database=worker_1_do_not_delete;");
-                    await connection.OpenAsync();
-                    // using var connection = await this.GetOpenConnection(this.GetDatabaseName());
+                    // await using var connection = new NpgsqlConnection("Server=postgres;Port=5432;User Id=worker_1_do_not_delete_ojs_user;Password=1123QwER;Database=worker_1_do_not_delete;");
+                    // await connection.OpenAsync();
+                    using var connection = await this.GetOpenConnection(this.GetDatabaseName());
                     this.CleanUpDb(connection);
                 }
 
@@ -200,6 +201,23 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             }
 
             return base.GetDataRecordFieldValue(dataRecord, index);
+        }
+
+        private async Task<NpgsqlConnection> GetConn()
+        {
+            var connection = new NpgsqlConnection(this.BuildWorkerDbConnectionString(this.databaseNameForSubmissionProcessor));
+            await connection.OpenAsync();
+
+            connection.StateChange += (sender, args) =>
+            {
+                if (args.CurrentState == ConnectionState.Closed ||
+                    args.CurrentState == ConnectionState.Broken)
+                {
+                    this.isDisposed = true;
+                }
+            };
+
+            return connection;
         }
 
         private void CleanUpDb(IDbConnection connection)
