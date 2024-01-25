@@ -144,6 +144,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
+            .AsNoTracking()
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 

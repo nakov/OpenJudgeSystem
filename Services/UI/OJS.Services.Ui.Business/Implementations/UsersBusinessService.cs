@@ -27,14 +27,21 @@
         }
 
         public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)
-            => this.usersProfileData
-                .GetByUsername<UserProfileServiceModel>(username);
+        {
+            bool isUserAdminOrProfileOwner = this.ShouldGetFullProfile(username);
 
-        public async Task<UserProfileServiceModel?> GetUserProfileById(string userId)
-            => await this.usersProfileData
+            return isUserAdminOrProfileOwner
+                ? this.usersProfileData
+                    .GetByUsername<UserProfileServiceModel>(username)
+                : this.GetByUsernameAsShortProfile(username);
+        }
+
+        public async Task<UserProfileServiceModel?> GetUserProfileById(string userId) =>
+            await this.usersProfileData
                 .GetByIdQuery(userId)
-                .MapCollection<UserProfileServiceModel>()
-                .FirstOrDefaultAsync();
+                .AsNoTracking()
+                .FirstOrDefaultAsync()
+                .Map<UserProfileServiceModel>();
 
         public async Task<UserSearchServiceResultModel> GetSearchUsersByUsername(SearchServiceModel model)
         {
@@ -77,5 +84,28 @@
 
             return profile?.Map<UserAuthInfoServiceModel>();
         }
+
+        private bool ShouldGetFullProfile(string? username)
+        {
+            var currentUser = this.userProvider.GetCurrentUser();
+
+            if (currentUser.IsNull() || string.IsNullOrEmpty(username))
+            {
+                return false;
+            }
+
+            return currentUser.IsAdmin ||
+                   this.usersProfileData.GetByIdQuery(currentUser.Id).Any(u => u.UserName == username);
+        }
+
+        private async Task<UserProfileServiceModel?> GetByUsernameAsShortProfile(string? username) =>
+            await this.usersProfileData.GetByUsername(username)
+                .AsNoTracking()
+                .Select(user => new UserProfileServiceModel
+                {
+                    UserName = user.UserName,
+                    Id = user.Id,
+                })
+                .FirstOrDefaultAsync();
     }
 }

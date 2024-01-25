@@ -6,6 +6,7 @@
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class UsersProfileDataService : DataService<UserProfile>, IUsersProfileDataService
@@ -50,11 +51,10 @@
 
         public Task<TServiceModel?> GetByUsername<TServiceModel>(string? username)
             => this.GetByUsername(username)
-                .AsNoTracking()
-                .MapCollection<TServiceModel>()
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync()
+                .Map<TServiceModel?>();
 
-        private IQueryable<UserProfile> GetByUsername(string? username)
+        public IQueryable<UserProfile> GetByUsername(string? username)
             => this.DbSet
                 .Include(up => up.UserSettings)
                 .Where(u => u.UserName == username);
