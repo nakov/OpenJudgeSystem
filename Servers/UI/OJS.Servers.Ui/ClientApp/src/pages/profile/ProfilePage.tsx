@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import Heading from '../../components/guidelines/headings/Heading';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
@@ -14,6 +15,7 @@ import { usePageTitles } from '../../hooks/use-page-titles';
 import { useUsers } from '../../hooks/use-users';
 import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../utils/check-utils';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { decodeUsernameFromUrlParam } from '../../utils/urls';
 import NotFoundPage from '../not-found/NotFoundPage';
 import { makePrivate } from '../shared/make-private';
@@ -26,6 +28,8 @@ const ProfilePage = () => {
         state: {
             myProfile,
             isProfileInfoLoaded,
+            isProfileInfoLoading,
+            isGetProfileQueryInitiated,
         },
         actions: {
             getProfile,
@@ -41,7 +45,7 @@ const ProfilePage = () => {
 
     useEffect(
         () => {
-            if (!isEmpty(myProfile.userName)) {
+            if (!isEmpty(myProfile.userName) || isGetProfileQueryInitiated || isProfileInfoLoading) {
                 return;
             }
 
@@ -50,19 +54,29 @@ const ProfilePage = () => {
                 : internalUser.userName;
 
             setUsernameForProfile(usernameParam);
-            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameParam) === internalUser.userName);
             getProfile(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ getProfile, myProfile, myProfile.userName, internalUser.userName, setUsernameForProfile, username ],
+        [ getProfile, myProfile.userName, internalUser.userName, setUsernameForProfile, username ],
     );
 
     useEffect(
         () => {
-            if (!isProfileInfoLoaded) {
+            if (!isProfileInfoLoaded || isEmpty(myProfile.userName)) {
                 return;
             }
 
             setPageTitle(`${usernameForProfile}'s profile`);
+        },
+        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
+    );
+
+    useEffect(
+        () => {
+            if (isEmpty(myProfile.userName)) {
+                return;
+            }
+
+            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameForProfile) === internalUser.userName);
         },
         [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
     );
@@ -96,33 +110,40 @@ const ProfilePage = () => {
     );
 
     const renderPage = useCallback(
-        () => (
-            isEmpty(myProfile.userName) && isProfileInfoLoaded
-                ? <NotFoundPage />
-                : (
-                    <>
-                        {renderUsernameHeading()}
-                        <ProfileAboutInfo
-                          userProfile={myProfile}
-                          isUserAdmin={internalUser.canAccessAdministration}
-                          isUserProfileOwner={currentUserIsProfileOwner}
-                        />
-                        {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
-                        <ProfileContestParticipations />
-                        {/* Tabs will be hidden for alpha version,
+        () =>
+            ( isEmpty(myProfile.userName)
+                    ? <NotFoundPage />
+                    : (
+                        <>
+                            {renderUsernameHeading()}
+                            <ProfileAboutInfo
+                              userProfile={myProfile}
+                              isUserAdmin={internalUser.isAdmin}
+                              isUserProfileOwner={currentUserIsProfileOwner}
+                            />
+                            {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
+                            <ProfileContestParticipations />
+                            {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
-                        {/* <Tabs */}
-                        {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
-                        {/*  contents={[ <ProfileSubmissions />, */}
-                        {/*  <ProfileContestParticipations /> ]} */}
-                        {/* /> */}
-                    </>
+                            {/* <Tabs */}
+                            {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
+                            {/*  contents={[ <ProfileSubmissions />, */}
+                            {/*  <ProfileContestParticipations /> ]} */}
+                            {/* /> */}
+                        </>
                 )
-        ),
-        [ myProfile, isProfileInfoLoaded, renderUsernameHeading, currentUserIsProfileOwner, internalUser.canAccessAdministration ],
+            ),
+        [ isProfileInfoLoaded, isProfileInfoLoading, myProfile, renderUsernameHeading,
+            internalUser.canAccessAdministration, currentUserIsProfileOwner ],
     );
 
-    return renderPage();
+    return isProfileInfoLoaded && !isProfileInfoLoading
+        ? renderPage()
+        : (
+            <div style={{ ...flexCenterObjectStyles }}>
+                <SpinningLoader />
+            </div>
+        );
 };
 
 export default makePrivate(setLayout(ProfilePage));
