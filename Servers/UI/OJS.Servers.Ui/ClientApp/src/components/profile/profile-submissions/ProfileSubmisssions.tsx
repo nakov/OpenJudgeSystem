@@ -174,12 +174,19 @@ const ProfileSubmissions = () => {
             }
 
             return (
-                <List
-                    values={currentSubmissions}
-                    itemFunc={renderSubmissionRow}
-                    itemClassName={styles.submissionRow}
-                    fullWidth
-                />
+                <>
+                    <PaginationControls
+                        count={pagesInfo.pagesCount}
+                        page={submissionsPage}
+                        onChange={handlePageChange}
+                    />
+                    <List
+                        values={currentSubmissions}
+                        itemFunc={renderSubmissionRow}
+                        itemClassName={styles.submissionRow}
+                        fullWidth
+                    />
+                </>
             );
         },
         [
@@ -206,11 +213,6 @@ const ProfileSubmissions = () => {
                     />
                 </div>
             </div>
-            <PaginationControls
-                count={pagesInfo.pagesCount}
-                page={submissionsPage}
-                onChange={handlePageChange}
-            />
                 {renderSubmissionsList()}
         </>
     );
