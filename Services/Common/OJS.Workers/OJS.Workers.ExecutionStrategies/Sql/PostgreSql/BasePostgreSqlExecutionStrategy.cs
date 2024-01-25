@@ -1,4 +1,5 @@
 ﻿#nullable disable
+
 namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 {
     using System;
@@ -18,7 +19,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         private readonly string databaseNameForSubmissionProcessor;
         private string workerDbConnectionString;
-        private IDbConnection currentConnection;
+        private NpgsqlConnection currentConnection;
         private bool isDisposed;
 
         protected BasePostgreSqlExecutionStrategy(
@@ -75,9 +76,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
             try
             {
-                // using var connection = await this.GetOpenConnection(this.databaseNameForSubmissionProcessor);
-                var connection = await this.GetConn();
-
+                await using var connection = await this.GetOpenConnection(this.GetDatabaseName()) as NpgsqlConnection;
                 this.ExecuteBeforeTests(connection, executionContext);
 
                 foreach (var test in executionContext.Input.Tests)
@@ -93,9 +92,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             {
                 if (!string.IsNullOrWhiteSpace(this.GetDatabaseName()))
                 {
-                    // await using var connection = new NpgsqlConnection("Server=postgres;Port=5432;User Id=worker_1_do_not_delete_ojs_user;Password=1123QwER;Database=worker_1_do_not_delete;");
-                    // await connection.OpenAsync();
-                    using var connection = await this.GetOpenConnection(this.GetDatabaseName());
+                    await using var connection = await this.GetOpenConnection(this.GetDatabaseName()) as NpgsqlConnection;
                     this.CleanUpDb(connection);
                 }
 
@@ -147,8 +144,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             int timeLimit = DefaultTimeLimit)
         {
             var sqlTestResult = new SqlResult { Completed = true };
-            commandText = commandText.Replace("TABLE_SCHEMA", "TABLE_CATALOG");
-            commandText = commandText.Replace("public", this.databaseNameForSubmissionProcessor);
+
             try
             {
                 using var command = connection.CreateCommand();
@@ -275,14 +271,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             this.workerDbConnectionString = this.BuildWorkerDbConnectionString(databaseName);
         }
 
-        private async Task<IDbConnection> CreateConnection()
+        private async Task<NpgsqlConnection> CreateConnection()
         {
             var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
-            // connection.Disposed += (sender, args) =>
-            // {
-            //     this.isDisposed = true;
-            // };
 
             connection.StateChange += (sender, args) =>
             {
@@ -295,6 +287,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
             this.currentConnection = connection;
             this.isDisposed = false;
+
             return this.currentConnection;
         }
     }
