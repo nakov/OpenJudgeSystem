@@ -10,6 +10,7 @@ import { IAuthorizationReduxState } from '../../../redux/features/authorizationS
 import { formatDate } from '../../../utils/dates';
 import { decodeUsernameFromUrlParam } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import isEmpty from "lodash/isEmpty";
 
 const columns: GridColDef[] = [
     {
@@ -65,13 +66,17 @@ const ProfileContestParticipations = () => {
                 return;
             }
 
+            if (!isEmpty(userParticipations)) {
+                return;
+            }
+
             const usernameParam = !isNil(username)
                 ? username
                 : myProfile.userName;
 
             getUserParticipations(decodeUsernameFromUrlParam(usernameParam));
         },
-        [ isProfileInfoLoaded, getUserParticipations, user.userName, myProfile.userName, username ],
+        [ isProfileInfoLoaded, getUserParticipations, user.userName, myProfile.userName, username, userParticipations ],
     );
 
     useEffect(
