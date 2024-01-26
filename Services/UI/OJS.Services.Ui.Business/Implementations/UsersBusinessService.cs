@@ -98,6 +98,9 @@
                    this.usersProfileData.GetByIdQuery(currentUser.Id).Any(u => u.UserName == username);
         }
 
+        //AsNoTracking() Method is added to prevent ''tracking query'' error.
+        //Error is thrown when we map from UserSettings (owned entity) without including the
+        //UserProfile (owner entity) in the query.
         private async Task<UserProfileServiceModel?> GetByUsernameAsShortProfile(string? username) =>
             await this.usersProfileData.GetByUsername(username)
                 .AsNoTracking()

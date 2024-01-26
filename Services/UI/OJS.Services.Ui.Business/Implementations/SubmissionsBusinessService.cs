@@ -142,6 +142,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         var currentUser = this.userProviderService.GetCurrentUser();
 
+        //AsNoTracking() Method is added to prevent ''tracking query'' error.
+        //Error is thrown when we map from UserSettings (owned entity) without including the
+        //UserProfile (owner entity) in the query.
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
             .AsNoTracking()
