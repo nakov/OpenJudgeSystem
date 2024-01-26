@@ -7,9 +7,6 @@ public class ApplicationUrlsConfig : BaseConfig
     public override string SectionName => "ApplicationUrls";
 
     [Required]
-    public string UiUrl { get; set; } = string.Empty;
-
-    [Required]
     public string AdministrationUrl { get; set; } = string.Empty;
 
     [Required]
