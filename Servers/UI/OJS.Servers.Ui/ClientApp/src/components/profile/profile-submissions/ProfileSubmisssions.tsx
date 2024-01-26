@@ -155,8 +155,6 @@ const ProfileSubmissions = () => {
 
     const renderSubmissionsList = useCallback(
         () => {
-            console.log(userSubmissionsByContestLoading);
-            console.log(currentSubmissions);
             if (userSubmissionsLoading || userSubmissionsByContestLoading) {
                 return (
                     <div style={{ ...flexCenterObjectStyles, marginTop: '10px' }}>
