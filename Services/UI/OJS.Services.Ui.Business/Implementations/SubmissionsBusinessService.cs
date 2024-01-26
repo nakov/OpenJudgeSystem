@@ -576,43 +576,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
     }
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
-        bool? isOfficial,
-        int page)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        var userParticipantsIdsQuery = this.participantsDataService
-            .GetAllByUser(user.Id);
-
-        if (isOfficial.HasValue)
-        {
-            userParticipantsIdsQuery = userParticipantsIdsQuery.Where(p => p.IsOfficial == isOfficial);
-        }
-
-        var ids = await userParticipantsIdsQuery
-            .Select(p => p.Id)
-            .ToEnumerableAsync();
-
-        return await this.submissionsData
-            .GetLatestSubmissionsByUserParticipations<SubmissionForPublicSubmissionsServiceModel>(
-                ids.MapCollection<int?>(),
-                DefaultSubmissionsPerPage,
-                page);
-    }
-
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        return await this.submissionsData
-            .GetAllForUserByContest(
-                contestId,
-                user.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
-    }
-
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
 
