@@ -36,14 +36,14 @@ public abstract class FilteringService<TEntity>
 
         foreach (var filter in filters)
         {
-            var expression = BuildFilteringExpression(mappedQuery, filter);
+            var expression = BuildFilteringExpression<TModel>(filter);
             mappedQuery = mappedQuery.Where(expression);
         }
 
         return mappedQuery;
     }
 
-    private static Expression<Func<T, bool>> BuildFilteringExpression<T>(IQueryable<T> query, FilteringModel filter)
+    private static Expression<Func<T, bool>> BuildFilteringExpression<T>(FilteringModel filter)
     {
         var parameter = Expression.Parameter(typeof(T), "x");
         var property = Expression.Property(parameter, filter.Property);

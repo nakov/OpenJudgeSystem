@@ -25,6 +25,7 @@
   color: red;
   margin: 10px;
 }
+
 .legendBox {
   display: flex;
   flex-direction: column;
@@ -40,18 +41,22 @@
   margin-bottom: 1rem;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
+
 .colorBox {
   background: #FFA1A1;
   width: 20px;
   height: 20px;
   border-radius: 50%;
 }
+
 .colorSeparator {
   margin: 0px 0.5rem;
 }
+
 .deleted {
   background: #FFA1A1;
 }
+
 .visible {
   background: #C0C0C0;
 }

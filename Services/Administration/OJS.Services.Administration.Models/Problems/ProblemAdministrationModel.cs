@@ -39,7 +39,6 @@ public class ProblemAdministrationModel : IMapExplicitly
 
     public string? ProblemGroupType { get; set; }
 
-    // public byte[]? AdditionalFiles { get; set; }
     public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
 
     public void RegisterMappings(IProfileExpression configuration)

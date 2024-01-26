@@ -16,9 +16,11 @@
     height: auto;
     width: 90%;
 }
+
 .fieldBox > div > div {
     width: 95%;
 }
+
 .inputRow {
     width: 90%;
     margin-bottom: 1rem !important;
@@ -28,6 +30,7 @@
 .textArea {
     width: 90%;
 }
+
 .flex {
     display: flex;
     flex-direction: column;
@@ -54,6 +57,7 @@
     margin: 20px;
     margin: 0px 10px;
 }
+
 .buttonsWrapper {
     display: flex;
     justify-content:space-around;
@@ -61,6 +65,7 @@
     width: 30%;
     padding: 1rem;
 }
+
 .checkboxes {
     display: flex;
     flex-direction: column;

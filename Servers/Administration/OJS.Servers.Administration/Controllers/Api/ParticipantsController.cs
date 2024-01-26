@@ -18,7 +18,7 @@ public class ParticipantsController : ApiControllerBase
     [Route("contest/{contestId}")]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
-        //TODO maybe check for higher number that contests count;
+        // TODO maybe check for higher number that contests count;
         if (contestId < 1)
         {
             return this.BadRequest("Invalid contest id.");
