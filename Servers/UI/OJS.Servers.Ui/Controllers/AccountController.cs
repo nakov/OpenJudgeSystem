@@ -2,7 +2,6 @@ namespace OJS.Servers.Ui.Controllers
 {
     using System;
     using System.Threading.Tasks;
-    using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;

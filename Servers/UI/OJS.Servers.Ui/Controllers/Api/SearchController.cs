@@ -1,8 +1,8 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using Models.Search;
-using Models;
+using OJS.Servers.Ui.Models.Search;
+using OJS.Servers.Ui.Models;
 using OJS.Services.Ui.Business;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Search;

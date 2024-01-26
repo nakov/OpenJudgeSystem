@@ -14,9 +14,9 @@ public class CompilerFactory : ICompilerFactory
     public CompilerFactory(IOptions<OjsWorkersConfig> settingsAccessor)
         => this.settings = settingsAccessor.Value;
 
-    public string GetCompilerPath(CompilerType type)
+    public string GetCompilerPath(CompilerType compilerType, ExecutionStrategyType strategyType)
     {
-        switch (type)
+        switch (compilerType)
         {
             case CompilerType.CPlusPlusGcc:
             case CompilerType.CPlusPlusZip:
@@ -32,20 +32,18 @@ public class CompilerFactory : ICompilerFactory
                 return this.settings.GolangCompilerPath;
             case CompilerType.None:
             default:
-                throw new ArgumentOutOfRangeException(nameof(type), $"Cannot get compiler path for \"{type}\" compiler type.");
+                throw new ArgumentOutOfRangeException(nameof(compilerType), $"Cannot get compiler path for \"{compilerType}\" compiler type.");
         }
     }
 
-    public ICompiler CreateCompiler(
-        CompilerType compilerType,
-        ExecutionStrategyType type = ExecutionStrategyType.DoNothing)
+    public ICompiler CreateCompiler(CompilerType compilerType, ExecutionStrategyType strategyType)
         => compilerType switch
         {
-            CompilerType.None => throw new ArgumentException($"Cannot create compiler from {type} compiler type."),
+            CompilerType.None => throw new ArgumentException($"Cannot create compiler from {compilerType} compiler type."),
             CompilerType.CSharpDotNetCore => new CSharpDotNetCoreCompiler(
                 this.settings.CSharpDotNetCoreCompilerProcessExitTimeOutMultiplier,
-                this.settings.CSharpDotNetCoreCompilerPath(type),
-                this.settings.DotNetCoreSharedAssembliesPath(type)),
+                this.GetCSharpDotNetCoreCompilerPath(strategyType),
+                this.GetDotNetCoreSharedAssembliesPath(strategyType)),
             CompilerType.CPlusPlusGcc => new CPlusPlusCompiler(this.settings
                 .CPlusPlusCompilerProcessExitTimeOutMultiplier),
             CompilerType.Java => new JavaCompiler(this.settings.JavaCompilerProcessExitTimeOutMultiplier),
@@ -57,5 +55,21 @@ public class CompilerFactory : ICompilerFactory
             CompilerType.DotNetCompiler => new DotNetCompiler(this.settings.DotNetCompilerProcessExitTimeOutMultiplier),
             CompilerType.GolangCompiler => new GolangCompiler(this.settings.GolangCompilerProcessExitTimeOutMultiplier),
             _ => throw new ArgumentException("Unsupported compiler."),
+        };
+
+    private string GetCSharpDotNetCoreCompilerPath(ExecutionStrategyType type)
+        => type switch
+        {
+            ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => this.settings.CSharpDotNet3CoreCompilerPath,
+            ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => this.settings.CSharpDotNetCore5CompilerPath,
+            _ => this.settings.CSharpDotNetCore6CompilerPath,
+        };
+
+    private string GetDotNetCoreSharedAssembliesPath(ExecutionStrategyType type)
+        => type switch
+        {
+            ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => this.settings.DotNetCore3SharedAssembliesPath,
+            ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => this.settings.DotNetCore5SharedAssembliesPath,
+            _ => this.settings.DotNetCore6SharedAssembliesPath,
         };
 }

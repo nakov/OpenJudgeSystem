@@ -21,7 +21,7 @@
             var options = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp7_3);
 
             var parsedSyntaxTree = SyntaxFactory.ParseSyntaxTree(codeString, options);
-            var systemDir = Path.GetDirectoryName(typeof(object).Assembly.Location) !;
+            var systemDir = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
 
             var references = new MetadataReference[]
             {

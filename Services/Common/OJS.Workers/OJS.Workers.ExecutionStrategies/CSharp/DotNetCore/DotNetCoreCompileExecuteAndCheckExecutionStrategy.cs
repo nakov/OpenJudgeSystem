@@ -12,19 +12,19 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Executors;
     using static OJS.Workers.Common.Constants;
 
-    public class DotNetCoreCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class DotNetCoreCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : DotNetCoreCompileExecuteAndCheckExecutionStrategySettings
     {
         private const string DotNetCoreCodeStringTemplate = "{0}{1}{2}";
-        private readonly string dotNetCoreRuntimeVersion;
 
         public DotNetCoreCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            string dotNetCoreRuntimeVersion,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
-            => this.dotNetCoreRuntimeVersion = dotNetCoreRuntimeVersion;
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+        {
+        }
 
         private static IEnumerable<string> DotNetSixDefaultUsingNamespaces
             => new List<string>
@@ -43,7 +43,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 	            ""runtimeOptions"": {{
                     ""framework"": {{
                         ""name"": ""Microsoft.NETCore.App"",
-                        ""version"": ""{this.dotNetCoreRuntimeVersion}""
+                        ""version"": ""{this.Settings.DotNetCoreRuntimeVersion}""
                     }}
                 }}
             }}";
@@ -70,7 +70,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             foreach (var test in executionContext.Input.Tests)
             {
                 var processExecutionResult = await executor.Execute(
-                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                    this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                     test.Input,
                     executionContext.TimeLimit,
                     executionContext.MemoryLimit,
@@ -107,7 +107,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
                 out var arguments);
 
             var processExecutionResult = await executor.Execute(
-                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType),
+                this.CompilerFactory.GetCompilerPath(executionContext.CompilerType, this.Type),
                 executionContext.Input?.Input ?? string.Empty,
                 executionContext.TimeLimit,
                 executionContext.MemoryLimit,
@@ -174,4 +174,10 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             return executor;
         }
     }
+
+    public record DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed,
+        string DotNetCoreRuntimeVersion)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

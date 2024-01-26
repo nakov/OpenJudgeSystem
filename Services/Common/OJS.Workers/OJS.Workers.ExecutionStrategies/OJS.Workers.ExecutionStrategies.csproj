@@ -15,12 +15,11 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Build" Version="17.0.0" />
-      <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.4" />
+      <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
       <PackageReference Include="MySql.Data" Version="8.0.33" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="Npgsql" Version="8.0.0-preview.4" />
       <PackageReference Include="System.CodeDom" Version="4.5.0" />
-      <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     </ItemGroup>
 
 </Project>

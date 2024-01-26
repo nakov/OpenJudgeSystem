@@ -230,13 +230,13 @@ public class BaseAutoCrudAdminController<TEntity> : AutoCrudAdminController<TEnt
 
         // Get the property access expression:
         // model => model.DateTimeProp
-        var dateTimeProperty = typeof(TEntity).GetProperty(property.Name) !;
+        var dateTimeProperty = typeof(TEntity).GetProperty(property.Name)!;
         var parameter = Expression.Parameter(typeof(TEntity), "model");
         var dateTimePropertyAccess = Expression.Property(parameter, dateTimeProperty);
 
         // Get the method TimeZoneInfo.ConvertTimeFromUtc(dateTime, LocalTimeZoneInfo);
         var convertMethod = typeof(TimeZoneInfo)
-            .GetMethod(nameof(TimeZoneInfo.ConvertTimeFromUtc), new[] { typeof(DateTime), typeof(TimeZoneInfo) }) !;
+            .GetMethod(nameof(TimeZoneInfo.ConvertTimeFromUtc), new[] { typeof(DateTime), typeof(TimeZoneInfo) })!;
         var localTimeZoneInfoExpression = Expression.Constant(this.localTimeZoneInfo);
 
         if (typeof(TProperty) == typeof(DateTime?))

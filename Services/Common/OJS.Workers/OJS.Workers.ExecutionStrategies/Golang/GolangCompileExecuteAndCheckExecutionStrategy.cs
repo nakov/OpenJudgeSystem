@@ -2,20 +2,22 @@
 {
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
-    public class GolangCompileExecuteAndCheckExecutionStrategy : BaseCompiledCodeExecutionStrategy
+    public class GolangCompileExecuteAndCheckExecutionStrategy<TSettings> : BaseCompiledCodeExecutionStrategy<TSettings>
+        where TSettings : GolangCompileExecuteAndCheckExecutionStrategySettings
     {
         private const string CodeSaveFileName = "main.go";
 
         public GolangCompileExecuteAndCheckExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, compilerFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 
@@ -35,4 +37,9 @@
                 executionContext.Code,
                 FileHelpers.BuildPath(this.WorkingDirectory, CodeSaveFileName));
     }
+
+    public record GolangCompileExecuteAndCheckExecutionStrategySettings(
+        int BaseTimeUsed,
+        int BaseMemoryUsed)
+        : BaseCompiledCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }

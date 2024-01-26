@@ -1,13 +1,12 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using Microsoft.AspNetCore.Authorization;
-using OJS.Data.Models;
-using static OJS.Common.GlobalConstants.Roles;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using OJS.Common;
+using OJS.Data.Models;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Data;
@@ -16,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using static OJS.Common.GlobalConstants.Roles;
 
 [Authorize(Roles = Administrator)]
 public class LecturersInContestCategoriesController : BaseAutoCrudAdminController<LecturerInContestCategory>

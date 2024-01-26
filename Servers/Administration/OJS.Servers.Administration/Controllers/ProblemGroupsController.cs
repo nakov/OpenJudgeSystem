@@ -79,7 +79,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
     protected override IEnumerable<GridAction> CustomActions
         => new GridAction[]
         {
-            new () { Action = nameof(this.Problems) },
+            new() { Action = nameof(this.Problems) },
         };
 
     public IActionResult Problems([FromQuery] IDictionary<string, string> complexId)

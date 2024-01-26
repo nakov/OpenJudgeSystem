@@ -2,17 +2,19 @@
 {
     using System;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
 
-    public class BaseInterpretedCodeExecutionStrategy : BaseCodeExecutionStrategy
+    public class BaseInterpretedCodeExecutionStrategy<TSettings> : BaseCodeExecutionStrategy<TSettings>
+        where TSettings : BaseInterpretedCodeExecutionStrategySettings
     {
         protected BaseInterpretedCodeExecutionStrategy(
+            ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            int baseTimeUsed,
-            int baseMemoryUsed)
-            : base(processExecutorFactory, baseTimeUsed, baseMemoryUsed)
+            IExecutionStrategySettingsProvider settingsProvider)
+            : base(type, processExecutorFactory, settingsProvider)
         {
         }
 
@@ -30,4 +32,8 @@
             return base.InternalExecute(executionContext, result);
         }
     }
+
+    public abstract record BaseInterpretedCodeExecutionStrategySettings(
+        int BaseTimeUsed, int BaseMemoryUsed)
+        : BaseCodeExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed);
 }
