@@ -26,5 +26,5 @@ public abstract class BaseValidator<T> : AbstractValidator<T>
 
 public class ExceptionResponse
 {
-    public List<ExceptionResponseModel> Errors { get; set; } = new ();
+    public List<ExceptionResponseModel> Errors { get; set; } = new();
 }

@@ -29,7 +29,7 @@ const AdministrationContestsPage = () => {
     const [ contestId, setContestId ] = useState<number>();
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
     const selectedFilters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedSorters);    
+    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedSorters);
     const {
         data,
         error,

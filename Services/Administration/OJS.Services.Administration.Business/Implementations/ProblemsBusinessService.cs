@@ -185,7 +185,7 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             problem.MapFrom(model);
-            problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id) !;
+            problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id)!;
             problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)

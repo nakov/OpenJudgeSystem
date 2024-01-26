@@ -162,19 +162,19 @@ public abstract class FilteringService<TEntity>
             case OperatorType.Contains:
                 expression = Expression.Call(
                     property,
-                    typeof(string).GetMethod("Contains", new[] { typeof(string) }) !,
+                    typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
                     constant);
                 break;
             case OperatorType.StartsWith:
                 expression = Expression.Call(
                     property,
-                    typeof(string).GetMethod("StartsWith", new[] { typeof(string) }) !,
+                    typeof(string).GetMethod("StartsWith", new[] { typeof(string) })!,
                     constant);
                 break;
             case OperatorType.EndsWith:
                 expression = Expression.Call(
                     property,
-                    typeof(string).GetMethod("EndsWith", new[] { typeof(string) }) !,
+                    typeof(string).GetMethod("EndsWith", new[] { typeof(string) })!,
                     constant);
                 break;
             default:

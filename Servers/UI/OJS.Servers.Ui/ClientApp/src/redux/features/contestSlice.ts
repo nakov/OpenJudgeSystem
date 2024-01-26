@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable prefer-destructuring */
+/* eslint-disable import/group-exports */
 import { createSlice } from '@reduxjs/toolkit';
 
 // interfaces & types
