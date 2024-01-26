@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import CloseIcon from '@mui/icons-material/Close';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
@@ -21,6 +23,8 @@ interface IAdministrationSortProps {
     selectedSorters: Array<IAdministrationSorter>;
     setStateAction: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
+    searchParams?: URLSearchParams;
+    setSearchParams?: SetURLSearchParams;
 }
 
 interface IAdministrationSorter {
@@ -35,14 +39,13 @@ const orderByOptions = [
 ];
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns, location, selectedSorters, setStateAction, withSearchParams = true } = props;
+    const { columns, location, selectedSorters, setStateAction, searchParams, setSearchParams, withSearchParams = true } = props;
     const defaultSorter = {
         columnName: '',
         orderBy: SortingEnum.ASC,
         availableColumns: columns,
     };
     const dispatch = useDispatch();
-    const [ searchParams, setSearchParams ] = useSearchParams();
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -55,6 +58,9 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     const open = Boolean(anchor);
 
     const mapUrlToSorters = (): IAdministrationSorter[] => {
+        if (!searchParams || !setSearchParams) {
+            return [];
+        }
         const urlSelectedSorters: IAdministrationSorter[] = [];
 
         const sorterParams = searchParams.get('sorting') ?? '';
@@ -103,7 +109,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         };
 
         const sorterFormattedArray = selectedSorters.map(formatSorterToString).filter((sorter) => sorter);
-        if (!sorterFormattedArray.length) {
+        if (!sorterFormattedArray.length && searchParams && setSearchParams) {
             searchParams.delete('sorting');
             if (withSearchParams) {
                 setSearchParams(searchParams);
@@ -112,8 +118,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         }
 
         const delayedSetOfSearch = debounce(() => {
-            searchParams.set('sorting', sorterFormattedArray.join('&'));
-            if (withSearchParams) {
+            if (searchParams && setSearchParams && withSearchParams) {
+                searchParams.set('sorting', sorterFormattedArray.join('&'));
                 setSearchParams(searchParams);
             }
         }, 500);
@@ -143,8 +149,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     const removeAllSorters = () => {
-        searchParams.delete('sorting');
-        if (withSearchParams) {
+        if (searchParams && setSearchParams && withSearchParams) {
+            searchParams.delete('sorting');
             setSearchParams(searchParams);
         }
         dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
@@ -160,8 +166,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         newSortersArray.splice(idx, 1);
         dispatch(setStateAction({ key: location, sorters: newSortersArray }));
         if (newSortersArray.length === 1) {
-            searchParams.delete('sorting');
-            if (withSearchParams) {
+            if (searchParams && setSearchParams && withSearchParams) {
+                searchParams.delete('sorting');
                 setSearchParams(searchParams);
             }
         }
@@ -193,6 +199,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                   value={selectedSorters[idx]?.columnName}
                   label="Sort By"
                   onChange={(e) => updateSorterColumnData(idx, e, 'columnName')}
+                  disabled={idx > 0}
                 >
                     { selectedSorters[idx].availableColumns.map((sortOption) => (
                         <MenuItem key={`a-s-e-${sortOption}`} value={sortOption}>{sortOption}</MenuItem>)) }
@@ -205,7 +212,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                   value={selectedSorters[idx]?.orderBy}
                   label="Order By"
                   onChange={(e) => updateSorterColumnData(idx, e, 'orderBy')}
-                  disabled={!selectedSorters[idx]?.columnName}
+                  disabled={!selectedSorters[idx]?.columnName || idx > 0}
                 >
                     { orderByOptions.map((orderByOption) => (
                         <MenuItem key={`s-o-o-${orderByOption.name}`} value={orderByOption.value}>{orderByOption.name}</MenuItem>)) }
