@@ -14,7 +14,7 @@ public abstract class GridDataService<TEntity> : SortingService<TEntity>
 {
     private readonly IDataService<TEntity> dataService;
 
-    public GridDataService(IDataService<TEntity> dataService) => this.dataService = dataService;
+    protected GridDataService(IDataService<TEntity> dataService) => this.dataService = dataService;
 
     public async Task<PaginatedList<T>> GetAll<T>(PaginationRequestModel paginationRequestModel)
     {
