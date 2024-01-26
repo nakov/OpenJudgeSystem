@@ -12,9 +12,9 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Common;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Models.Contests;
-using OJS.Services.Ui.Data;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
+using OJS.Services.Ui.Data;
 
 public class ContestAdministrationModel : IMapExplicitly
 {
@@ -176,6 +176,7 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
     private const int ProblemGroupsCountLimit = 40;
     private readonly IContestsActivityService activityService;
     private readonly IContestsDataService contestService;
+
     public ContestAdministrationModelValidator(
         IContestsActivityService activityService,
         IContestsDataService contestService)
