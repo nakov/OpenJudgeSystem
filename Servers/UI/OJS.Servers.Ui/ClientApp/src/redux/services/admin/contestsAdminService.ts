@@ -61,11 +61,11 @@ export const contestService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 0 }),
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 10 }),
         deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
         updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
         createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/', method: 'POST', body: contestAdministrationModel }) }),
-        getCopyAll: builder.query<Array<IContestAutocomplete>, null>({ query: () => ({ url: '/copyAll' }), keepUnusedDataFor: 0 }),
+        getCopyAll: builder.query<Array<IContestAutocomplete>, null>({ query: () => ({ url: '/copyAll' }) }),
     }),
 });
 

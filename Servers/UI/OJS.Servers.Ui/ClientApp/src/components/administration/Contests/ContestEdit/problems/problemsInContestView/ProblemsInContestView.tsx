@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -11,7 +12,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import ReplayIcon from '@mui/icons-material/Replay';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { Box, IconButton, Modal, Tooltip } from '@mui/material';
+import { Autocomplete, Box, IconButton, MenuItem, Modal, TextField, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../../../common/types';
@@ -127,6 +128,26 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         <Modal key={index} open={openShowCreateProblemModal} onClose={() => setOpenShowCreateProblemModal(!openShowCreateProblemModal)}>
             <Box sx={modalStyles}>
                 <ProblemForm contestId={Number(contestId)} isEditMode={false} problemId={null} />
+            </Box>
+        </Modal>
+    );
+
+    const renderCopyAllModal = (index: number) => (
+        <Modal key={index} open={skipContestAutocomplete} onClose={() => setSkipContestAutocomplete(!skipContestAutocomplete)}>
+            <Box sx={modalStyles}>
+                <Autocomplete
+                  options={contestsAutocompleteData!}
+                  renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
+                //   onChange={(event, newValue) => onStrategyAdd(newValue!)}
+                  value={null}
+                  isOptionEqualToValue={(option, value) => option.id === value.id}
+                  getOptionLabel={(option) => option?.name}
+                  renderOption={(properties, option) => (
+                      <MenuItem {...properties} key={option.id} value={option.id}>
+                          {option.name}
+                      </MenuItem>
+                  )}
+                />
             </Box>
         </Modal>
     );
@@ -329,6 +350,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                   { showModal: openEditModal, modal: (i) => renderEditProblemModal(i) },
                   { showModal: openShowCreateProblemModal, modal: (i) => renderProblemsCreateModal(i) },
                   { showModal: showDeleteAllConfirm, modal: (i) => renderDeleteAllModal(i) },
+                  { showModal: skipContestAutocomplete, modal: (i) => renderCopyAllModal(i) },
               ]}
               renderActionButtons={renderGridSettings}
               setFilterStateAction={setAdminContestsFilters}

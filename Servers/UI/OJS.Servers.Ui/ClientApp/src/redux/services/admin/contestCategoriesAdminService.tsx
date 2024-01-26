@@ -15,7 +15,7 @@ export const contestCategoriesAdminService = createApi({
         },
     }),
     // eslint-disable-next-line max-len
-    endpoints: (builder) => ({ getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/dropdown' }), keepUnusedDataFor: 0 }) }),
+    endpoints: (builder) => ({ getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/dropdown' }) }) }),
 });
 
 // eslint-disable-next-line import/group-exports
