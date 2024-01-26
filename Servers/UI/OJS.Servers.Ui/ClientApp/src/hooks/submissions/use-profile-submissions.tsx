@@ -59,7 +59,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     const [ usernameForProfile, setUsernameForProfile ] = useState(defaultState.state.usernameForProfile);
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
     const [ userSubmissions,
-            setUserSubmissions
+        setUserSubmissions,
     ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
     const [
         userByContestSubmissions,

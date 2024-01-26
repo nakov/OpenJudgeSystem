@@ -24,11 +24,7 @@ const selectedSubmissionsStateMapping = {
     3: 'Pending',
 } as IDictionary<string>;
 
-const defaultState = {
-    state: {
-        selectedActive: 1,
-    },
-};
+const defaultState = { state: { selectedActive: 1 } };
 
 const SubmissionsGrid = () => {
     const [ selectedActive, setSelectedActive ] = useState<number>(defaultState.state.selectedActive);
@@ -37,7 +33,7 @@ const SubmissionsGrid = () => {
             publicSubmissions,
             totalSubmissionsCount,
             totalUnprocessedSubmissionsCount,
-            areSubmissionsLoading
+            areSubmissionsLoading,
         },
         actions: {
             loadTotalUnprocessedSubmissionsCount,
@@ -121,47 +117,45 @@ const SubmissionsGrid = () => {
             const { isAdmin } = user;
 
             return (
-                <>
-                    { isAdmin && (
-                        <>
-                            <Heading type={HeadingType.secondary}>
-                                Submissions awaiting execution:
-                                {' '}
-                                {totalUnprocessedSubmissionsCount}
-                                {' '}
-                                (
-                                <SubmissionStateLink
-                                    stateIndex={1}
-                                    isSelected={selectedActive === 1}
-                                    text={selectedSubmissionsStateMapping[1]}
-                                    handleOnSelect={handleSelectSubmissionType}
-                                />
-                                /
-                                <SubmissionStateLink
-                                    stateIndex={2}
-                                    isSelected={selectedActive === 2}
-                                    text={selectedSubmissionsStateMapping[2]}
-                                    handleOnSelect={handleSelectSubmissionType}
-                                />
-                                /
-                                <SubmissionStateLink
-                                    stateIndex={3}
-                                    isSelected={selectedActive === 3}
-                                    text={selectedSubmissionsStateMapping[3]}
-                                    handleOnSelect={handleSelectSubmissionType}
-                                />
-                                )
-                            </Heading>
-                            { publicSubmissions?.length > 0 && (
-                                <PaginationControls
-                                    count={pagesCount}
-                                    page={currentPage}
-                                    onChange={handlePageChange}
-                                />
-                            )}
-                        </>
-                    )}
-                </>
+                isAdmin && (
+                    <>
+                        <Heading type={HeadingType.secondary}>
+                            Submissions awaiting execution:
+                            {' '}
+                            {totalUnprocessedSubmissionsCount}
+                            {' '}
+                            (
+                            <SubmissionStateLink
+                              stateIndex={1}
+                              isSelected={selectedActive === 1}
+                              text={selectedSubmissionsStateMapping[1]}
+                              handleOnSelect={handleSelectSubmissionType}
+                            />
+                            /
+                            <SubmissionStateLink
+                              stateIndex={2}
+                              isSelected={selectedActive === 2}
+                              text={selectedSubmissionsStateMapping[2]}
+                              handleOnSelect={handleSelectSubmissionType}
+                            />
+                            /
+                            <SubmissionStateLink
+                              stateIndex={3}
+                              isSelected={selectedActive === 3}
+                              text={selectedSubmissionsStateMapping[3]}
+                              handleOnSelect={handleSelectSubmissionType}
+                            />
+                            )
+                        </Heading>
+                        { publicSubmissions?.length > 0 && (
+                            <PaginationControls
+                              count={pagesCount}
+                              page={currentPage}
+                              onChange={handlePageChange}
+                            />
+                        )}
+                    </>
+                )
             );
         },
         [
@@ -213,6 +207,7 @@ const SubmissionsGrid = () => {
         [
             publicSubmissions,
             renderSubmissionRow,
+            areSubmissionsLoading,
         ],
     );
 

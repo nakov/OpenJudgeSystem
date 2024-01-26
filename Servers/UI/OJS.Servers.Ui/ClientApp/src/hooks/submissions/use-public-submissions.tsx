@@ -1,12 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IPagedResultType, ISubmissionResponseModel } from '../../common/types';
 import { IGetSubmissionsUrlParams } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import {
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
@@ -45,11 +43,7 @@ interface IPublicSubmissionsContext {
     };
 }
 
-const defaultState = {
-    state: {
-        publicSubmissions: [] as ISubmissionResponseModel[],
-    },
-};
+const defaultState = { state: { publicSubmissions: [] as ISubmissionResponseModel[] } };
 
 const PublicSubmissionsContext = createContext<IPublicSubmissionsContext>(defaultState as IPublicSubmissionsContext);
 
@@ -60,8 +54,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     const [ publicSubmissions, setPublicSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.publicSubmissions);
     const [ previousPage, setPreviousPage ] = useState(0);
 
-    const { internalUser: user } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const {
         state: { currentPage },
         populatePageInformation,
@@ -69,7 +61,7 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
     } = usePages();
 
     const {
-        isLoading : areSubmissionsLoading,
+        isLoading: areSubmissionsLoading,
         get: getSubmissions,
         data: publicSubmissionsData,
     } = useHttp<
@@ -207,7 +199,6 @@ const PublicSubmissionsProvider = ({ children }: IPublicSubmissionsProviderProps
         },
         [ getSubmissionsUrlParams, getSubmissions ],
     );
-
 
     const clearPageValues = useCallback(
         () => {
