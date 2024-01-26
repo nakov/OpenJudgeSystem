@@ -1,14 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Reflection;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
     using FluentValidation;
     using Hangfire;
     using Hangfire.SqlServer;
@@ -45,6 +36,15 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Reflection;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
 
