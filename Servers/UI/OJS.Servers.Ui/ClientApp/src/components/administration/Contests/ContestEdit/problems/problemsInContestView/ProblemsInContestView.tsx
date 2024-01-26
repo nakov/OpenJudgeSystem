@@ -133,7 +133,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     );
 
     const renderCopyAllModal = (index: number) => (
-        <Modal key={index} open={skipContestAutocomplete} onClose={() => setSkipContestAutocomplete(!skipContestAutocomplete)}>
+        <Modal key={index} open={!skipContestAutocomplete} onClose={() => setSkipContestAutocomplete(!skipContestAutocomplete)}>
             <Box sx={modalStyles}>
                 <Autocomplete
                   options={contestsAutocompleteData!}
