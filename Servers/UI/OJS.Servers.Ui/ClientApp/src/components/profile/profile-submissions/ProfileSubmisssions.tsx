@@ -30,6 +30,7 @@ const ProfileSubmissions = () => {
             userSubmissions,
             userByContestSubmissions,
             userSubmissionsLoading,
+            userSubmissionsByContestLoading,
             menuItems},
         actions: { initiateUserSubmissionsForProfileQuery,
             initiateSubmissionsByContestForProfileQuery,
@@ -45,7 +46,6 @@ const ProfileSubmissions = () => {
     const [ submissionsPage, setSubmissionsPage ] = useState(defaultState.state.initialPage);
 
     useEffect(() => {
-
         if (isEmpty(usernameForProfile)){
             return;
         }
@@ -54,7 +54,6 @@ const ProfileSubmissions = () => {
     }, [ ]);
 
     useEffect(() => {
-
         if (isEmpty(usernameForProfile)){
             return;
         }
@@ -82,11 +81,10 @@ const ProfileSubmissions = () => {
     const handleMenuItemSelection = useCallback(
         (value: string) => {
             const item = menuItems.find((i) => i.value === value) as IKeyValuePair<string>;
+            setSubmissionsPage(defaultState.state.initialPage);
 
             if (isNil(item)) {
                 setSelectValue(defaultState.state.selectValue);
-                setSubmissionsPage(1);
-
                 return;
             }
 
@@ -157,7 +155,9 @@ const ProfileSubmissions = () => {
 
     const renderSubmissionsList = useCallback(
         () => {
-            if (userSubmissionsLoading) {
+            console.log(userSubmissionsByContestLoading);
+            console.log(currentSubmissions);
+            if (userSubmissionsLoading || userSubmissionsByContestLoading) {
                 return (
                     <div style={{ ...flexCenterObjectStyles, marginTop: '10px' }}>
                         <SpinningLoader />

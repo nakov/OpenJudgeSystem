@@ -29,6 +29,7 @@ interface IProfileSubmissionsContext {
         usernameForProfile : string;
         userSubmissions: ISubmissionResponseModel[];
         userSubmissionsLoading: boolean;
+        userSubmissionsByContestLoading: boolean;
         userByContestSubmissions: ISubmissionResponseModel[];
         userSubmissionUrlParams?: IPage;
         submissionsByContestParams?: IGetUserSubmissionsForProfileByContestUrlParams;
@@ -56,8 +57,10 @@ const ProfileSubmissionsContext = createContext<IProfileSubmissionsContext>(defa
 type IProfileSubmissionsProviderProps = IHaveChildrenProps
 const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderProps) => {
     const [ usernameForProfile, setUsernameForProfile ] = useState(defaultState.state.usernameForProfile);
-    const [ userSubmissions, setUserSubmissions ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
+    const [ userSubmissions,
+            setUserSubmissions
+    ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
     const [
         userByContestSubmissions,
         setUserByContestSubmissions,
@@ -92,6 +95,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         });
 
     const {
+        isLoading: userSubmissionsByContestLoading,
         get: getUserByContestSubmissions,
         data: userByContestSubmissionsData,
     } = useHttp<
@@ -267,6 +271,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
                 userSubmissions,
                 userByContestSubmissions,
                 userSubmissionsLoading,
+                userSubmissionsByContestLoading,
                 menuItems: selectMenuItems,
             },
             actions: {
@@ -280,6 +285,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
             userSubmissions,
             usernameForProfile,
             userByContestSubmissions,
+            userSubmissionsByContestLoading,
             userSubmissionsLoading,
             setUsernameForProfile,
             initiateUserSubmissionsForProfileQuery,
