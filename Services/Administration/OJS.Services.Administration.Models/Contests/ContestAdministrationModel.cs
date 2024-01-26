@@ -10,11 +10,11 @@ using System.Linq;
 using FluentValidation;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common;
-using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
-using OJS.Services.Ui.Data;
+using Microsoft.EntityFrameworkCore;
+using OJS.Services.Administration.Data;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 public class ContestAdministrationModel : IMapExplicitly
 {

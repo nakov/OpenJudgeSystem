@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Extensions;
 
-using OJS.Common;
 using System.Linq;
 using AutoCrudAdmin.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +12,8 @@ using OJS.Services.Common.Models.Configurations;
 using SoftUni.Data.Infrastructure.Enumerations;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
 using System.Text.Json.Serialization;
+using FluentValidation;
+using OJS.Services.Administration.Models.Contests;
 
 internal static class ServiceCollectionExtensions
 {
@@ -40,4 +41,7 @@ internal static class ServiceCollectionExtensions
             .UseAutoCrudAdmin()
             .AddControllersWithViews()
             .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+    private static IServiceCollection AddValidators(this IServiceCollection services) =>
+        services.AddValidatorsFromAssemblyContaining<ContestAdministrationModelValidator>(ServiceLifetime.Transient);
 }

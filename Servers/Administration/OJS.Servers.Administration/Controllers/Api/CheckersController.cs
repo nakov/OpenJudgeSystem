@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using OJS.Services.Ui.Data;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Services.Administration.Data;
 
 public class CheckersController : ApiControllerBase
 {
