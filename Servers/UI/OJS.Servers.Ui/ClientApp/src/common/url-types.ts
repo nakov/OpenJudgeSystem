@@ -57,10 +57,6 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
-interface IGetUserSubmissionsUrlParams {
-    page: number;
-}
-
 interface IGetUserSubmissionsForProfileUrlParams {
     username: string;
     page: number;
@@ -70,11 +66,6 @@ interface IGetUserSubmissionsForProfileByContestUrlParams {
     username: string;
     page: number;
     contestId: string;
-}
-
-interface IGetSubmissionsByContestIdParams {
-    page: number;
-    contestId: string | string[] | undefined;
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
@@ -135,7 +126,6 @@ export type {
     IGetUserSubmissionsForProfileByContestUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionsUrlParams,
-    IGetUserSubmissionsUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
@@ -146,5 +136,4 @@ export type {
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
-    IGetSubmissionsByContestIdParams,
 };

@@ -22,11 +22,9 @@ import {
     IGetSearchResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
-    IGetSubmissionsByContestIdParams,
     IGetSubmissionsUrlParams,
     IGetUserSubmissionsForProfileByContestUrlParams,
     IGetUserSubmissionsForProfileUrlParams,
-    IGetUserSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -218,28 +216,10 @@ const getSubmissionsUrl = ({ status, page }: IGetSubmissionsUrlParams) => {
 
 const getSubmissionsTotalCountUrl = () => `${baseApiUrl}/Submissions/TotalCount`;
 const getSubmissionsUnprocessedTotalCountUrl = () => `${baseApiUrl}/Submissions/UnprocessedTotalCount`;
-const getUserSubmissionsUrl = ({ page }: IGetUserSubmissionsUrlParams) => {
-    const pageQuery = isNil(page)
-        ? ''
-        : `page=${page}`;
-
-    return `${baseApiUrl}/Submissions/GetUserSubmissions?${pageQuery}`;
-};
 const getSubmitUrl = () => `${baseApiUrl}/Compete/Submit`;
 const getSubmitFileUrl = () => `${baseApiUrl}/Compete/SubmitFileSubmission`;
 const getSubmissionFileDownloadUrl =
     ({ id }: IDownloadSubmissionFileUrlParams) => `${baseApiUrl}/Submissions/Download/${id}`;
-const getSubmissionsByContestIdUrl = ({ contestId = '', page }: IGetSubmissionsByContestIdParams) => {
-    const pageQuery = isNil(page)
-        ? ''
-        : `page=${page}`;
-
-    const contestQuery = isNil(contestId)
-        ? ''
-        : `contestId=${contestId}`;
-
-    return `${baseApiUrl}/Submissions/getUserSubmissionsByContest?${contestQuery}&${pageQuery}`;
-};
 
 // Submission types
 const getAllContestStrategyFiltersUrl =
@@ -300,10 +280,8 @@ export {
     getContestByProblemUrl,
     getSubmissionResultsByProblemUrl,
     getSubmissionResultsUrl,
-    getSubmissionsByContestIdUrl,
     getSubmissionsTotalCountUrl,
     getSubmissionsUnprocessedTotalCountUrl,
-    getUserSubmissionsUrl,
     getSubmitUrl,
     getSubmitFileUrl,
     getProblemSubmissionDetailsUrl,
