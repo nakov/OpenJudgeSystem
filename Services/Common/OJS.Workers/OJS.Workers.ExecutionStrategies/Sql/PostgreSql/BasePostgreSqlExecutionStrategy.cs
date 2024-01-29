@@ -75,8 +75,6 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
             try
             {
-                // Casting this to NpgsqlConnection as IDBConnection does not inherit IAsyncDisposable
-                // and cannot be used with await using and the connection gets disposed
                 using var connection = await this.GetOpenConnection(this.GetDatabaseName());
                 this.ExecuteBeforeTests(connection, executionContext);
 
