@@ -15,19 +15,21 @@ using OJS.Data.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Exceptions;
+using FluentExtensions.Extensions;
+using System.Linq;
 
 public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
 {
+    private const int NumberOfContestsToGet = 20;
     private readonly IContestsDataService contestsData;
     private readonly Business.IUserProviderService userProvider;
-    private readonly IProblemsDataService problemsDataService;
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IParticipantsDataService participantsData;
+
     public ContestsBusinessService(
         IContestsDataService contestsData,
         Business.IUserProviderService userProvider,
-        IProblemsDataService problemsDataService,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
         IParticipantsDataService participantsData)
@@ -35,7 +37,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
-        this.problemsDataService = problemsDataService;
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.participantsData = participantsData;
@@ -48,14 +49,21 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         => !string.IsNullOrWhiteSpace(userId) &&
            (isUserAdmin || await this.contestsData.IsUserLecturerInContestByContestAndUser(contestId, userId));
 
-    public async Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>()
+    public async Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
         where TServiceModel : class
     {
         var user = this.userProvider.GetCurrentUser();
 
         return user.IsAdmin
-            ? await this.contestsData.AllTo<TServiceModel>()
+            ? await this.contestsData.AllTo<TServiceModel>(
+                filter: c => c.Name!.Contains(searchString),
+                null,
+                false,
+                0,
+                NumberOfContestsToGet)
             : await this.contestsData.GetAllByLecturer(user.Id)
+                .Where(x => x.Name!.Contains(searchString))
+                .Take(NumberOfContestsToGet)
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
     }
