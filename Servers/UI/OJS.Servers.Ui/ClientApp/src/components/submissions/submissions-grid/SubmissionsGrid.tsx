@@ -211,8 +211,6 @@ const SubmissionsGrid = () => {
         ],
     );
 
-    console.log(selectedActive);
-
     return (
         <>
             <Heading type={HeadingType.primary}>
