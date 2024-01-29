@@ -77,7 +77,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             {
                 // Casting this to NpgsqlConnection as IDBConnection does not inherit IAsyncDisposable
                 // and cannot be used with await using and the connection gets disposed
-                await using var connection = await this.GetOpenConnection(this.GetDatabaseName()) as NpgsqlConnection;
+                using var connection = await this.GetOpenConnection(this.GetDatabaseName());
                 this.ExecuteBeforeTests(connection, executionContext);
 
                 foreach (var test in executionContext.Input.Tests)
@@ -257,6 +257,8 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         private async Task<IDbConnection> CreateConnection()
         {
+            // Connection is not used in a "using" block because the connection variable is saved
+            // in currentConnection and gets disposed otherwise
             var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
 
