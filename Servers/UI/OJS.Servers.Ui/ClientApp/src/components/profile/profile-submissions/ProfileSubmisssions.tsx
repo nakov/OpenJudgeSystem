@@ -63,7 +63,7 @@ const ProfileSubmissions = () => {
         }
 
         initiateUserSubmissionsForProfileQuery(getDecodedUsernameFromProfile(), submissionsPage);
-    }, [ submissionsPage, usernameForProfile ]);
+    }, [ submissionsPage, usernameForProfile, selectValue.key ]);
 
     useEffect(() => {
         if(isEmpty(selectValue.key)) {
@@ -84,7 +84,10 @@ const ProfileSubmissions = () => {
             setSubmissionsPage(defaultState.state.initialPage);
 
             if (isNil(item)) {
+                clearPageValue();
                 setSelectValue(defaultState.state.selectValue);
+                setSubmissionsPage(defaultState.state.initialPage);
+
                 return;
             }
 
