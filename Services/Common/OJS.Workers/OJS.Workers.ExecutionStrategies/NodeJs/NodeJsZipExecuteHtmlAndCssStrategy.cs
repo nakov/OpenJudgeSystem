@@ -100,21 +100,24 @@ before(function(done) {{
     style.innerHTML = bootstrapCss;
     head.append(style);
 
-    head.find('link').each(function() {{
-        let link = $(this);
-        let cssPath = link.attr('href').replace('{UserBaseDirectoryPlaceholder}/', '');
-        let cssContent = fs.readFileSync(cssPath, 'utf-8');
-        let inlineStyle = document.createElement('style');
-        inlineStyle.type = 'text/css';
-        inlineStyle.innerHTML = cssContent;
-        head.append(inlineStyle);
-    }}).remove();
+    let links = head.find('link');
+                links.each((index, el)=>{{
+                    let style = document.createElement('style');
+                    style.type = 'text/css';
+                    let path = '{UserBaseDirectoryPlaceholder}/' + el.href;
+                    let css = fs.readFileSync(path, 'utf-8');
+                    style.innerHTML = css;
+                    head.append(style);
+                }});
 
-    let bgCoderConsole = {{}};
-    Object.keys(console).forEach((prop) => {{
-        bgCoderConsole[prop] = console[prop];
-        console[prop] = function() {{}};
-    }});
+                links.remove();
+
+
+   Object.keys(console)
+                    .forEach(function (prop) {{
+                        bgCoderConsole[prop] = console[prop];
+                        console[prop] = new Function('');
+                    }});
 
     {NodeDisablePlaceholder}
 
