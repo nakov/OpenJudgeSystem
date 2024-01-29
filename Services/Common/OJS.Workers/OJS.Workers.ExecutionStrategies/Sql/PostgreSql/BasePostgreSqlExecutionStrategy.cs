@@ -93,7 +93,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             {
                 if (!string.IsNullOrWhiteSpace(this.GetDatabaseName()))
                 {
-                    await using var connection = await this.GetOpenConnection(this.GetDatabaseName()) as NpgsqlConnection;
+                    using var connection = await this.GetOpenConnection(this.GetDatabaseName());
                     this.CleanUpDb(connection);
                 }
 
