@@ -1,11 +1,10 @@
+/* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
-/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/react-in-jsx-scope */
-import { SyntheticEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -15,7 +14,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import ReplayIcon from '@mui/icons-material/Replay';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { Autocomplete, Box, IconButton, MenuItem, Modal, TextField, Tooltip, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, IconButton, MenuItem, Modal, TextField, Tooltip, Typography } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
@@ -25,9 +24,9 @@ import { mapSorterParamsToQueryString } from '../../../../../../pages/administra
 import AdministrationGridView from '../../../../../../pages/administration-new/AdministrationGridView';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../../../redux/features/admin/contestsAdminSlice';
 import { useGetCopyAllQuery } from '../../../../../../redux/services/admin/contestsAdminService';
-import { useDeleteByContestMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../../../redux/services/admin/problemsAdminService';
+import { useCopyAllMutation, useDeleteByContestMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../../../utils/constants';
-import { flexCenterObjectStyles, modalStyles } from '../../../../../../utils/object-utils';
+import { flexCenterObjectStyles } from '../../../../../../utils/object-utils';
 import { Alert, AlertSeverity, AlertVariant } from '../../../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../../../guidelines/spinning-loader/SpinningLoader';
@@ -37,7 +36,20 @@ import ProblemForm from '../../../../Problems/problemForm/ProblemForm';
 interface IProblemsInContestViewProps {
     contestId: number;
 }
-
+const modalStyles = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '50%',
+    height: '40%',
+    bgcolor: 'background.paper',
+    borderRadius: 3,
+    boxShadow: '0px 0px 19px -4px rgba(0,0,0,0.75)',
+    p: 4,
+    fontFamily: 'Roboto, Helvetica , Arial',
+    overflow: 'auto',
+};
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId } = props;
     const filtersAndSortersLocation = `contest-details-problems-${contestId}`;
@@ -68,6 +80,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
     const { data: problemsData, error } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
     const { data: contestsAutocompleteData, isFetching: isFetchingCopyAllData } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
+    const [ copyAll ] = useCopyAllMutation();
 
     useEffect(() => {
         if (contestsAutocompleteData) {
@@ -148,9 +161,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         setContestToCopy(contest);
     };
 
+    const onCopyAll = () => {
+        copyAll({ sourceContestId: contestId, destinationContestId: contestToCopy!.id });
+    };
+
     const renderCopyAllModal = (index: number) => (
         <Modal key={index} open={showCopyAllModal && problemsData!.totalCount > 0} onClose={() => setShowCopyAllModal(!showCopyAllModal)}>
             <Box sx={modalStyles}>
+                <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
                 <Autocomplete
                   options={problemsCopyAllData!}
                   renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
@@ -165,6 +183,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                       </MenuItem>
                   )}
                 />
+                {contestToCopy !== null && (
                 <Box sx={{ padding: '4rem' }}>
                     <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
                         {problemsData?.items![0].contest}
@@ -172,6 +191,10 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                         <ArrowRightAltIcon />
                         {contestToCopy?.name}
                     </Typography>
+                </Box>
+                )}
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                    <Button variant="contained" disabled={contestToCopy === null} onClick={onCopyAll}>Copy</Button>
                 </Box>
             </Box>
         </Modal>

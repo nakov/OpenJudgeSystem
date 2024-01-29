@@ -92,6 +92,13 @@ export const problemsAdminService = createApi({
                 method: 'DELETE',
             }),
         }),
+        copyAll: builder.mutation<string, {sourceContestId:number; destinationContestId:number} >({
+            query: ({ sourceContestId, destinationContestId }) => ({
+                url: '/copyAll',
+                method: 'POST',
+                body: { sourceContestId, destinationContestId },
+            }),
+        }),
     }),
 });
 
@@ -104,6 +111,7 @@ export const {
     useGetContestProblemsQuery,
     useRetestByIdMutation,
     useDeleteByContestMutation,
+    useCopyAllMutation,
 
 } = problemsAdminService;
 export default problemsAdminService;
