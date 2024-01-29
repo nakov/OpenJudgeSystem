@@ -4,10 +4,10 @@ import { persistReducer, persistStore } from 'redux-persist';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import storage from 'redux-persist/lib/storage';
 
-import authorizationReducer from './features/authorizationSlice';
+import authorizationReducer, { authorizationSliceName } from './features/authorizationSlice';
 // features
 import submissionDetailsReducer from './features/submissionDetailsSlice';
-import themeReducer from './features/themeSlice';
+import themeReducer, { themeSliceName } from './features/themeSlice';
 import authorizationService from './services/authorizationService';
 // services
 import submissionDetailsService from './services/submissionDetailsService';
@@ -28,8 +28,8 @@ const persistConfig = (reducersToPersist: string[]) => ({
 
 // list reducers with data to be persisted here
 const reducersToPersist = [
-    'authorization',
-    'theme',
+    authorizationSliceName,
+    themeSliceName,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
