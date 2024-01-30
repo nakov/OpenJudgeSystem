@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
 import { useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
@@ -25,6 +26,7 @@ const AdministrationProblemsPage = () => {
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
+    const [ problemId, setProblemId ] = useState<number | null>(null);
     const selectedFilters = useSelector((state: IRootStore) => state.adminProblems['all-problems']?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminProblems['all-problems']?.selectedSorters);
     const { data: problemsData, isLoading: isLoadingProblems, error } = useGetAllAdminProblemsQuery(queryParams);
@@ -42,6 +44,7 @@ const AdministrationProblemsPage = () => {
 
     const onEditClick = (id: number) => {
         setOpenEditProblemModal(true);
+        setProblemId(id);
     };
 
     const renderProblemsEditModal = (index: number) => (
@@ -51,7 +54,7 @@ const AdministrationProblemsPage = () => {
           onClose={() => setOpenEditProblemModal(false)}
         >
             <Box sx={modalStyles}>
-                <></>
+                <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
             </Box>
         </Modal>
     );
