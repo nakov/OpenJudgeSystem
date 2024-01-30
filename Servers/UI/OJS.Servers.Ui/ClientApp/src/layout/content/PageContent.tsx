@@ -127,7 +127,7 @@ const adminRoutes = [
         Element: AdministrationContestPage,
     },
     {
-        path: '/administration-new/contestsCategories',
+        path: '/administration-new/contestCategories',
         Element: AdministrationContestCategories
     },
     {

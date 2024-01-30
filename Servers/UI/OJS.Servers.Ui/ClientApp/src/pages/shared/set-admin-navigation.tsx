@@ -38,9 +38,9 @@ const administrationItems = [
         icon: <AutoStoriesIcon />,
         path: '/administration-new/contests',
     },{
-        name: 'Contests Categories',
+        name: 'Contest Categories',
         icon: <BookmarksIcon />,
-        path: '/administration-new/contestsCategories',
+        path: '/administration-new/contestCategories',
     },{
         name: 'Submissions',
         icon: <DoneOutlineIcon />,
