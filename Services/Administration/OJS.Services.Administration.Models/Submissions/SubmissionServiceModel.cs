@@ -1,0 +1,76 @@
+namespace OJS.Services.Administration.Models.Submissions;
+
+using OJS.Data.Models.Submissions;
+using SoftUni.AutoMapper.Infrastructure.Models;
+
+public class SubmissionServiceModel : IMapFrom<Submission>
+{
+    public int Id { get; set; }
+
+    public int? ParticipantId { get; set; }
+
+    public virtual Participant? Participant { get; set; }
+
+    public int ProblemId { get; set; }
+
+    public virtual Problem Problem { get; set; } = null!;
+
+    public int? SubmissionTypeId { get; set; }
+
+    public virtual SubmissionType? SubmissionType { get; set; }
+
+    /// <remarks>
+    /// Using byte[] (compressed with deflate) to save database space for text inputs. For other file types the actual file content is saved in the field.
+    /// </remarks>
+    public byte[] Content { get; set; } = Array.Empty<byte>();
+
+    /// <remarks>
+    /// If the value of FileExtension is null, then compressed text file is written in Content.
+    /// </remarks>
+    public string? FileExtension { get; set; }
+
+    public byte[]? SolutionSkeleton { get; set; }
+
+    public DateTime? StartedExecutionOn { get; set; }
+
+    public DateTime? CompletedExecutionOn { get; set; }
+
+    [StringLength(ConstraintConstants.IpAddressMaxLength)]
+    [Column(TypeName = "varchar")]
+    public string? IpAddress { get; set; }
+
+    [NotMapped]
+    public bool IsBinaryFile => !string.IsNullOrWhiteSpace(this.FileExtension);
+
+
+    public bool IsCompiledSuccessfully { get; set; }
+
+    public string? CompilerComment { get; set; }
+
+    public bool? IsPublic { get; set; }
+
+    public virtual ICollection<TestRun> TestRuns { get; set; } = new HashSet<TestRun>();
+
+    /// <summary>
+    /// Gets or sets a cache field for submission test runs representing each test run result as an integer equal to <see cref="TestRunResultType"/>.
+    /// The first integer represent the number of trial tests associated with this submissions.
+    /// This field optimized database queries.
+    ///
+    /// Example: 300011002 means:
+    /// - Three trial tests runs with 0 result (Correct Answer)
+    /// - Five normal test runs with:
+    ///   - Two 1 results (Wrong Answer)
+    ///   - Two 0 results (Correct Answer)
+    ///   - One 2 result (Time Limit).
+    /// </summary>
+    public string? TestRunsCache { get; set; }
+
+    public bool Processed { get; set; }
+
+    public string? ProcessingComment { get; set; }
+
+    /// <summary>
+    /// Gets or sets a cache field for submissions points (to speed-up some of the database queries).
+    /// </summary>
+    public int Points { get; set; }
+}

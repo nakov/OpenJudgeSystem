@@ -93,12 +93,12 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                     <Box className={styles.rowColorBox}>
                         <Box className={`${styles.colorBox} ${styles.deleted}`} />
                         <p className={styles.colorSeparator}>-</p>
-                        <p>Contest is deleted.</p>
+                        <p>Deleted</p>
                     </Box>
                     <Box className={styles.rowColorBox}>
                         <Box className={`${styles.colorBox} ${styles.visible}`} />
                         <p className={styles.colorSeparator}>-</p>
-                        <p>Contest is not visible.</p>
+                        <p>Not visible</p>
                     </Box>
                 </Box>
             </div>

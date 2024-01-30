@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business
 {
-    using System.Linq;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;
@@ -8,7 +8,7 @@
 
     public interface ISubmissionsBusinessService : IService
     {
-        Task<IQueryable<Submission>> GetAllForArchiving();
+        Task<IEnumerable<SubmissionService>> GetAll();
 
         Task RecalculatePointsByProblem(int problemId);
 

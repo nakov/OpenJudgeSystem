@@ -338,6 +338,29 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
 }
+
+interface IAdminViewSubmissionDetails {
+    id: number;
+    name: string;
+    type: string;
+    categoryId: number;
+    categoryName: string;
+    description: string | null;
+    startTime: Date | null;
+    endTime: Date | null;
+    practiceStartTime: Date | null;
+    practiceEndTime: Date | null;
+    contestPassword: string | null;
+    practicePassword: string | null;
+    limitBetweenSubmissions: number;
+    isVisible: boolean;
+    newIpPassword: string | null;
+    allowParallelSubmissionsInTasks: boolean;
+    autoChangeTestsFeedbackVisibility: boolean;
+    orderBy: number;
+    allowedIps: string;
+}
+
 interface IContestAutocomplete {
     id: number;
     name: string;
@@ -362,6 +385,7 @@ interface IAdminSlice {
 
 interface IRootStore {
     adminContests: IAdminSlice;
+    adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
 }
 type ExceptionData = {
