@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
@@ -36,7 +37,11 @@ const administrationItems = [
         name: 'Contests',
         icon: <AutoStoriesIcon />,
         path: '/administration-new/contests',
-    }, {
+    },{
+        name: 'Contests Categories',
+        icon: <BookmarksIcon />,
+        path: '/administration-new/contestsCategories',
+    },{
         name: 'Submissions',
         icon: <DoneOutlineIcon />,
         path: '/administration-new/submissions',

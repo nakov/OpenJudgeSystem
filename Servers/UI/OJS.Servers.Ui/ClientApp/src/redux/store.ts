@@ -21,6 +21,7 @@ import submissionTypesAdminService from './services/admin/submissionTypesAdminSe
 // features
 import authorizationService from './services/authorizationService';
 import submissionDetailsService from './services/submissionDetailsService';
+import {contestCategoriesAdminSlice} from "./features/admin/contestCategoriesAdminSlice";
 
 const rootReducer = combineReducers({
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
     [authorizationService.reducerPath]: authorizationService.reducer,
     authorization: authorizationReducer,
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
+    [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: submissionTypesAdminService.reducer,
@@ -50,6 +52,7 @@ const reducersToPersist = [
     contestsAdminSlice.name,
     'authorization',
     problemsAdminSlice.name,
+    contestCategoriesAdminSlice.name
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

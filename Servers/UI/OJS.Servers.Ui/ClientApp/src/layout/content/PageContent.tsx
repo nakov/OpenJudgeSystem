@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
+import AdministrationContestCategories from "../../pages/administration-new/AdministrationContestCategories";
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
@@ -124,6 +125,10 @@ const adminRoutes = [
     {
         path: '/administration-new/contests/:id',
         Element: AdministrationContestPage,
+    },
+    {
+        path: '/administration-new/contestsCategories',
+        Element: AdministrationContestCategories
     },
     {
         path: '/administration-new/submissions',
