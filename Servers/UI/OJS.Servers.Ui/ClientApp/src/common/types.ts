@@ -363,12 +363,20 @@ interface IAdminSlice {
 interface IRootStore {
     adminContests: IAdminSlice;
     adminProblems: IAdminSlice;
+    adminProblemGroups: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
     message: string;
 }
 
+interface IProblemGroupsData {
+    id:number;
+    contest:string;
+    isDeleted:boolean;
+    orderBy:number;
+    type:string;
+}
 interface IProblemSubmissionType{
     id: number;
     name: string;
@@ -413,4 +421,5 @@ export type {
     IProblemSubmissionType,
     ISubmissionTypeInProblem,
     IContestAutocomplete,
+    IProblemGroupsData,
 };

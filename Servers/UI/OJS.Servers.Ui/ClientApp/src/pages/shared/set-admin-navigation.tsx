@@ -49,6 +49,10 @@ const administrationItems = [
         icon: <NotListedLocationIcon />,
         path: '/administration-new/problems',
     }, {
+        name: 'Problem Groups',
+        icon: <BorderAllIcon />,
+        path: '/administration-new/problemGroups',
+    }, {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: '/administration-new/submissionTypes',

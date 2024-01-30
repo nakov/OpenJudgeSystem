@@ -75,7 +75,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         }
         return '';
     };
-
     const renderGridSettings = () => {
         const sortingColumns = mapGridColumnsToAdministrationSortingProps(filterableGridColumnDef);
         const filtersColumns = mapGridColumnsToAdministrationFilterProps(filterableGridColumnDef);

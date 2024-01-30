@@ -17,12 +17,12 @@ const succesfullStatusCodes = [ 200, 204 ];
 
 const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
+        credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/problems`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
-        credentials: 'include',
     });
 
     const result = await baseQuery(args, api, extraOptions);
