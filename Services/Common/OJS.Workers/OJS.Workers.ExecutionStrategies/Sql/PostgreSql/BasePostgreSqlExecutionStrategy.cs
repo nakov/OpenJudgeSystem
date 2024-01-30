@@ -260,7 +260,7 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
             var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
 
-            connection.StateChange += (sender, args) =>
+            connection.StateChange += (_, args) =>
             {
                 if (args.CurrentState == ConnectionState.Closed ||
                     args.CurrentState == ConnectionState.Broken)
