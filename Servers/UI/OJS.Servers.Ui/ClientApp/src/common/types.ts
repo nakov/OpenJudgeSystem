@@ -208,6 +208,7 @@ interface IIndexProblemsType {
     practiceTestsCount: number;
     competeTetstsCount: number;
     isDeleted: boolean;
+    contestId: number;
 }
 
 interface IRegisterForContestResponseType {

@@ -8,8 +8,8 @@ import storage from 'redux-persist/lib/storage';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
-import authorizationReducer from './features/authorizationSlice';
-import submissionDetailsReducer from './features/submissionDetailsSlice';
+import { authorizationSlide } from './features/authorizationSlice';
+import { submissionDetailsSlice } from './features/submissionDetailsSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // services
@@ -25,8 +25,8 @@ import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
     // reducers
-    submissionDetails: submissionDetailsReducer,
-    authorization: authorizationReducer,
+    [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
+    [authorizationSlide.name]: authorizationSlide.reducer,
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
@@ -52,7 +52,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 // list reducers with data to be persisted here
 const reducersToPersist = [
     contestsAdminSlice.name,
-    'authorization',
+    authorizationSlide.name,
     problemsAdminSlice.name,
     problemGroupsAdminSlice.name,
 ];

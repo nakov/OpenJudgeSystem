@@ -8,14 +8,15 @@ import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
+import { Alert, AlertSeverity, AlertVariant } from '../../../components/guidelines/alert/Alert';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
-import { useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
+import { useGetAllAdminProblemsQuery, useRetestByIdMutation } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
-import filterableColumns, { returnNonFilterableColumns } from './problemGridColumns';
+import filterableColumns, { returnProblemsNonFilterableColumns } from './problemGridColumns';
 
 const AdministrationProblemsPage = () => {
     const [ searchParams ] = useSearchParams();
@@ -68,23 +69,26 @@ const AdministrationProblemsPage = () => {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
     return (
-        <AdministrationGridView
-          filterableGridColumnDef={filterableColumns}
-          notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
-          data={problemsData}
-          renderActionButtons={renderGridSettings}
-          error={error}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setFilterStateAction={setAdminProblemsFilters}
-          setSorterStateAction={setAdminProblemsSorters}
-          location="all-problems"
-          modals={[
-              { showModal: openEditProblemModal, modal: (i) => renderProblemsEditModal(i) },
-          ]}
-        />
+        <>
+            <AdministrationGridView
+              filterableGridColumnDef={filterableColumns}
+              notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick)}
+              data={problemsData}
+              renderActionButtons={renderGridSettings}
+              error={error}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              selectedFilters={selectedFilters || []}
+              selectedSorters={selectedSorters || []}
+              setFilterStateAction={setAdminProblemsFilters}
+              setSorterStateAction={setAdminProblemsSorters}
+              location="all-problems"
+              modals={[
+                  { showModal: openEditProblemModal, modal: (i) => renderProblemsEditModal(i) },
+              ]}
+              legendDeleteMessage="Problem is deleted."
+            />
+        </>
     );
 };
 

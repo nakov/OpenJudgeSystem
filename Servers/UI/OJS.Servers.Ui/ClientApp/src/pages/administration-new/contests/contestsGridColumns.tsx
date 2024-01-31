@@ -6,7 +6,7 @@ import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import ContestDeleteButton from '../../../components/administration/Contests/delete/ContestDeleteButton';
+import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 
 const contestFilterableColumns: GridColDef[] = [
     {
@@ -117,7 +117,14 @@ const contestFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnContestsNonFilterableColumns = (onEditClick: Function) => [
+export const returnContestsNonFilterableColumns = (
+    onEditClick: Function,
+    deleteRequest: any,
+    data:string | undefined,
+    isDeleting:boolean,
+    isSuccess:boolean,
+    error:any,
+) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -134,7 +141,16 @@ export const returnContestsNonFilterableColumns = (onEditClick: Function) => [
                 <Link to={`/administration-new/contests/${Number(params.row.id)}`}>
                     <ShortcutIcon color="primary" />
                 </Link>
-                <ContestDeleteButton contestId={Number(params.row.id)} contestName={params.row.name} />
+                <DeleteButton
+                  id={Number(params.row.id)}
+                  name={params.row.name}
+                  text="Are you sure that you want to delete the contest."
+                  deleteRequest={deleteRequest}
+                  data={data}
+                  isLoading={isDeleting}
+                  isSuccess={isSuccess}
+                  error={error}
+                />
             </div>
         ),
     },

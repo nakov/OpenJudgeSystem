@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable max-len */
 import React, { FC, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -125,11 +127,14 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
 
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
-        if (!/^\d+$/.test(locationPathnameElements[locationPathnameElements.length - 1])) {
-            setLocationTitle(locationPathnameElements[locationPathnameElements.length - 1].toUpperCase());
+        const lastElementOfThePathname = locationPathnameElements[locationPathnameElements.length - 1];
+
+        if (!/^\d+$/.test(lastElementOfThePathname)) {
+            const section = administrationItems.find((x) => x.path.split('/').pop() === lastElementOfThePathname);
+            setLocationTitle(section!.name.toUpperCase());
         } else {
             setLocationTitle(`${locationPathnameElements[locationPathnameElements.length - 2].toUpperCase()}
-             Id: ${locationPathnameElements[locationPathnameElements.length - 1]}`);
+             Id: ${lastElementOfThePathname}`);
         }
     }, [ location.pathname ]);
 

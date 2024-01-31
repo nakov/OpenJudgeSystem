@@ -2,22 +2,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
-import ReplayIcon from '@mui/icons-material/Replay';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { Autocomplete, Box, Button, IconButton, MenuItem, Modal, TextField, Tooltip, Typography } from '@mui/material';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
 import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
 import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCopyAllMutation, useDeleteByContestMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
@@ -26,7 +22,6 @@ import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteProblem from '../../Problems/delete/DeleteProblem';
 import ProblemForm from '../../Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
@@ -220,125 +215,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           variant={AlertVariant.Filled}
         />
     );
-    const filterableColumns: GridColDef[] = [
-        {
-            field: 'id',
-            headerName: 'Id',
-            flex: 1,
-            type: 'number',
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-            valueFormatter: (params) => params.value.toString(),
-        },
-        {
-            field: 'name',
-            headerName: 'Name',
-            flex: 1,
-            type: 'string',
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-        },
-        {
-            field: 'contest',
-            headerName: 'Contest',
-            flex: 2,
-            type: 'string',
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-        },
-        {
-            field: 'problemGroupId',
-            headerName: 'Problem Group Id',
-            flex: 0.5,
-            type: 'number',
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-        },
-        {
-            field: 'problemGroup',
-            headerName: 'Problem Group',
-            flex: 1,
-            type: 'string',
-            filterable: false,
-            align: 'center',
-            sortable: false,
-            headerAlign: 'center',
-            valueFormatter: (params) => {
-                if (params.value === '') {
-                    return 'None';
-                }
-                return params.value.toString();
-            },
-        },
-        {
-            field: 'practiceTestsCount',
-            headerName: 'Practice Tests',
-            flex: 0.5,
-            type: 'number',
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-        },
-        {
-            field: 'competeTestsCount',
-            headerName: 'Compete Tests',
-            flex: 0.5,
-            type: 'number',
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-        },
-        {
-            field: 'isDeleted',
-            headerName: 'Is Deleted',
-            type: 'boolean',
-            flex: 0.5,
-            filterable: false,
-            sortable: false,
-            align: 'center',
-            headerAlign: 'center',
-        },
-    ];
-
-    const nonFilterableColumns: GridColDef[] = [
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            width: 140,
-            headerAlign: 'center',
-            align: 'center',
-            filterable: false,
-            sortable: false,
-            renderCell: (params: GridRenderCellParams) => (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <IconButton onClick={() => onEditClick(Number(params.row.id))}>
-                        <EditIcon color="warning" />
-                    </IconButton>
-                    <Link to={`/administration-new/problems/${Number(params.row.id)}`}>
-                        <ShortcutIcon color="primary" />
-                    </Link>
-                    <DeleteProblem
-                      problemId={Number(params.row.id)}
-                      problemName={params.row.name}
-                      style={{ alignSelf: 'flex-end' }}
-                    />
-                    <IconButton onClick={() => retestProblem(Number(params.row.id))}>
-                        <ReplayIcon />
-                    </IconButton>
-                </div>
-            ),
-        },
-    ];
 
     const renderDeleteAllModal = (index: number) => (
         <ConfirmDialog
@@ -392,8 +268,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             <AdministrationGridView
               data={problemsData}
               error={error}
-              filterableGridColumnDef={filterableColumns}
-              notFilterableGridColumnDef={nonFilterableColumns}
+              filterableGridColumnDef={problemFilterableColums}
+              notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, retestProblem)}
               queryParams={queryParams}
               location={filtersAndSortersLocation}
               selectedFilters={selectedFilters}
@@ -409,6 +285,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               setFilterStateAction={setAdminContestsFilters}
               setSorterStateAction={setAdminContestsSorters}
               withSearchParams={false}
+              legendDeleteMessage="Problem is deleted."
             />
         </div>
     );

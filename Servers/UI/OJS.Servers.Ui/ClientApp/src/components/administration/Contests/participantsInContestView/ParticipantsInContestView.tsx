@@ -159,6 +159,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
               modals={[]}
               setQueryParams={setQueryParams}
               withSearchParams={false}
+              legendDeleteMessage="Participant is deleted."
             />
         </div>
     );

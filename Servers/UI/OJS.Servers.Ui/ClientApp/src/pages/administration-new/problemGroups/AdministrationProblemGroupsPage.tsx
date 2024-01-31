@@ -63,6 +63,7 @@ const AdministrationProblemGroupsPage = () => {
           setSorterStateAction={setAdminProblemGroupsSorters}
           location={LOCATION}
           modals={[]}
+          legendDeleteMessage="Probem group is deleted"
         />
     );
 };

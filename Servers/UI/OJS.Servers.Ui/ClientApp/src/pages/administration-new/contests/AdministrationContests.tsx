@@ -12,7 +12,7 @@ import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import ContestEdit from '../../../components/administration/Contests/ContestEdit/ContestEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
-import { useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
+import { useDeleteContestMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
@@ -32,6 +32,15 @@ const AdministrationContestsPage = () => {
         error,
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
+
+    const [
+        deleteContest,
+        {
+            data: deleteData,
+            isLoading: isDeleting,
+            isSuccess: isSuccesfullyDeleted,
+            error: deleteError,
+        } ] = useDeleteContestMutation();
 
     const onEditClick = (id: number) => {
         setOpenEditContestModal(true);
@@ -90,7 +99,7 @@ const AdministrationContestsPage = () => {
           data={data}
           error={error}
           filterableGridColumnDef={contestFilterableColumns}
-          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick)}
+          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick, deleteContest, deleteData, isDeleting, isSuccesfullyDeleted, deleteError)}
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
@@ -103,6 +112,8 @@ const AdministrationContestsPage = () => {
               { showModal: openShowCreateContestModal, modal: (i) => renderCreateContestModal(i) },
               { showModal: openEditContestModal, modal: (i) => renderEditContestModal(i) },
           ]}
+          legendDeleteMessage="Contest is deleted."
+          legendVisibleMessage="Contest is not visible"
         />
     );
 };

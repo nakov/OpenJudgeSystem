@@ -2,13 +2,14 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
+import ReplayIcon from '@mui/icons-material/Replay';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import DeleteProblem from '../../../components/administration/Problems/delete/DeleteProblem';
 
-const filterableColumns: GridColDef[] = [
+const problemFilterableColums: GridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -98,7 +99,7 @@ const filterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnNonFilterableColumns = (onEditClick: Function) => [
+export const returnProblemsNonFilterableColumns = (onEditClick: Function, retestProblem?: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -115,16 +116,19 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
                 <Link to={`/administration-new/problems/${Number(params.row.id)}`}>
                     <ShortcutIcon color="primary" />
                 </Link>
-                <Tooltip title="Delete">
-                    <DeleteProblem
-                      problemId={Number(params.row.id)}
-                      problemName={params.row.name}
-                      style={{ alignSelf: 'flex-end' }}
-                    />
-                </Tooltip>
+                <DeleteProblem
+                  problemId={Number(params.row.id)}
+                  problemName={params.row.name}
+                  style={{ alignSelf: 'flex-end' }}
+                />
+                {retestProblem && (
+                <IconButton onClick={() => retestProblem(Number(params.row.id))}>
+                    <ReplayIcon />
+                </IconButton>
+                )}
             </div>
         ),
     },
 ] as GridColDef[];
 
-export default filterableColumns;
+export default problemFilterableColums;
