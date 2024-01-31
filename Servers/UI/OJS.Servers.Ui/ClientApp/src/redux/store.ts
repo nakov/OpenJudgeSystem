@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
+import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import authorizationReducer from './features/authorizationSlice';
 import submissionDetailsReducer from './features/submissionDetailsSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
@@ -17,6 +18,7 @@ import participantsAdminService from './services/admin/participantsAdminService'
 import problemGroupsAdminService from './services/admin/problemGroupsAdminService';
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
+import submissionsAdminService from './services/admin/submissionsAdminService';
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 // features
 import authorizationService from './services/authorizationService';
@@ -27,6 +29,7 @@ const rootReducer = combineReducers({
     submissionDetails: submissionDetailsReducer,
     // admin reducers
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
+    [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
@@ -34,6 +37,7 @@ const rootReducer = combineReducers({
     authorization: authorizationReducer,
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
+    [submissionsAdminSlice.name]: submissionsAdminSlice.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
@@ -60,6 +64,7 @@ const store = configureStore({
         submissionDetailsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
+        submissionsAdminService.middleware,
         contestCategoriesAdminService.middleware,
         authorizationService.middleware,
         problemsAdminService.middleware,

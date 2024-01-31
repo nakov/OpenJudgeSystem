@@ -3,34 +3,42 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { IPagedResultType, IParticiapntsInContestView } from '../../../common/types';
-import { IGetByContestId } from '../../../common/url-types';
-
+import {
+    IGetAllAdminParams,
+    IPagedResultType,
+    ISubmissionsAdminGridViewType,
+} from '../../../common/types';
 // eslint-disable-next-line import/group-exports
 export const submissionsAdminService = createApi({
-    reducerPath: 'participants',
+    reducerPath: 'submissions',
     baseQuery: fetchBaseQuery({
         credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/participants`,
+        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/submissions`,
         prepareHeaders: (headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
     }),
     endpoints: (builder) => ({
-        getAll: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetByContestId>({ query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({ url: `/contest/${contestId}`,
-            params: {
+        getAllSubmissions: builder.query<IPagedResultType<ISubmissionsAdminGridViewType>, IGetAllAdminParams>({
+            query: ({
                 filter,
                 page,
                 ItemsPerPage,
-                sorting,
-            } }) }),
+                sorting }) => ({
+                url: '',
+                params: {
+                    filter,
+                    page,
+                    ItemsPerPage,
+                    sorting,
+                } }) }),
     }),
 });
 
 // eslint-disable-next-line import/group-exports
 export const {
-    useGetAllQuery,
+    useGetAllSubmissionsQuery,
 } = submissionsAdminService;
 
 export default submissionsAdminService;

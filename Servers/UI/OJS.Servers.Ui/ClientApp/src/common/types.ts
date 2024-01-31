@@ -339,26 +339,31 @@ interface IContestAdministration {
     allowedIps: string;
 }
 
-interface IAdminViewSubmissionDetails {
+interface ISubmissionsAdminGridViewType {
+    id: number;
+    isCompiledSuccessfully: boolean;
+    processed: boolean;
+    isDeleted: boolean;
+    processingComment: boolean;
+    points: number;
+    participant: IParticipantType;
+    problem: IProblemSimpleType;
+    submissionType: ISubmissionTypeSimpleType;
+}
+
+interface IParticipantType {
+    id: number;
+    username: string;
+}
+
+interface IProblemSimpleType {
     id: number;
     name: string;
-    type: string;
-    categoryId: number;
-    categoryName: string;
-    description: string | null;
-    startTime: Date | null;
-    endTime: Date | null;
-    practiceStartTime: Date | null;
-    practiceEndTime: Date | null;
-    contestPassword: string | null;
-    practicePassword: string | null;
-    limitBetweenSubmissions: number;
-    isVisible: boolean;
-    newIpPassword: string | null;
-    allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
-    orderBy: number;
-    allowedIps: string;
+}
+
+interface ISubmissionTypeSimpleType {
+    id: number;
+    name: string;
 }
 
 interface IContestAutocomplete {
@@ -428,6 +433,7 @@ export type {
     IContestAdministration,
     IFilterColumn,
     IParticiapntsInContestView,
+    ISubmissionsAdminGridViewType,
     IAdminSlice,
     IRootStore,
     IContestCategories,

@@ -6,10 +6,8 @@
     using SoftUni.Services.Infrastructure;
     using OJS.Services.Common.Data.Pagination;
 
-    public interface ISubmissionsBusinessService : IService
+    public interface ISubmissionsBusinessService : IGridDataService<Submission>, IService
     {
-        Task<PaginatedList<TServiceModel>> GetAll<TServiceModel>();
-
         Task RecalculatePointsByProblem(int problemId);
 
         Task<ServiceResult> Retest(Submission submission);

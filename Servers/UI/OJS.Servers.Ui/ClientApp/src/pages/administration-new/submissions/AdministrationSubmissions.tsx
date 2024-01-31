@@ -5,13 +5,13 @@ import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { IGetAllAdminParams, IRootStore } from '../../common/types';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../redux/features/admin/contestsAdminSlice';
-import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
-import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { setAdminSubmissionsFilters, setAdminSubmissionsSorters } from '../../../redux/features/admin/submissionsAdminSlice';
+import { useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsAdminService';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import AdministrationGridView from '../AdministrationGridView';
 
-import AdministrationGridView from './AdministrationGridView';
 import dataColumns from './grid-col-def';
 
 export const AdministrationSubmissionsPage = () => {
@@ -24,13 +24,13 @@ export const AdministrationSubmissionsPage = () => {
             sorting: searchParams.get('sorting') ?? '',
         });
 
-    const selectedFilters = useSelector((state: IRootStore) => state.adminContests['all-submissions']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-submissions']?.selectedSorters);
+    const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedFilters);
+    const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedSorters);
 
     const {
         data,
         error,
-    } = useGetAllAdminContestsQuery(queryParams);
+    } = useGetAllSubmissionsQuery(queryParams);
 
     const nonFilterableColumns: GridColDef[] = [
         {
@@ -67,8 +67,8 @@ export const AdministrationSubmissionsPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setSorterStateAction={setAdminContestsSorters}
-          setFilterStateAction={setAdminContestsFilters}
+          setSorterStateAction={setAdminSubmissionsSorters}
+          setFilterStateAction={setAdminSubmissionsFilters}
           location="all-submissions"
         />
     );
