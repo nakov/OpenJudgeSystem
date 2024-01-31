@@ -12,6 +12,7 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 import AdministrationGridView from './AdministrationGridView';
+import dataColumns from './grid-col-def';
 
 export const AdministrationSubmissionsPage = () => {
     const [ searchParams ] = useSearchParams();
@@ -30,87 +31,6 @@ export const AdministrationSubmissionsPage = () => {
         data,
         error,
     } = useGetAllAdminContestsQuery(queryParams);
-
-    const dataColumns: GridColDef[] = [
-        {
-            field: 'id',
-            headerName: 'Id',
-            type: 'number',
-            filterable: true,
-            sortable: true,
-            valueFormatter: (params) => params.value.toString(),
-        },
-        {
-            field: 'problem',
-            headerName: 'Problem',
-            type: 'string',
-            filterable: true,
-            sortable: true,
-        },
-        {
-            field: 'problemId',
-            headerName: 'Problem Id',
-            type: 'number',
-            filterable: true,
-            sortable: true,
-        },
-        {
-            field: 'processed',
-            headerName: 'Processed',
-            align: 'left',
-            type: 'boolean',
-            filterable: true,
-            sortable: false,
-        },
-        {
-            field: 'points',
-            headerName: 'Points',
-            align: 'left',
-            type: 'number',
-            filterable: true,
-            sortable: true,
-        },
-        {
-            field: 'isCompiledSuccessfully',
-            headerName: 'Is Compiled Successfully',
-            align: 'left',
-            type: 'boolean',
-            filterable: true,
-            sortable: false,
-        },
-        {
-            field: 'processingComment',
-            headerName: 'Processing Comment',
-            align: 'left',
-            type: 'string',
-            filterable: true,
-            sortable: false,
-        },
-        {
-            field: 'submissionType',
-            headerName: 'Submission Type',
-            align: 'left',
-            type: 'string',
-            filterable: true,
-            sortable: true,
-        },
-        {
-            field: 'participant',
-            headerName: 'Participant',
-            align: 'left',
-            type: 'number',
-            filterable: true,
-            sortable: false,
-        },
-        {
-            field: 'isDeleted',
-            headerName: 'Is Deleted',
-            align: 'left',
-            type: 'date',
-            filterable: true,
-            sortable: false,
-        },
-    ];
 
     const nonFilterableColumns: GridColDef[] = [
         {

@@ -3,11 +3,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business;
-using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Common.Models.Pagination;
-using System.Linq;
-using OJS.Services.Common.Validation;
-using OJS.Services.Administration.Models.Contests.Problems;
 
 public class SubmissionsController : ApiControllerBase
 {
@@ -19,7 +16,9 @@ public class SubmissionsController : ApiControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
-        var contest = await this.submissionsBusinessService.<ContestInListModel>(model);
+        var contest = await this.submissionsBusinessService
+            .GetAll<SubmissionAdministrationServiceModel>();
+
         return this.Ok(contest);
     }
 }

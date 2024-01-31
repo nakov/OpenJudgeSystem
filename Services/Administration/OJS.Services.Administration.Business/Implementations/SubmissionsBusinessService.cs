@@ -1,3 +1,5 @@
+using SoftUni.Common.Extensions;
+
 namespace OJS.Services.Administration.Business.Implementations
 {
     using System;
@@ -13,9 +15,11 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Administration.Models;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
+    using OJS.Services.Common.Data.Pagination;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure;
+    using OJS.Services.Common.Models.Pagination;
     using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
@@ -66,6 +70,12 @@ namespace OJS.Services.Administration.Business.Implementations
                     archiveBestSubmissionsLimit,
                     archiveNonBestSubmissionsLimit));
         }
+
+        public async Task<PaginatedList<TServiceModel>> GetAll<TServiceModel>(int submissionsPerPage, int pageNumber)
+            => await Task.FromResult(this.submissionsData
+                .GetAllWithParticipantProblemAndSubmissionType()
+                .MapCollection<TServiceModel>()
+                .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
 
         public Task RecalculatePointsByProblem(int problemId)
         {

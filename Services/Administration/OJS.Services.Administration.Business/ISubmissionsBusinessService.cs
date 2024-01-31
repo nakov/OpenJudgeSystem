@@ -1,14 +1,14 @@
 ﻿namespace OJS.Services.Administration.Business
 {
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
+    using OJS.Services.Common.Data.Pagination;
 
     public interface ISubmissionsBusinessService : IService
     {
-        Task<IEnumerable<SubmissionService>> GetAll();
+        Task<PaginatedList<TServiceModel>> GetAll<TServiceModel>();
 
         Task RecalculatePointsByProblem(int problemId);
 
