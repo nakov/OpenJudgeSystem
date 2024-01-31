@@ -14,13 +14,12 @@ import JavaScriptIcon from '../components/guidelines/icons/strategies/JavaScript
 import MySqlIcon from '../components/guidelines/icons/strategies/MySqlIcon';
 import PhpIcon from '../components/guidelines/icons/strategies/PhpIcon';
 import PlainTextIcon from '../components/guidelines/icons/strategies/PlainTextIcon';
+import PostgreSqlIcon from '../components/guidelines/icons/strategies/PostgreSqlIcon';
 import PythonIcon from '../components/guidelines/icons/strategies/PythonIcon';
 import RubyIcon from '../components/guidelines/icons/strategies/RubyIcon';
 import SqlServerIcon from '../components/guidelines/icons/strategies/SqlServerIcon';
 
 const shortNameToType: IDictionary<StrategyType> = {
-    mysql: StrategyType.MySql,
-    'sql server': StrategyType.SqlServer,
     '.net': StrategyType.DotNet,
     dotnet: StrategyType.DotNet,
     'c#': StrategyType.DotNet,
@@ -33,6 +32,9 @@ const shortNameToType: IDictionary<StrategyType> = {
     php: StrategyType.Php,
     ruby: StrategyType.Ruby,
     'html and css': StrategyType.HtmlCss,
+    mysql: StrategyType.MySql,
+    postgresql: StrategyType.PostgreSql,
+    'sql server': StrategyType.SqlServer,
     'plain text': StrategyType.PlainText,
     'file upload': StrategyType.FileUpload,
 };
@@ -49,6 +51,7 @@ const typeToIcon: IDictionary<FC<IIconProps>> = {
     [StrategyType.HtmlCss]: HtmlCssIcon,
     [StrategyType.MySql]: MySqlIcon,
     [StrategyType.SqlServer]: SqlServerIcon,
+    [StrategyType.PostgreSql]: PostgreSqlIcon,
     [StrategyType.PlainText]: PlainTextIcon,
     [StrategyType.FileUpload]: FileUploadIcon,
 };
