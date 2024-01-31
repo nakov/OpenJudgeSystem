@@ -149,69 +149,72 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        <Box sx={{ display: 'flex', zIndex: 0 }}>
-            <AppBar position="fixed" open={open}>
-                <Toolbar>
-                    <div className={styles.adminHeaderWrapper}>
-                        <Link to="/" className={styles.adminHeaderLink}>
-                            <Tooltip title="Return to client app">
-                                <KeyboardReturnIcon />
-                            </Tooltip>
-                        </Link>
-                        <div className={styles.locationTitle}>{locationTitle}</div>
-                        <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
-                    </div>
-                </Toolbar>
-            </AppBar>
-            <Drawer
-              variant="permanent"
-              open={open}
-            >
-                <DrawerHeader>
-                    <div />
-                </DrawerHeader>
-                {!open
-                    ? (
-                        <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerOpen}>
-                            <ChevronRightIcon />
-                        </IconButton>
-                    )
-                    : (
-                        <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerClose}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    )}
-                {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
-                <List>
-                    {administrationItems.map((item) => (
-                        <ListItem key={item.name} disablePadding>
-                            <Link
-                              to={item.path}
-                              className={`${location.pathname === item.path
-                                  ? styles.activeAdminNavLink
-                                  : ''} ${styles.adminNavLink}`}
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon style={{
-                                        color: location.pathname === item.path
-                                            ? '#42abf8'
-                                            : '#3e4c5d',
-                                    }}
-                                    >
-                                        {item.icon}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} />
-                                </ListItemButton>
+        <>
+            {!open
+                ? (
+                    <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
+                        <ChevronRightIcon />
+                    </IconButton>
+                )
+                : (
+                    <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                )}
+            <Box sx={{ display: 'flex', zIndex: 5000 }}>
+                <AppBar position="fixed" open={open}>
+                    <Toolbar>
+                        <div className={styles.adminHeaderWrapper}>
+                            <Link to="/" className={styles.adminHeaderLink}>
+                                <Tooltip title="Return to client app">
+                                    <KeyboardReturnIcon />
+                                </Tooltip>
                             </Link>
-                        </ListItem>
-                    ))}
-                </List>
-            </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                <ComponentToWrap {...props} />
+                            <div className={styles.locationTitle}>{locationTitle}</div>
+                            <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+                <Drawer
+                  variant="permanent"
+                  open={open}
+                >
+                    <DrawerHeader>
+                        <div />
+                    </DrawerHeader>
+
+                    {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
+                    <List>
+                        {administrationItems.map((item) => (
+                            <ListItem key={item.name} disablePadding>
+                                <Link
+                                  to={item.path}
+                                  className={`${location.pathname === item.path
+                                      ? styles.activeAdminNavLink
+                                      : ''} ${styles.adminNavLink}`}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon style={{
+                                            color: location.pathname === item.path
+                                                ? '#42abf8'
+                                                : '#3e4c5d',
+                                        }}
+                                        >
+                                            {item.icon}
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Drawer>
+                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                    <ComponentToWrap {...props} />
+                </Box>
             </Box>
-        </Box>
+        </>
     );
 };
 
