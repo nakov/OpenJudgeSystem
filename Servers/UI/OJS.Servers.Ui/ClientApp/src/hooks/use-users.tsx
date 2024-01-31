@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IUserInfoUrlParams } from '../common/url-types';
@@ -15,6 +16,8 @@ interface IUserProfileType {
     lastName: string;
     email: string;
     isGetUserLoading: boolean;
+    city?: string;
+    age?: number;
 }
 
 interface IUsersContext {
@@ -22,6 +25,7 @@ interface IUsersContext {
         myProfile: IUserProfileType;
         isProfileInfoLoaded: boolean;
         isProfileInfoLoading: boolean;
+        isGetProfileQueryInitiated : boolean;
     };
     actions: {
         getProfile: (username: string) => void;
@@ -37,6 +41,8 @@ type IUsersProviderProps = IHaveChildrenProps
 
 const UsersProvider = ({ children }: IUsersProviderProps) => {
     const [ isLoading, setIsLoading ] = useState(false);
+    const [ isGetProfileQueryInitiated, setIsGetProfileQueryInitiated ] = useState(false);
+    const [ isProfileInfoLoaded, setIsProfileInfoLoaded ] = useState(false);
     const [ myProfile, setMyProfile ] = useState(defaultState.state.myProfile);
     const [ profileInfoUrlUrlParam, setProfileInfoUrlParam ] =
         useState<IUserInfoUrlParams | null>();
@@ -53,6 +59,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
 
     const getProfile = useCallback(
         (username: string) => {
+            setIsGetProfileQueryInitiated(true);
             setProfileInfoUrlParam({ username });
         },
         [],
@@ -60,6 +67,9 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
 
     const clearUserProfileInformation = useCallback(
         () => {
+            setIsLoading(false);
+            setIsGetProfileQueryInitiated(false);
+            setIsProfileInfoLoaded(false);
             setMyProfile(defaultState.state.myProfile);
         },
         [],
@@ -87,7 +97,6 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
                 return;
             }
 
-            setIsLoading(false);
             setMyProfile(profileData);
 
             setProfileInfoUrlParam(null);
@@ -95,19 +104,47 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
         [ profileData, showError ],
     );
 
+    useEffect(
+        () => {
+            if (!isNil(profileData) && isSuccess && !isEmpty(myProfile.userName)) {
+                setIsLoading(false);
+            }
+        },
+        [ profileData, myProfile, isSuccess ],
+    );
+
+    useEffect(
+        () => {
+            if (isSuccess && isEmpty(myProfile.userName)) {
+                setIsLoading(false);
+            }
+        },
+        [ profileData, myProfile, isSuccess ],
+    );
+
+    useEffect(
+        () => {
+            if (isSuccess) {
+                setIsProfileInfoLoaded(true);
+            }
+        },
+        [ isSuccess ],
+    );
+
     const value = useMemo(
         () => ({
             state: {
                 myProfile,
-                isProfileInfoLoaded: isSuccess,
+                isProfileInfoLoaded,
                 isProfileInfoLoading: isLoading,
+                isGetProfileQueryInitiated,
             },
             actions: {
                 getProfile,
                 clearUserProfileInformation,
             },
         }),
-        [ getProfile, myProfile, isSuccess, isLoading, clearUserProfileInformation ],
+        [ myProfile, isProfileInfoLoaded, isLoading, isGetProfileQueryInitiated, getProfile, clearUserProfileInformation ],
     );
 
     return (

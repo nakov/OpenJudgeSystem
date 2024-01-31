@@ -60,15 +60,18 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
                 return;
             }
 
+            if (isLoading || !isNil(apiParticipationsForProfile)) {
+                return;
+            }
+
+            setIsLoading(true);
             (async () => {
-                setIsLoading(true);
                 await getParticipationsForProfile();
-                setIsLoading(false);
             })();
 
             setParticipationsForProfileUrUrlParam(null);
         },
-        [ getParticipationsForProfileUrlParam, getParticipationsForProfile ],
+        [ getParticipationsForProfileUrlParam, getParticipationsForProfile, isLoading, apiParticipationsForProfile ],
     );
 
     useEffect(
@@ -78,6 +81,7 @@ const ParticipationsProvider = ({ children }: IParticipationsProviderProps) => {
             }
 
             setUserParticipations(apiParticipationsForProfile);
+            setIsLoading(false);
         },
         [ apiParticipationsForProfile ],
     );

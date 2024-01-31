@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -9,18 +10,26 @@
     {
         public int Id { get; set; }
 
-        public DateTime SubmittedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
 
-        public ProblemResponseModel Problem { get; set; } = null!;
+        public string StrategyName { get; set; } = null!;
 
-        public string SubmissionTypeName { get; set; } = null!;
+        public bool IsOfficial { get; set; }
 
-        public int Points { get; set; }
+        public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
-        public IEnumerable<TestRunResponseModel> TestRuns { get; set; } = null!;
+        public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
-        public double MaxUsedTime { get; set; }
+        public StateResultForPublicSubmissionsServiceModel State { get; set; }
 
-        public double MaxUsedMemory { get; set; }
+        public bool IsCompiledSuccessfully { get; set; }
+
+        public long? MaxMemoryUsed { get; set; }
+
+        public int? MaxTimeUsed { get; set; }
+
+        public bool Processed { get; set; }
+
+        public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
     }
 }

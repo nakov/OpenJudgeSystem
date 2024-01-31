@@ -24,7 +24,9 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username);
+        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page);
+
+        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId);
 
         Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult);
 
@@ -33,10 +35,6 @@
         Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page);
 
         Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int page);
-
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(bool? isOfficial, int page);
-
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page);
 
         Task<int> GetTotalCount();
 
