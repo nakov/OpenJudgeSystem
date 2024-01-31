@@ -6,13 +6,13 @@ import { ContestStatus, FilterType, IFilter, SortType } from '../../common/conte
 import { PageParams } from '../../common/pages-types';
 import { IIndexContestsType } from '../../common/types';
 import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
+import ContestCardNew from '../../components/contests/contest-card-new/ContestCard';
 import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../components/guidelines/alert/Alert';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import { useUrlParams } from '../../hooks/common/use-url-params';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
@@ -129,7 +129,8 @@ const ContestsPage = () => {
 
     const renderContest = useCallback(
         (contest: IIndexContestsType) => (
-            <ContestCard contest={contest} />
+            // <ContestCard contest={contest} />
+            <ContestCardNew contest={contest} />
         ),
         [],
     );

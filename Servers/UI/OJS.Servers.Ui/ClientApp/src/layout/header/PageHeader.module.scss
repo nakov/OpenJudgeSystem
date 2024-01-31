@@ -2,77 +2,60 @@
 @use 'src/styles/fonts';
 @use 'src/styles/components';
 @use 'src/styles/shadows';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
 
 .header {
-  display: flex;
-  height: 75px;
-  justify-content: center;
-  position: absolute;
-  width: 100%;
-
-  @media only screen and (max-width: 425px) {
-    padding: 0 5px;
-  }
-
-  h1 {
-    color: colors.$white-color;
-  }
-
-  img {
-    max-height: 40px;
-  }
-}
-
-.headerSize {
-  @extend %contentSize;
-
-  align-items: center;
-  background-color: colors.$white-color;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
+  @extend %font-family-roboto;
+  box-shadow: shadows.$dp-shadow-4;
+  background-color: colors.$primary-blue;
   display: flex;
   justify-content: space-between;
-  padding: 0 30px;
-
-  @media only screen and (max-width: 425px) {
-    box-shadow: none;
-    padding: 0;
-  }
-}
-
-.heading {
-  @media only screen and (max-width: 425px) {
-    width: 100px;
-  }
-}
-
-.headerLinks {
   align-items: center;
-  display: flex;
-  font-family: fonts.$font-family-lato;
-  gap: 10px;
-  justify-content: center;
+  position: absolute;
+  width: 100%;
+  padding: spacings.$sp-24 0;
+  z-index: 3;
+
+  > div {
+    margin-left: spacings.$sp-64;
+  }
+  .logoBtn {
+    font-size: variables.$f-size-30 !important;
+    font-weight: 800 !important;
+    margin-right: spacings.$sp-12;
+  }
+  .navButton {
+    font-size: variables.$f-size-18;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0 spacings.$sp-12;
+    &:visited {
+      color: colors.$white-color;
+    }
+  }
+  .authButtons {
+    margin-right: spacings.$sp-192;
+  }
 }
 
-.searchButton {
-  background-color: colors.$white-color;
-  border: 0;
-  box-shadow: none;
+.searchIcon {
   cursor: pointer;
-  margin-bottom: 15px;
-  margin-right: 15px;
-  margin-top: 10px;
-  padding: 10px;
-}
-
-.navbarContainer {
-  display: flex;
+  color: colors.$white-color;
+  font-size: variables.$f-size-18;
+  background-color: colors.$primary-blue;
+  margin-right: spacings.$sp-12;
+  align-self: center;
+  transition: all .1s ease-in-out;
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .themeSwitchWrapper {
   height: 40px;
   position: absolute;
-  top: 15px;
+  top: 22px;
   right: 30px;
   box-shadow: shadows.$dp-shadow-4;
 }

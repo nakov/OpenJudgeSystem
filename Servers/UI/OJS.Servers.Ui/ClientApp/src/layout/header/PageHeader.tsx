@@ -1,22 +1,14 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
 import { RiSunLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
-import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import SearchIcon from '../../components/guidelines/icons/SearchIcon';
 import { useSearch } from '../../hooks/use-search';
 import useTheme from '../../hooks/use-theme';
 import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
-import concatClassNames from '../../utils/class-names';
-import generateId from '../../utils/id-generator';
-import { getAdministrationNavigation } from '../../utils/urls';
-import PageNav from '../nav/PageNav';
-
-import logo from './softuni-logo-horizontal.svg';
 
 import styles from './PageHeader.module.scss';
 
@@ -25,60 +17,12 @@ const PageHeader = () => {
     const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
     const dispatch = useDispatch();
     const { toggleSelectedTheme } = useTheme();
+    const { isLoggedIn } =
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const { mode } = useSelector((state: any) => state.theme);
 
-    const toggleButtonSxProps = {
-        width: 50,
-        transition: 'background-color 0.1s ease-in-out',
-        '&.Mui-selected': {
-            backgroundColor: '#42abf8',
-            color: 'white',
-        },
-        '&.Mui-selected:hover': { backgroundColor: { backgroundColor: '#1597f6' } },
-    };
-    const renderLinks = useCallback(() => {
-        const administrationLink = user.canAccessAdministration
-            ? (
-                <LinkButton
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to={getAdministrationNavigation()}
-                  isToExternal
-                  text="Administration"
-                />
-            )
-            : null;
-
-        return (
-            <>
-                <LinkButton
-                  id="nav-contests-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/contests"
-                  text="Contests"
-                />
-                <LinkButton
-                  id="nav-submissions-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/submissions"
-                  text="Submissions"
-                />
-                { administrationLink }
-            </>
-        );
-    }, [ user.canAccessAdministration ]);
-
-    const btnId = useMemo(
-        () => {
-            const searchIdBtn = generateId();
-            return `btn-submit-${searchIdBtn}`;
-        },
-        [],
-    );
     useEffect(() => {
         if (isSuccessfullRequest && userData) {
             dispatch(setInternalUser(userData));
@@ -89,52 +33,37 @@ const PageHeader = () => {
         }
     }, [ isSuccessfullRequest, userData, dispatch ]);
 
-    const handleSearchClick = useCallback(
-        () => toggleVisibility(),
-        [ toggleVisibility ],
-    );
-
-    const searchBtnClassName = concatClassNames('searchButton', styles.searchButton);
-
-    const searchButton = useCallback(
-        () => (
-            <Button
-              id={btnId}
-              onClick={handleSearchClick}
-              type={ButtonType.submit}
-              internalClassName={searchBtnClassName}
-            >
-                <SearchIcon />
-            </Button>
-        ),
-        [ btnId, handleSearchClick, searchBtnClassName ],
-    );
-
-    const headingSecondaryClass = 'headingSeconary';
-    const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
+    const toggleButtonSxProps = {
+        width: 50,
+        backgroundColor: 'white',
+        transition: 'background-color 0.1s ease-in-out',
+        '&.Mui-selected': {
+            backgroundColor: '#42abf8',
+            color: 'white',
+        },
+        '&.Mui-selected:hover': { backgroundColor: { backgroundColor: '#00457a' } },
+    };
 
     return (
-        <header id="pageHeader" className={styles.header}>
-            <div className={styles.headerSize}>
-                <div className={styles.headerLinks}>
-                    <Heading
-                      id="page-header-h2"
-                      type={HeadingType.secondary}
-                      className={headingSecondaryClassName}
-                    >
-                        <LinkButton
-                          to="/"
-                          type={LinkButtonType.image}
-                          altText="Softuni logo"
-                          imgSrc={logo}
-                        />
-                    </Heading>
-                    { renderLinks() }
-                </div>
-                <div className={styles.navbarContainer}>
-                    { searchButton() }
-                    <PageNav />
-                </div>
+        <header className={styles.header}>
+            <div>
+                <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>Softuni Judge</Link>
+                <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
+                <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
+                {user.canAccessAdministration && <Link to="/administration" className={styles.navButton}>Administration</Link>}
+            </div>
+            <div className={styles.authButtons}>
+                <i className={`fas fa-search ${styles.searchIcon}`} onClick={toggleVisibility} />
+                {isLoggedIn
+                    ? (<div>test</div>)
+                    : (
+                        <>
+                            <Link to="/login" className={styles.navButton}>LOGIN</Link>
+                            <Link to="/register" className={styles.navButton}>
+                                REGISTER
+                            </Link>
+                        </>
+                    )}
             </div>
             <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
                 <ToggleButton

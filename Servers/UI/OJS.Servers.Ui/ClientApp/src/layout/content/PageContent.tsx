@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import useTheme from '../../hooks/use-theme';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -107,6 +108,7 @@ const routes = [
 ];
 
 const PageContent = () => {
+    const { themeColors } = useTheme();
     const renderRoute = (path: string, Element: FC, title: string | undefined) => {
         const WrappedElement = asPage(withTitle(Element, title));
         return (
@@ -115,7 +117,7 @@ const PageContent = () => {
     };
 
     return (
-        <main className={styles.main}>
+        <main className={styles.main} style={{ backgroundColor: `${themeColors.baseColor400}` }}>
             <Routes>
                 {routes.map(({ path, Element, title }) => renderRoute(path, Element, title))}
             </Routes>
