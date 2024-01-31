@@ -1,10 +1,6 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -18,20 +14,20 @@ import { Autocomplete, Box, Button, IconButton, MenuItem, Modal, TextField, Tool
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
-import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../../../pages/administration-new/AdministrationGridView';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../../../redux/features/admin/contestsAdminSlice';
-import { useGetCopyAllQuery } from '../../../../../../redux/services/admin/contestsAdminService';
-import { useCopyAllMutation, useDeleteByContestMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../../../redux/services/admin/problemsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../../../utils/constants';
-import { flexCenterObjectStyles } from '../../../../../../utils/object-utils';
-import { Alert, AlertSeverity, AlertVariant } from '../../../../../guidelines/alert/Alert';
-import ConfirmDialog from '../../../../../guidelines/dialog/ConfirmDialog';
-import SpinningLoader from '../../../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteProblem from '../../../../Problems/delete/DeleteProblem';
-import ProblemForm from '../../../../Problems/problemForm/ProblemForm';
+import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
+import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useCopyAllMutation, useDeleteByContestMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
+import { flexCenterObjectStyles } from '../../../../utils/object-utils';
+import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
+import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
+import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import DeleteProblem from '../../Problems/delete/DeleteProblem';
+import ProblemForm from '../../Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
     contestId: number;
@@ -79,7 +75,11 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
     const { data: problemsData, error } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
-    const { data: contestsAutocompleteData, isFetching: isFetchingCopyAllData } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
+    const {
+        data: contestsAutocompleteData,
+        isFetching: isFetchingCopyAllData,
+    } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
+
     const [ copyAll ] = useCopyAllMutation();
 
     useEffect(() => {
@@ -112,7 +112,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     useEffect(() => {
         let messages: Array<string> = [];
         if (isDeleteAllError && deleteAllError) {
-            messages = deleteAllError.data?.map((x:ExceptionData) => x.message);
+            messages = deleteAllError.data.map((x:ExceptionData) => x.message);
         }
         if (isRetestError && retestError) {
             messages = retestError.data?.map((x:ExceptionData) => x.message);

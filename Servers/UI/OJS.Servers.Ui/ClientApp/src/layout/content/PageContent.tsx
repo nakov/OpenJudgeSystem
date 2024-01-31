@@ -9,9 +9,9 @@ import ContestProblemsPage from '../../pages/administration/ContestProblemsPage'
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../pages/administration/TestEditPage';
 import Administration from '../../pages/administration-new/Administration';
-import AdministrationContestsPage from '../../pages/administration-new/AdministrationContests';
+import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
 import { AdministrationSubmissionsPage } from '../../pages/administration-new/AdministrationSubmissions';
-import AdministrationContestPage from '../../pages/administration-new/Contest/AdministrationContestPage';
+import AdministrationContestPage from '../../components/administration/Contests/AdministrationContestPage';
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
