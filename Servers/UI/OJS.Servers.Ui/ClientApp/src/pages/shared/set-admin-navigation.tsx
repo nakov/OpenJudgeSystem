@@ -10,6 +10,7 @@ import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import ScienceIcon from '@mui/icons-material/Science';
+import TableViewIcon from '@mui/icons-material/TableView';
 import { Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -52,7 +53,7 @@ const administrationItems = [
         path: '/administration-new/problems',
     }, {
         name: 'Problem Groups',
-        icon: <BorderAllIcon />,
+        icon: <TableViewIcon />,
         path: '/administration-new/problemGroups',
     }, {
         name: 'Submission Types',
