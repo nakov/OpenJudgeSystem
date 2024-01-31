@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { TbBrandGolang } from 'react-icons/tb';
+import { DiPostgresql } from 'react-icons/di';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
@@ -7,19 +7,19 @@ import Icon, { IIconProps } from '../Icon';
 
 import styles from './StrategyIcon.module.scss';
 
-type IGoIconProps = IIconProps
+type IPostgreSqlIconProps = IIconProps
 
-const GoIcon = ({
+const PostgreSqlIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
-}: IGoIconProps) => (
+}: IPostgreSqlIconProps) => (
     <Icon
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={TbBrandGolang}
+      Component={DiPostgresql}
     />
 );
 
-export default memo(GoIcon);
+export default memo(PostgreSqlIcon);
