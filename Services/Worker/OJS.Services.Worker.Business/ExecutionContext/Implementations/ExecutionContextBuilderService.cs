@@ -49,9 +49,6 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
                 string.Format(CannotCreateInputTemplate, submissionServiceModel.ExecutionType))
             .VerifyResult();
 
-        submission.CompilerType = this.executionContextValuesProvider
-            .GetDefaultCompilerTypeByExecutionStrategyType(submission.ExecutionStrategyType);
-
         submission.AdditionalCompilerArguments = this.executionContextValuesProvider
             .GetDefaultAdditionalCompilerArgumentsByCompilerType(submission.CompilerType);
 

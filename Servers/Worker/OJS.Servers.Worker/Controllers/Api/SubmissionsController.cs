@@ -73,9 +73,9 @@ public class SubmissionsController : BaseApiController
 
             result.SetExecutionResult(executionResultResponseModel);
         }
-        catch (BusinessServiceException)
+        catch (BusinessServiceException ex)
         {
-            throw;
+            result.SetException(ex, false);
         }
         catch (Exception ex)
         {
