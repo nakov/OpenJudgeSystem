@@ -2,7 +2,6 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable max-len */
-/* eslint-disable no-undefined */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */

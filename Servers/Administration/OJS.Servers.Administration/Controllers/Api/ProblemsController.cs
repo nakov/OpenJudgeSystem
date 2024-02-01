@@ -166,7 +166,7 @@ public class ProblemsController : ApiControllerBase
     }
 
     [HttpPost]
-    [Route("/copyAll")]
+    [Route("copyAll")]
     public async Task<IActionResult> CopyAll(int sourceContestId, int destinationContestId)
     {
         var hasSourceContest = await this.contestsDataService.ExistsById(sourceContestId);

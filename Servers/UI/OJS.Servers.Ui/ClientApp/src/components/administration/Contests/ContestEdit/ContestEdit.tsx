@@ -14,11 +14,11 @@ import { isNaN } from 'lodash';
 import { ContestVariation } from '../../../../common/contest-types';
 import { ExceptionData, IContestAdministration, IContestCategories } from '../../../../common/types';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useCreateContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import ContestDeleteButton from '../delete/ContestDeleteButton';
+import DeleteButton from '../../common/delete/DeleteButton';
 
 // eslint-disable-next-line import/no-unresolved
 import styles from './ContestEdit.module.scss';
@@ -35,6 +35,14 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
+    const [
+        deleteContest,
+        {
+            data: deleteData,
+            isLoading: isDeleting,
+            isSuccess: isSuccesfullyDeleted,
+            error: deleteError,
+        } ] = useDeleteContestMutation();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -610,10 +618,16 @@ const ContestEdit = (props:IContestEditProps) => {
                             </div>
                         )}
                     <Box sx={{ alignSelf: 'flex-end' }}>
-                        <ContestDeleteButton
-                          contestId={contestId!}
-                          contestName={contest.name}
+                        <DeleteButton
+                          id={Number(contestId!)}
+                          name={contest.name}
                           onSuccess={() => navigate('/administration-new/contests')}
+                          deleteRequest={deleteContest}
+                          data={deleteData}
+                          isLoading={isDeleting}
+                          isSuccess={isSuccesfullyDeleted}
+                          error={deleteError}
+                          text="Are you sure that you want to delete the contest."
                         />
                     </Box>
                 </div>

@@ -18,45 +18,9 @@
   }
 }
 
-
 .errorText {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-size: 25px;
   color: red;
   margin: 10px;
-}
-
-.legendBox {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center
-}
-
-.rowColorBox{
-  display: flex;
-  align-items: center;
-  width: 200px;
-  justify-content: flex-start;
-  margin-bottom: 1rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-}
-
-.colorBox {
-  background: #FFA1A1;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-}
-
-.colorSeparator {
-  margin: 0 0.5rem;
-}
-
-.deleted {
-  background: #FFA1A1;
-}
-
-.visible {
-  background: #C0C0C0;
 }

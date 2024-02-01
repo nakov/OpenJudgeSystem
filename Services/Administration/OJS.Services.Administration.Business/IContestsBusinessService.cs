@@ -12,7 +12,7 @@ public interface IContestsBusinessService : IGridDataService<Contest>, IService
 {
     Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 
-    Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>()
+    Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
         where TServiceModel : class;
 
     Task<ContestAdministrationModel> ById(int id);

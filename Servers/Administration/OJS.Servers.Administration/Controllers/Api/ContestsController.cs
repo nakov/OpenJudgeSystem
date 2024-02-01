@@ -103,11 +103,11 @@ public class ContestsController : ApiControllerBase
 
     [HttpGet]
     [Route("CopyAll")]
-    public async Task<IActionResult> GetAllForProblem()
+    public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
         var contests =
             await this.contestsBusinessService
-                .GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+                .GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>(searchString ?? string.Empty);
         return this.Ok(contests);
     }
 

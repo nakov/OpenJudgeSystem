@@ -3,7 +3,7 @@
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
-import { ExceptionData } from '../../../common/types';
+import { ExceptionData, IGetAllAdminParams, IPagedResultType, IProblemGroupsData } from '../../../common/types';
 
 type ExtraOptionsType = {
 // Add extra options if needed
@@ -43,11 +43,27 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 
 // eslint-disable-next-line import/group-exports
 export const problemGroupsAdminService = createApi({
-    reducerPath: 'problemGroupsAdmin',
+    reducerPath: 'problemGroups',
     baseQuery: customBaseQuery,
-    endpoints: (builder) => ({ getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/forProblem' }) }) }),
+    endpoints: (builder) => ({
+        getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/forProblem' }) }),
+        getAllAdminProblemGroups: builder.query<IPagedResultType<IProblemGroupsData>, IGetAllAdminParams>({
+            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+                url: '',
+                params: {
+                    filter,
+                    page,
+                    ItemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+    }),
 });
 
 // eslint-disable-next-line import/group-exports
-export const { useGetProblemGroupsForProblemQuery } = problemGroupsAdminService;
+export const {
+    useGetProblemGroupsForProblemQuery,
+    useGetAllAdminProblemGroupsQuery,
+} = problemGroupsAdminService;
 export default problemGroupsAdminService;

@@ -1,25 +1,26 @@
-// eslint-disable-next-line import/no-unused-modules
 import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton } from '@mui/material';
 
-import { useDeleteContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
-import styles from './ContestDeleteButton.module.scss';
-
-interface IContestDeleteButtonProps {
+interface IDeleteButtonProps {
     onSuccess?: () => void;
-    contestId: number;
-    contestName: string;
+    id: number;
+    name: string;
     style?: object;
+    deleteRequest: any;
+    data: string | undefined;
+    isLoading:boolean;
+    isSuccess:boolean;
+    error: any;
+    text: string;
 }
 
-const ContestDeleteButton = (props:IContestDeleteButtonProps) => {
-    const { onSuccess, contestId, contestName, style } = props;
-    const [ deleteContest, { data, isLoading, isSuccess, error } ] = useDeleteContestMutation();
+const DeleteButton = (props: IDeleteButtonProps) => {
+    const { onSuccess, id, name, style = {}, deleteRequest, data, isLoading, isSuccess, error, text } = props;
     const [ showConfirmDelete, setShowConfirmDelete ] = useState<boolean>(false);
     const [ message, setMessage ] = useState<string | null>(null);
     const confirmDeleteContest = () => {
@@ -60,20 +61,29 @@ const ContestDeleteButton = (props:IContestDeleteButtonProps) => {
                     />
                     )}
                     <IconButton onClick={confirmDeleteContest}>
-                        <DeleteIcon className={styles.button} color="error">Delete</DeleteIcon>
+                        <DeleteIcon
+                          sx={{
+                              width: '1.7rem',
+                              height: '2rem',
+                          }}
+                          color="error"
+                        >
+                            Delete
+                        </DeleteIcon>
                     </IconButton>
                     {showConfirmDelete && (
                     <ConfirmDialog
-                      title={`Delete: ${contestName}`}
-                      text="Are you sure that you want to delete the contest."
+                      title={`Delete: ${name}`}
+                      text={text}
                       confirmButtonText="Delete"
                       declineButtonText="Cancel"
                       onClose={() => setShowConfirmDelete(!showConfirmDelete)}
-                      confirmFunction={() => deleteContest({ id: Number(contestId) })}
+                      confirmFunction={() => deleteRequest({ id })}
                     />
                     )}
                 </div>
             )
     );
 };
-export default ContestDeleteButton;
+
+export default DeleteButton;
