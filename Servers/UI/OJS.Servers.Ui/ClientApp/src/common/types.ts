@@ -210,7 +210,7 @@ interface IIndexProblemsType {
     isDeleted: boolean;
 }
 
-interface IIndexContestsCategoriesType {
+interface IIndexContestCategoriesType {
     id: number;
     name: string;
     parent: string;
@@ -221,6 +221,18 @@ interface IIndexContestsCategoriesType {
     modifiedOn: Date;
     createdOn: Date;
     deletedOn: Date;
+}
+
+interface IContestCategoryAdministration {
+    id: number;
+    name: string;
+    parent: string;
+    parentId: number;
+    isDeleted: boolean;
+    isVisible: boolean;
+    orderBy: number;
+    deletedOn: Date | null;
+    modifiedOn: Date | null;
 }
 
 interface IRegisterForContestResponseType {
@@ -427,5 +439,6 @@ export type {
     IProblemSubmissionType,
     ISubmissionTypeInProblem,
     IContestAutocomplete,
-    IIndexContestsCategoriesType,
+    IIndexContestCategoriesType,
+    IContestCategoryAdministration,
 };

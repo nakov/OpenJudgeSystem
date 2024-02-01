@@ -31,4 +31,49 @@ public class ContestCategoriesController : ApiControllerBase
         var contestsCategories = await this.categoriesBusinessService.GetAll<ContestCategoryInListModel>(model);
         return this.Ok(contestsCategories);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(ContestCategoryAdministrationModel model)
+    {
+        // var validations = await this.validationService.ValidateAsync(this.validator, model);
+        //
+        // if (validations.Errors.Any())
+        // {
+        //     return this.UnprocessableEntity(validations.Errors);
+        // }
+
+        await this.categoriesBusinessService.Create(model);
+        return this.Ok("Contest Category created successfully.");
+    }
+
+    [HttpGet]
+    [Route("GetById/{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        // if (!await this.HasContestPermission(id))
+        // {
+        //     return this.Unauthorized();
+        // }
+
+        var contest = await this.categoriesBusinessService.GetById(id);
+        return this.Ok(contest);
+    }
+
+    [HttpPatch]
+    [Route("{id}")]
+    public async Task<IActionResult> Update(ContestCategoryAdministrationModel model, [FromRoute] int id)
+    {
+        model.Id = id;
+
+        // var validations = await this.validationService.ValidateAsync(this.validator, model);
+        //
+        // if (validations.Errors.Any())
+        // {
+        //     return this.UnprocessableEntity(validations.Errors);
+        // }
+
+        await this.categoriesBusinessService.Edit(model, id);
+
+        return this.Ok("Contest was successfully updated.");
+    }
 }
