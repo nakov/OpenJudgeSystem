@@ -48,8 +48,7 @@ interface IAdministrationGridViewProps<T> {
 
    location: string;
    withSearchParams?: boolean;
-   legendDeleteMessage?: string;
-   legendVisibleMessage?: string;
+   legendProps?: Array<{color: string; message:string}>;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -69,8 +68,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         setSorterStateAction,
         location,
         withSearchParams = true,
-        legendDeleteMessage,
-        legendVisibleMessage,
+        legendProps,
     } = props;
 
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -95,8 +93,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                     <AdministrationSorting searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
                 </div>
                 )}
-                {(legendDeleteMessage || legendVisibleMessage) &&
-                <LegendBox deletedMessage={legendDeleteMessage} visibleMessage={legendVisibleMessage} />}
+                {legendProps &&
+                <LegendBox renders={legendProps} />}
             </div>
         );
     };

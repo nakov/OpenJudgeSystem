@@ -160,7 +160,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
               modals={[]}
               setQueryParams={setQueryParams}
               withSearchParams={false}
-              legendDeleteMessage="Participant is deleted."
+              legendProps={[ { color: '#FFA1A1', message: 'Participant is deleted.' } ]}
             />
         </div>
     );

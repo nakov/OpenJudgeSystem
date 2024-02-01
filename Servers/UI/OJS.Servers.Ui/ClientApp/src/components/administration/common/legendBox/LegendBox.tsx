@@ -1,33 +1,42 @@
 /* eslint-disable import/exports-last */
 /* eslint-disable import/no-unused-modules */
 import React from 'react';
-import { Box } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { Box, List, ListItem, Tooltip } from '@mui/material';
 
 import styles from './LegendBox.module.scss';
 
 interface ILegendBoxProps {
-    deletedMessage?: string;
-    visibleMessage?: string;
+    renders: Array<{color: string; message:string}>;
 }
 
 const LegendBox = (props: ILegendBoxProps) => {
-    const { deletedMessage, visibleMessage } = props;
+    const { renders } = props;
     return (
         <Box className={styles.legendBox}>
-            {deletedMessage && (
-            <Box className={styles.rowColorBox}>
-                <Box className={`${styles.colorBox} ${styles.deleted}`} />
-                <p className={styles.colorSeparator}>-</p>
-                <p>{deletedMessage}</p>
-            </Box>
-            )}
-            {visibleMessage && (
-            <Box className={styles.rowColorBox}>
-                <Box className={`${styles.colorBox} ${styles.visible}`} />
-                <p className={styles.colorSeparator}>-</p>
-                <p>{visibleMessage}</p>
-            </Box>
-            )}
+            <Tooltip
+              color="warning"
+              title={(
+                  <List sx={{ p: 0 }}>
+                      {renders.map((x) => (
+                          <ListItem key={x.message}>
+                              <Box className={styles.legendBox}>
+                                  <Box className={styles.rowColorBox}>
+                                      <Box
+                                        sx={{ backgroundColor: `${x.color} !important` }}
+                                        className={`${styles.colorBox}`}
+                                      />
+                                      <p className={styles.colorSeparator}>-</p>
+                                      <p>{x.message}</p>
+                                  </Box>
+                              </Box>
+                          </ListItem>
+                      ))}
+                  </List>
+)}
+            >
+                <InfoIcon sx={{ width: '35px', height: '35px', marginRight: '3rem' }} />
+            </Tooltip>
         </Box>
     );
 };

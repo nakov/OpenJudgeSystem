@@ -112,8 +112,7 @@ const AdministrationContestsPage = () => {
               { showModal: openShowCreateContestModal, modal: (i) => renderCreateContestModal(i) },
               { showModal: openEditContestModal, modal: (i) => renderEditContestModal(i) },
           ]}
-          legendDeleteMessage="Contest is deleted."
-          legendVisibleMessage="Contest is not visible"
+          legendProps={[ { color: '#FFA1A1', message: 'Contest is deleted.' }, { color: '#C0C0C0', message: 'Contest is not visible' } ]}
         />
     );
 };

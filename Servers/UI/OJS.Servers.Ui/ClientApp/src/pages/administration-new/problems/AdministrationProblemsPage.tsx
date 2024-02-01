@@ -86,7 +86,7 @@ const AdministrationProblemsPage = () => {
               modals={[
                   { showModal: openEditProblemModal, modal: (i) => renderProblemsEditModal(i) },
               ]}
-              legendDeleteMessage="Problem is deleted."
+              legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
             />
         </>
     );

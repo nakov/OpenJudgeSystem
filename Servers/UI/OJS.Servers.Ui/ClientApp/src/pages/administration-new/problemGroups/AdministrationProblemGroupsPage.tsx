@@ -63,7 +63,7 @@ const AdministrationProblemGroupsPage = () => {
           setSorterStateAction={setAdminProblemGroupsSorters}
           location={LOCATION}
           modals={[]}
-          legendDeleteMessage="Probem group is deleted"
+          legendProps={[ { color: '#FFA1A1', message: 'Problem Group is deleted.' } ]}
         />
     );
 };

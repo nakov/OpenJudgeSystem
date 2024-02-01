@@ -286,7 +286,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               setFilterStateAction={setAdminContestsFilters}
               setSorterStateAction={setAdminContestsSorters}
               withSearchParams={false}
-              legendDeleteMessage="Problem is deleted."
+              legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
             />
         </div>
     );
