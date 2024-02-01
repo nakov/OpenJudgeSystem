@@ -1,7 +1,6 @@
 namespace OJS.PubSub.Worker.Models.Submissions;
 
 using AutoMapper;
-using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions.ExecutionDetails;
 using OJS.Workers.Common.Models;
@@ -14,6 +13,8 @@ public class SubmissionForProcessingPubSubModel : IMapExplicitly
     public ExecutionType ExecutionType { get; set; }
 
     public ExecutionStrategyType ExecutionStrategy { get; set; }
+
+    public CompilerType CompilerType { get; set; }
 
     public byte[]? FileContent { get; set; }
 
