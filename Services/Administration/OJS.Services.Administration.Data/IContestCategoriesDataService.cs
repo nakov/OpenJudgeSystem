@@ -14,6 +14,8 @@ namespace OJS.Services.Administration.Data
 
         Task<ContestCategory> GetById(int? id);
 
+        Task<ContestCategory?> GetByIdWithParent(int? id);
+
         Task<string?> GetNameById(int id);
 
         Task<bool> HasContestsById(int id);
