@@ -6,12 +6,11 @@ using System.Linq.Expressions;
 using System.Reflection;
 using SoftUni.Data.Infrastructure.Models;
 
-public class SortingService<TEntity> : ISortingService<TEntity>
-    where TEntity : class, IEntity
+public class SortingService : ISortingService
 {
-    private readonly IFilteringService<TEntity> filteringService;
+    private readonly IFilteringService filteringService;
 
-    public SortingService(IFilteringService<TEntity> filteringService)
+    public SortingService(IFilteringService filteringService)
         => this.filteringService = filteringService;
 
     public virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting)

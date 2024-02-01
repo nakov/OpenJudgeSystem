@@ -48,12 +48,6 @@ internal static class ServiceCollectionExtensions
     private static IServiceCollection AddValidators(this IServiceCollection services) =>
         services.AddValidatorsFromAssemblyContaining<ContestAdministrationModelValidator>(ServiceLifetime.Transient);
 
-    private static IServiceCollection AddGridServices(this IServiceCollection services)
-    {
-        services.AddTransient(typeof(IFilteringService<>), typeof(FilteringService<>));
-        services.AddTransient(typeof(ISortingService<>), typeof(SortingService<>));
+    private static IServiceCollection AddGridServices(this IServiceCollection services) =>
         services.AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));
-
-        return services;
-    }
 }

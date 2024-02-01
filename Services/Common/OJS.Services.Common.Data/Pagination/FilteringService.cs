@@ -10,8 +10,7 @@ using OJS.Services.Common.Models.Pagination;
 using System.Collections.Generic;
 using SoftUni.Data.Infrastructure.Models;
 
-public class FilteringService<TEntity> : IFilteringService<TEntity>
-    where TEntity : class, IEntity
+public class FilteringService : IFilteringService
 {
     public PropertyInfo? GetProperty<T>(string key)
     {
@@ -27,7 +26,7 @@ public class FilteringService<TEntity> : IFilteringService<TEntity>
         return propertyInfo;
     }
 
-    public virtual IQueryable<TModel> ApplyFiltering<TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
+    public virtual IQueryable<TModel> ApplyFiltering<TEntity, TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
     {
         if (!filters.Any())
         {

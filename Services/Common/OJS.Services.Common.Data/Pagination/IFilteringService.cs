@@ -7,9 +7,9 @@ using System.Reflection;
 using SoftUni.Data.Infrastructure.Models;
 using SoftUni.Services.Infrastructure;
 
-public interface IFilteringService<TEntity> : IService
-     where TEntity : class, IEntity
+public interface IFilteringService : IService
 {
      PropertyInfo? GetProperty<T>(string key);
-     IQueryable<TModel> ApplyFiltering<TModel>(IQueryable<TEntity> query, List<FilteringModel> filters);
+
+     IQueryable<TModel> ApplyFiltering<TEntity, TModel>(IQueryable<TEntity> query, List<FilteringModel> filters);
 }

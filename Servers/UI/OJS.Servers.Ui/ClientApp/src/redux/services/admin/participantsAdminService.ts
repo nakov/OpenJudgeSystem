@@ -1,24 +1,17 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable max-len */
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { defaultPathIdentifier } from '../../../common/constants';
 import { IPagedResultType, IParticiapntsInContestView } from '../../../common/types';
 import { IGetByContestId } from '../../../common/url-types';
+import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 // eslint-disable-next-line import/group-exports
 export const participantsAdminService = createApi({
     reducerPath: 'participants',
-    baseQuery: fetchBaseQuery({
-        credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/participants`,
-        prepareHeaders: (headers) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
-        },
-    }),
+    baseQuery: getCustomBaseQuery('participants'),
     endpoints: (builder) => ({
-        getByContestId: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetByContestId>({ query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({ url: `/contest/${contestId}`,
+        getByContestId: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetByContestId>({ query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({ url: `/GetByContestId/${contestId}`,
             params: {
                 filter,
                 page,

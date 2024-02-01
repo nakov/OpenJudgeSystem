@@ -18,7 +18,8 @@ public abstract class BaseAdminApiController<TEntity, TGridModel> : BaseApiContr
 {
     private readonly IGridDataService<TEntity> gridDataService;
 
-    public BaseAdminApiController(IGridDataService<TEntity> gridDataService)
+    public BaseAdminApiController(
+        IGridDataService<TEntity> gridDataService)
         => this.gridDataService = gridDataService;
 
     [HttpGet]

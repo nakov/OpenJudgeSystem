@@ -15,12 +15,12 @@ public class GridDataService<TEntity> : IGridDataService<TEntity>
     where TEntity : class, IEntity
 {
     private readonly IDataService<TEntity> dataService;
-    private readonly ISortingService<TEntity> sortingService;
-    private readonly IFilteringService<TEntity> filteringService;
+    private readonly ISortingService sortingService;
+    private readonly IFilteringService filteringService;
     public GridDataService(
         IDataService<TEntity> dataService,
-        ISortingService<TEntity> sortingService,
-        IFilteringService<TEntity> filteringService)
+        ISortingService sortingService,
+        IFilteringService filteringService)
     {
         this.dataService = dataService;
         this.sortingService = sortingService;
@@ -103,7 +103,7 @@ public class GridDataService<TEntity> : IGridDataService<TEntity>
     {
         var filterAsCollection = this.MapFilterStringToCollection<T>(paginationRequestModel).ToList();
 
-        var mappedQuery = this.filteringService.ApplyFiltering<T>(query, filterAsCollection);
+        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, T>(query, filterAsCollection);
         mappedQuery = this.sortingService.ApplySorting(mappedQuery, paginationRequestModel.Sorting);
 
         var response = await this.ApplyPagination<T>(
