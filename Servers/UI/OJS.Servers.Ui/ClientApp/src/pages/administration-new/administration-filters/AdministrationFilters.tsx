@@ -306,7 +306,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         <div style={{ display: 'flex', margin: '5px 0' }} key={`admin-filter-${idx}`}>
             <CloseIcon className={styles.closeIcon} onClick={() => setAnchor(null)} />
             { idx !== 0 && (
-                <DeleteIcon className={styles.removeFilterButton} onClick={() => removeSingleFilter(idx)} />
+                <DeleteIcon color="error" className={styles.removeFilterButton} onClick={() => removeSingleFilter(idx)} />
             )}
             <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
                 <InputLabel id="column-select-label">Column</InputLabel>
