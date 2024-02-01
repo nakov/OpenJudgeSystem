@@ -126,17 +126,23 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
 
+    const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
         const lastElementOfThePathname = locationPathnameElements[locationPathnameElements.length - 1];
-
+        let pageTitle = '';
         if (!/^\d+$/.test(lastElementOfThePathname)) {
             const section = administrationItems.find((x) => x.path.split('/').pop() === lastElementOfThePathname);
-            setLocationTitle(section!.name.toUpperCase());
+            pageTitle = capitalizeFirstLetter(section!.name);
+            setLocationTitle(pageTitle);
         } else {
-            setLocationTitle(`${locationPathnameElements[locationPathnameElements.length - 2].toUpperCase()}
-             Id: ${lastElementOfThePathname}`);
+            pageTitle = capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]}
+            Id: ${lastElementOfThePathname}`);
+
+            setLocationTitle(pageTitle);
         }
+        document.title = `Administration ${pageTitle}`;
     }, [ location.pathname ]);
 
     const handleDrawerOpen = () => {
