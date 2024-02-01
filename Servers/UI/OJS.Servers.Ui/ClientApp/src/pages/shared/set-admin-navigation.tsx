@@ -142,7 +142,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
 
             setLocationTitle(pageTitle);
         }
-        document.title = `Administration ${pageTitle}`;
+        document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
     const handleDrawerOpen = () => {
