@@ -57,13 +57,15 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
-interface IGetUserSubmissionsUrlParams {
+interface IGetUserSubmissionsForProfileUrlParams {
+    username: string;
     page: number;
 }
 
-interface IGetSubmissionsByContestIdParams {
+interface IGetUserSubmissionsForProfileByContestUrlParams {
+    username: string;
     page: number;
-    contestId: string | string[] | undefined;
+    contestId: string;
 }
 
 interface IGetSubmissionResultsByProblemUrlParams {
@@ -121,17 +123,17 @@ export type {
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
+    IGetUserSubmissionsForProfileByContestUrlParams,
     IDownloadProblemResourceUrlParams,
     IGetSubmissionsUrlParams,
-    IGetUserSubmissionsUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetContestResultsParams,
     IRetestSubmissionUrlParams,
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
+    IGetUserSubmissionsForProfileUrlParams,
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
-    IGetSubmissionsByContestIdParams,
 };

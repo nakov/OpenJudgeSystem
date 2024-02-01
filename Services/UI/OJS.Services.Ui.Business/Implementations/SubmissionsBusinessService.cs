@@ -142,8 +142,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         var currentUser = this.userProviderService.GetCurrentUser();
 
+        //AsNoTracking() Method is added to prevent ''tracking query'' error.
+        //Error is thrown when we map from UserSettings (owned entity) without including the
+        //UserProfile (owner entity) in the query.
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
+            .AsNoTracking()
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
 
@@ -352,21 +356,32 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     //     return Task.CompletedTask;
     // }
 
-    public async Task<IEnumerable<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username)
+    public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page)
     {
         var user = await this.usersBusiness.GetUserProfileByUsername(username);
-        var data = await this.submissionsData
-            .GetQuery()
-            .Include(s => s.Problem)
-            .Include(s => s.TestRuns)
-            .Include(s => s.SubmissionType)
-            .Where(s => s.Participant!.UserId == user!.Id)
-            .Take(40)
-            .OrderByDescending(s => s.CreatedOn)
-            .MapCollection<SubmissionForProfileServiceModel>()
-            .ToListAsync();
 
-        return data;
+        var userParticipantsIds = await this.participantsDataService
+            .GetAllByUser(user!.Id)
+            .Select(p => p.Id)
+                .ToEnumerableAsync();
+
+        return await this.submissionsData
+            .GetLatestSubmissionsByUserParticipations<SubmissionForProfileServiceModel>(
+                userParticipantsIds.MapCollection<int?>(),
+                DefaultSubmissionsPerPage,
+                page);
+    }
+
+    public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId)
+    {
+        var user = await this.usersBusiness.GetUserProfileByUsername(username);
+
+        return await this.submissionsData
+            .GetAllForUserByContest(
+                contestId,
+                user!.Id)
+            .MapCollection<SubmissionForProfileServiceModel>()
+            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
     public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
@@ -559,43 +574,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
 
         return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
-    }
-
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetUsersLastSubmissions(
-        bool? isOfficial,
-        int page)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        var userParticipantsIdsQuery = this.participantsDataService
-            .GetAllByUser(user.Id);
-
-        if (isOfficial.HasValue)
-        {
-            userParticipantsIdsQuery = userParticipantsIdsQuery.Where(p => p.IsOfficial == isOfficial);
-        }
-
-        var ids = await userParticipantsIdsQuery
-            .Select(p => p.Id)
-            .ToEnumerableAsync();
-
-        return await this.submissionsData
-            .GetLatestSubmissionsByUserParticipations<SubmissionForPublicSubmissionsServiceModel>(
-                ids.MapCollection<int?>(),
-                DefaultSubmissionsPerPage,
-                page);
-    }
-
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetByContest(int contestId, int page)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        return await this.submissionsData
-            .GetAllForUserByContest(
-                contestId,
-                user.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
     public Task<int> GetTotalCount()
