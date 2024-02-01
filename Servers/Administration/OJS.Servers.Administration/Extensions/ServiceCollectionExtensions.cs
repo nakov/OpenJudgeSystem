@@ -13,7 +13,9 @@ using SoftUni.Data.Infrastructure.Enumerations;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
 using System.Text.Json.Serialization;
 using FluentValidation;
-using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Administration.Business.Validation.Validators;
+using OJS.Services.Common.Data.Pagination;
+using OJS.Data.Models.Contests;
 
 internal static class ServiceCollectionExtensions
 {
@@ -23,6 +25,7 @@ internal static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
         => services
+            .AddGridServices()
             .AddValidators()
             .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
@@ -44,4 +47,13 @@ internal static class ServiceCollectionExtensions
 
     private static IServiceCollection AddValidators(this IServiceCollection services) =>
         services.AddValidatorsFromAssemblyContaining<ContestAdministrationModelValidator>(ServiceLifetime.Transient);
+
+    private static IServiceCollection AddGridServices(this IServiceCollection services)
+    {
+        services.AddTransient(typeof(IFilteringService<>), typeof(FilteringService<>));
+        services.AddTransient(typeof(ISortingService<>), typeof(SortingService<>));
+        services.AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));
+
+        return services;
+    }
 }

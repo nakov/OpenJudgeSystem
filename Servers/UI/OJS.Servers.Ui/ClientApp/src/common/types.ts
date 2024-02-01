@@ -237,7 +237,6 @@ interface IPagedResultType<TItem> {
     itemsPerPage: number;
     pagesCount: number;
     pageNumber: number;
-    totalCount: number;
     items?: TItem[];
 }
 

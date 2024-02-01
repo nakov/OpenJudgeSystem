@@ -46,10 +46,10 @@ export const problemGroupsAdminService = createApi({
     reducerPath: 'problemGroups',
     baseQuery: customBaseQuery,
     endpoints: (builder) => ({
-        getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/forProblem' }) }),
+        getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/GetForProblem' }) }),
         getAllAdminProblemGroups: builder.query<IPagedResultType<IProblemGroupsData>, IGetAllAdminParams>({
             query: ({ filter, page, ItemsPerPage, sorting }) => ({
-                url: '',
+                url: 'GetAll',
                 params: {
                     filter,
                     page,

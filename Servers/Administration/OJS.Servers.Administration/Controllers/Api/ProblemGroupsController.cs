@@ -2,29 +2,21 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
-using OJS.Services.Common.Models.Pagination;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.ProblemGroups;
+using OJS.Data.Models.Problems;
+using OJS.Services.Common.Data.Pagination;
 
-public class ProblemGroupsController : ApiControllerBase
+public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, ProblemGroupInListModel>
 {
-    private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
-
-    public ProblemGroupsController(IProblemGroupsBusinessService problemGroupsBusinessService)
-        => this.problemGroupsBusinessService = problemGroupsBusinessService;
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
+    public ProblemGroupsController(IGridDataService<ProblemGroup> problemGroupGridDataService)
+        : base(problemGroupGridDataService)
     {
-        var problemGroups = await this.problemGroupsBusinessService.GetAll<ProblemGroupInListModel>(model);
-        return this.Ok(problemGroups);
     }
 
     [HttpGet]
-    [Route("forProblem")]
     public IActionResult GetForProblem() =>
         this.Ok(Enum.GetNames(typeof(ProblemGroupType)).ToList());
 }

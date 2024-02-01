@@ -40,6 +40,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 using Resource = OJS.Common.Resources.ProblemGroupsControllers;
+using OJS.Services.Administration.Business.Contests;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {

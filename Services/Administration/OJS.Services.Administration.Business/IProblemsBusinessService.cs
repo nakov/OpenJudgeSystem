@@ -7,7 +7,7 @@ namespace OJS.Services.Administration.Business
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
 
-    public interface IProblemsBusinessService : IGridDataService<Problem>, IService
+    public interface IProblemsBusinessService : IService
     {
         Task RetestById(int id);
 

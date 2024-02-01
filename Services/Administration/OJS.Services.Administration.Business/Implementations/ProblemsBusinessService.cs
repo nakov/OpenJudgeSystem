@@ -16,7 +16,6 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Administration.Models.Problems;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
-    using OJS.Services.Common.Data.Pagination;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure.Exceptions;
@@ -24,8 +23,9 @@ namespace OJS.Services.Administration.Business.Implementations
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
+    using OJS.Services.Administration.Business.Contests;
 
-    public class ProblemsBusinessService : GridDataService<Problem>, IProblemsBusinessService
+    public class ProblemsBusinessService : IProblemsBusinessService
     {
         private readonly IContestsDataService contestsData;
         private readonly IParticipantScoresDataService participantScoresData;
@@ -53,7 +53,6 @@ namespace OJS.Services.Administration.Business.Implementations
             IContestsBusinessService contestsBusiness,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService,
             IProblemGroupsDataService problemGroupsDataService)
-            : base(problemsData)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;

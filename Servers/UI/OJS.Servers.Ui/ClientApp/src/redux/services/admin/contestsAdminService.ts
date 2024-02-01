@@ -51,7 +51,7 @@ export const contestService = createApi({
     endpoints: (builder) => ({
         getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllAdminParams>({
             query: ({ filter, page, ItemsPerPage, sorting }) => ({
-                url: '',
+                url: '/getAll',
                 params: {
                     filter,
                     page,
@@ -61,10 +61,10 @@ export const contestService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${id}` }), keepUnusedDataFor: 10 }),
-        deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
-        updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
-        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/', method: 'POST', body: contestAdministrationModel }) }),
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/ById/${id}` }), keepUnusedDataFor: 10 }),
+        deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/delete/${id}`, method: 'DELETE' }) }),
+        updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/update${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
+        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/create', method: 'POST', body: contestAdministrationModel }) }),
         getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/copyAll?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
     }),
 });

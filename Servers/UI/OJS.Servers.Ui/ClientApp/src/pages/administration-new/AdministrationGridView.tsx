@@ -112,7 +112,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                         <DataGrid
                           columns={[ ...filterableGridColumnDef, ...notFilterableGridColumnDef ]}
                           rows={data?.items ?? []}
-                          rowCount={data?.totalCount ?? 0}
+                          rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
                           onPageChange={(e) => {
                               setQueryParams({ ...queryParams, page: e + 1 });

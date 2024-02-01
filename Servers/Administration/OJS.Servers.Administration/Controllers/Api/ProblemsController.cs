@@ -11,8 +11,11 @@ using OJS.Services.Administration.Data;
 using OJS.Servers.Administration.Models.Problems;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using OJS.Data.Models.Problems;
+using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Business.Contests;
 
-public class ProblemsController : ApiControllerBase
+public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel>
 {
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
@@ -29,7 +32,9 @@ public class ProblemsController : ApiControllerBase
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
         IContestsDataService contestsDataService,
-        IProblemGroupsBusinessService problemGroupsBusinessService)
+        IProblemGroupsBusinessService problemGroupsBusinessService,
+        IGridDataService<Problem> problemGridDataService)
+            : base(problemGridDataService)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.contestsBusinessService = contestsBusinessService;
@@ -40,15 +45,7 @@ public class ProblemsController : ApiControllerBase
         this.problemGroupsBusinessService = problemGroupsBusinessService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
-    {
-        var problems = await this.problemsBusinessService.GetAll<ProblemsInListModel>(model);
-        return this.Ok(problems);
-    }
-
-    [HttpGet]
-    [Route("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> ById([FromRoute] int id)
     {
         if (id <= 0)
@@ -61,8 +58,7 @@ public class ProblemsController : ApiControllerBase
         return this.Ok(problem);
     }
 
-    [HttpPatch]
-    [Route("{id}")]
+    [HttpPatch("{id:int}")]
     public async Task<IActionResult> Edit(ProblemAdministrationModel model)
     {
         var contest = await this.contestsBusinessService.ById(model.ContestId);
@@ -82,7 +78,7 @@ public class ProblemsController : ApiControllerBase
         return this.Ok("Problem successfully updated.");
     }
 
-    [HttpDelete]
+    [HttpDelete("{id:int}")]
     [Route("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
@@ -112,8 +108,7 @@ public class ProblemsController : ApiControllerBase
         return this.Ok("Problem successfully deleted.");
     }
 
-    [HttpGet]
-    [Route("contest/{contestId}")]
+    [HttpGet("{contestId:int}")]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (!await this.HasContestPermission(contestId))
@@ -122,12 +117,12 @@ public class ProblemsController : ApiControllerBase
         }
 
         return this.Ok(
-            await this.problemsBusinessService
-                .GetAll<ProblemsInListModel>(model, this.problemsDataService.GetAllByContest(contestId)));
+            await this.GetWithFilter<ProblemsInListModel>(
+                model,
+                problem => problem.ProblemGroup.ContestId == contestId));
     }
 
     [HttpPost]
-    [Route("retest")]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
     {
         if (model == null || !await this.problemsDataService.ExistsById(model.Id))
@@ -145,8 +140,7 @@ public class ProblemsController : ApiControllerBase
         return this.Ok("Problem successfully retested.");
     }
 
-    [HttpDelete]
-    [Route("contest/{contestId}")]
+    [HttpDelete("{contestId:int}")]
     public async Task<IActionResult> DeleteAll([FromRoute] int contestId)
     {
         if (!await this.HasContestPermission(contestId))
@@ -166,7 +160,6 @@ public class ProblemsController : ApiControllerBase
     }
 
     [HttpPost]
-    [Route("copyAll")]
     public async Task<IActionResult> CopyAll(int sourceContestId, int destinationContestId)
     {
         var hasSourceContest = await this.contestsDataService.ExistsById(sourceContestId);

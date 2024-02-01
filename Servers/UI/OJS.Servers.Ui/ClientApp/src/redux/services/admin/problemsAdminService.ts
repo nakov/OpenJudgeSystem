@@ -49,7 +49,7 @@ export const problemsAdminService = createApi({
     endpoints: (builder) => ({
         getAllAdminProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetAllAdminParams>({
             query: ({ filter, page, ItemsPerPage, sorting }) => ({
-                url: '',
+                url: 'GetAll',
                 params: {
                     filter,
                     page,
@@ -59,8 +59,8 @@ export const problemsAdminService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/${id}` }) }),
-        deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/${id}`, method: 'DELETE' }) }),
+        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/ById/${id}` }) }),
+        deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
             query: (problem) => ({
                 url: `/${problem.id}`,
@@ -70,7 +70,7 @@ export const problemsAdminService = createApi({
         }),
         getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
             query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({
-                url: `/contest/${contestId}`,
+                url: `/GetByContestId/${contestId}`,
                 params: {
                     filter,
                     page,
@@ -88,13 +88,13 @@ export const problemsAdminService = createApi({
         }),
         deleteByContest: builder.mutation({
             query: (contestId) => ({
-                url: `/contest/${contestId}`,
+                url: `/Delete/${contestId}`,
                 method: 'DELETE',
             }),
         }),
         copyAll: builder.mutation<string, {sourceContestId:number; destinationContestId:number} >({
             query: ({ sourceContestId, destinationContestId }) => ({
-                url: '/copyAll',
+                url: 'copyAll',
                 method: 'POST',
                 body: { sourceContestId, destinationContestId },
             }),

@@ -45,7 +45,7 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 export const submissionTypesAdminService = createApi({
     reducerPath: 'submissionTypes',
     baseQuery: customBaseQuery,
-    endpoints: (builder) => ({ getForProblem: builder.query<Array<ISubmissionTypeInProblem>, null>({ query: () => ({ url: '/problemView' }) }) }),
+    endpoints: (builder) => ({ getForProblem: builder.query<Array<ISubmissionTypeInProblem>, null>({ query: () => ({ url: '/GetForProblem' }) }) }),
 });
 
 // eslint-disable-next-line import/group-exports

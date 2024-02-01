@@ -12,9 +12,8 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common.Models;
     using Resource = OJS.Common.Resources.ProblemGroupsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
-    using OJS.Services.Common.Data.Pagination;
 
-    public class ProblemGroupsBusinessService : GridDataService<ProblemGroup>, IProblemGroupsBusinessService
+    public class ProblemGroupsBusinessService : IProblemGroupsBusinessService
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;
@@ -34,7 +33,6 @@ namespace OJS.Services.Administration.Business.Implementations
             IOrderableService<Problem> problemsOrderableService,
             IOrderableService<ProblemGroup> problemGroupsOrderableService,
             ITestsDataService testsData)
-            : base(problemGroupsData)
         {
             this.problemGroupsData = problemGroupsData;
             this.contestsData = contestsData;

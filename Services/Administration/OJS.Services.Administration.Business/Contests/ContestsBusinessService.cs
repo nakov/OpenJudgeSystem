@@ -1,24 +1,21 @@
-namespace OJS.Services.Administration.Business.Implementations;
+namespace OJS.Services.Administration.Business.Contests;
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Contests;
-using OJS.Services.Administration.Data;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using OJS.Services.Common.Data.Pagination;
-using OJS.Services.Administration.Models.Contests;
-using System;
-using OJS.Services.Administration.Models.Problems;
 using OJS.Data.Models;
+using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Exceptions;
-using FluentExtensions.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-public class ContestsBusinessService : GridDataService<Contest>, IContestsBusinessService
+public class ContestsBusinessService : IContestsBusinessService
 {
     private const int NumberOfContestsToGet = 20;
     private readonly IContestsDataService contestsData;
@@ -33,7 +30,6 @@ public class ContestsBusinessService : GridDataService<Contest>, IContestsBusine
         IIpsDataService ipsData,
         IContestsActivityService activityService,
         IParticipantsDataService participantsData)
-        : base(contestsData)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;

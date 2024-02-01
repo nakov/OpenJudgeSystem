@@ -58,7 +58,7 @@ const DROPDOWN_OPERATORS = {
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Equals Not Equals', value: 'equalsnotequals' },
+        { name: 'Not Equals', value: 'notequals' },
     ],
     [FilterColumnTypeEnum.DATE]: [
         { name: 'Test', value: 'test' },

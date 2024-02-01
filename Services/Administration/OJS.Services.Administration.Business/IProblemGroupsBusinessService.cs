@@ -6,7 +6,7 @@ namespace OJS.Services.Administration.Business
     using SoftUni.Services.Infrastructure;
     using OJS.Services.Common.Data.Pagination;
 
-    public interface IProblemGroupsBusinessService : IGridDataService<ProblemGroup>, IService
+    public interface IProblemGroupsBusinessService : IService
     {
         Task<ServiceResult> DeleteById(int id);
 

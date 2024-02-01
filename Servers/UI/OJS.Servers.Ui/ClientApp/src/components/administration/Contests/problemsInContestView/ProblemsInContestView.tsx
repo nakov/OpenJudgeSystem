@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
@@ -161,7 +162,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     const renderCopyAllModal = (index: number) => (
-        <Modal key={index} open={showCopyAllModal && problemsData!.totalCount > 0} onClose={() => setShowCopyAllModal(!showCopyAllModal)}>
+        <Modal key={index} open={showCopyAllModal && problemsData!.totalItemsCount > 0} onClose={() => setShowCopyAllModal(!showCopyAllModal)}>
             <Box sx={modalStyles}>
                 <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
                 <Autocomplete

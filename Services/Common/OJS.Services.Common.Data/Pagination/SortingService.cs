@@ -4,11 +4,17 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Collections.Generic;
+using SoftUni.Data.Infrastructure.Models;
 
-public abstract class SortingService<TEntity> : FilteringService<TEntity>
+public class SortingService<TEntity> : ISortingService<TEntity>
+    where TEntity : class, IEntity
 {
-    protected virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting)
+    private readonly IFilteringService<TEntity> filteringService;
+
+    public SortingService(IFilteringService<TEntity> filteringService)
+        => this.filteringService = filteringService;
+
+    public virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting)
     {
         if (string.IsNullOrEmpty(sorting))
         {
@@ -23,7 +29,7 @@ public abstract class SortingService<TEntity> : FilteringService<TEntity>
             var key = sortArgs[0];
             var sortingDirection = sortArgs[1];
 
-            var sortingProperty = GetProperty<TModel>(key);
+            var sortingProperty = this.filteringService.GetProperty<TModel>(key);
 
             if (sortingProperty is null)
             {
