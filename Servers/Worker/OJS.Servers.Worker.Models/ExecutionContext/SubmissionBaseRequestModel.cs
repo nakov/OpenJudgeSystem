@@ -20,6 +20,8 @@
         [Required]
         public string? ExecutionStrategy { get; set; }
 
+        public string? CompilerType { get; set; }
+
         [Required]
         public TExecutionDetails ExecutionDetails { get; set; } = default!;
 
@@ -45,6 +47,9 @@
                     m => m.ExecutionStrategy,
                     opt => opt.MapFrom<ExecutionStrategyValueResolver, string>(src
                         => src.ExecutionStrategy ?? string.Empty))
+                .ForMember(
+                    m => m.CompilerType,
+                    opt => opt.MapFrom<CompilerTypeMemberValueResolver, string?>(src => src.CompilerType))
                 .ForMember(
                     m => m.SimpleExecutionDetails,
                     opt => opt.MapFrom(src =>

@@ -3,6 +3,11 @@ name: Deploy PROD All
 on:
   workflow_dispatch:
     inputs:
+      branch_name:
+        description: 'The branch that will be deployed'
+        required: true
+        default: "v2"
+        type: string
       docker_image_tag:
         description: 'The docker tag that will be pushed when the selected Branch is build'
         required: true
@@ -12,20 +17,24 @@ jobs:
   build-and-deploy-admin:
     uses: ./.github/workflows/admin-prod-deploy.yml
     with:
+      branch_name: ${{ inputs.branch_name }}
       docker_image_tag: ${{ inputs.docker_image_tag }}
     secrets: inherit
   build-and-deploy-ui:
     uses: ./.github/workflows/ui-prod-deploy.yml
     with:
+      branch_name: ${{ inputs.branch_name }}
       docker_image_tag: ${{ inputs.docker_image_tag }}
     secrets: inherit
   build-and-deploy-fe:
     uses: ./.github/workflows/fe-prod-deploy.yml
     with:
+      branch_name: ${{ inputs.branch_name }}
       docker_image_tag: ${{ inputs.docker_image_tag }}
     secrets: inherit
   build-and-deploy-worker:
     uses: ./.github/workflows/worker-prod-deploy.yml
     with:
+      branch_name: ${{ inputs.branch_name }}
       docker_image_tag: ${{ inputs.docker_image_tag }}
     secrets: inherit
