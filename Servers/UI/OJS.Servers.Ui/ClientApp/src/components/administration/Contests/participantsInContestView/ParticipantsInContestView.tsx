@@ -67,7 +67,8 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
             type: 'number',
             filterable: false,
             sortable: false,
-            flex: 0,
+            flex: 0.5,
+            valueFormatter: (params) => params.value.toString(),
         },
         {
             field: 'userName',

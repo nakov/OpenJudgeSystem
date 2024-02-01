@@ -104,7 +104,7 @@ public class ContestAdministrationModel : IMapExplicitly
             .ForMember(crm => crm.Duration, opt
                 => opt.MapFrom(c => c.Duration))
             .ForMember(crm => crm.NumberOfProblemGroups, opt
-                => opt.MapFrom(c => c.ProblemGroups.Count))
+                => opt.MapFrom(c => c.NumberOfProblemGroups))
             .ForMember(crm => crm.AllowedIps, opt
                 => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
 
@@ -147,7 +147,7 @@ public class ContestAdministrationModel : IMapExplicitly
             .ForMember(crm => crm.Category, opt
                 => opt.Ignore())
             .ForMember(crm => crm.NumberOfProblemGroups, opt
-                => opt.Ignore())
+                => opt.MapFrom(c => c.NumberOfProblemGroups))
             .ForMember(crm => crm.LecturersInContests, opt
                 => opt.Ignore())
             .ForMember(crm => crm.Questions, opt
@@ -214,16 +214,7 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
                 => ValidateOnlineContestProblemGroups(model))
             .When(model => model.Id > 0)
             .WithName("Number of problem groups")
-            .NotNull()
-            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
-
-        this.RuleFor(model => model)
-            .Must((model, cancellation)
-                => ValidateOnlineContestProblemGroups(model))
-            .When(model => model.Id > 0)
-            .WithName("Number of problem groups")
-            .NotNull()
-            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
+            .WithMessage($"The Number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
     }
 
     private static bool ValidateOnlineContestProblemGroups(ContestAdministrationModel model)

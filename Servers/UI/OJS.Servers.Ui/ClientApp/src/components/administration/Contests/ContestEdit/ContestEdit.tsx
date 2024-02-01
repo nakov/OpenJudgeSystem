@@ -64,6 +64,8 @@ const ContestEdit = (props:IContestEditProps) => {
         practiceStartTime: null,
         startTime: null,
         type: 'Exercise',
+        numberOfProblemGroups: 0,
+        duration: '',
     });
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
@@ -161,6 +163,8 @@ const ContestEdit = (props:IContestEditProps) => {
             autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
+            numberOfProblemGroups,
+            duration,
         } = contest;
         const currentContestValidations = contestValidations;
         // eslint-disable-next-line default-case
@@ -267,6 +271,16 @@ const ContestEdit = (props:IContestEditProps) => {
                 categoryName = category.name;
             }
             break;
+        case 'numberOfProblemGroups':
+            if (value) {
+                numberOfProblemGroups = Number(value);
+            }
+            break;
+        case 'duration':
+            if (value) {
+                duration = value;
+            }
+            break;
         }
         setContestValidations(currentContestValidations);
         setContest((prevState) => ({
@@ -289,6 +303,8 @@ const ContestEdit = (props:IContestEditProps) => {
             autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
+            numberOfProblemGroups,
+            duration,
         }));
         validateForm();
     };
@@ -413,6 +429,16 @@ const ContestEdit = (props:IContestEditProps) => {
                               // eslint-disable-next-line max-len
                                   helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
                                 />
+                                <TextField
+                                  className={styles.inputRow}
+                                  type="number"
+                                  label="Number of problem groups"
+                                  variant="standard"
+                                  value={contest.numberOfProblemGroups}
+                                  onChange={(e) => onChange(e)}
+                                  InputLabelProps={{ shrink: true }}
+                                  name="numberOfProblemGroups"
+                                />
                             </Box>
                             <Box>
                                 <TextField
@@ -460,6 +486,16 @@ const ContestEdit = (props:IContestEditProps) => {
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
                                   name="allowedIps"
+                                />
+                                <TextField
+                                  className={styles.inputRow}
+                                  type="string"
+                                  label="Duration"
+                                  variant="standard"
+                                  value={contest.duration}
+                                  onChange={(e) => onChange(e)}
+                                  InputLabelProps={{ shrink: true }}
+                                  name="duration"
                                 />
                             </Box>
                         </Box>
@@ -510,7 +546,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
                               value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
                               options={contestCategories!}
-                              renderInput={(params) => <TextField {...params} label="Select Option" key={params.id} />}
+                              renderInput={(params) => <TextField {...params} label="Select Category" key={params.id} />}
                               getOptionLabel={(option) => option?.name}
                               renderOption={(properties, option) => (
                                   <MenuItem {...properties} key={option.id} value={option.id}>

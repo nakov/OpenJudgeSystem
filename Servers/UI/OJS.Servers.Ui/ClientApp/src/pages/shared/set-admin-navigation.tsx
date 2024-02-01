@@ -162,7 +162,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                         <ChevronLeftIcon />
                     </IconButton>
                 )}
-            <Box sx={{ display: 'flex', zIndex: 5000 }}>
+            <Box sx={{ display: 'flex', zIndex: 0 }}>
                 <AppBar position="fixed" open={open}>
                     <Toolbar>
                         <div className={styles.adminHeaderWrapper}>

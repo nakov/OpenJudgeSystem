@@ -338,6 +338,8 @@ interface IContestAdministration {
     autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
     allowedIps: string;
+    numberOfProblemGroups: number;
+    duration: string;
 }
 interface IContestAutocomplete {
     id: number;

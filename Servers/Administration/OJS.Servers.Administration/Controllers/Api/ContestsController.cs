@@ -8,7 +8,8 @@ using OJS.Services.Common.Models.Pagination;
 using System.Linq;
 using OJS.Services.Common.Validation;
 using OJS.Services.Administration.Models.Contests.Problems;
-
+using OJS.Common.Exceptions;
+using System.Collections.Generic;
 public class ContestsController : ApiControllerBase
 {
     private readonly IContestsBusinessService contestsBusinessService;
