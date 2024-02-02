@@ -33,12 +33,18 @@ export const submissionsAdminService = createApi({
                     ItemsPerPage,
                     sorting,
                 } }) }),
+        retest: builder.mutation({
+            query: (submissionId) => ({
+                url: `/retest/${submissionId}`,
+                method: 'POST',
+            }) }),
     }),
 });
 
 // eslint-disable-next-line import/group-exports
 export const {
     useGetAllSubmissionsQuery,
+    useRetestMutation,
 } = submissionsAdminService;
 
 export default submissionsAdminService;

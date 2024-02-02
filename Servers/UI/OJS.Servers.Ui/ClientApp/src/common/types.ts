@@ -349,6 +349,10 @@ interface ISubmissionsAdminGridViewType {
     participant: IParticipantType;
     problem: IProblemSimpleType;
     submissionType: ISubmissionTypeSimpleType;
+    createdOn: Date;
+    modifiedOn: Date;
+    startedExecutionOn: Date;
+    completedExecutionOn: Date;
 }
 
 interface IParticipantType {

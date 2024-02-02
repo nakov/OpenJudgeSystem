@@ -17,8 +17,11 @@ public class SubmissionsController : ApiControllerBase
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
         var contest = await this.submissionsBusinessService
-            .GetAll<SubmissionAdministrationServiceModel>();
+            .GetAll<SubmissionAdministrationServiceModel>(model);
 
         return this.Ok(contest);
     }
+
+    [Route("/retest/{id}")]
+    public async Task<IActionResult> Retest([FromQuery] int id) => await Task.FromResult(this.Ok(id));
 }

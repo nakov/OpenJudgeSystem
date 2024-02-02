@@ -3,16 +3,17 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
+import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import { setAdminSubmissionsFilters, setAdminSubmissionsSorters } from '../../../redux/features/admin/submissionsAdminSlice';
-import { useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsAdminService';
+import { useGetAllSubmissionsQuery, useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
-import dataColumns from './grid-col-def';
+import dataColumns from './admin-submissions-grid-def';
 
 export const AdministrationSubmissionsPage = () => {
     const [ searchParams ] = useSearchParams();
@@ -32,6 +33,8 @@ export const AdministrationSubmissionsPage = () => {
         error,
     } = useGetAllSubmissionsQuery(queryParams);
 
+    const [ retest ] = useRetestMutation();
+
     const nonFilterableColumns: GridColDef[] = [
         {
             field: 'actions',
@@ -44,7 +47,11 @@ export const AdministrationSubmissionsPage = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                   <p>No actions available</p>
+                    <IconButton
+                      onClick={() => retest(Number(params.row.id))}
+                    >
+                        Retest
+                    </IconButton>
                 </div>
             ),
         },

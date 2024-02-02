@@ -1,11 +1,11 @@
 namespace OJS.Services.Administration.Models.Submissions;
 
-using AutoMapper;
+using System;
 using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Administration.Models.SubmissionTypes;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SubmissionAdministrationServiceModel : IMapFrom<Submission>
 {
@@ -20,6 +20,14 @@ public class SubmissionAdministrationServiceModel : IMapFrom<Submission>
     public string? ProcessingComment { get; set; }
 
     public int Points { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime ModifiedOn { get; set; }
+
+    public DateTime StartedExecutionOn { get; set; }
+
+    public DateTime CompletedExecutionOn { get; set; }
 
     public ParticipantServiceModel Participant { get; set; } = null!;
 

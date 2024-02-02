@@ -1,4 +1,11 @@
-import { GridColDef } from '@mui/x-data-grid';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
+import ShortcutIcon from '@mui/icons-material/Shortcut';
+import { IconButton } from '@mui/material';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+
+import ContestDeleteButton from '../../../components/administration/Contests/delete/ContestDeleteButton';
 
 const dataColumns: GridColDef[] = [
     {
@@ -88,6 +95,46 @@ const dataColumns: GridColDef[] = [
         filterable: true,
         sortable: true,
         valueGetter: (params) => params.row?.submissionType?.name,
+    },
+    {
+        field: 'createdOn',
+        headerName: 'Created On',
+        align: 'center',
+        type: 'dateTime',
+        width: 200,
+        filterable: true,
+        sortable: true,
+        valueGetter: (params) => params.row?.createdOn,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: 'Modified On',
+        align: 'center',
+        type: 'dateTime',
+        width: 200,
+        filterable: true,
+        sortable: true,
+        valueGetter: (params) => params.row?.modifiedOn,
+    },
+    {
+        field: 'startedExecutionOn',
+        headerName: 'Started Execution On',
+        align: 'center',
+        type: 'dateTime',
+        width: 200,
+        filterable: true,
+        sortable: true,
+        valueGetter: (params) => params.row?.startedExecutionOn,
+    },
+    {
+        field: 'completedExecutionOn',
+        headerName: 'Completed Execution On',
+        align: 'center',
+        type: 'dateTime',
+        width: 200,
+        filterable: true,
+        sortable: true,
+        valueGetter: (params) => params.row?.completedExecutionOn,
     },
 ];
 
