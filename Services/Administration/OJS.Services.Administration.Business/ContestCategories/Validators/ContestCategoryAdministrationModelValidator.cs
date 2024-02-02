@@ -1,8 +1,8 @@
 ﻿namespace OJS.Services.Administration.Business.ContestCategories.Validators;
 
-using OJS.Data.Models.Contests;
+using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Common.Validation;
 
-public class ContestCategoryAdministrationModelValidator : BaseValidator<ContestCategory>
+public class ContestCategoryAdministrationModelValidator : BaseValidator<ContestCategoriesAdministrationModel>
 {
 }

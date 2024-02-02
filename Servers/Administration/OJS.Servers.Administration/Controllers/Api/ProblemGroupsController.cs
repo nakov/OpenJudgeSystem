@@ -3,14 +3,13 @@
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
 using OJS.Services.Administration.Models.ProblemGroups;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Data.Pagination;
 using System;
 using System.Linq;
+using OJS.Services.Administration.Business.ProblemGroups.Permissions;
 
 public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
 {
@@ -18,12 +17,14 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, Prob
         IGridDataService<ProblemGroup> problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         ProblemGroupsAdministrationModelValidator validator,
-        ProblemGroupsDeleteValidator deleteValidator)
+        ProblemGroupsDeleteValidator deleteValidator,
+        IProblemGroupsPermissionsService permissionsService)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,
             validator,
-            deleteValidator)
+            deleteValidator,
+            permissionsService)
     {
     }
 

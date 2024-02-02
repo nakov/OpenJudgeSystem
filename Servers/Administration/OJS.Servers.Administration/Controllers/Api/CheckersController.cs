@@ -2,14 +2,14 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Checkers;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Checkers;
+using OJS.Services.Administration.Business.Checkers.Permissions;
 using OJS.Services.Administration.Business.Checkers.Validators;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Validation;
+using OJS.Services.Administration.Models.Checkers;
 using OJS.Services.Common.Data.Pagination;
 
-public class CheckersController : BaseAdminApiController<Checker, Checker, Checker>
+public class CheckersController : BaseAdminApiController<Checker, Checker, CheckerAdministrationModel>
 {
     private readonly ICheckersDataService checkersDataService;
 
@@ -18,12 +18,14 @@ public class CheckersController : BaseAdminApiController<Checker, Checker, Check
         IGridDataService<Checker> checkerGridDataService,
         ICheckersBusinessService checkersBusinessService,
         CheckerAdministrationModelValidator validator,
-        CheckerDeleteValidator deleteValidator)
+        CheckerDeleteValidator deleteValidator,
+        ICheckersPermissionService permissionService)
     : base(
         checkerGridDataService,
         checkersBusinessService,
         validator,
-        deleteValidator)
+        deleteValidator,
+        permissionService)
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]

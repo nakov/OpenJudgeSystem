@@ -4,19 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common;
 using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
 using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
+using OJS.Services.Administration.Business.Problems.Permissions;
 
 public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel, ProblemAdministrationModel>
 {
@@ -38,12 +37,14 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IGridDataService<Problem> problemGridDataService,
         ProblemAdministrationModelValidator validator,
-        ProblemsDeleteValidator deleteValidator)
+        ProblemsDeleteValidator deleteValidator,
+        IProblemsPermissionsService permissionsService)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
                 validator,
-                deleteValidator)
+                deleteValidator,
+                permissionsService)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.contestsBusinessService = contestsBusinessService;

@@ -2,11 +2,10 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.SubmissionTypes;
+using OJS.Services.Administration.Business.SubmissionTypes.Permissions;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Models.SubmissionTypes;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Data.Pagination;
 using System.Threading.Tasks;
 
@@ -18,12 +17,14 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
         SubmissionTypesAdministrationModelValidator validator,
-        SubmissionTypesDeleteValidator deleteValidator)
+        SubmissionTypesDeleteValidator deleteValidator,
+        ISubmissionTypesPermissionsService permissionsService)
             : base(
                 submissionTypesGridDataService,
                 submissionTypesBusinessService,
                 validator,
-                deleteValidator) =>
+                deleteValidator,
+                permissionsService) =>
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]

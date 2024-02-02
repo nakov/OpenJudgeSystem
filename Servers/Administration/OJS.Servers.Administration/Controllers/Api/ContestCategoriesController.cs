@@ -2,17 +2,16 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ContestCategories;
+using OJS.Services.Administration.Business.ContestCategories.Permissions;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Data.Pagination;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
-public class ContestCategoriesController : BaseAdminApiController<ContestCategory, ContestCategoriesInContestView, ContestCategory>
+public class ContestCategoriesController : BaseAdminApiController<ContestCategory, ContestCategoriesInContestView, ContestCategoriesAdministrationModel>
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;
 
@@ -21,12 +20,14 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         IGridDataService<ContestCategory> contestCategoryGridDataService,
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
-        ContestCategoryDeleteValidator deleteValidator)
+        ContestCategoryDeleteValidator deleteValidator,
+        IContestCategoriesPermissionsService permissionsService)
     : base(
         contestCategoryGridDataService,
         contestCategoriesBusinessService,
         validator,
-        deleteValidator)
+        deleteValidator,
+        permissionsService)
         => this.contestCategoriesDataService = contestCategoriesDataService;
 
     [HttpGet]

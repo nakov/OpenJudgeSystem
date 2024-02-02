@@ -24,22 +24,30 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     private readonly IAdministrationOperationService<TEntity, TUpdateModel> operationService;
     private readonly BaseValidator<TUpdateModel> validator;
     private readonly BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator;
+    private readonly IPermissionsService<TUpdateModel> permissionsService;
 
     protected BaseAdminApiController(
         IGridDataService<TEntity> gridDataService,
         IAdministrationOperationService<TEntity, TUpdateModel> operationService,
         BaseValidator<TUpdateModel> validator,
-        BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator)
+        BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator,
+        IPermissionsService<TUpdateModel> permissionsService)
     {
         this.gridDataService = gridDataService;
         this.operationService = operationService;
         this.validator = validator;
         this.deleteValidator = deleteValidator;
+        this.permissionsService = permissionsService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
+        if (!this.permissionsService.HasReadPermission())
+        {
+            return this.Unauthorized();
+        }
+
         var contest = await this.gridDataService.GetAll<TGridModel>(model);
         return this.Ok(contest);
     }
@@ -47,6 +55,11 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpGet("{id:int}")]
     public virtual async Task<IActionResult> Get(int id)
     {
+        if (!this.permissionsService.HasReadPermission())
+        {
+            return this.Unauthorized();
+        }
+
         var result = await this.operationService.Get(id);
         return this.Ok(result);
     }
@@ -54,6 +67,11 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpPost]
     public virtual async Task<IActionResult> Create(TUpdateModel model)
     {
+        if (!this.permissionsService.HasCreatePermission())
+        {
+            return this.Unauthorized();
+        }
+
         var validationResult = await this.validator.ExecuteValidation(model);
 
         if (!validationResult.IsValid)
@@ -68,6 +86,11 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpPatch]
     public virtual async Task<IActionResult> Edit(TUpdateModel model)
     {
+        if (!this.permissionsService.HasUpdatePermission(model))
+        {
+            return this.Unauthorized();
+        }
+
         var validationResult = await this.validator.ExecuteValidation(model);
 
         if (!validationResult.IsValid)
@@ -82,6 +105,11 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpDelete("{id:int}")]
     public virtual async Task<IActionResult> Delete(int id)
     {
+        if (!this.permissionsService.HasDeletePermission(id))
+        {
+            return this.Unauthorized();
+        }
+
         var validationResult =
             await this.deleteValidator.ExecuteValidation(new BaseDeleteValidationModel { Id = id });
 
