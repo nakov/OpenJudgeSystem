@@ -25,11 +25,11 @@ export const contestService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/ById/${id}` }), keepUnusedDataFor: 10 }),
-        deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/delete/${id}`, method: 'DELETE' }) }),
-        updateContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ id, ...contestAdministrationModel }) => ({ url: `/update${id}`, method: 'PATCH', body: contestAdministrationModel }) }),
-        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/create', method: 'POST', body: contestAdministrationModel }) }),
-        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/copyAll?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/Get/${id}` }), keepUnusedDataFor: 10 }),
+        deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+        updateContest: builder.mutation<string, IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/Edit', method: 'PATCH', body: contestAdministrationModel }) }),
+        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/Create', method: 'POST', body: contestAdministrationModel }) }),
+        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/CopyAll?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
     }),
 });
 

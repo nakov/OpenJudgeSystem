@@ -1,16 +1,13 @@
-namespace OJS.Services.Administration.Business.Implementations
+namespace OJS.Services.Administration.Business.Problems
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Transactions;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Enumerations;
     using OJS.Common.Helpers;
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
+    using OJS.Services.Administration.Business.Contests;
+    using OJS.Services.Administration.Business.ProblemGroups;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
     using OJS.Services.Administration.Models.Problems;
@@ -20,12 +17,16 @@ namespace OJS.Services.Administration.Business.Implementations
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
     using OJS.Services.Infrastructure.Exceptions;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Transactions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
-    using OJS.Services.Administration.Business.Contests;
 
-    public class ProblemsBusinessService : IProblemsBusinessService
+    public class ProblemsBusinessService : AdministrationOperationService<Problem, ProblemAdministrationModel>, IProblemsBusinessService
     {
         private readonly IContestsDataService contestsData;
         private readonly IParticipantScoresDataService participantScoresData;
@@ -68,7 +69,7 @@ namespace OJS.Services.Administration.Business.Implementations
             this.problemGroupsDataService = problemGroupsDataService;
         }
 
-        public async Task DeleteById(int id)
+        public override async Task Delete(int id)
         {
             var problem = this.problemsData
                 .GetByIdQuery(id)
@@ -104,7 +105,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 .GetAllByContest(contestId)
                 .Select(p => p.Id)
                 .ToList()
-                .ForEachSequential(async id => await this.DeleteById(id));
+                .ForEachSequential(async id => await this.Delete(id));
 
         public async Task<ServiceResult> CopyToContestByIdByContestAndProblemGroup(int id, int contestId, int? problemGroupId)
         {
@@ -151,7 +152,7 @@ namespace OJS.Services.Administration.Business.Implementations
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
 
-        public async Task<ProblemAdministrationModel> ById(int id)
+        public override async Task<ProblemAdministrationModel> Get(int id)
         {
             var problem = await this.problemsData.GetByIdQuery(id)
                 .Include(stp => stp.SubmissionTypesInProblems)
@@ -166,7 +167,7 @@ namespace OJS.Services.Administration.Business.Implementations
             return problem.Map<ProblemAdministrationModel>();
         }
 
-        public async Task Edit(ProblemAdministrationModel model)
+        public override async Task<ProblemAdministrationModel> Edit(ProblemAdministrationModel model)
         {
             if (!model.Id.HasValue)
             {
@@ -196,6 +197,7 @@ namespace OJS.Services.Administration.Business.Implementations
 
             this.problemsData.Update(problem);
             await this.problemsData.SaveChanges();
+            return model;
         }
 
         public async Task RetestById(int id)

@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Business.Validation.Validators;
+﻿namespace OJS.Services.Administration.Business.Contests.Validators;
 
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;

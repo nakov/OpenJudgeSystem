@@ -1,12 +1,5 @@
 namespace OJS.Servers.Administration.Controllers;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
@@ -15,6 +8,7 @@ using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
@@ -26,7 +20,10 @@ using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.ProblemGroups;
+using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
@@ -37,10 +34,15 @@ using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 using Resource = OJS.Common.Resources.ProblemGroupsControllers;
-using OJS.Services.Administration.Business.Contests;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {

@@ -4,9 +4,7 @@ using OJS.Services.Common;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Problems;
-using OJS.Common.Exceptions;
 using OJS.Services.Administration.Data;
 using OJS.Servers.Administration.Models.Problems;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +12,10 @@ using System.Linq;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Business.ProblemGroups;
 
-public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel>
+public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel, ProblemAdministrationModel>
 {
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
@@ -33,8 +33,12 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         IContestsActivityService contestsActivityService,
         IContestsDataService contestsDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        IGridDataService<Problem> problemGridDataService)
-            : base(problemGridDataService)
+        IGridDataService<Problem> problemGridDataService,
+        ProblemAdministrationModelValidator validator)
+            : base(
+                problemGridDataService,
+                problemsBusinessService,
+                validator)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.contestsBusinessService = contestsBusinessService;
@@ -45,42 +49,40 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         this.problemGroupsBusinessService = problemGroupsBusinessService;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> ById([FromRoute] int id)
-    {
-        if (id <= 0)
-        {
-            return this.BadRequest(new ExceptionResponseModel(id.ToString(), "Invalid problem id"));
-        }
+    // [HttpGet("{id:int}")]
+    // public async Task<IActionResult> ById([FromRoute] int id)
+    // {
+    //     if (id <= 0)
+    //     {
+    //         return this.BadRequest(new ExceptionResponseModel(id.ToString(), "Invalid problem id"));
+    //     }
+    //
+    //     var problem = await this.problemsBusinessService.Get(id);
+    //
+    //     return this.Ok(problem);
+    // }
+    //
+    // [HttpPatch("{id:int}")]
+    // public async Task<IActionResult> Edit(ProblemAdministrationModel model)
+    // {
+    //     var contest = await this.contestsBusinessService.Get(model.ContestId);
+    //
+    //     if (contest is null)
+    //     {
+    //         return this.NotFound($"Cannot update problem: Contest with id {model.ContestId} not found");
+    //     }
+    //
+    //     if (!await this.HasContestPermission(contest.Id))
+    //     {
+    //         return this.Unauthorized();
+    //     }
+    //
+    //     await this.problemsBusinessService.Edit(model);
+    //
+    //     return this.Ok("Problem successfully updated.");
+    // }
 
-        var problem = await this.problemsBusinessService.ById(id);
-
-        return this.Ok(problem);
-    }
-
-    [HttpPatch("{id:int}")]
-    public async Task<IActionResult> Edit(ProblemAdministrationModel model)
-    {
-        var contest = await this.contestsBusinessService.ById(model.ContestId);
-
-        if (contest is null)
-        {
-            return this.NotFound($"Cannot update problem: Contest with id {model.ContestId} not found");
-        }
-
-        if (!await this.HasContestPermission(contest.Id))
-        {
-            return this.Unauthorized();
-        }
-
-        await this.problemsBusinessService.Edit(model);
-
-        return this.Ok("Problem successfully updated.");
-    }
-
-    [HttpDelete("{id:int}")]
-    [Route("{id}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public override async Task<IActionResult> Delete([FromRoute] int id)
     {
         var currentProblem = this.problemsDataService.GetByIdQuery(id)
             .Include(x => x.ProblemGroup)
@@ -103,9 +105,7 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
             return this.UnprocessableEntity("Cannot delete problem from an active contest.");
         }
 
-        await this.problemsBusinessService.DeleteById(currentProblem.Id);
-
-        return this.Ok("Problem successfully deleted.");
+        return this.Ok(base.Delete(id));
     }
 
     [HttpGet("{contestId:int}")]

@@ -6,12 +6,21 @@ using OJS.Services.Administration.Models.Contests.Participants;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Common.Validation;
+using OJS.Services.Administration.Business.Participants;
+using OJS.Services.Administration.Business.Participants.Validators;
+using OJS.Services.Administration.Models.Participants;
 
-public class ParticipantsController : BaseAdminApiController<Participant, ContestViewParticipantsModel>
+public class ParticipantsController : BaseAdminApiController<Participant, ContestViewParticipantsModel, ParticipantsAdministrationModel>
 {
     public ParticipantsController(
-        IGridDataService<Participant> participantsGridDataService)
-        : base(participantsGridDataService)
+        IGridDataService<Participant> participantsGridDataService,
+        IParticipantsBusinessService participantsBusinessService,
+        ParticipantsAdministrationModelValidator validator)
+        : base(
+            participantsGridDataService,
+            participantsBusinessService,
+            validator)
     {
     }
 

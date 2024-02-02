@@ -1,12 +1,12 @@
-namespace OJS.Services.Administration.Business
+namespace OJS.Services.Administration.Business.ProblemGroups
 {
-    using System.Threading.Tasks;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
-    using OJS.Services.Common.Data.Pagination;
+    using System.Threading.Tasks;
+    using OJS.Services.Administration.Models.ProblemGroups;
 
-    public interface IProblemGroupsBusinessService : IService
+    public interface IProblemGroupsBusinessService : IAdministrationOperationService<ProblemGroup, ProblemGroupsAdministrationModel>
     {
         Task<ServiceResult> DeleteById(int id);
 

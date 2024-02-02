@@ -1,19 +1,25 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using OJS.Services.Administration.Business;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Business.SubmissionTypes;
+using OJS.Services.Administration.Business.SubmissionTypes.Validators;
+using OJS.Services.Administration.Models.SubmissionTypes;
 using OJS.Services.Common.Data.Pagination;
+using System.Threading.Tasks;
 
-public class SubmissionTypesController : BaseAdminApiController<SubmissionType, SubmissionType>
+public class SubmissionTypesController : BaseAdminApiController<SubmissionType, SubmissionType, SubmissionTypesAdministrationModel>
 {
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
 
     public SubmissionTypesController(
         ISubmissionTypesBusinessService submissionTypesBusinessService,
-        IGridDataService<SubmissionType> submissionTypesGridDataService)
-            : base(submissionTypesGridDataService) =>
+        IGridDataService<SubmissionType> submissionTypesGridDataService,
+        SubmissionTypesAdministrationModelValidator validator)
+            : base(
+                submissionTypesGridDataService,
+                submissionTypesBusinessService,
+                validator) =>
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]

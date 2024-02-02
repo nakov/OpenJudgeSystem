@@ -21,11 +21,11 @@ export const problemsAdminService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/ById/${id}` }) }),
+        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
         deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
             query: (problem) => ({
-                url: `/${problem.id}`,
+                url: `/Edit`,
                 method: 'PATCH',
                 body: problem,
             }),
