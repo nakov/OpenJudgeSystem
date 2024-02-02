@@ -6,10 +6,11 @@ import storage from 'redux-persist/lib/storage';
 
 // features
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
+import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
-import authorizationReducer from './features/authorizationSlice';
-import submissionDetailsReducer from './features/submissionDetailsSlice';
+import { authorizationSlide } from './features/authorizationSlice';
+import { submissionDetailsSlice } from './features/submissionDetailsSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // services
@@ -25,21 +26,24 @@ import authorizationService from './services/authorizationService';
 import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
+    // reducers
+    [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
+    [authorizationSlide.name]: authorizationSlide.reducer,
+    [contestsAdminSlice.name]: contestsAdminSlice.reducer,
+    [submissionsAdminSlice.name]: submissionsAdminService.reducer,
+    [problemsAdminSlice.name]: problemsAdminSlice.reducer,
+    [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
+
+    // services
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
-    submissionDetails: submissionDetailsReducer,
-    // admin reducers
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
-    [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
+    [submissionsAdminService.reducerPath]: problemsAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
-    authorization: authorizationReducer,
-    [contestsAdminSlice.name]: contestsAdminSlice.reducer,
-    [problemsAdminSlice.name]: problemsAdminSlice.reducer,
-    [submissionsAdminSlice.name]: submissionsAdminSlice.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
-    [problemGroupsAdminService.reducerPath]: submissionTypesAdminService.reducer,
+    [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
 });
 
@@ -52,8 +56,9 @@ const persistConfig = (reducersToPersist: string[]) => ({
 // list reducers with data to be persisted here
 const reducersToPersist = [
     contestsAdminSlice.name,
-    'authorization',
+    authorizationSlide.name,
     problemsAdminSlice.name,
+    problemGroupsAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -64,12 +69,12 @@ const store = configureStore({
         submissionDetailsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
-        submissionsAdminService.middleware,
+        problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
         authorizationService.middleware,
         problemsAdminService.middleware,
+        submissionsAdminService.middleware,
         submissionTypesAdminService.middleware,
-        problemGroupsAdminService.middleware,
         checkerAdminService.middleware,
     ]),
 });

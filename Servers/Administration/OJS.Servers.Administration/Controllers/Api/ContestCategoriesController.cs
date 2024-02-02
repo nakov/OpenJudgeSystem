@@ -3,19 +3,22 @@
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
-using System.Threading.Tasks;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
+using OJS.Data.Models.Contests;
+using OJS.Services.Common.Data.Pagination;
 
-public class ContestCategoriesController : ApiControllerBase
+public class ContestCategoriesController : BaseAdminApiController<ContestCategory, ContestCategoriesInContestView>
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;
 
-    public ContestCategoriesController(IContestCategoriesDataService contestCategoriesDataService)
+    public ContestCategoriesController(
+        IContestCategoriesDataService contestCategoriesDataService,
+        IGridDataService<ContestCategory> contestCategoryGridDataService)
+    : base(contestCategoryGridDataService)
         => this.contestCategoriesDataService = contestCategoriesDataService;
 
     [HttpGet]
-    [Route("dropdown")]
     public IActionResult GetForContestDropdown()
         => this.Ok(
              this.contestCategoriesDataService

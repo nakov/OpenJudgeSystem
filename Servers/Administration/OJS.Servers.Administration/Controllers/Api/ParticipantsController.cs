@@ -1,21 +1,21 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Data.Models.Participants;
+using OJS.Services.Administration.Models.Contests.Participants;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using OJS.Services.Administration.Business;
-using OJS.Services.Administration.Models.Contests.Participants;
+using OJS.Services.Common.Data.Pagination;
 
-public class ParticipantsController : ApiControllerBase
+public class ParticipantsController : BaseAdminApiController<Participant, ContestViewParticipantsModel>
 {
-    private readonly IParticipantsBusinessService participantsBusinessService;
+    public ParticipantsController(
+        IGridDataService<Participant> participantsGridDataService)
+        : base(participantsGridDataService)
+    {
+    }
 
-    public ParticipantsController(IParticipantsBusinessService participantsBusinessService)
-        => this.participantsBusinessService = participantsBusinessService;
-
-    [HttpGet]
-    [Route("contest/{contestId}")]
+    [HttpGet("{contestId:int}")]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (contestId < 1)
@@ -24,8 +24,6 @@ public class ParticipantsController : ApiControllerBase
         }
 
         return this.Ok(
-            await this.participantsBusinessService
-                .GetAll<ContestViewParticipantsModel>(model, this.participantsBusinessService
-                    .GetByContest(contestId)));
+            await this.GetWithFilter<ContestViewParticipantsModel>(model, participant => participant.ContestId == contestId));
     }
 }

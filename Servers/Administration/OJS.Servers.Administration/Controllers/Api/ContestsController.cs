@@ -4,12 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Contests;
-using OJS.Services.Common.Models.Pagination;
 using System.Linq;
 using OJS.Services.Common.Validation;
 using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Data.Models.Contests;
+using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Business.Validation.Validators;
+using OJS.Services.Administration.Business.Contests;
 
-public class ContestsController : ApiControllerBase
+public class ContestsController : BaseAdminApiController<Contest, ContestInListModel>
 {
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly IFluentValidationService<ContestAdministrationModel> validationService;
@@ -19,19 +22,14 @@ public class ContestsController : ApiControllerBase
         IContestsBusinessService contestsBusinessService,
         IFluentValidationService<ContestAdministrationModel> validationService,
         ContestAdministrationModelValidator validator,
-        IUserProviderService userProvider)
+        IUserProviderService userProvider,
+        IGridDataService<Contest> contestGridDataService)
+    : base(contestGridDataService)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.validator = validator;
         this.userProvider = userProvider;
         this.validationService = validationService;
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
-    {
-        var contest = await this.contestsBusinessService.GetAll<ContestInListModel>(model);
-        return this.Ok(contest);
     }
 
     [HttpPost]
@@ -48,8 +46,7 @@ public class ContestsController : ApiControllerBase
         return this.Ok("Contest create successfully.");
     }
 
-    [HttpDelete]
-    [Route("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         if (!await this.HasContestPermission(id))
@@ -66,14 +63,25 @@ public class ContestsController : ApiControllerBase
         return this.Ok("Contest was successfully marked as deleted.");
     }
 
-    [HttpPatch]
-    [Route("{id}")]
+    [HttpPatch("{id:int}")]
     public async Task<IActionResult> Update(ContestAdministrationModel model, [FromRoute] int id)
     {
         if (!await this.HasContestPermission(id))
         {
             return this.Unauthorized();
         }
+
+        // if (!this.ModelState.IsValid)
+        // {
+        //     var errors = this.ModelState.ErrorCount > 0 ?
+        //         this.ModelState
+        //         .Where(kvp => kvp!.Value!.Errors.Count > 0)
+        //         .Select(kvp => new ExceptionResponseModel {
+        //             Name = kvp.Key,
+        //             Message = kvp!.Value!.Errors.Select(e => e.ErrorMessage).FirstOrDefault(),
+        //         })
+        //         .ToList();
+        // }
 
         model.Id = id;
         var validations = await this.validationService.ValidateAsync(this.validator, model);
@@ -88,8 +96,7 @@ public class ContestsController : ApiControllerBase
         return this.Ok("Contest was successfully updated.");
     }
 
-    [HttpGet]
-    [Route("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> ById(int id)
     {
         if (!await this.HasContestPermission(id))
@@ -103,11 +110,11 @@ public class ContestsController : ApiControllerBase
 
     [HttpGet]
     [Route("CopyAll")]
-    public async Task<IActionResult> GetAllForProblem()
+    public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
         var contests =
             await this.contestsBusinessService
-                .GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+                .GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>(searchString ?? string.Empty);
         return this.Ok(contests);
     }
 

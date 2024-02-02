@@ -8,10 +8,11 @@ using System.Reflection;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Pagination;
 using System.Collections.Generic;
+using SoftUni.Data.Infrastructure.Models;
 
-public abstract class FilteringService<TEntity>
+public class FilteringService : IFilteringService
 {
-    protected static PropertyInfo? GetProperty<T>(string key)
+    public PropertyInfo? GetProperty<T>(string key)
     {
         var propertyInfo = typeof(T).GetProperties()
             .FirstOrDefault(p =>
@@ -25,7 +26,7 @@ public abstract class FilteringService<TEntity>
         return propertyInfo;
     }
 
-    protected virtual IQueryable<TModel> ApplyFiltering<TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
+    public virtual IQueryable<TModel> ApplyFiltering<TEntity, TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
     {
         if (!filters.Any())
         {

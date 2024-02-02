@@ -7,7 +7,7 @@ using System.Linq;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Data.Pagination;
 
-public class ParticipantsBusinessService : GridDataService<Participant>, IParticipantsBusinessService
+public class ParticipantsBusinessService : IParticipantsBusinessService
 {
     private readonly IParticipantsDataService participantsData;
     private readonly IParticipantScoresDataService scoresDataService;
@@ -15,7 +15,6 @@ public class ParticipantsBusinessService : GridDataService<Participant>, IPartic
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         IParticipantScoresDataService scoresDataService)
-        : base(participantsData)
     {
         this.participantsData = participantsData;
         this.scoresDataService = scoresDataService;

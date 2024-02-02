@@ -1,3 +1,5 @@
+/* eslint-disable import/exports-last */
+/* eslint-disable import/group-exports */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { submissionDetailsSliceName } from '../../common/reduxNames';
@@ -18,7 +20,7 @@ const initialState: ISubmissionDetailsReduxState = {
     retestIsSuccess: false,
 };
 
-const submissionDetailsSlice = createSlice({
+export const submissionDetailsSlice = createSlice({
     name: submissionDetailsSliceName,
     initialState,
     reducers: {

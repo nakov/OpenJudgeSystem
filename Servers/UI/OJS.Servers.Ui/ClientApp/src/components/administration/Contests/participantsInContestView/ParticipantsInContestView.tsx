@@ -7,17 +7,17 @@ import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { IRootStore } from '../../../../../../common/types';
+import { IRootStore } from '../../../../common/types';
 import {
     mapFilterParamsToQueryString,
-} from '../../../../../../pages/administration-new/administration-filters/AdministrationFilters';
+} from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import {
     mapSorterParamsToQueryString,
-} from '../../../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../../../pages/administration-new/AdministrationGridView';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../../../redux/features/admin/contestsAdminSlice';
-import { useGetByContestIdQuery } from '../../../../../../redux/services/admin/participantsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../../../utils/constants';
+} from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
+import { useGetByContestIdQuery } from '../../../../redux/services/admin/participantsAdminService';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 
 interface IParticipantsInContestView {
     contestId: number;
@@ -67,7 +67,8 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
             type: 'number',
             filterable: false,
             sortable: false,
-            flex: 0,
+            flex: 0.5,
+            valueFormatter: (params) => params.value.toString(),
         },
         {
             field: 'userName',
@@ -159,6 +160,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
               modals={[]}
               setQueryParams={setQueryParams}
               withSearchParams={false}
+              legendProps={[ { color: '#FFA1A1', message: 'Participant is deleted.' } ]}
             />
         </div>
     );

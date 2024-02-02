@@ -4,6 +4,7 @@ namespace OJS.Services.Administration.Business
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Models;
     using SoftUni.Services.Infrastructure;
+    using OJS.Services.Common.Data.Pagination;
 
     public interface IProblemGroupsBusinessService : IService
     {

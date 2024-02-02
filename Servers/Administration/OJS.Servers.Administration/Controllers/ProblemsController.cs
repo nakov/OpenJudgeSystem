@@ -40,6 +40,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using GeneralResource = OJS.Common.Resources.AdministrationGeneral;
 using GlobalResource = OJS.Common.Resources.ProblemsController;
 using Resource = OJS.Common.Resources.ProblemGroupsControllers;
+using OJS.Services.Administration.Business.Contests;
 
 public class ProblemsController : BaseAutoCrudAdminController<Problem>
 {
@@ -730,8 +731,9 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private async Task<SelectList> GetContestsToCopyToSelectList()
     {
+        //used by the new administration.
         var contestsToCopyTo =
-            await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>();
+            await this.contestsBusiness.GetAllAvailableForCurrentUser<ContestCopyProblemsValidationServiceModel>("test");
 
         return new SelectList(contestsToCopyTo, nameof(Contest.Id), nameof(Contest.Name));
     }

@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable max-len */
 import React, { FC, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -8,6 +10,7 @@ import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import ScienceIcon from '@mui/icons-material/Science';
+import TableViewIcon from '@mui/icons-material/TableView';
 import { Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -48,6 +51,10 @@ const administrationItems = [
         name: 'Problems',
         icon: <NotListedLocationIcon />,
         path: '/administration-new/problems',
+    }, {
+        name: 'Problem Groups',
+        icon: <TableViewIcon />,
+        path: '/administration-new/problemGroups',
     }, {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
@@ -119,14 +126,23 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
 
+    const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
-        if (!/^\d+$/.test(locationPathnameElements[locationPathnameElements.length - 1])) {
-            setLocationTitle(locationPathnameElements[locationPathnameElements.length - 1].toUpperCase());
+        const lastElementOfThePathname = locationPathnameElements[locationPathnameElements.length - 1];
+        let pageTitle = '';
+        if (!/^\d+$/.test(lastElementOfThePathname)) {
+            const section = administrationItems.find((x) => x.path.split('/').pop() === lastElementOfThePathname);
+            pageTitle = capitalizeFirstLetter(section!.name);
+            setLocationTitle(pageTitle);
         } else {
-            setLocationTitle(`${locationPathnameElements[locationPathnameElements.length - 2].toUpperCase()}
-             Id: ${locationPathnameElements[locationPathnameElements.length - 1]}`);
+            pageTitle = capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]}
+            Id: ${lastElementOfThePathname}`);
+
+            setLocationTitle(pageTitle);
         }
+        document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
     const handleDrawerOpen = () => {
@@ -140,69 +156,72 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        <Box sx={{ display: 'flex', zIndex: 0 }}>
-            <AppBar position="fixed" open={open}>
-                <Toolbar>
-                    <div className={styles.adminHeaderWrapper}>
-                        <Link to="/" className={styles.adminHeaderLink}>
-                            <Tooltip title="Return to client app">
-                                <KeyboardReturnIcon />
-                            </Tooltip>
-                        </Link>
-                        <div className={styles.locationTitle}>{locationTitle}</div>
-                        <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
-                    </div>
-                </Toolbar>
-            </AppBar>
-            <Drawer
-              variant="permanent"
-              open={open}
-            >
-                <DrawerHeader>
-                    <div />
-                </DrawerHeader>
-                {!open
-                    ? (
-                        <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerOpen}>
-                            <ChevronRightIcon />
-                        </IconButton>
-                    )
-                    : (
-                        <IconButton sx={{ width: '50px', alignSelf: 'center' }} onClick={handleDrawerClose}>
-                            <ChevronLeftIcon />
-                        </IconButton>
-                    )}
-                {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
-                <List>
-                    {administrationItems.map((item) => (
-                        <ListItem key={item.name} disablePadding>
-                            <Link
-                              to={item.path}
-                              className={`${location.pathname === item.path
-                                  ? styles.activeAdminNavLink
-                                  : ''} ${styles.adminNavLink}`}
-                            >
-                                <ListItemButton>
-                                    <ListItemIcon style={{
-                                        color: location.pathname === item.path
-                                            ? '#42abf8'
-                                            : '#3e4c5d',
-                                    }}
-                                    >
-                                        {item.icon}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} />
-                                </ListItemButton>
+        <>
+            {!open
+                ? (
+                    <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
+                        <ChevronRightIcon />
+                    </IconButton>
+                )
+                : (
+                    <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                )}
+            <Box sx={{ display: 'flex', zIndex: 0 }}>
+                <AppBar position="fixed" open={open}>
+                    <Toolbar>
+                        <div className={styles.adminHeaderWrapper}>
+                            <Link to="/" className={styles.adminHeaderLink}>
+                                <Tooltip title="Return to client app">
+                                    <KeyboardReturnIcon />
+                                </Tooltip>
                             </Link>
-                        </ListItem>
-                    ))}
-                </List>
-            </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-                <ComponentToWrap {...props} />
+                            <div className={styles.locationTitle}>{locationTitle}</div>
+                            <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+                <Drawer
+                  variant="permanent"
+                  open={open}
+                >
+                    <DrawerHeader>
+                        <div />
+                    </DrawerHeader>
+
+                    {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
+                    <List>
+                        {administrationItems.map((item) => (
+                            <ListItem key={item.name} disablePadding>
+                                <Link
+                                  to={item.path}
+                                  className={`${location.pathname === item.path
+                                      ? styles.activeAdminNavLink
+                                      : ''} ${styles.adminNavLink}`}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon style={{
+                                            color: location.pathname === item.path
+                                                ? '#42abf8'
+                                                : '#3e4c5d',
+                                        }}
+                                        >
+                                            {item.icon}
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Drawer>
+                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+                    <ComponentToWrap {...props} />
+                </Box>
             </Box>
-        </Box>
+        </>
     );
 };
 

@@ -46,7 +46,7 @@ const PageHeader = () => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to="administration-new"
+                          to="administration-new/contests"
                           text="Administration"
                           isToExternal
                         />

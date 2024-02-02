@@ -16,6 +16,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Infrastructure.Exceptions;
 using Resource = OJS.Common.Resources.ContestsGeneral;
+using OJS.Services.Administration.Business.Contests;
 
 public class ResultsController : BaseAdminViewController
 {

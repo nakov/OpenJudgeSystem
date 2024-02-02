@@ -2,16 +2,19 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Administration.Data;
-
-public class CheckersController : ApiControllerBase
+using OJS.Data.Models.Checkers;
+using OJS.Services.Common.Data.Pagination;
+public class CheckersController : BaseAdminApiController<Checker, Checker>
 {
     private readonly ICheckersDataService checkersDataService;
 
-    public CheckersController(ICheckersDataService checkersDataService)
+    public CheckersController(
+        ICheckersDataService checkersDataService,
+        IGridDataService<Checker> checkerGridDataService)
+    : base(checkerGridDataService)
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]
-    [Route("forProblem")]
     public IActionResult GetForProblems()
         => this.Ok(this.checkersDataService.GetAll());
 }

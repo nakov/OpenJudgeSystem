@@ -6,7 +6,7 @@ using OJS.Services.Common.Data.Pagination;
 using OJS.Data.Models.Participants;
 using System.Linq;
 
-public interface IParticipantsBusinessService : IGridDataService<Participant>,  IService
+public interface IParticipantsBusinessService : IService
 {
     /// <summary>
     /// Updates the total score snapshot for all participants.

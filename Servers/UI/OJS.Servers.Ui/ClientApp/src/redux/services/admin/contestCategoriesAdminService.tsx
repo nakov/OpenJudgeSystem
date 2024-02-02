@@ -1,21 +1,14 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+/* eslint-disable max-len */
+import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { defaultPathIdentifier } from '../../../common/constants';
 import { IContestCategories } from '../../../common/types';
+import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 // eslint-disable-next-line import/group-exports
 export const contestCategoriesAdminService = createApi({
     reducerPath: 'contestCategories',
-    baseQuery: fetchBaseQuery({
-        credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/contestCategories`,
-        prepareHeaders: (headers) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
-        },
-    }),
-    // eslint-disable-next-line max-len
-    endpoints: (builder) => ({ getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/dropdown' }) }) }),
+    baseQuery: getCustomBaseQuery('contestCategories'),
+    endpoints: (builder) => ({ getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/GetForContestDropdown' }) }) }),
 });
 
 // eslint-disable-next-line import/group-exports
