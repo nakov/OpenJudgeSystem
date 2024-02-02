@@ -1,19 +1,22 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using OJS.Services.Common;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Services.Common.Models.Pagination;
-using System.Threading.Tasks;
-using OJS.Services.Administration.Models.Problems;
-using OJS.Services.Administration.Data;
-using OJS.Servers.Administration.Models.Problems;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using OJS.Data.Models.Problems;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Servers.Administration.Models.Problems;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Contests;
-using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Business.ProblemGroups;
+using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Validation;
+using OJS.Services.Common;
+using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Common.Models.Pagination;
+using System.Linq;
+using System.Threading.Tasks;
+using OJS.Services.Administration.Business.Problems.Validators;
 
 public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel, ProblemAdministrationModel>
 {
@@ -34,11 +37,13 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         IContestsDataService contestsDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IGridDataService<Problem> problemGridDataService,
-        ProblemAdministrationModelValidator validator)
+        ProblemAdministrationModelValidator validator,
+        ProblemsDeleteValidator deleteValidator)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
-                validator)
+                validator,
+                deleteValidator)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.contestsBusinessService = contestsBusinessService;

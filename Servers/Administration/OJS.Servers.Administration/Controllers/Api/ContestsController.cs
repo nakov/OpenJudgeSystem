@@ -1,15 +1,15 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using OJS.Services.Administration.Business;
-using OJS.Services.Administration.Models.Contests;
-using OJS.Services.Common.Validation;
-using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Data.Models.Contests;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Contests.Validators;
+using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Administration.Models.Validation;
+using OJS.Services.Common.Data.Pagination;
+using System.Threading.Tasks;
 
 public class ContestsController : BaseAdminApiController<Contest, ContestInListModel, ContestAdministrationModel>
 {
@@ -19,11 +19,13 @@ public class ContestsController : BaseAdminApiController<Contest, ContestInListM
         IContestsBusinessService contestsBusinessService,
         ContestAdministrationModelValidator validator,
         IUserProviderService userProvider,
-        IGridDataService<Contest> contestGridDataService)
+        IGridDataService<Contest> contestGridDataService,
+        ContestDeleteValidator deleteValidator)
     : base(
         contestGridDataService,
         contestsBusinessService,
-        validator)
+        validator,
+        deleteValidator)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.userProvider = userProvider;

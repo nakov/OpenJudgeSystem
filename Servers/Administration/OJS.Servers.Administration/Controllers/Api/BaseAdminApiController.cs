@@ -1,20 +1,21 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common;
 using OJS.Servers.Infrastructure.Controllers;
+using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
+using OJS.Services.Common.Validation;
+using SoftUni.Common.Models;
 using SoftUni.Data.Infrastructure.Models;
 using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using SoftUni.Common.Models;
-using OJS.Services.Administration.Business;
-using OJS.Services.Common.Validation;
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
+using OJS.Common;
 
+[Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
 public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> : BaseApiController
     where TEntity : class, IEntity
     where TUpdateModel : class
@@ -22,15 +23,18 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     private readonly IGridDataService<TEntity> gridDataService;
     private readonly IAdministrationOperationService<TEntity, TUpdateModel> operationService;
     private readonly BaseValidator<TUpdateModel> validator;
+    private readonly BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator;
 
     protected BaseAdminApiController(
         IGridDataService<TEntity> gridDataService,
         IAdministrationOperationService<TEntity, TUpdateModel> operationService,
-        BaseValidator<TUpdateModel> validator)
+        BaseValidator<TUpdateModel> validator,
+        BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator)
     {
         this.gridDataService = gridDataService;
         this.operationService = operationService;
         this.validator = validator;
+        this.deleteValidator = deleteValidator;
     }
 
     [HttpGet]
@@ -50,11 +54,11 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpPost]
     public virtual async Task<IActionResult> Create(TUpdateModel model)
     {
-        var validations = this.validator.ProcessValidationResult(await this.validator.ValidateAsync(model));
+        var validationResult = await this.validator.ExecuteValidation(model);
 
-        if (validations.Errors.Any())
+        if (!validationResult.IsValid)
         {
-            return this.UnprocessableEntity(validations.Errors);
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
         await this.operationService.Create(model);
@@ -64,11 +68,11 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpPatch]
     public virtual async Task<IActionResult> Edit(TUpdateModel model)
     {
-        var validations = this.validator.ProcessValidationResult(await this.validator.ValidateAsync(model));
+        var validationResult = await this.validator.ExecuteValidation(model);
 
-        if (validations.Errors.Any())
+        if (!validationResult.IsValid)
         {
-            return this.UnprocessableEntity(validations.Errors);
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
         await this.operationService.Edit(model);
@@ -78,9 +82,12 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpDelete("{id:int}")]
     public virtual async Task<IActionResult> Delete(int id)
     {
-        if (id <= 0)
+        var validationResult =
+            await this.deleteValidator.ExecuteValidation(new BaseDeleteValidationModel { Id = id });
+
+        if (!validationResult.IsValid)
         {
-            return this.UnprocessableEntity("Invalid contest id.");
+            return this.UnprocessableEntity(validationResult.Errors);
         }
 
         await this.operationService.Delete(id);

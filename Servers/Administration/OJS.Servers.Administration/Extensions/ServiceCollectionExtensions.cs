@@ -19,6 +19,9 @@ using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Business.Checkers.Validators;
+using OJS.Services.Administration.Business.ContestCategories.Validators;
+using OJS.Services.Administration.Business.Problems.Validators;
 
 internal static class ServiceCollectionExtensions
 {
@@ -56,6 +59,13 @@ internal static class ServiceCollectionExtensions
         services.AddValidatorsFromAssemblyContaining<SubmissionTypesAdministrationModelValidator>(ServiceLifetime.Transient);
         services.AddValidatorsFromAssemblyContaining<ParticipantsAdministrationModelValidator>(ServiceLifetime.Transient);
         services.AddValidatorsFromAssemblyContaining<ProblemGroupsAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<CheckerDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ContestCategoryDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ContestDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ParticipantsDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemGroupsDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemsDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<SubmissionTypesDeleteValidator>(ServiceLifetime.Transient);
         return services;
     }
 

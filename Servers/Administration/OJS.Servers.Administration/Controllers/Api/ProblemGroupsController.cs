@@ -2,24 +2,28 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
-using System;
-using System.Linq;
-using OJS.Services.Administration.Models.ProblemGroups;
 using OJS.Data.Models.Problems;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
+using OJS.Services.Administration.Models.ProblemGroups;
+using OJS.Services.Administration.Models.Validation;
+using OJS.Services.Common.Data.Pagination;
+using System;
+using System.Linq;
 
 public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
 {
     public ProblemGroupsController(
         IGridDataService<ProblemGroup> problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        ProblemGroupsAdministrationModelValidator validator)
+        ProblemGroupsAdministrationModelValidator validator,
+        ProblemGroupsDeleteValidator deleteValidator)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,
-            validator)
+            validator,
+            deleteValidator)
     {
     }
 

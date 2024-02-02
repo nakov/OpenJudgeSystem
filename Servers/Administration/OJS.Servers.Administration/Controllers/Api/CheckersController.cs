@@ -1,12 +1,13 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Services.Administration.Data;
 using OJS.Data.Models.Checkers;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Checkers;
 using OJS.Services.Administration.Business.Checkers.Validators;
-using OJS.Services.Common.Validation;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Validation;
+using OJS.Services.Common.Data.Pagination;
 
 public class CheckersController : BaseAdminApiController<Checker, Checker, Checker>
 {
@@ -16,11 +17,13 @@ public class CheckersController : BaseAdminApiController<Checker, Checker, Check
         ICheckersDataService checkersDataService,
         IGridDataService<Checker> checkerGridDataService,
         ICheckersBusinessService checkersBusinessService,
-        CheckerAdministrationModelValidator validator)
+        CheckerAdministrationModelValidator validator,
+        CheckerDeleteValidator deleteValidator)
     : base(
         checkerGridDataService,
         checkersBusinessService,
-        validator)
+        validator,
+        deleteValidator)
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]
