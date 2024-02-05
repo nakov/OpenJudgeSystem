@@ -22,7 +22,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
 
-    public class SubmissionsBusinessService : ISubmissionsBusinessService
+    public class SubmissionsBusinessService : AdministrationOperationService<Submission, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
     {
         private readonly IParticipantScoresBusinessService participantScoresBusiness;
         private readonly ISubmissionsDataService submissionsData;
@@ -221,7 +221,7 @@ namespace OJS.Services.Administration.Business.Implementations
             return await this.Retest(submission!);
         }
 
-        public async Task Delete(int id)
+        public override async Task Delete(int id)
         {
             var submission = await this.submissionsData
                 .GetByIdQuery(id)
@@ -256,7 +256,7 @@ namespace OJS.Services.Administration.Business.Implementations
             });
         }
 
-        public async Task<CodeSubmissionAdministrationServiceModel> Download(int id)
+        public async Task<SubmissionAdministrationServiceModel> Download(int id)
         {
             if (id <= 0)
             {
@@ -277,7 +277,7 @@ namespace OJS.Services.Administration.Business.Implementations
                 throw new BusinessServiceException(Resources.SubmissionsController.SubmissionNotFileUpload);
             }
 
-            return submission.Map<CodeSubmissionAdministrationServiceModel>();
+            return submission.Map<SubmissionAdministrationServiceModel>();
         }
 
         public async Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId)

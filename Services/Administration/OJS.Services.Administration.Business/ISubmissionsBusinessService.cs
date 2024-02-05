@@ -6,7 +6,7 @@
     using SoftUni.Services.Infrastructure;
     using OJS.Services.Administration.Models.Submissions;
 
-    public interface ISubmissionsBusinessService : IService
+    public interface ISubmissionsBusinessService : IAdministrationOperationService<Submission, SubmissionAdministrationServiceModel>
     {
         Task RecalculatePointsByProblem(int problemId);
 
@@ -14,9 +14,7 @@
 
         Task<ServiceResult> Retest(int id);
 
-        Task Delete(int id);
-
-        Task<CodeSubmissionAdministrationServiceModel> Download(int id);
+        Task<SubmissionAdministrationServiceModel> Download(int id);
 
         Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId);
     }

@@ -1,56 +1,55 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common;
 using OJS.Data.Models.Submissions;
+using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.Submissions.Permissions;
+using OJS.Services.Administration.Business.Submissions.Validation;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Common.Data.Pagination;
-using OJS.Servers.Infrastructure.Extensions;
+using System.Threading.Tasks;
 
-public class SubmissionsController : BaseAdminApiController<Submission, SubmissionAdministrationServiceModel>
+public class SubmissionsController : BaseAdminApiController<
+    Submission,
+    SubmissionAdministrationServiceModel,
+    SubmissionAdministrationServiceModel>
 {
     private ISubmissionsBusinessService submissionsBusinessService;
 
+    // IGridDataService<TEntity> gridDataService,
+    //     IAdministrationOperationService<TEntity, TUpdateModel> operationService,
+    // BaseValidator<TUpdateModel> validator,
+    //     BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator,
+    // IPermissionsService<TEntity, TUpdateModel> permissionsService)
     public SubmissionsController(
         IGridDataService<Submission> submissionsGridDataService,
-        ISubmissionsBusinessService submissionsBusinessService)
-        : base(submissionsGridDataService) =>
+        ISubmissionsBusinessService submissionsBusinessService,
+        SubmissionsAdministrationModelValidator validator,
+        SubmissionsDeleteValidator submissionsDeleteValidator,
+        ISubmissionsPermissionsService submissionsPermissionsService)
+        : base(
+            submissionsGridDataService,
+            submissionsBusinessService,
+            validator,
+            submissionsDeleteValidator,
+            submissionsPermissionsService) =>
         this.submissionsBusinessService = submissionsBusinessService;
 
     [HttpPost("{id:int}")]
-    public async Task<IActionResult> Retest([FromRoute] int id)
+    public async Task<IActionResult> Retest(int id)
         => await this.submissionsBusinessService
             .Retest(id)
             .ToOkResult();
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
-    {
-        // TODO: Check if only users with permissions for contest can delete submissions
-        // if (!await this.HasContestPermission(id))
-        // {
-        //     return this.Unauthorized();
-        // }
-
-        if (id <= 0)
-        {
-            return this.UnprocessableEntity("Invalid submission id.");
-        }
-
-        await this.submissionsBusinessService.Delete(id);
-
-        return this.Ok("Submission was successfully marked as deleted.");
-    }
-
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Download([FromQuery] int id)
+    public async Task<IActionResult> Download(int id)
     {
         var submission = await this.submissionsBusinessService.Download(id);
 
         return this.File(
-            submission.Content,
+            submission.ByteContent,
             GlobalConstants.MimeTypes.ApplicationOctetStream,
             string.Format(GlobalConstants.Submissions.SubmissionDownloadFileName, id, submission.FileExtension));
     }

@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import isNil from 'lodash/isNil';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
@@ -53,15 +52,10 @@ export const AdministrationSubmissionsPage = () => {
 
     const startDownload = useCallback((id: number) => {
         setSubmissionToDownload(id);
+        setShouldSkipDownloadOfSubmission(false);
     }, []);
 
-    useEffect(() => {
-        if (!isNil(submissionToDownload)) {
-            console.log(submissionToDownload);
-            setShouldSkipDownloadOfSubmission(false);
-        }
-    }, [ submissionToDownload ]);
-
+    // TODO: Extract this in helpers
     const saveAttachment = (blob:Blob, filename: string) => {
         const blobUrl = URL.createObjectURL(blob);
 
@@ -112,19 +106,14 @@ export const AdministrationSubmissionsPage = () => {
                             <RefreshIcon size={IconSize.Large} />
                         </IconButton>
                     </Tooltip>
-                    {
-                        params.row.isBinaryFile
-                            ? (
-                                <Tooltip title="Download">
-                                    <IconButton
-                                      onClick={() => startDownload(Number(params.row.id))}
-                                    >
-                                        <DownloadIcon size={IconSize.Large} />
-                                    </IconButton>
-                                </Tooltip>
-                            )
-                            : null
-                    }
+                    <Tooltip title="Download">
+                        <IconButton
+                          disabled={!params.row.isBinaryFile}
+                          onClick={() => startDownload(Number(params.row.id))}
+                        >
+                            <DownloadIcon size={IconSize.Large} />
+                        </IconButton>
+                    </Tooltip>
                     <DeleteButton
                       id={Number(params.row.id)}
                       name="Submission"
