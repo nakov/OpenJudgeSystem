@@ -346,6 +346,7 @@ interface ISubmissionsAdminGridViewType {
     isCompiledSuccessfully: boolean;
     processed: boolean;
     isDeleted: boolean;
+    isBinaryFile: boolean;
     processingComment: boolean;
     points: number;
     participant: IParticipantType;

@@ -36,12 +36,13 @@ const rootReducer = combineReducers({
 
     // services
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
+    [authorizationService.reducerPath]: authorizationService.reducer,
+
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
-    [submissionsAdminService.reducerPath]: problemsAdminService.reducer,
+    [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
-    [authorizationService.reducerPath]: authorizationService.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,

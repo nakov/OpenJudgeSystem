@@ -17,6 +17,8 @@ public class SubmissionAdministrationServiceModel : IMapFrom<Submission>
 
     public bool IsDeleted { get; set; }
 
+    public bool IsBinaryFile { get; set; }
+
     public string? ProcessingComment { get; set; }
 
     public int Points { get; set; }

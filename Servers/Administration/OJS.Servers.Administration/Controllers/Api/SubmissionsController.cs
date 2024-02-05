@@ -1,27 +1,57 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using OJS.Common;
+using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Submissions;
-using OJS.Services.Common.Models.Pagination;
+using OJS.Services.Common.Data.Pagination;
+using OJS.Servers.Infrastructure.Extensions;
 
-public class SubmissionsController : ApiControllerBase
+public class SubmissionsController : BaseAdminApiController<Submission, SubmissionAdministrationServiceModel>
 {
-    private readonly ISubmissionsBusinessService submissionsBusinessService;
+    private ISubmissionsBusinessService submissionsBusinessService;
 
-    public SubmissionsController(ISubmissionsBusinessService submissionsBusinessService)
-        => this.submissionsBusinessService = submissionsBusinessService;
+    public SubmissionsController(
+        IGridDataService<Submission> submissionsGridDataService,
+        ISubmissionsBusinessService submissionsBusinessService)
+        : base(submissionsGridDataService) =>
+        this.submissionsBusinessService = submissionsBusinessService;
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> Retest([FromRoute] int id)
+        => await this.submissionsBusinessService
+            .Retest(id)
+            .ToOkResult();
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var contest = await this.submissionsBusinessService
-            .GetAll<SubmissionAdministrationServiceModel>(model);
+        // TODO: Check if only users with permissions for contest can delete submissions
+        // if (!await this.HasContestPermission(id))
+        // {
+        //     return this.Unauthorized();
+        // }
 
-        return this.Ok(contest);
+        if (id <= 0)
+        {
+            return this.UnprocessableEntity("Invalid submission id.");
+        }
+
+        await this.submissionsBusinessService.Delete(id);
+
+        return this.Ok("Submission was successfully marked as deleted.");
     }
 
-    [Route("/retest/{id}")]
-    public async Task<IActionResult> Retest([FromQuery] int id) => await Task.FromResult(this.Ok(id));
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Download([FromQuery] int id)
+    {
+        var submission = await this.submissionsBusinessService.Download(id);
+
+        return this.File(
+            submission.Content,
+            GlobalConstants.MimeTypes.ApplicationOctetStream,
+            string.Format(GlobalConstants.Submissions.SubmissionDownloadFileName, id, submission.FileExtension));
+    }
 }
