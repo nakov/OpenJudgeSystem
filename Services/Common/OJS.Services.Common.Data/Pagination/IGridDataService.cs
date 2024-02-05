@@ -2,11 +2,16 @@
 
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using System.Linq;
+using System;
+using System.Linq.Expressions;
+using SoftUni.Services.Infrastructure;
+using SoftUni.Data.Infrastructure.Models;
+using SoftUni.Common.Models;
 
-public interface IGridDataService<TEntity>
+public interface IGridDataService<TEntity> : IService
+  where TEntity : class, IEntity
 {
-  Task<PaginatedList<T>> GetAll<T>(PaginationRequestModel paginationRequestModel);
+  Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel);
 
-  Task<PaginatedList<T>> GetAll<T>(PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query);
+  Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel,  Expression<Func<TEntity, bool>> filter);
 }

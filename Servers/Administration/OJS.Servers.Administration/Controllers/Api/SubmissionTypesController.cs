@@ -1,23 +1,33 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common;
+using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Business.SubmissionTypes;
+using OJS.Services.Administration.Business.SubmissionTypes.Permissions;
+using OJS.Services.Administration.Business.SubmissionTypes.Validators;
+using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Common.Data.Pagination;
 using System.Threading.Tasks;
-using OJS.Services.Administration.Business;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
-public class SubmissionTypesController : ControllerBase
+public class SubmissionTypesController : BaseAdminApiController<SubmissionType, SubmissionType, SubmissionTypesAdministrationModel>
 {
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
 
-    public SubmissionTypesController(ISubmissionTypesBusinessService submissionTypesBusinessService)
-        => this.submissionTypesBusinessService = submissionTypesBusinessService;
+    public SubmissionTypesController(
+        ISubmissionTypesBusinessService submissionTypesBusinessService,
+        IGridDataService<SubmissionType> submissionTypesGridDataService,
+        SubmissionTypesAdministrationModelValidator validator,
+        SubmissionTypesDeleteValidator deleteValidator,
+        ISubmissionTypesPermissionsService permissionsService)
+            : base(
+                submissionTypesGridDataService,
+                submissionTypesBusinessService,
+                validator,
+                deleteValidator,
+                permissionsService) =>
+        this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]
-    [Route("problemView")]
     public async Task<IActionResult> GetForProblem()
         => this.Ok(await this.submissionTypesBusinessService.GetForProblem());
 }

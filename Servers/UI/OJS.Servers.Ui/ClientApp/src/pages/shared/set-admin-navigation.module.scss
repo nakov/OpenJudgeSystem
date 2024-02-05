@@ -28,3 +28,24 @@
   font-family: 'montserrat', sans-serif;
   font-size: 20px;
 }
+
+.arrowCommon {
+  margin: 0px;
+  position: relative;
+  z-index: 1;
+  top: 430px;
+  width: 35px;
+  height: 35px;
+  padding: 0px !important;
+  background-color: white !important;
+  box-shadow: 6px 0px 7px -4px rgba(22,0,0,0.75);
+  transition: 225ms ease-in-out, transform 225ms ease-in-out !important;
+}
+
+.arrow {
+  left: 220px;
+}
+
+.arrowRight {
+  left: 45px;
+}

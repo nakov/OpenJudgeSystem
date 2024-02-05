@@ -45,7 +45,7 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
 export const checkerAdminService = createApi({
     reducerPath: 'checkersAdmin',
     baseQuery: customBaseQuery,
-    endpoints: (builder) => ({ getCheckersForProblem: builder.query<Array<{id: number; name: string}>, null>({ query: () => ({ url: '/forProblem' }) }) }),
+    endpoints: (builder) => ({ getCheckersForProblem: builder.query<Array<{id: number; name: string}>, null>({ query: () => ({ url: '/GetForProblems' }) }) }),
 });
 
 // eslint-disable-next-line import/group-exports

@@ -208,6 +208,7 @@ interface IIndexProblemsType {
     practiceTestsCount: number;
     competeTetstsCount: number;
     isDeleted: boolean;
+    contestId: number;
 }
 
 interface IIndexContestCategoriesType {
@@ -261,7 +262,6 @@ interface IPagedResultType<TItem> {
     itemsPerPage: number;
     pagesCount: number;
     pageNumber: number;
-    totalCount: number;
     items?: TItem[];
 }
 
@@ -362,6 +362,8 @@ interface IContestAdministration {
     autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
     allowedIps: string;
+    numberOfProblemGroups: number;
+    duration: string;
 }
 interface IContestAutocomplete {
     id: number;
@@ -388,6 +390,7 @@ interface IAdminSlice {
 interface IRootStore {
     adminContests: IAdminSlice;
     adminProblems: IAdminSlice;
+    adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
 }
 type ExceptionData = {
@@ -395,6 +398,13 @@ type ExceptionData = {
     message: string;
 }
 
+interface IProblemGroupsData {
+    id:number;
+    contest:string;
+    isDeleted:boolean;
+    orderBy:number;
+    type:string;
+}
 interface IProblemSubmissionType{
     id: number;
     name: string;
@@ -439,6 +449,7 @@ export type {
     IProblemSubmissionType,
     ISubmissionTypeInProblem,
     IContestAutocomplete,
+    IProblemGroupsData,
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
 };

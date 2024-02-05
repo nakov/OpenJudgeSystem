@@ -14,11 +14,11 @@ import { isNaN } from 'lodash';
 import { ContestVariation } from '../../../../common/contest-types';
 import { ExceptionData, IContestAdministration, IContestCategories } from '../../../../common/types';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useCreateContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import ContestDeleteButton from '../delete/ContestDeleteButton';
+import DeleteButton from '../../common/delete/DeleteButton';
 
 // eslint-disable-next-line import/no-unresolved
 import styles from './ContestEdit.module.scss';
@@ -35,6 +35,14 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
+    const [
+        deleteContest,
+        {
+            data: deleteData,
+            isLoading: isDeleting,
+            isSuccess: isSuccesfullyDeleted,
+            error: deleteError,
+        } ] = useDeleteContestMutation();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -56,6 +64,8 @@ const ContestEdit = (props:IContestEditProps) => {
         practiceStartTime: null,
         startTime: null,
         type: 'Exercise',
+        numberOfProblemGroups: 0,
+        duration: '',
     });
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
@@ -153,6 +163,8 @@ const ContestEdit = (props:IContestEditProps) => {
             autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
+            numberOfProblemGroups,
+            duration,
         } = contest;
         const currentContestValidations = contestValidations;
         // eslint-disable-next-line default-case
@@ -259,6 +271,16 @@ const ContestEdit = (props:IContestEditProps) => {
                 categoryName = category.name;
             }
             break;
+        case 'numberOfProblemGroups':
+            if (value) {
+                numberOfProblemGroups = Number(value);
+            }
+            break;
+        case 'duration':
+            if (value) {
+                duration = value;
+            }
+            break;
         }
         setContestValidations(currentContestValidations);
         setContest((prevState) => ({
@@ -281,6 +303,8 @@ const ContestEdit = (props:IContestEditProps) => {
             autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
+            numberOfProblemGroups,
+            duration,
         }));
         validateForm();
     };
@@ -405,6 +429,16 @@ const ContestEdit = (props:IContestEditProps) => {
                               // eslint-disable-next-line max-len
                                   helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
                                 />
+                                <TextField
+                                  className={styles.inputRow}
+                                  type="number"
+                                  label="Number of problem groups"
+                                  variant="standard"
+                                  value={contest.numberOfProblemGroups}
+                                  onChange={(e) => onChange(e)}
+                                  InputLabelProps={{ shrink: true }}
+                                  name="numberOfProblemGroups"
+                                />
                             </Box>
                             <Box>
                                 <TextField
@@ -452,6 +486,16 @@ const ContestEdit = (props:IContestEditProps) => {
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
                                   name="allowedIps"
+                                />
+                                <TextField
+                                  className={styles.inputRow}
+                                  type="string"
+                                  label="Duration"
+                                  variant="standard"
+                                  value={contest.duration}
+                                  onChange={(e) => onChange(e)}
+                                  InputLabelProps={{ shrink: true }}
+                                  name="duration"
                                 />
                             </Box>
                         </Box>
@@ -502,7 +546,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
                               value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
                               options={contestCategories!}
-                              renderInput={(params) => <TextField {...params} label="Select Option" key={params.id} />}
+                              renderInput={(params) => <TextField {...params} label="Select Category" key={params.id} />}
                               getOptionLabel={(option) => option?.name}
                               renderOption={(properties, option) => (
                                   <MenuItem {...properties} key={option.id} value={option.id}>
@@ -610,10 +654,16 @@ const ContestEdit = (props:IContestEditProps) => {
                             </div>
                         )}
                     <Box sx={{ alignSelf: 'flex-end' }}>
-                        <ContestDeleteButton
-                          contestId={contestId!}
-                          contestName={contest.name}
+                        <DeleteButton
+                          id={Number(contestId!)}
+                          name={contest.name}
                           onSuccess={() => navigate('/administration-new/contests')}
+                          deleteRequest={deleteContest}
+                          data={deleteData}
+                          isLoading={isDeleting}
+                          isSuccess={isSuccesfullyDeleted}
+                          error={deleteError}
+                          text="Are you sure that you want to delete the contest."
                         />
                     </Box>
                 </div>

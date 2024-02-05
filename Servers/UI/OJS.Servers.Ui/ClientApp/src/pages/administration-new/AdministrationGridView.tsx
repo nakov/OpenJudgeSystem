@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -7,12 +8,13 @@
 /* eslint-disable func-style */
 import React, { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Box, Slide } from '@mui/material';
+import { Slide } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
+import LegendBox from '../../components/administration/common/legendBox/LegendBox';
 import { DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
@@ -46,6 +48,7 @@ interface IAdministrationGridViewProps<T> {
 
    location: string;
    withSearchParams?: boolean;
+   legendProps?: Array<{color: string; message:string}>;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -65,7 +68,9 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         setSorterStateAction,
         location,
         withSearchParams = true,
+        legendProps,
     } = props;
+
     const [ searchParams, setSearchParams ] = useSearchParams();
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
@@ -75,7 +80,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         }
         return '';
     };
-
     const renderGridSettings = () => {
         const sortingColumns = mapGridColumnsToAdministrationSortingProps(filterableGridColumnDef);
         const filtersColumns = mapGridColumnsToAdministrationFilterProps(filterableGridColumnDef);
@@ -89,18 +93,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                     <AdministrationSorting searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
                 </div>
                 )}
-                <Box className={styles.legendBox}>
-                    <Box className={styles.rowColorBox}>
-                        <Box className={`${styles.colorBox} ${styles.deleted}`} />
-                        <p className={styles.colorSeparator}>-</p>
-                        <p>Contest is deleted.</p>
-                    </Box>
-                    <Box className={styles.rowColorBox}>
-                        <Box className={`${styles.colorBox} ${styles.visible}`} />
-                        <p className={styles.colorSeparator}>-</p>
-                        <p>Contest is not visible.</p>
-                    </Box>
-                </Box>
+                {legendProps &&
+                <LegendBox renders={legendProps} />}
             </div>
         );
     };
@@ -116,7 +110,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                         <DataGrid
                           columns={[ ...filterableGridColumnDef, ...notFilterableGridColumnDef ]}
                           rows={data?.items ?? []}
-                          rowCount={data?.totalCount ?? 0}
+                          rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
                           onPageChange={(e) => {
                               setQueryParams({ ...queryParams, page: e + 1 });

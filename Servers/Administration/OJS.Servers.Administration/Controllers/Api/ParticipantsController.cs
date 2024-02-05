@@ -1,21 +1,34 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Data.Models.Participants;
+using OJS.Services.Administration.Business.Participants;
+using OJS.Services.Administration.Business.Participants.Validators;
+using OJS.Services.Administration.Models.Contests.Participants;
+using OJS.Services.Administration.Models.Participants;
+using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using OJS.Services.Administration.Business;
-using OJS.Services.Administration.Models.Contests.Participants;
+using OJS.Services.Administration.Business.Participants.Permissions;
 
-public class ParticipantsController : ApiControllerBase
+public class ParticipantsController : BaseAdminApiController<Participant, ContestViewParticipantsModel, ParticipantsAdministrationModel>
 {
-    private readonly IParticipantsBusinessService participantsBusinessService;
+    public ParticipantsController(
+        IGridDataService<Participant> participantsGridDataService,
+        IParticipantsBusinessService participantsBusinessService,
+        ParticipantsAdministrationModelValidator validator,
+        ParticipantsDeleteValidator deleteValidator,
+        IParticipantsPermissionsService permissionsService)
+        : base(
+            participantsGridDataService,
+            participantsBusinessService,
+            validator,
+            deleteValidator,
+            permissionsService)
+    {
+    }
 
-    public ParticipantsController(IParticipantsBusinessService participantsBusinessService)
-        => this.participantsBusinessService = participantsBusinessService;
-
-    [HttpGet]
-    [Route("contest/{contestId}")]
+    [HttpGet("{contestId:int}")]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (contestId < 1)
@@ -24,8 +37,6 @@ public class ParticipantsController : ApiControllerBase
         }
 
         return this.Ok(
-            await this.participantsBusinessService
-                .GetAll<ContestViewParticipantsModel>(model, this.participantsBusinessService
-                    .GetByContest(contestId)));
+            await this.GetWithFilter<ContestViewParticipantsModel>(model, participant => participant.ContestId == contestId));
     }
 }

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
 import AdministrationContestCategories from "../../pages/administration-new/AdministrationContestCategories";
+import AdministrationContestPage from '../../components/administration/Contests/AdministrationContestPage';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
@@ -10,9 +11,9 @@ import ContestProblemsPage from '../../pages/administration/ContestProblemsPage'
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../pages/administration/TestEditPage';
 import Administration from '../../pages/administration-new/Administration';
-import AdministrationContestsPage from '../../pages/administration-new/AdministrationContests';
 import { AdministrationSubmissionsPage } from '../../pages/administration-new/AdministrationSubmissions';
-import AdministrationContestPage from '../../pages/administration-new/Contest/AdministrationContestPage';
+import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
+import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
@@ -145,6 +146,10 @@ const adminRoutes = [
     {
         path: '/administration-new/problems/:id',
         Element: AdministrationProblem,
+    },
+    {
+        path: '/administration-new/problemGroups',
+        Element: AdministrationProblemGroupsPage,
     },
     {
         path: '/administration-new/submissionTypes',

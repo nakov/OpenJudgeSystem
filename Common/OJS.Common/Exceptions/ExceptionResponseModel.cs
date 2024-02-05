@@ -2,6 +2,10 @@
 
 public class ExceptionResponseModel
 {
+    public ExceptionResponseModel()
+    {
+    }
+
     public ExceptionResponseModel(string name, string message)
     {
         this.Name = name;
