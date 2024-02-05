@@ -11,7 +11,5 @@ using SoftUni.Common.Models;
 public interface IGridDataService<TEntity> : IService
   where TEntity : class, IEntity
 {
-  Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel);
-
-  Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel,  Expression<Func<TEntity, bool>> filter);
+  Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel, Expression<Func<TEntity, bool>>? filter = null);
 }
