@@ -25,7 +25,7 @@ export const problemsAdminService = createApi({
         deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
             query: (problem) => ({
-                url: `/Edit`,
+                url: '/Edit',
                 method: 'PATCH',
                 body: problem,
             }),
