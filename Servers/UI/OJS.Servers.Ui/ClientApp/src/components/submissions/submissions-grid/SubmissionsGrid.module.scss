@@ -10,30 +10,6 @@
   }
 }
 
-.toggleButtonWrapper {
-  display: flex;
-
-  button {
-    @extend %font-family-montserrat;
-
-    background-color: colors.$white-color;
-    border: 0;
-    border-radius: 8px;
-    box-shadow: colors.$box-shadow-color;
-    color: colors.$light-blue-color;
-    cursor: pointer;
-    font-size: variables.$f-size-16;
-    font-weight: 700;
-    margin: 30px 0 10px;
-    padding: 13px 24px;
-    transition: all 0.2s ease-in-out;
-
-    &:first-child {
-      margin-right: 20px;
-    }
-  }
-}
-
 .noSubmissionsFound {
   @extend %font-family-montserrat;
 
@@ -41,10 +17,4 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
-}
-
-.filtersContainer {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
 }

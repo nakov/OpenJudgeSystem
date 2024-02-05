@@ -1,4 +1,5 @@
 ﻿#nullable disable
+
 namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 {
     using System;
@@ -254,15 +255,23 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         private async Task<IDbConnection> CreateConnection()
         {
-            await using var connection = new NpgsqlConnection(this.workerDbConnectionString);
+            // Connection is not used in a "using" block because the connection variable is saved
+            // in currentConnection and gets disposed otherwise
+            var connection = new NpgsqlConnection(this.workerDbConnectionString);
             await connection.OpenAsync();
-            connection.Disposed += (sender, args) =>
+
+            connection.StateChange += (_, args) =>
             {
-                this.isDisposed = true;
+                if (args.CurrentState == ConnectionState.Closed ||
+                    args.CurrentState == ConnectionState.Broken)
+                {
+                    this.isDisposed = true;
+                }
             };
 
             this.currentConnection = connection;
             this.isDisposed = false;
+
             return this.currentConnection;
         }
     }

@@ -1,18 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { InputLabel, MenuItem, Select } from '@mui/material';
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
 
-import { IDictionary, IKeyValuePair } from '../../../common/common-types';
+import { IDictionary } from '../../../common/common-types';
 import { ISubmissionResponseModel } from '../../../common/types';
-import { useUrlParams } from '../../../hooks/common/use-url-params';
 import { usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { usePages } from '../../../hooks/use-pages';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { format } from '../../../utils/number-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import Button, { ButtonType } from '../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
@@ -29,78 +24,33 @@ const selectedSubmissionsStateMapping = {
     3: 'Pending',
 } as IDictionary<string>;
 
-enum toggleValues {
-    allSubmissions = 'all submissions',
-    mySubmissions = 'my submissions',
-}
-
-enum queryKeys {
-    contestId = 'contestid',
-    toggle = 'toggle'
-}
-
-enum queryValues {
-    mySubmissions = 'my',
-    allSubmissions = 'all'
-}
-
-const defaultState = {
-    state: {
-        selectValue: { key: '', value: '' },
-        selectedActive: 1,
-    },
-};
+const defaultState = { state: { selectedActive: 1 } };
 
 const SubmissionsGrid = () => {
-    const [ selectValue, setSelectValue ] = useState<IKeyValuePair<string>>(defaultState.state.selectValue);
     const [ selectedActive, setSelectedActive ] = useState<number>(defaultState.state.selectedActive);
     const {
         state: {
-            userSubmissions,
-            userSubmissionsLoading,
             publicSubmissions,
             totalSubmissionsCount,
             totalUnprocessedSubmissionsCount,
-            userByContestSubmissions,
-            menuItems,
+            areSubmissionsLoading,
         },
         actions: {
             loadTotalUnprocessedSubmissionsCount,
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
             initiatePendingSubmissionsQuery,
-            initiateUserSubmissionsQuery,
-            initiateSubmissionsByContestQuery,
             clearPageValues,
             clearPageInformation,
         },
     } = usePublicSubmissions();
+
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const {
-        state: { params: urlParams },
-        actions: { setParam, unsetParam },
-    } = useUrlParams();
     const {
         state: { currentPage, pagesInfo },
         changePage,
     } = usePages();
-
-    const contestIdParam = useMemo(
-        () => urlParams.find((urlParam) => urlParam.key === queryKeys.contestId)?.value as string,
-        [ urlParams ],
-    );
-
-    const toggleParam = useMemo(
-        () => urlParams.find((urlParam) => urlParam.key === queryKeys.toggle)?.value,
-        [ urlParams ],
-    );
-
-    const [ activeToggleElement, setActiveToggleElement ] = useState<toggleValues>(!toggleParam
-        ? toggleValues.allSubmissions
-        : toggleParam === queryValues.mySubmissions
-            ? toggleValues.mySubmissions
-            : toggleValues.allSubmissions);
 
     const selectedSubmissionStateToRequestMapping = useMemo(
         () => ({
@@ -117,43 +67,11 @@ const SubmissionsGrid = () => {
                 return;
             }
 
-            if (activeToggleElement !== toggleValues.allSubmissions) {
-                return;
-            }
-
             (async () => {
                 await loadTotalUnprocessedSubmissionsCount();
             })();
         },
-        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin, activeToggleElement ],
-    );
-
-    useEffect(() => {
-        if (activeToggleElement === toggleValues.mySubmissions && isNil(contestIdParam)) {
-            initiateUserSubmissionsQuery();
-        }
-    }, [ activeToggleElement, initiateUserSubmissionsQuery, contestIdParam ]);
-
-    useEffect(
-        () => {
-            if (isEmpty(menuItems)) {
-                return;
-            }
-
-            if (isNil(contestIdParam)) {
-                return;
-            }
-
-            const selectedMenuItem = menuItems.find((mi) => mi.key === contestIdParam) as IKeyValuePair<string>;
-
-            if (isNil(selectedMenuItem)) {
-                return;
-            }
-
-            setSelectValue(selectedMenuItem);
-            initiateSubmissionsByContestQuery(contestIdParam);
-        },
-        [ contestIdParam, currentPage, initiateSubmissionsByContestQuery, menuItems ],
+        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin ],
     );
 
     const handlePageChange = useCallback(
@@ -172,57 +90,11 @@ const SubmissionsGrid = () => {
         [ clearPageValues, selectedActive ],
     );
 
-    const handleMenuItemSelection = useCallback(
-        (value: string) => {
-            const item = menuItems.find((i) => i.value === value) as IKeyValuePair<string>;
-
-            clearPageValues();
-
-            if (isNil(item)) {
-                unsetParam(queryKeys.contestId);
-                setSelectValue(defaultState.state.selectValue);
-
-                return;
-            }
-
-            setSelectValue(item);
-            setParam(queryKeys.contestId, item.key);
-        },
-        [ clearPageValues, setParam, unsetParam, menuItems ],
-    );
-
-    const handleToggleClick = useCallback(
-        (e: React.MouseEvent<HTMLButtonElement>) => {
-            const clickedElement = e.target as HTMLButtonElement;
-            const { textContent } = clickedElement;
-
-            if (textContent?.toLowerCase() === toggleValues.allSubmissions) {
-                setActiveToggleElement(toggleValues.allSubmissions);
-                setParam(queryKeys.toggle, queryValues.allSubmissions);
-            } else {
-                setActiveToggleElement(toggleValues.mySubmissions);
-                setParam(queryKeys.toggle, queryValues.mySubmissions);
-            }
-
-            setSelectValue(defaultState.state.selectValue);
-
-            unsetParam(queryKeys.contestId);
-            clearPageValues();
-        },
-        [ unsetParam, clearPageValues, setParam ],
-    );
-
     useEffect(
         () => {
-            if (activeToggleElement === toggleValues.mySubmissions || contestIdParam) {
-                return;
-            }
-
             selectedSubmissionStateToRequestMapping[selectedActive]();
         },
         [
-            contestIdParam,
-            activeToggleElement,
             initiatePendingSubmissionsQuery,
             initiatePublicSubmissionsQuery,
             initiateUnprocessedSubmissionsQuery,
@@ -230,26 +102,6 @@ const SubmissionsGrid = () => {
             selectedSubmissionStateToRequestMapping,
             totalSubmissionsCount,
         ],
-    );
-
-    const getCurrentAllSubmissions = useMemo(
-        () => publicSubmissions,
-        [ publicSubmissions ],
-    );
-
-    const getCurrentMySubmissions = useMemo(
-        () => contestIdParam
-            ? userByContestSubmissions
-            : userSubmissions,
-        [ contestIdParam, userByContestSubmissions, userSubmissions ],
-    );
-
-    const currentSubmissions = useMemo(
-        () => activeToggleElement === toggleValues.allSubmissions
-            ? getCurrentAllSubmissions
-            : getCurrentMySubmissions,
-
-        [ activeToggleElement, getCurrentMySubmissions, getCurrentAllSubmissions ],
     );
 
     useEffect(
@@ -263,13 +115,10 @@ const SubmissionsGrid = () => {
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isAdmin } = user;
-            const toggleSubmissions = activeToggleElement === toggleValues.allSubmissions
-                ? publicSubmissions
-                : userSubmissions;
 
             return (
-                <>
-                    { (isAdmin && activeToggleElement === toggleValues.allSubmissions) && (
+                isAdmin && (
+                    <>
                         <Heading type={HeadingType.secondary}>
                             Submissions awaiting execution:
                             {' '}
@@ -298,22 +147,20 @@ const SubmissionsGrid = () => {
                             />
                             )
                         </Heading>
-                    )}
-                    { ((isAdmin || activeToggleElement === toggleValues.mySubmissions) && toggleSubmissions?.length > 0) && (
-                    <PaginationControls
-                      count={pagesCount}
-                      page={currentPage}
-                      onChange={handlePageChange}
-                    />
-                    ) }
-                </>
+                        { publicSubmissions?.length > 0 && (
+                            <PaginationControls
+                              count={pagesCount}
+                              page={currentPage}
+                              onChange={handlePageChange}
+                            />
+                        )}
+                    </>
+                )
             );
         },
         [
             user,
-            activeToggleElement,
             publicSubmissions,
-            userSubmissions,
             totalUnprocessedSubmissionsCount,
             selectedActive,
             handleSelectSubmissionType,
@@ -321,66 +168,6 @@ const SubmissionsGrid = () => {
             currentPage,
             handlePageChange,
         ],
-    );
-
-    const renderToggleButton = useCallback(
-        () => (
-            <div className={styles.toggleButtonWrapper}>
-                <Button
-                  type={activeToggleElement === toggleValues.allSubmissions
-                      ? ButtonType.toggled
-                      : ButtonType.untoggled}
-                  onClick={(e) => handleToggleClick(e)}
-                >
-                    ALL SUBMISSIONS
-                </Button>
-                <Button
-                  type={activeToggleElement === toggleValues.mySubmissions
-                      ? ButtonType.toggled
-                      : ButtonType.untoggled}
-                  onClick={(e) => handleToggleClick(e)}
-                >
-                    MY SUBMISSIONS
-                </Button>
-            </div>
-        ),
-        [ activeToggleElement, handleToggleClick ],
-    );
-
-    const renderSubmissionsDropdown = useCallback(
-        () => (
-            <div>
-                <InputLabel id="contest-submissions-label">Choose Contest</InputLabel>
-                <Select
-                  sx={{
-                      width: 350,
-                      height: 40,
-                      border: '2px solid #42abf8',
-                      borderRadius: 2,
-                      transition: 'all .2s ease-in-out',
-                      '&& fieldset': { border: 'none' },
-                      '&:hover': { backgroundColor: '#e3f3fd' },
-                  }}
-                  defaultValue=""
-                  labelId="contest-submissions-label"
-                  autoWidth
-                  displayEmpty
-                  value={selectValue.value}
-                  onChange={(e) => handleMenuItemSelection(e.target.value)}
-                >
-                    <MenuItem key="contest-submissions-item-default" value="">Select contest</MenuItem>
-                    {menuItems.map((item: IKeyValuePair<string>) => (
-                        <MenuItem
-                          key={`contest-submissions-item-${item.key}`}
-                          value={item.value}
-                        >
-                            {item.value}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </div>
-        ),
-        [ selectValue, menuItems, handleMenuItemSelection ],
     );
 
     const renderSubmissionRow = useCallback(
@@ -392,7 +179,7 @@ const SubmissionsGrid = () => {
 
     const renderSubmissionsList = useCallback(
         () => {
-            if (activeToggleElement === toggleValues.mySubmissions && userSubmissionsLoading) {
+            if (areSubmissionsLoading) {
                 return (
                     <div style={{ ...flexCenterObjectStyles, marginTop: '10px' }}>
                         <SpinningLoader />
@@ -400,7 +187,7 @@ const SubmissionsGrid = () => {
                 );
             }
 
-            if (currentSubmissions.length === 0) {
+            if (publicSubmissions.length === 0) {
                 return (
                     <div className={styles.noSubmissionsFound}>
                         No submissions found.
@@ -410,7 +197,7 @@ const SubmissionsGrid = () => {
 
             return (
                 <List
-                  values={currentSubmissions}
+                  values={publicSubmissions}
                   itemFunc={renderSubmissionRow}
                   itemClassName={styles.submissionRow}
                   fullWidth
@@ -418,10 +205,9 @@ const SubmissionsGrid = () => {
             );
         },
         [
-            currentSubmissions,
-            activeToggleElement,
-            userSubmissionsLoading,
+            publicSubmissions,
             renderSubmissionRow,
+            areSubmissionsLoading,
         ],
     );
 
@@ -430,7 +216,7 @@ const SubmissionsGrid = () => {
             <Heading type={HeadingType.primary}>
                 Latest
                 {' '}
-                {currentSubmissions.length}
+                {publicSubmissions.length}
                 {' '}
                 submissions out of
                 {' '}
@@ -438,10 +224,6 @@ const SubmissionsGrid = () => {
                 {' '}
                 total
             </Heading>
-            <div className={styles.filtersContainer}>
-                {user.email && renderToggleButton()}
-                {activeToggleElement === toggleValues.mySubmissions && renderSubmissionsDropdown()}
-            </div>
             {renderPrivilegedComponent()}
             {renderSubmissionsList()}
         </>
