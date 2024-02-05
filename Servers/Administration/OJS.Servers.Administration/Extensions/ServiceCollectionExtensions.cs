@@ -1,21 +1,27 @@
 namespace OJS.Servers.Administration.Extensions;
 
-using System.Linq;
 using AutoCrudAdmin.Extensions;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Users;
 using OJS.Servers.Infrastructure.Extensions;
+using OJS.Services.Administration.Business.Contests.Validators;
+using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Configurations;
 using SoftUni.Data.Infrastructure.Enumerations;
-using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
+using System.Linq;
 using System.Text.Json.Serialization;
-using FluentValidation;
-using OJS.Services.Administration.Business.Validation.Validators;
-using OJS.Services.Common.Data.Pagination;
-using OJS.Data.Models.Contests;
+using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
+using OJS.Services.Administration.Business.Participants.Validators;
+using OJS.Services.Administration.Business.ProblemGroups.Validators;
+using OJS.Services.Administration.Business.SubmissionTypes.Validators;
+using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Business.Checkers.Validators;
+using OJS.Services.Administration.Business.ContestCategories.Validators;
+using OJS.Services.Administration.Business.Problems.Validators;
 
 internal static class ServiceCollectionExtensions
 {
@@ -45,8 +51,23 @@ internal static class ServiceCollectionExtensions
             .AddControllersWithViews()
             .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-    private static IServiceCollection AddValidators(this IServiceCollection services) =>
+    private static IServiceCollection AddValidators(this IServiceCollection services)
+    {
         services.AddValidatorsFromAssemblyContaining<ContestAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ParticipantsAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<SubmissionTypesAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ParticipantsAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemGroupsAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<CheckerDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ContestCategoryDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ContestDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ParticipantsDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemGroupsDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemsDeleteValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<SubmissionTypesDeleteValidator>(ServiceLifetime.Transient);
+        return services;
+    }
 
     private static IServiceCollection AddGridServices(this IServiceCollection services) =>
         services.AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));

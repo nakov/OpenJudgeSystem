@@ -27,18 +27,10 @@ public class GridDataService<TEntity> : IGridDataService<TEntity>
         this.filteringService = filteringService;
     }
 
-    public async Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel)
-    {
-        var query = this.dataService.GetQuery();
-
-        return await this.ApplyAll<T>(paginationRequestModel, query);
-    }
-
-    public async Task<PagedResult<T>> GetAll<T>(
-        PaginationRequestModel paginationRequestModel,
-        Expression<Func<TEntity, bool>> filter)
+    public async Task<PagedResult<T>> GetAll<T>(PaginationRequestModel paginationRequestModel, Expression<Func<TEntity, bool>>? filter = null)
     {
         var query = this.dataService.GetQuery(filter);
+
         return await this.ApplyAll<T>(paginationRequestModel, query);
     }
 

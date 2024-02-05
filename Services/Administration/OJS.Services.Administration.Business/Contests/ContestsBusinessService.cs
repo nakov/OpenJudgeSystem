@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class ContestsBusinessService : IContestsBusinessService
+public class ContestsBusinessService : AdministrationOperationService<Contest, ContestAdministrationModel>, IContestsBusinessService
 {
     private const int NumberOfContestsToGet = 20;
     private readonly IContestsDataService contestsData;
@@ -64,14 +64,12 @@ public class ContestsBusinessService : IContestsBusinessService
                 .ToListAsync();
     }
 
-    public async Task<ContestAdministrationModel> ById(int id)
+    public override async Task<ContestAdministrationModel> Get(int id)
         => await this.contestsData.GetByIdWithProblems(id).Map<ContestAdministrationModel>();
 
-    public async Task Edit(ContestAdministrationModel model, int id)
+    public override async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model)
     {
-        var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();
-
-        model.Id = id;
+        var contest = await this.contestsData.GetByIdQuery(model.Id!.Value).FirstOrDefaultAsync();
 
         if (!model.IsOnlineExam && model.Duration != null)
         {
@@ -95,9 +93,10 @@ public class ContestsBusinessService : IContestsBusinessService
         await this.contestsData.SaveChanges();
 
         await this.InvalidateParticipants(originalContestPassword, originalPracticePassword, model);
+        return model;
     }
 
-    public async Task Delete(int id)
+    public override async Task Delete(int id)
     {
         var contest = await this.contestsData.GetByIdQuery(id).FirstOrDefaultAsync();
         if (contest is null)
@@ -114,7 +113,7 @@ public class ContestsBusinessService : IContestsBusinessService
         await this.contestsData.SaveChanges();
     }
 
-    public async Task Create(ContestAdministrationModel model)
+    public override async Task<ContestAdministrationModel> Create(ContestAdministrationModel model)
     {
         var contest = model.Map<Contest>();
 
@@ -123,6 +122,7 @@ public class ContestsBusinessService : IContestsBusinessService
 
         await this.contestsData.Add(contest);
         await this.contestsData.SaveChanges();
+        return model;
     }
 
     private static void AddProblemGroupsToContest(Contest contest, int problemGroupsCount)

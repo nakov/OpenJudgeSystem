@@ -4,19 +4,12 @@ using OJS.Services.Administration.Models.Contests;
 using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
 
-public interface IContestsBusinessService : IService
+public interface IContestsBusinessService : IAdministrationOperationService<Contest, ContestAdministrationModel>
 {
     Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 
     Task<IEnumerable<TServiceModel>> GetAllAvailableForCurrentUser<TServiceModel>(string searchString)
         where TServiceModel : class;
-
-    Task<ContestAdministrationModel> ById(int id);
-
-    Task Edit(ContestAdministrationModel model, int id);
-
-    Task Delete(int id);
-
-    Task Create(ContestAdministrationModel model);
 }

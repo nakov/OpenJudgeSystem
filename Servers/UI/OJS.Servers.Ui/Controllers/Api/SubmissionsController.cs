@@ -37,13 +37,31 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets all user submissions. Prepared for the user's profile page.
     /// </summary>
-    /// <returns>Collection of user submissions.</returns>
+    /// <param name="username">Username of the profile's owner.</param>
+    /// <param name="page">The current page number.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<SubmissionForProfileResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetForProfile()
+    public async Task<IActionResult> GetForProfile([FromQuery] string username, [FromQuery]int page)
         => await this.submissionsBusiness
-            .GetForProfileByUser(this.User.Identity?.Name)
-            .MapCollection<SubmissionForProfileResponseModel>()
+            .GetForProfileByUser(username, page)
+            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets user latest submissions for contest.
+    /// </summary>
+    /// /// <param name="username">Username of the profile's owner.</param>
+    /// <param name="page">The current page number.</param>
+    /// <param name="contestId">Contest for which the submissions will be retrieved.</param>
+    /// <returns>A page with submissions containing information about their score and user.</returns>
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForProfileResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissionsForProfileByContest([FromQuery] string username, [FromQuery] int page, [FromQuery] int contestId)
+        => await this.submissionsBusiness
+            .GetForProfileByUserAndContest(username, page, contestId)
+            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -126,37 +144,6 @@ public class SubmissionsController : BaseApiController
 
         return this.Ok(result);
     }
-
-    /// <summary>
-    /// Gets user latest submissions (default number of submissions) by participation mode.
-    /// </summary>
-    /// <param name="isOfficial">Nullable oolean indicating submission participation mode (practice/compete).
-    /// If no value is passed, all submission for user will be loaded, otherwise they will be filtered by mode.</param>
-    /// <param name="page">The current page number.</param>
-    /// <returns>A page with submissions containing information about their score and user.</returns>
-    [HttpGet]
-    [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetUserSubmissions([FromQuery] bool? isOfficial, [FromQuery]int page)
-        => await this.submissionsBusiness
-            .GetUsersLastSubmissions(isOfficial, page)
-            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
-            .ToOkResult();
-
-    /// <summary>
-    /// Gets user latest submissions for contest.
-    /// </summary>
-    /// <param name="contestId">Contest for which the submissions will be retrieved.</param>
-    /// <param name="page">The current page number.</param>
-    /// <returns>A page with submissions containing information about their score and user.</returns>
-    [HttpGet]
-    [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetUserSubmissionsByContest([FromQuery] int contestId, [FromQuery] int page)
-        => await this.submissionsBusiness
-            .GetByContest(contestId, page)
-            .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
-            .ToOkResult();
 
     /// <summary>
     /// Gets the count of all submissions.

@@ -50,6 +50,7 @@ const problemFilterableColums: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        valueFormatter: (params) => params.value.toString(),
     },
     {
         field: 'problemGroup',

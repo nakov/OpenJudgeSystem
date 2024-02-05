@@ -1,12 +1,12 @@
-﻿namespace OJS.Services.Administration.Business;
+﻿namespace OJS.Services.Administration.Business.Participants;
 
-using SoftUni.Services.Infrastructure;
-using System.Threading.Tasks;
-using OJS.Services.Common.Data.Pagination;
 using OJS.Data.Models.Participants;
+using SoftUni.Services.Infrastructure;
 using System.Linq;
+using System.Threading.Tasks;
+using OJS.Services.Administration.Models.Participants;
 
-public interface IParticipantsBusinessService : IService
+public interface IParticipantsBusinessService : IAdministrationOperationService<Participant, ParticipantsAdministrationModel>
 {
     /// <summary>
     /// Updates the total score snapshot for all participants.

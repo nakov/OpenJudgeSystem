@@ -17,6 +17,7 @@ enum StrategyType {
     // Database strategies
     MySql = 'mysql',
     SqlServer = 'sql-server',
+    PostgreSql = 'postgresql',
 
     // Other strategies
     PlainText = 'plain-text',

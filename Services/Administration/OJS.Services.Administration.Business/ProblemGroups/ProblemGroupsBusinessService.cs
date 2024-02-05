@@ -1,19 +1,20 @@
-namespace OJS.Services.Administration.Business.Implementations
+namespace OJS.Services.Administration.Business.ProblemGroups
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Services.Administration.Data;
+    using OJS.Services.Administration.Models.ProblemGroups;
     using OJS.Services.Common.Models;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Resource = OJS.Common.Resources.ProblemGroupsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
-    public class ProblemGroupsBusinessService : IProblemGroupsBusinessService
+    public class ProblemGroupsBusinessService : AdministrationOperationService<ProblemGroup, ProblemGroupsAdministrationModel>, IProblemGroupsBusinessService
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;

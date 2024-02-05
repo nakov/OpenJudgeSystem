@@ -1,13 +1,13 @@
-﻿namespace OJS.Services.Administration.Business.Implementations;
+﻿namespace OJS.Services.Administration.Business.Participants;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Administration.Data;
-using System.Threading.Tasks;
-using System.Linq;
 using OJS.Data.Models.Participants;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Participants;
+using System.Linq;
+using System.Threading.Tasks;
 
-public class ParticipantsBusinessService : IParticipantsBusinessService
+public class ParticipantsBusinessService : AdministrationOperationService<Participant, ParticipantsAdministrationModel>, IParticipantsBusinessService
 {
     private readonly IParticipantsDataService participantsData;
     private readonly IParticipantScoresDataService scoresDataService;

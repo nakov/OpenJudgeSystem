@@ -2,16 +2,29 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
+using OJS.Services.Administration.Business.Participants;
+using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
+using OJS.Services.Administration.Models.Participants;
+using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Business.Participants.Permissions;
 
-public class ParticipantsController : BaseAdminApiController<Participant, ContestViewParticipantsModel>
+public class ParticipantsController : BaseAdminApiController<Participant, ContestViewParticipantsModel, ParticipantsAdministrationModel>
 {
     public ParticipantsController(
-        IGridDataService<Participant> participantsGridDataService)
-        : base(participantsGridDataService)
+        IGridDataService<Participant> participantsGridDataService,
+        IParticipantsBusinessService participantsBusinessService,
+        ParticipantsAdministrationModelValidator validator,
+        ParticipantsDeleteValidator deleteValidator,
+        IParticipantsPermissionsService permissionsService)
+        : base(
+            participantsGridDataService,
+            participantsBusinessService,
+            validator,
+            deleteValidator,
+            permissionsService)
     {
     }
 

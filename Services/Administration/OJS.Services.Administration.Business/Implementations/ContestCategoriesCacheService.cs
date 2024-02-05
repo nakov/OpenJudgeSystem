@@ -1,11 +1,12 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {
@@ -19,6 +20,14 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.cache = cache;
         this.contestCategoriesData = contestCategoriesData;
     }
+
+    public Task<ContestCategoriesAdministrationModel> Get(int id) => throw new System.NotImplementedException();
+
+    public Task<ContestCategoriesAdministrationModel> Create(ContestCategoriesAdministrationModel model) => throw new System.NotImplementedException();
+
+    public Task<ContestCategoriesAdministrationModel> Edit(ContestCategoriesAdministrationModel model) => throw new System.NotImplementedException();
+
+    public Task Delete(int id) => throw new System.NotImplementedException();
 
     public void ClearMainContestCategoriesCache()
     {

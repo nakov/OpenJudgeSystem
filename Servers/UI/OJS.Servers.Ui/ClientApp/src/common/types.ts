@@ -56,7 +56,7 @@ interface ISubmissionResponseModel {
     id: number;
     createdOn: Date;
     strategyName: string;
-    user: IPublicSubmissionUser;
+    user?: IPublicSubmissionUser;
     problem: IPublicSubmissionProblem;
     result: IPublicSubmissionResult;
     state: PublicSubmissionState;
