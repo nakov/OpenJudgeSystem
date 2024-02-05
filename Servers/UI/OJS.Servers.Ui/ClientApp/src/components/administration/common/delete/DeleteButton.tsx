@@ -11,19 +11,18 @@ interface IDeleteButtonProps {
     id: number;
     name: string;
     style?: object;
-    deleteRequest: any;
-    data: string | undefined;
-    isLoading:boolean;
-    isSuccess:boolean;
-    error: any;
     text: string;
+    mutation: any
 }
 
 const DeleteButton = (props: IDeleteButtonProps) => {
-    const { onSuccess, id, name, style = {}, deleteRequest, data, isLoading, isSuccess, error, text } = props;
+    const { onSuccess, id, name, style = {}, text, mutation } = props;
     const [ showConfirmDelete, setShowConfirmDelete ] = useState<boolean>(false);
     const [ message, setMessage ] = useState<string | null>(null);
-    const confirmDeleteContest = () => {
+
+    const [ deleteRequest, { data, isLoading, isSuccess, error } ] = mutation();
+
+    const confirmDelete = () => {
         setShowConfirmDelete(!showConfirmDelete);
     };
 
@@ -60,7 +59,7 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                       message={message}
                     />
                     )}
-                    <IconButton onClick={confirmDeleteContest}>
+                    <IconButton onClick={confirmDelete}>
                         <DeleteIcon
                           sx={{
                               width: '1.7rem',

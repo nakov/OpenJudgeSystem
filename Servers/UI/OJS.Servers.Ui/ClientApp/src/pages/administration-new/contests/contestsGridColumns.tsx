@@ -5,6 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 
@@ -63,6 +64,9 @@ const contestFilterableColumns: GridColDef[] = [
         type: 'date',
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => params.value
+            ? dayjs(params.value)
+            : null,
     },
     {
         field: 'endTime',
@@ -73,6 +77,9 @@ const contestFilterableColumns: GridColDef[] = [
         type: 'date',
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => params.value
+            ? dayjs(params.value)
+            : null,
     },
     {
         field: 'limitBetweenSubmissions',
@@ -119,11 +126,7 @@ const contestFilterableColumns: GridColDef[] = [
 
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
-    deleteRequest: any,
-    data:string | undefined,
-    isDeleting:boolean,
-    isSuccess:boolean,
-    error:any,
+    deleteMutation: any,
 ) => [
     {
         field: 'actions',
@@ -145,11 +148,7 @@ export const returnContestsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text="Are you sure that you want to delete the contest."
-                  deleteRequest={deleteRequest}
-                  data={data}
-                  isLoading={isDeleting}
-                  isSuccess={isSuccess}
-                  error={error}
+                  mutation={deleteMutation}
                 />
             </div>
         ),

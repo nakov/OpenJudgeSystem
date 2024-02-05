@@ -8,10 +8,9 @@ import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
-import { Alert, AlertSeverity, AlertVariant } from '../../../components/guidelines/alert/Alert';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
-import { useGetAllAdminProblemsQuery, useRetestByIdMutation } from '../../../redux/services/admin/problemsAdminService';
+import { useDeleteProblemMutation, useGetAllAdminProblemsQuery, useRetestByIdMutation } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
@@ -72,7 +71,12 @@ const AdministrationProblemsPage = () => {
         <>
             <AdministrationGridView
               filterableGridColumnDef={filterableColumns}
-              notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick)}
+              notFilterableGridColumnDef={
+                returnProblemsNonFilterableColumns(
+                    onEditClick,
+                    useDeleteProblemMutation,
+                )
+}
               data={problemsData}
               renderActionButtons={renderGridSettings}
               error={error}

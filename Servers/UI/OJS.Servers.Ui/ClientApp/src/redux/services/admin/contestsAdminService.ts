@@ -29,7 +29,7 @@ export const contestService = createApi({
         deleteContest: builder.mutation<string, IContestDetailsUrlParams >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateContest: builder.mutation<string, IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/Edit', method: 'PATCH', body: contestAdministrationModel }) }),
         createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: '/Create', method: 'POST', body: contestAdministrationModel }) }),
-        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/CopyAll?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
+        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
     }),
 });
 

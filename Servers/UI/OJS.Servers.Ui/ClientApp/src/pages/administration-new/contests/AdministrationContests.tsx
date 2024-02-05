@@ -33,15 +33,6 @@ const AdministrationContestsPage = () => {
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
 
-    const [
-        deleteContest,
-        {
-            data: deleteData,
-            isLoading: isDeleting,
-            isSuccess: isSuccesfullyDeleted,
-            error: deleteError,
-        } ] = useDeleteContestMutation();
-
     const onEditClick = (id: number) => {
         setOpenEditContestModal(true);
         setContestId(id);
@@ -99,7 +90,7 @@ const AdministrationContestsPage = () => {
           data={data}
           error={error}
           filterableGridColumnDef={contestFilterableColumns}
-          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick, deleteContest, deleteData, isDeleting, isSuccesfullyDeleted, deleteError)}
+          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick, useDeleteContestMutation)}
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}

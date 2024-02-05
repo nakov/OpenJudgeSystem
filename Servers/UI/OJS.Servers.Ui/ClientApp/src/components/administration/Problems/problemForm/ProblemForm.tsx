@@ -15,11 +15,11 @@ import { isNaN } from 'lodash';
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
-import { useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteProblem from '../delete/DeleteProblem';
+import DeleteButton from '../../common/delete/DeleteButton';
 
 interface IProblemFormProps {
     problemId: number | null;
@@ -405,11 +405,13 @@ const ProblemForm = (props: IProblemFormProps) => {
                                 ? (
                                     <>
                                         <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={() => updateProblem(currentProblem)} variant="contained">Edit</Button>
-                                        <DeleteProblem
-                                          problemId={problemId!}
-                                          problemName={currentProblem.name}
+                                        <DeleteButton
+                                          id={problemId!}
+                                          name={currentProblem.name}
                                           style={{ alignSelf: 'flex-end' }}
                                           onSuccess={(() => navigate('/administration-new/problems'))}
+                                          text="Are you sure you want to delete this problem."
+                                          mutation={useDeleteProblemMutation}
                                         />
                                     </>
                                 )
