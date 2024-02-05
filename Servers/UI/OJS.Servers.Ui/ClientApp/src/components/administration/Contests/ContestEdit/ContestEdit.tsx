@@ -281,14 +281,16 @@ const ContestEdit = (props:IContestEditProps) => {
             }
             break;
         case 'duration':
-            if (value) {
-                const timeSpanRegex = /^-?(\d+\.)?(\d{1,2}):(\d{2}):(\d{2})(\.\d{1,7})?$/;
-                currentContestValidations.isDurationValid = timeSpanRegex.test(value);
-                currentContestValidations.isDurationTouched = true;
-                console.log(currentContestValidations.isDurationValid)
-                console.log(currentContestValidations.isDurationTouched)
-                duration = value;
+            let currentValue = value;
+
+            if (currentValue === '') {
+                currentValue = null;
             }
+
+            const timeSpanRegex = /^-?(\d+\.)?(\d{1,2}):(\d{2}):(\d{2})(\.\d{1,7})?$/;
+            currentContestValidations.isDurationValid = timeSpanRegex.test(value) || currentValue === null;
+            currentContestValidations.isDurationTouched = true;
+            duration = currentValue;
             break;
         }
         setContestValidations(currentContestValidations);
@@ -332,7 +334,9 @@ const ContestEdit = (props:IContestEditProps) => {
         const event = {
             target: {
                 name,
-                value: newValue.toString(),
+                value: newValue
+                    ? newValue.toString()
+                    : null,
             },
         };
         onChange(event);
@@ -506,7 +510,7 @@ const ContestEdit = (props:IContestEditProps) => {
                                   InputLabelProps={{ shrink: true }}
                                   name="duration"
                                   error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
-                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) && 'Duration must be valid time.'}
+                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) && 'Duration must be valid time with format hh:mm:ss'}
                                 />
                             </Box>
                         </Box>

@@ -63,6 +63,11 @@ public class FilteringService : IFilteringService
         {
             expression = BuildIntExpression(filter.OperatorType, filter.Value, property);
         }
+        else if (filter.Property.PropertyType == typeof(DateTime) ||
+                 Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(DateTime))
+        {
+            expression = BuildDateTimeExpression(filter.OperatorType, filter.Value, property);
+        }
 
         if (expression == null)
         {
@@ -99,6 +104,63 @@ public class FilteringService : IFilteringService
         else if (int.TryParse(value, out var intValue))
         {
             var constant = Expression.Constant(intValue, IsNullableType(property.Type) ? typeof(int?) : typeof(int));
+            switch (operatorType)
+            {
+                case OperatorType.Equals:
+                    expression = Expression.Equal(property, constant);
+                    break;
+                case OperatorType.GreaterThan:
+                    expression = Expression.GreaterThan(property, constant);
+                    break;
+                case OperatorType.LessThan:
+                    expression = Expression.LessThan(property, constant);
+                    break;
+                case OperatorType.LessThanOrEqual:
+                    expression = Expression.LessThanOrEqual(property, constant);
+                    break;
+                case OperatorType.GreaterThanOrEqual:
+                    expression = Expression.GreaterThanOrEqual(property, constant);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"Property of type int cannot have {operatorType} operator");
+            }
+        }
+        else
+        {
+            throw new ArgumentException($"Invalid value for integer property: {value}");
+        }
+
+        return expression;
+    }
+
+    private static Expression? BuildDateTimeExpression(OperatorType operatorType, string? value, MemberExpression property)
+    {
+        Expression? expression;
+
+        if (value == null || value.Equals("null", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!IsNullableType(property.Type))
+            {
+                throw new ArgumentException($"Cannot assign null to a non-nullable integer property: {property.Member.Name}");
+            }
+
+            switch (operatorType)
+            {
+                case OperatorType.Equals:
+                    expression = Expression.Equal(property, Expression.Constant(null, property.Type));
+                    break;
+                case OperatorType.NotEquals:
+                    expression = Expression.NotEqual(property, Expression.Constant(null, property.Type));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"Property of type int? cannot have {operatorType} operator");
+            }
+        }
+        else if (DateTime.TryParse(value, out var dateTimeValue))
+        {
+            var constant = Expression.Constant(dateTimeValue, IsNullableType(property.Type) ? typeof(DateTime?) : typeof(DateTime));
             switch (operatorType)
             {
                 case OperatorType.Equals:
