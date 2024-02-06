@@ -7,7 +7,7 @@ import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import DeleteProblem from '../../../components/administration/Problems/delete/DeleteProblem';
+import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 
 const problemFilterableColums: GridColDef[] = [
     {
@@ -100,7 +100,11 @@ const problemFilterableColums: GridColDef[] = [
     },
 ];
 
-export const returnProblemsNonFilterableColumns = (onEditClick: Function, retestProblem?: Function) => [
+export const returnProblemsNonFilterableColumns = (
+    onEditClick: Function,
+    deleteMutation: any,
+    retestProblem?: Function,
+) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -117,15 +121,16 @@ export const returnProblemsNonFilterableColumns = (onEditClick: Function, retest
                 <Link to={`/administration-new/problems/${Number(params.row.id)}`}>
                     <ShortcutIcon color="primary" />
                 </Link>
-                <DeleteProblem
-                  problemId={Number(params.row.id)}
-                  problemName={params.row.name}
-                  style={{ alignSelf: 'flex-end' }}
+                <DeleteButton
+                  id={Number(params.row.id)}
+                  name={params.row.name}
+                  text="Are you sure that you want to delete the contest."
+                  mutation={deleteMutation}
                 />
                 {retestProblem && (
-                <IconButton onClick={() => retestProblem(Number(params.row.id))}>
-                    <ReplayIcon />
-                </IconButton>
+                    <IconButton onClick={() => retestProblem(Number(params.row.id))}>
+                        <ReplayIcon />
+                    </IconButton>
                 )}
             </div>
         ),

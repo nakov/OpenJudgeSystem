@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 import { defaultPathIdentifier } from '../../common/constants';
@@ -22,9 +23,21 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
 
     const result = await baseQuery(args, api, extraOptions);
     const response = result.meta?.response;
+
     if (response && errorStatusCodes.some((status) => status === Number(response.status))) {
         const errorsArray = result.error as ResultError;
-        return { error: errorsArray.data as Array<ExceptionData> };
+        let data = [] as Array<ExceptionData>;
+        try {
+            data = errorsArray.data as Array<ExceptionData>;
+            data.forEach((x) => {
+                if (!x.message) {
+                    x.message = 'Unexpected error. Please contact an administrator.';
+                }
+            });
+        } catch {
+            data = [ { message: 'Something went wrong', name: 'Unexpected Error' } ] as Array<ExceptionData>;
+        }
+        return { error: data };
     }
 
     if (response && succesfullStatusCodes.some((status) => status === Number(response!.status))) {

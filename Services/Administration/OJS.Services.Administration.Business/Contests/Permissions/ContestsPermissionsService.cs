@@ -33,9 +33,6 @@ public class ContestsPermissionsService : BasePermissionService<Contest, Contest
             .GetAwaiter()
             .GetResult();
 
-    public override bool HasFullAccess(ClaimsPrincipal user)
-        => user.IsAdmin();
-
     public override Expression<Func<Contest, bool>>? GeneratePermittedRecordsExpression() =>
         contest
             => contest.LecturersInContests.Any(l => l.LecturerId == this.userProviderService.GetCurrentUser().Id);

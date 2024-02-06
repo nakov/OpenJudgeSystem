@@ -21,7 +21,6 @@ import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVe
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 
-// eslint-disable-next-line import/no-unresolved
 import styles from './ContestEdit.module.scss';
 
 interface IContestEditProps {
@@ -36,14 +35,6 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
-    const [
-        deleteContest,
-        {
-            data: deleteData,
-            isLoading: isDeleting,
-            isSuccess: isSuccesfullyDeleted,
-            error: deleteError,
-        } ] = useDeleteContestMutation();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -439,7 +430,6 @@ const ContestEdit = (props:IContestEditProps) => {
                                       ? 'success'
                                       : 'primary'}
                                   error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                              // eslint-disable-next-line max-len
                                   helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
                                 />
                                 <TextField
@@ -506,9 +496,9 @@ const ContestEdit = (props:IContestEditProps) => {
                                   label="Duration"
                                   variant="standard"
                                   value={contest.duration}
+                                  name="duration"
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
-                                  name="duration"
                                   error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
                                   helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) && 'Duration must be valid time with format hh:mm:ss'}
                                 />
@@ -673,11 +663,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           id={Number(contestId!)}
                           name={contest.name}
                           onSuccess={() => navigate('/administration-new/contests')}
-                          deleteRequest={deleteContest}
-                          data={deleteData}
-                          isLoading={isDeleting}
-                          isSuccess={isSuccesfullyDeleted}
-                          error={deleteError}
+                          mutation={useDeleteContestMutation}
                           text="Are you sure that you want to delete the contest."
                         />
                     </Box>
