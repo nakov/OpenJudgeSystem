@@ -30,7 +30,7 @@ public class ContestCategoryAdministrationModelValidator : BaseValidator<Contest
     private bool ValidateParentCategoryIsValid(ContestCategoryAdministrationModel model)
     {
         // If ParentId = 0 and Parent is empty > no parent category has been selected
-        if (model.ParentId == 0 && model.Parent == string.Empty)
+        if (model.ParentId == 0 && string.IsNullOrEmpty(model.Parent))
         {
             return true;
         }

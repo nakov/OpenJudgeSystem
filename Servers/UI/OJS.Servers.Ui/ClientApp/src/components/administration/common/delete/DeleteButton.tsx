@@ -12,7 +12,7 @@ interface IDeleteButtonProps {
     name: string;
     style?: object;
     text: string;
-    mutation: any
+    mutation: any;
 }
 
 const DeleteButton = (props: IDeleteButtonProps) => {
