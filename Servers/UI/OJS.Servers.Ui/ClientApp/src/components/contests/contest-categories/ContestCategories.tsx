@@ -8,16 +8,16 @@ import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
-import concatClassNames from '../../../utils/class-names';
+import useTheme from '../../../hooks/use-theme';
+import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import Tree from '../../guidelines/trees/Tree';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
     onCategoryClick: (filter: IFilter) => void;
-    defaultSelected: string;
     setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
     shouldReset: boolean;
 }
@@ -34,12 +34,11 @@ const defaultState = {
     },
 };
 const ContestCategories = ({
-    className = '',
     onCategoryClick,
-    defaultSelected,
     setStrategyFilters,
     shouldReset,
 }: IContestCategoriesProps) => {
+    const { themeColors } = useTheme();
     const { state: { categories, categoriesFlat } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb, clearBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -47,6 +46,13 @@ const ContestCategories = ({
     const [ openedCategoryFilter, setOpenedCategoryFilter ] = useState(defaultState.state.openedCategoryFilter);
     const [ currentCategoryId, selectCurrentCategoryId ] = useState<string>('');
     const [ prevCategoryId, setPrevCategoryId ] = useState<string>('');
+    const [ isExpanded, setIsExpanded ] = useState<boolean>(true);
+
+    const {
+        data: contestCategories,
+        isLoading: areCategoriesLoading,
+        error: categoriesError,
+    } = useGetContestCategoriesQuery();
 
     const getCategoryByValue = useCallback(
         (searchedValue?: string) => {
@@ -106,11 +112,6 @@ const ContestCategories = ({
             return result;
         },
         [ getCurrentNode ],
-    );
-
-    const defaultExpanded = useMemo(
-        () => getParents([], categoriesFlat, defaultSelected),
-        [ defaultSelected, categoriesFlat, getParents ],
     );
 
     const strategyFilterGroup = useMemo(
@@ -257,22 +258,54 @@ const ContestCategories = ({
         [ applyStrategyFilters, currentCategoryId, prevCategoryId ],
     );
 
+    const renderContestCategories = useCallback(() => {
+        console.log('contest categories => ', contestCategories);
+        return (
+            <div className={styles.categoriesTreeWrapper} style={{ color: themeColors.textColor }}>
+                {contestCategories.map((category: any, idx: number) => {
+                    const isLast = idx === contestCategories.length - 1;
+                    return (
+                        <div
+                          key={`c-c-${category.id}`}
+                          className={styles.categoryTreeItemWrapper}
+                          style={{ borderBottom: `2px solid ${themeColors.baseColor100}` }}
+                        >
+                            <i className="far fa-file-alt" />
+                            <div className={styles.categoryTreeItem} onClick={() => onCategoryClick(category.name)}>
+                                {category.name}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    }, [ contestCategories ]);
+
+    if (categoriesError) {
+        return (<div>Error loading contest categories. Please try again.</div>);
+    }
+
     return (
-        <div className={concatClassNames(className)}>
-            <Heading
-              type={HeadingType.small}
-              className={styles.heading}
+        <div className={styles.contestCategoriesWrapper}>
+            {/*
+                eslint-disable-next-line
+                jsx-a11y/click-events-have-key-events,
+                jsx-a11y/no-static-element-interactions
+             */}
+            <div
+              className={styles.contestCategoriesHeading}
+              style={{ color: themeColors.textColor }}
+              onClick={() => setIsExpanded(!isExpanded)}
             >
-                Category
-            </Heading>
-            <Tree
-              items={categories}
-              onSelect={handleTreeLabelClick}
-              defaultSelected={getCategoryById(defaultSelected)}
-              defaultExpanded={defaultExpanded}
-              treeItemHasTooltip
-              shouldReset={shouldReset}
-            />
+                Contest Categories
+                <i className={`fas ${isExpanded
+                    ? 'fa-angle-up'
+                    : 'fa-angle-down'}`}
+                />
+            </div>
+            {areCategoriesLoading
+                ? <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>
+                : <div>{renderContestCategories()}</div>}
         </div>
     );
 };

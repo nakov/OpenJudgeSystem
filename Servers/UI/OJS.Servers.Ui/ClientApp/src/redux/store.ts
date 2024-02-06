@@ -5,19 +5,21 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import authorizationReducer, { authorizationSliceName } from './features/authorizationSlice';
-// features
+import { contestSlice } from './features/contestsSlice';
 import submissionDetailsReducer from './features/submissionDetailsSlice';
 import themeReducer, { themeSliceName } from './features/themeSlice';
 import authorizationService from './services/authorizationService';
-// services
+import { contestsService } from './services/contestsService';
 import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
     submissionDetails: submissionDetailsReducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
+    [contestsService.reducerPath]: contestsService.reducer,
     authorization: authorizationReducer,
     theme: themeReducer,
+    [contestSlice.name]: contestSlice.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -39,6 +41,7 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat([
         submissionDetailsService.middleware,
         authorizationService.middleware,
+        contestsService.middleware,
     ]),
 });
 

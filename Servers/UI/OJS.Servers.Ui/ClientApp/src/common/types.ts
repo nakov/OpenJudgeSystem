@@ -63,6 +63,14 @@ interface ISubmissionResponseModel {
     processed: boolean;
 }
 
+interface IGetAllContestsOptions {
+    status: string;
+    sortType: string;
+    page: number;
+    category?: number | null;
+    strategy?: number | null;
+}
+
 interface IProblemResourceType {
     id: number;
     name: string;
@@ -265,4 +273,5 @@ export type {
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
     ILoginDetailsType,
+    IGetAllContestsOptions,
 };

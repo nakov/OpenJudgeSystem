@@ -96,7 +96,7 @@ const List = <TValue, >({
                       key={keyFunc(value)}
                       className={itemClassNameCombined}
                       style={{
-                          width: '90%',
+                          width: '100%',
                           marginBottom: isLast
                               ? 0
                               : 20,
