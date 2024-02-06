@@ -2,6 +2,6 @@
 
 using OJS.Services.Administration.Models.ContestCategories;
 
-public interface IContestCategoriesPermissionsService : IPermissionsService<ContestCategoriesAdministrationModel>
+public interface IContestCategoriesPermissionsService : IPermissionsService<ContestCategoryAdministrationModel>
 {
 }
