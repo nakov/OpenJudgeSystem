@@ -4,32 +4,25 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import dayjs from 'dayjs';
-import { isNaN } from 'lodash';
+import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
-import { ContestVariation } from '../../../../common/contest-types';
 import {
     ExceptionData,
     IContestCategories,
-    IContestCategoryAdministration
+    IContestCategoryAdministration,
 } from '../../../../common/types';
 import {
     useCreateContestCategoryMutation,
+    useDeleteContestCategoryMutation,
     useGetCategoriesQuery,
-    useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation
+    useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation,
 } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useCreateContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
-import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import DeleteButton from '../../common/delete/DeleteButton';
 
 // eslint-disable-next-line import/no-unresolved
 import styles from './CategoryEdit.module.scss';
-import ContestDeleteButton from "../../Contests/delete/ContestDeleteButton";
 
 interface IContestCategoryEditProps {
     contestCategoryId: number | null;
@@ -82,6 +75,15 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             isLoading: isCreating,
         } ] = useCreateContestCategoryMutation();
 
+    const [
+        deleteContestCategory,
+        {
+            data: deleteData,
+            isLoading: isDeleting,
+            isSuccess: isSuccesfullyDeleted,
+            error: deleteError,
+        } ] = useDeleteContestCategoryMutation();
+
     useEffect(
         () => {
             if (data) {
@@ -101,7 +103,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             setSuccessMessage(createData as string);
             setErrorMessages([]);
         }
-    }, [ createData, isSuccesfullyCreated ]);
+    }, [ createData, isSuccesfullyCreated, isSuccesfullyUpdated, updateData ]);
 
     useEffect(() => {
         if (updateError && !isSuccesfullyUpdated) {
@@ -114,7 +116,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         } else {
             setErrorMessages([]);
         }
-    }, [ createError, isSuccesfullyCreated ]);
+    }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {
         const isValid = contestCategoryValidations.isNameValid &&
@@ -128,57 +130,49 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         const { name, value, checked } = e.target;
         let {
             name: contestCategoryName,
-            id,
             parentId,
             parent,
-            isDeleted,
             isVisible,
             orderBy,
-            deletedOn,
-            modifiedOn,
         } = contestCategory;
         const contestCategoryValidations1 = contestCategoryValidations;
         // eslint-disable-next-line default-case
         switch (name) {
-            case 'name':
-                contestCategoryName = value;
-                contestCategoryValidations1.isNameTouched = true;
-                contestCategoryValidations1.isNameValid = true;
-                if (value.length < 4 || value.length > 100) {
-                    contestCategoryValidations1.isNameValid = false;
-                }
-                break;
-            case 'orderBy':
-                contestCategoryValidations1.isOrderByTouched = true;
-                contestCategoryValidations1.isOrderByValid = true;
-                orderBy = value;
-                if (value < 0) {
-                    contestCategoryValidations1.isOrderByValid = false;
-                }
-                break;
-            case 'isVisible':
-                isVisible = checked;
-                break;
-            case 'parent':
-                const category = contestCategories?.find((cc) => cc.id === value);
-                if (category) {
-                    parentId = category.id;
-                    parent = category.name;
-                }
-                break;
+        case 'name':
+            contestCategoryName = value;
+            contestCategoryValidations1.isNameTouched = true;
+            contestCategoryValidations1.isNameValid = true;
+            if (value.length < 4 || value.length > 100) {
+                contestCategoryValidations1.isNameValid = false;
+            }
+            break;
+        case 'orderBy':
+            contestCategoryValidations1.isOrderByTouched = true;
+            contestCategoryValidations1.isOrderByValid = true;
+            orderBy = value;
+            if (value < 0) {
+                contestCategoryValidations1.isOrderByValid = false;
+            }
+            break;
+        case 'isVisible':
+            isVisible = checked;
+            break;
+        case 'parent':
+            const category = contestCategories?.find((cc) => cc.id === value);
+            if (category) {
+                parentId = category.id;
+                parent = category.name;
+            }
+            break;
         }
         setContestCategoryValidations(contestCategoryValidations1);
         setContestCategory((prevState) => ({
             ...prevState,
             name: contestCategoryName,
-            id,
             parent,
             parentId,
-            isDeleted,
             isVisible,
             orderBy,
-            deletedOn,
-            modifiedOn,
         }));
         validateForm();
     };
@@ -212,93 +206,95 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                 <div className={`${styles.flex}`}>
                     {errorMessages.map((x, i) => (
                         <Alert
-                            key={x.name}
-                            variant={AlertVariant.Filled}
-                            vertical={AlertVerticalOrientation.Top}
-                            horizontal={AlertHorizontalOrientation.Right}
-                            severity={AlertSeverity.Error}
-                            message={x.message}
-                            styles={{ marginTop: `${i * 4}rem` }}
+                          key={x.name}
+                          variant={AlertVariant.Filled}
+                          vertical={AlertVerticalOrientation.Top}
+                          horizontal={AlertHorizontalOrientation.Right}
+                          severity={AlertSeverity.Error}
+                          message={x.message}
+                          styles={{ marginTop: `${i * 4}rem` }}
                         />
                     ))}
                     {successMessage && (
                         <Alert
-                            variant={AlertVariant.Filled}
-                            autoHideDuration={3000}
-                            vertical={AlertVerticalOrientation.Top}
-                            horizontal={AlertHorizontalOrientation.Right}
-                            severity={AlertSeverity.Success}
-                            message={successMessage}
+                          variant={AlertVariant.Filled}
+                          autoHideDuration={3000}
+                          vertical={AlertVerticalOrientation.Top}
+                          horizontal={AlertHorizontalOrientation.Right}
+                          severity={AlertSeverity.Success}
+                          message={successMessage}
                         />
                     )}
                     <Typography className={styles.centralize} variant="h4">
-                        {isEditMode ? contestCategory.name : 'Contest Category form'}
+                        {isEditMode
+                            ? contestCategory.name
+                            : 'Contest Category form'}
                     </Typography>
                     <form className={`${styles.form}`}>
-                            <Box>
-                                <TextField
-                                    className={styles.inputRow}
-                                    label="Name"
-                                    variant="standard"
-                                    name="name"
-                                    onChange={(e) => onChange(e)}
-                                    value={contestCategory.name}
-                                    color={contestCategoryValidations.isNameValid && contestCategoryValidations.isNameTouched
-                                        ? 'success'
-                                        : 'primary'}
-                                    error={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid)}
+                        <Box>
+                            <TextField
+                              className={styles.inputRow}
+                              label="Name"
+                              variant="standard"
+                              name="name"
+                              onChange={(e) => onChange(e)}
+                              value={contestCategory.name}
+                              color={contestCategoryValidations.isNameValid && contestCategoryValidations.isNameTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid)}
                                     // eslint-disable-next-line max-len
-                                    helperText={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid) && 'Category name length must be between 4 and 100 characters long'}
-                                />
-                                <TextField
-                                    className={styles.inputRow}
-                                    type="number"
-                                    label="Order By"
-                                    variant="standard"
-                                    value={contestCategory.orderBy}
-                                    onChange={(e) => onChange(e)}
-                                    InputLabelProps={{ shrink: true }}
-                                    name="orderBy"
-                                    color={contestCategoryValidations.isOrderByValid && contestCategoryValidations.isOrderByTouched
-                                        ? 'success'
-                                        : 'primary'}
-                                    error={(contestCategoryValidations.isOrderByTouched && !contestCategoryValidations.isOrderByValid)}
-                                    // eslint-disable-next-line max-len
-                                    helperText={(contestCategoryValidations.isOrderByTouched && !contestCategoryValidations.isOrderByValid) && 'Order by cannot be less than 0'}
-                                />
-                                <FormControlLabel
-                                    sx={{ marginTop: '1rem' }}
-                                    control={<Checkbox checked={contestCategory.isVisible} />}
-                                    label="IsVisible"
-                                    name="isVisible"
-                                    onChange={(e) => onChange(e)}
-                                />
-                        <FormControl className={styles.textArea} sx={{ margin: '15px 0' }}>
-                            <Autocomplete
-                                sx={{ width: '100%' }}
-                                className={styles.inputRow}
-                                onChange={(event, newValue) => handleAutocompleteChange('parent', newValue!)}
-                                value={contestCategories?.find((category) => category.id === contestCategory.parentId) ?? null}
-                                options={contestCategories!}
-                                renderInput={(params) => <TextField {...params} label="Parent Category" key={params.id} />}
-                                getOptionLabel={(option) => option?.name}
-                                renderOption={(properties, option) => (
-                                    <MenuItem {...properties} key={option.id} value={option.id}>
-                                        {option.name}
-                                    </MenuItem>
-                                )}
+                              helperText={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid) && 'Category name length must be between 4 and 100 characters long'}
                             />
-                        </FormControl>
+                            <TextField
+                              className={styles.inputRow}
+                              type="number"
+                              label="Order By"
+                              variant="standard"
+                              value={contestCategory.orderBy}
+                              onChange={(e) => onChange(e)}
+                              InputLabelProps={{ shrink: true }}
+                              name="orderBy"
+                              color={contestCategoryValidations.isOrderByValid && contestCategoryValidations.isOrderByTouched
+                                  ? 'success'
+                                  : 'primary'}
+                              error={(contestCategoryValidations.isOrderByTouched && !contestCategoryValidations.isOrderByValid)}
+                                    // eslint-disable-next-line max-len
+                              helperText={(contestCategoryValidations.isOrderByTouched && !contestCategoryValidations.isOrderByValid) && 'Order by cannot be less than 0'}
+                            />
+                            <FormControlLabel
+                              sx={{ marginTop: '1rem' }}
+                              control={<Checkbox checked={contestCategory.isVisible} />}
+                              label="IsVisible"
+                              name="isVisible"
+                              onChange={(e) => onChange(e)}
+                            />
+                            <FormControl className={styles.textArea} sx={{ margin: '15px 0' }}>
+                                <Autocomplete
+                                  sx={{ width: '100%' }}
+                                  className={styles.inputRow}
+                                  onChange={(event, newValue) => handleAutocompleteChange('parent', newValue!)}
+                                  value={contestCategories?.find((category) => category.id === contestCategory.parentId) ?? null}
+                                  options={contestCategories!}
+                                  renderInput={(params) => <TextField {...params} label="Parent Category" key={params.id} />}
+                                  getOptionLabel={(option) => option?.name}
+                                  renderOption={(properties, option) => (
+                                      <MenuItem {...properties} key={option.id} value={option.id}>
+                                          {option.name}
+                                      </MenuItem>
+                                  )}
+                                />
+                            </FormControl>
                         </Box>
                     </form>
                     {isEditMode
                         ? (
                             <div className={styles.buttonsWrapper}>
                                 <Button
-                                    variant="contained"
-                                    onClick={() => edit()}
-                                    className={styles.button}
-                                    disabled={!isValidForm}
+                                  variant="contained"
+                                  onClick={() => edit()}
+                                  className={styles.button}
+                                  disabled={!isValidForm}
                                 >
                                     Edit
                                 </Button>
@@ -307,20 +303,26 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                         : (
                             <div className={styles.buttonsWrapper}>
                                 <Button
-                                    variant="contained"
-                                    onClick={() => create()}
-                                    className={styles.button}
-                                    disabled={!isValidForm}
+                                  variant="contained"
+                                  onClick={() => create()}
+                                  className={styles.button}
+                                  disabled={!isValidForm}
                                 >
                                     Create
                                 </Button>
                             </div>
                         )}
                     <Box sx={{ alignSelf: 'flex-end' }}>
-                        <ContestDeleteButton
-                            contestId={contestCategoryId!}
-                            contestName={contestCategory.name}
-                            onSuccess={() => navigate('/administration-new/contestCategories')}
+                        <DeleteButton
+                          id={Number(contestCategoryId!)}
+                          name={contestCategory.name}
+                          onSuccess={() => navigate('/administration-new/contestCategories')}
+                          deleteRequest={deleteContestCategory}
+                          data={deleteData}
+                          isLoading={isDeleting}
+                          isSuccess={isSuccesfullyDeleted}
+                          error={deleteError}
+                          text="Are you sure that you want to delete the contest category."
                         />
                     </Box>
                 </div>
