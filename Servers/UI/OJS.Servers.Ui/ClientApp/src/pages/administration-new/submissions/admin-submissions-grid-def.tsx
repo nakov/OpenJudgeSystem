@@ -1,11 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton } from '@mui/material';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 
-import ContestDeleteButton from '../../../components/administration/Contests/delete/ContestDeleteButton';
+import { preciseFormatDate } from '../../../utils/dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -13,8 +8,8 @@ const dataColumns: GridColDef[] = [
         headerName: 'Id',
         type: 'number',
         width: 10,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueFormatter: (params) => params.value.toString(),
     },
     {
@@ -23,7 +18,7 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'boolean',
         width: 200,
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -32,7 +27,7 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'boolean',
         width: 100,
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -40,7 +35,7 @@ const dataColumns: GridColDef[] = [
         headerName: 'Is Deleted',
         align: 'center',
         type: 'boolean',
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -49,15 +44,15 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         width: 200,
         type: 'string',
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
         field: 'problemId',
         headerName: 'Problem Id',
         type: 'number',
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueGetter: (params) => params.row?.problem?.id,
     },
     {
@@ -65,8 +60,8 @@ const dataColumns: GridColDef[] = [
         headerName: 'Problem',
         type: 'string',
         width: 200,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueGetter: (params) => params.row?.problem?.name,
     },
     {
@@ -74,15 +69,15 @@ const dataColumns: GridColDef[] = [
         headerName: 'Points',
         align: 'center',
         type: 'number',
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
     },
     {
         field: 'participant',
         headerName: 'Participant',
         align: 'center',
         type: 'string',
-        filterable: true,
+        filterable: false,
         sortable: false,
         valueGetter: (params) => params.row?.participant?.userName,
     },
@@ -92,9 +87,18 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'string',
         width: 200,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueGetter: (params) => params.row?.submissionType?.name,
+    },
+    {
+        field: 'isBinaryFile',
+        headerName: 'Is File Content',
+        align: 'center',
+        type: 'boolean',
+        width: 100,
+        filterable: false,
+        sortable: false,
     },
     {
         field: 'createdOn',
@@ -102,9 +106,9 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'dateTime',
         width: 200,
-        filterable: true,
-        sortable: true,
-        valueGetter: (params) => params.row?.createdOn,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
     },
     {
         field: 'modifiedOn',
@@ -112,9 +116,9 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'dateTime',
         width: 200,
-        filterable: true,
-        sortable: true,
-        valueGetter: (params) => params.row?.modifiedOn,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
     },
     {
         field: 'startedExecutionOn',
@@ -122,9 +126,9 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'dateTime',
         width: 200,
-        filterable: true,
-        sortable: true,
-        valueGetter: (params) => params.row?.startedExecutionOn,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => preciseFormatDate(params.value?.startedExecutionOn),
     },
     {
         field: 'completedExecutionOn',
@@ -132,9 +136,9 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         type: 'dateTime',
         width: 200,
-        filterable: true,
-        sortable: true,
-        valueGetter: (params) => params.row?.completedExecutionOn,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => preciseFormatDate(params.value?.completedExecutionOn),
     },
 ];
 

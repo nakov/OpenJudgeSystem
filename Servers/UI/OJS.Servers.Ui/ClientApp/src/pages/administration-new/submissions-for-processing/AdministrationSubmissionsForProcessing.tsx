@@ -20,7 +20,7 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
-import dataColumns from './admin-submissions-grid-def';
+import dataColumns from './admin-submissions-for-processing-grid-def';
 
 export const AdministrationSubmissionsForProcessingPage = () => {
     const [ searchParams ] = useSearchParams();

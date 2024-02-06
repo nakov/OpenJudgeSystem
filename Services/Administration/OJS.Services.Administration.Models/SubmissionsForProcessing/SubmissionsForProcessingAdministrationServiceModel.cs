@@ -1,5 +1,6 @@
 namespace OJS.Services.Administration.Models.SubmissionsForProcessing;
 
+using System;
 using OJS.Data.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -18,4 +19,8 @@ public class SubmissionsForProcessingAdministrationServiceModel : IMapFrom<Submi
     public string? SerializedExecutionResult { get; set; }
 
     public string? SerializedException { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
 }

@@ -47,7 +47,7 @@ const administrationItems = [
         path: '/administration-new/submissions',
     },
     {
-        name: 'SubmissionsForProcessing',
+        name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
         path: '/administration-new/submissions-for-processing',
     },

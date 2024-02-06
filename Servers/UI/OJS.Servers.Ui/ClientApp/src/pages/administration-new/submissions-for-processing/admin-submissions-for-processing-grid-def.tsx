@@ -1,5 +1,7 @@
 import { GridColDef } from '@mui/x-data-grid';
 
+import { preciseFormatDate } from '../../../utils/dates';
+
 const dataColumns: GridColDef[] = [
     {
         field: 'id',
@@ -71,6 +73,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: true,
         sortable: true,
+        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
     },
     {
         field: 'modifiedOn',
@@ -80,6 +83,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: true,
         sortable: true,
+        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
     },
 ];
 
