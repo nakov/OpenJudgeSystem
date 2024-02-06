@@ -156,7 +156,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        <>
+        <Box sx={{ zIndex: 0 }}>
             {!open
                 ? (
                     <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
@@ -183,6 +183,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </Toolbar>
                 </AppBar>
                 <Drawer
+                  sx={{ zIndex: 0 }}
                   variant="permanent"
                   open={open}
                 >
@@ -221,7 +222,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>
-        </>
+        </Box>
     );
 };
 

@@ -66,7 +66,7 @@ const contestFilterableColumns: GridColDef[] = [
         headerName: 'Start Time',
         width: 105,
         flex: 1.5,
-        align: 'left',
+        align: 'center',
         type: 'date',
         headerAlign: 'center',
         filterable: false,
