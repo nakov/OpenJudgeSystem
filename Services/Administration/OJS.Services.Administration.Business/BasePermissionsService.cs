@@ -1,7 +1,12 @@
 ﻿namespace OJS.Services.Administration.Business;
 
-public abstract class BasePermissionService<TModel>
-where TModel : class
+using System.Security.Claims;
+using System.Linq.Expressions;
+using System;
+using OJS.Common.Extensions;
+
+public abstract class BasePermissionService<TEntity, TModel>
+    where TModel : class
 {
     public virtual bool HasReadPermission() => true;
 
@@ -10,4 +15,8 @@ where TModel : class
     public virtual bool HasUpdatePermission(TModel model) => true;
 
     public virtual bool HasDeletePermission(int id) => true;
+
+    public virtual bool HasFullAccess(ClaimsPrincipal user) => user.IsAdmin();
+
+    public virtual Expression<Func<TEntity, bool>>? GeneratePermittedRecordsExpression() => null;
 }

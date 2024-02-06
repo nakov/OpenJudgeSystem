@@ -1,7 +1,6 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Services.Administration.Business.Contests;
@@ -12,7 +11,6 @@ using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
-using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Business.Problems.Permissions;
@@ -36,7 +34,7 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         IContestsDataService contestsDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IGridDataService<Problem> problemGridDataService,
-        ProblemAdministrationModelValidator validator,
+        ProblemAdministrationValidator validator,
         ProblemsDeleteValidator deleteValidator,
         IProblemsPermissionsService permissionsService)
             : base(
@@ -53,65 +51,6 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         this.contestsActivityService = contestsActivityService;
         this.contestsDataService = contestsDataService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
-    }
-
-    // [HttpGet("{id:int}")]
-    // public async Task<IActionResult> ById([FromRoute] int id)
-    // {
-    //     if (id <= 0)
-    //     {
-    //         return this.BadRequest(new ExceptionResponseModel(id.ToString(), "Invalid problem id"));
-    //     }
-    //
-    //     var problem = await this.problemsBusinessService.Get(id);
-    //
-    //     return this.Ok(problem);
-    // }
-    //
-    // [HttpPatch("{id:int}")]
-    // public async Task<IActionResult> Edit(ProblemAdministrationModel model)
-    // {
-    //     var contest = await this.contestsBusinessService.Get(model.ContestId);
-    //
-    //     if (contest is null)
-    //     {
-    //         return this.NotFound($"Cannot update problem: Contest with id {model.ContestId} not found");
-    //     }
-    //
-    //     if (!await this.HasContestPermission(contest.Id))
-    //     {
-    //         return this.Unauthorized();
-    //     }
-    //
-    //     await this.problemsBusinessService.Edit(model);
-    //
-    //     return this.Ok("Problem successfully updated.");
-    // }
-
-    public override async Task<IActionResult> Delete([FromRoute] int id)
-    {
-        var currentProblem = this.problemsDataService.GetByIdQuery(id)
-            .Include(x => x.ProblemGroup)
-            .ThenInclude(pg => pg.Contest)
-            .FirstOrDefault();
-
-        if (currentProblem == null)
-        {
-            return this.NotFound();
-        }
-
-        var contestId = currentProblem.ProblemGroup.ContestId;
-        if (!await this.HasContestPermission(contestId))
-        {
-            return this.Unauthorized();
-        }
-
-        if (await this.contestsActivityService.IsContestActive(contestId))
-        {
-            return this.UnprocessableEntity("Cannot delete problem from an active contest.");
-        }
-
-        return this.Ok(base.Delete(id));
     }
 
     [HttpGet("{contestId:int}")]

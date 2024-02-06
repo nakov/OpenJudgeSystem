@@ -34,7 +34,6 @@ public class ContestsController : BaseAdminApiController<Contest, ContestInListM
     }
 
     [HttpGet]
-    [Route("CopyAll")]
     public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
         var contests =

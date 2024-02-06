@@ -130,26 +130,3 @@ public class ProblemAdministrationModel : IMapExplicitly
                  => opt.Ignore());
     }
 }
-
-public class ProblemAdministrationModelValidator : BaseValidator<ProblemAdministrationModel>
-{
-    public ProblemAdministrationModelValidator()
-    {
-        this.RuleFor(model => model.Name)
-            .Length(1, ConstraintConstants.Problem.NameMaxLength);
-        this.RuleFor(model => model.TimeLimit)
-            .GreaterThanOrEqualTo(0);
-        this.RuleFor(model => model.MemoryLimit)
-            .GreaterThanOrEqualTo(0);
-        this.RuleFor(model => model.SourceCodeSizeLimit)
-            .GreaterThanOrEqualTo(0);
-        this.RuleFor(model => model.MaximumPoints)
-            .GreaterThanOrEqualTo((short)0);
-        this.RuleFor(model => model.SubmissionTypes.Count)
-            .GreaterThanOrEqualTo(1);
-        this.RuleFor(model => model.ContestId)
-            .GreaterThanOrEqualTo(0);
-
-        //TODO: check uploaded files.
-    }
-}

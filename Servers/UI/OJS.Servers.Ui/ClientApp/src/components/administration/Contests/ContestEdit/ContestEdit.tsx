@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-case-declarations */
@@ -20,7 +21,6 @@ import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVe
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 
-// eslint-disable-next-line import/no-unresolved
 import styles from './ContestEdit.module.scss';
 
 interface IContestEditProps {
@@ -35,14 +35,6 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
-    const [
-        deleteContest,
-        {
-            data: deleteData,
-            isLoading: isDeleting,
-            isSuccess: isSuccesfullyDeleted,
-            error: deleteError,
-        } ] = useDeleteContestMutation();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -78,6 +70,8 @@ const ContestEdit = (props:IContestEditProps) => {
         isOrderByValid: true,
         isNewIpPasswordTouched: false,
         isNewIpPasswordValid: true,
+        isDurationTouched: false,
+        isDurationValid: true,
     });
 
     const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
@@ -137,7 +131,8 @@ const ContestEdit = (props:IContestEditProps) => {
         contestValidations.isTypeValid &&
         contestValidations.isLimitBetweenSubmissionsValid &&
         contestValidations.isOrderByValid &&
-        contestValidations.isNewIpPasswordValid;
+        contestValidations.isNewIpPasswordValid &&
+        contestValidations.isDurationValid;
         setIsValidForm(isValid);
     };
 
@@ -277,9 +272,16 @@ const ContestEdit = (props:IContestEditProps) => {
             }
             break;
         case 'duration':
-            if (value) {
-                duration = value;
+            let currentValue = value;
+
+            if (currentValue === '') {
+                currentValue = null;
             }
+
+            const timeSpanRegex = /^-?(\d+\.)?(\d{1,2}):(\d{2}):(\d{2})(\.\d{1,7})?$/;
+            currentContestValidations.isDurationValid = timeSpanRegex.test(value) || currentValue === null;
+            currentContestValidations.isDurationTouched = true;
+            duration = currentValue;
             break;
         }
         setContestValidations(currentContestValidations);
@@ -323,7 +325,9 @@ const ContestEdit = (props:IContestEditProps) => {
         const event = {
             target: {
                 name,
-                value: newValue.toString(),
+                value: newValue
+                    ? newValue.toString()
+                    : null,
             },
         };
         onChange(event);
@@ -426,7 +430,6 @@ const ContestEdit = (props:IContestEditProps) => {
                                       ? 'success'
                                       : 'primary'}
                                   error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                              // eslint-disable-next-line max-len
                                   helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
                                 />
                                 <TextField
@@ -496,6 +499,8 @@ const ContestEdit = (props:IContestEditProps) => {
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
                                   name="duration"
+                                  error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
+                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) && 'Duration must be valid time with format hh:mm:ss'}
                                 />
                             </Box>
                         </Box>
@@ -658,11 +663,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           id={Number(contestId!)}
                           name={contest.name}
                           onSuccess={() => navigate('/administration-new/contests')}
-                          deleteRequest={deleteContest}
-                          data={deleteData}
-                          isLoading={isDeleting}
-                          isSuccess={isSuccesfullyDeleted}
-                          error={deleteError}
+                          mutation={useDeleteContestMutation}
                           text="Are you sure that you want to delete the contest."
                         />
                     </Box>

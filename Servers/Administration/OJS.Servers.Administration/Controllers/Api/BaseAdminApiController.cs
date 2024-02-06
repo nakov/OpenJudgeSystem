@@ -24,14 +24,14 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     private readonly IAdministrationOperationService<TEntity, TUpdateModel> operationService;
     private readonly BaseValidator<TUpdateModel> validator;
     private readonly BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator;
-    private readonly IPermissionsService<TUpdateModel> permissionsService;
+    private readonly IPermissionsService<TEntity, TUpdateModel> permissionsService;
 
     protected BaseAdminApiController(
         IGridDataService<TEntity> gridDataService,
         IAdministrationOperationService<TEntity, TUpdateModel> operationService,
         BaseValidator<TUpdateModel> validator,
         BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator,
-        IPermissionsService<TUpdateModel> permissionsService)
+        IPermissionsService<TEntity, TUpdateModel> permissionsService)
     {
         this.gridDataService = gridDataService;
         this.operationService = operationService;
@@ -41,15 +41,19 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
+    public virtual async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
         if (!this.permissionsService.HasReadPermission())
         {
             return this.Unauthorized();
         }
 
-        var contest = await this.gridDataService.GetAll<TGridModel>(model);
-        return this.Ok(contest);
+        if (!this.permissionsService.HasFullAccess(this.User))
+        {
+            return this.Ok(await this.gridDataService.GetAll<TGridModel>(model, this.permissionsService.GeneratePermittedRecordsExpression()));
+        }
+
+        return this.Ok(await this.gridDataService.GetAll<TGridModel>(model));
     }
 
     [HttpGet("{id:int}")]
@@ -122,6 +126,6 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
         return this.Ok($"Successfully deleted {typeof(TEntity).Name} with id: {id}");
     }
 
-    protected async Task<PagedResult<T>> GetWithFilter<T>(PaginationRequestModel model,  Expression<Func<TEntity, bool>> filter)
+    protected async Task<PagedResult<T>> GetWithFilter<T>(PaginationRequestModel model,  Expression<Func<TEntity, bool>>? filter = null)
         => await this.gridDataService.GetAll<T>(model, filter);
 }

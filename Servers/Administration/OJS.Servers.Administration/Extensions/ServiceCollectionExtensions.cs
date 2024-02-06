@@ -54,7 +54,7 @@ internal static class ServiceCollectionExtensions
     private static IServiceCollection AddValidators(this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<ContestAdministrationModelValidator>(ServiceLifetime.Transient);
-        services.AddValidatorsFromAssemblyContaining<ProblemAdministrationModelValidator>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<ProblemAdministrationValidator>(ServiceLifetime.Transient);
         services.AddValidatorsFromAssemblyContaining<ParticipantsAdministrationModelValidator>(ServiceLifetime.Transient);
         services.AddValidatorsFromAssemblyContaining<SubmissionTypesAdministrationModelValidator>(ServiceLifetime.Transient);
         services.AddValidatorsFromAssemblyContaining<ParticipantsAdministrationModelValidator>(ServiceLifetime.Transient);

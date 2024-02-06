@@ -16,6 +16,8 @@
 
         public ExecutionStrategyType ExecutionStrategy { get; set; }
 
+        public CompilerType CompilerType { get; set; }
+
         public byte[]? FileContent { get; set; }
 
         public string? Code { get; set; }
@@ -46,6 +48,9 @@
                     nameof(OjsSubmission<object>.ExecutionType),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionType)))
                 .ForMember(
+                    nameof(OjsSubmission<object>.CompilerType),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.CompilerType)))
+                .ForMember(
                     nameof(OjsSubmission<object>.Code),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.Code)))
                 .ForMember(
@@ -68,7 +73,10 @@
                     opt => opt.MapFrom(s => s.IsBinaryFile ? s.Content : null))
                 .ForMember(
                     d => d.ExecutionStrategy,
-                    opt => opt.MapFrom(s => s.SubmissionType!.ExecutionStrategyType))
+                    opt => opt.MapFrom(s =>
+                        s.SubmissionType != null
+                            ? s.SubmissionType.ExecutionStrategyType
+                            : ExecutionStrategyType.NotFound))
                 .ForMember(
                     d => d.ExecutionType,
                     opt => opt.MapFrom(s => ExecutionType.TestsExecution))
@@ -81,6 +89,12 @@
                 .ForMember(
                     d => d.TestsExecutionDetails,
                     opt => opt.MapFrom(s => s.Problem))
+                .ForMember(
+                    d => d.CompilerType,
+                    opt => opt.MapFrom(s =>
+                        s.SubmissionType != null
+                            ? s.SubmissionType.CompilerType
+                            : CompilerType.None))
                 .ForMember(
                     d => d.SimpleExecutionDetails,
                     opt => opt.Ignore())

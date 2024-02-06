@@ -2,15 +2,22 @@
 
 using OJS.Services.Administration.Models.Contests;
 using System.Threading.Tasks;
+using OJS.Data.Models.Contests;
+using OJS.Common.Extensions;
+using System.Security.Claims;
+using System;
+using System.Linq.Expressions;
+using System.Linq;
 
-public class ContestsPermissionsService : BasePermissionService<ContestAdministrationModel>, IContestPermissionsService
+public class ContestsPermissionsService : BasePermissionService<Contest, ContestAdministrationModel>, IContestPermissionsService
 {
     private readonly IUserProviderService userProviderService;
     private readonly IContestsBusinessService contestsBusinessService;
 
     public ContestsPermissionsService(
         IUserProviderService userProviderService,
-        IContestsBusinessService contestsBusinessService)
+        IContestsBusinessService contestsBusinessService,
+        ILecturerContestPrivilegesBusinessService lecturerContestPrivilegesBusinessService)
     {
         this.userProviderService = userProviderService;
         this.contestsBusinessService = contestsBusinessService;
@@ -25,6 +32,10 @@ public class ContestsPermissionsService : BasePermissionService<ContestAdministr
         => this.HasContestPermission(id)
             .GetAwaiter()
             .GetResult();
+
+    public override Expression<Func<Contest, bool>>? GeneratePermittedRecordsExpression() =>
+        contest
+            => contest.LecturersInContests.Any(l => l.LecturerId == this.userProviderService.GetCurrentUser().Id);
 
     private async Task<bool> HasContestPermission(int contestId)
     {

@@ -6,34 +6,60 @@ import isNilOrEmpty from '../../../utils/check-utils';
 import styles from './ProfileAboutInfo.module.scss';
 
 interface IProfileAboutInfoProps {
-    value: IUserProfileType;
+    userProfile: IUserProfileType;
+    isUserAdmin : boolean;
+    isUserProfileOwner : boolean;
 }
 
-const ProfileAboutInfo = ({ value } : IProfileAboutInfoProps) => (
-    <div className={styles.profileAboutInfo}>
-        <div className={styles.profileAboutInfoGroupControl}>
-            <h2>Username:</h2>
-            <p>{value.userName}</p>
+const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IProfileAboutInfoProps) => {
+    const shouldRenderName = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
+
+    return (
+        <div className={styles.profileAboutInfo}>
+            <div className={styles.profileAboutInfoGroupControl}>
+                <h2>Username:</h2>
+                <p>{userProfile.userName}</p>
+            </div>
+            {(isUserAdmin || isUserProfileOwner) && (
+            <div className={styles.profileAboutInfoGroupControl}>
+                {shouldRenderName && (
+                <div className={styles.profileAboutInfoGroupControl}>
+                    <h2>Name:</h2>
+                    <p>
+                        {userProfile.firstName}
+                        {' '}
+                        {userProfile.lastName}
+                    </p>
+                </div>
+                )}
+                <div className={styles.profileAboutInfoGroupControl}>
+                    <h2>Email:</h2>
+                    <p>{userProfile.email}</p>
+                </div>
+                {isUserAdmin && (
+                <div className={styles.profileAboutInfoGroupControl}>
+                    <h2>Id:</h2>
+                    <p>{userProfile.id}</p>
+                </div>
+                )}
+                {!isNilOrEmpty(userProfile.age) &&
+                            (
+                            <div className={styles.profileAboutInfoGroupControl}>
+                                <h2>Age:</h2>
+                                <p>{userProfile.age}</p>
+                            </div>
+                            )}
+                {!isNilOrEmpty(userProfile.city) &&
+                            (
+                                <div className={styles.profileAboutInfoGroupControl}>
+                                    <h2>City:</h2>
+                                    <p>{userProfile.city}</p>
+                                </div>
+                            )}
+            </div>
+            )}
         </div>
-        {
-            isNilOrEmpty(value.firstName) || isNilOrEmpty(value.lastName)
-                ? null
-                : (
-                    <div className={styles.profileAboutInfoGroupControl}>
-                        <h2>Name:</h2>
-                        <p>
-                            {value.firstName}
-                            {' '}
-                            {value.lastName}
-                        </p>
-                    </div>
-                )
-        }
-        <div className={styles.profileAboutInfoGroupControl}>
-            <h2>Email:</h2>
-            <p>{value.email}</p>
-        </div>
-    </div>
-);
+    );
+};
 
 export default ProfileAboutInfo;
