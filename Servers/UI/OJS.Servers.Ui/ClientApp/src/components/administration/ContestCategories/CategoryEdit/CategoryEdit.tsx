@@ -142,7 +142,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             contestCategoryName = value;
             contestCategoryValidations1.isNameTouched = true;
             contestCategoryValidations1.isNameValid = true;
-            if (value.length < 4 || value.length > 100) {
+            if (value.length < 2 || value.length > 100) {
                 contestCategoryValidations1.isNameValid = false;
             }
             break;
@@ -244,7 +244,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                                   : 'primary'}
                               error={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid)}
                                     // eslint-disable-next-line max-len
-                              helperText={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid) && 'Category name length must be between 4 and 100 characters long'}
+                              helperText={(contestCategoryValidations.isNameTouched && !contestCategoryValidations.isNameValid) && 'Category name length must be between 2 and 100 characters long'}
                             />
                             <TextField
                               className={styles.inputRow}
