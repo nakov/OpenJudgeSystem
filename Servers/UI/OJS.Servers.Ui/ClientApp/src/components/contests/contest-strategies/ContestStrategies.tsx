@@ -47,24 +47,22 @@ const ContestStrategies = ({ filteredStrategies }: IContestStrategyProps) => {
     if (areStrategiesLoading) { return <div>Loading strategies...</div>; }
 
     return (
-        <div style={{ width: '95%' }}>
-            <Select
-              sx={{
-                  width: '100%',
-                  height: 40,
-                  color: themeColors.textColor,
-                  fontSize: 16,
-                  fontWeight: 500,
-                  '& .MuiSvgIcon-root': { fill: themeColors.textColor },
-                  '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
-              }}
-              defaultValue=""
-              labelId="strategy-label"
-              autoWidth
-              displayEmpty
-              children={[ <MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems ]}
-            />
-        </div>
+        <Select
+          sx={{
+              width: 350,
+              height: 40,
+              color: themeColors.textColor,
+              fontSize: 16,
+              fontWeight: 500,
+              '& .MuiSvgIcon-root': { fill: themeColors.textColor },
+              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
+          }}
+          defaultValue=""
+          labelId="strategy-label"
+          autoWidth
+          displayEmpty
+          children={[ <MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems ]}
+        />
     );
 };
 

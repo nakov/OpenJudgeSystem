@@ -116,7 +116,7 @@ const ContestsPage = () => {
                 />
                 <div style={{ width: '100%' }}>
                     <div className={styles.headingWrapper} style={{ color: themeColors.textColor }}>
-                        <div style={{ width: '50%' }}>{selectedCategory || 'All Categories'}</div>
+                        <div>{selectedCategory || 'All Categories'}</div>
                         <ContestStrategies filteredStrategies={filteredStrategyFilters} />
                     </div>
                     {renderContests()}
