@@ -13,10 +13,12 @@ import Administration from '../../pages/administration-new/Administration';
 import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
-import { AdministrationSubmissionsPage } from '../../pages/administration-new/submissions/AdministrationSubmissions';
+import { AdministrationSubmissionsPage } from '../../pages/administration-new/submissions/AdminSubmissionsGrid';
+import AdminSubmissionForProcessingDetails
+    from '../../pages/administration-new/submissions-for-processing/AdminSubmissionForProcessingDetails';
 import {
     AdministrationSubmissionsForProcessingPage,
-} from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessing';
+} from '../../pages/administration-new/submissions-for-processing/AdminSubmissionsForProcessingGrid';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -136,6 +138,10 @@ const adminRoutes = [
     {
         path: '/administration-new/submissions-for-processing',
         Element: AdministrationSubmissionsForProcessingPage,
+    },
+    {
+        path: '/administration-new/submissions-for-processing/:id',
+        Element: AdminSubmissionForProcessingDetails,
     },
     {
         path: '/administration-new/tests',

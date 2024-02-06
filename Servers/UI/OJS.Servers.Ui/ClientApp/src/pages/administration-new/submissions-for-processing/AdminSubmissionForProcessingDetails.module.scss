@@ -1,0 +1,18 @@
+.fieldBox {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto;
+    width: 90%;
+}
+
+.fieldBox > div > div {
+    width: 95%;
+}
+
+.inputRow {
+    width: 90%;
+    margin-bottom: 1rem !important;
+    margin-top: 1rem !important;
+}

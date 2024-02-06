@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Administration.Business.Implementations;
 
-using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Submissions;
@@ -8,7 +7,9 @@ using OJS.Services.Administration.Models.SubmissionsForProcessing;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
+using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Threading.Tasks;
 
 public class SubmissionsForProcessingBusinessService :
     AdministrationOperationService<SubmissionForProcessing, SubmissionsForProcessingAdministrationServiceModel>,
@@ -26,6 +27,21 @@ public class SubmissionsForProcessingBusinessService :
         this.submissionsForProcessingData = submissionsForProcessingData;
         this.submissionsCommonData = submissionsCommonData;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
+    }
+
+    public override async Task<SubmissionsForProcessingAdministrationServiceModel> Get(int id)
+    {
+        var submission = await this.submissionsForProcessingData
+            .GetByIdQuery(id)
+            .MapCollection<SubmissionsForProcessingAdministrationServiceModel>()
+            .FirstOrDefaultAsync();
+
+        if (submission == null)
+        {
+            throw new BusinessServiceException("Submission not found");
+        }
+
+        return submission;
     }
 
     public async Task<int> EnqueuePendingSubmissions()

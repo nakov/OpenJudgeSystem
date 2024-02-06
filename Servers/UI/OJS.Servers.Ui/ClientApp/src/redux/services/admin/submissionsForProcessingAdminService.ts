@@ -3,10 +3,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import {
+    IContestAdministration,
     IGetAllAdminParams,
     IPagedResultType,
     ISubmissionForProcessingAdminGridViewType,
 } from '../../../common/types';
+import { IContestDetailsUrlParams } from '../../../common/url-types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 // eslint-disable-next-line import/group-exports
 export const submissionsForProcessingAdminService = createApi({
@@ -23,12 +25,19 @@ export const submissionsForProcessingAdminService = createApi({
                     ItemsPerPage,
                     sorting,
                 } }) }),
+        getById: builder.query<ISubmissionForProcessingAdminGridViewType, { id:number }>({
+            query: ({ id }) => ({
+                url: `/Get/${id}`,
+            }),
+            keepUnusedDataFor: 10,
+        }),
     }),
 });
 
 // eslint-disable-next-line import/group-exports
 export const {
     useGetAllSubmissionsQuery,
+    useGetByIdQuery,
 } = submissionsForProcessingAdminService;
 
 export default submissionsForProcessingAdminService;

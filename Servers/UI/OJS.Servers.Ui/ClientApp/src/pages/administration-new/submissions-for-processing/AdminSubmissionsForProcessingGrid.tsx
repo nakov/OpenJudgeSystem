@@ -1,16 +1,14 @@
 /* eslint-disable react/jsx-indent */
 /* eslint-disable import/prefer-default-export */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
-import { IconButton, Tooltip } from '@mui/material';
+import { Link, useSearchParams } from 'react-router-dom';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import ShortcutIcon from '@mui/icons-material/Shortcut';
+import { Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
-import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
-import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
-import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
 import {
     setAdminSubmissionsFilters,
     setAdminSubmissionsSorters,
@@ -52,7 +50,11 @@ export const AdministrationSubmissionsForProcessingPage = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    No actions
+                    <Tooltip title="View">
+                        <Link to={`/administration-new/submissions-for-processing/${Number(params.row.id)}`}>
+                            <RemoveRedEyeIcon color="primary" />
+                        </Link>
+                    </Tooltip>
                 </div>
             ),
         },
