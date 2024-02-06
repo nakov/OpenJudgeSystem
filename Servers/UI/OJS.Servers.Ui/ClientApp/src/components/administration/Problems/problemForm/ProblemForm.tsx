@@ -1,3 +1,4 @@
+/* eslint-disable no-undefined */
 /* eslint-disable array-callback-return */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable react/no-array-index-key */
@@ -30,14 +31,14 @@ interface IProblemFormProps {
 }
 
 const ProblemForm = (props: IProblemFormProps) => {
-    const { problemId, isEditMode, contestId } = props;
+    const { problemId, isEditMode = true, contestId } = props;
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
-        checkerId: 0,
-        contestId: !isEditMode && contestId
-            ? contestId
-            : -1,
-        id: -1,
+        checkerId: '',
+        contestId: contestId ?? -1,
+        id: isEditMode
+            ? 0
+            : undefined,
         maximumPoints: 0,
         memoryLimit: 0,
         name: '',
@@ -317,7 +318,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                               onChange={(e) => onChange(e)}
                               onBlur={(e) => onChange(e)}
                               labelId="checkerId"
-                              value={Number(currentProblem.checkerId)}
+                              value={currentProblem.checkerId}
                               name="checkerId"
                             >
                                 {checkers?.map((c) => (

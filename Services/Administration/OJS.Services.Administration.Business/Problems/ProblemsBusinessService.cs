@@ -69,6 +69,33 @@ namespace OJS.Services.Administration.Business.Problems
             this.problemGroupsDataService = problemGroupsDataService;
         }
 
+        public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
+        {
+            var contestId = model.ContestId;
+
+            var problem = model.Map<Problem>();
+            if (problem.ProblemGroupId == default)
+            {
+                var isValidGroupType = Enum.TryParse(model.ProblemGroupType, out ProblemGroupType problemGroupType);
+
+                problem.ProblemGroup = new ProblemGroup
+                {
+                    ContestId = contestId,
+                    OrderBy = problem.OrderBy,
+                    Type = isValidGroupType ? problemGroupType : null,
+                };
+            }
+
+            await this.problemsData.Add(problem);
+            AddSubmissionTypes(problem, model);
+            // await this.TryAddTestsToProblem(entity, actionContext);
+
+            await this.problemsData.SaveChanges();
+
+            //TODO add tests
+            return model;
+        }
+
         public override async Task Delete(int id)
         {
             var problem = this.problemsData
