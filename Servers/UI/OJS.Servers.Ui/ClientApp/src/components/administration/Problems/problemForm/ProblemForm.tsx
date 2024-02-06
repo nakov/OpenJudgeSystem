@@ -1,16 +1,11 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-restricted-imports */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable max-len */
-/* eslint-disable prefer-destructuring */
+/* eslint-disable no-undefined */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
-import { isNaN } from 'lodash';
+import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
@@ -30,14 +25,14 @@ interface IProblemFormProps {
 }
 
 const ProblemForm = (props: IProblemFormProps) => {
-    const { problemId, isEditMode, contestId } = props;
+    const { problemId, isEditMode = true, contestId } = props;
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
-        checkerId: 0,
-        contestId: !isEditMode && contestId
-            ? contestId
-            : -1,
-        id: -1,
+        checkerId: '',
+        contestId: contestId ?? -1,
+        id: isEditMode
+            ? 0
+            : undefined,
         maximumPoints: 0,
         memoryLimit: 0,
         name: '',
@@ -52,7 +47,11 @@ const ProblemForm = (props: IProblemFormProps) => {
     });
 
     const navigate = useNavigate();
-    const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
+    const {
+        data: problemData,
+        isLoading: isGettingData,
+        error: gettingDataError,
+    } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
     const { data: submissionTypes } = useGetForProblemQuery(null);
     const { data: checkers } = useGetCheckersForProblemQuery(null);
     const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
@@ -74,15 +73,24 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     useEffect(() => {
         let errors: Array<string> = [];
+
+        const extractMessages = (error: unknown): Array<string> => {
+            if (Array.isArray(error) && error.every((e) => 'message' in e)) {
+                return error.map((x: ExceptionData) => x.message);
+            }
+            return [];
+        };
+
         if (gettingDataError) {
-            errors = gettingDataError!.map((x: ExceptionData) => x.message);
+            errors = errors.concat(extractMessages(gettingDataError));
         }
         if (createError) {
-            errors = createError!.map((x: ExceptionData) => x.message);
+            errors = errors.concat(extractMessages(createError));
         }
         if (updateError) {
-            errors = updateError!.map((x:ExceptionData) => x.message);
+            errors = errors.concat(extractMessages(updateError));
         }
+
         setErrorMessages(errors);
         setSuccessMessages('');
     }, [ updateError, createError, gettingDataError ]);
@@ -99,7 +107,8 @@ const ProblemForm = (props: IProblemFormProps) => {
     }, [ updateData, createData ]);
 
     const onChange = (e: any) => {
-        const { name, type, value, checked } = e.target;
+        const { target } = e;
+        const { name, type, value, checked } = target;
         setCurrentProblem((prevState) => ({
             ...prevState,
             [name]: type === 'checkbox'
@@ -317,7 +326,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                               onChange={(e) => onChange(e)}
                               onBlur={(e) => onChange(e)}
                               labelId="checkerId"
-                              value={Number(currentProblem.checkerId)}
+                              value={currentProblem.checkerId}
                               name="checkerId"
                             >
                                 {checkers?.map((c) => (
@@ -430,7 +439,14 @@ const ProblemForm = (props: IProblemFormProps) => {
                             {isEditMode
                                 ? (
                                     <>
-                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={() => updateProblem(currentProblem)} variant="contained">Edit</Button>
+                                        <Button
+                                          size="large"
+                                          sx={{ width: '20%', alignSelf: 'center' }}
+                                          onClick={() => updateProblem(currentProblem)}
+                                          variant="contained"
+                                        >
+                                            Edit
+                                        </Button>
                                         <DeleteButton
                                           id={problemId!}
                                           name={currentProblem.name}
@@ -441,7 +457,16 @@ const ProblemForm = (props: IProblemFormProps) => {
                                         />
                                     </>
                                 )
-                                : <Button onClick={() => createProblem(currentProblem)} size="large" sx={{ width: '20%', alignSelf: 'center' }} variant="contained">Create</Button>}
+                                : (
+                                    <Button
+                                      onClick={() => createProblem(currentProblem)}
+                                      size="large"
+                                      sx={{ width: '20%', alignSelf: 'center' }}
+                                      variant="contained"
+                                    >
+                                        Create
+                                    </Button>
+                                )}
 
                         </FormGroup>
 
