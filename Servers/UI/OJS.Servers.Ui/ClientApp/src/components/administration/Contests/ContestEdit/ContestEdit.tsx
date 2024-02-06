@@ -496,9 +496,9 @@ const ContestEdit = (props:IContestEditProps) => {
                                   label="Duration"
                                   variant="standard"
                                   value={contest.duration}
+                                  name="duration"
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
-                                  name="duration"
                                   error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
                                   helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) && 'Duration must be valid time with format hh:mm:ss'}
                                 />

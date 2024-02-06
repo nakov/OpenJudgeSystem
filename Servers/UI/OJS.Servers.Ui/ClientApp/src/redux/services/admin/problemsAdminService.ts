@@ -30,6 +30,13 @@ export const problemsAdminService = createApi({
                 body: problem,
             }),
         }),
+        createProblem: builder.mutation({
+            query: (problem) => ({
+                url: '/Create',
+                method: 'POST',
+                body: problem,
+            }),
+        }),
         getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
             query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({
                 url: `/GetByContestId/${contestId}`,
@@ -74,6 +81,7 @@ export const {
     useRetestByIdMutation,
     useDeleteByContestMutation,
     useCopyAllMutation,
+    useCreateProblemMutation,
 
 } = problemsAdminService;
 export default problemsAdminService;

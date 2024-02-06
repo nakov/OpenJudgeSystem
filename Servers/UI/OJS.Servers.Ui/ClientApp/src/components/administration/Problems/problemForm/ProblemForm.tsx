@@ -15,7 +15,7 @@ import { isNaN } from 'lodash';
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
-import { useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -55,7 +55,11 @@ const ProblemForm = (props: IProblemFormProps) => {
     const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
     const { data: submissionTypes } = useGetForProblemQuery(null);
     const { data: checkers } = useGetCheckersForProblemQuery(null);
-    const [ updateProblem, { data: updateData, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateProblemMutation();
+    const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
+    const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
+    const [ successMessages, setSuccessMessages ] = useState<string>('');
+
     useEffect(() => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
@@ -67,6 +71,32 @@ const ProblemForm = (props: IProblemFormProps) => {
             setCurrentProblem(problemData);
         }
     }, [ problemData ]);
+
+    useEffect(() => {
+        let errors: Array<string> = [];
+        if (gettingDataError) {
+            errors = gettingDataError!.map((x: ExceptionData) => x.message);
+        }
+        if (createError) {
+            errors = createError!.map((x: ExceptionData) => x.message);
+        }
+        if (updateError) {
+            errors = updateError!.map((x:ExceptionData) => x.message);
+        }
+        setErrorMessages(errors);
+        setSuccessMessages('');
+    }, [ updateError, createError, gettingDataError ]);
+
+    useEffect(() => {
+        let successMessage = '';
+        if (updateData) {
+            successMessage = updateData;
+        }
+        if (createData) {
+            successMessage = createData;
+        }
+        setSuccessMessages(successMessage);
+    }, [ updateData, createData ]);
 
     const onChange = (e: any) => {
         const { name, type, value, checked } = e.target;
@@ -147,13 +177,14 @@ const ProblemForm = (props: IProblemFormProps) => {
             submissionTypes: newSubmissionTypes,
         }));
     };
-    const renderAlert = (message: string, severity:AlertSeverity) => (
+    const renderAlert = (message: string, severity:AlertSeverity, index:number) => (
         <Alert
           variant={AlertVariant.Filled}
           vertical={AlertVerticalOrientation.Top}
           horizontal={AlertHorizontalOrientation.Right}
           severity={severity}
           message={message}
+          styles={{ marginTop: `${index * 4}rem` }}
         />
     );
 
@@ -162,14 +193,9 @@ const ProblemForm = (props: IProblemFormProps) => {
             ? <SpinningLoader />
             : (
                 <>
-                    {gettingDataError &&
-                   renderAlert(gettingDataError.data[0].message, AlertSeverity.Error)}
-                    {updateError?.data.map((x:ExceptionData) => {
-                        renderAlert(x.message, AlertSeverity.Error);
-                    })}
-                    {
-                        isSuccesfullyUpdated && renderAlert(updateData, AlertSeverity.Success)
-                    }
+                    {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
+                    {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+
                     <Typography sx={{ textAlign: 'center' }} variant="h3">{currentProblem?.name}</Typography>
 
                     <form style={{ display: 'flex', flexDirection: 'column' }}>
@@ -229,7 +255,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                                       value={currentProblem?.orderBy}
                                       InputLabelProps={{ shrink: true }}
                                       type="number"
-                                      name="sourceCodeSizeLimit"
+                                      name="orderBy"
                                       onChange={(e) => onChange(e)}
                                     />
                                 </FormControl>
@@ -415,7 +441,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                                         />
                                     </>
                                 )
-                                : <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} variant="contained">Create</Button>}
+                                : <Button onClick={() => createProblem(currentProblem)} size="large" sx={{ width: '20%', alignSelf: 'center' }} variant="contained">Create</Button>}
 
                         </FormGroup>
 
