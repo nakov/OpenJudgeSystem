@@ -18,11 +18,6 @@ public class SubmissionsController : BaseAdminApiController<
 {
     private ISubmissionsBusinessService submissionsBusinessService;
 
-    // IGridDataService<TEntity> gridDataService,
-    //     IAdministrationOperationService<TEntity, TUpdateModel> operationService,
-    // BaseValidator<TUpdateModel> validator,
-    //     BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator,
-    // IPermissionsService<TEntity, TUpdateModel> permissionsService)
     public SubmissionsController(
         IGridDataService<Submission> submissionsGridDataService,
         ISubmissionsBusinessService submissionsBusinessService,

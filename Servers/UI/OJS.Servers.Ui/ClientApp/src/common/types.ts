@@ -358,6 +358,18 @@ interface ISubmissionsAdminGridViewType {
     completedExecutionOn: Date;
 }
 
+interface ISubmissionForProcessingAdminGridViewType {
+    id: number;
+    processed: boolean;
+    processing: boolean;
+    serializedException: string;
+    serializedExecutionDetails: string;
+    serializedExecutionResult: string;
+    submissionId: number;
+    createdOn: Date;
+    modifiedOn: Date;
+}
+
 interface IParticipantType {
     id: number;
     username: string;
@@ -449,6 +461,7 @@ export type {
     IFilterColumn,
     IParticiapntsInContestView,
     ISubmissionsAdminGridViewType,
+    ISubmissionForProcessingAdminGridViewType,
     IAdminSlice,
     IRootStore,
     IContestCategories,

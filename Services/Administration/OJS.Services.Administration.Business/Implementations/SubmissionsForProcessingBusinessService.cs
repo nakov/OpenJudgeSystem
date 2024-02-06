@@ -3,12 +3,16 @@
 using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Models.SubmissionsForProcessing;
 using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 
-public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessingBusinessService
+public class SubmissionsForProcessingBusinessService :
+    AdministrationOperationService<SubmissionForProcessing, SubmissionsForProcessingAdministrationServiceModel>,
+    ISubmissionsForProcessingBusinessService
 {
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;

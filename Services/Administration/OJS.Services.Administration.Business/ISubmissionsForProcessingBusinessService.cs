@@ -1,9 +1,12 @@
 namespace OJS.Services.Administration.Business;
 
 using System.Threading.Tasks;
-using SoftUni.Services.Infrastructure;
+using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Models.SubmissionsForProcessing;
 
-public interface ISubmissionsForProcessingBusinessService : IService
+public interface ISubmissionsForProcessingBusinessService : IAdministrationOperationService<
+    SubmissionForProcessing,
+    SubmissionsForProcessingAdministrationServiceModel>
 {
     /// <summary>
     /// Enqueues all submissions that are pending (not added in the queue, nor processing).

@@ -14,6 +14,9 @@ import AdministrationContestsPage from '../../pages/administration-new/contests/
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
 import { AdministrationSubmissionsPage } from '../../pages/administration-new/submissions/AdministrationSubmissions';
+import {
+    AdministrationSubmissionsForProcessingPage,
+} from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessing';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -129,6 +132,10 @@ const adminRoutes = [
     {
         path: '/administration-new/submissions',
         Element: AdministrationSubmissionsPage,
+    },
+    {
+        path: '/administration-new/submissions-for-processing',
+        Element: AdministrationSubmissionsForProcessingPage,
     },
     {
         path: '/administration-new/tests',

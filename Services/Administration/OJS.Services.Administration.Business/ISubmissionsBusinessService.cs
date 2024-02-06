@@ -3,7 +3,6 @@
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;
-    using SoftUni.Services.Infrastructure;
     using OJS.Services.Administration.Models.Submissions;
 
     public interface ISubmissionsBusinessService : IAdministrationOperationService<Submission, SubmissionAdministrationServiceModel>
