@@ -338,7 +338,7 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
     numberOfProblemGroups: number;
-    duration: string;
+    duration: string | undefined;
 }
 interface IContestAutocomplete {
     id: number;

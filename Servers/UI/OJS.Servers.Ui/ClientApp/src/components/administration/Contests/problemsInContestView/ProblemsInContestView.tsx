@@ -70,7 +70,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ showCopyAllModal, setShowCopyAllModal ] = useState<boolean>(false);
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-    const { data: problemsData, error } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
+    const { data: problemsData, error: getContestError } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
     const { data: contestsAutocompleteData } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
 
     const [ copyAll,
@@ -111,18 +111,27 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        let messages: Array<string> = [];
-        if (isDeleteAllError && deleteAllError) {
-            messages = deleteAllError.map((x:ExceptionData) => x.message);
+        let errors: Array<string> = [];
+
+        const extractMessages = (error: unknown): Array<string> => {
+            if (Array.isArray(error) && error.every((e) => 'message' in e)) {
+                return error.map((x: ExceptionData) => x.message);
+            }
+            return [];
+        };
+
+        if (isDeleteAllError) {
+            errors = errors.concat(extractMessages(deleteAllError));
         }
-        if (isRetestError && retestError) {
-            messages = retestError?.map((x:ExceptionData) => x.message);
+        if (isRetestError) {
+            errors = errors.concat(extractMessages(retestError));
         }
-        if (isCopyAllError && copyAllError) {
-            messages = copyAllError?.map((x:ExceptionData) => x.message);
+        if (isCopyAllError) {
+            errors = errors.concat(extractMessages(copyAllError));
         }
-        setErrorMessages(messages);
-    }, [ isDeleteAllError, isRetestError, copyAllError ]);
+
+        setErrorMessages(errors);
+    }, [ isDeleteAllError, isRetestError, isCopyAllError ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
@@ -289,7 +298,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             {(isRetesting || isDeletingAll) && <SpinningLoader />}
             <AdministrationGridView
               data={problemsData}
-              error={error}
+              error={getContestError}
               filterableGridColumnDef={problemFilterableColums}
               notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, useDeleteProblemMutation, retestProblem)}
               queryParams={queryParams}

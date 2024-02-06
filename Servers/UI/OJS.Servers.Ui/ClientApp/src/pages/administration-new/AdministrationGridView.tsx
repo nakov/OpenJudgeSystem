@@ -125,7 +125,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                               columns: {
                                   columnVisibilityModel: {
                                       isDeleted: false,
-                                      isVisible: true,
+                                      isVisible: false,
                                   },
                               },
                           }}
