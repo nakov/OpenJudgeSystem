@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Models.ContestCategories;
+﻿namespace OJS.Services.Administration.Models.ContestCategories;
 
 using AutoMapper;
 using OJS.Data.Models.Contests;

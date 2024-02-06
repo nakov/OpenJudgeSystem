@@ -2,6 +2,6 @@
 
 using OJS.Services.Administration.Models.ContestCategories;
 
-public class ContestCategoriesPermissionsService : BasePermissionService<ContestCategoriesAdministrationModel>, IContestCategoriesPermissionsService
+public class ContestCategoriesPermissionsService : BasePermissionService<ContestCategoryAdministrationModel>, IContestCategoriesPermissionsService
 {
 }

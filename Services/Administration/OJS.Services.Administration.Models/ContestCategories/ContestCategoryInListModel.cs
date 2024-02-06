@@ -13,7 +13,6 @@ public class ContestCategoryInListModel : IMapExplicitly
 
     public double OrderBy { get; set; }
 
-    public int? ParentId { get; set; }
     public string? Parent { get; set; }
 
     public bool IsDeleted { get; set; }
