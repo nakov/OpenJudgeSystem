@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
-import AdministrationContestCategories from "../../pages/administration-new/AdministrationContestCategories";
 import AdministrationContestPage from '../../components/administration/Contests/AdministrationContestPage';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
@@ -12,6 +11,8 @@ import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPag
 import TestEditPage from '../../pages/administration/TestEditPage';
 import Administration from '../../pages/administration-new/Administration';
 import { AdministrationSubmissionsPage } from '../../pages/administration-new/AdministrationSubmissions';
+import AdministrationContestCategories
+    from '../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
@@ -129,7 +130,7 @@ const adminRoutes = [
     },
     {
         path: '/administration-new/contestCategories',
-        Element: AdministrationContestCategories
+        Element: AdministrationContestCategories,
     },
     {
         path: '/administration-new/submissions',
