@@ -79,14 +79,6 @@ export const AdministrationSubmissionsPage = () => {
 
     const [ retest ] = useRetestMutation();
 
-    const [ deleteSubmission,
-        {
-            data: deleteData,
-            isLoading: isDeleting,
-            isSuccess: isSuccesfullyDeleted,
-            error: deleteError,
-        } ] = useDeleteSubmissionMutation();
-
     const nonFilterableColumns: GridColDef[] = [
         {
             field: 'actions',
@@ -118,11 +110,7 @@ export const AdministrationSubmissionsPage = () => {
                       id={Number(params.row.id)}
                       name="Submission"
                       text={`Are you sure that you want to delete submission #${params.row.id}?`}
-                      deleteRequest={deleteSubmission}
-                      data={deleteData}
-                      isLoading={isDeleting}
-                      isSuccess={isSuccesfullyDeleted}
-                      error={deleteError}
+                      mutation={useDeleteSubmissionMutation}
                     />
                 </div>
             ),
