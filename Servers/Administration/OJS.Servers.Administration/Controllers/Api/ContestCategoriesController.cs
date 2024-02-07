@@ -5,21 +5,19 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.Permissions;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Common.Data.Pagination;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
-public class ContestCategoriesController : BaseAdminApiController<ContestCategory, ContestCategoriesInContestView, ContestCategoriesAdministrationModel>
+public class ContestCategoriesController : BaseAdminApiController<ContestCategory, ContestCategoryInListModel, ContestCategoryAdministrationModel>
 {
-    private readonly IContestCategoriesDataService contestCategoriesDataService;
+    private readonly IContestCategoriesBusinessService contestCategoriesBusinessService;
 
     public ContestCategoriesController(
-        IContestCategoriesDataService contestCategoriesDataService,
-        IGridDataService<ContestCategory> contestCategoryGridDataService,
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
+        IGridDataService<ContestCategory> contestCategoryGridDataService,
         ContestCategoryDeleteValidator deleteValidator,
         IContestCategoriesPermissionsService permissionsService)
     : base(
@@ -28,12 +26,12 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         validator,
         deleteValidator,
         permissionsService)
-        => this.contestCategoriesDataService = contestCategoriesDataService;
+        => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
 
     [HttpGet]
     public IActionResult GetForContestDropdown()
         => this.Ok(
-             this.contestCategoriesDataService
+             this.contestCategoriesBusinessService
             .GetAllVisible()
             .ToHashSet()
             .MapCollection<ContestCategoriesInContestView>());

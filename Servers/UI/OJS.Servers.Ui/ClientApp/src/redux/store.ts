@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // features
+import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
+    [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
 
     // services
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
@@ -55,6 +57,7 @@ const reducersToPersist = [
     authorizationSlide.name,
     problemsAdminSlice.name,
     problemGroupsAdminSlice.name,
+    contestCategoriesAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

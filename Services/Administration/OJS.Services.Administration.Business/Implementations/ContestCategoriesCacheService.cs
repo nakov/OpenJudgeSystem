@@ -21,11 +21,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public Task<ContestCategoriesAdministrationModel> Get(int id) => throw new System.NotImplementedException();
+    public Task<ContestCategoryAdministrationModel> Get(int id) => throw new System.NotImplementedException();
 
-    public Task<ContestCategoriesAdministrationModel> Create(ContestCategoriesAdministrationModel model) => throw new System.NotImplementedException();
+    public Task<ContestCategoryAdministrationModel> Create(ContestCategoryAdministrationModel model) => throw new System.NotImplementedException();
 
-    public Task<ContestCategoriesAdministrationModel> Edit(ContestCategoriesAdministrationModel model) => throw new System.NotImplementedException();
+    public Task<ContestCategoryAdministrationModel> Edit(ContestCategoryAdministrationModel model) => throw new System.NotImplementedException();
 
     public Task Delete(int id) => throw new System.NotImplementedException();
 
