@@ -365,6 +365,51 @@ interface IContestAdministration {
     numberOfProblemGroups: number;
     duration: string | undefined;
 }
+
+interface ISubmissionsAdminGridViewType {
+    id: number;
+    isCompiledSuccessfully: boolean;
+    processed: boolean;
+    isDeleted: boolean;
+    isBinaryFile: boolean;
+    processingComment: boolean;
+    points: number;
+    participant: IParticipantType;
+    problem: IProblemSimpleType;
+    submissionType: ISubmissionTypeSimpleType;
+    createdOn: Date;
+    modifiedOn: Date;
+    startedExecutionOn: Date;
+    completedExecutionOn: Date;
+}
+
+interface ISubmissionForProcessingAdminGridViewType {
+    id: number;
+    processed: boolean;
+    processing: boolean;
+    serializedException: string;
+    serializedExecutionDetails: string;
+    serializedExecutionResult: string;
+    submissionId: number;
+    createdOn: Date;
+    modifiedOn: Date;
+}
+
+interface IParticipantType {
+    id: number;
+    username: string;
+}
+
+interface IProblemSimpleType {
+    id: number;
+    name: string;
+}
+
+interface ISubmissionTypeSimpleType {
+    id: number;
+    name: string;
+}
+
 interface IContestAutocomplete {
     id: number;
     name: string;
@@ -389,6 +434,7 @@ interface IAdminSlice {
 
 interface IRootStore {
     adminContests: IAdminSlice;
+    adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
@@ -440,6 +486,8 @@ export type {
     IContestAdministration,
     IFilterColumn,
     IParticiapntsInContestView,
+    ISubmissionsAdminGridViewType,
+    ISubmissionForProcessingAdminGridViewType,
     IAdminSlice,
     IRootStore,
     IContestCategories,

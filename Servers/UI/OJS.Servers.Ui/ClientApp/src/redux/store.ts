@@ -9,6 +9,8 @@ import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesA
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
+import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
+import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
 import { authorizationSlide } from './features/authorizationSlice';
 import { submissionDetailsSlice } from './features/submissionDetailsSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
@@ -19,6 +21,8 @@ import participantsAdminService from './services/admin/participantsAdminService'
 import problemGroupsAdminService from './services/admin/problemGroupsAdminService';
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
+import submissionsAdminService from './services/admin/submissionsAdminService';
+import submissionsForProcessingAdminService from './services/admin/submissionsForProcessingAdminService';
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 // features
 import authorizationService from './services/authorizationService';
@@ -29,17 +33,22 @@ const rootReducer = combineReducers({
     [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
     [authorizationSlide.name]: authorizationSlide.reducer,
     [contestsAdminSlice.name]: contestsAdminSlice.reducer,
+    [submissionsAdminSlice.name]: submissionsAdminSlice.reducer,
+    [submissionsForProcessingAdminSlice.name]: submissionsForProcessingAdminSlice.reducer,
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
     [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
 
     // services
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
+    [authorizationService.reducerPath]: authorizationService.reducer,
+
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
+    [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
+    [submissionsForProcessingAdminService.reducerPath]: submissionsForProcessingAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
-    [authorizationService.reducerPath]: authorizationService.reducer,
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
@@ -72,6 +81,8 @@ const store = configureStore({
         contestCategoriesAdminService.middleware,
         authorizationService.middleware,
         problemsAdminService.middleware,
+        submissionsAdminService.middleware,
+        submissionsForProcessingAdminService.middleware,
         submissionTypesAdminService.middleware,
         checkerAdminService.middleware,
     ]),

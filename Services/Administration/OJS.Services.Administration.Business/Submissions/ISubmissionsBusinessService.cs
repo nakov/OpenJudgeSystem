@@ -1,20 +1,19 @@
 ﻿namespace OJS.Services.Administration.Business
 {
-    using System.Linq;
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Administration.Models.Submissions;
 
-    public interface ISubmissionsBusinessService : IService
+    public interface ISubmissionsBusinessService : IAdministrationOperationService<Submission, SubmissionAdministrationServiceModel>
     {
-        Task<IQueryable<Submission>> GetAllForArchiving();
-
         Task RecalculatePointsByProblem(int problemId);
 
         Task<ServiceResult> Retest(Submission submission);
 
         Task<ServiceResult> Retest(int id);
+
+        Task<SubmissionAdministrationServiceModel> Download(int id);
 
         Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId);
     }
