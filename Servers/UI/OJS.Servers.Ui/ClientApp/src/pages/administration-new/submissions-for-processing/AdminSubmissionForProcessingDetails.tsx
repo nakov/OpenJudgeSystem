@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import React, { useEffect, useState } from 'react';
+import ReactJson from 'react-json-view';
 import { useLocation } from 'react-router-dom';
 import {
     Box, FormControl, FormLabel,
@@ -68,28 +69,40 @@ const AdministrationContestPage = () => {
                       value={submission.processing}
                       disabled
                     />
-                    <TextField
-                      className={styles.inputRow}
-                      label="Serialized Exception"
-                      variant="standard"
-                      value={submission.serializedException ?? 'No value'}
-                      disabled
-                    />
-                    <FormControl sx={{ width: '60%' }}>
+                    <FormControl className={styles.inputRow}>
+                        <FormLabel>Serialized Exception</FormLabel>
+                        {isNil(submission.serializedException)
+                            ? 'No Value'
+                            : (
+                                <ReactJson
+                                  src={JSON.parse(submission.serializedException)}
+                                  theme="summerfruit:inverted"
+                                  collapsed={false}
+                                  quotesOnKeys
+                                />
+                            )}
+                    </FormControl>
+                    <FormControl className={styles.inputRow}>
                         <FormLabel>Serialized Execution Details</FormLabel>
-                        <TextareaAutosize
-                          minRows={10}
-                          value={JSON.stringify(submission.serializedExecutionDetails, null, 2) ?? 'No value'}
+                        <ReactJson
+                          src={JSON.parse(submission.serializedExecutionDetails)}
+                          theme="summerfruit:inverted"
+                          collapsed={false}
+                          quotesOnKeys
                         />
                     </FormControl>
-                    <FormControl sx={{ width: '60%' }}>
+                    <FormControl className={styles.inputRow}>
                         <FormLabel>Serialized Execution Result</FormLabel>
-                        <TextareaAutosize
-                          minRows={10}
-                          value={submission.serializedExecutionResult ?? 'No value'}
-                          name="serializedExecutionResult"
-                          disabled
-                        />
+                        {isNil(submission.serializedExecutionResult)
+                            ? 'No Value'
+                            : (
+                                <ReactJson
+                                  src={JSON.parse(submission.serializedExecutionResult)}
+                                  theme="summerfruit:inverted"
+                                  collapsed={false}
+                                  quotesOnKeys
+                                />
+                            )}
                     </FormControl>
                     <TextField
                       className={styles.inputRow}
