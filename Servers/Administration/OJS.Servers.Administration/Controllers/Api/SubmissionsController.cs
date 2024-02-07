@@ -16,7 +16,7 @@ public class SubmissionsController : BaseAdminApiController<
     SubmissionAdministrationServiceModel,
     SubmissionAdministrationServiceModel>
 {
-    private ISubmissionsBusinessService submissionsBusinessService;
+    private readonly ISubmissionsBusinessService submissionsBusinessService;
 
     public SubmissionsController(
         IGridDataService<Submission> submissionsGridDataService,
