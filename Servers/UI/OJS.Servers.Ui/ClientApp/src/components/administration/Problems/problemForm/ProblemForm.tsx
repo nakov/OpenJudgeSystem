@@ -1,3 +1,5 @@
+/* eslint-disable default-case */
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-undefined */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
@@ -43,7 +45,8 @@ const ProblemForm = (props: IProblemFormProps) => {
         sourceCodeSizeLimit: 0,
         submissionTypes: [],
         timeLimit: 0,
-        // additionalFiles: null,
+        additionalFiles: null,
+        tests: null,
     });
 
     const navigate = useNavigate();
@@ -197,6 +200,27 @@ const ProblemForm = (props: IProblemFormProps) => {
         />
     );
 
+    const handleFileUpload = (e: any) => {
+        const { target } = e;
+        const { name } = target;
+        let { additionalFiles } = currentProblem;
+        let { tests } = currentProblem;
+
+        switch (name) {
+        case 'tests':
+            tests = e.target.files[0];
+            break;
+        case 'additionalFiles':
+            additionalFiles = e.target.files[0];
+            break;
+        }
+        setCurrentProblem((prevState) => ({
+            ...prevState,
+            additionalFiles,
+            tests,
+        }));
+    };
+
     return (
         isGettingData
             ? <SpinningLoader />
@@ -344,18 +368,23 @@ const ProblemForm = (props: IProblemFormProps) => {
                                   name="additionalFiles"
                                   variant="standard"
                                   sx={{ width: '45%', margin: '1rem' }}
+                                  onChange={(e) => handleFileUpload(e)}
                                   InputLabelProps={{ shrink: true }}
                                 />
                             </FormControl>
-                            {/* <FormControl>
+                            {!isEditMode && (
+                            <FormControl>
                                 <TextField
                                   type="file"
                                   label="Tests"
                                   variant="standard"
+                                  name="tests"
                                   sx={{ width: '45%', margin: '1rem' }}
+                                  onChange={(e) => handleFileUpload(e)}
                                   InputLabelProps={{ shrink: true }}
                                 />
-                            </FormControl> */}
+                            </FormControl>
+                            )}
                         </FormGroup>
                         <FormGroup sx={{ marginLeft: '4rem' }}>
                             <FormControlLabel
@@ -459,7 +488,38 @@ const ProblemForm = (props: IProblemFormProps) => {
                                 )
                                 : (
                                     <Button
-                                      onClick={() => createProblem(currentProblem)}
+                                      onClick={() => {
+                                          const formData = new FormData();
+                                          formData.append('name', currentProblem.name);
+                                          formData.append('id', currentProblem.id?.toString() ?? '');
+                                          formData.append('orderBy', currentProblem.orderBy?.toString() || '');
+                                          formData.append('contestId', currentProblem.contestId?.toString() || '');
+                                          formData.append('maximumPoints', currentProblem.maximumPoints?.toString() || '');
+                                          formData.append('memoryLimit', currentProblem.memoryLimit?.toString() || '');
+                                          formData.append('sourceCodeSizeLimit', currentProblem.sourceCodeSizeLimit?.toString() || '');
+                                          formData.append('timeLimit', currentProblem.timeLimit?.toString() || '');
+                                          formData.append('problemGroupType', currentProblem.problemGroupType?.toString());
+                                          formData.append('checkerId', currentProblem.checkerId?.toString() || '');
+                                          formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
+                                          formData.append('showResults', currentProblem.showResults?.toString() || '');
+                                          currentProblem.submissionTypes?.forEach((type, index) => {
+                                              formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
+                                              formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
+
+                                              type.solutionSkeleton && formData.append(
+                                                  `SubmissionTypes[${index}].SolutionSkeleton`,
+                                                  type.solutionSkeleton!.toString(),
+                                              );
+                                          });
+
+                                          currentProblem.additionalFiles &&
+                                          formData.append('additionalFiles', currentProblem.additionalFiles);
+
+                                          currentProblem.tests &&
+                                          formData.append('tests', currentProblem.tests);
+
+                                          createProblem(formData);
+                                      }}
                                       size="large"
                                       sx={{ width: '20%', alignSelf: 'center' }}
                                       variant="contained"

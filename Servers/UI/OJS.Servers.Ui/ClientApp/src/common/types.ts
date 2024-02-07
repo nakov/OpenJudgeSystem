@@ -317,7 +317,8 @@ interface IProblemAdministration {
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
-    // additionalFiles: File | null;
+    additionalFiles: File | null;
+    tests: File | null;
 }
 
 interface IUserRoleType {

@@ -25,6 +25,8 @@ namespace OJS.Services.Administration.Business.Problems
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
+    using Microsoft.AspNetCore.Http;
+    using System.IO;
 
     public class ProblemsBusinessService : AdministrationOperationService<Problem, ProblemAdministrationModel>, IProblemsBusinessService
     {
@@ -40,6 +42,7 @@ namespace OJS.Services.Administration.Business.Problems
         private readonly IContestsBusinessService contestsBusiness;
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
         private readonly IProblemGroupsDataService problemGroupsDataService;
+        private readonly IZippedTestsParserService zippedTestsParser;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -53,7 +56,8 @@ namespace OJS.Services.Administration.Business.Problems
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService,
-            IProblemGroupsDataService problemGroupsDataService)
+            IProblemGroupsDataService problemGroupsDataService,
+            IZippedTestsParserService zippedTestsParser)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -67,6 +71,7 @@ namespace OJS.Services.Administration.Business.Problems
             this.contestsBusiness = contestsBusiness;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
             this.problemGroupsDataService = problemGroupsDataService;
+            this.zippedTestsParser = zippedTestsParser;
         }
 
         public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -87,8 +92,9 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             await this.problemsData.Add(problem);
+
             AddSubmissionTypes(problem, model);
-            // await this.TryAddTestsToProblem(entity, actionContext);
+            await this.TryAddTestsToProblem(problem, model.Tests);
 
             await this.problemsData.SaveChanges();
 
@@ -299,6 +305,39 @@ namespace OJS.Services.Administration.Business.Problems
 
             await this.problemsData.Add(problem);
             await this.problemsData.SaveChanges();
+        }
+
+        private async Task TryAddTestsToProblem(Problem problem, IFormFile? tests)
+        {
+            if (tests == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await this.AddTestsToProblem(problem, tests);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format(ex.Message), ex);
+            }
+        }
+
+        private async Task AddTestsToProblem(Problem problem, IFormFile testsFile)
+        {
+            await using var memoryStream = new MemoryStream();
+            await testsFile.CopyToAsync(memoryStream);
+            memoryStream.Position = 0;
+
+            var parsedTests = await this.zippedTestsParser.Parse(memoryStream);
+
+            if (!this.zippedTestsParser.AreTestsParsedCorrectly(parsedTests))
+            {
+                throw new ArgumentException("Invalid tests");
+            }
+
+            this.zippedTestsParser.AddTestsToProblem(problem, parsedTests);
         }
     }
 }
