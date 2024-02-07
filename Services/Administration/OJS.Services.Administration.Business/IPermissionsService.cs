@@ -1,22 +1,16 @@
 ﻿namespace OJS.Services.Administration.Business;
 
+using OJS.Services.Administration.Models;
+using OJS.Services.Common.Models;
+using OJS.Services.Common.Models.Users;
 using SoftUni.Services.Infrastructure;
-using System.Security.Claims;
-using System;
-using System.Linq.Expressions;
+using System.Threading.Tasks;
 
-public interface IPermissionsService<TEntity, TModel> : IService
-where TModel : class
+public interface IPermissionsService<in TModel, in TId> : IService
+   where TModel : BaseAdministrationModel<TId>
+   where TId : notnull
 {
-   bool HasReadPermission();
+   Task<UserPermissionsModel> GetPermissions(UserInfoModel user, TId id);
 
-   bool HasCreatePermission();
-
-   bool HasUpdatePermission(TModel model);
-
-   bool HasDeletePermission(int id);
-
-   bool HasFullAccess(ClaimsPrincipal user);
-
-   Expression<Func<TEntity, bool>>? GeneratePermittedRecordsExpression();
+   Task<UserPermissionsModel> GetPermissions(UserInfoModel user, TModel model);
 }

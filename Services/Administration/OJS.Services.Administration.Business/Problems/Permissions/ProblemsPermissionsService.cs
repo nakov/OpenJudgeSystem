@@ -1,43 +1,31 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Permissions;
-using OJS.Services.Administration.Models.Problems;
-using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Data;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Administration.Business.Contests;
+using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Business.Contests.Interfaces;
+using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Common.Models;
+using OJS.Services.Common.Models.Users;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class ProblemsPermissionsService : BasePermissionService<Problem, ProblemAdministrationModel>, IProblemsPermissionsService
+public class ProblemsPermissionsService(
+    IProblemsDataService problemsDataService,
+    IContestsBusinessService contestsBusinessService)
+    : PermissionsService<ProblemAdministrationModel, int>, IProblemsPermissionsService
 {
-    private readonly IUserProviderService userProviderService;
-    private readonly IProblemsDataService problemsDataService;
-    private readonly IContestsBusinessService contestsBusinessService;
-    public ProblemsPermissionsService(
-        IUserProviderService userProviderService,
-        IProblemsDataService problemsDataService,
-        IContestsBusinessService contestsBusinessService)
+    public override async Task<UserPermissionsModel> GetPermissions(UserInfoModel user, int id)
     {
-        this.userProviderService = userProviderService;
-        this.problemsDataService = problemsDataService;
-        this.contestsBusinessService = contestsBusinessService;
-    }
+        var contestId = await problemsDataService
+            .GetByIdQuery(id)
+            .Select(p => p.ProblemGroup.ContestId)
+            .FirstOrDefaultAsync();
 
-    public override bool HasDeletePermission(int id)
-    {
-            var currentProblem = this.problemsDataService.GetByIdQuery(id)
-                .Include(x => x.ProblemGroup)
-                .ThenInclude(pg => pg.Contest)
-                .FirstOrDefault();
-            return currentProblem != null && this.HasContestPermission(currentProblem.ProblemGroup.ContestId).GetAwaiter().GetResult();
-    }
-
-    private async Task<bool> HasContestPermission(int contestId)
-    {
-        var user = this.userProviderService.GetCurrentUser();
-
-        return await this.contestsBusinessService.UserHasContestPermissions(
+        var hasContestPermissions = await contestsBusinessService.UserHasContestPermissions(
             contestId,
             user.Id,
             user.IsAdmin);
+
+        return (await base.GetPermissions(user, id)).WithFullAccess(hasContestPermissions);
     }
 }

@@ -3,6 +3,6 @@
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Models.ContestCategories;
 
-public interface IContestCategoriesBusinessService : IAdministrationOperationService<ContestCategory, ContestCategoriesAdministrationModel>
+public interface IContestCategoriesBusinessService : IAdministrationOperationService<ContestCategory, int, ContestCategoriesAdministrationModel>
 {
 }

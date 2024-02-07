@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
 
-public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, SubmissionTypesAdministrationModel>, ISubmissionTypesBusinessService
+public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypesAdministrationModel>, ISubmissionTypesBusinessService
 {
     private readonly ISubmissionTypesDataService submissionTypesDataService;
 

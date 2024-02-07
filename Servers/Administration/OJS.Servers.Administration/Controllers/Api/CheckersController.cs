@@ -1,15 +1,16 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Checkers;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Checkers;
-using OJS.Services.Administration.Business.Checkers.Permissions;
 using OJS.Services.Administration.Business.Checkers.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Checkers;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Models.Validation;
 
-public class CheckersController : BaseAdminApiController<Checker, Checker, CheckerAdministrationModel>
+public class CheckersController : BaseAdminApiController<Checker, int, Checker, CheckerAdministrationModel>
 {
     private readonly ICheckersDataService checkersDataService;
 
@@ -18,14 +19,14 @@ public class CheckersController : BaseAdminApiController<Checker, Checker, Check
         IGridDataService<Checker> checkerGridDataService,
         ICheckersBusinessService checkersBusinessService,
         CheckerAdministrationModelValidator validator,
-        CheckerDeleteValidator deleteValidator,
-        ICheckersPermissionService permissionService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
+        IPermissionsService<CheckerAdministrationModel, int> permissionsService)
     : base(
         checkerGridDataService,
         checkersBusinessService,
         validator,
         deleteValidator,
-        permissionService)
+        permissionsService)
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]

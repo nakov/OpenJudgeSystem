@@ -7,6 +7,7 @@ namespace OJS.Services.Administration.Business.Problems
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Business.Contests;
+    using OJS.Services.Administration.Business.Contests.Interfaces;
     using OJS.Services.Administration.Business.ProblemGroups;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;
@@ -26,7 +27,7 @@ namespace OJS.Services.Administration.Business.Problems
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
-    public class ProblemsBusinessService : AdministrationOperationService<Problem, ProblemAdministrationModel>, IProblemsBusinessService
+    public class ProblemsBusinessService : AdministrationOperationService<Problem, int, ProblemAdministrationModel>, IProblemsBusinessService
     {
         private readonly IContestsDataService contestsData;
         private readonly IParticipantScoresDataService participantScoresData;
@@ -169,7 +170,7 @@ namespace OJS.Services.Administration.Business.Problems
 
         public override async Task<ProblemAdministrationModel> Edit(ProblemAdministrationModel model)
         {
-            if (!model.Id.HasValue)
+            if (model.Id < 0)
             {
                 throw new ArgumentNullException("Problem must have an Id");
             }

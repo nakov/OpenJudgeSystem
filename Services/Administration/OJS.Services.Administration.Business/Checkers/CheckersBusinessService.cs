@@ -3,6 +3,6 @@
 using OJS.Data.Models.Checkers;
 using OJS.Services.Administration.Models.Checkers;
 
-public class CheckersBusinessService : AdministrationOperationService<Checker, CheckerAdministrationModel>, ICheckersBusinessService
+public class CheckersBusinessService : AdministrationOperationService<Checker, int, CheckerAdministrationModel>, ICheckersBusinessService
 {
 }

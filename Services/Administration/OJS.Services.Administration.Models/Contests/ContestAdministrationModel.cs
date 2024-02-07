@@ -8,9 +8,8 @@ using System.ComponentModel.DataAnnotations;
 using OJS.Common.Enumerations;
 using System.Linq;
 
-public class ContestAdministrationModel : IMapExplicitly
+public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int? Id { get; set; }
     public string? Name { get; set; }
 
     public string? Type { get; set; }

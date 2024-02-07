@@ -39,11 +39,11 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
         this.RuleFor(model => model.Type)
             .NotNull()
             .NotEmpty()
-            .Must(this.BeAValidContestType)
+            .Must(BeAValidContestType)
             .WithMessage("There is no contest type with this value");
 
         this.RuleFor(model => model)
-            .MustAsync(async (model, cancellation)
+            .MustAsync(async (model, _)
                 => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
             .When(model => model.Id > 0)
             .WithName("Duration")
@@ -51,12 +51,17 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
             .WithMessage("Cannot change duration or type in an active contest.");
 
         this.RuleFor(model => model)
-            .Must((model, cancellation)
-                => ValidateOnlineContestProblemGroups(model))
+            .Must(ValidateOnlineContestProblemGroups)
             .When(model => model.Id > 0)
             .WithName("Number of problem groups")
             .NotNull()
             .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
+    }
+
+    private static bool BeAValidContestType(string? type)
+    {
+        var isValid = Enum.TryParse<ContestType>(type, true, out _);
+        return isValid;
     }
 
     private static bool ValidateOnlineContestProblemGroups(ContestAdministrationModel model)
@@ -79,7 +84,7 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
 
     private async Task<bool> ValidateActiveContestCannotEditDurationTypeOnEdit(ContestAdministrationModel model)
     {
-        var contest = await this.contestService.GetByIdQuery(model.Id!.Value).FirstOrDefaultAsync();
+        var contest = await this.contestService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
         if (contest is null)
         {
             return false;
@@ -105,17 +110,11 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
 
     private async Task ValidateContestExists(ContestAdministrationModel model)
     {
-        var contest = await this.contestService.GetByIdQuery(model.Id!.Value).FirstOrDefaultAsync();
+        var contest = await this.contestService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
 
         if (contest is null)
         {
-            throw new ArgumentNullException($"Contest with Id:{model.Id!.Value} not found");
+            throw new ArgumentNullException($"Contest with Id:{model.Id} not found");
         }
-    }
-
-    private bool BeAValidContestType(string? type)
-    {
-        var isValid = Enum.TryParse<ContestType>(type, true, out _);
-        return isValid;
     }
 }

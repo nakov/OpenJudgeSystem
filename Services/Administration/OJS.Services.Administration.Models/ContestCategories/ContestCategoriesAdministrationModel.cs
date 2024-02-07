@@ -1,5 +1,5 @@
 ﻿namespace OJS.Services.Administration.Models.ContestCategories;
 
-public class ContestCategoriesAdministrationModel
+public class ContestCategoriesAdministrationModel : BaseAdministrationModel<int>
 {
 }

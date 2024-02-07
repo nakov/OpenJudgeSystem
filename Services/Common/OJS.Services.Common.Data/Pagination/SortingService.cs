@@ -4,15 +4,9 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using SoftUni.Data.Infrastructure.Models;
 
 public class SortingService : ISortingService
 {
-    private readonly IFilteringService filteringService;
-
-    public SortingService(IFilteringService filteringService)
-        => this.filteringService = filteringService;
-
     public virtual IQueryable<TModel> ApplySorting<TModel>(IQueryable<TModel> query, string? sorting)
     {
         if (string.IsNullOrEmpty(sorting))
@@ -28,12 +22,7 @@ public class SortingService : ISortingService
             var key = sortArgs[0];
             var sortingDirection = sortArgs[1];
 
-            var sortingProperty = this.filteringService.GetProperty<TModel>(key);
-
-            if (sortingProperty is null)
-            {
-                continue;
-            }
+            var sortingProperty = PropertyInfoCache.GetPropertyInfo<TModel>(key);
 
             var methodName = index == 0
                 ? (sortingDirection == "ASC"

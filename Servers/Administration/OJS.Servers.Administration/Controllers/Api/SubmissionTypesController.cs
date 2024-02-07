@@ -1,15 +1,17 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.SubmissionTypes;
-using OJS.Services.Administration.Business.SubmissionTypes.Permissions;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
+using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
-using OJS.Services.Common.Data.Pagination;
+using OJS.Services.Administration.Models.Validation;
 using System.Threading.Tasks;
 
-public class SubmissionTypesController : BaseAdminApiController<SubmissionType, SubmissionType, SubmissionTypesAdministrationModel>
+public class SubmissionTypesController : BaseAdminApiController<SubmissionType, int, SubmissionType, SubmissionTypesAdministrationModel>
 {
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
 
@@ -17,8 +19,8 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
         SubmissionTypesAdministrationModelValidator validator,
-        SubmissionTypesDeleteValidator deleteValidator,
-        ISubmissionTypesPermissionsService permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
+        IPermissionsService<SubmissionTypesAdministrationModel, int> permissionsService)
             : base(
                 submissionTypesGridDataService,
                 submissionTypesBusinessService,

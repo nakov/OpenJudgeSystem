@@ -4,17 +4,11 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
 using System.Collections.Generic;
 using OJS.Data.Models.Problems;
-using FluentValidation;
-using OJS.Data.Validation;
-using OJS.Services.Common.Validation;
 using OJS.Common.Enumerations;
 using System;
-using Microsoft.AspNetCore.Http;
 
-public class ProblemAdministrationModel : IMapExplicitly
+public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int? Id { get; set; }
-
     public string? Name { get; set; }
 
     public short MaximumPoints { get; set; }

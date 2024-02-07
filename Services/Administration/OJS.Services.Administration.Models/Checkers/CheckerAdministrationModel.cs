@@ -1,5 +1,5 @@
 ﻿namespace OJS.Services.Administration.Models.Checkers;
 
-public class CheckerAdministrationModel
+public class CheckerAdministrationModel : BaseAdministrationModel<int>
 {
 }

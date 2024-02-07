@@ -1,12 +1,11 @@
-namespace OJS.Services.Administration.Business.Contests;
+namespace OJS.Services.Administration.Business.Contests.Interfaces;
 
 using OJS.Services.Administration.Models.Contests;
-using SoftUni.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OJS.Data.Models.Contests;
 
-public interface IContestsBusinessService : IAdministrationOperationService<Contest, ContestAdministrationModel>
+public interface IContestsBusinessService : IAdministrationOperationService<Contest, int, ContestAdministrationModel>
 {
     Task<bool> UserHasContestPermissions(int contestId, string? userId, bool isUserAdmin);
 

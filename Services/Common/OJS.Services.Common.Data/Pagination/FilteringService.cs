@@ -4,28 +4,12 @@ using OJS.Services.Common.Data.Pagination.Enums;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Pagination;
 using System.Collections.Generic;
-using SoftUni.Data.Infrastructure.Models;
 
 public class FilteringService : IFilteringService
 {
-    public PropertyInfo? GetProperty<T>(string key)
-    {
-        var propertyInfo = typeof(T).GetProperties()
-            .FirstOrDefault(p =>
-                string.Equals(p.Name, key, StringComparison.OrdinalIgnoreCase));
-
-        if (propertyInfo is null)
-        {
-            return null;
-        }
-
-        return propertyInfo;
-    }
-
     public virtual IQueryable<TModel> ApplyFiltering<TEntity, TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
     {
         if (!filters.Any())

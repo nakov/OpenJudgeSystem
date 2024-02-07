@@ -10,7 +10,7 @@ using Resource = OJS.Common.Resources.ContestsControllers;
 using OJS.Common.Enumerations;
 using OJS.Services.Administration.Models.Contests;
 using System;
-using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Contests.Interfaces;
 
 public class ContestsValidationHelper : IContestsValidationHelper
 {

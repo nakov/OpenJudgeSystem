@@ -20,7 +20,7 @@ using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Problems;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
-using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Contests.Interfaces;
 using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;

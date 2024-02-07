@@ -5,7 +5,7 @@ using OJS.Services.Administration.Models.ContestCategories;
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 
-public interface IContestCategoriesCacheService : IAdministrationOperationService<ContestCategory, ContestCategoriesAdministrationModel>, IService
+public interface IContestCategoriesCacheService : IAdministrationOperationService<ContestCategory, int, ContestCategoriesAdministrationModel>, IService
 {
     void ClearMainContestCategoriesCache();
 

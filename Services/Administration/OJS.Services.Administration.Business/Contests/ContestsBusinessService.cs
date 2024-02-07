@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Business.Contests.Interfaces;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;
@@ -15,7 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class ContestsBusinessService : AdministrationOperationService<Contest, ContestAdministrationModel>, IContestsBusinessService
+public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
 {
     private const int NumberOfContestsToGet = 20;
     private readonly IContestsDataService contestsData;
@@ -69,7 +70,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, C
 
     public override async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model)
     {
-        var contest = await this.contestsData.GetByIdQuery(model.Id!.Value).FirstOrDefaultAsync();
+        var contest = await this.contestsData.GetByIdQuery(model.Id).FirstOrDefaultAsync();
 
         if (!model.IsOnlineExam && model.Duration != null)
         {
@@ -158,13 +159,13 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, C
         if (originalContestPassword != contest.ContestPassword &&
             !string.IsNullOrWhiteSpace(contest.ContestPassword))
         {
-            await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id!.Value, isOfficial: true);
+            await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: true);
         }
 
         if (originalPracticePassword != contest.PracticePassword &&
             !string.IsNullOrWhiteSpace(contest.PracticePassword))
         {
-            await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id!.Value, isOfficial: false);
+            await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
         }
     }
 

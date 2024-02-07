@@ -14,7 +14,7 @@ namespace OJS.Services.Administration.Business.ProblemGroups
     using Resource = OJS.Common.Resources.ProblemGroupsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
-    public class ProblemGroupsBusinessService : AdministrationOperationService<ProblemGroup, ProblemGroupsAdministrationModel>, IProblemGroupsBusinessService
+    public class ProblemGroupsBusinessService : AdministrationOperationService<ProblemGroup, int, ProblemGroupsAdministrationModel>, IProblemGroupsBusinessService
     {
         private readonly IProblemGroupsDataService problemGroupsData;
         private readonly IContestsDataService contestsData;

@@ -1,5 +1,5 @@
 ﻿namespace OJS.Services.Administration.Models.SubmissionTypes;
 
-public class SubmissionTypesAdministrationModel
+public class SubmissionTypesAdministrationModel : BaseAdministrationModel<int>
 {
 }

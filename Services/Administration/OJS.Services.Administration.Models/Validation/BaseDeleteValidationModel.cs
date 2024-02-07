@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Models.Validation;
 
-public class BaseDeleteValidationModel
+public class BaseDeleteValidationModel<TId>
 {
-    public int Id { get; set; }
+    public TId Id { get; set; } = default!;
 }

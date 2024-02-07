@@ -5,7 +5,7 @@ using OJS.Services.Administration.Models.SubmissionTypes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface ISubmissionTypesBusinessService : IAdministrationOperationService<SubmissionType, SubmissionTypesAdministrationModel>
+public interface ISubmissionTypesBusinessService : IAdministrationOperationService<SubmissionType, int, SubmissionTypesAdministrationModel>
 {
     Task<List<SubmissionTypesInProblemView>> GetForProblem();
 }

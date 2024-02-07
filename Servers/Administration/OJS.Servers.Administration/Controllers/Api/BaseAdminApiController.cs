@@ -1,37 +1,39 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Models.Validation;
-using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
-using OJS.Services.Common.Validation;
-using SoftUni.Common.Models;
 using SoftUni.Data.Infrastructure.Models;
-using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using OJS.Common;
+using OJS.Common.Extensions;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
+using OJS.Services.Common.Models.Users;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 [Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
-public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> : BaseApiController
-    where TEntity : class, IEntity
-    where TUpdateModel : class
+public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateModel> : BaseApiController
+    where TEntity : class, IEntity<TId>
+    where TUpdateModel : BaseAdministrationModel<TId>
+    where TId : notnull
 {
     private readonly IGridDataService<TEntity> gridDataService;
-    private readonly IAdministrationOperationService<TEntity, TUpdateModel> operationService;
-    private readonly BaseValidator<TUpdateModel> validator;
-    private readonly BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator;
-    private readonly IPermissionsService<TEntity, TUpdateModel> permissionsService;
+    private readonly IAdministrationOperationService<TEntity, TId, TUpdateModel> operationService;
+    private readonly IValidator<TUpdateModel> validator;
+    private readonly IValidator<BaseDeleteValidationModel<TId>> deleteValidator;
+    private readonly IPermissionsService<TUpdateModel, TId> permissionsService;
 
     protected BaseAdminApiController(
         IGridDataService<TEntity> gridDataService,
-        IAdministrationOperationService<TEntity, TUpdateModel> operationService,
-        BaseValidator<TUpdateModel> validator,
-        BaseDeleteValidator<BaseDeleteValidationModel> deleteValidator,
-        IPermissionsService<TEntity, TUpdateModel> permissionsService)
+        IAdministrationOperationService<TEntity, TId, TUpdateModel> operationService,
+        IValidator<TUpdateModel> validator,
+        IValidator<BaseDeleteValidationModel<TId>> deleteValidator,
+        IPermissionsService<TUpdateModel, TId> permissionsService)
     {
         this.gridDataService = gridDataService;
         this.operationService = operationService;
@@ -43,23 +45,22 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpGet]
     public virtual async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
-        if (!this.permissionsService.HasReadPermission())
+        var user = this.User.Map<UserInfoModel>();
+
+        if (!await this.gridDataService.UserHasAccessToGrid(user))
         {
             return this.Unauthorized();
         }
 
-        if (!this.permissionsService.HasFullAccess(this.User))
-        {
-            return this.Ok(await this.gridDataService.GetAll<TGridModel>(model, this.permissionsService.GeneratePermittedRecordsExpression()));
-        }
-
-        return this.Ok(await this.gridDataService.GetAll<TGridModel>(model));
+        return this.Ok(await this.gridDataService.GetAllForUser<TGridModel>(model, user));
     }
 
-    [HttpGet("{id:int}")]
-    public virtual async Task<IActionResult> Get(int id)
+    [HttpGet("{id}")]
+    public virtual async Task<IActionResult> Get(TId id)
     {
-        if (!this.permissionsService.HasReadPermission())
+        var entityPermissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), id);
+
+        if (!entityPermissions.CanRead)
         {
             return this.Unauthorized();
         }
@@ -71,12 +72,14 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpPost]
     public virtual async Task<IActionResult> Create(TUpdateModel model)
     {
-        if (!this.permissionsService.HasCreatePermission())
+        var entityPermissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), model);
+
+        if (!entityPermissions.CanCreate)
         {
             return this.Unauthorized();
         }
 
-        var validationResult = await this.validator.ExecuteValidation(model);
+        var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
         {
@@ -90,12 +93,14 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
     [HttpPatch]
     public virtual async Task<IActionResult> Edit(TUpdateModel model)
     {
-        if (!this.permissionsService.HasUpdatePermission(model))
+        var entityPermissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), model.Id!);
+
+        if (!entityPermissions.CanEdit)
         {
             return this.Unauthorized();
         }
 
-        var validationResult = await this.validator.ExecuteValidation(model);
+        var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
         {
@@ -106,16 +111,20 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
         return this.Ok($"The {typeof(TEntity).Name} was successfully updated.");
     }
 
-    [HttpDelete("{id:int}")]
-    public virtual async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id}")]
+    public virtual async Task<IActionResult> Delete(TId id)
     {
-        if (!this.permissionsService.HasDeletePermission(id))
+        var entityPermissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), id);
+
+        if (!entityPermissions.CanDelete)
         {
             return this.Unauthorized();
         }
 
         var validationResult =
-            await this.deleteValidator.ExecuteValidation(new BaseDeleteValidationModel { Id = id });
+            await this.deleteValidator
+                .ValidateAsync(new BaseDeleteValidationModel<TId> { Id = id })
+                .ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
         {
@@ -125,7 +134,4 @@ public abstract class BaseAdminApiController<TEntity, TGridModel, TUpdateModel> 
         await this.operationService.Delete(id);
         return this.Ok($"Successfully deleted {typeof(TEntity).Name} with id: {id}");
     }
-
-    protected async Task<PagedResult<T>> GetWithFilter<T>(PaginationRequestModel model,  Expression<Func<TEntity, bool>>? filter = null)
-        => await this.gridDataService.GetAll<T>(model, filter);
 }

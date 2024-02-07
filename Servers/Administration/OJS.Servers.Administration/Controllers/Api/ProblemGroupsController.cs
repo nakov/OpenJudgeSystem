@@ -1,24 +1,26 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
 using OJS.Services.Administration.Models.ProblemGroups;
-using OJS.Services.Common.Data.Pagination;
 using System;
 using System.Linq;
-using OJS.Services.Administration.Business.ProblemGroups.Permissions;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Validation;
 
-public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
+public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int, ProblemGroupInListModel, ProblemGroupsAdministrationModel>
 {
     public ProblemGroupsController(
         IGridDataService<ProblemGroup> problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         ProblemGroupsAdministrationModelValidator validator,
-        ProblemGroupsDeleteValidator deleteValidator,
-        IProblemGroupsPermissionsService permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
+        IPermissionsService<ProblemGroupsAdministrationModel, int> permissionsService)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,

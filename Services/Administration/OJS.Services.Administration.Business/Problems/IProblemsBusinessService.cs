@@ -6,7 +6,7 @@ namespace OJS.Services.Administration.Business.Problems
     using SoftUni.Services.Infrastructure;
     using System.Threading.Tasks;
 
-    public interface IProblemsBusinessService : IAdministrationOperationService<Problem, ProblemAdministrationModel>
+    public interface IProblemsBusinessService : IAdministrationOperationService<Problem, int, ProblemAdministrationModel>
     {
         Task RetestById(int id);
 

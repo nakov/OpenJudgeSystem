@@ -1,8 +1,8 @@
-namespace OJS.Servers.Administration.Extensions;
+namespace OJS.Common.Extensions;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using System.Linq.Expressions;
 
 public static class ExpressionExtensions

@@ -3,6 +3,6 @@
 using OJS.Data.Models.Problems;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class ProblemGroupsAdministrationModel : IMapFrom<ProblemGroup>
+public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IMapFrom<ProblemGroup>
 {
 }

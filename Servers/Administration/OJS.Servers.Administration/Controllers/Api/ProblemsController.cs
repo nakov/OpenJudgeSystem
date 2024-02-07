@@ -3,19 +3,18 @@
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
-using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Contests.Interfaces;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
-using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Business.Problems.Permissions;
 
-public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel, ProblemAdministrationModel>
+public class ProblemsController : BaseAdminApiController<Problem, int, ProblemsInListModel, ProblemAdministrationModel>
 {
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
@@ -24,6 +23,7 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
     private readonly IContestsActivityService contestsActivityService;
     private readonly IContestsDataService contestsDataService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
+    private readonly IGridDataService<Problem> problemGridDataService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
@@ -51,6 +51,7 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         this.contestsActivityService = contestsActivityService;
         this.contestsDataService = contestsDataService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
+        this.problemGridDataService = problemGridDataService;
     }
 
     [HttpGet("{contestId:int}")]
@@ -62,9 +63,8 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         }
 
         return this.Ok(
-            await this.GetWithFilter<ProblemsInListModel>(
-                model,
-                problem => problem.ProblemGroup.ContestId == contestId));
+            await this.problemGridDataService
+                .GetAll<ProblemsInListModel>(model, problem => problem.ProblemGroup.ContestId == contestId));
     }
 
     [HttpPost]
