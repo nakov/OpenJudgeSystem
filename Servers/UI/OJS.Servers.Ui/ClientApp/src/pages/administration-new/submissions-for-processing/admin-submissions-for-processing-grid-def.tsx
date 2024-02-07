@@ -1,4 +1,6 @@
-import { GridColDef } from '@mui/x-data-grid';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { preciseFormatDate } from '../../../utils/dates';
 
@@ -64,6 +66,13 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: true,
         sortable: true,
+        renderCell: (params: GridRenderCellParams) => (
+            <Link
+              to={`/submissions/${Number(params.row?.submissionId)}/details`}
+            >
+                {params.row?.submissionId}
+            </Link>
+        ),
     },
     {
         field: 'createdOn',

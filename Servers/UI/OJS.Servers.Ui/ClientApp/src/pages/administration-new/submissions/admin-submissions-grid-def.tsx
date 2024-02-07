@@ -1,4 +1,6 @@
-import { GridColDef } from '@mui/x-data-grid';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { preciseFormatDate } from '../../../utils/dates';
 
@@ -48,21 +50,19 @@ const dataColumns: GridColDef[] = [
         sortable: false,
     },
     {
-        field: 'problemId',
-        headerName: 'Problem Id',
-        type: 'number',
-        filterable: false,
-        sortable: false,
-        valueGetter: (params) => params.row?.problem?.id,
-    },
-    {
         field: 'problem',
         headerName: 'Problem',
         type: 'string',
         width: 200,
         filterable: false,
         sortable: false,
-        valueGetter: (params) => params.row?.problem?.name,
+        renderCell: (params: GridRenderCellParams) => (
+            <Link
+              to={`/administration-new/problems/${Number(params.row?.problem?.id)}`}
+            >
+                {params.row?.problem?.name}
+            </Link>
+        ),
     },
     {
         field: 'points',
@@ -79,7 +79,13 @@ const dataColumns: GridColDef[] = [
         type: 'string',
         filterable: false,
         sortable: false,
-        valueGetter: (params) => params.row?.participant?.userName,
+        renderCell: (params: GridRenderCellParams) => (
+            <Link
+              to={`/administration-new/participants/${Number(params.row?.participant?.id)}`}
+            >
+                {params.row?.participant?.userName}
+            </Link>
+        ),
     },
     {
         field: 'submissionType',
