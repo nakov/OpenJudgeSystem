@@ -17,7 +17,7 @@ import AdministrationGridView from '../../../../pages/administration-new/Adminis
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
 import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
-import { useCopyAllMutation, useDeleteByContestMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCopyAllMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
@@ -34,7 +34,7 @@ const modalStyles = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '50%',
-    height: '40%',
+    height: '80%',
     bgcolor: 'background.paper',
     borderRadius: 3,
     boxShadow: '0px 0px 19px -4px rgba(0,0,0,0.75)',
@@ -70,13 +70,18 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ showCopyAllModal, setShowCopyAllModal ] = useState<boolean>(false);
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-    const { data: problemsData, error } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
-    const {
-        data: contestsAutocompleteData,
-        isFetching: isFetchingCopyAllData,
-    } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
+    const { data: problemsData, error: getContestError } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
+    const { data: contestsAutocompleteData } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
 
-    const [ copyAll ] = useCopyAllMutation();
+    const [ copyAll,
+        {
+            data: copyAllData,
+            isSuccess: isSuccesfullyCoppiedAll,
+            isLoading: isCoppyingAll,
+            error: copyAllError,
+            isError: isCopyAllError,
+        } ] =
+        useCopyAllMutation();
 
     useEffect(() => {
         if (contestsAutocompleteData) {
@@ -106,15 +111,27 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        let messages: Array<string> = [];
-        if (isDeleteAllError && deleteAllError) {
-            messages = deleteAllError.data.map((x:ExceptionData) => x.message);
+        let errors: Array<string> = [];
+
+        const extractMessages = (error: unknown): Array<string> => {
+            if (Array.isArray(error) && error.every((e) => 'message' in e)) {
+                return error.map((x: ExceptionData) => x.message);
+            }
+            return [];
+        };
+
+        if (isDeleteAllError) {
+            errors = errors.concat(extractMessages(deleteAllError));
         }
-        if (isRetestError && retestError) {
-            messages = retestError.data?.map((x:ExceptionData) => x.message);
+        if (isRetestError) {
+            errors = errors.concat(extractMessages(retestError));
         }
-        setErrorMessages(messages);
-    }, [ isDeleteAllError, isRetestError ]);
+        if (isCopyAllError) {
+            errors = errors.concat(extractMessages(copyAllError));
+        }
+
+        setErrorMessages(errors);
+    }, [ isDeleteAllError, isRetestError, isCopyAllError ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
@@ -149,6 +166,12 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         </Modal>
     );
 
+    useEffect(() => {
+        if (isSuccesfullyCoppiedAll) {
+            setShowCopyAllModal(false);
+        }
+    }, [ isSuccesfullyCoppiedAll ]);
+
     const onCopyAllChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
     }, 300);
@@ -164,34 +187,40 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const renderCopyAllModal = (index: number) => (
         <Modal key={index} open={showCopyAllModal && problemsData!.totalItemsCount > 0} onClose={() => setShowCopyAllModal(!showCopyAllModal)}>
             <Box sx={modalStyles}>
-                <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
-                <Autocomplete
-                  options={problemsCopyAllData!}
-                  renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
-                  onChange={(event, newValue) => onCopyAllSelect(newValue!)}
-                  onInputChange={(event) => onCopyAllChange(event)}
-                  value={null}
-                  isOptionEqualToValue={(option, value) => option.id === value.id}
-                  getOptionLabel={(option) => option?.name}
-                  renderOption={(properties, option) => (
-                      <MenuItem {...properties} key={option.id} value={option.id}>
-                          {option.name}
-                      </MenuItem>
-                  )}
-                />
-                {contestToCopy !== null && (
-                <Box sx={{ padding: '4rem' }}>
-                    <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                        {problemsData?.items![0].contest}
-                        {' '}
-                        <ArrowRightAltIcon />
-                        {contestToCopy?.name}
-                    </Typography>
-                </Box>
-                )}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                    <Button variant="contained" disabled={contestToCopy === null} onClick={onCopyAll}>Copy</Button>
-                </Box>
+                {isCoppyingAll
+                    ? <SpinningLoader />
+                    : (
+                        <>
+                            <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
+                            <Autocomplete
+                              options={problemsCopyAllData!}
+                              renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
+                              onChange={(event, newValue) => onCopyAllSelect(newValue!)}
+                              onInputChange={(event) => onCopyAllChange(event)}
+                              value={null}
+                              isOptionEqualToValue={(option, value) => option.id === value.id}
+                              getOptionLabel={(option) => option?.name}
+                              renderOption={(properties, option) => (
+                                  <MenuItem {...properties} key={option.id} value={option.id}>
+                                      {option.name}
+                                  </MenuItem>
+                              )}
+                            />
+                            {contestToCopy !== null && (
+                            <Box sx={{ padding: '4rem' }}>
+                                <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
+                                    {problemsData?.items![0].contest}
+                                    {' '}
+                                    <ArrowRightAltIcon />
+                                    {contestToCopy?.name}
+                                </Typography>
+                            </Box>
+                            )}
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+                                <Button variant="contained" disabled={contestToCopy === null} onClick={onCopyAll}>Copy</Button>
+                            </Box>
+                        </>
+                    )}
             </Box>
         </Modal>
     );
@@ -264,13 +293,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         <div style={{ marginTop: '2rem' }}>
             {isSuccessfullyRetest && renderAlert(retestData, AlertSeverity.Success)}
             {isSuccesfullyDeletedAll && renderAlert(deleteAllData, AlertSeverity.Success)}
+            {isSuccesfullyCoppiedAll && renderAlert(copyAllData!, AlertSeverity.Success)}
             {errorMessages.map((x: string) => renderAlert(x, AlertSeverity.Error))}
             {(isRetesting || isDeletingAll) && <SpinningLoader />}
             <AdministrationGridView
               data={problemsData}
-              error={error}
+              error={getContestError}
               filterableGridColumnDef={problemFilterableColums}
-              notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, retestProblem)}
+              notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, useDeleteProblemMutation, retestProblem)}
               queryParams={queryParams}
               location={filtersAndSortersLocation}
               selectedFilters={selectedFilters}

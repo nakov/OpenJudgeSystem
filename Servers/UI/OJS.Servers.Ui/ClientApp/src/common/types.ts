@@ -304,14 +304,14 @@ interface IUserType {
 }
 
 interface IProblemAdministration {
-    id: number;
+    id: number | undefined;
     name: string;
     maximumPoints: number;
     sourceCodeSizeLimit: number;
     orderBy: number;
     showResults: boolean;
     showDetailedFeedback: boolean;
-    checkerId: number;
+    checkerId: string;
     problemGroupType: string;
     contestId: number;
     submissionTypes: Array<IProblemSubmissionType>;
@@ -363,7 +363,7 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
     numberOfProblemGroups: number;
-    duration: string;
+    duration: string | undefined;
 }
 interface IContestAutocomplete {
     id: number;

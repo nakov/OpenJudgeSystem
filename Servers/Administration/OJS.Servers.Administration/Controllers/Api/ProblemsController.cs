@@ -105,23 +105,23 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
     }
 
     [HttpPost]
-    public async Task<IActionResult> CopyAll(int sourceContestId, int destinationContestId)
+    public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)
     {
-        var hasSourceContest = await this.contestsDataService.ExistsById(sourceContestId);
-        var hasDestinationContest = await this.contestsDataService.ExistsById(destinationContestId);
+        var hasSourceContest = await this.contestsDataService.ExistsById(model.SourceContestId);
+        var hasDestinationContest = await this.contestsDataService.ExistsById(model.DestinationContestId);
 
         if (!hasSourceContest || !hasDestinationContest)
         {
-            return this.NotFound($"Contest with id {sourceContestId} not found");
+            return this.NotFound($"Contest with id {model.SourceContestId} not found");
         }
 
-        if (!await this.HasContestPermission(sourceContestId) || !await this.HasContestPermission(destinationContestId))
+        if (!await this.HasContestPermission(model.SourceContestId) || !await this.HasContestPermission(model.DestinationContestId))
         {
             return this.Unauthorized();
         }
 
         var result = await this.problemGroupsBusinessService
-            .CopyAllToContestBySourceAndDestinationContest(sourceContestId, destinationContestId);
+            .CopyAllToContestBySourceAndDestinationContest(model.SourceContestId, model.DestinationContestId);
 
         if (result.IsError)
         {

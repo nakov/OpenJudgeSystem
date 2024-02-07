@@ -1,7 +1,6 @@
-/* eslint-disable max-len */
-/* eslint-disable no-restricted-imports */
-/* eslint-disable prefer-destructuring */
 /* eslint-disable no-case-declarations */
+/* eslint-disable no-undefined */
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
-import { isNaN } from 'lodash';
+import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { ExceptionData, IContestAdministration, IContestCategories } from '../../../../common/types';
@@ -57,7 +56,7 @@ const ContestEdit = (props:IContestEditProps) => {
         startTime: null,
         type: 'Exercise',
         numberOfProblemGroups: 0,
-        duration: '',
+        duration: undefined,
     });
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
@@ -275,11 +274,11 @@ const ContestEdit = (props:IContestEditProps) => {
             let currentValue = value;
 
             if (currentValue === '') {
-                currentValue = null;
+                currentValue = undefined;
             }
 
             const timeSpanRegex = /^-?(\d+\.)?(\d{1,2}):(\d{2}):(\d{2})(\.\d{1,7})?$/;
-            currentContestValidations.isDurationValid = timeSpanRegex.test(value) || currentValue === null;
+            currentContestValidations.isDurationValid = timeSpanRegex.test(value) || currentValue === undefined;
             currentContestValidations.isDurationTouched = true;
             duration = currentValue;
             break;
@@ -430,7 +429,8 @@ const ContestEdit = (props:IContestEditProps) => {
                                       ? 'success'
                                       : 'primary'}
                                   error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                                  helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) && 'Order by cannot be less than 0'}
+                                  helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
+                                    'Order by cannot be less than 0'}
                                 />
                                 <TextField
                                   className={styles.inputRow}
@@ -495,12 +495,15 @@ const ContestEdit = (props:IContestEditProps) => {
                                   type="string"
                                   label="Duration"
                                   variant="standard"
-                                  value={contest.duration}
+                                  value={contest.duration
+                                      ? contest.duration
+                                      : undefined}
+                                  name="duration"
                                   onChange={(e) => onChange(e)}
                                   InputLabelProps={{ shrink: true }}
-                                  name="duration"
                                   error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
-                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) && 'Duration must be valid time with format hh:mm:ss'}
+                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
+                                    'Duration must be valid time with format hh:mm:ss'}
                                 />
                             </Box>
                         </Box>

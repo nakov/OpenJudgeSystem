@@ -44,60 +44,16 @@ public class ProblemAdministrationModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
     {
          configuration.CreateMap<Problem, ProblemAdministrationModel>()
-            .ForMember(pam => pam.Id, opt
-                => opt.MapFrom(p => p.Id))
-            .ForMember(pam => pam.Name, opt
-                => opt.MapFrom(p => p.Name))
-            .ForMember(pam => pam.MaximumPoints, opt
-                => opt.MapFrom(p => p.MaximumPoints))
-            .ForMember(pam => pam.SourceCodeSizeLimit, opt
-                => opt.MapFrom(p => p.SourceCodeSizeLimit))
-            .ForMember(pam => pam.OrderBy, opt
-                => opt.MapFrom(p => p.OrderBy))
-            .ForMember(pam => pam.ShowResults, opt
-                => opt.MapFrom(p => p.ShowResults))
-            .ForMember(pam => pam.ShowDetailedFeedback, opt
-                => opt.MapFrom(p => p.ShowDetailedFeedback))
-            .ForMember(pam => pam.CheckerId, opt
-                => opt.MapFrom(p => p.CheckerId))
-            .ForMember(pam => pam.ProblemGroupId, opt
-                => opt.MapFrom(p => p.ProblemGroupId))
-            .ForMember(pam => pam.ContestId, opt
+             .ForMember(pam => pam.ContestId, opt
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
-            .ForMember(pam => pam.MemoryLimit, opt
-                => opt.MapFrom(p => p.MemoryLimit))
-            .ForMember(pam => pam.TimeLimit, opt
-                => opt.MapFrom(p => p.TimeLimit))
-            // .ForMember(pam => pam.AdditionalFiles, opt
+             // .ForMember(pam => pam.AdditionalFiles, opt
             //     => opt.MapFrom(p => p.AdditionalFiles))
             .ForMember(pam => pam.ProblemGroupType, opt
                 => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)));
 
          configuration.CreateMap<ProblemAdministrationModel, Problem>()
-             .ForMember(pam => pam.Id, opt
-                 => opt.MapFrom(p => p.Id))
-             .ForMember(pam => pam.Name, opt
-                 => opt.MapFrom(p => p.Name))
-             .ForMember(pam => pam.MaximumPoints, opt
-                 => opt.MapFrom(p => p.MaximumPoints))
-             .ForMember(pam => pam.SourceCodeSizeLimit, opt
-                 => opt.MapFrom(p => p.SourceCodeSizeLimit))
-             .ForMember(pam => pam.OrderBy, opt
-                 => opt.MapFrom(p => p.OrderBy))
-             .ForMember(pam => pam.ShowResults, opt
-                 => opt.MapFrom(p => p.ShowResults))
-             .ForMember(pam => pam.ShowDetailedFeedback, opt
-                 => opt.MapFrom(p => p.ShowDetailedFeedback))
-             .ForMember(pam => pam.CheckerId, opt
-                 => opt.MapFrom(p => p.CheckerId))
-             .ForMember(pam => pam.ProblemGroupId, opt
-                 => opt.MapFrom(p => p.ProblemGroupId))
-             .ForMember(pam => pam.MemoryLimit, opt
-                 => opt.MapFrom(p => p.MemoryLimit))
-             .ForMember(pam => pam.TimeLimit, opt
-                 => opt.MapFrom(p => p.TimeLimit))
              .ForMember(pam => pam.SubmissionTypesInProblems, opt
                  => opt.Ignore())
              .ForMember(pam => pam.ProblemGroup, opt

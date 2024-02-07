@@ -1,21 +1,16 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable no-restricted-imports */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable max-len */
-/* eslint-disable prefer-destructuring */
+/* eslint-disable no-undefined */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
-import { isNaN } from 'lodash';
+import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
-import { useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -30,14 +25,14 @@ interface IProblemFormProps {
 }
 
 const ProblemForm = (props: IProblemFormProps) => {
-    const { problemId, isEditMode, contestId } = props;
+    const { problemId, isEditMode = true, contestId } = props;
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
-        checkerId: 0,
-        contestId: !isEditMode && contestId
-            ? contestId
-            : -1,
-        id: -1,
+        checkerId: '',
+        contestId: contestId ?? -1,
+        id: isEditMode
+            ? 0
+            : undefined,
         maximumPoints: 0,
         memoryLimit: 0,
         name: '',
@@ -52,10 +47,18 @@ const ProblemForm = (props: IProblemFormProps) => {
     });
 
     const navigate = useNavigate();
-    const { data: problemData, isLoading: isGettingData, error: gettingDataError } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
+    const {
+        data: problemData,
+        isLoading: isGettingData,
+        error: gettingDataError,
+    } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
     const { data: submissionTypes } = useGetForProblemQuery(null);
     const { data: checkers } = useGetCheckersForProblemQuery(null);
-    const [ updateProblem, { data: updateData, isSuccess: isSuccesfullyUpdated, error: updateError } ] = useUpdateProblemMutation();
+    const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
+    const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
+    const [ successMessages, setSuccessMessages ] = useState<string>('');
+
     useEffect(() => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
@@ -68,8 +71,44 @@ const ProblemForm = (props: IProblemFormProps) => {
         }
     }, [ problemData ]);
 
+    useEffect(() => {
+        let errors: Array<string> = [];
+
+        const extractMessages = (error: unknown): Array<string> => {
+            if (Array.isArray(error) && error.every((e) => 'message' in e)) {
+                return error.map((x: ExceptionData) => x.message);
+            }
+            return [];
+        };
+
+        if (gettingDataError) {
+            errors = errors.concat(extractMessages(gettingDataError));
+        }
+        if (createError) {
+            errors = errors.concat(extractMessages(createError));
+        }
+        if (updateError) {
+            errors = errors.concat(extractMessages(updateError));
+        }
+
+        setErrorMessages(errors);
+        setSuccessMessages('');
+    }, [ updateError, createError, gettingDataError ]);
+
+    useEffect(() => {
+        let successMessage = '';
+        if (updateData) {
+            successMessage = updateData;
+        }
+        if (createData) {
+            successMessage = createData;
+        }
+        setSuccessMessages(successMessage);
+    }, [ updateData, createData ]);
+
     const onChange = (e: any) => {
-        const { name, type, value, checked } = e.target;
+        const { target } = e;
+        const { name, type, value, checked } = target;
         setCurrentProblem((prevState) => ({
             ...prevState,
             [name]: type === 'checkbox'
@@ -147,13 +186,14 @@ const ProblemForm = (props: IProblemFormProps) => {
             submissionTypes: newSubmissionTypes,
         }));
     };
-    const renderAlert = (message: string, severity:AlertSeverity) => (
+    const renderAlert = (message: string, severity:AlertSeverity, index:number) => (
         <Alert
           variant={AlertVariant.Filled}
           vertical={AlertVerticalOrientation.Top}
           horizontal={AlertHorizontalOrientation.Right}
           severity={severity}
           message={message}
+          styles={{ marginTop: `${index * 4}rem` }}
         />
     );
 
@@ -162,14 +202,9 @@ const ProblemForm = (props: IProblemFormProps) => {
             ? <SpinningLoader />
             : (
                 <>
-                    {gettingDataError &&
-                   renderAlert(gettingDataError.data[0].message, AlertSeverity.Error)}
-                    {updateError?.data.map((x:ExceptionData) => {
-                        renderAlert(x.message, AlertSeverity.Error);
-                    })}
-                    {
-                        isSuccesfullyUpdated && renderAlert(updateData, AlertSeverity.Success)
-                    }
+                    {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
+                    {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+
                     <Typography sx={{ textAlign: 'center' }} variant="h3">{currentProblem?.name}</Typography>
 
                     <form style={{ display: 'flex', flexDirection: 'column' }}>
@@ -229,7 +264,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                                       value={currentProblem?.orderBy}
                                       InputLabelProps={{ shrink: true }}
                                       type="number"
-                                      name="sourceCodeSizeLimit"
+                                      name="orderBy"
                                       onChange={(e) => onChange(e)}
                                     />
                                 </FormControl>
@@ -291,7 +326,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                               onChange={(e) => onChange(e)}
                               onBlur={(e) => onChange(e)}
                               labelId="checkerId"
-                              value={Number(currentProblem.checkerId)}
+                              value={currentProblem.checkerId}
                               name="checkerId"
                             >
                                 {checkers?.map((c) => (
@@ -404,7 +439,14 @@ const ProblemForm = (props: IProblemFormProps) => {
                             {isEditMode
                                 ? (
                                     <>
-                                        <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} onClick={() => updateProblem(currentProblem)} variant="contained">Edit</Button>
+                                        <Button
+                                          size="large"
+                                          sx={{ width: '20%', alignSelf: 'center' }}
+                                          onClick={() => updateProblem(currentProblem)}
+                                          variant="contained"
+                                        >
+                                            Edit
+                                        </Button>
                                         <DeleteButton
                                           id={problemId!}
                                           name={currentProblem.name}
@@ -415,7 +457,16 @@ const ProblemForm = (props: IProblemFormProps) => {
                                         />
                                     </>
                                 )
-                                : <Button size="large" sx={{ width: '20%', alignSelf: 'center' }} variant="contained">Create</Button>}
+                                : (
+                                    <Button
+                                      onClick={() => createProblem(currentProblem)}
+                                      size="large"
+                                      sx={{ width: '20%', alignSelf: 'center' }}
+                                      variant="contained"
+                                    >
+                                        Create
+                                    </Button>
+                                )}
 
                         </FormGroup>
 
