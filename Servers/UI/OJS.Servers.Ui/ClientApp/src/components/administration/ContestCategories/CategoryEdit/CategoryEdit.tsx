@@ -75,15 +75,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             isLoading: isCreating,
         } ] = useCreateContestCategoryMutation();
 
-    const [
-        deleteContestCategory,
-        {
-            data: deleteData,
-            isLoading: isDeleting,
-            isSuccess: isSuccesfullyDeleted,
-            error: deleteError,
-        } ] = useDeleteContestCategoryMutation();
-
     useEffect(
         () => {
             if (data) {
@@ -317,11 +308,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                           id={Number(contestCategoryId!)}
                           name={contestCategory.name}
                           onSuccess={() => navigate('/administration-new/contestCategories')}
-                          deleteRequest={deleteContestCategory}
-                          data={deleteData}
-                          isLoading={isDeleting}
-                          isSuccess={isSuccesfullyDeleted}
-                          error={deleteError}
+                          mutation={useDeleteContestCategoryMutation}
                           text="Are you sure that you want to delete the contest category."
                         />
                     </Box>

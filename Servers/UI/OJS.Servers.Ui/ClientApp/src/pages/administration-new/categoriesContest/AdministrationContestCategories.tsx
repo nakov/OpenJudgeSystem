@@ -35,15 +35,6 @@ const AdministrationContestCategoriesPage = () => {
         isLoading,
     } = useGetAllAdminContestCategoriesQuery(queryParams);
 
-    const [
-        deleteContestCategory,
-        {
-            data: deleteData,
-            isLoading: isDeleting,
-            isSuccess: isSuccesfullyDeleted,
-            error: deleteError,
-        } ] = useDeleteContestCategoryMutation();
-
     const onEditClick = (id: number) => {
         setOpenEditContestCategoryModal(true);
         setContestCategoryId(id);
@@ -101,7 +92,7 @@ const AdministrationContestCategoriesPage = () => {
           data={data}
           error={error}
           filterableGridColumnDef={categoriesFilterableColumns}
-          notFilterableGridColumnDef={returnCategoriesNonFilterableColumns(onEditClick, deleteContestCategory, deleteData, isDeleting, isSuccesfullyDeleted, deleteError)}
+          notFilterableGridColumnDef={returnCategoriesNonFilterableColumns(onEditClick, useDeleteContestCategoryMutation)}
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}

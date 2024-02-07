@@ -94,11 +94,7 @@ const categoriesFilterableColumns: GridColDef[] = [
 
 export const returnCategoriesNonFilterableColumns = (
     onEditClick: Function,
-    deleteRequest: any,
-    data:string | undefined,
-    isDeleting:boolean,
-    isSuccess:boolean,
-    error:any,
+    deleteMutation: any,
 ) => [
     {
         field: 'actions',
@@ -117,11 +113,7 @@ export const returnCategoriesNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text="Are you sure that you want to delete the contest category."
-                  deleteRequest={deleteRequest}
-                  data={data}
-                  isLoading={isDeleting}
-                  isSuccess={isSuccess}
-                  error={error}
+                  mutation={deleteMutation}
                 />
             </div>
         ),
