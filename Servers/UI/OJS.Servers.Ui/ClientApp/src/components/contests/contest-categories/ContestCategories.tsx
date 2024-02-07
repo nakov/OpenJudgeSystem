@@ -1,25 +1,28 @@
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import ICategoryStrategiesTypes from '../../../common/category-strategies-types';
 import { FilterType, IFilter } from '../../../common/contest-types';
 import ITreeItemType from '../../../common/tree-types';
-import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
 import useTheme from '../../../hooks/use-theme';
+import { setContestCategory } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { flattenWith } from '../../../utils/list-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+import Tree from '../../guidelines/trees/Tree';
 
 import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
-    onCategoryClick: (filter: IFilter) => void;
     setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
     shouldReset: boolean;
+    defaultSelected: string;
 }
 
 interface IFilterProps {
@@ -34,12 +37,12 @@ const defaultState = {
     },
 };
 const ContestCategories = ({
-    onCategoryClick,
     setStrategyFilters,
     shouldReset,
+    defaultSelected,
 }: IContestCategoriesProps) => {
+    const dispatch = useDispatch();
     const { themeColors } = useTheme();
-    const { state: { categories, categoriesFlat } } = useContestCategories();
     const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb, clearBreadcrumb } } = useCategoriesBreadcrumbs();
     const [ openedCategoryFilters, setOpenedCategoryFilters ] = useState(defaultState.state.openedCategoryFilters);
@@ -53,6 +56,13 @@ const ContestCategories = ({
         isLoading: areCategoriesLoading,
         error: categoriesError,
     } = useGetContestCategoriesQuery();
+
+    const flattenCategories = useMemo(() => {
+        if (contestCategories) {
+            return flattenWith(contestCategories, (c: ITreeItemType) => c.children || null);
+        }
+        return [];
+    }, [ contestCategories ]);
 
     const getCategoryByValue = useCallback(
         (searchedValue?: string) => {
@@ -92,9 +102,9 @@ const ContestCategories = ({
                 ? getCategoryByValue(searchValue)
                 : getCategoryById(searchId);
 
-            return categoriesFlat.find(({ id }) => id.toString() === categoryValue);
+            return flattenCategories.find(({ id }) => id.toString() === categoryValue);
         },
-        [ categoriesFlat, getCategoryById, getCategoryByValue ],
+        [ flattenCategories, getCategoryById, getCategoryByValue ],
     );
 
     const getParents = useCallback(
@@ -112,6 +122,14 @@ const ContestCategories = ({
             return result;
         },
         [ getCurrentNode ],
+    );
+    const onCategoryClick = (category: ITreeItemType) => {
+        dispatch(setContestCategory(category));
+    };
+
+    const defaultExpanded = useMemo(
+        () => getParents([], flattenCategories, defaultSelected),
+        [ defaultSelected, flattenCategories, getParents ],
     );
 
     const strategyFilterGroup = useMemo(
@@ -198,26 +216,23 @@ const ContestCategories = ({
 
     const handleTreeLabelClick = useCallback(
         (node: ICategoryStrategiesTypes) => {
-            const filter = possibleFilters.find(({ value }) => value.toString() === node.id.toString());
-            const category = categoriesFlat.find(({ id }) => id.toString() === node.id.toString());
+            const category = flattenCategories.find(({ id }) => id.toString() === node.id.toString());
 
-            if (isNil(filter)) {
-                return;
-            }
-
-            updateBreadcrumb(category, categoriesFlat);
+            updateBreadcrumb(category, flattenCategories);
             updateStrategyFilters(node.id, node);
             selectCurrentCategoryId(node.id);
 
-            onCategoryClick(filter);
+            if (category) {
+                onCategoryClick(category);
+            }
         },
-        [ categoriesFlat, onCategoryClick, possibleFilters, updateBreadcrumb, updateStrategyFilters ],
+        [ flattenCategories, onCategoryClick, updateBreadcrumb, updateStrategyFilters ],
     );
 
     const applyStrategyFilters = useCallback(
         () => {
             const categoryValue = getCategoryByValue(currentCategoryId);
-            const category = categoriesFlat.find(({ id }) => id.toString() === categoryValue) as ITreeItemType;
+            const category = flattenCategories.find(({ id }) => id.toString() === categoryValue) as ITreeItemType;
             if (isNil(category)) {
                 return;
             }
@@ -226,7 +241,7 @@ const ContestCategories = ({
 
             setPrevCategoryId(currentCategoryId);
         },
-        [ categoriesFlat, currentCategoryId, getCategoryByValue, handleTreeLabelClick ],
+        [ flattenCategories, currentCategoryId, getCategoryByValue, handleTreeLabelClick ],
     );
 
     useEffect(() => {
@@ -258,28 +273,18 @@ const ContestCategories = ({
         [ applyStrategyFilters, currentCategoryId, prevCategoryId ],
     );
 
-    const renderContestCategories = useCallback(() => {
-        console.log('contest categories => ', contestCategories);
-        return (
-            <div className={styles.categoriesTreeWrapper} style={{ color: themeColors.textColor }}>
-                {contestCategories.map((category: any, idx: number) => {
-                    const isLast = idx === contestCategories.length - 1;
-                    return (
-                        <div
-                          key={`c-c-${category.id}`}
-                          className={styles.categoryTreeItemWrapper}
-                          style={{ borderBottom: `2px solid ${themeColors.baseColor100}` }}
-                        >
-                            <i className="far fa-file-alt" />
-                            <div className={styles.categoryTreeItem} onClick={() => onCategoryClick(category.name)}>
-                                {category.name}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-        );
-    }, [ contestCategories ]);
+    const renderContestCategories = useCallback(() => (
+        <div className={styles.categoriesTreeWrapper} style={{ color: themeColors.textColor }}>
+            <Tree
+              items={contestCategories}
+              onSelect={handleTreeLabelClick}
+              defaultSelected={getCategoryById(defaultSelected)}
+              defaultExpanded={defaultExpanded}
+              treeItemHasTooltip
+              shouldReset={shouldReset}
+            />
+        </div>
+    ), [ contestCategories ]);
 
     if (categoriesError) {
         return (<div>Error loading contest categories. Please try again.</div>);

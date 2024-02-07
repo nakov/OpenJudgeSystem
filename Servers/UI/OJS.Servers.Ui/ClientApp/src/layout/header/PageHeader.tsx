@@ -55,7 +55,15 @@ const PageHeader = () => {
             <div className={styles.authButtons}>
                 <i className={`fas fa-search ${styles.searchIcon}`} onClick={toggleVisibility} />
                 {isLoggedIn
-                    ? (<div>test</div>)
+                    ? (
+                        <>
+                            {' '}
+                            <Link to="/" className={styles.navButton}>MY PROFILE</Link>
+                            <Link to="/logout" className={styles.navButton}>
+                                LOGOUT
+                            </Link>
+                        </>
+                    )
                     : (
                         <>
                             <Link to="/login" className={styles.navButton}>LOGIN</Link>

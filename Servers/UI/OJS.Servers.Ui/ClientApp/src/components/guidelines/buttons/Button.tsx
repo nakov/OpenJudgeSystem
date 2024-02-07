@@ -52,6 +52,7 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     isWide?: boolean;
     internalClassName?: string;
+    style?: object;
 }
 
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
@@ -103,6 +104,7 @@ const Button = ({
     internalClassName = '',
     imgSrc = '',
     altText = '',
+    style,
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
 
@@ -142,6 +144,7 @@ const Button = ({
           onClick={onClick}
           className={buttonClassName}
           id={id}
+          style={style}
         >
             {content}
         </button>

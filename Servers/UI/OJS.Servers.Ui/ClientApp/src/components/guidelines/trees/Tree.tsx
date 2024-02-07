@@ -9,6 +9,7 @@ import without from 'lodash/without';
 import ITreeItemType from '../../../common/tree-types';
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import useTheme from '../../../hooks/use-theme';
 import ExpandMoreIcon from '../icons/ExpandMoreIcon';
 import RightArrowIcon from '../icons/RightArrowIcon';
 
@@ -34,6 +35,7 @@ const Tree = ({
     treeItemHasTooltip = false,
     shouldReset,
 }: ITreeProps) => {
+    const { themeColors } = useTheme();
     const [ expandedIds, setExpandedIds ] = useState([] as string[]);
     const [ selectedId, setSelectedId ] = useState('');
     const [ selectedFromUrl, setSelectedFromUrl ] = useState(true);
@@ -63,6 +65,7 @@ const Tree = ({
           nodeId={node.id.toString()}
           label={node.name}
           onClick={() => handleTreeItemClick(node)}
+          style={{ color: themeColors.textColor }}
         >
             {isArray(node.children)
                 ? node.children.map((child) => treeItemHasTooltip

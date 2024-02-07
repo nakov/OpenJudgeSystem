@@ -1,8 +1,11 @@
 import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 
 import { useContestCategories } from '../../../hooks/use-contest-categories';
 import { ICategoriesBreadcrumbItem, useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
+import useTheme from '../../../hooks/use-theme';
+import { setContestCategory } from '../../../redux/features/contestsSlice';
 import concatClassNames from '../../../utils/class-names';
 import { getContestCategoryBreadcrumbItemPath } from '../../../utils/urls';
 import Breadcrumb from '../../guidelines/breadcrumb/Breadcrumb';
@@ -15,6 +18,8 @@ interface IContestBreadcrumb {
 }
 
 const ContestBreadcrumb = ({ isLastBreadcrumbGrey = false }: IContestBreadcrumb) => {
+    const dispatch = useDispatch();
+    const { themeColors } = useTheme();
     const { state: { breadcrumbItems }, actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const { state: { categoriesFlat } } = useContestCategories();
     const navigate = useNavigate();
@@ -25,6 +30,7 @@ const ContestBreadcrumb = ({ isLastBreadcrumbGrey = false }: IContestBreadcrumb)
 
             updateBreadcrumb(category, categoriesFlat);
             navigate(getContestCategoryBreadcrumbItemPath(breadcrumb.id));
+            dispatch(setContestCategory(breadcrumb));
         },
         [ categoriesFlat, navigate, updateBreadcrumb ],
     );
@@ -45,6 +51,11 @@ const ContestBreadcrumb = ({ isLastBreadcrumbGrey = false }: IContestBreadcrumb)
                   className={classNames}
                   onClick={() => updateBreadcrumbAndNavigateToCategory(categoryBreadcrumbItem)}
                   text={value}
+                  style={{
+                      color: isLast
+                          ? themeColors.textColor
+                          : '#44a9f8',
+                  }}
                 />
             );
         },

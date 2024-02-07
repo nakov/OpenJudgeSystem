@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router';
 import moment from 'moment';
 import styled from 'styled-components';
 
@@ -20,10 +21,11 @@ interface IContestButtonProps {
     maxPoints: number;
     achievedPoints: number;
     hasParticipated: boolean;
+    onClick: () => void;
 }
 
 const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, maxPoints, achievedPoints, hasParticipated } = props;
+    const { isCompete, isDisabled, maxPoints, achievedPoints, hasParticipated, onClick } = props;
     return (
         <div className={styles.contestBtnWrapper}>
             { hasParticipated && (
@@ -36,6 +38,7 @@ const ContestButton = (props: IContestButtonProps) => {
             <button
               type="button"
               disabled={isDisabled}
+              onClick={onClick}
             >
                 {isCompete
                     ? 'COMPETE'
@@ -67,7 +70,19 @@ const ContestCard = (props: IContestCardProps) => {
         contest,
     } = props;
 
-    const { id, name, category, canBeCompeted, canBePracticed, practiceStartTime, practiceEndTime, startTime, endTime } = contest;
+    const navigate = useNavigate();
+
+    const {
+        id,
+        name,
+        category,
+        canBeCompeted,
+        canBePracticed,
+        practiceStartTime,
+        practiceEndTime,
+        startTime,
+        endTime,
+    } = contest;
 
     const { themeColors } = useTheme();
 
@@ -112,8 +127,28 @@ const ContestCard = (props: IContestCardProps) => {
                 </div>
             </div>
             <div className={styles.contestBtnsWrapper}>
-                <ContestButton isCompete isDisabled={!canBeCompeted} maxPoints={0} achievedPoints={0} hasParticipated />
-                <ContestButton isCompete={false} isDisabled={!canBePracticed} maxPoints={0} achievedPoints={0} hasParticipated={false} />
+                <ContestButton
+                  isCompete
+                  isDisabled={!canBeCompeted}
+                  maxPoints={0}
+                  achievedPoints={0}
+                  hasParticipated
+                  onClick={() => {
+                      if (canBeCompeted) {
+                          navigate(`/contests/${id}/compete`);
+                      }
+                  }}
+                />
+                <ContestButton
+                  isCompete={false}
+                  isDisabled={!canBePracticed}
+                  maxPoints={0}
+                  achievedPoints={0}
+                  hasParticipated={false}
+                  onClick={() => {
+                      navigate(`/contests/${id}/practice`);
+                  }}
+                />
             </div>
         </StyledDiv>
     );

@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
 
 import { IFilter } from '../../common/contest-types';
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
@@ -21,11 +20,9 @@ import { setLayout } from '../shared/set-layout';
 import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
-    const navigate = useNavigate();
     const { themeColors } = useTheme();
-    const { category, status, strategy, flattenCategories } = useSelector((state: any) => state.filterContests);
+    const { category, status, strategy } = useSelector((state: any) => state.filterContests);
     const [ selectedPage, setSelectedPage ] = useState(1);
-    const [ selectedCategory, setSelectedCategory ] = useState('');
     const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
 
     const contestParams = useMemo(() => {
@@ -36,11 +33,11 @@ const ContestsPage = () => {
         };
         if (category) {
             // eslint-disable-next-line prefer-destructuring
-            params.category = category.value;
+            params.category = category.id;
         }
         if (strategy) {
             // eslint-disable-next-line prefer-destructuring
-            params.strategy = strategy.value;
+            params.strategy = strategy.id;
         }
         if (status) {
             params.status = status;
@@ -57,18 +54,14 @@ const ContestsPage = () => {
 
     const [ showAlert, setShowAlert ] = useState<boolean>(false);
 
-    const onCategoryClick = (categoryName: any) => {
-        setSelectedCategory(categoryName);
-    };
-
     const renderContest = useCallback((contest: IIndexContestsType) => (
         <ContestCardNew contest={contest} />
     ), []);
 
     const renderContests = useCallback(() => {
-        if (!allContests?.items) {
+        if (!allContests?.items?.length) {
             return (
-                <Heading type={HeadingType.secondary}>
+                <Heading type={HeadingType.secondary} style={{ color: themeColors.textColor }}>
                     No contests apply for this filter
                 </Heading>
             );
@@ -110,13 +103,12 @@ const ContestsPage = () => {
             <ContestBreadcrumb isLastBreadcrumbGrey />
             <div className={styles.contestsContainer}>
                 <ContestCategories
-                  onCategoryClick={onCategoryClick}
                   setStrategyFilters={setFilteredStrategyFilters}
                   shouldReset={false}
                 />
                 <div style={{ width: '100%' }}>
                     <div className={styles.headingWrapper} style={{ color: themeColors.textColor }}>
-                        <div>{selectedCategory || 'All Categories'}</div>
+                        <div>All Categories</div>
                         <ContestStrategies filteredStrategies={filteredStrategyFilters} />
                     </div>
                     {renderContests()}

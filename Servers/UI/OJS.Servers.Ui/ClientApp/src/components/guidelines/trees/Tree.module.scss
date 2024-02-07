@@ -1,5 +1,7 @@
 @use 'src/styles/fonts';
 @use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
 
 .Tree {
   @extend %font-family-lato;
@@ -14,9 +16,11 @@
 .treeElement div:nth-child(2) {
   width: 100%;
   word-wrap: break-word;
-
+  font-size: variables.$f-size-16;
+  padding: spacings.$sp-8;
+  transition: all .2s ease-in-out;
   &:hover {
-    max-width: none;
+    // max-width: none;
   }
 }
 
