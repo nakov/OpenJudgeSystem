@@ -22,7 +22,7 @@ import problemGroupsAdminService from './services/admin/problemGroupsAdminServic
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
 import submissionsAdminService from './services/admin/submissionsAdminService';
-import SubmissionsForProcessingAdminService from './services/admin/submissionsForProcessingAdminService';
+import submissionsForProcessingAdminService from './services/admin/submissionsForProcessingAdminService';
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 // features
 import authorizationService from './services/authorizationService';
@@ -45,7 +45,7 @@ const rootReducer = combineReducers({
 
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
-    [SubmissionsForProcessingAdminService.reducerPath]: SubmissionsForProcessingAdminService.reducer,
+    [submissionsForProcessingAdminService.reducerPath]: submissionsForProcessingAdminService.reducer,
     [participantsAdminService.reducerPath]: participantsAdminService.reducer,
     [problemsAdminService.reducerPath]: problemsAdminService.reducer,
     [contestCategoriesAdminService.reducerPath]: contestCategoriesAdminService.reducer,
