@@ -9,6 +9,7 @@ import { Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
     setAdminSubmissionsSorters,
@@ -36,6 +37,8 @@ export const AdministrationSubmissionsForProcessingPage = () => {
     const {
         data,
         error,
+        isLoading,
+        isFetching,
     } = useGetAllSubmissionsQuery(queryParams);
 
     const nonFilterableColumns: GridColDef[] = [
@@ -67,19 +70,23 @@ export const AdministrationSubmissionsForProcessingPage = () => {
     );
 
     return (
-        <AdministrationGridView
-          data={data}
-          error={error}
-          filterableGridColumnDef={dataColumns}
-          notFilterableGridColumnDef={nonFilterableColumns}
-          renderActionButtons={renderGridActions}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setAdminSubmissionsSorters}
-          setFilterStateAction={setAdminSubmissionsFilters}
-          location="all-submissions-for-processing"
-        />
+        isLoading || isFetching
+            ? <SpinningLoader />
+            : (
+                <AdministrationGridView
+                  data={data}
+                  error={error}
+                  filterableGridColumnDef={dataColumns}
+                  notFilterableGridColumnDef={nonFilterableColumns}
+                  renderActionButtons={renderGridActions}
+                  queryParams={queryParams}
+                  setQueryParams={setQueryParams}
+                  selectedFilters={selectedFilters || []}
+                  selectedSorters={selectedSorters || []}
+                  setSorterStateAction={setAdminSubmissionsSorters}
+                  setFilterStateAction={setAdminSubmissionsFilters}
+                  location="all-submissions-for-processing"
+                />
+            )
     );
 };

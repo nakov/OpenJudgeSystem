@@ -11,6 +11,7 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
+import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
     setAdminSubmissionsSorters,
@@ -43,6 +44,8 @@ export const AdministrationSubmissionsPage = () => {
     const {
         data,
         error,
+        isLoading,
+        isFetching,
     } = useGetAllSubmissionsQuery(queryParams);
 
     const { data: fileSubmission } = useDownloadFileSubmissionQuery(
@@ -124,19 +127,23 @@ export const AdministrationSubmissionsPage = () => {
     );
 
     return (
-        <AdministrationGridView
-          data={data}
-          error={error}
-          filterableGridColumnDef={dataColumns}
-          notFilterableGridColumnDef={nonFilterableColumns}
-          renderActionButtons={renderGridActions}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setAdminSubmissionsSorters}
-          setFilterStateAction={setAdminSubmissionsFilters}
-          location="all-submissions"
-        />
+        isLoading || isFetching
+            ? <SpinningLoader />
+            : (
+                <AdministrationGridView
+                  data={data}
+                  error={error}
+                  filterableGridColumnDef={dataColumns}
+                  notFilterableGridColumnDef={nonFilterableColumns}
+                  renderActionButtons={renderGridActions}
+                  queryParams={queryParams}
+                  setQueryParams={setQueryParams}
+                  selectedFilters={selectedFilters || []}
+                  selectedSorters={selectedSorters || []}
+                  setSorterStateAction={setAdminSubmissionsSorters}
+                  setFilterStateAction={setAdminSubmissionsFilters}
+                  location="all-submissions"
+                />
+            )
     );
 };
