@@ -10,6 +10,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
+        headerAlign: 'center',
         flex: 0.5,
         width: 10,
         type: 'number',
@@ -20,6 +21,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'isDeleted',
         headerName: 'Is Deleted',
+        headerAlign: 'center',
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -28,6 +30,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'isVisible',
         headerName: 'Is Visible',
+        headerAlign: 'center',
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -36,6 +39,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'name',
         headerName: 'Name',
+        headerAlign: 'center',
         width: 200,
         flex: 2,
         type: 'string',
@@ -45,6 +49,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'orderBy',
         headerName: 'Order By',
+        headerAlign: 'center',
         flex: 0.5,
         align: 'left',
         type: 'number',
@@ -54,6 +59,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'parent',
         headerName: 'Parent',
+        headerAlign: 'center',
         width: 150,
         flex: 2,
         type: 'string',
@@ -63,6 +69,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'createdOn',
         headerName: 'Created On',
+        headerAlign: 'center',
         width: 105,
         flex: 1,
         align: 'left',
@@ -73,6 +80,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'deletedOn',
         headerName: 'Deleted On',
+        headerAlign: 'center',
         width: 105,
         flex: 1,
         align: 'left',
@@ -83,6 +91,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     {
         field: 'modifiedOn',
         headerName: 'Modified On',
+        headerAlign: 'center',
         width: 105,
         flex: 1,
         align: 'left',
