@@ -10,10 +10,12 @@ import submissionDetailsReducer from './features/submissionDetailsSlice';
 import themeReducer, { themeSliceName } from './features/themeSlice';
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
+import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionDetailsService from './services/submissionDetailsService';
 
 const rootReducer = combineReducers({
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
+    [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     submissionDetails: submissionDetailsReducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
@@ -42,6 +44,7 @@ const store = configureStore({
         submissionDetailsService.middleware,
         authorizationService.middleware,
         contestsService.middleware,
+        homeStatisticsService.middleware,
     ]),
 });
 

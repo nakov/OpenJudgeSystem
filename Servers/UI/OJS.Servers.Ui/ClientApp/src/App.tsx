@@ -17,7 +17,6 @@ import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters
 import ContestsProvider from './hooks/use-contests';
 import CurrentContestsProvider from './hooks/use-current-contest';
 import HomeContestsProvider from './hooks/use-home-contests';
-import HomeStatisticsProvider from './hooks/use-home-statistics';
 import NotificationsProvider from './hooks/use-notifications';
 import PageWithTitleProvider from './hooks/use-page-titles';
 import PageProvider from './hooks/use-pages';
@@ -55,7 +54,6 @@ const App = () => {
         ProblemSubmissionsProvider,
         ProblemsProvider,
         SubmissionsProvider,
-        HomeStatisticsProvider,
         PublicSubmissionsProvider,
         SearchProvider,
     ] as ProviderType[];
