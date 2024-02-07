@@ -10,6 +10,8 @@ import ContestProblemsPage from '../../pages/administration/ContestProblemsPage'
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../pages/administration/TestEditPage';
 import Administration from '../../pages/administration-new/Administration';
+import AdministrationContestCategories
+    from '../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
@@ -130,6 +132,10 @@ const adminRoutes = [
     {
         path: '/administration-new/contests/:id',
         Element: AdministrationContestPage,
+    },
+    {
+        path: '/administration-new/contestCategories',
+        Element: AdministrationContestCategories,
     },
     {
         path: '/administration-new/submissions',

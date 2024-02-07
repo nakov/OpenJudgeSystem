@@ -211,6 +211,31 @@ interface IIndexProblemsType {
     contestId: number;
 }
 
+interface IIndexContestCategoriesType {
+    id: number;
+    name: string;
+    parent: string;
+    parentId: number;
+    isDeleted: boolean;
+    isVisible: boolean;
+    orderBy: number;
+    modifiedOn: Date;
+    createdOn: Date;
+    deletedOn: Date;
+}
+
+interface IContestCategoryAdministration {
+    id: number;
+    name: string;
+    parent: string;
+    parentId: number;
+    isDeleted: boolean;
+    isVisible: boolean;
+    orderBy: number;
+    deletedOn: Date | null;
+    modifiedOn: Date | null;
+}
+
 interface IRegisterForContestResponseType {
     id: number;
     name: string;
@@ -412,6 +437,7 @@ interface IRootStore {
     adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
     adminProblemGroups: IAdminSlice;
+    adminContestsCategories: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -472,4 +498,6 @@ export type {
     ISubmissionTypeInProblem,
     IContestAutocomplete,
     IProblemGroupsData,
+    IIndexContestCategoriesType,
+    IContestCategoryAdministration,
 };
