@@ -82,7 +82,7 @@ const store = configureStore({
         authorizationService.middleware,
         problemsAdminService.middleware,
         submissionsAdminService.middleware,
-        SubmissionsForProcessingAdminService.middleware,
+        submissionsForProcessingAdminService.middleware,
         submissionTypesAdminService.middleware,
         checkerAdminService.middleware,
     ]),
