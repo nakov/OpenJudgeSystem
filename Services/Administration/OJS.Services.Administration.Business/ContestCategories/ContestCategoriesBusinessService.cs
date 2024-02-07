@@ -52,7 +52,6 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
     public override async Task<ContestCategoryAdministrationModel> Edit(ContestCategoryAdministrationModel model)
     {
         var contestCategory = await this.categoriesDataService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
-
         contestCategory.MapFrom(model);
 
         if (model.ParentId == 0)
@@ -78,6 +77,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
     public override async Task Delete(int id)
     {
         var contestCategory = await this.categoriesDataService.GetByIdQuery(id).FirstOrDefaultAsync();
+
         if (contestCategory is null)
         {
             throw new BusinessServiceException($"Contest Category with Id:{id} not found.");
@@ -97,6 +97,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
     private async Task OrderContestCategoriesByOrderBy(ContestCategory contestCategory)
     {
         IEnumerable<ContestCategory> contestCategories;
+
         if (contestCategory.ParentId.HasValue)
         {
             contestCategories = await this.categoriesDataService.GetContestCategoriesByParentId(contestCategory.ParentId);

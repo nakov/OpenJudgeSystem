@@ -29,6 +29,18 @@ interface IContestCategoryEditProps {
     isEditMode?: boolean;
 }
 
+const initialState : IContestCategoryAdministration = {
+    id: 0,
+    name: '',
+    parent: '',
+    parentId: 0,
+    isDeleted: false,
+    isVisible: false,
+    orderBy: 0,
+    deletedOn: null,
+    modifiedOn: null,
+};
+
 const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     const { contestCategoryId, isEditMode = true } = props;
 
@@ -37,17 +49,8 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
 
-    const [ contestCategory, setContestCategory ] = useState<IContestCategoryAdministration>({
-        id: 0,
-        name: '',
-        parent: '',
-        parentId: 0,
-        isDeleted: false,
-        isVisible: false,
-        orderBy: 0,
-        deletedOn: null,
-        modifiedOn: null,
-    });
+    const [ contestCategory, setContestCategory ] = useState<IContestCategoryAdministration>(initialState);
+
     const [ contestCategoryValidations, setContestCategoryValidations ] = useState({
         isNameTouched: false,
         isNameValid: !!isEditMode,
@@ -309,7 +312,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                           name={contestCategory.name}
                           onSuccess={() => navigate('/administration-new/contestCategories')}
                           mutation={useDeleteContestCategoryMutation}
-                          text="Are you sure that you want to delete the contest category."
+                          text="Are you sure that you want to delete the contest category?"
                         />
                     </Box>
                 </div>

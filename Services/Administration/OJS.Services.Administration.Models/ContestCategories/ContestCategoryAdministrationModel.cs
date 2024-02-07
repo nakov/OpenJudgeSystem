@@ -30,13 +30,7 @@ public class ContestCategoryAdministrationModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<ContestCategoryAdministrationModel, ContestCategory>()
-            .ForMember(c => c.IsDeleted, opt
-                => opt.Ignore())
-            .ForMember(c => c.CreatedOn, opt
-                => opt.Ignore())
             .ForMember(c => c.Parent, opt
-                => opt.Ignore())
-            .ForMember(c => c.ModifiedOn, opt
                 => opt.Ignore())
             .ForMember(c => c.LecturersInContestCategories, opt
                 => opt.Ignore())

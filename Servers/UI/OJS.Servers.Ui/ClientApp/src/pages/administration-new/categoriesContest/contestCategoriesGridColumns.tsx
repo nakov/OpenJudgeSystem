@@ -121,7 +121,7 @@ export const returnCategoriesNonFilterableColumns = (
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}
-                  text="Are you sure that you want to delete the contest category."
+                  text="Are you sure that you want to delete the contest category?"
                   mutation={deleteMutation}
                 />
             </div>
