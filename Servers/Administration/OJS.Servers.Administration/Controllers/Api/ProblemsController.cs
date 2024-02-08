@@ -3,36 +3,34 @@
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
-using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
-using OJS.Services.Common.Data.Pagination;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Common.Exceptions;
-using OJS.Services.Common.Validation;
+using OJS.Services.Administration.Business.Contests.Permissions;
+using OJS.Services.Common.Models.Users;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 
-public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel, ProblemAdministrationModel>
+public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
-    private readonly IContestsBusinessService contestsBusinessService;
-    private readonly Services.Administration.Business.IUserProviderService userProvider;
     private readonly IContestsActivityService contestsActivityService;
     private readonly IContestsDataService contestsDataService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
+    private readonly IGridDataService<Problem> problemGridDataService;
     private readonly IProblemsPermissionsService permissionsService;
+    private readonly IContestPermissionsService contestPermissionsService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
-        IContestsBusinessService contestsBusinessService,
-        Services.Administration.Business.IUserProviderService userProvider,
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
         IContestsDataService contestsDataService,
@@ -40,7 +38,8 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         IGridDataService<Problem> problemGridDataService,
         ProblemAdministrationValidator validator,
         ProblemsDeleteValidator deleteValidator,
-        IProblemsPermissionsService permissionsService)
+        IProblemsPermissionsService permissionsService,
+        IContestPermissionsService contestPermissionsService)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
@@ -49,25 +48,27 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
                 permissionsService)
     {
         this.problemsBusinessService = problemsBusinessService;
-        this.contestsBusinessService = contestsBusinessService;
-        this.userProvider = userProvider;
         this.problemsDataService = problemsDataService;
         this.contestsActivityService = contestsActivityService;
         this.contestsDataService = contestsDataService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
+        this.problemGridDataService = problemGridDataService;
         this.permissionsService = permissionsService;
+        this.contestPermissionsService = contestPermissionsService;
     }
 
     [HttpGet("{contestId:int}")]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
-        if (!await this.HasContestPermission(contestId))
+        var contestPermissions = await this.contestPermissionsService.GetPermissions(this.User.Map<UserInfoModel>(), contestId);
+
+        if (!contestPermissions.CanRead)
         {
             return this.Unauthorized();
         }
 
         return this.Ok(
-            await this.GetWithFilter<ProblemsInListModel>(
+            await this.problemGridDataService.GetAll<ProblemInListModel>(
                 model,
                 problem => problem.ProblemGroup.ContestId == contestId));
     }
@@ -86,7 +87,9 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
             return this.UnprocessableEntity();
         }
 
-        if (!await this.HasContestPermission(model.ContestId))
+        var permissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), model.Id);
+
+        if (!permissions.HasFullAccess)
         {
             return this.Unauthorized();
         }
@@ -99,7 +102,9 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
     [HttpDelete("{contestId:int}")]
     public async Task<IActionResult> DeleteAll([FromRoute] int contestId)
     {
-        if (!await this.HasContestPermission(contestId))
+        var contestPermissions = await this.contestPermissionsService.GetPermissions(this.User.Map<UserInfoModel>(), contestId);
+
+        if (!contestPermissions.CanDelete)
         {
             return this.Unauthorized();
         }
@@ -118,7 +123,8 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
     [HttpGet("{id:int}")]
     public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
     {
-        if (!this.permissionsService.HasReadPermission())
+        var permissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), id);
+        if (!permissions.CanRead)
         {
             return this.Unauthorized();
         }
@@ -151,7 +157,11 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
             return this.NotFound($"Contest with id {model.SourceContestId} not found");
         }
 
-        if (!await this.HasContestPermission(model.SourceContestId) || !await this.HasContestPermission(model.DestinationContestId))
+        var user = this.User.Map<UserInfoModel>();
+        var hasSourceContestPermissions = await this.contestPermissionsService.GetPermissions(user, model.SourceContestId);
+        var hasDestinationContestPermissions = await this.contestPermissionsService.GetPermissions(user, model.DestinationContestId);
+
+        if (!hasSourceContestPermissions.CanEdit || !hasDestinationContestPermissions.CanEdit)
         {
             return this.Unauthorized();
         }
@@ -165,15 +175,5 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         }
 
         return this.Ok("Problems successfully copied.");
-    }
-
-    private async Task<bool> HasContestPermission(int? contestId)
-    {
-        var user = this.userProvider.GetCurrentUser();
-
-        return await this.contestsBusinessService.UserHasContestPermissions(
-            contestId!.Value,
-            user.Id,
-            user.IsAdmin);
     }
 }

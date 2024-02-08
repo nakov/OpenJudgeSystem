@@ -12,14 +12,7 @@ public record UserPermissionsModel(string UserId, object? EntityId, Type EntityT
 
     public bool CanDelete { get; private set; }
 
-    public UserPermissionsModel WithFullWriteAccess(bool allow)
-    {
-        this.CanCreate = allow;
-        this.CanEdit = allow;
-        this.CanDelete = allow;
-
-        return this;
-    }
+    public bool HasFullAccess { get; private set; }
 
     public UserPermissionsModel WithReadAccess(bool allow)
     {
@@ -27,11 +20,20 @@ public record UserPermissionsModel(string UserId, object? EntityId, Type EntityT
         return this;
     }
 
+    public UserPermissionsModel WithWriteAccess(bool allow)
+    {
+        this.WithReadAccess(allow);
+        this.CanCreate = allow;
+        this.CanEdit = allow;
+        this.CanDelete = allow;
+        return this;
+    }
+
     public UserPermissionsModel WithFullAccess(bool allow)
     {
         this.WithReadAccess(allow);
-        this.WithFullWriteAccess(allow);
-
+        this.WithWriteAccess(allow);
+        this.HasFullAccess = allow;
         return this;
     }
 }
