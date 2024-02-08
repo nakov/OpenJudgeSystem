@@ -20,7 +20,7 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
             const contentType = response.headers.get('Content-Type');
             if (contentType?.includes('application/octet-stream')) {
                 const contentDisposition = response.headers.get('Content-Disposition');
-                let filename = 'submission.zip';
+                let filename = 'file.zip';
                 if (contentDisposition) {
                     const match = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
                     if (match) {
