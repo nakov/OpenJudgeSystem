@@ -16,6 +16,27 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
         credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/${baseUrl}`,
         prepareHeaders: (headers) => headers,
+        responseHandler: async (response: Response) => {
+            const contentType = response.headers.get('Content-Type');
+            if (contentType?.includes('application/octet-stream')) {
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'file.zip';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
+                    if (match) {
+                        filename = decodeURIComponent(match[1]);
+                    }
+                }
+                const blob = await response.blob();
+                return { blob, filename };
+            }
+
+            if (response.headers.get('Content-Length')) {
+                return '';
+            }
+
+            return response.json();
+        },
     });
 
     const result = await baseQuery(args, api, extraOptions);

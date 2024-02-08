@@ -42,6 +42,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public IFormFile? Tests { get; set; }
 
+    public bool HasAdditionalFiles { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
     {
          configuration.CreateMap<Problem, ProblemAdministrationModel>()
@@ -54,7 +56,9 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt
-                => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)));
+                => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)))
+             .ForMember(pam => pam.HasAdditionalFiles, opt
+                 => opt.MapFrom(p => p.AdditionalFiles != null));
 
          configuration.CreateMap<ProblemAdministrationModel, Problem>()
              .ForMember(pam => pam.SubmissionTypesInProblems, opt
