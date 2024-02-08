@@ -8,10 +8,8 @@ using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Administration.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class SubmissionAdministrationServiceModel : IMapExplicitly
+public class SubmissionAdministrationServiceModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int Id { get; set; }
-
     public bool IsCompiledSuccessfully { get; set; }
 
     public bool Processed { get; set; }

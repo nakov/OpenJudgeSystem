@@ -2,7 +2,6 @@ namespace OJS.Services.Administration.Business.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Linq;
@@ -20,14 +19,6 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.cache = cache;
         this.contestCategoriesData = contestCategoriesData;
     }
-
-    public Task<ContestCategoryAdministrationModel> Get(int id) => throw new System.NotImplementedException();
-
-    public Task<ContestCategoryAdministrationModel> Create(ContestCategoryAdministrationModel model) => throw new System.NotImplementedException();
-
-    public Task<ContestCategoryAdministrationModel> Edit(ContestCategoryAdministrationModel model) => throw new System.NotImplementedException();
-
-    public Task Delete(int id) => throw new System.NotImplementedException();
 
     public void ClearMainContestCategoriesCache()
     {

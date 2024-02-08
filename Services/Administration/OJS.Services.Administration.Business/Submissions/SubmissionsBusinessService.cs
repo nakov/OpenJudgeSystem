@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business.Implementations
+namespace OJS.Services.Administration.Business.Submissions
 {
     using System;
     using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace OJS.Services.Administration.Business.Implementations
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
 
-    public class SubmissionsBusinessService : AdministrationOperationService<Submission, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
+    public class SubmissionsBusinessService : AdministrationOperationService<Submission, int, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
     {
         private readonly IParticipantScoresBusinessService participantScoresBusiness;
         private readonly ISubmissionsDataService submissionsData;

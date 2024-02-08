@@ -5,10 +5,8 @@ using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 
-public class ContestCategoryAdministrationModel : IMapExplicitly
+public class ContestCategoryAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int Id { get; set; }
-
     public string? Name { get; set; }
 
     public double OrderBy { get; set; }

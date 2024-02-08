@@ -1,11 +1,11 @@
-﻿namespace OJS.Services.Administration.Business
+﻿namespace OJS.Services.Administration.Business.Submissions
 {
     using System.Threading.Tasks;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models;
     using OJS.Services.Administration.Models.Submissions;
 
-    public interface ISubmissionsBusinessService : IAdministrationOperationService<Submission, SubmissionAdministrationServiceModel>
+    public interface ISubmissionsBusinessService : IAdministrationOperationService<Submission, int, SubmissionAdministrationServiceModel>
     {
         Task RecalculatePointsByProblem(int problemId);
 

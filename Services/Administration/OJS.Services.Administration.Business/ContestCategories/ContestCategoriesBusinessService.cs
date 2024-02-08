@@ -10,7 +10,7 @@ using OJS.Data.Models.Contests;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.ContestCategories;
 
-public class ContestCategoriesBusinessService : AdministrationOperationService<ContestCategory, ContestCategoryAdministrationModel>, IContestCategoriesBusinessService
+public class ContestCategoriesBusinessService : AdministrationOperationService<ContestCategory, int, ContestCategoryAdministrationModel>, IContestCategoriesBusinessService
 {
     private readonly IContestCategoriesDataService categoriesDataService;
     private readonly IOrderableService<ContestCategory> contestCategoriesOrderableService;

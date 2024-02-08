@@ -93,7 +93,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     [HttpPatch]
     public virtual async Task<IActionResult> Edit(TUpdateModel model)
     {
-        var entityPermissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), model.Id!);
+        var entityPermissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), model);
 
         if (!entityPermissions.CanEdit)
         {

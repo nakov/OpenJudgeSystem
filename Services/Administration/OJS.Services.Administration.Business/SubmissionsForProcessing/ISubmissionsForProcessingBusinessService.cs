@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business;
+namespace OJS.Services.Administration.Business.SubmissionsForProcessing;
 
 using System.Threading.Tasks;
 using OJS.Data.Models.Submissions;
@@ -6,6 +6,7 @@ using OJS.Services.Administration.Models.SubmissionsForProcessing;
 
 public interface ISubmissionsForProcessingBusinessService : IAdministrationOperationService<
     SubmissionForProcessing,
+    int,
     SubmissionsForProcessingAdministrationServiceModel>
 {
     /// <summary>

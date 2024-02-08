@@ -10,10 +10,8 @@ using OJS.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 
 using System.IO;
-public class ProblemAdministrationModel : IMapExplicitly
+public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int? Id { get; set; }
-
     public string? Name { get; set; }
 
     public short MaximumPoints { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace OJS.Services.Administration.Business.Implementations;
+﻿namespace OJS.Services.Administration.Business.SubmissionsForProcessing;
 
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
 public class SubmissionsForProcessingBusinessService :
-    AdministrationOperationService<SubmissionForProcessing, SubmissionsForProcessingAdministrationServiceModel>,
+    AdministrationOperationService<SubmissionForProcessing, int, SubmissionsForProcessingAdministrationServiceModel>,
     ISubmissionsForProcessingBusinessService
 {
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
