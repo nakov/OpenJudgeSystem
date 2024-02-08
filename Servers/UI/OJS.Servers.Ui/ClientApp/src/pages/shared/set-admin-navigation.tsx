@@ -3,12 +3,14 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
+import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
+import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
 import { Tooltip } from '@mui/material';
@@ -39,23 +41,38 @@ const administrationItems = [
         name: 'Contests',
         icon: <AutoStoriesIcon />,
         path: '/administration-new/contests',
-    }, {
+    },
+    {
+        name: 'Contest Categories',
+        icon: <BookmarksIcon />,
+        path: '/administration-new/contestCategories',
+    },
+    {
         name: 'Submissions',
-        icon: <DoneOutlineIcon />,
+        icon: <PlaylistAddCheckCircleIcon />,
         path: '/administration-new/submissions',
-    }, {
+    },
+    {
+        name: 'Submissions For Processing',
+        icon: <DataSaverOnIcon />,
+        path: '/administration-new/submissions-for-processing',
+    },
+    {
         name: 'Tests',
         icon: <ScienceIcon />,
         path: '/administration-new/tests',
-    }, {
+    },
+    {
         name: 'Problems',
         icon: <NotListedLocationIcon />,
         path: '/administration-new/problems',
-    }, {
+    },
+    {
         name: 'Problem Groups',
         icon: <TableViewIcon />,
         path: '/administration-new/problemGroups',
-    }, {
+    },
+    {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: '/administration-new/submissionTypes',
@@ -156,7 +173,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        <>
+        <Box sx={{ zIndex: 0 }}>
             {!open
                 ? (
                     <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
@@ -183,6 +200,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </Toolbar>
                 </AppBar>
                 <Drawer
+                  sx={{ zIndex: 0 }}
                   variant="permanent"
                   open={open}
                 >
@@ -221,7 +239,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>
-        </>
+        </Box>
     );
 };
 

@@ -15,10 +15,7 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
     const baseQuery = fetchBaseQuery({
         credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/${baseUrl}`,
-        prepareHeaders: (headers) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
-        },
+        prepareHeaders: (headers) => headers,
     });
 
     const result = await baseQuery(args, api, extraOptions);

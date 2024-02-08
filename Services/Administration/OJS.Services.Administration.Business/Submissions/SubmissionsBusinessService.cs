@@ -8,36 +8,43 @@ namespace OJS.Services.Administration.Business.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Common.Helpers;
-    using OJS.Data.Models.Submissions;
-    using OJS.Services.Administration.Data;
-    using OJS.Services.Administration.Models;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
+    using OJS.Data.Models.Submissions;
+    using OJS.Services.Administration.Data;
+    using OJS.Services.Administration.Models;
+    using OJS.Services.Administration.Models.Submissions;
     using OJS.Services.Infrastructure;
+    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure;
 
-    public class SubmissionsBusinessService : ISubmissionsBusinessService
+    public class SubmissionsBusinessService : AdministrationOperationService<Submission, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
     {
+        private readonly IParticipantScoresBusinessService participantScoresBusiness;
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService;
         private readonly IParticipantScoresDataService participantScoresData;
         private readonly IParticipantScoresBusinessService participantScoresBusinessService;
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
+        private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
+        private readonly ITestRunsDataService testRunsData;
         private readonly ITransactionsProvider transactions;
         private readonly IDatesService dates;
         private readonly ITestRunsDataService testRunsDataService;
 
         public SubmissionsBusinessService(
             ISubmissionsDataService submissionsData,
+            IParticipantScoresBusinessService participantScoresBusiness,
             IParticipantScoresDataService participantScoresData,
             ITransactionsProvider transactions,
             ISubmissionsForProcessingCommonDataService submissionsForProcessingDataService,
             IParticipantScoresBusinessService participantScoresBusinessService,
-            ISubmissionPublisherService submissionPublisherService,
+            ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
+            ITestRunsDataService testRunsData,
             IDatesService dates,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService,
             ITestRunsDataService testRunsDataService)
@@ -51,6 +58,9 @@ namespace OJS.Services.Administration.Business.Implementations
             this.dates = dates;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
             this.testRunsDataService = testRunsDataService;
+            this.participantScoresBusiness = participantScoresBusiness;
+            this.submissionsForProcessingData = submissionsForProcessingData;
+            this.testRunsData = testRunsData;
         }
 
         public Task<IQueryable<Submission>> GetAllForArchiving()
@@ -209,6 +219,65 @@ namespace OJS.Services.Administration.Business.Implementations
             }
 
             return await this.Retest(submission!);
+        }
+
+        public override async Task Delete(int id)
+        {
+            var submission = await this.submissionsData
+                .GetByIdQuery(id)
+                .FirstOrDefaultAsync();
+
+            if (submission == null)
+            {
+                throw new BusinessServiceException($"Submission with Id:{id} not found.");
+            }
+
+            var submissionProblemId = submission.ProblemId;
+            var submissionParticipantId = submission.ParticipantId!.Value;
+
+            await this.transactions.ExecuteInTransaction(async () =>
+            {
+                await this.testRunsData.DeleteBySubmission(submission.Id);
+                await this.submissionsData.DeleteById(submission.Id);
+                await this.submissionsData.SaveChanges();
+                await this.submissionsForProcessingData.RemoveBySubmission(submission.Id);
+
+                var isBestSubmission = await this.IsBestSubmission(
+                    submissionProblemId,
+                    submissionParticipantId,
+                    submission.Id);
+
+                if (isBestSubmission)
+                {
+                    await this.participantScoresBusiness.RecalculateForParticipantByProblem(
+                        submission.ParticipantId.Value,
+                        submission.ProblemId);
+                }
+            });
+        }
+
+        public async Task<SubmissionAdministrationServiceModel> Download(int id)
+        {
+            if (id <= 0)
+            {
+                throw new BusinessServiceException(Resources.SubmissionsController.SubmissionNotFound);
+            }
+
+            var submission = await this.submissionsData
+                .GetByIdQuery(id)
+                .FirstOrDefaultAsync();
+
+            if (submission == null)
+            {
+                throw new BusinessServiceException(Resources.SubmissionsController.SubmissionNotFound);
+            }
+
+            if (!submission.IsBinaryFile)
+            {
+                throw new BusinessServiceException(Resources.SubmissionsController.SubmissionNotFileUpload);
+            }
+
+            return submission.Map<SubmissionAdministrationServiceModel>();
         }
 
         public async Task<bool> IsBestSubmission(int problemId, int participantId, int submissionId)

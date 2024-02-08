@@ -31,7 +31,7 @@ export const problemsAdminService = createApi({
             }),
         }),
         createProblem: builder.mutation({
-            query: (problem) => ({
+            query: (problem: FormData) => ({
                 url: '/Create',
                 method: 'POST',
                 body: problem,

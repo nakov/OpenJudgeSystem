@@ -46,6 +46,11 @@ namespace OJS.Services.Administration.Data.Implementations
             => await this.GetByIdQuery(id!)
                 .FirstAsync();
 
+        public async Task<ContestCategory?> GetByIdWithParent(int? id)
+            => await this.GetByIdQuery(id!)
+                .Include(c => c.Parent)
+                .FirstOrDefaultAsync();
+
         public Task<string?> GetNameById(int id)
             => this.DbSet
                 .Where(cc => cc.Id == id)

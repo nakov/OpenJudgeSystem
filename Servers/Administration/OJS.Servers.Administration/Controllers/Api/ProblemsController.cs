@@ -67,6 +67,12 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemsI
                 .GetAll<ProblemsInListModel>(model, problem => problem.ProblemGroup.ContestId == contestId));
     }
 
+    public override async Task<IActionResult> Create([FromForm] ProblemAdministrationModel model)
+    {
+        var response = await base.Create(model);
+        return response;
+    }
+
     [HttpPost]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
     {

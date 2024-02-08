@@ -211,6 +211,31 @@ interface IIndexProblemsType {
     contestId: number;
 }
 
+interface IIndexContestCategoriesType {
+    id: number;
+    name: string;
+    parent: string;
+    parentId: number;
+    isDeleted: boolean;
+    isVisible: boolean;
+    orderBy: number;
+    modifiedOn: Date;
+    createdOn: Date;
+    deletedOn: Date;
+}
+
+interface IContestCategoryAdministration {
+    id: number;
+    name: string;
+    parent: string;
+    parentId: number;
+    isDeleted: boolean;
+    isVisible: boolean;
+    orderBy: number;
+    deletedOn: Date | null;
+    modifiedOn: Date | null;
+}
+
 interface IRegisterForContestResponseType {
     id: number;
     name: string;
@@ -279,20 +304,21 @@ interface IUserType {
 }
 
 interface IProblemAdministration {
-    id: number;
+    id: number | undefined;
     name: string;
     maximumPoints: number;
     sourceCodeSizeLimit: number;
     orderBy: number;
     showResults: boolean;
     showDetailedFeedback: boolean;
-    checkerId: number;
+    checkerId: string;
     problemGroupType: string;
     contestId: number;
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
-    // additionalFiles: File | null;
+    additionalFiles: File | null;
+    tests: File | null;
 }
 
 interface IUserRoleType {
@@ -338,8 +364,53 @@ interface IContestAdministration {
     orderBy: number;
     allowedIps: string;
     numberOfProblemGroups: number;
-    duration: string;
+    duration: string | undefined;
 }
+
+interface ISubmissionsAdminGridViewType {
+    id: number;
+    isCompiledSuccessfully: boolean;
+    processed: boolean;
+    isDeleted: boolean;
+    isBinaryFile: boolean;
+    processingComment: boolean;
+    points: number;
+    participant: IParticipantType;
+    problem: IProblemSimpleType;
+    submissionType: ISubmissionTypeSimpleType;
+    createdOn: Date;
+    modifiedOn: Date;
+    startedExecutionOn: Date;
+    completedExecutionOn: Date;
+}
+
+interface ISubmissionForProcessingAdminGridViewType {
+    id: number;
+    processed: boolean;
+    processing: boolean;
+    serializedException: string;
+    serializedExecutionDetails: string;
+    serializedExecutionResult: string;
+    submissionId: number;
+    createdOn: Date;
+    modifiedOn: Date;
+}
+
+interface IParticipantType {
+    id: number;
+    username: string;
+}
+
+interface IProblemSimpleType {
+    id: number;
+    name: string;
+}
+
+interface ISubmissionTypeSimpleType {
+    id: number;
+    name: string;
+}
+
 interface IContestAutocomplete {
     id: number;
     name: string;
@@ -364,8 +435,10 @@ interface IAdminSlice {
 
 interface IRootStore {
     adminContests: IAdminSlice;
+    adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
     adminProblemGroups: IAdminSlice;
+    adminContestsCategories: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -414,6 +487,8 @@ export type {
     IContestAdministration,
     IFilterColumn,
     IParticiapntsInContestView,
+    ISubmissionsAdminGridViewType,
+    ISubmissionForProcessingAdminGridViewType,
     IAdminSlice,
     IRootStore,
     IContestCategories,
@@ -424,4 +499,6 @@ export type {
     ISubmissionTypeInProblem,
     IContestAutocomplete,
     IProblemGroupsData,
+    IIndexContestCategoriesType,
+    IContestCategoryAdministration,
 };
