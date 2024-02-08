@@ -1,4 +1,4 @@
-namespace OJS.Services.Administration.Business.Contests.Interfaces;
+namespace OJS.Services.Administration.Business.Contests;
 
 using OJS.Services.Administration.Models.Contests;
 using System.Collections.Generic;

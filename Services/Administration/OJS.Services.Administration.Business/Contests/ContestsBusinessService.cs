@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business.Contests.Interfaces;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;

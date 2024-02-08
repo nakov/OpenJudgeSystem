@@ -7,7 +7,6 @@ namespace OJS.Services.Administration.Business.Problems
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Business.Contests;
-    using OJS.Services.Administration.Business.Contests.Interfaces;
     using OJS.Services.Administration.Business.ProblemGroups;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models.Contests.Problems;

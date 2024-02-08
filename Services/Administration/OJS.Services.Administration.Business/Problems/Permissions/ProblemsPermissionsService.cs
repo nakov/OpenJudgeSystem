@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Data;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Administration.Business.Contests.Interfaces;
+using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
@@ -13,7 +13,15 @@ public class ProblemsPermissionsService(
     IContestsBusinessService contestsBusinessService)
     : PermissionsService<ProblemAdministrationModel, int>, IProblemsPermissionsService
 {
-    public override async Task<UserPermissionsModel> GetPermissions(UserInfoModel user, int id)
+    protected override async Task<UserPermissionsModel> GetPermissionsForNewEntity(UserInfoModel user, ProblemAdministrationModel model)
+        => (await this.GetPermissions(user, model))
+            .WithFullAccess(
+                allow: await contestsBusinessService.UserHasContestPermissions(
+                    model.ContestId,
+                    user.Id,
+                    user.IsAdmin));
+
+    protected override async Task<UserPermissionsModel> GetPermissionsForExistingEntity(UserInfoModel user, int id)
     {
         var contestId = await problemsDataService
             .GetByIdQuery(id)
@@ -25,6 +33,6 @@ public class ProblemsPermissionsService(
             user.Id,
             user.IsAdmin);
 
-        return (await base.GetPermissions(user, id)).WithFullAccess(hasContestPermissions);
+        return (await this.GetPermissions(user, id)).WithFullAccess(hasContestPermissions);
     }
 }

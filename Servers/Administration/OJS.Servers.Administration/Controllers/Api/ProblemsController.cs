@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Models.Problems;
-using OJS.Services.Administration.Business.Contests.Interfaces;
+using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
