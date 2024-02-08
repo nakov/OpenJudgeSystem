@@ -5,14 +5,15 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Select, styled, TextareaAutosize, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
-import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCreateProblemMutation, useDeleteProblemMutation, useDownloadAdditionalFilesQuery, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -25,6 +26,17 @@ interface IProblemFormProps {
 
     contestId: number | null;
 }
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 const ProblemForm = (props: IProblemFormProps) => {
     const { problemId, isEditMode = true, contestId } = props;
@@ -47,9 +59,14 @@ const ProblemForm = (props: IProblemFormProps) => {
         timeLimit: 0,
         additionalFiles: null,
         tests: null,
+        hasAdditionalFiles: false,
     });
 
     const navigate = useNavigate();
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
+    const [ successMessages, setSuccessMessages ] = useState<string>('');
+    const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
+
     const {
         data: problemData,
         isLoading: isGettingData,
@@ -59,8 +76,12 @@ const ProblemForm = (props: IProblemFormProps) => {
     const { data: checkers } = useGetCheckersForProblemQuery(null);
     const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
     const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
-    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string>('');
+    const {
+        data: additionalFilesData,
+        isLoading: isDownloadingFiles,
+        isSuccess: isSuccesfullyDownloaded,
+        error: downloadAdditionalFilesError,
+    } = useDownloadAdditionalFilesQuery(Number(problemId), { skip: skipDownload });
 
     useEffect(() => {
         if (submissionTypes) {
@@ -93,10 +114,14 @@ const ProblemForm = (props: IProblemFormProps) => {
         if (updateError) {
             errors = errors.concat(extractMessages(updateError));
         }
+        if (downloadAdditionalFilesError) {
+            errors = errors.concat(extractMessages(updateError));
+            setSkipDownload(false);
+        }
 
         setErrorMessages(errors);
         setSuccessMessages('');
-    }, [ updateError, createError, gettingDataError ]);
+    }, [ updateError, createError, gettingDataError, downloadAdditionalFilesError ]);
 
     useEffect(() => {
         let successMessage = '';
@@ -106,8 +131,33 @@ const ProblemForm = (props: IProblemFormProps) => {
         if (createData) {
             successMessage = createData;
         }
+        if (isSuccesfullyDownloaded) {
+            successMessage = 'Additional files succesfully downloaded.';
+            setSkipDownload(false);
+        }
         setSuccessMessages(successMessage);
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccesfullyDownloaded ]);
+
+    const downloadFile = (blob:Blob, filename: string) => {
+        const blobUrl = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style.display = 'none';
+        a.href = blobUrl;
+        // eslint-disable-next-line prefer-destructuring
+        a.download = filename;
+
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+    };
+
+    useEffect(() => {
+        if (additionalFilesData?.blob) {
+            downloadFile(additionalFilesData.blob, additionalFilesData.filename);
+        }
+    }, [ additionalFilesData ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -200,13 +250,10 @@ const ProblemForm = (props: IProblemFormProps) => {
         />
     );
 
-    const handleFileUpload = (e: any) => {
-        const { target } = e;
-        const { name } = target;
+    const handleFileUpload = (e: any, propName:string) => {
         let { additionalFiles } = currentProblem;
         let { tests } = currentProblem;
-
-        switch (name) {
+        switch (propName) {
         case 'tests':
             tests = e.target.files[0];
             break;
@@ -222,7 +269,7 @@ const ProblemForm = (props: IProblemFormProps) => {
     };
 
     return (
-        isGettingData
+        isGettingData || isDownloadingFiles
             ? <SpinningLoader />
             : (
                 <>
@@ -360,32 +407,6 @@ const ProblemForm = (props: IProblemFormProps) => {
                                 ))}
                             </Select>
                         </FormGroup>
-                        <FormGroup sx={{ width: '45%' }}>
-                            <FormControl>
-                                <TextField
-                                  type="file"
-                                  label="Additional files"
-                                  name="additionalFiles"
-                                  variant="standard"
-                                  sx={{ width: '45%', margin: '1rem' }}
-                                  onChange={(e) => handleFileUpload(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                />
-                            </FormControl>
-                            {!isEditMode && (
-                            <FormControl>
-                                <TextField
-                                  type="file"
-                                  label="Tests"
-                                  variant="standard"
-                                  name="tests"
-                                  sx={{ width: '45%', margin: '1rem' }}
-                                  onChange={(e) => handleFileUpload(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                />
-                            </FormControl>
-                            )}
-                        </FormGroup>
                         <FormGroup sx={{ marginLeft: '4rem' }}>
                             <FormControlLabel
                               control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
@@ -404,7 +425,71 @@ const ProblemForm = (props: IProblemFormProps) => {
                               label="Show Results"
                             />
                         </FormGroup>
+                        <FormGroup sx={{ width: '100%' }}>
+                            <Typography sx={{ marginTop: '1rem' }} variant="h4">Additional files</Typography>
+                            <Divider />
+                            <FormGroup
+                              sx={{
+                                  display: 'flex',
+                                  width: '100%',
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  justifyContent: 'flex-start',
+                                  margin: '1rem',
+                              }}
+                            >
+                                <FormControl sx={{ margin: '1rem' }}>
+                                    <Button
+                                      sx={{ width: '200px' }}
+                                      component="label"
+                                      variant="contained"
+                                      startIcon={<CloudUploadIcon />}
+                                      onChange={(e) => handleFileUpload(e, 'additionalFiles')}
+                                    >
+                                        Additional Files
+                                        <VisuallyHiddenInput type="file" />
+                                    </Button>
+                                    <Typography variant="caption">
+                                        {' '}
+                                        {currentProblem.additionalFiles?.name}
+                                    </Typography>
+                                </FormControl>
+                                {currentProblem.hasAdditionalFiles && (
+                                <FormControl sx={{ margin: '1rem' }}>
+                                    <Button
+                                      sx={{ width: '200px' }}
+                                      variant="contained"
+                                      onClick={() => setSkipDownload(false)}
+                                    >
+                                        Download
+                                    </Button>
+                                </FormControl>
+                                )}
+                            </FormGroup>
 
+                            {!isEditMode && (
+                                <>
+                                    <Typography sx={{ marginTop: '1rem' }} variant="h4">Tests</Typography>
+                                    <Divider />
+                                    <FormControl sx={{ margin: '2rem', width: '200px' }}>
+                                        <Button
+                                          sx={{ width: '200px' }}
+                                          component="label"
+                                          variant="contained"
+                                          startIcon={<CloudUploadIcon />}
+                                          onChange={(e) => handleFileUpload(e, 'tests')}
+                                        >
+                                            Tests
+                                            <VisuallyHiddenInput type="file" />
+                                        </Button>
+                                        <Typography variant="caption">
+                                            {' '}
+                                            {currentProblem.tests?.name}
+                                        </Typography>
+                                    </FormControl>
+                                </>
+                            )}
+                        </FormGroup>
                         <Typography sx={{ marginTop: '1rem' }} variant="h4">Submission Types</Typography>
                         <Divider />
                         <FormControl sx={{ margin: '3rem 0', width: '92%', alignSelf: 'center' }}>

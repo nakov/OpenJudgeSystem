@@ -285,6 +285,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 config =>
                     config.WithOrigins(
                             configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
+                        .WithExposedHeaders("Content-Disposition")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

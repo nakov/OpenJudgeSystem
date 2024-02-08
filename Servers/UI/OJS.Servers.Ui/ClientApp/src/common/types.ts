@@ -319,6 +319,8 @@ interface IProblemAdministration {
     memoryLimit: number;
     additionalFiles: File | null;
     tests: File | null;
+    hasAdditionalFiles: boolean;
+
 }
 
 interface IUserRoleType {

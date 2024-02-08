@@ -14,6 +14,9 @@ using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Business.Problems.Permissions;
+using OJS.Common.Exceptions;
+using OJS.Services.Common.Validation;
+using System.Collections.Generic;
 
 public class ProblemsController : BaseAdminApiController<Problem, ProblemsInListModel, ProblemAdministrationModel>
 {
@@ -24,6 +27,7 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
     private readonly IContestsActivityService contestsActivityService;
     private readonly IContestsDataService contestsDataService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
+    private readonly IProblemsPermissionsService permissionsService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
@@ -51,6 +55,7 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         this.contestsActivityService = contestsActivityService;
         this.contestsDataService = contestsDataService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
+        this.permissionsService = permissionsService;
     }
 
     [HttpGet("{contestId:int}")]
@@ -108,6 +113,31 @@ public class ProblemsController : BaseAdminApiController<Problem, ProblemsInList
         await this.problemsBusinessService.DeleteByContest(contest.Id);
 
         return this.Ok($"Problems for {contest.Name} were successfully deleted.");
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
+    {
+        if (!this.permissionsService.HasReadPermission())
+        {
+            return this.Unauthorized();
+        }
+
+        if (id <= 0)
+        {
+            return this.UnprocessableEntity(new ExceptionResponse
+            {
+                Errors = new List<ExceptionResponseModel>() { new() { Name = "Id", Message = "Invalid id", }, },
+            });
+        }
+
+        var file = await this.problemsBusinessService.GetAdditionalFiles(id);
+        if (file == null)
+        {
+            return this.BadRequest();
+        }
+
+        return this.File(file.Content!, file.MimeType!, file.FileName);
     }
 
     [HttpPost]

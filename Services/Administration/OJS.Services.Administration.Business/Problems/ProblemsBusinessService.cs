@@ -1,7 +1,9 @@
 namespace OJS.Services.Administration.Business.Problems
 {
     using FluentExtensions.Extensions;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Common.Helpers;
     using OJS.Data.Models;
@@ -19,14 +21,13 @@ namespace OJS.Services.Administration.Business.Problems
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
     using IsolationLevel = System.Transactions.IsolationLevel;
     using Resource = OJS.Common.Resources.ProblemsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
-    using Microsoft.AspNetCore.Http;
-    using System.IO;
 
     public class ProblemsBusinessService : AdministrationOperationService<Problem, ProblemAdministrationModel>, IProblemsBusinessService
     {
@@ -98,7 +99,6 @@ namespace OJS.Services.Administration.Business.Problems
 
             await this.problemsData.SaveChanges();
 
-            //TODO add tests
             return model;
         }
 
@@ -184,6 +184,29 @@ namespace OJS.Services.Administration.Business.Problems
 
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
+
+        public async Task<AdditionalFilesDownloadModel?> GetAdditionalFiles(int problemId)
+        {
+            var hasProblem = await this.problemsData.ExistsById(problemId);
+            if (!hasProblem)
+            {
+                throw new BusinessServiceException("Problem not found.");
+            }
+
+            var file = await this.problemsData.GetByIdQuery(problemId).Select(p => p.AdditionalFiles)
+                .FirstOrDefaultAsync();
+            if (file == null)
+            {
+                return null;
+            }
+
+            return new AdditionalFilesDownloadModel()
+            {
+                Content = file!,
+                MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
+                FileName = string.Format($"Problem-{problemId}-Additional files.zip"),
+            };
+        }
 
         public override async Task<ProblemAdministrationModel> Get(int id)
         {

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
@@ -68,6 +69,7 @@ export const problemsAdminService = createApi({
                 body: { sourceContestId, destinationContestId },
             }),
         }),
+        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({ query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }), keepUnusedDataFor: 5 }),
     }),
 });
 
@@ -82,6 +84,7 @@ export const {
     useDeleteByContestMutation,
     useCopyAllMutation,
     useCreateProblemMutation,
+    useDownloadAdditionalFilesQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;
