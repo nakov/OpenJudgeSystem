@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.Participants;
 
-public interface IParticipantsBusinessService : IAdministrationOperationService<Participant, int, ParticipantsAdministrationModel>
+public interface IParticipantsBusinessService : IAdministrationOperationService<Participant, int, ParticipantAdministrationModel>
 {
     /// <summary>
     /// Updates the total score snapshot for all participants.

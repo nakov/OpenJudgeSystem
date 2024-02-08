@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Validation;
 
-public class ParticipantsController : BaseAdminApiController<Participant, int, ContestViewParticipantsModel, ParticipantsAdministrationModel>
+public class ParticipantsController : BaseAdminApiController<Participant, int, ContestViewParticipantsModel, ParticipantAdministrationModel>
 {
     private readonly IGridDataService<Participant> participantsGridDataService;
 
@@ -22,7 +22,7 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
         IParticipantsBusinessService participantsBusinessService,
         ParticipantsAdministrationModelValidator validator,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IPermissionsService<ParticipantsAdministrationModel, int> permissionsService)
+        IPermissionsService<ParticipantAdministrationModel, int> permissionsService)
         : base(
             participantsGridDataService,
             participantsBusinessService,

@@ -3,6 +3,6 @@
 using OJS.Services.Common.Validation;
 using OJS.Services.Administration.Models.Participants;
 
-public class ParticipantsAdministrationModelValidator : BaseValidator<ParticipantsAdministrationModel>
+public class ParticipantsAdministrationModelValidator : BaseValidator<ParticipantAdministrationModel>
 {
 }

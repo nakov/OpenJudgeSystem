@@ -3,6 +3,6 @@
 using OJS.Services.Common.Validation;
 using OJS.Services.Administration.Models.ProblemGroups;
 
-public class ProblemGroupsAdministrationModelValidator : BaseValidator<ProblemGroupsAdministrationModel>
+public class ProblemGroupAdministrationModelValidator : BaseValidator<ProblemGroupsAdministrationModel>
 {
 }

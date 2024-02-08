@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Data;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Business.Contests.Interfaces;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common.Models;

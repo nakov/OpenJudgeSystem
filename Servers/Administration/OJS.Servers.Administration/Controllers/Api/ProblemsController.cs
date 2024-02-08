@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Business.Problems.Permissions;
 
-public class ProblemsController : BaseAdminApiController<Problem, int, ProblemsInListModel, ProblemAdministrationModel>
+public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
@@ -64,7 +64,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemsI
 
         return this.Ok(
             await this.problemGridDataService
-                .GetAll<ProblemsInListModel>(model, problem => problem.ProblemGroup.ContestId == contestId));
+                .GetAll<ProblemInListModel>(model, problem => problem.ProblemGroup.ContestId == contestId));
     }
 
     public override async Task<IActionResult> Create([FromForm] ProblemAdministrationModel model)

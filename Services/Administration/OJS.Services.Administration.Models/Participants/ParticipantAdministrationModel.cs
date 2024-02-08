@@ -3,6 +3,6 @@
 using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class ParticipantsAdministrationModel : BaseAdministrationModel<int>, IMapFrom<Participant>
+public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMapFrom<Participant>
 {
 }

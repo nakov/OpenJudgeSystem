@@ -4,6 +4,7 @@ using FluentValidation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Common.Validation;
+using System.Threading.Tasks;
 
 public class ContestCategoryAdministrationModelValidator : BaseValidator<ContestCategoryAdministrationModel>
 {
@@ -22,28 +23,19 @@ public class ContestCategoryAdministrationModelValidator : BaseValidator<Contest
             .WithMessage("Order By cannot be negative number");
 
         this.RuleFor(model => model)
-            .Must((model, cancellation)
-                => this.ValidateParentCategoryIsValid(model))
+            .MustAsync(async (model, cancellation)
+                => await this.ValidateParentCategoryIsValid(model))
             .WithMessage($"Provided Parent category does not exist.");
     }
 
-    private bool ValidateParentCategoryIsValid(ContestCategoryAdministrationModel model)
+    private async Task<bool> ValidateParentCategoryIsValid(ContestCategoryAdministrationModel model)
     {
         // If ParentId = 0 and Parent is empty > no parent category has been selected
-        if (model.ParentId == 0 && string.IsNullOrEmpty(model.Parent))
+        if (model.ParentId is null or 0)
         {
             return true;
         }
 
-        var contestCategory = this.categoriesDataService.GetByIdWithParent(model.ParentId)
-            .GetAwaiter()
-            .GetResult();
-
-        if (contestCategory is null)
-        {
-            return false;
-        }
-
-        return true;
+        return await this.categoriesDataService.ExistsById(model.ParentId);
     }
 }

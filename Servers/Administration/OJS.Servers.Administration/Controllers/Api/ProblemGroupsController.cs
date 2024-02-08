@@ -18,7 +18,7 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
     public ProblemGroupsController(
         IGridDataService<ProblemGroup> problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        ProblemGroupsAdministrationModelValidator validator,
+        ProblemGroupAdministrationModelValidator validator,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator,
         IPermissionsService<ProblemGroupsAdministrationModel, int> permissionsService)
         : base(

@@ -4,7 +4,7 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
 using OJS.Data.Models.Problems;
 using System.Linq;
-public class ProblemsInListModel : IMapExplicitly
+public class ProblemInListModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -26,7 +26,7 @@ public class ProblemsInListModel : IMapExplicitly
     public bool IsDeleted { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
-        configuration.CreateMap<Problem, ProblemsInListModel>()
+        configuration.CreateMap<Problem, ProblemInListModel>()
             .ForMember(x => x.Id, opt
                 => opt.MapFrom(p => p.Id))
             .ForMember(x => x.Name, opt

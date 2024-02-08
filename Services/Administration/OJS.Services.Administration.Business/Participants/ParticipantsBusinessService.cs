@@ -7,7 +7,7 @@ using OJS.Services.Administration.Models.Participants;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class ParticipantsBusinessService : AdministrationOperationService<Participant, int, ParticipantsAdministrationModel>, IParticipantsBusinessService
+public class ParticipantsBusinessService : AdministrationOperationService<Participant, int, ParticipantAdministrationModel>, IParticipantsBusinessService
 {
     private readonly IParticipantsDataService participantsData;
     private readonly IParticipantScoresDataService scoresDataService;
