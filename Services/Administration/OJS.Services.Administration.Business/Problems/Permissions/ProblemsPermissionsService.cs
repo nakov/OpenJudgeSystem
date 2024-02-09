@@ -42,6 +42,6 @@ public class ProblemsPermissionsService
             user.Id,
             user.IsAdmin);
 
-        return (await this.GetPermissions(user, id)).WithFullAccess(hasContestPermissions);
+        return this.AllowFullAccessWhen(hasContestPermissions, user, id).WithFullAccess(hasContestPermissions);
     }
 }
