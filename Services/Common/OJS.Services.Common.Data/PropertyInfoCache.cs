@@ -15,7 +15,7 @@ public static class PropertyInfoCache
         => Cache.GetOrAdd((type, propertyName), key =>
         {
             var (targetType, propName) = key;
-            var propertyInfo = targetType.GetProperty(propName);
+            var propertyInfo = targetType.GetProperty(propName, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
             if (propertyInfo == null)
             {
                 throw new InvalidOperationException($"Property '{propName}' not found on type '{targetType}'.");
