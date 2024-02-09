@@ -14,13 +14,24 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-public class GridDataService<TEntity>(
-    IDataService<TEntity> dataService,
-    ISortingService sortingService,
-    IFilteringService filteringService)
+public class GridDataService<TEntity>
     : IGridDataService<TEntity>
     where TEntity : class, IEntity
 {
+    private readonly IDataService<TEntity> dataService;
+    private readonly ISortingService sortingService;
+    private readonly IFilteringService filteringService;
+
+    public GridDataService(
+        IDataService<TEntity> dataService,
+        ISortingService sortingService,
+        IFilteringService filteringService)
+    {
+        this.dataService = dataService;
+        this.sortingService = sortingService;
+        this.filteringService = filteringService;
+    }
+
     // TODO: Mark entities with attributes that are not allowed for lecturers
     // and use reflection to filter out the grids for the current user.
     public Task<bool> UserHasAccessToGrid(UserInfoModel user) => Task.FromResult(true);
@@ -28,13 +39,13 @@ public class GridDataService<TEntity>(
     public virtual Task<PagedResult<TModel>> GetAll<TModel>(
         PaginationRequestModel paginationRequestModel,
         Expression<Func<TEntity, bool>>? filter = null)
-        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, dataService.GetQuery(filter));
+        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter));
 
     public virtual Task<PagedResult<TModel>> GetAllForUser<TModel>(
         PaginationRequestModel paginationRequestModel,
         UserInfoModel user,
         Expression<Func<TEntity, bool>>? filter = null)
-        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, dataService.GetQueryForUser(user, filter));
+        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQueryForUser(user, filter));
 
     private static IEnumerable<FilteringModel> MapFilterStringToCollection<T>(PaginationRequestModel paginationRequestModel)
     {
@@ -77,8 +88,8 @@ public class GridDataService<TEntity>(
     {
         var filterAsCollection = MapFilterStringToCollection<TModel>(paginationRequestModel).ToList();
 
-        var mappedQuery = filteringService.ApplyFiltering<TEntity, TModel>(query, filterAsCollection);
-        return await sortingService
+        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query, filterAsCollection);
+        return await this.sortingService
             .ApplySorting(mappedQuery, paginationRequestModel.Sorting)
             .ToPagedResult(paginationRequestModel.Page, paginationRequestModel.ItemsPerPage);
     }
