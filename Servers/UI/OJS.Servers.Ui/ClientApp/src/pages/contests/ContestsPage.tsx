@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { IFilter } from '../../common/contest-types';
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import ContestCardNew from '../../components/contests/contest-card-new/ContestCard';
 import ContestCategories from '../../components/contests/contest-categories/ContestCategories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../components/guidelines/alert/Alert';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
@@ -23,7 +21,6 @@ const ContestsPage = () => {
     const { themeColors } = useTheme();
     const { category, status, strategy } = useSelector((state: any) => state.filterContests);
     const [ selectedPage, setSelectedPage ] = useState(1);
-    const [ filteredStrategyFilters, setFilteredStrategyFilters ] = useState<IFilter[]>([]);
 
     const contestParams = useMemo(() => {
         const params: IGetAllContestsOptions = {
@@ -51,8 +48,6 @@ const ContestsPage = () => {
         isLoading: areContestsLoading,
         error: allContestsError,
     } = useGetAllContestsQuery({ ...contestParams });
-
-    const [ showAlert, setShowAlert ] = useState<boolean>(false);
 
     const renderContest = useCallback((contest: IIndexContestsType) => (
         <ContestCardNew contest={contest} />
@@ -89,27 +84,13 @@ const ContestsPage = () => {
     return (
         <div style={{ padding: '20px 40px' }}>
             {areContestsLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
-            {showAlert &&
-                (
-                    <Alert
-                      message="The category you requested was not valid, all contests were loaded."
-                      severity={AlertSeverity.Error}
-                      variant={AlertVariant.Filled}
-                      autoHideDuration={3000}
-                      vertical={AlertVerticalOrientation.Bottom}
-                      horizontal={AlertHorizontalOrientation.Right}
-                    />
-                )}
             <ContestBreadcrumb isLastBreadcrumbGrey />
             <div className={styles.contestsContainer}>
-                <ContestCategories
-                  setStrategyFilters={setFilteredStrategyFilters}
-                  shouldReset={false}
-                />
+                <ContestCategories shouldReset={false} />
                 <div style={{ width: '100%' }}>
                     <div className={styles.headingWrapper} style={{ color: themeColors.textColor }}>
                         <div>All Categories</div>
-                        <ContestStrategies filteredStrategies={filteredStrategyFilters} />
+                        <ContestStrategies />
                     </div>
                     {renderContests()}
                 </div>

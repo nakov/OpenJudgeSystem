@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 import { IconType } from 'react-icons';
-import { FaCode, FaDeezer, FaPuzzlePiece, FaTrophy, FaUsers } from 'react-icons/fa';
+import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 
-import { IFilter } from '../../common/contest-types';
 import ContestCategories from '../../components/contests/contest-categories/ContestCategories';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -42,13 +41,12 @@ const HOME_STATISTICS = [
     { iconType: FaUsers, title: 'Users', dataKey: 'usersCount' },
     { iconType: FaPuzzlePiece, title: 'Problems', dataKey: 'problemsCount' },
     { iconType: FaDeezer, title: 'Submissions per day', dataKey: 'submissionsPerDayCount' },
-    { iconType: FaTrophy, title: 'Test strategies', dataKey: 'strategiesCount' },
+    { iconType: FaTasks, title: 'Test strategies', dataKey: 'strategiesCount' },
     { iconType: FaCode, title: 'Submissions', dataKey: 'submissionsCount' },
 ];
 
 const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
-    const [ strategyFilters, setStrategyFilters ] = React.useState<IFilter[]>();
 
     const renderHomeStatisticIcons = useCallback(() => {
         if (isLoading) {
@@ -77,7 +75,7 @@ const HomePage = () => {
 
     return (
         <div className={styles.homePageWrapper}>
-            <ContestCategories setStrategyFilters={setStrategyFilters} shouldReset={false} />
+            <ContestCategories shouldReset={false} />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
                 <iframe title="home-video" width={700} height={320} src="https://www.youtube.com/watch?v=zyhYnE4Fnmk&ab_channel=SoftwareUniversity%28SoftUni%29" />

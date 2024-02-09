@@ -1,19 +1,16 @@
 import React, { ReactNode } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { MenuItem, Select } from '@mui/material';
 
-import { IContestStrategyFilter, IFilter } from '../../../common/contest-types';
+import { IContestStrategyFilter } from '../../../common/contest-types';
 import useTheme from '../../../hooks/use-theme';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
 
-interface IContestStrategyProps {
-    filteredStrategies: IFilter[];
-}
-
-const ContestStrategies = ({ filteredStrategies }: IContestStrategyProps) => {
+const ContestStrategies = () => {
     const dispatch = useDispatch();
     const { themeColors } = useTheme();
+    const { filteredStrategies } = useSelector((state: any) => state.filterContests);
 
     const {
         data: contestStrategies,

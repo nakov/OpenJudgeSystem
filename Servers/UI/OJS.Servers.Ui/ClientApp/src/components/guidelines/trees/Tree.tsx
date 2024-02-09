@@ -30,7 +30,6 @@ const Tree = ({
     items,
     onSelect,
     defaultSelected = '',
-    defaultExpanded = [],
     itemFunc,
     treeItemHasTooltip = false,
     shouldReset,
@@ -107,15 +106,6 @@ const Tree = ({
             }
         },
         [ defaultSelected, selectedFromUrl, selectedId, updateBreadcrumb, categoriesFlat ],
-    );
-
-    useEffect(
-        () => {
-            if (isEmpty(expandedIds) && selectedFromUrl) {
-                setExpandedIds(defaultExpanded);
-            }
-        },
-        [ defaultExpanded, expandedIds, selectedFromUrl ],
     );
 
     useEffect(

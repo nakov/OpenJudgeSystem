@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -9,7 +9,7 @@ import ITreeItemType from '../../../common/tree-types';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
 import { useContests } from '../../../hooks/use-contests';
 import useTheme from '../../../hooks/use-theme';
-import { setContestCategory } from '../../../redux/features/contestsSlice';
+import { setContestCategory, setContestFilteredStrategies } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { flattenWith } from '../../../utils/list-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -20,9 +20,7 @@ import Tree from '../../guidelines/trees/Tree';
 import styles from './ContestCategories.module.scss';
 
 interface IContestCategoriesProps extends IHaveOptionalClassName {
-    setStrategyFilters: Dispatch<SetStateAction<IFilter[]>>;
     shouldReset: boolean;
-    defaultSelected: string;
 }
 
 interface IFilterProps {
@@ -36,11 +34,7 @@ const defaultState = {
         openedCategoryFilter: {} as IFilterProps,
     },
 };
-const ContestCategories = ({
-    setStrategyFilters,
-    shouldReset,
-    defaultSelected,
-}: IContestCategoriesProps) => {
+const ContestCategories = ({ shouldReset }: IContestCategoriesProps) => {
     const dispatch = useDispatch();
     const { themeColors } = useTheme();
     const { state: { possibleFilters } } = useContests();
@@ -63,6 +57,10 @@ const ContestCategories = ({
         }
         return [];
     }, [ contestCategories ]);
+
+    const onCategoryClick = useCallback((category: ITreeItemType | undefined) => {
+        dispatch(setContestCategory(category));
+    }, []);
 
     const getCategoryByValue = useCallback(
         (searchedValue?: string) => {
@@ -122,14 +120,6 @@ const ContestCategories = ({
             return result;
         },
         [ getCurrentNode ],
-    );
-    const onCategoryClick = (category: ITreeItemType) => {
-        dispatch(setContestCategory(category));
-    };
-
-    const defaultExpanded = useMemo(
-        () => getParents([], flattenCategories, defaultSelected),
-        [ defaultSelected, flattenCategories, getParents ],
     );
 
     const strategyFilterGroup = useMemo(
@@ -256,12 +246,12 @@ const ContestCategories = ({
         () => {
             if (isEmpty(openedCategoryFilters)) {
                 clearBreadcrumb();
-                setStrategyFilters([]);
+                dispatch(setContestFilteredStrategies([]));
             } else {
-                setStrategyFilters(openedCategoryFilter.strategies);
+                dispatch(setContestFilteredStrategies(openedCategoryFilter.strategies));
             }
         },
-        [ clearBreadcrumb, openedCategoryFilter.strategies, openedCategoryFilters, setStrategyFilters ],
+        [ clearBreadcrumb, openedCategoryFilter.strategies, openedCategoryFilters ],
     );
 
     useEffect(
@@ -278,8 +268,7 @@ const ContestCategories = ({
             <Tree
               items={contestCategories}
               onSelect={handleTreeLabelClick}
-              defaultSelected={getCategoryById(defaultSelected)}
-              defaultExpanded={defaultExpanded}
+              defaultSelected={getCategoryById('')}
               treeItemHasTooltip
               shouldReset={shouldReset}
             />
@@ -287,7 +276,7 @@ const ContestCategories = ({
     ), [ contestCategories ]);
 
     if (categoriesError) {
-        return (<div>Error loading contest categories. Please try again.</div>);
+        return (<div style={{ color: themeColors.textColor }}>Error loading contest categories. Please try again.</div>);
     }
 
     return (
