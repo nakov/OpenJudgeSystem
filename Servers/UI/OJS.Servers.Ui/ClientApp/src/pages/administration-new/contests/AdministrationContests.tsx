@@ -8,6 +8,8 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import { IconButton, Modal, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 
+import { CREATE_NEW_CONTEST } from '../../../common/labels';
+import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import ContestEdit from '../../../components/administration/Contests/ContestEdit/ContestEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -71,7 +73,7 @@ const AdministrationContestsPage = () => {
 
     const renderGridActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title="Create new contest">
+            <Tooltip title={CREATE_NEW_CONTEST}>
                 <IconButton
                   onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
                 >
@@ -103,7 +105,7 @@ const AdministrationContestsPage = () => {
               { showModal: openShowCreateContestModal, modal: (i) => renderCreateContestModal(i) },
               { showModal: openEditContestModal, modal: (i) => renderEditContestModal(i) },
           ]}
-          legendProps={[ { color: '#FFA1A1', message: 'Contest is deleted.' }, { color: '#C0C0C0', message: 'Contest is not visible' } ]}
+          legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
         />
     );
 };

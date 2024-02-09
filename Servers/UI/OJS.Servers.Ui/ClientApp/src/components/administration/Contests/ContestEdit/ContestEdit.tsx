@@ -12,7 +12,10 @@ import dayjs from 'dayjs';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CONTEST_ID, CONTEST_PASSWORD, DESCRIPTION, DURATION, END_TIME, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, START_TIME, TYPE } from '../../../../common/labels';
+import { CONTEST_DELETE_CONFIRMATION_MESSAGE, CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION } from '../../../../common/messages';
 import { ExceptionData, IContestAdministration, IContestCategories } from '../../../../common/types';
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
@@ -31,6 +34,7 @@ const ContestEdit = (props:IContestEditProps) => {
     const { contestId, isEditMode = true } = props;
 
     const navigate = useNavigate();
+
     const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
@@ -344,334 +348,338 @@ const ContestEdit = (props:IContestEditProps) => {
         }
     };
 
-    return (
-        isFetching || isLoading || isGettingCategories || isUpdating || isCreating
-            ? <SpinningLoader />
+    const renderFormSubmitButtons = () => (
+        isEditMode
+            ? (
+                <Box className={styles.buttonsWrapper}>
+                    <Button
+                      variant="contained"
+                      onClick={() => edit()}
+                      className={styles.button}
+                      disabled={!isValidForm}
+                    >
+                        Edit
+                    </Button>
+                </Box>
+            )
             : (
-                <div className={`${styles.flex}`}>
-                    {errorMessages.map((x, i) => (
-                        <Alert
-                          key={x.name}
-                          variant={AlertVariant.Filled}
-                          vertical={AlertVerticalOrientation.Top}
-                          horizontal={AlertHorizontalOrientation.Right}
-                          severity={AlertSeverity.Error}
-                          message={x.message}
-                          styles={{ marginTop: `${i * 4}rem` }}
-                        />
-                    ))}
-                    {successMessage && (
-                        <Alert
-                          variant={AlertVariant.Filled}
-                          autoHideDuration={3000}
-                          vertical={AlertVerticalOrientation.Top}
-                          horizontal={AlertHorizontalOrientation.Right}
-                          severity={AlertSeverity.Success}
-                          message={successMessage}
-                        />
-                    )}
-                    <Typography className={styles.centralize} variant="h4">
-                        {contest.name || 'Contest form'}
-                    </Typography>
-                    <form className={`${styles.form}`}>
-                        <Box className={`${styles.fieldBox}`}>
-                            <Box>
-                                <TextField
-                                  className={styles.inputRow}
-                                  label="Contest Id"
-                                  variant="standard"
-                                  value={contest.id}
-                                  disabled
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  label="Name"
-                                  variant="standard"
-                                  name="name"
-                                  onChange={(e) => onChange(e)}
-                                  value={contest.name}
-                                  color={contestValidations.isNameValid && contestValidations.isNameTouched
-                                      ? 'success'
-                                      : 'primary'}
-                                  error={(contestValidations.isNameTouched && !contestValidations.isNameValid)}
-                                  // eslint-disable-next-line max-len
-                                  helperText={(contestValidations.isNameTouched && !contestValidations.isNameValid) && 'Contest name length must be between 4 and 100 characters long'}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="number"
-                                  name="limitBetweenSubmissions"
-                                  label="Limit between submissions"
-                                  variant="standard"
-                                  onChange={(e) => onChange(e)}
-                                  value={contest.limitBetweenSubmissions}
-                                  InputLabelProps={{ shrink: true }}
-                                  color={contestValidations.isLimitBetweenSubmissionsValid &&
-                                    contestValidations.isLimitBetweenSubmissionsTouched
-                                      ? 'success'
-                                      : 'primary'}
-                                  error={(contestValidations.isLimitBetweenSubmissionsTouched &&
-                                    !contestValidations.isLimitBetweenSubmissionsValid)}
-                                // eslint-disable-next-line max-len
-                                  helperText={(contestValidations.isLimitBetweenSubmissionsTouched && !contestValidations.isLimitBetweenSubmissionsValid) &&
-                                    'Limit between submissions cannot be less than 0'}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="number"
-                                  label="Order By"
-                                  variant="standard"
-                                  value={contest.orderBy}
-                                  onChange={(e) => onChange(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                  name="orderBy"
-                                  color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
-                                      ? 'success'
-                                      : 'primary'}
-                                  error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
-                                  helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
-                                    'Order by cannot be less than 0'}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="number"
-                                  label="Number of problem groups"
-                                  variant="standard"
-                                  value={contest.numberOfProblemGroups}
-                                  onChange={(e) => onChange(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                  name="numberOfProblemGroups"
-                                />
-                            </Box>
-                            <Box>
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="text"
-                                  label="Contest Password"
-                                  variant="standard"
-                                  value={contest.contestPassword || ''}
-                                  name="contestPassword"
-                                  onChange={(e) => onChange(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="text"
-                                  label="Practice Password"
-                                  variant="standard"
-                                  name="practicePassword"
-                                  onChange={(e) => onChange(e)}
-                                  value={contest.practicePassword || ''}
-                                  InputLabelProps={{ shrink: true }}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  label="New Ip password"
-                                  variant="standard"
-                                  value={contest.newIpPassword || ''}
-                                  name="newIpPassword"
-                                  onChange={(e) => onChange(e)}
-                                  type="text"
-                                  color={contestValidations.isNewIpPasswordValid && contestValidations.isNewIpPasswordTouched
-                                      ? 'success'
-                                      : 'primary'}
-                                  error={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid)}
-                            // eslint-disable-next-line max-len
-                                  helperText={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid) && 'New Ip password cannot be more than 20 characters long'}
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="text"
-                                  label="Allowed Ips"
-                                  variant="standard"
-                                  placeholder="Split by ;"
-                                  value={contest.allowedIps}
-                                  onChange={(e) => onChange(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                  name="allowedIps"
-                                />
-                                <TextField
-                                  className={styles.inputRow}
-                                  type="string"
-                                  label="Duration"
-                                  variant="standard"
-                                  value={contest.duration
-                                      ? contest.duration
-                                      : undefined}
-                                  name="duration"
-                                  onChange={(e) => onChange(e)}
-                                  InputLabelProps={{ shrink: true }}
-                                  error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
-                                  helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
-                                    'Duration must be valid time with format hh:mm:ss'}
-                                />
-                            </Box>
-                        </Box>
-                        <FormControl
+                <Box className={styles.buttonsWrapper}>
+                    <Button
+                      variant="contained"
+                      onClick={() => create()}
+                      className={styles.button}
+                      disabled={!isValidForm}
+                    >
+                        Create
+                    </Button>
+                </Box>
+            )
+    );
+
+    if (isFetching || isLoading || isGettingCategories || isUpdating || isCreating) {
+        return (<SpinningLoader />);
+    }
+
+    return (
+        <Box className={`${styles.flex}`}>
+            {errorMessages.map((x, i) => (
+                <Alert
+                  key={x.name}
+                  variant={AlertVariant.Filled}
+                  vertical={AlertVerticalOrientation.Top}
+                  horizontal={AlertHorizontalOrientation.Right}
+                  severity={AlertSeverity.Error}
+                  message={x.message}
+                  styles={{ marginTop: `${i * 4}rem` }}
+                />
+            ))}
+            {successMessage && (
+            <Alert
+              variant={AlertVariant.Filled}
+              autoHideDuration={3000}
+              vertical={AlertVerticalOrientation.Top}
+              horizontal={AlertHorizontalOrientation.Right}
+              severity={AlertSeverity.Success}
+              message={successMessage}
+            />
+            )}
+            <Typography className={styles.centralize} variant="h4">
+                {contest.name || 'Contest form'}
+            </Typography>
+            <form className={`${styles.form}`}>
+                <Box className={`${styles.fieldBox}`}>
+                    <Box>
+                        <TextField
                           className={styles.inputRow}
-                        >
-                            <InputLabel id="contest-type">Type</InputLabel>
-                            <Select
-                              sx={{ width: '100%' }}
-                              variant="standard"
-                              value={contest.type}
-                              className={styles.inputRow}
-                              name="type"
-                              labelId="contest-type"
-                              onChange={(e) => onChange(e)}
-                              onBlur={(e) => onChange(e)}
-                              color={contestValidations.isTypeValid && contestValidations.isTypeTouched
-                                  ? 'success'
-                                  : 'primary'}
-                              error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
-                            >
-                                {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
-                                    <MenuItem key={key} value={key}>
-                                        {key}
-                                    </MenuItem>
-                                ))}
-                                helperText=
-                                {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
-                                        'Contest type is invalid'}
-                            </Select>
-                        </FormControl>
-                        <FormControl className={styles.textArea}>
-                            <FormLabel>Description</FormLabel>
-                            <TextareaAutosize
-                              placeholder="Enter description here..."
-                              value={contest.description === null
-                                  ? ''
-                                  : contest.description}
-                              minRows={10}
-                              name="description"
-                              onChange={(e) => onChange(e)}
-                            />
-                        </FormControl>
-                        <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
-                            <Autocomplete
-                              sx={{ width: '100%' }}
-                              className={styles.inputRow}
-                              onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
-                              value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
-                              options={contestCategories!}
-                              renderInput={(params) => <TextField {...params} label="Select Category" key={params.id} />}
-                              getOptionLabel={(option) => option?.name}
-                              renderOption={(properties, option) => (
-                                  <MenuItem {...properties} key={option.id} value={option.id}>
-                                      {option.name}
-                                  </MenuItem>
-                              )}
-                            />
-                        </FormControl>
-                        <div className={styles.row}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker
-                                  sx={{ width: '48%' }}
-                                  name="startTime"
-                                  label="Start Time"
-                                  value={contest.startTime
-                                      ? dayjs(contest.startTime)
-                                      : null}
-                                  onChange={(newValue) => handleDateTimePickerChange('startTime', newValue)}
-                                />
-                                <DateTimePicker
-                                  sx={{ width: '48%' }}
-                                  name="endTime"
-                                  label="End Time"
-                                  value={contest.endTime
-                                      ? dayjs(contest.endTime)
-                                      : null}
-                                  onChange={(newValue) => handleDateTimePickerChange('endTime', newValue)}
-                                />
-                            </LocalizationProvider>
-                        </div>
-                        <div className={styles.row}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker
-                                  sx={{ width: '48%', margin: '20px 0' }}
-                                  name="practiceStartTime"
-                                  label="Practice Start Time"
-                                  value={contest.practiceStartTime
-                                      ? dayjs(contest.practiceStartTime)
-                                      : null}
-                                  onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue)}
-                                />
-                                <DateTimePicker
-                                  sx={{ width: '48%', margin: '20px 0' }}
-                                  name="practiceEndTime"
-                                  label="Practice End Time"
-                                  value={contest.practiceEndTime
-                                      ? dayjs(contest.practiceEndTime)
-                                      : null}
-                                  onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue)}
-                                />
-                            </LocalizationProvider>
-                        </div>
-                        <Box className={styles.checkboxes}>
-                            <FormControlLabel
-                              control={<Checkbox checked={contest.isVisible} />}
-                              label="IsVisible"
-                              name="isVisible"
-                              onChange={(e) => onChange(e)}
-                            />
-                            <FormControlLabel
-                              control={(
-                                  <Checkbox
-                                    checked={contest.allowParallelSubmissionsInTasks}
-                                  />
-                              )}
-                              name="allowParallelSubmissionsInTasks"
-                              onChange={(e) => onChange(e)}
-                              label="Allow parallel submissions in tasks"
-                            />
-                            <FormControlLabel
-                              control={(
-                                  <Checkbox
-                                    checked={contest?.autoChangeTestsFeedbackVisibility}
-                                  />
-                                )}
-                              name="autoChangeTestsFeedbackVisibility"
-                              onChange={(e) => onChange(e)}
-                              label="Auto change tests feedback visibility"
-                            />
-                        </Box>
-                    </form>
-                    {isEditMode
-                        ? (
-                            <div className={styles.buttonsWrapper}>
-                                <Button
-                                  variant="contained"
-                                  onClick={() => edit()}
-                                  className={styles.button}
-                                  disabled={!isValidForm}
-                                >
-                                    Edit
-                                </Button>
-                            </div>
-                        )
-                        : (
-                            <div className={styles.buttonsWrapper}>
-                                <Button
-                                  variant="contained"
-                                  onClick={() => create()}
-                                  className={styles.button}
-                                  disabled={!isValidForm}
-                                >
-                                    Create
-                                </Button>
-                            </div>
-                        )}
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(contestId!)}
-                          name={contest.name}
-                          onSuccess={() => navigate('/administration-new/contests')}
-                          mutation={useDeleteContestMutation}
-                          text="Are you sure that you want to delete the contest."
+                          label={CONTEST_ID}
+                          variant="standard"
+                          value={contest.id}
+                          disabled
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          label={NAME}
+                          variant="standard"
+                          name="name"
+                          onChange={(e) => onChange(e)}
+                          value={contest.name}
+                          color={contestValidations.isNameValid && contestValidations.isNameTouched
+                              ? 'success'
+                              : 'primary'}
+                          error={(contestValidations.isNameTouched && !contestValidations.isNameValid)}
+                          helperText={(contestValidations.isNameTouched &&
+                                    !contestValidations.isNameValid) && CONTEST_NAME_VALIDATION}
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          type="number"
+                          name="limitBetweenSubmissions"
+                          label={LIMIT_BETWEEN_SUBMISSIONS}
+                          variant="standard"
+                          onChange={(e) => onChange(e)}
+                          value={contest.limitBetweenSubmissions}
+                          InputLabelProps={{ shrink: true }}
+                          color={contestValidations.isLimitBetweenSubmissionsValid &&
+                                    contestValidations.isLimitBetweenSubmissionsTouched
+                              ? 'success'
+                              : 'primary'}
+                          error={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                                    !contestValidations.isLimitBetweenSubmissionsValid)}
+                          helperText={(contestValidations.isLimitBetweenSubmissionsTouched &&
+                                    !contestValidations.isLimitBetweenSubmissionsValid) &&
+                                     CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          type="number"
+                          label={ORDER_BY}
+                          variant="standard"
+                          value={contest.orderBy}
+                          onChange={(e) => onChange(e)}
+                          InputLabelProps={{ shrink: true }}
+                          name="orderBy"
+                          color={contestValidations.isOrderByValid && contestValidations.isOrderByTouched
+                              ? 'success'
+                              : 'primary'}
+                          error={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid)}
+                          helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
+                            CONTEST_ORDER_BY_VALIDATION}
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          type="number"
+                          label={NUMBER_OF_PROBLEM_GROUPS}
+                          variant="standard"
+                          value={contest.numberOfProblemGroups}
+                          onChange={(e) => onChange(e)}
+                          InputLabelProps={{ shrink: true }}
+                          name="numberOfProblemGroups"
                         />
                     </Box>
-                </div>
-            )
+                    <Box>
+                        <TextField
+                          className={styles.inputRow}
+                          type="text"
+                          label={CONTEST_PASSWORD}
+                          variant="standard"
+                          value={contest.contestPassword || ''}
+                          name="contestPassword"
+                          onChange={(e) => onChange(e)}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          type="text"
+                          label={PRACTICE_PASSWORD}
+                          variant="standard"
+                          name="practicePassword"
+                          onChange={(e) => onChange(e)}
+                          value={contest.practicePassword || ''}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          label={NEW_IP_PASSWORD}
+                          variant="standard"
+                          value={contest.newIpPassword || ''}
+                          name="newIpPassword"
+                          onChange={(e) => onChange(e)}
+                          type="text"
+                          color={contestValidations.isNewIpPasswordValid && contestValidations.isNewIpPasswordTouched
+                              ? 'success'
+                              : 'primary'}
+                          error={(contestValidations.isNewIpPasswordTouched && !contestValidations.isNewIpPasswordValid)}
+                          helperText={(contestValidations.isNewIpPasswordTouched &&
+                                    !contestValidations.isNewIpPasswordValid) && CONTEST_NEW_IP_PASSWORD_VALIDATION}
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          type="text"
+                          label={ALLOWED_IPS}
+                          variant="standard"
+                          placeholder="Split by ;"
+                          value={contest.allowedIps}
+                          onChange={(e) => onChange(e)}
+                          InputLabelProps={{ shrink: true }}
+                          name="allowedIps"
+                        />
+                        <TextField
+                          className={styles.inputRow}
+                          type="string"
+                          label={DURATION}
+                          variant="standard"
+                          value={contest.duration
+                              ? contest.duration
+                              : undefined}
+                          name="duration"
+                          onChange={(e) => onChange(e)}
+                          InputLabelProps={{ shrink: true }}
+                          error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
+                          helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
+                            CONTEST_DURATION_VALIDATION}
+                        />
+                    </Box>
+                </Box>
+                <FormControl
+                  className={styles.inputRow}
+                >
+                    <InputLabel id="contest-type">{TYPE}</InputLabel>
+                    <Select
+                      sx={{ width: '100%' }}
+                      variant="standard"
+                      value={contest.type}
+                      className={styles.inputRow}
+                      name="type"
+                      labelId="contest-type"
+                      onChange={(e) => onChange(e)}
+                      onBlur={(e) => onChange(e)}
+                      color={contestValidations.isTypeValid && contestValidations.isTypeTouched
+                          ? 'success'
+                          : 'primary'}
+                      error={(contestValidations.isTypeTouched && !contestValidations.isTypeValid)}
+                    >
+                        {Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).map((key) => (
+                            <MenuItem key={key} value={key}>
+                                {key}
+                            </MenuItem>
+                        ))}
+                        helperText=
+                        {(contestValidations.isTypeTouched && !contestValidations.isTypeValid) &&
+                             CONTEST_TYPE_VALIDATION}
+                    </Select>
+                </FormControl>
+                <FormControl className={styles.textArea}>
+                    <FormLabel>{DESCRIPTION}</FormLabel>
+                    <TextareaAutosize
+                      placeholder={CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE}
+                      value={contest.description === null
+                          ? ''
+                          : contest.description}
+                      minRows={10}
+                      name="description"
+                      onChange={(e) => onChange(e)}
+                    />
+                </FormControl>
+                <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
+                    <Autocomplete
+                      sx={{ width: '100%' }}
+                      className={styles.inputRow}
+                      onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
+                      value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
+                      options={contestCategories!}
+                      renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
+                      getOptionLabel={(option) => option?.name}
+                      renderOption={(properties, option) => (
+                          <MenuItem {...properties} key={option.id} value={option.id}>
+                              {option.name}
+                          </MenuItem>
+                      )}
+                    />
+                </FormControl>
+                <Box className={styles.row}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker
+                          sx={{ width: '48%' }}
+                          name="startTime"
+                          label={START_TIME}
+                          value={contest.startTime
+                              ? dayjs(contest.startTime)
+                              : null}
+                          onChange={(newValue) => handleDateTimePickerChange('startTime', newValue)}
+                        />
+                        <DateTimePicker
+                          sx={{ width: '48%' }}
+                          name="endTime"
+                          label={END_TIME}
+                          value={contest.endTime
+                              ? dayjs(contest.endTime)
+                              : null}
+                          onChange={(newValue) => handleDateTimePickerChange('endTime', newValue)}
+                        />
+                    </LocalizationProvider>
+                </Box>
+                <Box className={styles.row}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateTimePicker
+                          sx={{ width: '48%', margin: '20px 0' }}
+                          name="practiceStartTime"
+                          label={PRACTICE_START_TIME}
+                          value={contest.practiceStartTime
+                              ? dayjs(contest.practiceStartTime)
+                              : null}
+                          onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue)}
+                        />
+                        <DateTimePicker
+                          sx={{ width: '48%', margin: '20px 0' }}
+                          name="practiceEndTime"
+                          label={PRACTICE_END_TIME}
+                          value={contest.practiceEndTime
+                              ? dayjs(contest.practiceEndTime)
+                              : null}
+                          onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue)}
+                        />
+                    </LocalizationProvider>
+                </Box>
+                <Box className={styles.checkboxes}>
+                    <FormControlLabel
+                      control={<Checkbox checked={contest.isVisible} />}
+                      label={IS_VISIBLE}
+                      name="isVisible"
+                      onChange={(e) => onChange(e)}
+                    />
+                    <FormControlLabel
+                      control={(
+                          <Checkbox
+                            checked={contest.allowParallelSubmissionsInTasks}
+                          />
+                              )}
+                      name="allowParallelSubmissionsInTasks"
+                      onChange={(e) => onChange(e)}
+                      label={ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}
+                    />
+                    <FormControlLabel
+                      control={(
+                          <Checkbox
+                            checked={contest?.autoChangeTestsFeedbackVisibility}
+                          />
+                                )}
+                      name="autoChangeTestsFeedbackVisibility"
+                      onChange={(e) => onChange(e)}
+                      label={AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}
+                    />
+                </Box>
+            </form>
+            {renderFormSubmitButtons()}
+            <Box sx={{ alignSelf: 'flex-end' }}>
+                <DeleteButton
+                  id={Number(contestId!)}
+                  name={contest.name}
+                  onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`)}
+                  mutation={useDeleteContestMutation}
+                  text={CONTEST_DELETE_CONFIRMATION_MESSAGE}
+                />
+            </Box>
+        </Box>
     );
 };
 

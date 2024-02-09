@@ -7,6 +7,7 @@ import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 
 const problemFilterableColums: GridColDef[] = [
@@ -118,7 +119,7 @@ export const returnProblemsNonFilterableColumns = (
                 <IconButton onClick={() => onEditClick(Number(params.row.id))}>
                     <EditIcon color="warning" />
                 </IconButton>
-                <Link to={`/administration-new/problems/${Number(params.row.id)}`}>
+                <Link to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${Number(params.row.id)}`}>
                     <ShortcutIcon color="primary" />
                 </Link>
                 <DeleteButton

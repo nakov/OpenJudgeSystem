@@ -8,6 +8,7 @@ import { Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
@@ -53,7 +54,7 @@ export const AdministrationSubmissionsForProcessingPage = () => {
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Tooltip title="View">
-                        <Link to={`/administration-new/submissions-for-processing/${Number(params.row.id)}`}>
+                        <Link to={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}>
                             <RemoveRedEyeIcon color="primary" />
                         </Link>
                     </Tooltip>

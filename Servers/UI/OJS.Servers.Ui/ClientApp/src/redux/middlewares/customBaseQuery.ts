@@ -2,6 +2,7 @@
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 import { defaultPathIdentifier } from '../../common/constants';
+import { SOMETHING_WENT_WRONG_MESSAGE, UNEXPECTED_ERROR_MESSAGE } from '../../common/messages';
 import { ExceptionData } from '../../common/types';
 
 type ExtraOptionsType = object
@@ -49,11 +50,11 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
             data = errorsArray.data as Array<ExceptionData>;
             data.forEach((x) => {
                 if (!x.message) {
-                    x.message = 'Unexpected error. Please contact an administrator.';
+                    x.message = UNEXPECTED_ERROR_MESSAGE;
                 }
             });
         } catch {
-            data = [ { message: 'Something went wrong', name: 'Unexpected Error' } ] as Array<ExceptionData>;
+            data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
         }
         return { error: data };
     }

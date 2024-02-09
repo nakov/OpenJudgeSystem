@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { IconButton } from '@mui/material';
+import { IoMdTrash } from 'react-icons/io';
+import { IconButton, Tooltip } from '@mui/material';
 
+import { DELETE } from '../../../../common/labels';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -59,17 +60,11 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                       message={message}
                     />
                     )}
-                    <IconButton onClick={confirmDelete}>
-                        <DeleteIcon
-                          sx={{
-                              width: '1.7rem',
-                              height: '2rem',
-                          }}
-                          color="error"
-                        >
-                            Delete
-                        </DeleteIcon>
-                    </IconButton>
+                    <Tooltip title={DELETE}>
+                        <IconButton onClick={confirmDelete}>
+                            <IoMdTrash color="red" />
+                        </IconButton>
+                    </Tooltip>
                     {showConfirmDelete && (
                     <ConfirmDialog
                       title={`Delete: ${name}`}

@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable max-len */
 import React from 'react';
 import { useLocation } from 'react-router';
 import { Box } from '@mui/material';
@@ -13,7 +12,7 @@ const AdministrationProblem = () => {
 
     return (
         <Box>
-            <ProblemForm problemId={Number(problemId)} isEditMode />
+            <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
         </Box>
     );
 };

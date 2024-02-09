@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import FiberNewIcon from '@mui/icons-material/FiberNew';
 
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../common/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
@@ -46,7 +47,7 @@ const PageHeader = () => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to="administration-new/contests"
+                          to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
                           text="Administration"
                           isToExternal
                         />

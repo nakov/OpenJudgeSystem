@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
-import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CATEGORY, CATEGORY_ID, CONTEST_PASSWORD, EDIT, END_TIME, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, START_TIME } from '../../../common/labels';
+import { CONTEST_DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 
 const contestFilterableColumns: GridColDef[] = [
     {
         field: 'id',
-        headerName: 'Id',
+        headerName: `${ID}`,
         flex: 0.5,
         type: 'number',
         headerAlign: 'center',
@@ -23,7 +24,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'name',
-        headerName: 'Name',
+        headerName: `${NAME}`,
         width: 200,
         flex: 2,
         headerAlign: 'center',
@@ -34,7 +35,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'category',
-        headerName: 'Category',
+        headerName: `${CATEGORY}`,
         align: 'center',
         type: 'string',
         filterable: false,
@@ -44,7 +45,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'categoryId',
-        headerName: 'Category Id',
+        headerName: `${CATEGORY_ID}`,
         flex: 0.5,
         align: 'center',
         type: 'number',
@@ -53,7 +54,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'contestPassword',
-        headerName: 'Contest Password',
+        headerName: `${CONTEST_PASSWORD}`,
         width: 100,
         flex: 1,
         align: 'center',
@@ -63,7 +64,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'startTime',
-        headerName: 'Start Time',
+        headerName: `${START_TIME}`,
         width: 105,
         flex: 1.5,
         align: 'center',
@@ -77,7 +78,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'endTime',
-        headerName: 'End Time',
+        headerName: `${END_TIME}`,
         width: 105,
         flex: 1.5,
         align: 'center',
@@ -91,7 +92,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'limitBetweenSubmissions',
-        headerName: 'Limit Between Submissions',
+        headerName: `${LIMIT_BETWEEN_SUBMISSIONS}`,
         flex: 0,
         type: 'number',
         align: 'center',
@@ -100,7 +101,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'allowParallelSubmissionsInTasks',
-        headerName: 'allowParallelSubmissionsInTasks',
+        headerName: `${ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}`,
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -108,7 +109,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'autoChangeTestsFeedbackVisibility',
-        headerName: 'autoChangeTestsFeedbackVisibility',
+        headerName: `${AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}`,
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -116,7 +117,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'isDeleted',
-        headerName: 'Is Deleted',
+        headerName: `${IS_DELETED}`,
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -124,7 +125,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'isVisible',
-        headerName: 'Is Visible',
+        headerName: `${IS_VISIBLE}`,
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -146,16 +147,12 @@ export const returnContestsNonFilterableColumns = (
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <IconButton onClick={() => onEditClick(params.row.id)}>
-                    <EditIcon color="warning" />
-                </IconButton>
-                <Link to={`/administration-new/contests/${Number(params.row.id)}`}>
-                    <ShortcutIcon color="primary" />
-                </Link>
+                <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
+                <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${Number(params.row.id)}`} location={EDIT} />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}
-                  text="Are you sure that you want to delete the contest."
+                  text={CONTEST_DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
                 />
             </div>

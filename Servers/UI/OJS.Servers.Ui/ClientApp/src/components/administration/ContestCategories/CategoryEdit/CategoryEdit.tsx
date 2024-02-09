@@ -11,6 +11,7 @@ import {
     IContestCategories,
     IContestCategoryAdministration,
 } from '../../../../common/types';
+import { CONTEST_CATEGORIES_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls';
 import {
     useCreateContestCategoryMutation,
     useDeleteContestCategoryMutation,
@@ -310,7 +311,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                         <DeleteButton
                           id={Number(contestCategoryId!)}
                           name={contestCategory.name}
-                          onSuccess={() => navigate('/administration-new/contestCategories')}
+                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`)}
                           mutation={useDeleteContestCategoryMutation}
                           text="Are you sure that you want to delete the contest category?"
                         />

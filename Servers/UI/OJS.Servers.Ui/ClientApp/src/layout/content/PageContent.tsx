@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 import AdministrationContestPage from '../../components/administration/Contests/AdministrationContestPage';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
@@ -121,52 +122,52 @@ const routes = [
 
 const adminRoutes = [
     {
-        path: '/administration-new',
+        path: `/${NEW_ADMINISTRATION_PATH}`,
         Element: AdministrationContestsPage,
         title: 'Administration',
     },
     {
-        path: '/administration-new/contests',
+        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`,
         Element: AdministrationContestsPage,
     },
     {
-        path: '/administration-new/contests/:id',
+        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/:id`,
         Element: AdministrationContestPage,
     },
     {
-        path: '/administration-new/contestCategories',
+        path: `/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`,
         Element: AdministrationContestCategories,
     },
     {
-        path: '/administration-new/submissions',
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_PATH}`,
         Element: AdministrationSubmissionsPage,
     },
     {
-        path: '/administration-new/submissions-for-processing',
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}`,
         Element: AdministrationSubmissionsForProcessingPage,
     },
     {
-        path: '/administration-new/submissions-for-processing/:id',
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
         Element: AdminSubmissionForProcessingDetails,
     },
     {
-        path: '/administration-new/tests',
+        path: `/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`,
         Element: Administration,
     },
     {
-        path: '/administration-new/problems',
+        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`,
         Element: AdministrationProblemsPage,
     },
     {
-        path: '/administration-new/problems/:id',
+        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/:id`,
         Element: AdministrationProblem,
     },
     {
-        path: '/administration-new/problemGroups',
+        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}`,
         Element: AdministrationProblemGroupsPage,
     },
     {
-        path: '/administration-new/submissionTypes',
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPES_PATH}`,
         Element: Administration,
     },
     {
