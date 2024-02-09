@@ -3,12 +3,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import {
-    IContestAdministration,
     IGetAllAdminParams,
     IPagedResultType,
     ISubmissionForProcessingAdminGridViewType,
 } from '../../../common/types';
-import { IContestDetailsUrlParams } from '../../../common/url-types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 // eslint-disable-next-line import/group-exports
 export const submissionsForProcessingAdminService = createApi({

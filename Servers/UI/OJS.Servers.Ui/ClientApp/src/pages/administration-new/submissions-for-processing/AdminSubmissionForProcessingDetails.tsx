@@ -4,11 +4,9 @@ import ReactJson from 'react-json-view';
 import { useLocation } from 'react-router-dom';
 import {
     Box, FormControl, FormLabel,
-    TextareaAutosize,
     TextField,
 } from '@mui/material';
 import isNil from 'lodash/isNil';
-import { parse } from 'node:url';
 
 import { ISubmissionForProcessingAdminGridViewType } from '../../../common/types';
 import { useGetByIdQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';

@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
