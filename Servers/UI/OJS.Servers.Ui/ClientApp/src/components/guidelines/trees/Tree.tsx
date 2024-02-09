@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeView from '@material-ui/lab/TreeView';
@@ -23,7 +24,6 @@ interface ITreeProps {
     itemFunc?: (item: ITreeItemType) => React.ReactElement;
     treeItemHasTooltip?: boolean;
     shouldReset?: boolean;
-
 }
 
 const Tree = ({

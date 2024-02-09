@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
@@ -6,11 +7,15 @@ import isNil from 'lodash/isNil';
 import ICategoryStrategiesTypes from '../../../common/category-strategies-types';
 import { FilterType, IFilter } from '../../../common/contest-types';
 import ITreeItemType from '../../../common/tree-types';
+import {
+    generateCategoryFilters,
+    generateStatusFilters,
+    generateStrategyFilters,
+} from '../../../hooks/contests/contest-filter-utils';
 import { useCategoriesBreadcrumbs } from '../../../hooks/use-contest-categories-breadcrumb';
-import { useContests } from '../../../hooks/use-contests';
 import useTheme from '../../../hooks/use-theme';
 import { setContestCategory, setContestFilteredStrategies } from '../../../redux/features/contestsSlice';
-import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { useGetContestCategoriesQuery, useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
 import { flattenWith } from '../../../utils/list-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
@@ -37,7 +42,6 @@ const defaultState = {
 const ContestCategories = ({ shouldReset }: IContestCategoriesProps) => {
     const dispatch = useDispatch();
     const { themeColors } = useTheme();
-    const { state: { possibleFilters } } = useContests();
     const { actions: { updateBreadcrumb, clearBreadcrumb } } = useCategoriesBreadcrumbs();
     const [ openedCategoryFilters, setOpenedCategoryFilters ] = useState(defaultState.state.openedCategoryFilters);
     const [ openedCategoryFilter, setOpenedCategoryFilter ] = useState(defaultState.state.openedCategoryFilter);
@@ -51,12 +55,21 @@ const ContestCategories = ({ shouldReset }: IContestCategoriesProps) => {
         error: categoriesError,
     } = useGetContestCategoriesQuery();
 
+    const { data: contestStrategies } = useGetContestStrategiesQuery();
+
     const flattenCategories = useMemo(() => {
         if (contestCategories) {
             return flattenWith(contestCategories, (c: ITreeItemType) => c.children || null);
         }
         return [];
     }, [ contestCategories ]);
+
+    const possibleFilters = useMemo(
+        () => generateStatusFilters()
+            .concat(generateCategoryFilters(contestCategories || []))
+            .concat(generateStrategyFilters(contestStrategies || [])) as IFilter[],
+        [ contestCategories, contestStrategies ],
+    );
 
     const onCategoryClick = useCallback((category: ITreeItemType | undefined) => {
         dispatch(setContestCategory(category));
@@ -127,18 +140,14 @@ const ContestCategories = ({ shouldReset }: IContestCategoriesProps) => {
         [ possibleFilters ],
     );
 
-    const getStrategyFiltersToAdd = useCallback(
-        ({ allowedStrategyTypes }: ICategoryStrategiesTypes) => allowedStrategyTypes
-            ?.map((value) => value.id.toString())
-            .map((x) => strategyFilterGroup.find((y) => y.value === x))
-            .filter((x) => !isNil(x)) as IFilter[],
-        [ strategyFilterGroup ],
-    );
+    const getStrategyFiltersToAdd = useCallback(({ allowedStrategyTypes }: ICategoryStrategiesTypes) => allowedStrategyTypes
+        ?.map((value) => value.id.toString())
+        .map((x) => strategyFilterGroup.find((y) => y.value === x))
+        .filter((x) => !isNil(x)) as IFilter[], [ strategyFilterGroup ]);
 
     const addNewStrategyFilters = useCallback(
         (id: string, node: ICategoryStrategiesTypes) => {
             const strategyFiltersToAdd = getStrategyFiltersToAdd(node);
-
             setOpenedCategoryFilters([
                 ...openedCategoryFilters,
                 { categoryId: id, strategies: strategyFiltersToAdd },

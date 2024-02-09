@@ -14,7 +14,6 @@ import SubmissionsProvider from './hooks/submissions/use-submissions';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
-import ContestsProvider from './hooks/use-contests';
 import CurrentContestsProvider from './hooks/use-current-contest';
 import HomeContestsProvider from './hooks/use-home-contests';
 import NotificationsProvider from './hooks/use-notifications';
@@ -46,7 +45,6 @@ const App = () => {
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
         CategoriesBreadcrumbProvider,
-        ContestsProvider,
         HomeContestsProvider,
         ParticipationsProvider,
         CurrentContestsProvider,
