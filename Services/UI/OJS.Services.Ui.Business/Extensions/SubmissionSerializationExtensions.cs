@@ -13,14 +13,17 @@ public static class SubmissionSerializationExtensions
         modelCopy.FileContent = null;
         modelCopy.Code = null;
 
-        modelCopy.TestsExecutionDetails!.Tests = modelCopy
-            .TestsExecutionDetails!
-            .Tests
-            .Mutate(t =>
-            {
-                t.Input = null;
-                t.Output = null;
-            });
+        if (modelCopy.TestsExecutionDetails != null)
+        {
+            modelCopy.TestsExecutionDetails.Tests = modelCopy
+                .TestsExecutionDetails
+                .Tests
+                .Mutate(t =>
+                {
+                    t.Input = null;
+                    t.Output = null;
+                });
+        }
 
         return modelCopy.ToJson();
     }
