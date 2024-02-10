@@ -3,7 +3,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
-using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
 using OJS.Services.Administration.Data;
@@ -29,7 +28,6 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
 
     [HttpGet]
-    [ProtectedEntityAction(false)]
     public IActionResult GetForContestDropdown()
         => this.Ok(
              this.contestCategoriesBusinessService

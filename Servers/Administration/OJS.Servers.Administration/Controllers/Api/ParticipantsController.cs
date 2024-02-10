@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
 using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Participants;
 using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
@@ -12,7 +13,6 @@ using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Validation;
-using static OJS.Services.Administration.Models.AdministrationConstants;
 
 public class ParticipantsController : BaseAdminApiController<Participant, int, ContestViewParticipantsModel, ParticipantAdministrationModel>
 {
@@ -31,7 +31,7 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
         => this.participantsGridDataService = participantsGridDataService;
 
     [HttpGet("{contestId:int}")]
-    [ProtectedEntityAction(AdministrationActions.RestrictedByContestId)]
+    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (contestId < 1)

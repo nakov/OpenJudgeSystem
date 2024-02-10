@@ -7,6 +7,7 @@ using OJS.Services.Common.Models.Users;
 using System.Threading.Tasks;
 using static OJS.Services.Administration.Models.AdministrationConstants.AdministrationActions;
 
+// Used with reflection
 public class ContestUpdateModelPermissionsService : IEntityPermissionsService<Contest, ContestAdministrationModel>
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;

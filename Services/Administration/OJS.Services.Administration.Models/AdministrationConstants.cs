@@ -13,8 +13,5 @@ public static class AdministrationConstants
         public const string Read = "Read";
         public const string Update = "Update";
         public const string Delete = "Delete";
-
-        // Custom
-        public const string RestrictedByContestId = "RestrictedByContestId";
     }
 }

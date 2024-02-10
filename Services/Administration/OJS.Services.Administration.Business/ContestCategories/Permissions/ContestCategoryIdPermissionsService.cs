@@ -5,11 +5,12 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Users;
 using System.Threading.Tasks;
 
-public class ContestCategoryPermissionsService : IEntityPermissionsService<ContestCategory, int>
+// Used with reflection
+public class ContestCategoryIdPermissionsService : IEntityPermissionsService<ContestCategory, int>
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;
 
-    public ContestCategoryPermissionsService(IContestCategoriesDataService contestCategoriesDataService)
+    public ContestCategoryIdPermissionsService(IContestCategoriesDataService contestCategoriesDataService)
         => this.contestCategoriesDataService = contestCategoriesDataService;
 
     public Task<bool> HasPermission(UserInfoModel user, int value, string action)

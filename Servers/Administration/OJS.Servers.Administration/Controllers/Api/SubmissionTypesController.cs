@@ -3,7 +3,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Submissions;
-using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
@@ -28,7 +27,6 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]
-    [ProtectedEntityAction(false)]
     public async Task<IActionResult> GetForProblem()
         => this.Ok(await this.submissionTypesBusinessService.GetForProblem());
 }

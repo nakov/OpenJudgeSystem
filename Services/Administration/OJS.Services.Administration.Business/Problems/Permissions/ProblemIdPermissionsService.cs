@@ -7,14 +7,14 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Users;
 using System.Linq;
 using System.Threading.Tasks;
-using static OJS.Services.Administration.Models.AdministrationConstants.AdministrationActions;
 
-public class ProblemPermissionsService : IEntityPermissionsService<Problem, int>
+// Used with reflection
+public class ProblemIdPermissionsService : IEntityPermissionsService<Problem, int>
 {
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsBusinessService contestsBusinessService;
 
-    public ProblemPermissionsService(
+    public ProblemIdPermissionsService(
         IProblemsDataService problemsDataService,
         IContestsBusinessService contestsBusinessService)
     {
@@ -24,18 +24,10 @@ public class ProblemPermissionsService : IEntityPermissionsService<Problem, int>
 
     public async Task<bool> HasPermission(UserInfoModel user, int value, string action)
     {
-        int contestId;
-        if (action == RestrictedByContestId)
-        {
-            contestId = value;
-        }
-        else
-        {
-            contestId = await this.problemsDataService
-                .GetByIdQuery(value)
-                .Select(p => p.ProblemGroup.ContestId)
-                .FirstOrDefaultAsync();
-        }
+        var contestId = await this.problemsDataService
+            .GetByIdQuery(value)
+            .Select(p => p.ProblemGroup.ContestId)
+            .FirstOrDefaultAsync();
 
         return await this.contestsBusinessService.UserHasContestPermissions(
             contestId,

@@ -3,7 +3,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Checkers;
-using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Checkers;
 using OJS.Services.Administration.Business.Checkers.Validators;
 using OJS.Services.Administration.Data;
@@ -28,7 +27,6 @@ public class CheckersController : BaseAdminApiController<Checker, int, Checker, 
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]
-    [ProtectedEntityAction(false)]
     public IActionResult GetForProblems()
         => this.Ok(this.checkersDataService.GetAll());
 }

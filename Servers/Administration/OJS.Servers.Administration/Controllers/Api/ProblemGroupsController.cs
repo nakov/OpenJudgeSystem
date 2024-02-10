@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
-using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
 using OJS.Services.Administration.Models.ProblemGroups;
@@ -29,7 +28,6 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
     }
 
     [HttpGet]
-    [ProtectedEntityAction(false)]
     public IActionResult GetForProblem() =>
         this.Ok(Enum.GetNames(typeof(ProblemGroupType)).ToList());
 }

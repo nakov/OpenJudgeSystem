@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Common.Exceptions;
 using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Contests.Permissions;
 using System.Collections.Generic;
-using static OJS.Services.Administration.Models.AdministrationConstants;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -49,7 +49,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpGet("{contestId:int}")]
-    [ProtectedEntityAction(AdministrationActions.RestrictedByContestId)]
+    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
         => this.Ok(
             await this.problemGridDataService.GetAll<ProblemInListModel>(
@@ -63,7 +63,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpPost]
-    [ProtectedEntityAction]
+    [ProtectedEntityAction(nameof(model))]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
     {
         if (model == null || !await this.problemsDataService.ExistsById(model.Id))
@@ -77,7 +77,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpDelete("{contestId:int}")]
-    [ProtectedEntityAction(AdministrationActions.RestrictedByContestId)]
+    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> DeleteAll([FromRoute] int contestId)
     {
         var contest = await this.contestsActivityService.GetContestActivity(contestId);
@@ -92,7 +92,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpGet("{id:int}")]
-    [ProtectedEntityAction]
+    [ProtectedEntityAction(nameof(id))]
     public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
     {
         if (id <= 0)
@@ -113,7 +113,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpPost]
-    [ProtectedEntityAction]
+    [ProtectedEntityAction(nameof(model))]
     public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)
     {
         var hasSourceContest = await this.contestsDataService.ExistsById(model.SourceContestId);

@@ -5,8 +5,8 @@ using SoftUni.Data.Infrastructure.Models;
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 
-public interface IEntityPermissionsService<in TEntity, in T> : IScopedService
+public interface IEntityPermissionsService<in TEntity, in TValue> : IScopedService
     where TEntity : IEntity
 {
-    public Task<bool> HasPermission(UserInfoModel user, T value, string action);
+    public Task<bool> HasPermission(UserInfoModel user, TValue value, string action);
 }

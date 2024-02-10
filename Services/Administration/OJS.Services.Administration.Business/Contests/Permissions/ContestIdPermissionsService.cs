@@ -4,11 +4,11 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using System.Threading.Tasks;
 
-public class ContestPermissionsService : IEntityPermissionsService<Contest, int>
+public class ContestIdPermissionsService : IEntityPermissionsService<Contest, int>
 {
     private readonly IContestsBusinessService contestsBusinessService;
 
-    public ContestPermissionsService(IContestsBusinessService contestsBusinessService)
+    public ContestIdPermissionsService(IContestsBusinessService contestsBusinessService)
         => this.contestsBusinessService = contestsBusinessService;
 
     public Task<bool> HasPermission(UserInfoModel user, int id, string action)
