@@ -8,7 +8,6 @@ using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Users;
 using OJS.Servers.Infrastructure.Extensions;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Common.Models.Configurations;
 using SoftUni.Data.Infrastructure.Enumerations;
@@ -54,6 +53,5 @@ internal static class ServiceCollectionExtensions
 
     private static IServiceCollection AddGridServices(this IServiceCollection services)
         => services
-            .AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>))
-            .AddTransient(typeof(IPermissionsService<,>), typeof(PermissionsService<,>));
+            .AddTransient(typeof(IGridDataService<>), typeof(GridDataService<>));
 }

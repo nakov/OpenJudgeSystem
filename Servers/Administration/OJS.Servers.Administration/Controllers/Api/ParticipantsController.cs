@@ -3,7 +3,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
-using OJS.Services.Administration.Business;
+using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Participants;
 using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
@@ -12,6 +12,7 @@ using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Validation;
+using static OJS.Services.Administration.Models.AdministrationConstants;
 
 public class ParticipantsController : BaseAdminApiController<Participant, int, ContestViewParticipantsModel, ParticipantAdministrationModel>
 {
@@ -21,17 +22,16 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
         IGridDataService<Participant> participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
         ParticipantsAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IPermissionsService<ParticipantAdministrationModel, int> permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
         : base(
             participantsGridDataService,
             participantsBusinessService,
             validator,
-            deleteValidator,
-            permissionsService)
+            deleteValidator)
         => this.participantsGridDataService = participantsGridDataService;
 
     [HttpGet("{contestId:int}")]
+    [ProtectedEntityAction(AdministrationActions.RestrictedByContestId)]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (contestId < 1)

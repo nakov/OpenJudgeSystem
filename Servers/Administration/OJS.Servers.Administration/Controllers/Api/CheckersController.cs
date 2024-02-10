@@ -3,7 +3,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Checkers;
-using OJS.Services.Administration.Business;
+using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Checkers;
 using OJS.Services.Administration.Business.Checkers.Validators;
 using OJS.Services.Administration.Data;
@@ -19,17 +19,16 @@ public class CheckersController : BaseAdminApiController<Checker, int, Checker, 
         IGridDataService<Checker> checkerGridDataService,
         ICheckersBusinessService checkersBusinessService,
         CheckerAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IPermissionsService<CheckerAdministrationModel, int> permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
     : base(
         checkerGridDataService,
         checkersBusinessService,
         validator,
-        deleteValidator,
-        permissionsService)
+        deleteValidator)
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]
+    [ProtectedEntityAction(false)]
     public IActionResult GetForProblems()
         => this.Ok(this.checkersDataService.GetAll());
 }

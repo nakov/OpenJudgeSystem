@@ -3,7 +3,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Administration.Business;
+using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
@@ -19,17 +19,16 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
         SubmissionTypesAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IPermissionsService<SubmissionTypesAdministrationModel, int> permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
             : base(
                 submissionTypesGridDataService,
                 submissionTypesBusinessService,
                 validator,
-                deleteValidator,
-                permissionsService) =>
+                deleteValidator) =>
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]
+    [ProtectedEntityAction(false)]
     public async Task<IActionResult> GetForProblem()
         => this.Ok(await this.submissionTypesBusinessService.GetForProblem());
 }

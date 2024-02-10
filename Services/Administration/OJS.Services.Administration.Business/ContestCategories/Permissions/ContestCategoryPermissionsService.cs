@@ -1,24 +1,18 @@
 namespace OJS.Services.Administration.Business.ContestCategories.Permissions;
 
+using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.ContestCategories;
-using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 using System.Threading.Tasks;
 
-public class ContestCategoryPermissionsService
-    : PermissionsService<ContestCategoryAdministrationModel, int>, IContestCategoryPermissionsService
+public class ContestCategoryPermissionsService : IEntityPermissionsService<ContestCategory, int>
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;
 
     public ContestCategoryPermissionsService(IContestCategoriesDataService contestCategoriesDataService)
         => this.contestCategoriesDataService = contestCategoriesDataService;
 
-    protected override async Task<UserPermissionsModel> GetPermissionsForExistingEntity(UserInfoModel user, int id)
-    {
-        var userHasCategoryPermissions = await this.contestCategoriesDataService
-            .UserHasContestCategoryPermissions(id, user.Id, user.IsAdmin);
-
-        return this.AllowFullAccessWhen(userHasCategoryPermissions, user, id);
-    }
+    public Task<bool> HasPermission(UserInfoModel user, int value, string action)
+        => this.contestCategoriesDataService
+            .UserHasContestCategoryPermissions(value, user.Id, user.IsAdmin);
 }

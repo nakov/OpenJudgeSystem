@@ -3,8 +3,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
+using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.ContestCategories;
-using OJS.Services.Administration.Business.ContestCategories.Permissions;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
@@ -20,17 +20,16 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
         IGridDataService<ContestCategory> contestCategoryGridDataService,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IContestCategoryPermissionsService permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
     : base(
         contestCategoryGridDataService,
         contestCategoriesBusinessService,
         validator,
-        deleteValidator,
-        permissionsService)
+        deleteValidator)
         => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
 
     [HttpGet]
+    [ProtectedEntityAction(false)]
     public IActionResult GetForContestDropdown()
         => this.Ok(
              this.contestCategoriesBusinessService
