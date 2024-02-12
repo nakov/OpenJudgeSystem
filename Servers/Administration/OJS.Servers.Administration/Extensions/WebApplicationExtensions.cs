@@ -16,6 +16,7 @@ internal static class WebApplicationExtensions
             .UseDefaults()
             .UseStaticFiles();
 
+        app.UseMiddleware<AdministrationExceptionMiddleware>();
         app.MigrateDatabase<OjsDbContext>();
 
         app.UseHealthMonitoring();

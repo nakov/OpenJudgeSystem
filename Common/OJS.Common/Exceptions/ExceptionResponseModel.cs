@@ -1,5 +1,7 @@
 ﻿namespace OJS.Common.Exceptions;
 
+using System.Text.Json.Serialization;
+
 public class ExceptionResponseModel
 {
     public ExceptionResponseModel()
@@ -12,7 +14,9 @@ public class ExceptionResponseModel
         this.Message = message;
     }
 
+    [JsonPropertyName("name")]
     public string? Name { get; set; } = null;
 
+    [JsonPropertyName("message")]
     public string? Message { get; set; } = null;
 }
