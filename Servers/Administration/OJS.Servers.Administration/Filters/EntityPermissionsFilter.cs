@@ -14,12 +14,26 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using static OJS.Services.Administration.Models.AdministrationConstants.AdministrationActions;
+using static OJS.Services.Administration.Models.AdministrationConstants.AdministrationOperations;
 
 /// <summary>
+/// <para>
 /// Filter that validates permissions of current user on an entity level.
-/// Every Action, part of the base administration api controller, accepting a parameter, is validated automatically.
 /// If the user does not have permissions for the action, Unauthorized result with a message is returned immediately.
+/// </para>
+/// <para>
+/// The filter operates with conjunction with the <see cref="ProtectedEntityActionAttribute"/>.
+/// It is used to mark the protected Actions.
+/// </para>
+/// <para>
+/// If the Action is not marked as protected, no validation is performed.
+/// </para>
+/// <para>
+/// If the Action is marked as protected, the filter will validate the permissions of the user
+/// against the provided entity instance, using a specific permissions service.
+/// The permissions service is provided as a type in the attribute, or dynamically constructed from
+/// the controller's TEntity type and the action's argument for validation type.
+/// </para>
 /// </summary>
 public class EntityPermissionsFilter : IAsyncActionFilter
 {
@@ -39,7 +53,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
             {
                 context.Result = new UnauthorizedObjectResult(
                     message ??
-                    $"You are not authorized to perform \"{permissionsModel.Action}\" action on this entity instance.");
+                    $"You are not authorized to perform \"{permissionsModel.Operation}\" operation on this entity instance.");
                 return;
             }
         }
@@ -136,7 +150,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
         permissionsModel = new PermissionsModel
         {
             Value = argument.Value,
-            Action = protectionAttribute.Action,
+            Operation = protectionAttribute.Operation,
             PermissionsServiceType = permissionsServiceType,
         };
 
@@ -159,7 +173,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
         UserInfoModel user,
         PermissionsModel permissionsModel)
     {
-        if (permissionsModel.Action == Unrestricted)
+        if (permissionsModel.Operation == Unrestricted)
         {
             return (true, null);
         }
@@ -169,7 +183,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
         {
             // Forbid any action, when no service is implemented for the given input.
             return (false,
-                $"Action \"{permissionsModel.Action}\" is forbidden for user." +
+                $"Action \"{permissionsModel.Operation}\" is forbidden for user." +
                 $"Could not resolve service of type {permissionsModel.PermissionsServiceType.FullName}");
         }
 
@@ -182,7 +196,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
                 $"Method {methodName} could not be found on the provided entity permissions service.");
         }
 
-        var task = method.Invoke(permissionsServiceInstance, [user, permissionsModel.Value, permissionsModel.Action]);
+        var task = method.Invoke(permissionsServiceInstance, [user, permissionsModel.Value, permissionsModel.Operation]);
         if (task is not Task<bool> resultTask)
         {
             throw new InvalidOperationException(
@@ -196,7 +210,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
     private class PermissionsModel
     {
         public object Value { get; set; } = default!;
-        public string Action { get; set; } = default!;
+        public string Operation { get; set; } = default!;
         public Type PermissionsServiceType { get; set; } = default!;
     }
 }

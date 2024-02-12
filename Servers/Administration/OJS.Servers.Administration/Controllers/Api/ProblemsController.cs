@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Problems;
-using OJS.Servers.Administration.Models.Problems;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
@@ -21,7 +20,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsActivityService contestsActivityService;
-    private readonly IContestsDataService contestsDataService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
     private readonly IGridDataService<Problem> problemGridDataService;
 
@@ -29,7 +27,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemsBusinessService problemsBusinessService,
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
-        IContestsDataService contestsDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IGridDataService<Problem> problemGridDataService,
         ProblemAdministrationValidator validator,
@@ -43,7 +40,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         this.problemsBusinessService = problemsBusinessService;
         this.problemsDataService = problemsDataService;
         this.contestsActivityService = contestsActivityService;
-        this.contestsDataService = contestsDataService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
         this.problemGridDataService = problemGridDataService;
     }
@@ -116,14 +112,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     [ProtectedEntityAction(nameof(model))]
     public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)
     {
-        var hasSourceContest = await this.contestsDataService.ExistsById(model.SourceContestId);
-        var hasDestinationContest = await this.contestsDataService.ExistsById(model.DestinationContestId);
-
-        if (!hasSourceContest || !hasDestinationContest)
-        {
-            return this.NotFound($"Contest with id {model.SourceContestId} not found");
-        }
-
         var result = await this.problemGroupsBusinessService
             .CopyAllToContestBySourceAndDestinationContest(model.SourceContestId, model.DestinationContestId);
 

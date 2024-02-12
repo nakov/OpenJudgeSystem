@@ -5,7 +5,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models.Users;
 using System.Threading.Tasks;
 
-// Used with reflection
+/// <inheritdoc />
 public class ContestCategoryIdPermissionsService : IEntityPermissionsService<ContestCategory, int>
 {
     private readonly IContestCategoriesDataService contestCategoriesDataService;
@@ -13,7 +13,7 @@ public class ContestCategoryIdPermissionsService : IEntityPermissionsService<Con
     public ContestCategoryIdPermissionsService(IContestCategoriesDataService contestCategoriesDataService)
         => this.contestCategoriesDataService = contestCategoriesDataService;
 
-    public Task<bool> HasPermission(UserInfoModel user, int value, string action)
+    public Task<bool> HasPermission(UserInfoModel user, int id, string action)
         => this.contestCategoriesDataService
-            .UserHasContestCategoryPermissions(value, user.Id, user.IsAdmin);
+            .UserHasContestCategoryPermissions(id, user.Id, user.IsAdmin);
 }

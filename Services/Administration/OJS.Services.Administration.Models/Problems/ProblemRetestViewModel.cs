@@ -1,4 +1,4 @@
-namespace OJS.Servers.Administration.Models.Problems;
+namespace OJS.Services.Administration.Models.Problems;
 
 using OJS.Services.Administration.Models.Contests.Problems;
 using SoftUni.AutoMapper.Infrastructure.Models;

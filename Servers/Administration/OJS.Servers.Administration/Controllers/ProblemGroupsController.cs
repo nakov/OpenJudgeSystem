@@ -10,7 +10,6 @@ using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
-using OJS.Servers.Administration.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Validation.Factories;

@@ -2,7 +2,7 @@ namespace OJS.Services.Administration.Models;
 
 public static class AdministrationConstants
 {
-    public static class AdministrationActions
+    public static class AdministrationOperations
     {
         // General
         public const string Unrestricted = "Unrestricted";

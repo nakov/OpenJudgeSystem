@@ -5,7 +5,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using System.Threading.Tasks;
-using static OJS.Services.Administration.Models.AdministrationConstants.AdministrationActions;
+using static OJS.Services.Administration.Models.AdministrationConstants.AdministrationOperations;
 
 // Used with reflection
 public class ContestUpdateModelPermissionsService : IEntityPermissionsService<Contest, ContestAdministrationModel>

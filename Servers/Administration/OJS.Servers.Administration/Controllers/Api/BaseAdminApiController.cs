@@ -56,7 +56,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpGet("{id}")]
-    [ProtectedEntityAction(nameof(id), AdministrationActions.Read)]
+    [ProtectedEntityAction(nameof(id), AdministrationOperations.Read)]
     public virtual async Task<IActionResult> Get(TId id)
     {
         var result = await this.operationService.Get(id);
@@ -64,7 +64,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpPost]
-    [ProtectedEntityAction(nameof(model), AdministrationActions.Create)]
+    [ProtectedEntityAction(nameof(model), AdministrationOperations.Create)]
     public virtual async Task<IActionResult> Create(TUpdateModel model)
     {
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
@@ -79,7 +79,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpPatch]
-    [ProtectedEntityAction(nameof(model), AdministrationActions.Update)]
+    [ProtectedEntityAction(nameof(model), AdministrationOperations.Update)]
     public virtual async Task<IActionResult> Edit(TUpdateModel model)
     {
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
@@ -94,7 +94,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpDelete("{id}")]
-    [ProtectedEntityAction(nameof(id), AdministrationActions.Delete)]
+    [ProtectedEntityAction(nameof(id), AdministrationOperations.Delete)]
     public virtual async Task<IActionResult> Delete(TId id)
     {
         var validationResult =

@@ -8,7 +8,7 @@ using OJS.Services.Common.Models.Users;
 using System.Linq;
 using System.Threading.Tasks;
 
-// Used with reflection
+/// <inheritdoc />
 public class ProblemIdPermissionsService : IEntityPermissionsService<Problem, int>
 {
     private readonly IProblemsDataService problemsDataService;
