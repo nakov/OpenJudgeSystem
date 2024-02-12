@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Slide, Tab, Tabs } from '@mui/material';
 
-import ContestEdit from './ContestEdit/ContestEdit';
-import ParticipantsInContestView from './participantsInContestView/ParticipantsInContestView';
-import ProblemsInContestView from './problemsInContestView/ProblemsInContestView';
+import ContestEdit from './contest-edit/ContestEdit';
+import ParticipantsInContestView from './participants-in-contest-view/ParticipantsInContestView';
+import ProblemsInContestView from './problems-in-contest-view/ProblemsInContestView';
 
 import styles from './AdministrationContestPage.module.scss';
 
