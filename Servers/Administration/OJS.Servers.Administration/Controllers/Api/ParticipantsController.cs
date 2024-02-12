@@ -3,7 +3,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
-using OJS.Services.Administration.Business;
+using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Participants;
 using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
@@ -21,17 +22,16 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
         IGridDataService<Participant> participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
         ParticipantsAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IPermissionsService<ParticipantAdministrationModel, int> permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
         : base(
             participantsGridDataService,
             participantsBusinessService,
             validator,
-            deleteValidator,
-            permissionsService)
+            deleteValidator)
         => this.participantsGridDataService = participantsGridDataService;
 
     [HttpGet("{contestId:int}")]
+    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (contestId < 1)

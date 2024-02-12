@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.Contests;
-using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
@@ -25,14 +24,12 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         ContestAdministrationModelValidator validator,
         IGridDataService<Contest> contestGridDataService,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IContestPermissionsService contestPermissions,
         IContestsDataService contestsData)
     : base(
         contestGridDataService,
         contestsBusinessService,
         validator,
-        deleteValidator,
-        contestPermissions)
+        deleteValidator)
         => this.contestsData = contestsData;
 
     [HttpGet]

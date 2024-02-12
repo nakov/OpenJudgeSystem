@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Problems;
-using OJS.Servers.Administration.Models.Problems;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
@@ -11,11 +10,9 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Business.Problems.Validators;
-using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Common.Exceptions;
+using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
-using OJS.Services.Common.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
@@ -23,55 +20,37 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsActivityService contestsActivityService;
-    private readonly IContestsDataService contestsDataService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
     private readonly IGridDataService<Problem> problemGridDataService;
-    private readonly IProblemsPermissionsService permissionsService;
-    private readonly IContestPermissionsService contestPermissionsService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
-        IContestsDataService contestsDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IGridDataService<Problem> problemGridDataService,
         ProblemAdministrationValidator validator,
-        ProblemsDeleteValidator deleteValidator,
-        IProblemsPermissionsService permissionsService,
-        IContestPermissionsService contestPermissionsService)
+        ProblemsDeleteValidator deleteValidator)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
                 validator,
-                deleteValidator,
-                permissionsService)
+                deleteValidator)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.problemsDataService = problemsDataService;
         this.contestsActivityService = contestsActivityService;
-        this.contestsDataService = contestsDataService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
         this.problemGridDataService = problemGridDataService;
-        this.permissionsService = permissionsService;
-        this.contestPermissionsService = contestPermissionsService;
     }
 
     [HttpGet("{contestId:int}")]
+    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
-    {
-        var contestPermissions = await this.contestPermissionsService.GetPermissions(this.User.Map<UserInfoModel>(), contestId);
-
-        if (!contestPermissions.CanRead)
-        {
-            return this.Unauthorized();
-        }
-
-        return this.Ok(
+        => this.Ok(
             await this.problemGridDataService.GetAll<ProblemInListModel>(
                 model,
                 problem => problem.ProblemGroup.ContestId == contestId));
-    }
 
     public override async Task<IActionResult> Create([FromForm] ProblemAdministrationModel model)
     {
@@ -80,18 +59,12 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpPost]
+    [ProtectedEntityAction(nameof(model))]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
     {
         if (model == null || !await this.problemsDataService.ExistsById(model.Id))
         {
             return this.UnprocessableEntity();
-        }
-
-        var permissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), model.Id);
-
-        if (!permissions.HasFullAccess)
-        {
-            return this.Unauthorized();
         }
 
         await this.problemsBusinessService.RetestById(model.Id);
@@ -100,15 +73,9 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpDelete("{contestId:int}")]
+    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> DeleteAll([FromRoute] int contestId)
     {
-        var contestPermissions = await this.contestPermissionsService.GetPermissions(this.User.Map<UserInfoModel>(), contestId);
-
-        if (!contestPermissions.CanDelete)
-        {
-            return this.Unauthorized();
-        }
-
         var contest = await this.contestsActivityService.GetContestActivity(contestId);
         if (await this.contestsActivityService.IsContestActive(contest.Id))
         {
@@ -121,14 +88,9 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpGet("{id:int}")]
+    [ProtectedEntityAction(nameof(id))]
     public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
     {
-        var permissions = await this.permissionsService.GetPermissions(this.User.Map<UserInfoModel>(), id);
-        if (!permissions.CanRead)
-        {
-            return this.Unauthorized();
-        }
-
         if (id <= 0)
         {
             return this.UnprocessableEntity(new ExceptionResponse
@@ -147,25 +109,9 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpPost]
+    [ProtectedEntityAction(nameof(model))]
     public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)
     {
-        var hasSourceContest = await this.contestsDataService.ExistsById(model.SourceContestId);
-        var hasDestinationContest = await this.contestsDataService.ExistsById(model.DestinationContestId);
-
-        if (!hasSourceContest || !hasDestinationContest)
-        {
-            return this.NotFound($"Contest with id {model.SourceContestId} not found");
-        }
-
-        var user = this.User.Map<UserInfoModel>();
-        var hasSourceContestPermissions = await this.contestPermissionsService.GetPermissions(user, model.SourceContestId);
-        var hasDestinationContestPermissions = await this.contestPermissionsService.GetPermissions(user, model.DestinationContestId);
-
-        if (!hasSourceContestPermissions.CanEdit || !hasDestinationContestPermissions.CanEdit)
-        {
-            return this.Unauthorized();
-        }
-
         var result = await this.problemGroupsBusinessService
             .CopyAllToContestBySourceAndDestinationContest(model.SourceContestId, model.DestinationContestId);
 

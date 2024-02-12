@@ -56,95 +56,21 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<Contest, ContestAdministrationModel>()
-            .ForMember(crm => crm.Id, opt
-                => opt.MapFrom(c => c.Id))
-            .ForMember(crm => crm.Name, opt
-                => opt.MapFrom(c => c.Name))
-            .ForMember(crm => crm.Type, opt
-                => opt.MapFrom(c => c.Type))
-            .ForMember(crm => crm.CategoryId, opt
-                => opt.MapFrom(c => c.CategoryId))
             .ForMember(crm => crm.CategoryName, opt
                 => opt.MapFrom(c => c.Category!.Name))
-            .ForMember(crm => crm.Description, opt
-                => opt.MapFrom(c => c.Description))
-            .ForMember(crm => crm.StartTime, opt
-                => opt.MapFrom(c => c.StartTime))
-            .ForMember(crm => crm.EndTime, opt
-                => opt.MapFrom(c => c.EndTime))
-            .ForMember(crm => crm.PracticeStartTime, opt
-                => opt.MapFrom(c => c.PracticeStartTime))
-            .ForMember(crm => crm.PracticeEndTime, opt
-                => opt.MapFrom(c => c.PracticeEndTime))
-            .ForMember(crm => crm.LimitBetweenSubmissions, opt
-                => opt.MapFrom(c => c.LimitBetweenSubmissions))
-            .ForMember(crm => crm.IsVisible, opt
-                => opt.MapFrom(c => c.IsVisible))
-            .ForMember(crm => crm.NewIpPassword, opt
-                => opt.MapFrom(c => c.NewIpPassword))
-            .ForMember(crm => crm.AllowParallelSubmissionsInTasks, opt
-                => opt.MapFrom(c => c.AllowParallelSubmissionsInTasks))
-            .ForMember(crm => crm.AutoChangeTestsFeedbackVisibility, opt
-                => opt.MapFrom(c => c.AutoChangeTestsFeedbackVisibility))
-            .ForMember(crm => crm.OrderBy, opt
-                => opt.MapFrom(c => c.OrderBy))
-            .ForMember(crm => crm.ContestPassword, opt
-                => opt.MapFrom(c => c.ContestPassword))
-            .ForMember(crm => crm.PracticePassword, opt
-                => opt.MapFrom(c => c.PracticePassword))
-            .ForMember(crm => crm.Duration, opt
-                => opt.MapFrom(c => c.Duration))
-            .ForMember(crm => crm.NumberOfProblemGroups, opt
-                => opt.MapFrom(c => c.NumberOfProblemGroups))
             .ForMember(crm => crm.AllowedIps, opt
                 => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
 
         configuration.CreateMap<ContestAdministrationModel, Contest>()
-            .ForMember(crm => crm.Name, opt
-                => opt.MapFrom(c => c.Name))
-            .ForMember(crm => crm.Type, opt
-                => opt.MapFrom(c => c.Type))
-            .ForMember(crm => crm.CategoryId, opt
-                => opt.MapFrom(c => c.CategoryId))
-            .ForMember(crm => crm.Description, opt
-                => opt.MapFrom(c => c.Description))
-            .ForMember(crm => crm.StartTime, opt
-                => opt.MapFrom(c => c.StartTime))
-            .ForMember(crm => crm.EndTime, opt
-                => opt.MapFrom(c => c.EndTime))
-            .ForMember(crm => crm.PracticeStartTime, opt
-                => opt.MapFrom(c => c.PracticeStartTime))
-            .ForMember(crm => crm.PracticeEndTime, opt
-                => opt.MapFrom(c => c.PracticeEndTime))
-            .ForMember(crm => crm.LimitBetweenSubmissions, opt
-                => opt.MapFrom(c => c.LimitBetweenSubmissions))
-            .ForMember(crm => crm.IsVisible, opt
-                => opt.MapFrom(c => c.IsVisible))
-            .ForMember(crm => crm.NewIpPassword, opt
-                => opt.MapFrom(c => c.NewIpPassword))
-            .ForMember(crm => crm.AllowParallelSubmissionsInTasks, opt
-                => opt.MapFrom(c => c.AllowParallelSubmissionsInTasks))
-            .ForMember(crm => crm.AutoChangeTestsFeedbackVisibility, opt
-                => opt.MapFrom(c => c.AutoChangeTestsFeedbackVisibility))
-            .ForMember(crm => crm.OrderBy, opt
-                => opt.MapFrom(c => c.OrderBy))
-            .ForMember(crm => crm.ContestPassword, opt
-                => opt.MapFrom(c => c.ContestPassword))
-            .ForMember(crm => crm.PracticePassword, opt
-                => opt.MapFrom(c => c.PracticePassword))
             //TODO Fix
             .ForMember(crm => crm.IpsInContests, opt
                 => opt.Ignore())
             .ForMember(crm => crm.Category, opt
                 => opt.Ignore())
-            .ForMember(crm => crm.NumberOfProblemGroups, opt
-                => opt.MapFrom(c => c.NumberOfProblemGroups))
             .ForMember(crm => crm.LecturersInContests, opt
                 => opt.Ignore())
             .ForMember(crm => crm.Questions, opt
                 => opt.Ignore())
-            .ForMember(crm => crm.Duration, opt
-                => opt.MapFrom(m => m.Duration))
             .ForMember(crm => crm.ProblemGroups, opt
                 => opt.Ignore())
             .ForMember(crm => crm.Participants, opt

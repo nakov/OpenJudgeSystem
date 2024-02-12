@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.Validators;
 using OJS.Services.Administration.Models.ProblemGroups;
@@ -19,14 +18,12 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
         IGridDataService<ProblemGroup> problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
         ProblemGroupAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
-        IPermissionsService<ProblemGroupsAdministrationModel, int> permissionsService)
+        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,
             validator,
-            deleteValidator,
-            permissionsService)
+            deleteValidator)
     {
     }
 

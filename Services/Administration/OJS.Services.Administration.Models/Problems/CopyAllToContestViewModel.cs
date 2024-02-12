@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Administration.Models.Problems;
+﻿namespace OJS.Services.Administration.Models.Problems;
 
 public class CopyAllToContestViewModel
 {

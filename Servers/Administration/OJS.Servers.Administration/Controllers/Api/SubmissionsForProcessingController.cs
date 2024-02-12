@@ -2,7 +2,6 @@
 
 using FluentValidation;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.SubmissionsForProcessing;
 using OJS.Services.Administration.Business.SubmissionsForProcessing.Validation;
 using OJS.Services.Administration.Data;
@@ -19,14 +18,12 @@ public class SubmissionsForProcessingController : BaseAdminApiController<
         IGridDataService<SubmissionForProcessing> submissionsGridDataService,
         ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService,
         SubmissionsForProcessingAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> submissionsForProcessingDeleteValidator,
-        IPermissionsService<SubmissionsForProcessingAdministrationServiceModel, int> submissionsPermissionsService)
+        IValidator<BaseDeleteValidationModel<int>> submissionsForProcessingDeleteValidator)
         : base(
             submissionsGridDataService,
             submissionsForProcessingBusinessService,
             validator,
-            submissionsForProcessingDeleteValidator,
-            submissionsPermissionsService)
+            submissionsForProcessingDeleteValidator)
     {
     }
 }
