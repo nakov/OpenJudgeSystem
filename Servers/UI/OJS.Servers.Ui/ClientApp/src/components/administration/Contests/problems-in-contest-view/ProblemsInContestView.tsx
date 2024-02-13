@@ -1,9 +1,7 @@
-/* eslint-disable max-len */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -23,6 +21,7 @@ import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import CreateButton from '../../common/create/CreateButton';
 import ProblemForm from '../../Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
@@ -185,7 +184,11 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     const renderCopyAllModal = (index: number) => (
-        <Modal key={index} open={showCopyAllModal && problemsData!.totalItemsCount > 0} onClose={() => setShowCopyAllModal(!showCopyAllModal)}>
+        <Modal
+          key={index}
+          open={showCopyAllModal && problemsData!.totalItemsCount > 0}
+          onClose={() => setShowCopyAllModal(!showCopyAllModal)}
+        >
             <Box sx={modalStyles}>
                 {isCoppyingAll
                     ? <SpinningLoader />
@@ -265,13 +268,11 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 
     const renderGridSettings = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title="Create new Problem">
-                <IconButton
-                  onClick={() => setOpenShowCreateProblemModal(!openShowCreateProblemModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
+            <CreateButton
+              showModal={openShowCreateProblemModal}
+              showModalFunc={setOpenShowCreateProblemModal}
+              styles={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }}
+            />
             <Tooltip title="Copy All">
                 <IconButton onClick={() => {
                     setShowCopyAllModal(!showCopyAllModal);

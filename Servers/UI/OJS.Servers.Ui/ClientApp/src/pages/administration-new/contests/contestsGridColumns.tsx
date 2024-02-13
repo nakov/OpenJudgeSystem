@@ -3,7 +3,7 @@ import React from 'react';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CATEGORY, CATEGORY_ID, CONTEST_PASSWORD, EDIT, END_TIME, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, START_TIME } from '../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CATEGORY, CATEGORY_ID, COMPETE_PASSWORD, EDIT, COMPETE_END_TIME, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, COMPETE_START_TIME } from '../../../common/labels';
 import { CONTEST_DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
@@ -54,7 +54,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'contestPassword',
-        headerName: `${CONTEST_PASSWORD}`,
+        headerName: `${COMPETE_PASSWORD}`,
         width: 100,
         flex: 1,
         align: 'center',
@@ -64,7 +64,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'startTime',
-        headerName: `${START_TIME}`,
+        headerName: `${COMPETE_START_TIME}`,
         width: 105,
         flex: 1.5,
         align: 'center',
@@ -78,7 +78,7 @@ const contestFilterableColumns: GridColDef[] = [
     },
     {
         field: 'endTime',
-        headerName: `${END_TIME}`,
+        headerName: `${COMPETE_END_TIME}`,
         width: 105,
         flex: 1.5,
         align: 'center',

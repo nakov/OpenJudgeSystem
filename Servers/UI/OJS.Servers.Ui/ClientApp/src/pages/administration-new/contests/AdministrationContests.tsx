@@ -8,7 +8,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import { IconButton, Modal, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 
-import { CREATE_NEW_CONTEST } from '../../../common/labels';
+import { CREATE_NEW_ENTITY } from '../../../common/labels';
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
@@ -73,7 +73,7 @@ const AdministrationContestsPage = () => {
 
     const renderGridActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title={CREATE_NEW_CONTEST}>
+            <Tooltip title={CREATE_NEW_ENTITY}>
                 <IconButton
                   onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
                 >

@@ -4,14 +4,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CONTEST_ID, CONTEST_PASSWORD, DESCRIPTION, DURATION, END_TIME, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, START_TIME, TYPE } from '../../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DELETE_CONFIRMATION_MESSAGE, CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION } from '../../../../common/messages';
 import { IContestAdministration, IContestCategories } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls';
@@ -23,6 +23,7 @@ import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../..
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
+import FormActionButton from '../../form-action-button/FormActionButton';
 
 import styles from './ContestEdit.module.scss';
 
@@ -336,28 +337,22 @@ const ContestEdit = (props:IContestEditProps) => {
     const renderFormSubmitButtons = () => (
         isEditMode
             ? (
-                <Box className={styles.buttonsWrapper}>
-                    <Button
-                      variant="contained"
-                      onClick={() => edit()}
-                      className={styles.button}
-                      disabled={!isValidForm}
-                    >
-                        Edit
-                    </Button>
-                </Box>
+                <FormActionButton
+                  className={styles.buttonsWrapper}
+                  disabled={!isValidForm}
+                  buttonClassName={styles.button}
+                  onClick={edit}
+                  name={EDIT}
+                />
             )
             : (
-                <Box className={styles.buttonsWrapper}>
-                    <Button
-                      variant="contained"
-                      onClick={() => create()}
-                      className={styles.button}
-                      disabled={!isValidForm}
-                    >
-                        Create
-                    </Button>
-                </Box>
+                <FormActionButton
+                  className={styles.buttonsWrapper}
+                  disabled={!isValidForm}
+                  buttonClassName={styles.button}
+                  onClick={create}
+                  name={CREATE}
+                />
             )
     );
 
@@ -396,7 +391,7 @@ const ContestEdit = (props:IContestEditProps) => {
                     <Box>
                         <TextField
                           className={styles.inputRow}
-                          label={CONTEST_ID}
+                          label={ID}
                           variant="standard"
                           value={contest.id}
                           disabled
@@ -465,7 +460,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         <TextField
                           className={styles.inputRow}
                           type="text"
-                          label={CONTEST_PASSWORD}
+                          label={COMPETE_PASSWORD}
                           variant="standard"
                           value={contest.contestPassword || ''}
                           name="contestPassword"
@@ -586,7 +581,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         <DateTimePicker
                           sx={{ width: '48%' }}
                           name="startTime"
-                          label={START_TIME}
+                          label={COMPETE_START_TIME}
                           value={contest.startTime
                               ? getDateWithFormat(contest.startTime)
                               : null}
@@ -595,7 +590,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         <DateTimePicker
                           sx={{ width: '48%' }}
                           name="endTime"
-                          label={END_TIME}
+                          label={COMPETE_END_TIME}
                           value={contest.endTime
                               ? getDateWithFormat(contest.endTime)
                               : null}
