@@ -212,7 +212,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
                 $"Method {methodName} could not be found on the provided entity permissions service.");
         }
 
-        var task = method.Invoke(permissionsServiceInstance, [user, permissionsModel.Value, permissionsModel.Operation]);
+        var task = method.Invoke(permissionsServiceInstance, new[] { user, permissionsModel.Value, permissionsModel.Operation });
         if (task is not Task<bool> resultTask)
         {
             throw new InvalidOperationException(
