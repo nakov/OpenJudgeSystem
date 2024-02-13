@@ -61,6 +61,22 @@ public class EntityPermissionsFilter : IAsyncActionFilter
         await next();
     }
 
+    /// <summary>
+    /// Method to determine if the permissions should be validated for the current action.
+    /// Permissions are validated only for actions that are marked with the <see cref="ProtectedEntityActionAttribute"/>.
+    /// </summary>
+    /// <param name="context">Action context.</param>
+    /// <param name="permissionsModel">Returns model with permissions validation setup.</param>
+    /// <returns>
+    /// True if the permissions should be validated for the current action.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// If the filter is used on a non-generic BaseAdminApiController.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// When the provided parameters to the <see cref="ProtectedEntityActionAttribute"/>
+    /// are invalid or do not match the expected types.
+    /// </exception>
     private static bool ShouldValidatePermissions(ActionExecutingContext context, out PermissionsModel permissionsModel)
     {
         permissionsModel = new PermissionsModel();
@@ -126,7 +142,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
             if (serviceArguments.Length < 2)
             {
                 throw new ArgumentException(
-                    $"Generic arguments of interface {interfaceType.FullName} should be at least 2." +
+                    $"Generic arguments of interface {interfaceType.Name} should be at least 2." +
                     $"First for entity type, second for value (validate against) type");
             }
 
@@ -134,7 +150,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
             var serviceArgumentType = serviceArguments[1];
             if (serviceArgumentType != argumentType)
             {
-                throw new InvalidOperationException(
+                throw new ArgumentException(
                     $"Type of the Action argument does not match with the TInput type of the provided permissions service." +
                     $"Action argument is {argumentType}, service expects {serviceArgumentType}");
             }
