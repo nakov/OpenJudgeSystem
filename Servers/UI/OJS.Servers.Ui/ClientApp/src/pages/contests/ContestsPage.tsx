@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
 import ContestCardNew from '../../components/contests/contest-card-new/ContestCard';
-import ContestCategories from '../../components/contests/contest-categories/ContestCategories';
+import ContestCategories from '../../components/contests/contest-categories-new/ContestCetegories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
@@ -19,12 +20,11 @@ import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
     const { themeColors } = useTheme();
-    const { category, status, strategy } = useSelector((state: any) => state.filterContests);
+    const { category, strategy } = useSelector((state: any) => state.filterContests);
     const [ selectedPage, setSelectedPage ] = useState(1);
 
     const contestParams = useMemo(() => {
         const params: IGetAllContestsOptions = {
-            status: status.name,
             sortType: 'OrderBy',
             page: selectedPage,
         };
@@ -36,12 +36,9 @@ const ContestsPage = () => {
             // eslint-disable-next-line prefer-destructuring
             params.strategy = strategy.id;
         }
-        if (status) {
-            params.status = status;
-        }
 
         return params;
-    }, [ category, status, strategy, selectedPage ]);
+    }, [ category, strategy, selectedPage ]);
 
     const {
         data: allContests,
@@ -56,7 +53,7 @@ const ContestsPage = () => {
     const renderContests = useCallback(() => {
         if (!allContests?.items?.length) {
             return (
-                <Heading type={HeadingType.secondary} style={{ color: themeColors.textColor }}>
+                <Heading type={HeadingType.secondary} style={{ color: themeColors.textColor, marginLeft: 50 }}>
                     No contests apply for this filter
                 </Heading>
             );
@@ -86,10 +83,14 @@ const ContestsPage = () => {
             {areContestsLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
             <ContestBreadcrumb isLastBreadcrumbGrey />
             <div className={styles.contestsContainer}>
-                <ContestCategories shouldReset={false} />
+                <ContestCategories />
                 <div style={{ width: '100%' }}>
                     <div className={styles.headingWrapper} style={{ color: themeColors.textColor }}>
-                        <div>All Categories</div>
+                        <div>
+                            { category
+                                ? category.name
+                                : 'All Categories'}
+                        </div>
                         <ContestStrategies />
                     </div>
                     {renderContests()}

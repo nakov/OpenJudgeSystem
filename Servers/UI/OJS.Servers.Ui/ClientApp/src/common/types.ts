@@ -64,11 +64,20 @@ interface ISubmissionResponseModel {
 }
 
 interface IGetAllContestsOptions {
-    status: string;
     sortType: string;
     page: number;
     category?: number | null;
     strategy?: number | null;
+}
+
+interface IContestCategory {
+    allowedStrategyTypes: any;
+    children: Array<IContestCategory>;
+    id: number;
+    name: string;
+    nameUrl: string;
+    orderBy: number;
+    parentId: null | number;
 }
 
 interface IProblemResourceType {
@@ -274,4 +283,5 @@ export type {
     ISubmissionDetailsReduxState,
     ILoginDetailsType,
     IGetAllContestsOptions,
+    IContestCategory,
 };

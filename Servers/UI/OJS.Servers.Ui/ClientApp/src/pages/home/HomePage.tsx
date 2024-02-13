@@ -2,11 +2,12 @@ import React, { useCallback } from 'react';
 import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 
-import ContestCategories from '../../components/contests/contest-categories/ContestCategories';
+import ContestCetegories from '../../components/contests/contest-categories-new/ContestCetegories';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
 import { useGetHomeStatisticsQuery } from '../../redux/services/homeStatisticsService';
+import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './HomePage.module.scss';
@@ -50,7 +51,7 @@ const HomePage = () => {
 
     const renderHomeStatisticIcons = useCallback(() => {
         if (isLoading) {
-            return <SpinningLoader />;
+            return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
         if (error) {
             return <div>Error fetching statistics data. Please try again!</div>;
@@ -58,14 +59,15 @@ const HomePage = () => {
         return (
             <div className={styles.gridWrapper}>
                 <div className={styles.homeStatistics}>
-                    {HOME_STATISTICS.map((el) => {
+                    {HOME_STATISTICS.map((el, idx) => {
                         const { iconType, title, dataKey } = el;
                         // eslint-disable-next-line prefer-destructuring
                         const count = Number(data[dataKey]) > 1000
                             ? `${(Number(data[dataKey]) / 1000).toFixed(1)}K`
                             : data[dataKey];
                         return (
-                            <HomePageStatistic title={title} iconType={iconType} count={count} />
+                            // eslint-disable-next-line react/no-array-index-key
+                            <HomePageStatistic key={`home-page-statistic-item-${idx}`} title={title} iconType={iconType} count={count} />
                         );
                     })}
                 </div>
@@ -75,7 +77,7 @@ const HomePage = () => {
 
     return (
         <div className={styles.homePageWrapper}>
-            <ContestCategories shouldReset={false} />
+            <ContestCetegories isRenderedOnHomePage />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
                 <iframe title="home-video" width={700} height={320} src="https://www.youtube.com/watch?v=zyhYnE4Fnmk&ab_channel=SoftwareUniversity%28SoftUni%29" />

@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/no-children-prop */
+
 import React, { ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MenuItem, Select } from '@mui/material';
@@ -10,7 +13,7 @@ import { useGetContestStrategiesQuery } from '../../../redux/services/contestsSe
 const ContestStrategies = () => {
     const dispatch = useDispatch();
     const { themeColors } = useTheme();
-    const { filteredStrategies } = useSelector((state: any) => state.filterContests);
+    const { category, strategy } = useSelector((state: any) => state.filterContests);
 
     const {
         data: contestStrategies,
@@ -21,14 +24,15 @@ const ContestStrategies = () => {
     const menuItems: ReactNode[] = React.useMemo(() => {
         if (!contestStrategies) { return []; }
 
-        const displayStrategies = filteredStrategies.length === 0
+        const displayStrategies = category?.allowedStrategyTypes?.length === 0
             ? contestStrategies
-            : filteredStrategies;
-        const handleStrategySelect = (strategy: any) => {
-            dispatch(setContestStrategy(strategy));
+            : category?.allowedStrategyTypes;
+
+        const handleStrategySelect = (s: any) => {
+            dispatch(setContestStrategy(s));
         };
 
-        return displayStrategies.map((item: IContestStrategyFilter) => (
+        return (displayStrategies || []).map((item: IContestStrategyFilter) => (
             <MenuItem
               key={`contest-strategy-item-${item.id}`}
               value={item.id}
@@ -37,7 +41,7 @@ const ContestStrategies = () => {
                 {item.name}
             </MenuItem>
         ));
-    }, [ contestStrategies, filteredStrategies ]);
+    }, [ contestStrategies, category?.allowedStrategyTypes ]);
 
     if (strategiesError) { return <div>Error loading strategies...</div>; }
 
@@ -54,7 +58,7 @@ const ContestStrategies = () => {
               '& .MuiSvgIcon-root': { fill: themeColors.textColor },
               '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
           }}
-          defaultValue=""
+          defaultValue={strategy}
           labelId="strategy-label"
           autoWidth
           displayEmpty
