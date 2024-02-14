@@ -82,7 +82,7 @@ const dataColumns: GridColDef[] = [
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Link
-              to={`/${NEW_ADMINISTRATION_PATH}/${PARTICIPANTS_PATH}/${Number(params.row?.participant?.id)}`}
+              to={`${PARTICIPANTS_PATH}/${Number(params.row?.participant?.id)}`}
             >
                 {params.row?.participant?.userName}
             </Link>

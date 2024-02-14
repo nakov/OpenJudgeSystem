@@ -12,7 +12,7 @@ import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
-import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../../common/urls';
+import { PROBLEMS_PATH } from '../../../../common/urls';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
 import { useCreateProblemMutation, useDeleteProblemMutation, useDownloadAdditionalFilesQuery, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
@@ -566,7 +566,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                                           id={problemId!}
                                           name={currentProblem.name}
                                           style={{ alignSelf: 'flex-end' }}
-                                          onSuccess={(() => navigate(`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`))}
+                                          onSuccess={(() => navigate(`${PROBLEMS_PATH}`))}
                                           text="Are you sure you want to delete this problem."
                                           mutation={useDeleteProblemMutation}
                                         />

@@ -13,8 +13,8 @@ import isNaN from 'lodash/isNaN';
 import { ContestVariation } from '../../../../common/contest-types';
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DELETE_CONFIRMATION_MESSAGE, CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION } from '../../../../common/messages';
-import { IContestAdministration, IContestCategories } from '../../../../common/types';
-import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls';
+import { IContestAdministration } from '../../../../common/types';
+import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
@@ -24,6 +24,7 @@ import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVe
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
+import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
 import styles from './ContestEdit.module.scss';
 
@@ -300,28 +301,6 @@ const ContestEdit = (props:IContestEditProps) => {
         validateForm();
     };
 
-    const handleAutocompleteChange = (name: string, newValue:IContestCategories) => {
-        const event = {
-            target: {
-                name,
-                value: newValue?.id,
-            },
-        };
-        onChange(event);
-    };
-
-    const handleDateTimePickerChange = (name: string, newValue:any) => {
-        const event = {
-            target: {
-                name,
-                value: newValue
-                    ? newValue.toString()
-                    : null,
-            },
-        };
-        onChange(event);
-    };
-
     const edit = () => {
         if (isValidForm) {
             updateContest(contest);
@@ -564,7 +543,7 @@ const ContestEdit = (props:IContestEditProps) => {
                     <Autocomplete
                       sx={{ width: '100%' }}
                       className={styles.inputRow}
-                      onChange={(event, newValue) => handleAutocompleteChange('category', newValue!)}
+                      onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
                       value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
                       options={contestCategories!}
                       renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
@@ -582,19 +561,15 @@ const ContestEdit = (props:IContestEditProps) => {
                           sx={{ width: '48%' }}
                           name="startTime"
                           label={COMPETE_START_TIME}
-                          value={contest.startTime
-                              ? getDateWithFormat(contest.startTime)
-                              : null}
-                          onChange={(newValue) => handleDateTimePickerChange('startTime', newValue)}
+                          value={getDateWithFormat(contest.startTime)}
+                          onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
                         />
                         <DateTimePicker
                           sx={{ width: '48%' }}
                           name="endTime"
                           label={COMPETE_END_TIME}
-                          value={contest.endTime
-                              ? getDateWithFormat(contest.endTime)
-                              : null}
-                          onChange={(newValue) => handleDateTimePickerChange('endTime', newValue)}
+                          value={getDateWithFormat(contest.endTime)}
+                          onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
                         />
                     </LocalizationProvider>
                 </Box>
@@ -604,19 +579,15 @@ const ContestEdit = (props:IContestEditProps) => {
                           sx={{ width: '48%', margin: '20px 0' }}
                           name="practiceStartTime"
                           label={PRACTICE_START_TIME}
-                          value={contest.practiceStartTime
-                              ? getDateWithFormat(contest.practiceStartTime)
-                              : null}
-                          onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue)}
+                          value={getDateWithFormat(contest.practiceStartTime)}
+                          onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
                         />
                         <DateTimePicker
                           sx={{ width: '48%', margin: '20px 0' }}
                           name="practiceEndTime"
                           label={PRACTICE_END_TIME}
-                          value={contest.practiceEndTime
-                              ? getDateWithFormat(contest.practiceEndTime)
-                              : null}
-                          onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue)}
+                          value={getDateWithFormat(contest.practiceEndTime)}
+                          onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
                         />
                     </LocalizationProvider>
                 </Box>
@@ -654,7 +625,7 @@ const ContestEdit = (props:IContestEditProps) => {
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}
-                  onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`)}
+                  onSuccess={() => navigate(`${CONTESTS_PATH}`)}
                   mutation={useDeleteContestMutation}
                   text={CONTEST_DELETE_CONFIRMATION_MESSAGE}
                 />

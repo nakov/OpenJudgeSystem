@@ -27,7 +27,7 @@ import { CSSObject, styled, Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 
 import { Anything } from '../../common/common-types';
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 
 import styles from './set-admin-navigation.module.scss';
 
@@ -41,42 +41,42 @@ const administrationItems = [
     {
         name: 'Contests',
         icon: <AutoStoriesIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`,
+        path: `${CONTESTS_PATH}`,
     },
     {
         name: 'Contest Categories',
         icon: <BookmarksIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`,
+        path: `${CONTEST_CATEGORIES_PATH}`,
     },
     {
         name: 'Submissions',
         icon: <PlaylistAddCheckCircleIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_PATH}`,
+        path: `${SUBMISSIONS_PATH}`,
     },
     {
         name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
     },
     {
         name: 'Tests',
         icon: <ScienceIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`,
+        path: `${TESTS_PATH}`,
     },
     {
         name: 'Problems',
         icon: <NotListedLocationIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`,
+        path: `${PROBLEMS_PATH}`,
     },
     {
         name: 'Problem Groups',
         icon: <TableViewIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}`,
+        path: `${PROBLEM_GROUPS_PATH}`,
     },
     {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPES_PATH}`,
+        path: `${SUBMISSION_TYPES_PATH}`,
     },
 ];
 

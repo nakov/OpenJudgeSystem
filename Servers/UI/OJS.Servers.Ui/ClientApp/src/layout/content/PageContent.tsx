@@ -127,47 +127,47 @@ const adminRoutes = [
         title: 'Administration',
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`,
+        path: `${CONTESTS_PATH}`,
         Element: AdministrationContestsPage,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/:id`,
+        path: `${CONTESTS_PATH}/:id`,
         Element: AdministrationContestPage,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`,
+        path: `${CONTEST_CATEGORIES_PATH}`,
         Element: AdministrationContestCategories,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_PATH}`,
+        path: `${SUBMISSIONS_PATH}`,
         Element: AdministrationSubmissionsPage,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
         Element: AdministrationSubmissionsForProcessingPage,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
+        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
         Element: AdminSubmissionForProcessingDetails,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`,
+        path: `${TESTS_PATH}`,
         Element: Administration,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`,
+        path: `${PROBLEMS_PATH}`,
         Element: AdministrationProblemsPage,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/:id`,
+        path: `${PROBLEMS_PATH}/:id`,
         Element: AdministrationProblem,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}`,
+        path: `${PROBLEM_GROUPS_PATH}`,
         Element: AdministrationProblemGroupsPage,
     },
     {
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPES_PATH}`,
+        path: `${SUBMISSION_TYPES_PATH}`,
         Element: Administration,
     },
     {

@@ -311,7 +311,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                         <DeleteButton
                           id={Number(contestCategoryId!)}
                           name={contestCategory.name}
-                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`)}
+                          onSuccess={() => navigate(`${CONTEST_CATEGORIES_PATH}`)}
                           mutation={useDeleteContestCategoryMutation}
                           text="Are you sure that you want to delete the contest category?"
                         />

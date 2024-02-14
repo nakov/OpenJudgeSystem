@@ -47,7 +47,7 @@ const PageHeader = () => {
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`}
+                          to={`${CONTESTS_PATH}`}
                           text="Administration"
                           isToExternal
                         />
