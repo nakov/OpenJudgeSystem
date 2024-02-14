@@ -45,7 +45,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpGet("{contestId:int}")]
-    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
+    [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
         => this.Ok(
             await this.problemGridDataService.GetAll<ProblemInListModel>(
@@ -59,7 +59,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpPost]
-    [ProtectedEntityAction(nameof(model))]
+    [ProtectedEntityAction]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)
     {
         if (model == null || !await this.problemsDataService.ExistsById(model.Id))
@@ -73,7 +73,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpDelete("{contestId:int}")]
-    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
+    [ProtectedEntityAction(typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> DeleteAll([FromRoute] int contestId)
     {
         var contest = await this.contestsActivityService.GetContestActivity(contestId);
@@ -88,7 +88,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpGet("{id:int}")]
-    [ProtectedEntityAction(nameof(id))]
+    [ProtectedEntityAction]
     public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
     {
         if (id <= 0)
@@ -109,7 +109,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     }
 
     [HttpPost]
-    [ProtectedEntityAction(nameof(model))]
+    [ProtectedEntityAction]
     public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)
     {
         var result = await this.problemGroupsBusinessService

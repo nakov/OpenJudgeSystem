@@ -60,7 +60,7 @@ internal static class ServiceCollectionExtensions
                         {
                             Name = modelStateError.Key,
                             Message =
-                                $"Error in {modelStateError.Key.Replace("$.", string.Empty) // Remove "$."
+                                $@"Error in {modelStateError.Key.Replace("$.", string.Empty) // Remove "$."
                                     .Replace("[", string.Empty)
                                     .Replace("]", string.Empty)
                                     .Replace(".", " > ")

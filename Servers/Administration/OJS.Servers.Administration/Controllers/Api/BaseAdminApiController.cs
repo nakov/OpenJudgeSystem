@@ -43,6 +43,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpGet]
+    [ProtectedEntityAction(false)]
     public virtual async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
     {
         var user = this.User.Map<UserInfoModel>();
@@ -55,8 +56,9 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
         return this.Ok(await this.gridDataService.GetAllForUser<TGridModel>(model, user));
     }
 
+    // TODO: use nameof(id) for the argument name in the attribute when upgraded to .NET 7 or above.
     [HttpGet("{id}")]
-    [ProtectedEntityAction(nameof(id), AdministrationOperations.Read)]
+    [ProtectedEntityAction("id", AdministrationOperations.Read)]
     public virtual async Task<IActionResult> Get(TId id)
     {
         var result = await this.operationService.Get(id);
@@ -64,7 +66,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpPost]
-    [ProtectedEntityAction(nameof(model), AdministrationOperations.Create)]
+    [ProtectedEntityAction("model", AdministrationOperations.Create)]
     public virtual async Task<IActionResult> Create(TUpdateModel model)
     {
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
@@ -79,7 +81,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpPatch]
-    [ProtectedEntityAction(nameof(model), AdministrationOperations.Update)]
+    [ProtectedEntityAction("model", AdministrationOperations.Update)]
     public virtual async Task<IActionResult> Edit(TUpdateModel model)
     {
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
@@ -94,7 +96,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     [HttpDelete("{id}")]
-    [ProtectedEntityAction(nameof(id), AdministrationOperations.Delete)]
+    [ProtectedEntityAction("id", AdministrationOperations.Delete)]
     public virtual async Task<IActionResult> Delete(TId id)
     {
         var validationResult =

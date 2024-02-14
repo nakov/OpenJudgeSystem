@@ -26,7 +26,7 @@ using static OJS.Services.Administration.Models.AdministrationConstants.Administ
 /// It is used to mark the protected Actions.
 /// </para>
 /// <para>
-/// If the Action is not marked as protected, no validation is performed.
+/// If the Action does not accept any arguments or is marked as unprotected explicitly, no validation is performed.
 /// </para>
 /// <para>
 /// If the Action is marked as protected, the filter will validate the permissions of the user
@@ -44,16 +44,21 @@ public class EntityPermissionsFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if (ShouldValidatePermissions(context, out var permissionsModel))
+        if (ShouldValidatePermissions(context, out var result))
         {
+            var (valueToValidate, protectionAttribute) = result;
+            var operation = protectionAttribute.Operation;
             var user = context.HttpContext.User.Map<UserInfoModel>();
-            var (userHasEntityPermissions, message) = await this.UserHasPermissions(user, permissionsModel);
+            var permissionsServiceType = GetPermissionsServiceType(context, valueToValidate.GetType(), protectionAttribute);
+
+            var (userHasEntityPermissions, message) =
+                await this.UserHasPermissions(user, operation, valueToValidate, permissionsServiceType);
 
             if (!userHasEntityPermissions)
             {
                 context.Result = new UnauthorizedObjectResult(
                     message ??
-                    $"You are not authorized to perform \"{permissionsModel.Operation}\" operation on this entity instance.");
+                    $"You are not authorized to perform \"{operation}\" operation on this entity instance.");
                 return;
             }
         }
@@ -63,10 +68,11 @@ public class EntityPermissionsFilter : IAsyncActionFilter
 
     /// <summary>
     /// Method to determine if the permissions should be validated for the current action.
-    /// Permissions are validated only for actions that are marked with the <see cref="ProtectedEntityActionAttribute"/>.
+    /// Permissions are validated only for actions accepting arguments, that are marked with the <see cref="ProtectedEntityActionAttribute"/>.
+    /// If Action accepts argument and is not marked with the attribute, an exception is thrown.
     /// </summary>
     /// <param name="context">Action context.</param>
-    /// <param name="permissionsModel">Returns model with permissions validation setup.</param>
+    /// <param name="result">The value to validate against with the protection attribute.</param>
     /// <returns>
     /// True if the permissions should be validated for the current action.
     /// </returns>
@@ -77,9 +83,11 @@ public class EntityPermissionsFilter : IAsyncActionFilter
     /// When the provided parameters to the <see cref="ProtectedEntityActionAttribute"/>
     /// are invalid or do not match the expected types.
     /// </exception>
-    private static bool ShouldValidatePermissions(ActionExecutingContext context, out PermissionsModel permissionsModel)
+    private static bool ShouldValidatePermissions(
+        ActionExecutingContext context,
+        out (object value, ProtectedEntityActionAttribute protectionAttrbite) result)
     {
-        permissionsModel = new PermissionsModel();
+        result = (null!, null!);
         if (!context.ActionArguments.Any())
         {
             // No need to run permission checks, when no arguments are passed to action.
@@ -100,15 +108,30 @@ public class EntityPermissionsFilter : IAsyncActionFilter
             return false;
         }
 
-        var protectionAttribute = descriptor.MethodInfo.GetCustomAttribute<ProtectedEntityActionAttribute>(inherit: true);
+        var protectionAttribute = descriptor.MethodInfo.GetCustomAttribute<ProtectedEntityActionAttribute>(true);
         if (protectionAttribute == null)
         {
-            // Route is not protected.
+            throw new InvalidOperationException(
+                $"Action {context.ActionDescriptor.DisplayName}, accepting arguments, " +
+                $"is not marked with the {nameof(ProtectedEntityActionAttribute)}.");
+        }
+
+        if (protectionAttribute.Operation == Unrestricted)
+        {
             return false;
         }
 
         // Get the argument that will be used for permissions check.
-        var argument = context.ActionArguments.FirstOrDefault(a => a.Key == protectionAttribute.ArgumentName);
+        if (context.ActionArguments.Count > 1 && string.IsNullOrEmpty(protectionAttribute.ArgumentName))
+        {
+            throw new ArgumentException(
+                $"Action {context.ActionDescriptor.DisplayName} has more than one argument and " +
+                $"no argument name is provided in the {nameof(ProtectedEntityActionAttribute)}.");
+        }
+
+        var argument = string.IsNullOrEmpty(protectionAttribute.ArgumentName)
+            ? context.ActionArguments.First()
+            : context.ActionArguments.FirstOrDefault(a => a.Key == protectionAttribute.ArgumentName);
 
         if (string.IsNullOrEmpty(argument.Key))
         {
@@ -119,13 +142,21 @@ public class EntityPermissionsFilter : IAsyncActionFilter
 
         if (argument.Value == null)
         {
-            // Passed argument for validation is null, so no need to check permissions.
+            // No need to run permission checks, when passed value is null, as it is not a valid entity instance.
             return false;
         }
 
+        result = (argument.Value, protectionAttribute);
+        return true;
+    }
+
+    private static Type GetPermissionsServiceType(
+        ActionExecutingContext context,
+        Type valueToValidateType,
+        ProtectedEntityActionAttribute protectionAttribute)
+    {
         var permissionsServiceInterfaceType = typeof(IEntityPermissionsService<,>);
-        var argumentType = argument.Value.GetType();
-        Type entityType;
+        Type? entityType;
         if (protectionAttribute.PermissionsServiceType != null)
         {
             if (!protectionAttribute.PermissionsServiceType.IsAssignableToGenericType(permissionsServiceInterfaceType))
@@ -148,29 +179,27 @@ public class EntityPermissionsFilter : IAsyncActionFilter
 
             entityType = serviceArguments[0];
             var serviceArgumentType = serviceArguments[1];
-            if (serviceArgumentType != argumentType)
+            if (serviceArgumentType != valueToValidateType)
             {
                 throw new ArgumentException(
                     $"Type of the Action argument does not match with the TInput type of the provided permissions service." +
-                    $"Action argument is {argumentType}, service expects {serviceArgumentType}");
+                    $"Action argument is {valueToValidateType}, service expects {serviceArgumentType}");
             }
         }
         else
         {
-            // Get the default entity type from the controller and value type from the argument.
-            entityType = controllerBaseType.GetGenericArguments().First();
+            // Get the default entity type from the controller.
+            entityType = context.Controller.GetType().BaseType?.GetGenericArguments().FirstOrDefault();
         }
 
-        var permissionsServiceType = permissionsServiceInterfaceType.MakeGenericType(entityType, argumentType);
-
-        permissionsModel = new PermissionsModel
+        if (entityType == null)
         {
-            Value = argument.Value,
-            Operation = protectionAttribute.Operation,
-            PermissionsServiceType = permissionsServiceType,
-        };
+            throw new InvalidOperationException(
+                $"Could not resolve entity type for the {nameof(ProtectedEntityActionAttribute)}" +
+                $"on Action {context.ActionDescriptor.DisplayName}.");
+        }
 
-        return true;
+        return permissionsServiceInterfaceType.MakeGenericType(entityType, valueToValidateType);
     }
 
     /// <summary>
@@ -187,20 +216,22 @@ public class EntityPermissionsFilter : IAsyncActionFilter
     /// </exception>
     private async Task<(bool, string? message)> UserHasPermissions(
         UserInfoModel user,
-        PermissionsModel permissionsModel)
+        string operation,
+        object value,
+        Type permissionsServiceType)
     {
-        if (permissionsModel.Operation == Unrestricted)
+        if (operation == Unrestricted)
         {
             return (true, null);
         }
 
-        var permissionsServiceInstance = this.serviceProvider.GetService(permissionsModel.PermissionsServiceType);
+        var permissionsServiceInstance = this.serviceProvider.GetService(permissionsServiceType);
         if (permissionsServiceInstance == null)
         {
             // Forbid any action, when no service is implemented for the given input.
             return (false,
-                $"Action \"{permissionsModel.Operation}\" is forbidden for user." +
-                $"Could not resolve service of type {permissionsModel.PermissionsServiceType.FullName}");
+                $"Action \"{operation}\" is forbidden for user." +
+                $"Could not resolve service of type {permissionsServiceType.FullName}");
         }
 
         const string methodName = nameof(IEntityPermissionsService<IEntity, object>.HasPermission);
@@ -212,7 +243,7 @@ public class EntityPermissionsFilter : IAsyncActionFilter
                 $"Method {methodName} could not be found on the provided entity permissions service.");
         }
 
-        var task = method.Invoke(permissionsServiceInstance, new[] { user, permissionsModel.Value, permissionsModel.Operation });
+        var task = method.Invoke(permissionsServiceInstance, new[] { user, value, operation });
         if (task is not Task<bool> resultTask)
         {
             throw new InvalidOperationException(
@@ -221,12 +252,5 @@ public class EntityPermissionsFilter : IAsyncActionFilter
 
         var result = await resultTask;
         return (result, null);
-    }
-
-    private class PermissionsModel
-    {
-        public object Value { get; set; } = default!;
-        public string Operation { get; set; } = default!;
-        public Type PermissionsServiceType { get; set; } = default!;
     }
 }

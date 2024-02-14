@@ -34,14 +34,14 @@ public class SubmissionsController : BaseAdminApiController<
         this.submissionsBusinessService = submissionsBusinessService;
 
     [HttpPost("{id:int}")]
-    [ProtectedEntityAction(nameof(id))]
+    [ProtectedEntityAction]
     public async Task<IActionResult> Retest(int id)
         => await this.submissionsBusinessService
             .Retest(id)
             .ToOkResult();
 
     [HttpGet("{id:int}")]
-    [ProtectedEntityAction(nameof(id))]
+    [ProtectedEntityAction]
     public async Task<IActionResult> Download(int id)
     {
         var submission = await this.submissionsBusinessService.Download(id);

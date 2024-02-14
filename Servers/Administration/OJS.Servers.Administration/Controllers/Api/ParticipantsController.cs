@@ -31,7 +31,7 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
         => this.participantsGridDataService = participantsGridDataService;
 
     [HttpGet("{contestId:int}")]
-    [ProtectedEntityAction(nameof(contestId), typeof(ContestIdPermissionsService))]
+    [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> GetByContestId([FromQuery] PaginationRequestModel model, [FromRoute] int contestId)
     {
         if (contestId < 1)

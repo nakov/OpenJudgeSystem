@@ -7,9 +7,21 @@ using static OJS.Services.Administration.Models.AdministrationConstants.Administ
 /// <summary>
 /// Attribute used to mark a method as requiring permissions to perform an action on an entity.
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, Inherited = true)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 public class ProtectedEntityActionAttribute : Attribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProtectedEntityActionAttribute"/> class
+    /// with option to specify if the action is restricted or not.
+    /// By default, restricted action is used.
+    /// </summary>
+    /// <param name="isRestricted">Optional boolean value indicating if the action is restricted or not.</param>
+    public ProtectedEntityActionAttribute(bool isRestricted = true)
+        => this.Operation =
+            isRestricted
+                ? Restricted
+                : Unrestricted;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ProtectedEntityActionAttribute"/> class
     /// wth the provided argument name.
@@ -17,10 +29,19 @@ public class ProtectedEntityActionAttribute : Attribute
     /// </summary>
     /// <param name="argumentName">The name of the Action argument that will be used to validate.</param>
     public ProtectedEntityActionAttribute(string argumentName)
-    {
-        this.ArgumentName = argumentName;
-        this.Operation = Restricted;
-    }
+        : this()
+        => this.ArgumentName = argumentName;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProtectedEntityActionAttribute"/> class
+    /// with the provided permissions service type.
+    /// </summary>
+    /// <param name="permissionsServiceType">
+    /// Permissions service should be assignable to <see cref="IEntityPermissionsService{TEntity, TValue}"/>.
+    /// </param>
+    public ProtectedEntityActionAttribute(Type permissionsServiceType)
+        : this()
+        => this.PermissionsServiceType = permissionsServiceType;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProtectedEntityActionAttribute"/> class
@@ -57,7 +78,7 @@ public class ProtectedEntityActionAttribute : Attribute
 
     public string Operation { get; }
 
-    public string ArgumentName { get; }
+    public string? ArgumentName { get; }
 
     public Type? PermissionsServiceType { get; }
 }

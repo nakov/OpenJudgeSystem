@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
+using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
@@ -33,6 +34,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         => this.contestsData = contestsData;
 
     [HttpGet]
+    [ProtectedEntityAction(false)]
     public async Task<IActionResult> GetAllForProblem(string? searchString)
     {
         var contests =
