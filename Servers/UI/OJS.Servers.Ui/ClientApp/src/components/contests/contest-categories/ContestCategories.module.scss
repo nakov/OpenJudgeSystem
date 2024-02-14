@@ -13,7 +13,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin: spacings.$sp-96 0 spacings.$sp-32 0;
+    margin-bottom: spacings.$sp-32;
     width: 250px;
     > div {
       margin-right: spacings.$sp-12;
@@ -32,19 +32,31 @@
     display: flex;
     padding: spacings.$sp-12 spacings.$sp-4;
     cursor: pointer;
+    transition: background-color .2s ease-in-out;
     > svg {
       margin-right: spacings.$sp-12;
+    }
+    &:hover {
+      background-color: #76a2d2;
     }
   }
   .categoryChildren {
     margin-left: 20px;
+    overflow: hidden;
+    height: 0;
+    transition: all 0.3s ease;
     .categoryItem {
-      margin: spacings.$sp-4 0 !important;
+      transition: all 0.3s ease;
+      margin: spacings.$sp-4 0;
       border-bottom: none !important;
     }
   }
+  .activeChildren {
+    height: auto;
+  }
   .selectedCategory {
-    background-color: colors.$primary-blue;;
+    background-color: colors.$primary-blue !important;
   }
 }
+
 

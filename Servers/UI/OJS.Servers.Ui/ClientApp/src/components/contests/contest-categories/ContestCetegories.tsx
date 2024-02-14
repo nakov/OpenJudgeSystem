@@ -4,7 +4,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
@@ -48,13 +47,6 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         if (categoryId) {
             const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, Number(categoryId));
             dispatch(setContestCategory(selectedContestCategory));
-            const elementToRenderChildren = document.getElementById(`category-${categoryId}-children`);
-            if (!elementToRenderChildren) {
-                return;
-            }
-
-            const children = selectedContestCategory?.children;
-            ReactDOM.render((children || []).map((child) => renderCategory(child)), elementToRenderChildren);
         }
     }, [ searchParams.get('category') ]);
 
@@ -90,18 +82,8 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         dispatch(setContestCategory(selectedContestCategory));
         dispatch(setContestStrategy(null));
 
-        const children = selectedContestCategory?.children;
-        const elementToRenderChildren = document.getElementById(`category-${id}-children`);
-        if (elementToRenderChildren?.children?.length) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            ReactDOM.render(null, elementToRenderChildren);
-        } else {
-            if (!elementToRenderChildren) {
-                return;
-            }
-            ReactDOM.render((children || []).map((child) => renderCategory(child)), elementToRenderChildren);
-        }
+        const elementWithChildren = document.getElementById(`category-${id}-children`);
+        elementWithChildren?.classList.toggle(styles.activeChildren);
     };
 
     const renderCategory = (category: IContestCategory) => (
@@ -120,7 +102,9 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
                     {category.name}
                 </div>
             </div>
-            <div className={styles.categoryChildren} id={`category-${category.id}-children`} />
+            <div id={`category-${category.id}-children`} className={styles.categoryChildren}>
+                {category.children.map((child) => renderCategory(child))}
+            </div>
         </div>
     );
 
@@ -131,7 +115,12 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         <div className={styles.contestCategoriesWrapper}>
             <div
               className={styles.contestCategoriesHeader}
-              style={{ color: themeColors.textColor }}
+              style={{
+                  color: themeColors.textColor,
+                  marginTop: isRenderedOnHomePage
+                      ? 0
+                      : 32,
+              }}
               onClick={() => setIsExpanded(!isExpanded)}
             >
                 <div>Contest Categories</div>

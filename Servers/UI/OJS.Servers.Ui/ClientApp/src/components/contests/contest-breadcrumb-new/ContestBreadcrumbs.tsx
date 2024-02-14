@@ -15,8 +15,9 @@ const ContestBreadcrumbs = () => {
     const { themeColors } = useTheme();
     const { breadcrumbItems } = useSelector((state: any) => state.contests);
 
-    const renderBreadcrumbItems = (breadcrumbItem: any, isLast: boolean) => (
+    const renderBreadcrumbItems = (breadcrumbItem: any, isLast: boolean, idx: number) => (
         <div
+          key={`contest-breadcrumb-item-${idx}`}
           onClick={() => {
               searchParams.set('category', breadcrumbItem.id.toString());
               setSearchParams(searchParams);
@@ -43,7 +44,7 @@ const ContestBreadcrumbs = () => {
           className={styles.breadcrumbsWrapper}
           style={{ color: themeColors.textColor, backgroundColor: themeColors.baseColor500 }}
         >
-            {breadcrumbItems.map((item: any, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
+            {breadcrumbItems.map((item: any, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1, idx))}
         </div>
     );
 };
