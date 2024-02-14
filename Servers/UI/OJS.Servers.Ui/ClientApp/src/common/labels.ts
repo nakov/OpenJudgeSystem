@@ -7,6 +7,7 @@ export const TYPE = 'Type';
 export const DESCRIPTION = 'Description';
 export const CATEGORY = 'Category';
 export const IS_DELETED = 'Is Deleted';
+export const CHECKER = 'Checker';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
@@ -32,7 +33,22 @@ export const CREATE_NEW_ENTITY = 'Create new contest';
 
 // Contest Categories
 export const CATEGORY_ID = 'Category Id';
+
 // Problems
 
+export const MAXIMUM_POINTS = 'Maximum Points';
+export const SOURCE_CODE_SIZE_LIMIT = 'Source Code Size Limit';
+export const MEMORY_LIMIT = 'Memory Limit';
+export const TIME_LIMIT = 'Time Limit';
+export const PROBLEM_GROUP_TYPE = 'Problem Group Type';
+export const SHOW_DETAILED_FEEDBACK = 'Show Detailed feedback';
+export const SHOW_RESULTS = 'Show Results';
+export const ADDITIONAL_FILES = 'Additional Files';
 export const CREATE_NEW_PROBLEM = 'Create new Problem';
+export const SOLUTION_SKELETON = 'Solution Skeleton';
+
 // Submission types
+export const SUBMISSION_TYPES = 'Submission Types';
+// Tests
+
+export const TESTS = 'Tests';

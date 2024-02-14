@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/react-in-jsx-scope */
-import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
 import ReplayIcon from '@mui/icons-material/Replay';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { EDIT } from '../../../common/labels';
+import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { PROBLEMS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 
 const problemFilterableColums: GridColDef[] = [
     {
@@ -109,23 +110,19 @@ export const returnProblemsNonFilterableColumns = (
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <IconButton onClick={() => onEditClick(Number(params.row.id))}>
-                    <EditIcon color="warning" />
-                </IconButton>
-                <Link to={`${PROBLEMS_PATH}/${Number(params.row.id)}`}>
-                    <ShortcutIcon color="primary" />
-                </Link>
+                <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
+                <RedirectButton path={`${PROBLEMS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}
-                  text="Are you sure that you want to delete the contest."
+                  text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
                 />
                 {retestProblem && (

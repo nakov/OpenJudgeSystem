@@ -5,20 +5,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { Autocomplete, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Select, styled, TextareaAutosize, TextField, Typography } from '@mui/material';
-import isNaN from 'lodash/isNaN';
+import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
 
-import { ProblemGroupTypes } from '../../../../common/enums';
-import { ExceptionData, IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
+import { ADDITIONAL_FILES, SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
+import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { PROBLEMS_PATH } from '../../../../common/urls';
-import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
 import { useCreateProblemMutation, useDeleteProblemMutation, useDownloadAdditionalFilesQuery, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
+import downloadFile from '../../../../utils/file-download-utils';
+import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { renderAlert } from '../../../../utils/render-utils';
+import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
+import FileUpload from '../../common/file-upload/FileUpload';
+import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissionTypes';
+
+import ProblemFormBasicInfo from './problem-form-basic-info.tsx/ProblemFormBasicInfo';
 
 interface IProblemFormProps {
     problemId: number | null;
@@ -27,20 +30,11 @@ interface IProblemFormProps {
 
     contestId: number | null;
 }
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
 
 const ProblemForm = (props: IProblemFormProps) => {
     const { problemId, isEditMode = true, contestId } = props;
+    const navigate = useNavigate();
+
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
         checkerId: '',
@@ -63,7 +57,6 @@ const ProblemForm = (props: IProblemFormProps) => {
         hasAdditionalFiles: false,
     });
 
-    const navigate = useNavigate();
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessages, setSuccessMessages ] = useState<string>('');
     const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
@@ -73,8 +66,9 @@ const ProblemForm = (props: IProblemFormProps) => {
         isLoading: isGettingData,
         error: gettingDataError,
     } = useGetProblemByIdQuery({ id: Number(problemId) }, { skip: problemId === null });
+
     const { data: submissionTypes } = useGetForProblemQuery(null);
-    const { data: checkers } = useGetCheckersForProblemQuery(null);
+
     const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
     const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
     const {
@@ -82,6 +76,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         isLoading: isDownloadingFiles,
         isSuccess: isSuccesfullyDownloaded,
         error: downloadAdditionalFilesError,
+        isError: isDownloadAdditionalFilesError,
     } = useDownloadAdditionalFilesQuery(Number(problemId), { skip: skipDownload });
 
     useEffect(() => {
@@ -97,62 +92,22 @@ const ProblemForm = (props: IProblemFormProps) => {
     }, [ problemData ]);
 
     useEffect(() => {
-        let errors: Array<string> = [];
-
-        const extractMessages = (error: unknown): Array<string> => {
-            if (Array.isArray(error) && error.every((e) => 'message' in e)) {
-                return error.map((x: ExceptionData) => x.message);
-            }
-            return [];
-        };
-
-        if (gettingDataError) {
-            errors = errors.concat(extractMessages(gettingDataError));
-        }
-        if (createError) {
-            errors = errors.concat(extractMessages(createError));
-        }
-        if (updateError) {
-            errors = errors.concat(extractMessages(updateError));
-        }
-        if (downloadAdditionalFilesError) {
-            errors = errors.concat(extractMessages(updateError));
-            setSkipDownload(false);
-        }
-
-        setErrorMessages(errors);
+        getAndSetExceptionMessage([ gettingDataError, createError, updateError, downloadAdditionalFilesError ], setErrorMessages);
         setSuccessMessages('');
     }, [ updateError, createError, gettingDataError, downloadAdditionalFilesError ]);
 
     useEffect(() => {
-        let successMessage = '';
-        if (updateData) {
-            successMessage = updateData;
-        }
-        if (createData) {
-            successMessage = createData;
-        }
+        let successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
         if (isSuccesfullyDownloaded) {
             successMessage = 'Additional files succesfully downloaded.';
-            setSkipDownload(false);
         }
-        setSuccessMessages(successMessage);
+
+        successMessage && setSuccessMessages(successMessage);
     }, [ updateData, createData, isSuccesfullyDownloaded ]);
 
-    const downloadFile = (blob:Blob, filename: string) => {
-        const blobUrl = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.style.display = 'none';
-        a.href = blobUrl;
-        // eslint-disable-next-line prefer-destructuring
-        a.download = filename;
-
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(blobUrl);
-    };
+    useEffect(() => {
+        (isSuccesfullyDownloaded || isDownloadAdditionalFilesError) && setSkipDownload(false);
+    }, [ isSuccesfullyDownloaded, isDownloadAdditionalFilesError ]);
 
     useEffect(() => {
         if (additionalFilesData?.blob) {
@@ -173,6 +128,39 @@ const ProblemForm = (props: IProblemFormProps) => {
                         : Number(value)
                     : value,
         }));
+    };
+
+    const submitForm = () => {
+        const formData = new FormData();
+        formData.append('name', currentProblem.name);
+        formData.append('id', currentProblem.id?.toString() ?? '');
+        formData.append('orderBy', currentProblem.orderBy?.toString() || '');
+        formData.append('contestId', currentProblem.contestId?.toString() || '');
+        formData.append('maximumPoints', currentProblem.maximumPoints?.toString() || '');
+        formData.append('memoryLimit', currentProblem.memoryLimit?.toString() || '');
+        formData.append('sourceCodeSizeLimit', currentProblem.sourceCodeSizeLimit?.toString() || '');
+        formData.append('timeLimit', currentProblem.timeLimit?.toString() || '');
+        formData.append('problemGroupType', currentProblem.problemGroupType?.toString());
+        formData.append('checkerId', currentProblem.checkerId?.toString() || '');
+        formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
+        formData.append('showResults', currentProblem.showResults?.toString() || '');
+        currentProblem.submissionTypes?.forEach((type, index) => {
+            formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
+            formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
+
+            type.solutionSkeleton && formData.append(
+                `SubmissionTypes[${index}].SolutionSkeleton`,
+                type.solutionSkeleton!.toString(),
+            );
+        });
+
+        currentProblem.additionalFiles &&
+        formData.append('additionalFiles', currentProblem.additionalFiles);
+
+        currentProblem.tests &&
+        formData.append('tests', currentProblem.tests);
+
+        createProblem(formData);
     };
 
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {
@@ -228,6 +216,7 @@ const ProblemForm = (props: IProblemFormProps) => {
             }
         }
     };
+
     const onSkeletonChange = (value: string, submissionTypeId: number) => {
         const index = currentProblem.submissionTypes.findIndex((st) => st.id === submissionTypeId);
 
@@ -240,16 +229,6 @@ const ProblemForm = (props: IProblemFormProps) => {
             submissionTypes: newSubmissionTypes,
         }));
     };
-    const renderAlert = (message: string, severity:AlertSeverity, index:number) => (
-        <Alert
-          variant={AlertVariant.Filled}
-          vertical={AlertVerticalOrientation.Top}
-          horizontal={AlertHorizontalOrientation.Right}
-          severity={severity}
-          message={message}
-          styles={{ marginTop: `${index * 4}rem` }}
-        />
-    );
 
     const handleFileUpload = (e: any, propName:string) => {
         let { additionalFiles } = currentProblem;
@@ -269,356 +248,132 @@ const ProblemForm = (props: IProblemFormProps) => {
         }));
     };
 
-    return (
-        isGettingData || isDownloadingFiles
-            ? <SpinningLoader />
-            : (
-                <>
-                    {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-                    {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+    const handleFileClearance = (propName: string) => {
+        let { additionalFiles } = currentProblem;
+        let { tests } = currentProblem;
+        switch (propName) {
+        case 'tests':
+            tests = null;
+            break;
+        case 'additionalFiles':
+            additionalFiles = null;
+            break;
+        }
+        setCurrentProblem((prevState) => ({
+            ...prevState,
+            additionalFiles,
+            tests,
+        }));
+    };
 
-                    <Typography sx={{ textAlign: 'center' }} variant="h3">{currentProblem?.name}</Typography>
-
-                    <form style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography sx={{ marginTop: '1rem' }} variant="h4">Basic info</Typography>
-                        <Divider />
-                        <Box style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                            <FormGroup sx={{ width: '45%' }}>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Id"
-                                      value={currentProblem?.id}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="text"
-                                      disabled
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Name"
-                                      value={currentProblem?.name}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="text"
-                                      name="name"
-                                      onChange={(e) => onChange(e)}
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Maximum Points"
-                                      value={currentProblem?.maximumPoints}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="number"
-                                      name="maximumPoints"
-                                      onChange={(e) => onChange(e)}
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Source Code Size Limit"
-                                      value={currentProblem?.sourceCodeSizeLimit}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="number"
-                                      name="sourceCodeSizeLimit"
-                                      onChange={(e) => onChange(e)}
-                                    />
-                                </FormControl>
-                            </FormGroup>
-                            <FormGroup sx={{ width: '45%' }}>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Order by"
-                                      value={currentProblem?.orderBy}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="number"
-                                      name="orderBy"
-                                      onChange={(e) => onChange(e)}
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Contest id"
-                                      value={currentProblem?.contestId}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="number"
-                                      name="contestId"
-                                      onChange={(e) => onChange(e)}
-                                      disabled
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Memory Limit"
-                                      value={currentProblem?.memoryLimit}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="number"
-                                      name="memoryLimit"
-                                      onChange={(e) => onChange(e)}
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <TextField
-                                      variant="standard"
-                                      label="Time Limit"
-                                      value={currentProblem?.timeLimit}
-                                      InputLabelProps={{ shrink: true }}
-                                      type="number"
-                                      name="timeLimit"
-                                      onChange={(e) => onChange(e)}
-                                    />
-                                </FormControl>
-                            </FormGroup>
-                        </Box>
-                        <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
-                            <InputLabel id="problemGroupType">Problem Group Type</InputLabel>
-                            <Select
-                              onChange={(e) => onChange(e)}
-                              onBlur={(e) => onChange(e)}
-                              labelId="problemGroupType"
-                              value={currentProblem.problemGroupType}
-                              name="problemGroupType"
-                            >
-                                {Object.keys(ProblemGroupTypes).filter((key) => isNaN(Number(key))).map((key) => (
-                                    <MenuItem key={key} value={key}>
-                                        {key}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormGroup>
-                        <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
-                            <InputLabel id="problemGroupType">Checker</InputLabel>
-                            <Select
-                              onChange={(e) => onChange(e)}
-                              onBlur={(e) => onChange(e)}
-                              labelId="checkerId"
-                              value={currentProblem.checkerId}
-                              name="checkerId"
-                            >
-                                {checkers?.map((c) => (
-                                    <MenuItem key={c.id} value={Number(c.id)}>
-                                        {c.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormGroup>
-                        <FormGroup sx={{ marginLeft: '4rem' }}>
-                            <FormControlLabel
-                              control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
-                              label="Show Detailed feedback"
-                              name="showDetailedFeedback"
-                              onChange={(e) => onChange(e)}
-                            />
-                            <FormControlLabel
-                              control={(
-                                  <Checkbox
-                                    checked={currentProblem.showResults}
-                                  />
-                              )}
-                              name="showResults"
-                              onChange={(e) => onChange(e)}
-                              label="Show Results"
-                            />
-                        </FormGroup>
-                        <FormGroup sx={{ width: '100%' }}>
-                            <Typography sx={{ marginTop: '1rem' }} variant="h4">Additional files</Typography>
-                            <Divider />
-                            <FormGroup
-                              sx={{
-                                  display: 'flex',
-                                  width: '100%',
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  justifyContent: 'flex-start',
-                                  margin: '1rem',
-                              }}
-                            >
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <Button
-                                      sx={{ width: '200px' }}
-                                      component="label"
-                                      variant="contained"
-                                      startIcon={<CloudUploadIcon />}
-                                      onChange={(e) => handleFileUpload(e, 'additionalFiles')}
-                                    >
-                                        Additional Files
-                                        <VisuallyHiddenInput type="file" />
-                                    </Button>
-                                    <Typography variant="caption">
-                                        {' '}
-                                        {currentProblem.additionalFiles?.name}
-                                    </Typography>
-                                </FormControl>
-                                {currentProblem.hasAdditionalFiles && (
-                                <FormControl sx={{ margin: '1rem' }}>
-                                    <Button
-                                      sx={{ width: '200px' }}
-                                      variant="contained"
-                                      onClick={() => setSkipDownload(false)}
-                                    >
-                                        Download
-                                    </Button>
-                                </FormControl>
-                                )}
-                            </FormGroup>
-
-                            {!isEditMode && (
-                                <>
-                                    <Typography sx={{ marginTop: '1rem' }} variant="h4">Tests</Typography>
-                                    <Divider />
-                                    <FormControl sx={{ margin: '2rem', width: '200px' }}>
-                                        <Button
-                                          sx={{ width: '200px' }}
-                                          component="label"
-                                          variant="contained"
-                                          startIcon={<CloudUploadIcon />}
-                                          onChange={(e) => handleFileUpload(e, 'tests')}
-                                        >
-                                            Tests
-                                            <VisuallyHiddenInput type="file" />
-                                        </Button>
-                                        <Typography variant="caption">
-                                            {' '}
-                                            {currentProblem.tests?.name}
-                                        </Typography>
-                                    </FormControl>
-                                </>
-                            )}
-                        </FormGroup>
-                        <Typography sx={{ marginTop: '1rem' }} variant="h4">Submission Types</Typography>
-                        <Divider />
-                        <FormControl sx={{ margin: '3rem 0', width: '92%', alignSelf: 'center' }}>
-                            <Autocomplete
-                              options={filteredSubmissionTypes!}
-                              renderInput={(params) => <TextField {...params} label="Select submission type" key={params.id} />}
-                              onChange={(event, newValue) => onStrategyAdd(newValue!)}
-                              value={null}
-                              isOptionEqualToValue={(option, value) => option.id === value.id}
-                              getOptionLabel={(option) => option?.name}
-                              renderOption={(properties, option) => (
-                                  <MenuItem {...properties} key={option.id} value={option.id}>
-                                      {option.name}
-                                  </MenuItem>
-                              )}
-                            />
-                        </FormControl>
-
-                        {
-            currentProblem?.submissionTypes.map((st : IProblemSubmissionType) => (
-                <FormGroup
-                  sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-around',
-                      margin: '1rem',
-                  }}
-                  key={st.id}
-                >
-                    <IconButton
-                      sx={{ width: '5%' }}
-                      onClick={() => onStrategyRemoved(st.id)}
+    const renderButtons = () => (
+        <FormGroup sx={{ display: 'flex', width: '100%' }}>
+            {isEditMode
+                ? (
+                    <>
+                        <Button
+                          size="large"
+                          sx={{ width: '20%', alignSelf: 'center' }}
+                          onClick={() => updateProblem(currentProblem)}
+                          variant="contained"
+                        >
+                            Edit
+                        </Button>
+                        <DeleteButton
+                          id={problemId!}
+                          name={currentProblem.name}
+                          style={{ alignSelf: 'flex-end' }}
+                          onSuccess={(() => navigate(`${PROBLEMS_PATH}`))}
+                          text="Are you sure you want to delete this problem."
+                          mutation={useDeleteProblemMutation}
+                        />
+                    </>
+                )
+                : (
+                    <Button
+                      onClick={() => submitForm()}
+                      size="large"
+                      sx={{ width: '20%', alignSelf: 'center' }}
+                      variant="contained"
                     >
-                        <RemoveCircleIcon color="error" />
-                    </IconButton>
-                    <FormControl sx={{ width: '25%' }}>
-                        <TextField
-                          variant="standard"
-                          label="Name"
-                          value={st.name}
-                          InputLabelProps={{ shrink: true }}
-                          type="text"
-                          InputProps={{ readOnly: true }}
-                        />
-                    </FormControl>
-                    <FormControl sx={{ width: '60%' }}>
-                        <FormLabel>Description</FormLabel>
-                        <TextareaAutosize
-                          placeholder="Enter skeleton here...."
-                          minRows={10}
-                          value={st.solutionSkeleton ?? ''}
-                          name="description"
-                          onChange={(e) => onSkeletonChange(e.target.value, st.id)}
-                        />
-                    </FormControl>
+                        Create
+                    </Button>
+                )}
+
+        </FormGroup>
+    );
+
+    if (isGettingData || isDownloadingFiles) {
+        return <SpinningLoader />;
+    }
+    return (
+        <>
+            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
+            {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+
+            <Typography sx={{ textAlign: 'center' }} variant="h3">{currentProblem?.name}</Typography>
+
+            <form style={{ display: 'flex', flexDirection: 'column' }}>
+                <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} />
+                <FormGroup sx={{ width: '100%' }}>
+                    <Typography sx={{ marginTop: '1rem' }} variant="h4">{ADDITIONAL_FILES}</Typography>
+                    <Divider />
+                    <FileUpload
+                      handleFileUpload={handleFileUpload}
+                      propName="additionalFiles"
+                      setSkipDownload={setSkipDownload}
+                      uploadButtonName={currentProblem.additionalFiles?.name}
+                      showDownloadButton={currentProblem.hasAdditionalFiles}
+                      onClearSelectionClicked={handleFileClearance}
+                    />
+
+                    {!isEditMode && (
+                        <>
+                            <Typography sx={{ marginTop: '1rem' }} variant="h4">{TESTS}</Typography>
+                            <Divider />
+                            <FileUpload
+                              handleFileUpload={handleFileUpload}
+                              propName="tests"
+                              setSkipDownload={setSkipDownload}
+                              uploadButtonName={currentProblem.tests?.name}
+                              showDownloadButton={false}
+                              onClearSelectionClicked={handleFileClearance}
+                            />
+                        </>
+                    )}
                 </FormGroup>
+                <Typography sx={{ marginTop: '1rem' }} variant="h4">{SUBMISSION_TYPES}</Typography>
+                <Divider />
+                <FormControl sx={{ margin: '3rem 0', width: '92%', alignSelf: 'center' }}>
+                    <Autocomplete
+                      options={filteredSubmissionTypes!}
+                      renderInput={(params) => <TextField {...params} label="Select submission type" key={params.id} />}
+                      onChange={(event, newValue) => onStrategyAdd(newValue!)}
+                      value={null}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      getOptionLabel={(option) => option?.name}
+                      renderOption={(properties, option) => (
+                          <MenuItem {...properties} key={option.id} value={option.id}>
+                              {option.name}
+                          </MenuItem>
+                      )}
+                    />
+                </FormControl>
+
+                {
+            currentProblem?.submissionTypes.map((st : IProblemSubmissionType) => (
+                <ProblemSubmissionTypes
+                  key={st.id}
+                  onSkeletonChange={onSkeletonChange}
+                  onStrategyRemoved={onStrategyRemoved}
+                  strategy={st}
+                />
             ))
         }
-                        <FormGroup sx={{ display: 'flex', width: '100%' }}>
-                            {isEditMode
-                                ? (
-                                    <>
-                                        <Button
-                                          size="large"
-                                          sx={{ width: '20%', alignSelf: 'center' }}
-                                          onClick={() => updateProblem(currentProblem)}
-                                          variant="contained"
-                                        >
-                                            Edit
-                                        </Button>
-                                        <DeleteButton
-                                          id={problemId!}
-                                          name={currentProblem.name}
-                                          style={{ alignSelf: 'flex-end' }}
-                                          onSuccess={(() => navigate(`${PROBLEMS_PATH}`))}
-                                          text="Are you sure you want to delete this problem."
-                                          mutation={useDeleteProblemMutation}
-                                        />
-                                    </>
-                                )
-                                : (
-                                    <Button
-                                      onClick={() => {
-                                          const formData = new FormData();
-                                          formData.append('name', currentProblem.name);
-                                          formData.append('id', currentProblem.id?.toString() ?? '');
-                                          formData.append('orderBy', currentProblem.orderBy?.toString() || '');
-                                          formData.append('contestId', currentProblem.contestId?.toString() || '');
-                                          formData.append('maximumPoints', currentProblem.maximumPoints?.toString() || '');
-                                          formData.append('memoryLimit', currentProblem.memoryLimit?.toString() || '');
-                                          formData.append('sourceCodeSizeLimit', currentProblem.sourceCodeSizeLimit?.toString() || '');
-                                          formData.append('timeLimit', currentProblem.timeLimit?.toString() || '');
-                                          formData.append('problemGroupType', currentProblem.problemGroupType?.toString());
-                                          formData.append('checkerId', currentProblem.checkerId?.toString() || '');
-                                          formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
-                                          formData.append('showResults', currentProblem.showResults?.toString() || '');
-                                          currentProblem.submissionTypes?.forEach((type, index) => {
-                                              formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
-                                              formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
+                {renderButtons()}
 
-                                              type.solutionSkeleton && formData.append(
-                                                  `SubmissionTypes[${index}].SolutionSkeleton`,
-                                                  type.solutionSkeleton!.toString(),
-                                              );
-                                          });
-
-                                          currentProblem.additionalFiles &&
-                                          formData.append('additionalFiles', currentProblem.additionalFiles);
-
-                                          currentProblem.tests &&
-                                          formData.append('tests', currentProblem.tests);
-
-                                          createProblem(formData);
-                                      }}
-                                      size="large"
-                                      sx={{ width: '20%', alignSelf: 'center' }}
-                                      variant="contained"
-                                    >
-                                        Create
-                                    </Button>
-                                )}
-
-                        </FormGroup>
-
-                    </form>
-                </>
-            )
+            </form>
+        </>
     );
 };
 

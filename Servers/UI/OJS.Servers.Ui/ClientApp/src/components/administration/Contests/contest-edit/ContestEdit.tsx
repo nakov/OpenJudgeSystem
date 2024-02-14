@@ -12,7 +12,7 @@ import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
-import { CONTEST_DELETE_CONFIRMATION_MESSAGE, CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION } from '../../../../common/messages';
+import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
@@ -20,7 +20,8 @@ import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQu
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { getDateWithFormat } from '../../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
+import { renderAlert } from '../../../../utils/render-utils';
+import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -33,6 +34,7 @@ interface IContestEditProps {
     isEditMode?: boolean;
 }
 
+const NAME_PROP = 'name';
 const ContestEdit = (props:IContestEditProps) => {
     const { contestId, isEditMode = true } = props;
 
@@ -154,7 +156,7 @@ const ContestEdit = (props:IContestEditProps) => {
         const currentContestValidations = contestValidations;
         // eslint-disable-next-line default-case
         switch (name) {
-        case 'name':
+        case NAME_PROP:
             contestName = value;
             currentContestValidations.isNameTouched = true;
             currentContestValidations.isNameValid = true;
@@ -341,27 +343,8 @@ const ContestEdit = (props:IContestEditProps) => {
 
     return (
         <Box className={`${styles.flex}`}>
-            {errorMessages.map((x, i) => (
-                <Alert
-                  key={x}
-                  variant={AlertVariant.Filled}
-                  vertical={AlertVerticalOrientation.Top}
-                  horizontal={AlertHorizontalOrientation.Right}
-                  severity={AlertSeverity.Error}
-                  message={x}
-                  styles={{ marginTop: `${i * 4}rem` }}
-                />
-            ))}
-            {successMessage && (
-            <Alert
-              variant={AlertVariant.Filled}
-              autoHideDuration={3000}
-              vertical={AlertVerticalOrientation.Top}
-              horizontal={AlertHorizontalOrientation.Right}
-              severity={AlertSeverity.Success}
-              message={successMessage}
-            />
-            )}
+            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
+            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
             <Typography className={styles.centralize} variant="h4">
                 {contest.name || 'Contest form'}
             </Typography>
@@ -627,7 +610,7 @@ const ContestEdit = (props:IContestEditProps) => {
                   name={contest.name}
                   onSuccess={() => navigate(`${CONTESTS_PATH}`)}
                   mutation={useDeleteContestMutation}
-                  text={CONTEST_DELETE_CONFIRMATION_MESSAGE}
+                  text={DELETE_CONFIRMATION_MESSAGE}
                 />
             </Box>
         </Box>
