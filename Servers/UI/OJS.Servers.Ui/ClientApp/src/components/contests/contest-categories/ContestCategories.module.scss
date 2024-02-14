@@ -43,16 +43,17 @@
   .categoryChildren {
     margin-left: 20px;
     overflow: hidden;
-    height: 0;
-    transition: all 0.3s ease;
+    max-height: 0;
+    transition: all 0.25s ease-in-out;
+
+    &.activeChildren {
+      transition: all 0.25s ease-in-out;
+      max-height: 1000px;
+    }
     .categoryItem {
-      transition: all 0.3s ease;
       margin: spacings.$sp-4 0;
       border-bottom: none !important;
     }
-  }
-  .activeChildren {
-    height: auto;
   }
   .selectedCategory {
     background-color: colors.$primary-blue !important;
