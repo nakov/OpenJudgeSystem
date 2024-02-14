@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
+@use 'src/styles/spacings';
 
 .contestsContainer {
   display: flex;
@@ -26,6 +27,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: 60px;
-  margin-bottom: 20px;
+  margin-left: spacings.$sp-64;
+  margin-bottom: spacings.$sp-24;
+  margin-top: 92px;
 }

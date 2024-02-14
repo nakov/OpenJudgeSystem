@@ -36,7 +36,7 @@ const useTheme = () => {
             baseColor200: '#374151',
             baseColor300: '#2C2F37',
             baseColor400: '#212328',
-            baseColor500: '#1C1C17',
+            baseColor500: '#2F2F2F',
         },
     };
 

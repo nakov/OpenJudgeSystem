@@ -12,7 +12,11 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IContestCategory } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import { setContestCategory, setContestStrategy } from '../../../redux/features/contestsSlice';
+import {
+    setContestCategory,
+    setContestStrategy,
+    updateContestCategoryBreadcrumbItem,
+} from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
@@ -29,7 +33,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors } = useTheme();
-    const { category: selectedCategory } = useSelector((state: any) => state.filterContests);
+    const { category: selectedCategory } = useSelector((state: any) => state.contests);
 
     const {
         data: contestCategories,
@@ -54,24 +58,26 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         }
     }, [ searchParams.get('category') ]);
 
-    const findContestCategoryByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number): IContestCategory | null => {
-        if (!elements) {
-            return null;
-        }
-        // eslint-disable-next-line no-restricted-syntax
-        for (const contestCategory of elements) {
-            if (contestCategory.id === id) {
-                return contestCategory;
+    const findContestCategoryByIdRecursive =
+        (elements: Array<IContestCategory> | undefined, id: number, rootIndex = 0): IContestCategory | null => {
+            if (!elements) {
+                return null;
             }
-            if (contestCategory.children.length) {
-                const foundContestCategory = findContestCategoryByIdRecursive(contestCategory.children, id);
-                if (foundContestCategory) {
-                    return foundContestCategory;
+            // eslint-disable-next-line no-restricted-syntax
+            for (const contestCategory of elements) {
+                if (contestCategory.id === id) {
+                    dispatch(updateContestCategoryBreadcrumbItem({ index: rootIndex, element: contestCategory }));
+                    return contestCategory;
+                }
+                if (contestCategory.children.length) {
+                    const foundCategory = findContestCategoryByIdRecursive(contestCategory.children, id, rootIndex + 1);
+                    if (foundCategory !== null) {
+                        return foundCategory;
+                    }
                 }
             }
-        }
-        return null;
-    };
+            return null;
+        };
 
     const onContestCategoryClick = (id: number) => {
         if (isRenderedOnHomePage) {
@@ -128,7 +134,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
               style={{ color: themeColors.textColor }}
               onClick={() => setIsExpanded(!isExpanded)}
             >
-                Contest Categories
+                <div>Contest Categories</div>
                 {isExpanded
                     ? <FaAngleDown />
                     : <FaAngleUp />}

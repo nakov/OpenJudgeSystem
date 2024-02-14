@@ -12,10 +12,12 @@
     font-weight: 700;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
     cursor: pointer;
-    margin-bottom: spacings.$sp-24;
+    margin: spacings.$sp-96 0 spacings.$sp-32 0;
     width: 250px;
+    > div {
+      margin-right: spacings.$sp-12;
+    }
   }
   .contestCategoriesInnerWrapper {
     opacity: 0;

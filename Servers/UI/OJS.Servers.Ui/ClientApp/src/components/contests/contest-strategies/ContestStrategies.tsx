@@ -12,7 +12,7 @@ import { useGetContestStrategiesQuery } from '../../../redux/services/contestsSe
 const ContestStrategies = () => {
     const dispatch = useDispatch();
     const { themeColors } = useTheme();
-    const { category, strategy } = useSelector((state: any) => state.filterContests);
+    const { category, strategy } = useSelector((state: any) => state.contests);
 
     const [ selectValue, setSelectValue ] = useState('');
 

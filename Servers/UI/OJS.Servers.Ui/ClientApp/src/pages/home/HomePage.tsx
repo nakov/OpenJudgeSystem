@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 
-import ContestCetegories from '../../components/contests/contest-categories-new/ContestCetegories';
+import ContestCetegories from '../../components/contests/contest-categories/ContestCetegories';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';

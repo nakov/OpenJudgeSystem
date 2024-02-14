@@ -8,7 +8,6 @@ import ContestProblemsPage from '../../pages/administration/ContestProblemsPage'
 import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../pages/administration/TestEditPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
-import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import HomePage from '../../pages/home/HomePage';
@@ -64,10 +63,6 @@ const routes = [
         title: 'Contests',
         path: '/contests',
         Element: ContestsPage,
-    },
-    {
-        path: '/contests/:contestId/:participationType',
-        Element: ContestPage,
     },
     {
         path: '/contests/:contestId',

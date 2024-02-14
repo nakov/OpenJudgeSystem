@@ -5,18 +5,18 @@ import { IContestStrategyFilter, IFilter } from '../../common/contest-types';
 interface IContestState {
     category: IFilter | null;
     strategy: IContestStrategyFilter | null;
-    filteredStrategies: [];
+    breadcrumbItems: Array<any>;
 }
 
 const initialState: IContestState = {
     category: null,
     strategy: null,
-    filteredStrategies: [],
+    breadcrumbItems: [],
 };
 
 // eslint-disable-next-line import/group-exports
 export const contestSlice = createSlice({
-    name: 'filterContests',
+    name: 'contests',
     initialState,
     reducers: {
         setContestCategory: (state, action) => {
@@ -27,15 +27,26 @@ export const contestSlice = createSlice({
             // eslint-disable-next-line no-param-reassign,prefer-destructuring
             state.strategy = action.payload;
         },
-        setContestFilteredStrategies: (state, action) => {
-            // eslint-disable-next-line no-param-reassign,prefer-destructuring
-            state.filteredStrategies = action.payload;
+        updateContestCategoryBreadcrumbItem: (state, action) => {
+            // eslint-disable-next-line prefer-destructuring
+            const { index, element } = action.payload;
+
+            if (index < state.breadcrumbItems.length) {
+                state.breadcrumbItems.splice(index);
+                state.breadcrumbItems.push(element);
+                return;
+            }
+
+            if (!state.breadcrumbItems[index]) {
+                state.breadcrumbItems.push(element);
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                state.breadcrumbItems[index] = element;
+            }
         },
-        clearContestFilters: (state) => {
+        clearContestCategoryBreadcrumbItems: (state) => {
             // eslint-disable-next-line no-param-reassign
-            state.category = null;
-            // eslint-disable-next-line no-param-reassign
-            state.strategy = null;
+            state.breadcrumbItems = [];
         },
     },
 });
@@ -44,8 +55,8 @@ export const contestSlice = createSlice({
 export const {
     setContestCategory,
     setContestStrategy,
-    clearContestFilters,
-    setContestFilteredStrategies,
+    updateContestCategoryBreadcrumbItem,
+    clearContestCategoryBreadcrumbItems,
 } = contestSlice.actions;
 
 export default contestSlice.reducer;
