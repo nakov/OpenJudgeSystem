@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/no-children-prop */
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MenuItem, Select } from '@mui/material';
 
@@ -15,11 +14,19 @@ const ContestStrategies = () => {
     const { themeColors } = useTheme();
     const { category, strategy } = useSelector((state: any) => state.filterContests);
 
+    const [ selectValue, setSelectValue ] = useState('');
+
     const {
         data: contestStrategies,
         isLoading: areStrategiesLoading,
         error: strategiesError,
     } = useGetContestStrategiesQuery();
+
+    useEffect(() => {
+        if (!strategy) {
+            setSelectValue('');
+        }
+    }, [ strategy ]);
 
     const menuItems: ReactNode[] = React.useMemo(() => {
         if (!contestStrategies) { return []; }
@@ -30,6 +37,7 @@ const ContestStrategies = () => {
 
         const handleStrategySelect = (s: any) => {
             dispatch(setContestStrategy(s));
+            setSelectValue(s.id);
         };
 
         return (displayStrategies || []).map((item: IContestStrategyFilter) => (
@@ -58,12 +66,15 @@ const ContestStrategies = () => {
               '& .MuiSvgIcon-root': { fill: themeColors.textColor },
               '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
           }}
-          defaultValue={strategy}
+          value={selectValue}
+          defaultValue=""
           labelId="strategy-label"
           autoWidth
           displayEmpty
-          children={[ <MenuItem key="strategy-item-default" value="" selected>Select strategy</MenuItem>, ...menuItems ]}
-        />
+        >
+            <MenuItem key="strategy-default-item" value="" selected>Select strategy</MenuItem>
+            {[ ...menuItems ]}
+        </Select>
     );
 };
 

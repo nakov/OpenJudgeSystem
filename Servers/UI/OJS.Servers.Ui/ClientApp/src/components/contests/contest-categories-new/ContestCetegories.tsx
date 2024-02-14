@@ -30,6 +30,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors } = useTheme();
     const { category: selectedCategory } = useSelector((state: any) => state.filterContests);
+
     const {
         data: contestCategories,
         isLoading: areCategoriesLoading,
@@ -51,7 +52,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             const children = selectedContestCategory?.children;
             ReactDOM.render((children || []).map((child) => renderCategory(child)), elementToRenderChildren);
         }
-    }, []);
+    }, [ searchParams.get('category') ]);
 
     const findContestCategoryByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number): IContestCategory | null => {
         if (!elements) {
