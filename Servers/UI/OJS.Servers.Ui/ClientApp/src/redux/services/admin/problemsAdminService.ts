@@ -3,6 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
 import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
+import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 // eslint-disable-next-line import/group-exports
@@ -23,17 +24,17 @@ export const problemsAdminService = createApi({
             keepUnusedDataFor: 10,
         }),
         getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
-        deleteProblem: builder.mutation<string, IProblemUrlById >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+        deleteProblem: builder.mutation<string, number >({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
             query: (problem) => ({
-                url: '/Edit',
+                url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
                 body: problem,
             }),
         }),
         createProblem: builder.mutation({
             query: (problem: FormData) => ({
-                url: '/Create',
+                url: `/${CREATE_ENDPOINT}`,
                 method: 'POST',
                 body: problem,
             }),

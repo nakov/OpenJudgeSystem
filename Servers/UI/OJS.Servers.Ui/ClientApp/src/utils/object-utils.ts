@@ -1,10 +1,12 @@
+/* eslint-disable import/group-exports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const toList = (obj: any) => Object.keys(obj)
+export const toList = (obj: any) => Object.keys(obj)
     .map((key) => ({ key, value: obj[key] }));
 
-const flexCenterObjectStyles = { display: 'flex', justifyContent: 'center', alignItems: 'center' };
-const modalStyles = {
+export const flexCenterObjectStyles = { display: 'flex', justifyContent: 'center', alignItems: 'center' };
+
+export const modalStyles = {
     position: 'absolute' as const,
     top: '50%',
     left: '50%',
@@ -18,10 +20,5 @@ const modalStyles = {
     fontFamily: 'Roboto, Helvetica , Arial',
     overflow: 'auto',
 };
-export default { toListOfKeyValue: toList };
 
-export {
-    toList,
-    flexCenterObjectStyles,
-    modalStyles,
-};
+export default { toListOfKeyValue: toList };

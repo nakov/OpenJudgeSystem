@@ -22,7 +22,6 @@ const DeleteButton = (props: IDeleteButtonProps) => {
     const [ message, setMessage ] = useState<string | null>(null);
 
     const [ deleteRequest, { data, isLoading, isSuccess, error } ] = mutation();
-
     const confirmDelete = () => {
         setShowConfirmDelete(!showConfirmDelete);
     };
@@ -72,7 +71,7 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                       confirmButtonText="Delete"
                       declineButtonText="Cancel"
                       onClose={() => setShowConfirmDelete(!showConfirmDelete)}
-                      confirmFunction={() => deleteRequest({ id })}
+                      confirmFunction={() => deleteRequest(id)}
                     />
                     )}
                 </div>

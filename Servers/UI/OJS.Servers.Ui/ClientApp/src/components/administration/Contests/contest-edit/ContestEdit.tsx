@@ -27,6 +27,7 @@ import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
+import formStyles from '../../common/styles/FormStyles.module.scss';
 import styles from './ContestEdit.module.scss';
 
 interface IContestEditProps {
@@ -319,18 +320,18 @@ const ContestEdit = (props:IContestEditProps) => {
         isEditMode
             ? (
                 <FormActionButton
-                  className={styles.buttonsWrapper}
+                  className={formStyles.buttonsWrapper}
                   disabled={!isValidForm}
-                  buttonClassName={styles.button}
+                  buttonClassName={formStyles.button}
                   onClick={edit}
                   name={EDIT}
                 />
             )
             : (
                 <FormActionButton
-                  className={styles.buttonsWrapper}
+                  className={formStyles.buttonsWrapper}
                   disabled={!isValidForm}
-                  buttonClassName={styles.button}
+                  buttonClassName={formStyles.button}
                   onClick={create}
                   name={CREATE}
                 />
@@ -345,21 +346,21 @@ const ContestEdit = (props:IContestEditProps) => {
         <Box className={`${styles.flex}`}>
             {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
             {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
-            <Typography className={styles.centralize} variant="h4">
+            <Typography className={formStyles.centralize} variant="h4">
                 {contest.name || 'Contest form'}
             </Typography>
-            <form className={`${styles.form}`}>
+            <form className={`${formStyles.form}`}>
                 <Box className={`${styles.fieldBox}`}>
                     <Box>
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           label={ID}
                           variant="standard"
                           value={contest.id}
                           disabled
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           label={NAME}
                           variant="standard"
                           name="name"
@@ -373,7 +374,7 @@ const ContestEdit = (props:IContestEditProps) => {
                                     !contestValidations.isNameValid) && CONTEST_NAME_VALIDATION}
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="number"
                           name="limitBetweenSubmissions"
                           label={LIMIT_BETWEEN_SUBMISSIONS}
@@ -392,7 +393,7 @@ const ContestEdit = (props:IContestEditProps) => {
                                      CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION}
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="number"
                           label={ORDER_BY}
                           variant="standard"
@@ -408,7 +409,7 @@ const ContestEdit = (props:IContestEditProps) => {
                             CONTEST_ORDER_BY_VALIDATION}
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="number"
                           label={NUMBER_OF_PROBLEM_GROUPS}
                           variant="standard"
@@ -420,7 +421,7 @@ const ContestEdit = (props:IContestEditProps) => {
                     </Box>
                     <Box>
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="text"
                           label={COMPETE_PASSWORD}
                           variant="standard"
@@ -430,7 +431,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           InputLabelProps={{ shrink: true }}
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="text"
                           label={PRACTICE_PASSWORD}
                           variant="standard"
@@ -440,7 +441,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           InputLabelProps={{ shrink: true }}
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           label={NEW_IP_PASSWORD}
                           variant="standard"
                           value={contest.newIpPassword || ''}
@@ -455,7 +456,7 @@ const ContestEdit = (props:IContestEditProps) => {
                                     !contestValidations.isNewIpPasswordValid) && CONTEST_NEW_IP_PASSWORD_VALIDATION}
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="text"
                           label={ALLOWED_IPS}
                           variant="standard"
@@ -466,7 +467,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           name="allowedIps"
                         />
                         <TextField
-                          className={styles.inputRow}
+                          className={formStyles.inputRow}
                           type="string"
                           label={DURATION}
                           variant="standard"
@@ -483,14 +484,14 @@ const ContestEdit = (props:IContestEditProps) => {
                     </Box>
                 </Box>
                 <FormControl
-                  className={styles.inputRow}
+                  className={formStyles.inputRow}
                 >
                     <InputLabel id="contest-type">{TYPE}</InputLabel>
                     <Select
                       sx={{ width: '100%' }}
                       variant="standard"
                       value={contest.type}
-                      className={styles.inputRow}
+                      className={formStyles.inputRow}
                       name="type"
                       labelId="contest-type"
                       onChange={(e) => onChange(e)}
@@ -525,7 +526,7 @@ const ContestEdit = (props:IContestEditProps) => {
                 <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
                     <Autocomplete
                       sx={{ width: '100%' }}
-                      className={styles.inputRow}
+                      className={formStyles.inputRow}
                       onChange={(event, newValue) => handleAutocompleteChange('category', newValue!, 'id', onChange)}
                       value={contestCategories?.find((category) => category.id === contest.categoryId) ?? contestCategories![0]}
                       options={contestCategories!}
@@ -538,7 +539,7 @@ const ContestEdit = (props:IContestEditProps) => {
                       )}
                     />
                 </FormControl>
-                <Box className={styles.row}>
+                <Box className={formStyles.row}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateTimePicker
                           sx={{ width: '48%' }}
@@ -556,7 +557,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         />
                     </LocalizationProvider>
                 </Box>
-                <Box className={styles.row}>
+                <Box className={formStyles.row}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DateTimePicker
                           sx={{ width: '48%', margin: '20px 0' }}

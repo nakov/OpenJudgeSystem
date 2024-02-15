@@ -13,6 +13,8 @@ namespace OJS.Services.Administration.Business.ProblemGroups
     using System.Threading.Tasks;
     using Resource = OJS.Common.Resources.ProblemGroupsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
+    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Exceptions;
 
     public class ProblemGroupsBusinessService : AdministrationOperationService<ProblemGroup, int, ProblemGroupsAdministrationModel>, IProblemGroupsBusinessService
     {
@@ -43,6 +45,34 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             this.problemGroupsOrderableService = problemGroupsOrderableService;
             this.testsData = testsData;
             this.problemResourcesData = problemResourcesData;
+        }
+
+        public override async Task<ProblemGroupsAdministrationModel> Get(int id)
+        {
+            var problemGroup = await this.problemGroupsData
+                .GetByIdQuery(id)
+                .Include(pg => pg.Contest)
+                .FirstOrDefaultAsync();
+            if (problemGroup == null)
+            {
+                throw new BusinessServiceException($"Problem group with id: {id} not found.");
+            }
+
+            return problemGroup.Map<ProblemGroupsAdministrationModel>();
+        }
+
+        public override async Task<ProblemGroupsAdministrationModel> Edit(ProblemGroupsAdministrationModel model)
+        {
+            var problemGroup = model.Map<ProblemGroup>();
+            this.problemGroupsData.Update(problemGroup);
+            await this.problemGroupsData.SaveChanges();
+            return model;
+        }
+
+        public override async Task Delete(int id)
+        {
+            await this.problemGroupsData.DeleteById(id);
+            await this.problemGroupsData.SaveChanges();
         }
 
         public async Task<ServiceResult> DeleteById(int id)

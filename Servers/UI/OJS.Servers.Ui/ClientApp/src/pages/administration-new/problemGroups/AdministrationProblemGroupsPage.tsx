@@ -12,7 +12,7 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
-import filterableColumns, { returnNonFilterableColumns } from './gridColumns';
+import filterableColumns, { returnNonFilterableColumns } from './problemGroupGridColumns';
 
 const LOCATION = 'all-problem-groups';
 
@@ -24,8 +24,8 @@ const AdministrationProblemGroupsPage = () => {
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
-
     const { data, isLoading, error } = useGetAllAdminProblemGroupsQuery(queryParams);
+
     const selectedFilters = useSelector((state: IRootStore) => state.adminProblemGroups[LOCATION]?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminProblemGroups[LOCATION]?.selectedSorters);
 
@@ -40,6 +40,10 @@ const AdministrationProblemGroupsPage = () => {
         setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
     }, [ sortingParams ]);
 
+    const onEditClick = () => {
+        console.log('Edit button clicked');
+    };
+
     const renderGridSettings = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }} />
     );
@@ -51,7 +55,7 @@ const AdministrationProblemGroupsPage = () => {
     return (
         <AdministrationGridView
           filterableGridColumnDef={filterableColumns}
-          notFilterableGridColumnDef={returnNonFilterableColumns()}
+          notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
           data={data}
           renderActionButtons={renderGridSettings}
           error={error}

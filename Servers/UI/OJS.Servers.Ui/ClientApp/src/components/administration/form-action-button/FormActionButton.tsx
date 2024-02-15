@@ -6,7 +6,7 @@ interface IFormActionButton {
     name: string;
     onClick: Function;
     className?: string;
-    disabled: boolean;
+    disabled?: boolean;
     buttonClassName?: string;
 }
 const FormActionButton = (props: IFormActionButton) => {
@@ -17,7 +17,7 @@ const FormActionButton = (props: IFormActionButton) => {
               variant="contained"
               onClick={() => onClick()}
               className={buttonClassName}
-              disabled={disabled}
+              disabled={disabled ?? false}
             >
                 {name}
             </Button>
