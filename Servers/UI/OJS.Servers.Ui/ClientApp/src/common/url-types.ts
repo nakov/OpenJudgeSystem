@@ -145,7 +145,6 @@ export type {
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
-    IGetSubmissionsByContestIdParams,
     IGetByContestId,
     IProblemUrlById,
 };
