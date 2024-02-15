@@ -63,9 +63,9 @@
       cursor: pointer;
       font-weight: 500;
       align-self: flex-end;
-      background-color: colors.$primary-blue;
+      background-color: colors.$secondary-green;
       &:first-child {
-        background-color: colors.$secondary-green;
+        background-color: colors.$primary-blue;
       }
       &:disabled {
         background-color: transparent;

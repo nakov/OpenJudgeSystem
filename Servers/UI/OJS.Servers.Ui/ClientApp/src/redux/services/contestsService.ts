@@ -43,7 +43,6 @@ export const contestsService = createApi({
 // eslint-disable-next-line import/group-exports
 export const {
     useGetAllContestsQuery,
-    useGetIndexContestsQuery,
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,

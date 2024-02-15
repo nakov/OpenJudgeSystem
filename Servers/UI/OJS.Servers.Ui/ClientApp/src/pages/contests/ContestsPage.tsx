@@ -3,8 +3,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
-import ContestBreadcrumbs from '../../components/contests/contest-breadcrumb-new/ContestBreadcrumbs';
-import ContestCardNew from '../../components/contests/contest-card/ContestCard';
+import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
+import ContestCard from '../../components/contests/contest-card/ContestCard';
 import ContestCategories from '../../components/contests/contest-categories/ContestCetegories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
@@ -47,7 +47,7 @@ const ContestsPage = () => {
     } = useGetAllContestsQuery({ ...contestParams });
 
     const renderContest = useCallback((contest: IIndexContestsType) => (
-        <ContestCardNew contest={contest} />
+        <ContestCard contest={contest} />
     ), []);
 
     const renderContests = useCallback(() => {

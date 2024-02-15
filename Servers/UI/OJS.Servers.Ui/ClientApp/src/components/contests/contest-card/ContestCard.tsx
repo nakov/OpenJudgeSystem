@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import moment from 'moment';
-import styled from 'styled-components';
 
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
@@ -57,11 +56,6 @@ const iconNames = {
     remainingTime: 'far fa-clock',
 };
 
-const StyledDiv = styled.div`
-  background-color: ${(props) => props.theme.baseColor200};
-  color: ${(props) => props.theme.textColor};
-`;
-
 const ContestCard = (props: IContestCardProps) => {
     const {
         numberOfProblems,
@@ -110,7 +104,7 @@ const ContestCard = (props: IContestCardProps) => {
     };
 
     return (
-        <StyledDiv theme={themeColors} className={styles.contestCardWrapper}>
+        <div style={{ backgroundColor: themeColors.baseColor200, color: themeColors.textColor }} className={styles.contestCardWrapper}>
             <div>
                 <div className={styles.contestCardTitle}>{name}</div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
@@ -150,7 +144,7 @@ const ContestCard = (props: IContestCardProps) => {
                   }}
                 />
             </div>
-        </StyledDiv>
+        </div>
     );
 };
 

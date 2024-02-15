@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
 import React, { useEffect } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
 import { RiSunLine } from 'react-icons/ri';
@@ -44,6 +47,25 @@ const PageHeader = () => {
         '&.Mui-selected:hover': { backgroundColor: { backgroundColor: '#00457a' } },
     };
 
+    const renderThemeSwitcher = () => (
+        <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
+            <ToggleButton
+              sx={{ ...toggleButtonSxProps }}
+              value="light"
+              onClick={toggleSelectedTheme}
+            >
+                <RiSunLine />
+            </ToggleButton>
+            <ToggleButton
+              sx={{ ...toggleButtonSxProps }}
+              value="dark"
+              onClick={toggleSelectedTheme}
+            >
+                <BsFillMoonFill />
+            </ToggleButton>
+        </ToggleButtonGroup>
+    );
+
     return (
         <header className={styles.header}>
             <div>
@@ -73,22 +95,7 @@ const PageHeader = () => {
                         </>
                     )}
             </div>
-            <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
-                <ToggleButton
-                  sx={{ ...toggleButtonSxProps }}
-                  value="light"
-                  onClick={toggleSelectedTheme}
-                >
-                    <RiSunLine />
-                </ToggleButton>
-                <ToggleButton
-                  sx={{ ...toggleButtonSxProps }}
-                  value="dark"
-                  onClick={toggleSelectedTheme}
-                >
-                    <BsFillMoonFill />
-                </ToggleButton>
-            </ToggleButtonGroup>
+            {renderThemeSwitcher()}
         </header>
     );
 };
