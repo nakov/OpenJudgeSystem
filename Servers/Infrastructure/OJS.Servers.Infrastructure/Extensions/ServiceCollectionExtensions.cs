@@ -1,14 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Reflection;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
@@ -27,6 +18,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
+    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
@@ -42,6 +34,15 @@ namespace OJS.Servers.Infrastructure.Extensions
     using SoftUni.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Reflection;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
 
@@ -275,6 +276,20 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .ValidateDataAnnotations()
                 .ValidateOnStart()
                 .Services;
+
+        public static IServiceCollection ConfigureCorsPolicy(this IServiceCollection services, IConfiguration configuration) =>
+        services.AddCors(options =>
+        {
+            options.AddPolicy(
+                GlobalConstants.CorsDefaultPolicyName,
+                config =>
+                    config.WithOrigins(
+                            configuration.GetSectionWithValidation<ApplicationUrlsConfig>().FrontEndUrl)
+                        .WithExposedHeaders("Content-Disposition")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
+        });
 
         private static IServiceCollection AddWebServerServices<TStartUp>(this IServiceCollection services)
         {

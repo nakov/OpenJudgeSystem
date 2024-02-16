@@ -1,30 +1,32 @@
 namespace OJS.Servers.Administration.Controllers;
-using OJS.Workers.Common.Extensions;
-using OJS.Common.Utils;
+
 using AutoCrudAdmin.Enumerations;
 using AutoCrudAdmin.Extensions;
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using OJS.Common.Extensions;
 using OJS.Common.Helpers;
+using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
+using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
-using OJS.Common.Extensions;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Workers.Common.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
@@ -289,10 +291,10 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Type = typeof(TestTypeEnum),
             Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
             Value = entity.IsOpenTest
-                ? TestTypeEnum.OpenTest
+                ? TestTypeEnum.Compete
                 : entity.IsTrialTest
-                    ? TestTypeEnum.TrialTest
-                    : TestTypeEnum.Compete,
+                    ? TestTypeEnum.Practice
+                    : TestTypeEnum.Standard,
         };
 
         if (action == EntityAction.Delete)
@@ -367,15 +369,15 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
         switch (testType)
         {
-            case TestTypeEnum.TrialTest:
+            case TestTypeEnum.Practice:
                 entity.IsTrialTest = true;
                 entity.IsOpenTest = false;
                 break;
-            case TestTypeEnum.OpenTest:
+            case TestTypeEnum.Compete:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
                 break;
-            case TestTypeEnum.Compete:
+            case TestTypeEnum.Standard:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = false;
                 break;

@@ -6,15 +6,18 @@ using Microsoft.AspNetCore.Builder;
 using OJS.Data;
 using OJS.Servers.Administration.Filters;
 using OJS.Servers.Infrastructure.Extensions;
+using OJS.Servers.Infrastructure.Middleware;
 
 internal static class WebApplicationExtensions
 {
     public static WebApplication ConfigureWebApplication(this WebApplication app)
     {
+        app.UseCorsPolicy();
         app
             .UseDefaults()
             .UseStaticFiles();
 
+        app.UseMiddleware<AdministrationExceptionMiddleware>();
         app.MigrateDatabase<OjsDbContext>();
 
         app.UseHealthMonitoring();

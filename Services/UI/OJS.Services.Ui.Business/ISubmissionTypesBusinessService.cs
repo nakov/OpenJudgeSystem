@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using OJS.Data.Models.Problems;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.Services.Infrastructure;
+using OJS.Data.Models;
 
 public interface ISubmissionTypesBusinessService : IService
 {

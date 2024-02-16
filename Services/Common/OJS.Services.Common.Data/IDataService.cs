@@ -1,5 +1,6 @@
 namespace OJS.Services.Common.Data
 {
+    using OJS.Services.Common.Models.Users;
     using SoftUni.Data.Infrastructure.Models;
     using SoftUni.Services.Infrastructure;
     using System;
@@ -66,6 +67,14 @@ namespace OJS.Services.Common.Data
         IQueryable<TEntity> GetByIdQuery(object id);
 
         IQueryable<TEntity> GetQuery(
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
+            bool descending = false,
+            int? skip = null,
+            int? take = null);
+
+        IQueryable<TEntity> GetQueryForUser(
+            UserInfoModel user,
             Expression<Func<TEntity, bool>>? filter = null,
             Expression<Func<TEntity, object>>? orderBy = null,
             bool descending = false,
