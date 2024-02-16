@@ -21,11 +21,11 @@ import { DEFAULT_DATE_FORMAT } from '../../../utils/constants';
 import { getDateWithFormat } from '../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
 import { renderAlert } from '../../../utils/render-utils';
-import { AlertSeverity } from '../../guidelines/alert/Alert';
-import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../administration/common/delete/DeleteButton';
 import FormActionButton from '../../administration/form-action-button/FormActionButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../administration/utils/mui-utils';
+import { AlertSeverity } from '../../guidelines/alert/Alert';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import formStyles from '../../common/styles/FormStyles.module.scss';
 import styles from './ContestEdit.module.scss';
