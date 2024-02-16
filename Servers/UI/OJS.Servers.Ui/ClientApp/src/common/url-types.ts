@@ -2,6 +2,7 @@
 import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
 
 import { IFilter, ISort } from './contest-types';
+import { IGetAllAdminParams } from './types';
 
 interface IUserInfoUrlParams {
     username: string;
@@ -9,6 +10,10 @@ interface IUserInfoUrlParams {
 
 interface IContestDetailsUrlParams {
     id: number;
+}
+
+interface IGetByContestId extends IGetAllAdminParams {
+    contestId: number;
 }
 
 interface IGetContestByProblemUrlParams {
@@ -93,6 +98,10 @@ interface IContestProblemsUrlParams {
     id: number;
 }
 
+interface IProblemUrlById {
+    id: number;
+}
+
 interface IContestEditUrlParams {
     id: number;
 }
@@ -136,4 +145,6 @@ export type {
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
+    IGetByContestId,
+    IProblemUrlById,
 };

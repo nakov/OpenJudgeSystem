@@ -1,7 +1,9 @@
 namespace OJS.Services.Common.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Extensions;
     using OJS.Common.Utils;
+    using OJS.Services.Common.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Models;
     using System;
@@ -152,6 +154,15 @@ namespace OJS.Services.Common.Data.Implementations
             return query;
         }
 
+        public IQueryable<TEntity> GetQueryForUser(
+            UserInfoModel user,
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
+            bool descending = false,
+            int? skip = null,
+            int? take = null)
+            => this.GetQuery(this.GetUserFilter(user).CombineAndAlso(filter), orderBy, descending, skip, take);
+
         //// In case that the timeout is set to 0, this means that there is no timeout.
         public async Task ExecuteSqlCommandWithTimeout(string query, int timeoutInSeconds)
         {
@@ -166,6 +177,9 @@ namespace OJS.Services.Common.Data.Implementations
                 this.db.Database.SetCommandTimeout(originalTimeout);
             }
         }
+
+        protected virtual Expression<Func<TEntity, bool>> GetUserFilter(UserInfoModel user)
+            => _ => true;
 
         private async Task DbExecuteSqlCommand(string query) =>
            await this.db.Database.ExecuteSqlRawAsync(query);

@@ -5,6 +5,7 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public interface IContestForActivityServiceModel : IMapFrom<Contest>
 {

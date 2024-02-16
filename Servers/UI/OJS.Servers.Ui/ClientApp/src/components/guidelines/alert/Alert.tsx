@@ -1,5 +1,6 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
-import { Alert as MuiAlert, Button, Snackbar } from '@mui/material';
+import { Alert as MuiAlert, Button, Portal, Snackbar } from '@mui/material';
 
 import './Alert.module.scss';
 
@@ -9,8 +10,9 @@ interface IAlertProps {
     onClose? :any;
     variant: AlertVariant;
     autoHideDuration?:number;
-    vertical:AlertVerticalOrientation;
-    horizontal:AlertHorizontalOrientation;
+    vertical?:AlertVerticalOrientation;
+    horizontal?:AlertHorizontalOrientation;
+    styles?: React.CSSProperties;
 }
 
  enum AlertVariant{
@@ -36,7 +38,7 @@ enum AlertHorizontalOrientation {
     Center = 'center',
 }
 const Alert = (props:IAlertProps) => {
-    const { message, severity, variant, onClose, autoHideDuration, vertical, horizontal } = props;
+    const { message, severity, variant, onClose, autoHideDuration, vertical, horizontal, styles } = props;
     const [ open, setOpen ] = useState<boolean>(true);
 
     const alertClass = `${severity === AlertSeverity.Success}`
@@ -50,23 +52,27 @@ const Alert = (props:IAlertProps) => {
     };
 
     return (
-        <Snackbar
-          open={open}
-          onClose={handleClose}
-          autoHideDuration={autoHideDuration}
-          anchorOrigin={{ vertical, horizontal }}
-          onClick={handleClose}
-        >
-            <MuiAlert
-              className={`${alertClass}`}
-              severity={severity}
-              variant={variant}
-              onClose={onClose}
+        <Portal>
+            <Snackbar
+              open={open}
+              onClose={handleClose}
+              autoHideDuration={autoHideDuration}
+              anchorOrigin={{ vertical: vertical ?? AlertVerticalOrientation.Top, horizontal: horizontal ?? AlertHorizontalOrientation.Right }}
+              onClick={handleClose}
             >
-                {message}
-                <Button className="alert-button" color="inherit" size="small">Close</Button>
-            </MuiAlert>
-        </Snackbar>
+                <MuiAlert
+                  className={`${alertClass}`}
+                  severity={severity}
+                  variant={variant}
+                  onClose={onClose}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                  style={styles || {}}
+                >
+                    {message}
+                    <Button className="alert-button" color="inherit" size="small">Close</Button>
+                </MuiAlert>
+            </Snackbar>
+        </Portal>
     );
 };
 

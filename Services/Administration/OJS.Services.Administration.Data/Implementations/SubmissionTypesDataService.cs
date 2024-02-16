@@ -17,5 +17,7 @@
                 .Where(st => st.SubmissionTypesInProblems
                     .Select(stp => stp.ProblemId)
                     .Contains(problemId));
+
+        public IQueryable<SubmissionType> GetAll() => this.DbSet;
     }
 }

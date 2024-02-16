@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
 
+import { CONTESTS_PATH } from '../../common/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SearchIcon from '../../components/guidelines/icons/SearchIcon';
@@ -9,7 +12,6 @@ import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLo
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import concatClassNames from '../../utils/class-names';
 import generateId from '../../utils/id-generator';
-import { getAdministrationNavigation } from '../../utils/urls';
 import PageNav from '../nav/PageNav';
 
 import logo from './softuni-logo-horizontal.svg';
@@ -17,21 +19,41 @@ import logo from './softuni-logo-horizontal.svg';
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
+    const { pathname } = useLocation();
+
+    const shouldRenderPageHeader = !pathname.includes('administration');
+
     const { actions: { toggleVisibility } } = useSearch();
+
     const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
+
     const dispatch = useDispatch();
+
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+
     const renderLinks = useCallback(() => {
         const administrationLink = user.canAccessAdministration
             ? (
-                <LinkButton
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to={getAdministrationNavigation()}
-                  isToExternal
-                  text="Administration"
-                />
+                <div className={styles.administrationsNavWrapper}>
+                    <LinkButton
+                      type={LinkButtonType.plain}
+                      size={ButtonSize.none}
+                      to="administration"
+                      text="Administration"
+                      isToExternal
+                    />
+                    <div style={{ marginLeft: '10px' }}>
+                        <LinkButton
+                          type={LinkButtonType.plain}
+                          size={ButtonSize.none}
+                          to={`${CONTESTS_PATH}`}
+                          text="Administration"
+                          isToExternal
+                        />
+                    </div>
+                    <FiberNewIcon className={styles.newIcon} />
+                </div>
             )
             : null;
 
@@ -97,6 +119,7 @@ const PageHeader = () => {
     const headingSecondaryClass = 'headingSeconary';
     const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 
+    if (!shouldRenderPageHeader) { return null; }
     return (
         <header id="pageHeader" className={styles.header}>
             <div className={styles.headerSize}>

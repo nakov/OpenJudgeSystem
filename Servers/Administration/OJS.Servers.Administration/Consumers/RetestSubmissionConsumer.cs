@@ -3,7 +3,7 @@ namespace OJS.Servers.Administration.Consumers;
 using System.Threading.Tasks;
 using MassTransit;
 using OJS.PubSub.Worker.Models.Submissions;
-using OJS.Services.Administration.Business;
+using OJS.Services.Administration.Business.Submissions;
 
 public class RetestSubmissionConsumer : IConsumer<RetestSubmissionPubSubModel>
 {

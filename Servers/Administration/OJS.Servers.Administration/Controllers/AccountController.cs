@@ -23,7 +23,7 @@ namespace OJS.Servers.Administration.Controllers
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
-            return this.Redirect(this.appUrls.UiUrl);
+            return this.Redirect(this.appUrls.FrontEndUrl);
         }
     }
 }

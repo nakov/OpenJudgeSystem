@@ -13,6 +13,7 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Services.Common;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Contests;
+    using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.AutoMapper.Infrastructure.Models;
@@ -153,6 +154,11 @@ namespace OJS.Services.Administration.Data.Implementations
                 .AnyAsync(c =>
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
+
+        protected override Expression<Func<Contest, bool>> GetUserFilter(UserInfoModel user)
+            => contest => user.IsAdmin ||
+                contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
+                contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
 
         private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
         {

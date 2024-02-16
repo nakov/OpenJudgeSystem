@@ -1,11 +1,11 @@
 namespace OJS.Services.Administration.Business.Implementations;
 
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 public class ContestCategoriesCacheService : IContestCategoriesCacheService
 {

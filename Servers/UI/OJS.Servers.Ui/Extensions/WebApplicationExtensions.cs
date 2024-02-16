@@ -12,7 +12,7 @@ namespace OJS.Servers.Ui.Extensions
             this WebApplication app,
             string apiVersion)
         {
-            app.UseCors(GlobalConstants.CorsDefaultPolicyName);
+            app.UseCorsPolicy();
             app
                 .UseDefaults()
                 .MapDefaultRoutes();

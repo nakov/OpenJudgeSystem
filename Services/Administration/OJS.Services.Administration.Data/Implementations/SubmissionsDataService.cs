@@ -27,6 +27,13 @@
             => this.DbSet
                 .Where(s => s.Id == id);
 
+        public IQueryable<Submission> GetAllWithParticipantProblemAndSubmissionType()
+            => this.DbSet
+                .Include(s => s.Participant)
+                    .ThenInclude(p => p!.User)
+                .Include(s => s.Problem)
+                .Include(s => s.SubmissionType);
+
         public IQueryable<Submission> GetAllByProblem(int problemId)
             => this.DbSet.Where(s => s.ProblemId == problemId);
 
