@@ -10,7 +10,7 @@ $wrappers-border-color: #cbcbcb;
 $success-background-color: #42abf8;
 $success-font-color: #fff;
 $color-btn-secondary: $light-blue-color;
-$color-btn-disabled: #bebebe;
+$color-btn-disabled: #687487;
 $background-color-btn-primary: $success-background-color;
 $background-color-btn-primary-hover: $primary-blue;
 $background-color-btn-secondary: #fff;
@@ -22,10 +22,25 @@ $text-dark-red: #a33338;
 $box-shadow-color: 0 1px 5px rgb(0 0 0 / 20%), 0 3px 4px rgb(0 0 0 / 12%), 0 2px 4px rgb(0 0 0 / 14%);
 $primary-red: #fc4c50;
 $primary-green: #23be5e;
-$secondary-green: #57B99D;
+$secondary-green: #57b99d;
 $icon-red: #f00;
 $icon-green: #0f0;
 $icon-blue: #00f;
 $label-purple: #9b5ec6;
 $label-gray: #f1f1f1;
 $horizontal-line-gray: #e5e5e5;
+
+$dark-text-color: #f3f1f1;
+$dark-base-color-100: #687487;
+$dark-base-color-200: #374151;
+$dark-base-color-300: #2c2f37;
+$dark-base-color-400: #212328;
+$dark-base-color-500: #2f2f2f;
+
+// sample colors, TBD
+$black-text-color: #14181c;
+$light-base-color-100: #cbcbcb;
+$light-base-color-200: #dadada;
+$light-base-color-300: #dedede;
+$light-base-color-400: #f5f5f5;
+$light-base-color-500: #f8f8f8;

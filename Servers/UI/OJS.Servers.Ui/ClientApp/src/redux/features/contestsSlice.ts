@@ -1,16 +1,20 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable prefer-destructuring */
+
 import { createSlice } from '@reduxjs/toolkit';
 
-import { IContestStrategyFilter, IFilter } from '../../common/contest-types';
+import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
+import { IContestCategory } from '../../common/types';
 
 interface IContestState {
-    category: IFilter | null;
-    strategy: IContestStrategyFilter | null;
-    breadcrumbItems: Array<any>;
+    selectedCategory: IContestCategory | null;
+    selectedStrategy: IContestStrategyFilter | null;
+    breadcrumbItems: Array<ContestBreadcrumb>;
 }
 
 const initialState: IContestState = {
-    category: null,
-    strategy: null,
+    selectedCategory: null,
+    selectedStrategy: null,
     breadcrumbItems: [],
 };
 
@@ -20,32 +24,19 @@ export const contestSlice = createSlice({
     initialState,
     reducers: {
         setContestCategory: (state, action) => {
-            // eslint-disable-next-line no-param-reassign,prefer-destructuring
-            state.category = action.payload;
+            state.selectedCategory = action.payload;
         },
         setContestStrategy: (state, action) => {
-            // eslint-disable-next-line no-param-reassign,prefer-destructuring
-            state.strategy = action.payload;
+            state.selectedStrategy = action.payload;
         },
         updateContestCategoryBreadcrumbItem: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
-            const { index, element } = action.payload;
-
-            if (index < state.breadcrumbItems.length) {
-                state.breadcrumbItems.splice(index);
-                state.breadcrumbItems.push(element);
+            const { elements } = action.payload;
+            if (!elements) {
                 return;
             }
-
-            if (!state.breadcrumbItems[index]) {
-                state.breadcrumbItems.push(element);
-            } else {
-                // eslint-disable-next-line no-param-reassign
-                state.breadcrumbItems[index] = element;
-            }
+            state.breadcrumbItems = [ ...elements ];
         },
         clearContestCategoryBreadcrumbItems: (state) => {
-            // eslint-disable-next-line no-param-reassign
             state.breadcrumbItems = [];
         },
     },

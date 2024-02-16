@@ -2,11 +2,11 @@ import React, { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
-import useTheme from '../../hooks/use-theme';
 import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 import AdministrationContestPage from '../../components/administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
+import useTheme from '../../hooks/use-theme';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -25,6 +25,7 @@ import {
     AdministrationSubmissionsForProcessingPage,
 } from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessingPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
+import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import HomePage from '../../pages/home/HomePage';
@@ -86,6 +87,10 @@ const routes = [
     {
         path: '/contests/:contestId',
         Element: ContestDetailsPage,
+    },
+    {
+        path: '/contests/:contestId/:participationType',
+        Element: ContestPage,
     },
     {
         path: '/contests/:contestId/:participationType/results/:resultType',
@@ -179,12 +184,11 @@ const adminRoutes = [
 ];
 
 const PageContent = () => {
-    const { themeColors } = useTheme();
-    const renderRoute = (path: string, Element: FC, title: string | undefined) => {
-        const WrappedElement = asPage(withTitle(Element, title));
+    const { themeColors, getColorClassName } = useTheme();
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor400);
     const renderRoute = (path: string, Element: FC, title: string | undefined, isAdminRoute: boolean) => {
         let WrappedElement = asPage(withTitle(Element, title));
         if (isAdminRoute) {
@@ -196,7 +200,7 @@ const PageContent = () => {
     };
 
     return (
-        <main className={styles.main} style={{ backgroundColor: `${themeColors.baseColor400}` }}>
+        <main className={`${styles.main} ${backgroundColorClassName}`}>
             <Routes>
                 {routes.map(({ path, Element, title }) => renderRoute(path, Element, title, false))}
                 {user.canAccessAdministration && adminRoutes.map(({ path, Element, title }) => renderRoute(path, Element, title, true))}

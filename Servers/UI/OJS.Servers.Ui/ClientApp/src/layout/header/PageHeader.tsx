@@ -1,67 +1,31 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
 import { RiSunLine } from 'react-icons/ri';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { useLocation } from 'react-router-dom';
-import FiberNewIcon from '@mui/icons-material/FiberNew';
 
-import { CONTESTS_PATH } from '../../common/urls';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import { useSearch } from '../../hooks/use-search';
 import useTheme from '../../hooks/use-theme';
-import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
+    const { toggleSelectedTheme } = useTheme();
     const { pathname } = useLocation();
-
     const shouldRenderPageHeader = !pathname.includes('administration');
 
     const { actions: { toggleVisibility } } = useSearch();
-
+    const { mode } = useAppSelector((state) => state.theme);
+    const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
     const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
 
-    const dispatch = useDispatch();
-
-    const { toggleSelectedTheme } = useTheme();
-    const { isLoggedIn } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-
-    const renderLinks = useCallback(() => {
-        const administrationLink = user.canAccessAdministration
-            ? (
-                <div className={styles.administrationsNavWrapper}>
-                    <LinkButton
-                      type={LinkButtonType.plain}
-                      size={ButtonSize.none}
-                      to="administration"
-                      text="Administration"
-                      isToExternal
-                    />
-                    <div style={{ marginLeft: '10px' }}>
-                        <LinkButton
-                          type={LinkButtonType.plain}
-                          size={ButtonSize.none}
-                          to={`${CONTESTS_PATH}`}
-                          text="Administration"
-                          isToExternal
-                        />
-                    </div>
-                    <FiberNewIcon className={styles.newIcon} />
-                </div>
-            )
-            : null;
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const { mode } = useSelector((state: any) => state.theme);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (isSuccessfullRequest && userData) {
@@ -110,7 +74,7 @@ const PageHeader = () => {
                 <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>Softuni Judge</Link>
                 <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
                 <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                {user.canAccessAdministration && <Link to="/administration" className={styles.navButton}>Administration</Link>}
+                {user.canAccessAdministration && <Link to="/administration" className={styles.navButton}>ADMINISTRATION</Link>}
             </div>
             <div className={styles.authButtons}>
                 <i className={`fas fa-search ${styles.searchIcon}`} onClick={toggleVisibility} />

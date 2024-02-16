@@ -1,6 +1,7 @@
-import { useDispatch, useSelector } from 'react-redux';
-
 import { toggleTheme } from '../redux/features/themeSlice';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+
+import styles from '../styles/theme-styles.module.scss';
 
 interface ITheme {
     [key: string]: {
@@ -12,26 +13,30 @@ interface ITheme {
         baseColor500: string;
     };
 }
+
+interface IThemeClassName {
+    [key: string]: string;
+}
+
 const useTheme = () => {
-    const dispatch = useDispatch();
-    const { mode } = useSelector((state: any) => state.theme);
+    const dispatch = useAppDispatch();
+    const { mode } = useAppSelector((state) => state.theme);
 
     const toggleSelectedTheme = () => {
         dispatch(toggleTheme());
     };
 
     const themeColors: ITheme = {
-        // TBD
         light: {
-            textColor: 'black',
-            baseColor100: '',
-            baseColor200: '',
-            baseColor300: '',
-            baseColor400: '',
-            baseColor500: '',
+            textColor: '#14181c',
+            baseColor100: '#6c6c6c',
+            baseColor200: '#9a9a9a',
+            baseColor300: '#adadad',
+            baseColor400: '#d7d7d7',
+            baseColor500: '#fdfdfd',
         },
         dark: {
-            textColor: 'white',
+            textColor: '#f3f1f1',
             baseColor100: '#687487',
             baseColor200: '#374151',
             baseColor300: '#2C2F37',
@@ -40,9 +45,29 @@ const useTheme = () => {
         },
     };
 
+    const colorClassName: IThemeClassName = {
+        // text color class names
+        [themeColors.light.textColor]: styles.blackColorClassName,
+        [themeColors.dark.textColor]: styles.whiteColorClassName,
+        // dark color class names
+        [themeColors.dark.baseColor100]: styles.darkBaseColor100ClassName,
+        [themeColors.dark.baseColor200]: styles.darkBaseColor200ClassName,
+        [themeColors.dark.baseColor300]: styles.darkBaseColor300ClassName,
+        [themeColors.dark.baseColor400]: styles.darkBaseColor400ClassName,
+        [themeColors.dark.baseColor500]: styles.darkBaseColor500ClassName,
+        // light color class names TBD
+        [themeColors.light.baseColor100]: styles.lightBaseColor100ClassName,
+        [themeColors.light.baseColor200]: styles.lightBaseColor200ClassName,
+        [themeColors.light.baseColor300]: styles.lightBaseColor300ClassName,
+        [themeColors.light.baseColor400]: styles.lightBaseColor400ClassName,
+        [themeColors.light.baseColor500]: styles.lightBaseColor500ClassName,
+    };
+
     // eslint-disable-next-line prefer-destructuring
     const selectedThemeColors = themeColors[mode];
 
-    return { mode, toggleSelectedTheme, themeColors: selectedThemeColors };
+    const getColorClassName = (color: string) => colorClassName[color];
+
+    return { mode, toggleSelectedTheme, themeColors: selectedThemeColors, getColorClassName };
 };
 export default useTheme;

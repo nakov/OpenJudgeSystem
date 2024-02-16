@@ -2,10 +2,11 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable consistent-return */
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ import {
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { useAppDispatch } from '../../../redux/store';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestCategories.module.scss';
@@ -29,9 +31,11 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const {
         data: contestCategories,
@@ -44,12 +48,47 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
 
     useEffect(() => {
-        const categoryId = searchParams.get('category');
-        if (categoryId) {
-            const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, Number(categoryId));
-            dispatch(setContestCategory(selectedContestCategory));
+        const selectedCategory = findContestCategoryByIdRecursive(contestCategories, selectedId);
+        const breadcrumbItems = findParentNames(contestCategories, selectedId);
+
+        dispatch(setContestCategory(selectedCategory));
+        dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
+    }, [ selectedId, contestCategories ]);
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const findParentNames = (collection: Array<IContestCategory> | undefined, selectedId: number) => {
+        if (!collection || !selectedId) {
+            return;
         }
-    }, [ searchParams.get('category') ]);
+        const findParentsRecursive = (
+            element: IContestCategory,
+            targetId: number,
+            parents: Array<{ name: string; id: number }> = [],
+        ): Array<{name: string; id: number}> | null => {
+            if (element.id === targetId) {
+                return [ ...parents, { name: element.name, id: element.id } ];
+            }
+
+            for (const child of element.children || []) {
+                const result = findParentsRecursive(child, targetId, [ ...parents, { name: element.name, id: element.id } ]);
+
+                if (result) {
+                    return result;
+                }
+            }
+
+            return null;
+        };
+
+        for (const node of collection) {
+            const parents = findParentsRecursive(node, selectedId);
+            if (parents) {
+                return parents;
+            }
+        }
+
+        return [];
+    };
 
     const findContestCategoryByIdRecursive =
         (elements: Array<IContestCategory> | undefined, id: number, rootIndex = 0): IContestCategory | null => {
@@ -59,7 +98,6 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             // eslint-disable-next-line no-restricted-syntax
             for (const contestCategory of elements) {
                 if (contestCategory.id === id) {
-                    dispatch(updateContestCategoryBreadcrumbItem({ index: rootIndex, element: contestCategory }));
                     return contestCategory;
                 }
                 if (contestCategory.children.length) {
@@ -140,9 +178,8 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     return (
         <div className={styles.contestCategoriesWrapper}>
             <div
-              className={styles.contestCategoriesHeader}
+              className={`${styles.contestCategoriesHeader} ${textColorClassName}`}
               style={{
-                  color: themeColors.textColor,
                   marginTop: isRenderedOnHomePage
                       ? 0
                       : 32,
@@ -155,13 +192,12 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
                     : <FaAngleUp />}
             </div>
             { categoriesError
-                ? <div style={{ color: themeColors.textColor }}>Error loading categories</div>
+                ? <div className={textColorClassName}>Error loading categories</div>
                 : (
                     <div
-                      className={`${styles.contestCategoriesInnerWrapper} ${isExpanded
+                      className={`${styles.contestCategoriesInnerWrapper} ${textColorClassName} ${isExpanded
                           ? styles.show
                           : ''}`}
-                      style={{ color: themeColors.textColor }}
                     >
                         {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
                     </div>

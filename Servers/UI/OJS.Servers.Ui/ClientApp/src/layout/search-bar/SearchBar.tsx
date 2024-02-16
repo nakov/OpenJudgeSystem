@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import { IoIosClose } from 'react-icons/io';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 import Form from '../../components/guidelines/forms/Form';
@@ -35,9 +36,12 @@ const defaultState = {
 };
 
 const SearchBar = () => {
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
     const [ searchParam, setSearchParam ] = useState<string>(defaultState.state.searchValue);
     const [ selectedTerms, setSelectedTerms ] = useState(defaultState.state.selectedTerms);
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
 
     const {
         state:
@@ -111,11 +115,11 @@ const SearchBar = () => {
 
     return (
         <div
-          style={{ backgroundColor: themeColors.baseColor200 }}
-          className={`${styles.searchContainer} ${isVisible
+          className={`${styles.searchContainer} ${backgroundColorClassName} ${isVisible
               ? `${styles.show}`
               : ''}`}
         >
+            <IoIosClose size={50} onClick={toggleVisibility} className={styles.closeIcon} />
             <Form
               className={styles.search}
               onSubmit={handleSubmit}
@@ -130,7 +134,9 @@ const SearchBar = () => {
                   value={searchParam}
                   shouldDisableLabel
                 />
-                <i style={{ color: themeColors.textColor }} className={`fas fa-search ${styles.searchIcon}`} onClick={handleSubmit} />
+                {/* eslint-disable-next-line max-len */}
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
+                <i className={`fas fa-search ${styles.searchIcon} ${textColorClassName}`} onClick={handleSubmit} />
                 <div className={styles.checkboxContainer}>
                     <FormControl
                       className={styles.checkbox}
@@ -140,7 +146,7 @@ const SearchBar = () => {
                       checked={selectedTerms.includes(CheckboxSearchValues.contests)}
                       onClick={handleSelectedCheckboxValue}
                     />
-                    <span className={styles.checkboxText} style={{ color: themeColors.textColor }}>
+                    <span className={`${styles.checkboxText} ${textColorClassName}`}>
                         Contests
                     </span>
                     <FormControl
@@ -151,7 +157,7 @@ const SearchBar = () => {
                       checked={selectedTerms.includes(CheckboxSearchValues.problems)}
                       onClick={handleSelectedCheckboxValue}
                     />
-                    <span className={styles.checkboxText} style={{ color: themeColors.textColor }}>
+                    <span className={`${styles.checkboxText} ${textColorClassName}`}>
                         Problems
                     </span>
                     <FormControl
@@ -162,7 +168,7 @@ const SearchBar = () => {
                       checked={selectedTerms.includes(CheckboxSearchValues.users)}
                       onClick={handleSelectedCheckboxValue}
                     />
-                    <span className={styles.checkboxText} style={{ color: themeColors.textColor }}>
+                    <span className={`${styles.checkboxText} ${textColorClassName}`}>
                         Users
                     </span>
                 </div>

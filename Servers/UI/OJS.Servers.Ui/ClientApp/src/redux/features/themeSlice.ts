@@ -8,7 +8,8 @@ interface IThemeState {
 
 const initialState: IThemeState = { mode: 'dark' };
 
-const themeSlice = createSlice({
+// eslint-disable-next-line import/group-exports
+export const themeSlice = createSlice({
     name: 'theme',
     initialState,
     reducers: {
@@ -25,8 +26,5 @@ const themeSlice = createSlice({
 
 // eslint-disable-next-line prefer-destructuring,import/group-exports
 export const { toggleTheme } = themeSlice.actions;
-
-// eslint-disable-next-line import/group-exports,prefer-destructuring
-export const themeSliceName = themeSlice.name;
 
 export default themeSlice.reducer;

@@ -2,6 +2,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .contestsContainer {
   display: flex;
@@ -22,12 +23,17 @@
 
 .headingWrapper {
   @extend %font-family-roboto;
-  font-size: variables.$f-size-24;
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
+
   align-items: center;
-  margin-left: spacings.$sp-64;
+  display: flex;
+  font-size: variables.$f-size-24;
+  font-weight: font-weights.$font-weight-medium;
+  justify-content: space-between;
   margin-bottom: spacings.$sp-24;
+  margin-left: spacings.$sp-64;
   margin-top: spacings.$sp-24;
+}
+
+.contestHeading {
+  margin-left: 50px;
 }

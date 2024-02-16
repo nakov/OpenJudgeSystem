@@ -3,30 +3,32 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
+import { ContestBreadcrumb } from '../../../common/contest-types';
 import useTheme from '../../../hooks/use-theme';
+import { useAppSelector } from '../../../redux/store';
 
 import styles from './ContestBreadcrumbs.module.scss';
 
 const ContestBreadcrumbs = () => {
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors } = useTheme();
-    const { breadcrumbItems } = useSelector((state: any) => state.contests);
+    const { themeColors, getColorClassName } = useTheme();
+    const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
-    const renderBreadcrumbItems = (breadcrumbItem: any, isLast: boolean, idx: number) => (
+    const textColorClassName = getColorClassName(themeColors.textColor);
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
+
+    const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean, idx: number) => (
         <div
           key={`contest-breadcrumb-item-${idx}`}
           onClick={() => {
               searchParams.set('category', breadcrumbItem.id.toString());
               setSearchParams(searchParams);
           }}
-          style={{
-              color: isLast
-                  ? themeColors.textColor
-                  : '#44A9F8',
-          }}
+          className={`${styles.item} ${isLast
+              ? textColorClassName
+              : ''}`}
         >
             {`${breadcrumbItem.name} ${!isLast
                 ? ' / '
@@ -35,16 +37,13 @@ const ContestBreadcrumbs = () => {
     );
 
     if (breadcrumbItems.length === 0) {
-        return <div />;
+        return null;
     }
 
-    // eslint-disable-next-line consistent-return
     return (
-        <div
-          className={styles.breadcrumbsWrapper}
-          style={{ color: themeColors.textColor, backgroundColor: themeColors.baseColor500 }}
-        >
-            {breadcrumbItems.map((item: any, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1, idx))}
+        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
+            {breadcrumbItems
+                .map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1, idx))}
         </div>
     );
 };

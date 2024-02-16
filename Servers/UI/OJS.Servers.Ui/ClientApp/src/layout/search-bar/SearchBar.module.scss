@@ -3,10 +3,11 @@
 @use 'src/styles/components';
 @use 'src/styles/fonts';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .searchContainer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   background-color: colors.$white-color;
   top: -100%;
@@ -39,6 +40,16 @@
   }
 }
 
+.closeIcon {
+  cursor: pointer;
+  color: colors.$white-color;
+  transition: all .1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
 .searchInput {
   font-size: variables.$f-size-16;
   margin-bottom: 15px;
@@ -64,7 +75,7 @@
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;
-  font-weight: 400;
+  font-weight: font-weights.$font-weight-light;
   line-height: 1.5;
   margin-left: spacings.$sp-4;
   margin-right: spacings.$sp-24;

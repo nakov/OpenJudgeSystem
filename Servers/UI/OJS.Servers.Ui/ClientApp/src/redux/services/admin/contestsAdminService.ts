@@ -11,16 +11,16 @@ import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 // eslint-disable-next-line import/group-exports
 export const contestService = createApi({
-    reducerPath: 'contests',
+    reducerPath: 'contestsAdminService',
     baseQuery: getCustomBaseQuery('contests'),
     endpoints: (builder) => ({
         getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: `/${GETALL_ENDPOINT}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),

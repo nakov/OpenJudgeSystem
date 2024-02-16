@@ -1,48 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import moment from 'moment';
 
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
+import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
 
 import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
     contest: IIndexContestsType;
 }
-
-interface IContestButtonProps {
-    isCompete: boolean;
-    isDisabled: boolean;
-    maxPoints: number;
-    achievedPoints: number;
-    hasParticipated: boolean;
-    onClick: () => void;
-}
-
-const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, maxPoints, achievedPoints, hasParticipated, onClick } = props;
-    return (
-        <div className={styles.contestBtnWrapper}>
-            { hasParticipated && (
-            <div className={styles.contestPoints}>
-                {achievedPoints}
-                /
-                {maxPoints}
-            </div>
-            )}
-            <button
-              type="button"
-              disabled={isDisabled}
-              onClick={onClick}
-            >
-                {isCompete
-                    ? 'COMPETE'
-                    : 'PRACTICE'}
-            </button>
-        </div>
-    );
-};
 
 const iconNames = {
     time: 'far fa-clock',
@@ -56,7 +26,13 @@ const iconNames = {
 const ContestCard = (props: IContestCardProps) => {
     const { contest } = props;
 
+    const { themeColors, getColorClassName } = useTheme();
+    const { isLoggedIn } =
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
+
+    const textColorClass = getColorClassName(themeColors.textColor);
+    const backgroundColorClass = getColorClassName(themeColors.baseColor200);
 
     const {
         id,
@@ -71,9 +47,12 @@ const ContestCard = (props: IContestCardProps) => {
         numberOfProblems,
         competeResults,
         practiceResults,
+        hasCompeted = false,
+        hasPracticed = false,
+        competeContestPoints = 0,
+        practiceContestPoints = 0,
+        maxPoints = 0,
     } = contest;
-
-    const { themeColors } = useTheme();
 
     const contestStartTime = canBeCompeted
         ? startTime
@@ -83,7 +62,8 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const remainingTime = moment.duration(moment(contestEndTime).diff(moment(contestStartTime)));
+    const diffTime = moment(contestEndTime).diff(moment(contestStartTime));
+    const remainingTime = moment.duration(diffTime);
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -96,22 +76,14 @@ const ContestCard = (props: IContestCardProps) => {
         // eslint-disable-next-line consistent-return
         return (
             <div
-              className={styles.contestDetailsFragment}
-              style={{
-                  color: isGreenColor
-                      ? '#57B99D'
-                      : '',
-              }}
+              className={`${styles.contestDetailsFragment} ${isGreenColor
+                  ? styles.greenColor
+                  : ''}`}
             >
                 <i className={`${iconName}`} />
-                <div style={{
-                    textDecoration: hasUnderLine
-                        ? 'underline'
-                        : '',
-                    cursor: hasUnderLine
-                        ? 'pointer'
-                        : '',
-                }}
+                <div className={`${hasUnderLine
+                    ? styles.hasUnderLine
+                    : ''}`}
                 >
                     {text}
                 </div>
@@ -119,8 +91,49 @@ const ContestCard = (props: IContestCardProps) => {
         );
     };
 
+    const renderContestButton = (isCompete: boolean, hasParticipated: boolean, participationPoints: number) => {
+        const btnText = isCompete
+            ? 'COMPETE'
+            : 'PRACTICE';
+        const btnNavigateUrl = isCompete
+            ? `/contests/${id}/compete`
+            : `/contests/${id}/practice`;
+        const isDisabled = isCompete
+            ? !canBeCompeted
+            : !canBePracticed;
+
+        return (
+            <div className={styles.contestBtn}>
+                {hasParticipated && (
+                <div>
+                    {participationPoints}
+                    {' '}
+                    /
+                    {' '}
+                    {maxPoints}
+                </div>
+                )}
+                <Button
+                  text={btnText}
+                  state={isDisabled
+                      ? ButtonState.disabled
+                      : ButtonState.enabled}
+                  size={ButtonSize.small}
+                  isCompete={isCompete}
+                  onClick={() => {
+                      if (!isLoggedIn) {
+                          navigate('/login');
+                          return;
+                      }
+                      navigate(btnNavigateUrl);
+                  }}
+                />
+            </div>
+        );
+    };
+
     return (
-        <div style={{ backgroundColor: themeColors.baseColor200, color: themeColors.textColor }} className={styles.contestCardWrapper}>
+        <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
                 <div className={styles.contestCardTitle}>{name}</div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
@@ -139,28 +152,10 @@ const ContestCard = (props: IContestCardProps) => {
                 </div>
             </div>
             <div className={styles.contestBtnsWrapper}>
-                <ContestButton
-                  isCompete
-                  isDisabled={!canBeCompeted}
-                  maxPoints={0}
-                  achievedPoints={0}
-                  hasParticipated
-                  onClick={() => {
-                      if (canBeCompeted) {
-                          navigate(`/contests/${id}/compete`);
-                      }
-                  }}
-                />
-                <ContestButton
-                  isCompete={false}
-                  isDisabled={!canBePracticed}
-                  maxPoints={0}
-                  achievedPoints={0}
-                  hasParticipated={false}
-                  onClick={() => {
-                      navigate(`/contests/${id}/practice`);
-                  }}
-                />
+                <div className={styles.contestBtn}>
+                    {renderContestButton(true, hasCompeted, competeContestPoints)}
+                    {renderContestButton(false, hasPracticed, practiceContestPoints)}
+                </div>
             </div>
         </div>
     );
