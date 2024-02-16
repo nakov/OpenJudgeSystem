@@ -22,12 +22,13 @@ export const contestsService = createApi({
     }),
     endpoints: (builder) => ({
         getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsOptions>({
-            query: ({ sortType, page, category }) => ({
+            query: ({ sortType, page, category, strategy }) => ({
                 url: '/Contests/GetAll',
                 params: {
                     sortType,
                     page,
                     category,
+                    strategy,
                 },
             }),
         }),

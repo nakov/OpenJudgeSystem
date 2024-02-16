@@ -42,7 +42,6 @@ const ContestsPage = () => {
         const params: IGetAllContestsOptions = {
             sortType: 'OrderBy',
             page: selectedPage,
-            strategy,
         };
         if (category) {
             // eslint-disable-next-line prefer-destructuring

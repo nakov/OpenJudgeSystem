@@ -77,7 +77,7 @@ interface IGetAllAdminParams {
 }
 
 interface IGetAllContestsOptions {
-    strategy: string | null;
+    strategy?: string;
     sortType: string;
     page: number;
     category?: number | null;
