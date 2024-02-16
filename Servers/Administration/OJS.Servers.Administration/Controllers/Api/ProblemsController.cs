@@ -95,7 +95,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         {
             return this.UnprocessableEntity(new ExceptionResponse
             {
-                Errors = new List<ExceptionResponseModel>() { new() { Name = "Id", Message = "Invalid id", }, },
+                Errors = new List<ExceptionResponseModel> { new() { Name = "Id", Message = "Invalid id", }, },
             });
         }
 

@@ -200,7 +200,7 @@ namespace OJS.Services.Administration.Business.Problems
                 return null;
             }
 
-            return new AdditionalFilesDownloadModel()
+            return new AdditionalFilesDownloadModel
             {
                 Content = file!,
                 MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
@@ -343,7 +343,7 @@ namespace OJS.Services.Administration.Business.Problems
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format(ex.Message), ex);
+                throw new InvalidOperationException(string.Format(ex.Message), ex);
             }
         }
 

@@ -22,7 +22,7 @@ public class ProblemsDeleteValidator : BaseDeleteValidator<BaseDeleteValidationM
             .Cascade(CascadeMode.Stop)
             .Must(this.ValidateProblemExists)
             .WithMessage($"Problem was not found.")
-            .MustAsync(async (id, cancellation)
+            .MustAsync(async (id, _)
                 => await this.ValidateContestIsNotActive(id))
             .When(model => model.Id > 0)
             .WithMessage("Cannot delete problem of an active contest.");

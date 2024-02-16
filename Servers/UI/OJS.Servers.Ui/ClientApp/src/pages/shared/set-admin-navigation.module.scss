@@ -30,15 +30,15 @@
 }
 
 .arrowCommon {
-  margin: 0px;
+  margin: 0;
   position: absolute;
   z-index: 3;
   top: 430px;
   width: 35px;
   height: 35px;
-  padding: 0px !important;
+  padding: 0 !important;
   background-color: white !important;
-  box-shadow: 6px 0px 7px -4px rgba(22,0,0,0.75);
+  box-shadow: 6px 0 7px -4px rgba(22,0,0,75%);
   transition: 225ms ease-in-out, transform 225ms ease-in-out !important;
 }
 

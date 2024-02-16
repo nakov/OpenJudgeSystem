@@ -15,8 +15,8 @@ public class ExceptionResponseModel
     }
 
     [JsonPropertyName("name")]
-    public string? Name { get; set; } = null;
+    public string? Name { get; set; }
 
     [JsonPropertyName("message")]
-    public string? Message { get; set; } = null;
+    public string? Message { get; set; }
 }

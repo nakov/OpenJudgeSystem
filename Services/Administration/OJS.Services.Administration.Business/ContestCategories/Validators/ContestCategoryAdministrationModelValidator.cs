@@ -23,7 +23,7 @@ public class ContestCategoryAdministrationModelValidator : BaseValidator<Contest
             .WithMessage("Order By cannot be negative number");
 
         this.RuleFor(model => model)
-            .MustAsync(async (model, cancellation)
+            .MustAsync(async (model, _)
                 => await this.ValidateParentCategoryIsValid(model))
             .WithMessage($"Provided Parent category does not exist.");
     }
