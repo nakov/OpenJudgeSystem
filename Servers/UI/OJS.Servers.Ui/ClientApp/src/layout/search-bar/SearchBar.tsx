@@ -130,6 +130,8 @@ const SearchBar = () => {
                   value={searchParam}
                   shouldDisableLabel
                 />
+                {/* eslint-disable-next-line max-len */}
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
                 <i style={{ color: themeColors.textColor }} className={`fas fa-search ${styles.searchIcon}`} onClick={handleSubmit} />
                 <div className={styles.checkboxContainer}>
                     <FormControl
