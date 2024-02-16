@@ -176,6 +176,9 @@ interface IIndexContestsType {
     hasPracticePassword: boolean;
     category: string;
     isLoading: boolean;
+    numberOfProblems: number;
+    practiceResults: number;
+    competeResults: number;
 }
 
 interface IContestModalInfoType {

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -21,7 +22,21 @@ import styles from './ContestsPage.module.scss';
 const ContestsPage = () => {
     const { themeColors } = useTheme();
     const { category, strategy } = useSelector((state: any) => state.contests);
-    const [ selectedPage, setSelectedPage ] = useState(1);
+    const [ searchParams, setSearchParams ] = useSearchParams();
+
+    useEffect(() => {
+        if (!searchParams.get('page')) {
+            searchParams.set('page', '1');
+            setSearchParams(searchParams);
+        }
+    }, []);
+
+    const selectedPage = useMemo(() => {
+        if (!searchParams.get('page')) {
+            return 1;
+        }
+        return Number(searchParams.get('page'));
+    }, [ searchParams ]);
 
     const contestParams = useMemo(() => {
         const params: IGetAllContestsOptions = {
@@ -70,7 +85,10 @@ const ContestsPage = () => {
                 <PaginationControls
                   count={allContests?.pagesCount}
                   page={selectedPage}
-                  onChange={(page:number) => setSelectedPage(page)}
+                  onChange={(page:number) => {
+                      searchParams.set('page', page.toString());
+                      setSearchParams(searchParams);
+                  }}
                 />
             </div>
         );

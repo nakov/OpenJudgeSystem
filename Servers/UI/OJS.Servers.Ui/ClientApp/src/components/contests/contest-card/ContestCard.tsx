@@ -8,9 +8,6 @@ import useTheme from '../../../hooks/use-theme';
 import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
-    numberOfProblems?: number;
-    practiceResults?: number;
-    competeResults?: number;
     contest: IIndexContestsType;
 }
 
@@ -57,12 +54,7 @@ const iconNames = {
 };
 
 const ContestCard = (props: IContestCardProps) => {
-    const {
-        numberOfProblems,
-        practiceResults,
-        competeResults,
-        contest,
-    } = props;
+    const { contest } = props;
 
     const navigate = useNavigate();
 
@@ -76,6 +68,9 @@ const ContestCard = (props: IContestCardProps) => {
         practiceEndTime,
         startTime,
         endTime,
+        numberOfProblems,
+        competeResults,
+        practiceResults,
     } = contest;
 
     const { themeColors } = useTheme();
@@ -90,15 +85,36 @@ const ContestCard = (props: IContestCardProps) => {
 
     const remainingTime = moment.duration(moment(contestEndTime).diff(moment(contestStartTime)));
 
-    const renderContestDetailsFragment = (iconName: string, text: string | number | undefined) => {
+    const renderContestDetailsFragment = (
+        iconName: string, text: string | number | undefined,
+        isGreenColor?: boolean, hasUnderLine?: boolean,
+    ) => {
         if (!text || !iconName) {
             return;
         }
+
         // eslint-disable-next-line consistent-return
         return (
-            <div className={styles.contestDetailsFragment}>
+            <div
+              className={styles.contestDetailsFragment}
+              style={{
+                  color: isGreenColor
+                      ? '#57B99D'
+                      : '',
+              }}
+            >
                 <i className={`${iconName}`} />
-                <div>{text}</div>
+                <div style={{
+                    textDecoration: hasUnderLine
+                        ? 'underline'
+                        : '',
+                    cursor: hasUnderLine
+                        ? 'pointer'
+                        : '',
+                }}
+                >
+                    {text}
+                </div>
             </div>
         );
     };
@@ -112,11 +128,13 @@ const ContestCard = (props: IContestCardProps) => {
                     {renderContestDetailsFragment(iconNames.time, moment(contestStartTime).format('HH:MM'))}
                     {renderContestDetailsFragment(iconNames.date, moment(contestStartTime).format('D MMM YY'))}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
-                    {practiceResults && renderContestDetailsFragment(iconNames.practiceResults, `practice results: ${practiceResults}`)}
-                    {competeResults && renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`)}
+                    {renderContestDetailsFragment(iconNames.practiceResults, `practice results: ${practiceResults}`, false, true)}
+                    {renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`, true, true)}
                     {canBeCompeted && remainingTime.asSeconds() > 0 && renderContestDetailsFragment(
                         iconNames.remainingTime,
                         `remaining time: ${Math.floor(remainingTime.asHours())}:${remainingTime.minutes()}:${remainingTime.seconds()}`,
+                        false,
+                        true,
                     )}
                 </div>
             </div>
