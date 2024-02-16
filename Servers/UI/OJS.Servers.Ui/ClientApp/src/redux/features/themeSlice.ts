@@ -8,6 +8,7 @@ interface IThemeState {
 
 const initialState: IThemeState = { mode: 'dark' };
 
+// eslint-disable-next-line import/group-exports
 export const themeSlice = createSlice({
     name: 'theme',
     initialState,
