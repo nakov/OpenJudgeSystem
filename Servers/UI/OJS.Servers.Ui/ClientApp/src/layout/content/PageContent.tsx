@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
 import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
-import AdministrationContestPage from '../../components/contest-components/AdministrationContestPage';
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
+import AdministrationContestPage from '../../components/contest-components/AdministrationContestPage';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
