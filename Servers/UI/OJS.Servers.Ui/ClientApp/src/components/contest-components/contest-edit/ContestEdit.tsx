@@ -27,7 +27,7 @@ import { handleAutocompleteChange, handleDateTimePickerChange } from '../../admi
 import { AlertSeverity } from '../../guidelines/alert/Alert';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
-import formStyles from '../../common/styles/FormStyles.module.scss';
+import formStyles from '../../administration/common/styles/FormStyles.module.scss';
 import styles from './ContestEdit.module.scss';
 
 interface IContestEditProps {
