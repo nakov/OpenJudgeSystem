@@ -18,11 +18,11 @@ import { useGetCopyAllQuery } from '../../../redux/services/admin/contestsAdminS
 import { useCopyAllMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import CreateButton from '../../administration/common/create/CreateButton';
+import ProblemForm from '../../administration/Problems/problemForm/ProblemForm';
 import { Alert, AlertSeverity, AlertVariant } from '../../guidelines/alert/Alert';
 import ConfirmDialog from '../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
-import CreateButton from '../../administration/common/create/CreateButton';
-import ProblemForm from '../../administration/Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
     contestId: number;
