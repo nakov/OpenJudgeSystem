@@ -3,9 +3,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
@@ -32,7 +32,6 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors } = useTheme();
-    const { category: selectedCategory } = useSelector((state: any) => state.contests);
 
     const {
         data: contestCategories,
@@ -41,6 +40,8 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     } = useGetContestCategoriesQuery();
 
     const [ isExpanded, setIsExpanded ] = useState<boolean>(true);
+
+    const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
 
     useEffect(() => {
         const categoryId = searchParams.get('category');
@@ -71,6 +72,25 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             return null;
         };
 
+    const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number) => {
+        if (!elements) {
+            return null;
+        }
+        // eslint-disable-next-line no-restricted-syntax
+        for (const element of elements) {
+            if (element.id === id) {
+                return true;
+            }
+            if (element.children) {
+                const found = findActiveChildrenByIdRecursive(element.children, id);
+                if (found) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
     const onContestCategoryClick = (id: number) => {
         if (isRenderedOnHomePage) {
             navigate(`/contests?category=${id}`);
@@ -83,32 +103,36 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         setSearchParams(searchParams);
         dispatch(setContestCategory(selectedContestCategory));
         dispatch(setContestStrategy(null));
-
-        const elementWithChildren = document.getElementById(`category-${id}-children`);
-        elementWithChildren?.classList.toggle(styles.activeChildren);
     };
 
-    const renderCategory = (category: IContestCategory) => (
-        <div
-          key={`contest-category-item-${category.id}`}
-        >
+    const renderCategory = (category: IContestCategory) => {
+        const isActiveOrHasActiveChild = findActiveChildrenByIdRecursive(category.children, selectedId) || selectedId === category.id;
+        return (
             <div
-              style={{ borderBottom: `1px solid ${themeColors.textColor}` }}
-              className={`${styles.categoryItem} ${selectedCategory?.id === category.id
-                  ? styles.selectedCategory
-                  : ''}`}
-              onClick={() => onContestCategoryClick(category.id)}
+              key={`contest-category-item-${category.id}`}
             >
-                <FaRegFileAlt />
-                <div>
-                    {category.name}
+                <div
+                  style={{ borderBottom: `1px solid ${themeColors.textColor}` }}
+                  className={`${styles.categoryItem} ${selectedId === category.id
+                      ? styles.selectedCategory
+                      : ''}`}
+                  onClick={() => onContestCategoryClick(category.id)}
+                >
+                    <FaRegFileAlt />
+                    <div>
+                        {category.name}
+                    </div>
+                </div>
+                <div
+                  className={`${styles.categoryChildren} ${isActiveOrHasActiveChild
+                      ? styles.activeChildren
+                      : ''}`}
+                >
+                    {category.children.map((child) => renderCategory(child))}
                 </div>
             </div>
-            <div id={`category-${category.id}-children`} className={styles.categoryChildren}>
-                {category.children.map((child) => renderCategory(child))}
-            </div>
-        </div>
-    );
+        );
+    };
 
     if (areCategoriesLoading) {
         return <SpinningLoader />;
