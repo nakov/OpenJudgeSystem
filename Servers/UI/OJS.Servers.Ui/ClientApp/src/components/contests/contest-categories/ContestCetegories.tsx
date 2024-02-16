@@ -44,12 +44,9 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
 
     useEffect(() => {
-        const categoryId = searchParams.get('category');
-        if (categoryId) {
-            const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, Number(categoryId));
-            dispatch(setContestCategory(selectedContestCategory));
-        }
-    }, [ searchParams.get('category') ]);
+        const selectedCategory = findContestCategoryByIdRecursive(contestCategories, selectedId);
+        dispatch(setContestCategory(selectedCategory));
+    }, [ selectedId, contestCategories ]);
 
     const findContestCategoryByIdRecursive =
         (elements: Array<IContestCategory> | undefined, id: number, rootIndex = 0): IContestCategory | null => {
