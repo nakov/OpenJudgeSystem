@@ -8,21 +8,21 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Autocomplete, Box, Button, IconButton, MenuItem, Modal, TextField, Tooltip, Typography } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../pages/administration-new/AdministrationGridView';
-import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../pages/administration-new/problems/problemGridColumns';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
-import { useGetCopyAllQuery } from '../../../redux/services/admin/contestsAdminService';
-import { useCopyAllMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../redux/services/admin/problemsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import CreateButton from '../../administration/common/create/CreateButton';
-import ProblemForm from '../../administration/Problems/problemForm/ProblemForm';
-import { Alert, AlertSeverity, AlertVariant } from '../../guidelines/alert/Alert';
-import ConfirmDialog from '../../guidelines/dialog/ConfirmDialog';
-import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
+import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
+import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useCopyAllMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
+import { flexCenterObjectStyles } from '../../../../utils/object-utils';
+import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
+import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
+import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import CreateButton from '../../common/create/CreateButton';
+import ProblemForm from '../../Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
     contestId: number;
