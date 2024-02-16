@@ -68,14 +68,6 @@ interface ISubmissionResponseModel {
     processed: boolean;
 }
 
-interface IGetAllContestsOptions {
-    status: string;
-    sortType: string;
-    page: number;
-    category?: number | null;
-    strategy?: number | null;
-}
-
 interface IGetAllAdminParams {
     filter?: string;
     ItemsPerPage: number;
@@ -87,7 +79,6 @@ interface IGetAllContestsOptions {
     sortType: string;
     page: number;
     category?: number | null;
-    strategy?: number | null;
 }
 
 interface IContestCategory {
@@ -504,7 +495,6 @@ export type {
     ISubmissionDetailsReduxState,
     IGetAllContestsOptions,
     IContestCategory,
-    IGetAllContestsOptions,
     IGetAllAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,
