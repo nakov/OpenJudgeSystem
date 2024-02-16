@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import { CREATE_NEW_ENTITY } from '../../../common/labels';
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
+import ContestEdit from '../../../components/contest-components/contest-edit/ContestEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
 import { useDeleteContestMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
