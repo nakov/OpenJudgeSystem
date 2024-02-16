@@ -14,7 +14,7 @@ import { preciseFormatDate } from '../../../utils/dates';
 
 import styles from './AdminSubmissionForProcessingDetails.module.scss';
 
-const AdministrationContestPage = () => {
+const AdministrationSubmissionForProcessing = () => {
     const { pathname } = useLocation();
     const [ , , , contestId ] = pathname.split('/');
     const [ submission, setSubmission ] = useState<ISubmissionForProcessingAdminGridViewType | null>(null);
@@ -121,4 +121,4 @@ const AdministrationContestPage = () => {
             : null
     );
 };
-export default AdministrationContestPage;
+export default AdministrationSubmissionForProcessing;

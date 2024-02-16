@@ -19,10 +19,10 @@ import AdministrationProblemGroupsPage from '../../pages/administration-new/prob
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
 import { AdministrationSubmissionsPage } from '../../pages/administration-new/submissions/AdminSubmissionsGrid';
 import AdminSubmissionForProcessingDetails
-    from '../../pages/administration-new/submissions-for-processing/AdminSubmissionForProcessingDetails';
+    from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import {
     AdministrationSubmissionsForProcessingPage,
-} from '../../pages/administration-new/submissions-for-processing/AdminSubmissionsForProcessingGrid';
+} from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessingPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
