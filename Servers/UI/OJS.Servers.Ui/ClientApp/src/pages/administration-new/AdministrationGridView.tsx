@@ -85,7 +85,13 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         const filtersColumns = mapGridColumnsToAdministrationFilterProps(filterableGridColumnDef);
 
         return (
-            <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
+            <div style={{
+                ...flexCenterObjectStyles,
+                justifyContent: legendProps
+                    ? 'space-between'
+                    : 'center',
+            }}
+            >
                 { renderActionButtons() }
                 {showFiltersAndSorters && (
                 <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between', width: '450px' }}>

@@ -23,6 +23,7 @@ import AdminSubmissionForProcessingDetails
 import {
     AdministrationSubmissionsForProcessingPage,
 } from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessingPage';
+import AdministrationTestsPage from '../../pages/administration-new/tests/AdministrationTestsPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -153,7 +154,7 @@ const adminRoutes = [
     },
     {
         path: `${TESTS_PATH}`,
-        Element: Administration,
+        Element: AdministrationTestsPage,
     },
     {
         path: `${PROBLEMS_PATH}`,

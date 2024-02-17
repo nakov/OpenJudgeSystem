@@ -98,7 +98,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
     };
-
+console.log(columns)
     useEffect(() => {
         if (selectedFilters.length <= 0) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
