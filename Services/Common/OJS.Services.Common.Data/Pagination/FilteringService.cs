@@ -43,9 +43,12 @@ public class FilteringService : IFilteringService
             expression = BuildBooleanExpression(filter.OperatorType, filter.Value, property);
         }
         else if (filter.Property.PropertyType == typeof(int) ||
-                 Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(int))
+                 Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(int) ||
+                 filter.Property.PropertyType == typeof(double) ||
+                 Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(double))
         {
-            expression = BuildIntExpression(filter.OperatorType, filter.Value, property);
+            var propertyType = filter.Property.PropertyType;
+            expression = BuildIntExpression(filter.OperatorType, filter.Value, property, propertyType);
         }
         else if (filter.Property.PropertyType == typeof(DateTime) ||
                  Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(DateTime))
@@ -61,7 +64,7 @@ public class FilteringService : IFilteringService
         return Expression.Lambda<Func<T, bool>>(expression, parameter);
     }
 
-    private static Expression? BuildIntExpression(OperatorType operatorType, string? value, MemberExpression property)
+    private static Expression? BuildIntExpression(OperatorType operatorType, string? value, MemberExpression property, Type? propertyType)
     {
         Expression? expression;
 
@@ -85,9 +88,34 @@ public class FilteringService : IFilteringService
                         $"Property of type int? cannot have {operatorType} operator");
             }
         }
-        else if (int.TryParse(value, out var intValue))
+        else if (int.TryParse(value, out var intValue) && propertyType == typeof(int))
         {
             var constant = Expression.Constant(intValue, IsNullableType(property.Type) ? typeof(int?) : typeof(int));
+            switch (operatorType)
+            {
+                case OperatorType.Equals:
+                    expression = Expression.Equal(property, constant);
+                    break;
+                case OperatorType.GreaterThan:
+                    expression = Expression.GreaterThan(property, constant);
+                    break;
+                case OperatorType.LessThan:
+                    expression = Expression.LessThan(property, constant);
+                    break;
+                case OperatorType.LessThanOrEqual:
+                    expression = Expression.LessThanOrEqual(property, constant);
+                    break;
+                case OperatorType.GreaterThanOrEqual:
+                    expression = Expression.GreaterThanOrEqual(property, constant);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"Property of type int cannot have {operatorType} operator");
+            }
+        }
+        else if (double.TryParse(value, out var doubleValue) && propertyType == typeof(double))
+        {
+            var constant = Expression.Constant(doubleValue, IsNullableType(property.Type) ? typeof(double?) : typeof(double));
             switch (operatorType)
             {
                 case OperatorType.Equals:

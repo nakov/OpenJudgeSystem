@@ -1,23 +1,29 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
+import { IconType } from 'react-icons/lib';
 import { RiAddBoxFill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 
-import { CREATE_NEW_PROBLEM } from '../../../../common/labels';
+import { CREATE_NEW_RECORD } from '../../../../common/labels';
 
 interface ICreateButtonProps {
     showModal: boolean;
     showModalFunc: Function;
     styles: object;
+    Icon? : IconType;
+    tooltipLabel?: string;
 }
 const CreateButton = (props: ICreateButtonProps) => {
-    const { showModal, showModalFunc, styles } = props;
+    const { showModal, showModalFunc, styles, Icon, tooltipLabel = CREATE_NEW_RECORD } = props;
     return (
-        <Tooltip title={CREATE_NEW_PROBLEM}>
+        <Tooltip title={tooltipLabel}>
             <IconButton
               onClick={() => showModalFunc(!showModal)}
             >
-                <RiAddBoxFill style={styles} />
+
+                {Icon
+                    ? <Icon style={styles} />
+                    : <RiAddBoxFill style={styles} />}
             </IconButton>
         </Tooltip>
     );

@@ -29,6 +29,7 @@ public class ProblemGroupAdministrationModelValidator : BaseValidator<ProblemGro
         this.RuleFor(model => model.Id)
             .NotNull()
             .MustAsync(async (model, _) => await this.Exists(model))
+            .When(model => model.Id > 0)
             .WithMessage("The problem group does not exists.");
         this.RuleFor(model => model.OrderBy)
             .NotNull()
@@ -38,7 +39,7 @@ public class ProblemGroupAdministrationModelValidator : BaseValidator<ProblemGro
             .NotNull()
             .When(x => x.Id > 0)
             .MustAsync(async (model, _) => await this.NotBeActiveOrOnlineContest(model))
-            .WithMessage("Contest which are not online or are active cannot be modified.");
+            .WithMessage("Contest which is not online or is active cannot be modified.");
     }
 
     private async Task<bool> Exists(int id)
