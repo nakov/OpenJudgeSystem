@@ -1,3 +1,4 @@
+/* eslint-disable css-modules/no-unused-class */
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
 import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
@@ -8,6 +9,8 @@ import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, 
 import { IProblemAdministration } from '../../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../../redux/services/admin/checkersAdminService';
 
+import formStyles from '../../../common/styles/FormStyles.module.scss';
+
 interface IProblemFormBasicInfoProps {
     onChange: Function;
     currentProblem: IProblemAdministration;
@@ -16,12 +19,12 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
     const { onChange, currentProblem } = props;
     const { data: checkers } = useGetCheckersForProblemQuery(null);
     return (
-        <>
-            <Typography sx={{ marginTop: '1rem' }} variant="h4">Basic info</Typography>
-            <Divider />
-            <Box style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                <FormGroup sx={{ width: '45%' }}>
-                    <FormControl sx={{ margin: '1rem' }}>
+        <Box className={formStyles.inputRow}>
+            <Typography className={formStyles.dividerLabel} variant="h4">Basic info</Typography>
+            <Divider className={formStyles.inputRow} />
+            <Box className={formStyles.row}>
+                <FormGroup className={formStyles.inlineElement}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={ID}
@@ -31,7 +34,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           disabled
                         />
                     </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={NAME}
@@ -42,7 +45,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                         />
                     </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={MAXIMUM_POINTS}
@@ -53,7 +56,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                         />
                     </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={SOURCE_CODE_SIZE_LIMIT}
@@ -65,8 +68,8 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                         />
                     </FormControl>
                 </FormGroup>
-                <FormGroup sx={{ width: '45%' }}>
-                    <FormControl sx={{ margin: '1rem' }}>
+                <FormGroup className={formStyles.inlineElement}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={ORDER_BY}
@@ -77,7 +80,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                         />
                     </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={CONTEST_ID}
@@ -89,7 +92,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           disabled
                         />
                     </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={MEMORY_LIMIT}
@@ -100,7 +103,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                           onChange={(e) => onChange(e)}
                         />
                     </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
+                    <FormControl className={formStyles.spacing}>
                         <TextField
                           variant="standard"
                           label={TIME_LIMIT}
@@ -113,7 +116,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                     </FormControl>
                 </FormGroup>
             </Box>
-            <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+            <FormGroup className={formStyles.selectFormGroup}>
                 <InputLabel id="problemGroupType">{PROBLEM_GROUP_TYPE}</InputLabel>
                 <Select
                   onChange={(e) => onChange(e)}
@@ -129,7 +132,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                     ))}
                 </Select>
             </FormGroup>
-            <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+            <FormGroup className={formStyles.selectFormGroup}>
                 <InputLabel id="problemGroupType">{CHECKER}</InputLabel>
                 <Select
                   onChange={(e) => onChange(e)}
@@ -145,7 +148,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                     ))}
                 </Select>
             </FormGroup>
-            <FormGroup sx={{ marginLeft: '4rem' }}>
+            <FormGroup>
                 <FormControlLabel
                   control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
                   label={SHOW_DETAILED_FEEDBACK}
@@ -163,7 +166,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                   label={SHOW_RESULTS}
                 />
             </FormGroup>
-        </>
+        </Box>
     );
 };
 export default ProblemFormBasicInfo;

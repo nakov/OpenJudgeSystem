@@ -58,6 +58,12 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         return response;
     }
 
+    public override async Task<IActionResult> Edit([FromForm] ProblemAdministrationModel model)
+    {
+        var response = await base.Edit(model);
+        return response;
+    }
+
     [HttpPost]
     [ProtectedEntityAction]
     public async Task<IActionResult> Retest(ProblemRetestViewModel? model)

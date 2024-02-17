@@ -1,3 +1,4 @@
+/* eslint-disable css-modules/no-unused-class */
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-undefined */
 /* eslint-disable prefer-destructuring */

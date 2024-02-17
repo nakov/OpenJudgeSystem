@@ -26,7 +26,7 @@ export const problemsAdminService = createApi({
         getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
         deleteProblem: builder.mutation<string, number >({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
-            query: (problem) => ({
+            query: (problem: FormData) => ({
                 url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
                 body: problem,
@@ -59,7 +59,7 @@ export const problemsAdminService = createApi({
         }),
         deleteByContest: builder.mutation({
             query: (contestId) => ({
-                url: `/Delete/${contestId}`,
+                url: `/DeleteAll/${contestId}`,
                 method: 'DELETE',
             }),
         }),

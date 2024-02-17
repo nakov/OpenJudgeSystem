@@ -233,6 +233,7 @@ namespace OJS.Services.Administration.Business.Problems
             var problem = await this.problemsData.GetByIdQuery(model.Id)
                 .Include(s => s.SubmissionTypesInProblems)
                 .Include(s => s.ProblemGroup)
+                .Include(s => s.Checker)
                 .FirstOrDefaultAsync();
 
             if (problem is null)
@@ -242,6 +243,7 @@ namespace OJS.Services.Administration.Business.Problems
 
             problem.MapFrom(model);
             problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id)!;
+            problem.ProblemGroupId = problem.ProblemGroup.Id;
             problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)
@@ -250,7 +252,6 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             AddSubmissionTypes(problem, model);
-
             this.problemsData.Update(problem);
             await this.problemsData.SaveChanges();
             return model;

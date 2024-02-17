@@ -1,3 +1,4 @@
+/* eslint-disable css-modules/no-unused-class */
 /* eslint-disable default-case */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undefined */
@@ -23,6 +24,8 @@ import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissio
 
 import ProblemFormBasicInfo from './problem-form-basic-info.tsx/ProblemFormBasicInfo';
 
+import formStyles from '../../common/styles/FormStyles.module.scss';
+
 interface IProblemFormProps {
     problemId: number | null;
 
@@ -37,11 +40,9 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
-        checkerId: '',
+        checkerId: '1',
         contestId: contestId ?? -1,
-        id: isEditMode
-            ? 0
-            : undefined,
+        id: 0,
         maximumPoints: 0,
         memoryLimit: 0,
         name: '',
@@ -160,7 +161,9 @@ const ProblemForm = (props: IProblemFormProps) => {
         currentProblem.tests &&
         formData.append('tests', currentProblem.tests);
 
-        createProblem(formData);
+        isEditMode
+            ? updateProblem(formData)
+            : createProblem(formData);
     };
 
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {
@@ -249,20 +252,21 @@ const ProblemForm = (props: IProblemFormProps) => {
     };
 
     const handleFileClearance = (propName: string) => {
-        let { additionalFiles } = currentProblem;
-        let { tests } = currentProblem;
+        let { additionalFiles, tests, hasAdditionalFiles } = currentProblem;
         switch (propName) {
         case 'tests':
             tests = null;
             break;
         case 'additionalFiles':
             additionalFiles = null;
+            hasAdditionalFiles = false;
             break;
         }
         setCurrentProblem((prevState) => ({
             ...prevState,
             additionalFiles,
             tests,
+            hasAdditionalFiles,
         }));
     };
 
@@ -274,7 +278,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                         <Button
                           size="large"
                           sx={{ width: '20%', alignSelf: 'center' }}
-                          onClick={() => updateProblem(currentProblem)}
+                          onClick={() => submitForm()}
                           variant="contained"
                         >
                             Edit
@@ -311,13 +315,13 @@ const ProblemForm = (props: IProblemFormProps) => {
             {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
             {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
 
-            <Typography sx={{ textAlign: 'center' }} variant="h3">{currentProblem?.name}</Typography>
+            <Typography className={formStyles.centralize} variant="h3">{currentProblem?.name}</Typography>
 
-            <form style={{ display: 'flex', flexDirection: 'column' }}>
+            <form className={formStyles.form}>
                 <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} />
-                <FormGroup sx={{ width: '100%' }}>
-                    <Typography sx={{ marginTop: '1rem' }} variant="h4">{ADDITIONAL_FILES}</Typography>
-                    <Divider />
+                <FormGroup className={formStyles.row}>
+                    <Typography className={formStyles.spacing} variant="h4">{ADDITIONAL_FILES}</Typography>
+                    <Divider className={formStyles.inputRow} />
                     <FileUpload
                       handleFileUpload={handleFileUpload}
                       propName="additionalFiles"
@@ -325,41 +329,46 @@ const ProblemForm = (props: IProblemFormProps) => {
                       uploadButtonName={currentProblem.additionalFiles?.name}
                       showDownloadButton={currentProblem.hasAdditionalFiles}
                       onClearSelectionClicked={handleFileClearance}
+                      disableClearButton={!currentProblem.hasAdditionalFiles && !currentProblem.additionalFiles}
+                      buttonLabel={ADDITIONAL_FILES}
                     />
 
                     {!isEditMode && (
                         <>
-                            <Typography sx={{ marginTop: '1rem' }} variant="h4">{TESTS}</Typography>
-                            <Divider />
+                            <Typography className={formStyles.spacing} variant="h4">{TESTS}</Typography>
+                            <Divider className={formStyles.inputRow} />
                             <FileUpload
                               handleFileUpload={handleFileUpload}
                               propName="tests"
                               setSkipDownload={setSkipDownload}
                               uploadButtonName={currentProblem.tests?.name}
                               showDownloadButton={false}
+                              disableClearButton
                               onClearSelectionClicked={handleFileClearance}
+                              buttonLabel={TESTS}
                             />
                         </>
                     )}
                 </FormGroup>
-                <Typography sx={{ marginTop: '1rem' }} variant="h4">{SUBMISSION_TYPES}</Typography>
-                <Divider />
-                <FormControl sx={{ margin: '3rem 0', width: '92%', alignSelf: 'center' }}>
-                    <Autocomplete
-                      options={filteredSubmissionTypes!}
-                      renderInput={(params) => <TextField {...params} label="Select submission type" key={params.id} />}
-                      onChange={(event, newValue) => onStrategyAdd(newValue!)}
-                      value={null}
-                      isOptionEqualToValue={(option, value) => option.id === value.id}
-                      getOptionLabel={(option) => option?.name}
-                      renderOption={(properties, option) => (
-                          <MenuItem {...properties} key={option.id} value={option.id}>
-                              {option.name}
-                          </MenuItem>
-                      )}
-                    />
-                </FormControl>
-
+                <FormGroup className={formStyles.inputRow}>
+                    <Typography className={formStyles.dividerLabel} variant="h4">{SUBMISSION_TYPES}</Typography>
+                    <Divider className={formStyles.inputRow} />
+                    <FormControl className={formStyles.row}>
+                        <Autocomplete
+                          options={filteredSubmissionTypes!}
+                          renderInput={(params) => <TextField {...params} label="Select submission type" key={params.id} />}
+                          onChange={(event, newValue) => onStrategyAdd(newValue!)}
+                          value={null}
+                          isOptionEqualToValue={(option, value) => option.id === value.id}
+                          getOptionLabel={(option) => option?.name}
+                          renderOption={(properties, option) => (
+                              <MenuItem {...properties} key={option.id} value={option.id}>
+                                  {option.name}
+                              </MenuItem>
+                          )}
+                        />
+                    </FormControl>
+                </FormGroup>
                 {
             currentProblem?.submissionTypes.map((st : IProblemSubmissionType) => (
                 <ProblemSubmissionTypes

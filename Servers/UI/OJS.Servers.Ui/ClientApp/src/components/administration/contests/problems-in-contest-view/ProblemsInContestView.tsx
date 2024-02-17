@@ -1,14 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
+import { FaLongArrowAltRight } from 'react-icons/fa';
+import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
-import CopyAllIcon from '@mui/icons-material/CopyAll';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Autocomplete, Box, Button, IconButton, MenuItem, Modal, TextField, Tooltip, Typography } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-import { ExceptionData, IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
@@ -17,8 +16,10 @@ import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../re
 import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCopyAllMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
-import { flexCenterObjectStyles } from '../../../../utils/object-utils';
-import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
+import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { flexCenterObjectStyles, modalStyles } from '../../../../utils/object-utils';
+import { renderAlert } from '../../../../utils/render-utils';
+import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -27,20 +28,7 @@ import ProblemForm from '../../Problems/problemForm/ProblemForm';
 interface IProblemsInContestViewProps {
     contestId: number;
 }
-const modalStyles = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '50%',
-    height: '80%',
-    bgcolor: 'background.paper',
-    borderRadius: 3,
-    boxShadow: '0px 0px 19px -4px rgba(0,0,0,0.75)',
-    p: 4,
-    fontFamily: 'Roboto, Helvetica , Arial',
-    overflow: 'auto',
-};
+
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId } = props;
     const filtersAndSortersLocation = `contest-details-problems-${contestId}`;
@@ -60,6 +48,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     });
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
+    const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
     const [ problemsCopyAllData, setContestsAutocomplete ] = useState <Array<IContestAutocomplete>>([]);
 
     const [ showDeleteAllConfirm, setShowDeleteAllConfirm ] = useState<boolean>(false);
@@ -69,7 +58,13 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const [ showCopyAllModal, setShowCopyAllModal ] = useState<boolean>(false);
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-    const { data: problemsData, error: getContestError } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
+
+    const {
+        refetch: retakeData,
+        data: problemsData,
+        error: getContestError,
+    } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
+
     const { data: contestsAutocompleteData } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
 
     const [ copyAll,
@@ -78,22 +73,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             isSuccess: isSuccesfullyCoppiedAll,
             isLoading: isCoppyingAll,
             error: copyAllError,
-            isError: isCopyAllError,
         } ] =
         useCopyAllMutation();
 
-    useEffect(() => {
-        if (contestsAutocompleteData) {
-            setContestsAutocomplete(contestsAutocompleteData);
-        }
-    }, [ contestsAutocompleteData ]);
     const [ retestById,
         {
             data: retestData,
-            isSuccess: isSuccessfullyRetest,
             isLoading: isRetesting,
             error: retestError,
-            isError: isRetestError,
         } ] = useRetestByIdMutation();
 
     const [ deleteByContest,
@@ -102,7 +89,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             isSuccess: isSuccesfullyDeletedAll,
             isLoading: isDeletingAll,
             error: deleteAllError,
-            isError: isDeleteAllError,
         } ] = useDeleteByContestMutation();
 
     const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
@@ -110,27 +96,13 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        let errors: Array<string> = [];
+        getAndSetExceptionMessage([ deleteAllError, retestError, copyAllError, getContestError ], setErrorMessages);
+    }, [ deleteAllError, retestError, copyAllError, getContestError ]);
 
-        const extractMessages = (error: unknown): Array<string> => {
-            if (Array.isArray(error) && error.every((e) => 'message' in e)) {
-                return error.map((x: ExceptionData) => x.message);
-            }
-            return [];
-        };
-
-        if (isDeleteAllError) {
-            errors = errors.concat(extractMessages(deleteAllError));
-        }
-        if (isRetestError) {
-            errors = errors.concat(extractMessages(retestError));
-        }
-        if (isCopyAllError) {
-            errors = errors.concat(extractMessages(copyAllError));
-        }
-
-        setErrorMessages(errors);
-    }, [ isDeleteAllError, isRetestError, isCopyAllError ]);
+    useEffect(() => {
+        const message = getAndSetSuccesfullMessages([ deleteAllData, retestData, copyAllData ]);
+        setSuccessMessage(message);
+    }, [ deleteAllData, retestData, copyAllData ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
@@ -145,25 +117,17 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         setProblemId(id);
     };
 
-    const renderEditProblemModal = (index: number) => (
-        <Modal
-          key={index}
-          open={openEditModal}
-          onClose={() => setOpenEditModal(false)}
-        >
-            <Box sx={modalStyles}>
-                <ProblemForm contestId={Number(contestId)} problemId={problemId} />
-            </Box>
-        </Modal>
-    );
+    useEffect(() => {
+        if (contestsAutocompleteData) {
+            setContestsAutocomplete(contestsAutocompleteData);
+        }
+    }, [ contestsAutocompleteData ]);
 
-    const renderProblemsCreateModal = (index: number) => (
-        <Modal key={index} open={openShowCreateProblemModal} onClose={() => setOpenShowCreateProblemModal(!openShowCreateProblemModal)}>
-            <Box sx={modalStyles}>
-                <ProblemForm contestId={Number(contestId)} isEditMode={false} problemId={null} />
-            </Box>
-        </Modal>
-    );
+    useEffect(() => {
+        if (isSuccesfullyDeletedAll) {
+            retakeData();
+        }
+    }, [ isSuccesfullyDeletedAll ]);
 
     useEffect(() => {
         if (isSuccesfullyCoppiedAll) {
@@ -182,6 +146,41 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const onCopyAll = () => {
         copyAll({ sourceContestId: contestId, destinationContestId: contestToCopy!.id });
     };
+
+    const retestProblem = (currentProblemId: number) => {
+        const currentProblem = problemsData?.items?.find((x) => x.id === currentProblemId);
+        if (currentProblem) {
+            const problem = {
+                id: currentProblemId,
+                name: currentProblem.name,
+                contestName: currentProblem.contest,
+                contestId,
+            };
+            retestById(problem);
+        }
+    };
+
+    const renderProblemModal = (index: number, isCreate: boolean) => (
+        <Modal
+          key={index}
+          open={isCreate
+              ? openShowCreateProblemModal
+              : openEditModal}
+          onClose={() => isCreate
+              ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
+              : setOpenEditModal(false)}
+        >
+            <Box sx={modalStyles}>
+                <ProblemForm
+                  contestId={Number(contestId)}
+                  problemId={isCreate
+                      ? null
+                      : problemId}
+                  isEditMode={!isCreate}
+                />
+            </Box>
+        </Modal>
+    );
 
     const renderCopyAllModal = (index: number) => (
         <Modal
@@ -214,7 +213,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
                                     {problemsData?.items![0].contest}
                                     {' '}
-                                    <ArrowRightAltIcon />
+                                    <FaLongArrowAltRight />
                                     {contestToCopy?.name}
                                 </Typography>
                             </Box>
@@ -226,27 +225,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                     )}
             </Box>
         </Modal>
-    );
-
-    const retestProblem = (currentProblemId: number) => {
-        const currentProblem = problemsData?.items?.find((x) => x.id === currentProblemId);
-        if (currentProblem) {
-            const problem = {
-                id: currentProblemId,
-                name: currentProblem.name,
-                contestName: currentProblem.contest,
-                contestId,
-            };
-            retestById(problem);
-        }
-    };
-
-    const renderAlert = (message: string, severity: AlertSeverity) => (
-        <Alert
-          severity={severity}
-          message={message}
-          variant={AlertVariant.Filled}
-        />
     );
 
     const renderDeleteAllModal = (index: number) => (
@@ -279,12 +257,12 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                     setSkipContestAutocomplete(false);
                 }}
                 >
-                    <CopyAllIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+                    <MdCopyAll style={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }} color="primary" />
                 </IconButton>
             </Tooltip>
             <Tooltip title="Delete All">
                 <IconButton onClick={() => setShowDeleteAllConfirm(!showDeleteAllConfirm)}>
-                    <DeleteForeverIcon sx={{ width: '40px', height: '40px' }} color="error" />
+                    <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
                 </IconButton>
             </Tooltip>
         </div>
@@ -292,33 +270,34 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 
     return (
         <div style={{ marginTop: '2rem' }}>
-            {isSuccessfullyRetest && renderAlert(retestData, AlertSeverity.Success)}
-            {isSuccesfullyDeletedAll && renderAlert(deleteAllData, AlertSeverity.Success)}
-            {isSuccesfullyCoppiedAll && renderAlert(copyAllData!, AlertSeverity.Success)}
-            {errorMessages.map((x: string) => renderAlert(x, AlertSeverity.Error))}
-            {(isRetesting || isDeletingAll) && <SpinningLoader />}
-            <AdministrationGridView
-              data={problemsData}
-              error={getContestError}
-              filterableGridColumnDef={problemFilterableColums}
-              notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, useDeleteProblemMutation, retestProblem)}
-              queryParams={queryParams}
-              location={filtersAndSortersLocation}
-              selectedFilters={selectedFilters}
-              selectedSorters={selectedSorters}
-              setQueryParams={setQueryParams}
-              modals={[
-                  { showModal: openEditModal, modal: (i) => renderEditProblemModal(i) },
-                  { showModal: openShowCreateProblemModal, modal: (i) => renderProblemsCreateModal(i) },
-                  { showModal: showDeleteAllConfirm, modal: (i) => renderDeleteAllModal(i) },
-                  { showModal: showCopyAllModal, modal: (i) => renderCopyAllModal(i) },
-              ]}
-              renderActionButtons={renderGridSettings}
-              setFilterStateAction={setAdminContestsFilters}
-              setSorterStateAction={setAdminContestsSorters}
-              withSearchParams={false}
-              legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
-            />
+            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
+            {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
+            {isRetesting || isDeletingAll
+                ? <SpinningLoader />
+                : (
+                    <AdministrationGridView
+                      data={problemsData}
+                      error={getContestError}
+                      filterableGridColumnDef={problemFilterableColums}
+                      notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, useDeleteProblemMutation, retestProblem)}
+                      queryParams={queryParams}
+                      location={filtersAndSortersLocation}
+                      selectedFilters={selectedFilters}
+                      selectedSorters={selectedSorters}
+                      setQueryParams={setQueryParams}
+                      modals={[
+                          { showModal: openEditModal, modal: (i) => renderProblemModal(i, false) },
+                          { showModal: openShowCreateProblemModal, modal: (i) => renderProblemModal(i, true) },
+                          { showModal: showDeleteAllConfirm, modal: (i) => renderDeleteAllModal(i) },
+                          { showModal: showCopyAllModal, modal: (i) => renderCopyAllModal(i) },
+                      ]}
+                      renderActionButtons={renderGridSettings}
+                      setFilterStateAction={setAdminContestsFilters}
+                      setSorterStateAction={setAdminContestsSorters}
+                      withSearchParams={false}
+                      legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
+                    />
+                )}
         </div>
     );
 };

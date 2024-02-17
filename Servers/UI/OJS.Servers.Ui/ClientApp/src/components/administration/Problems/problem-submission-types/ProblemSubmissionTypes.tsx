@@ -23,6 +23,8 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
               alignItems: 'center',
               justifyContent: 'space-around',
               margin: '1rem',
+              alignSelf: 'flex-start',
+              width: '85%',
           }}
           key={strategy.id}
         >

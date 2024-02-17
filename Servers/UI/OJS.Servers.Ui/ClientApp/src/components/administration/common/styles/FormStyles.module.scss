@@ -39,4 +39,23 @@
     align-items: center;
     justify-content: space-evenly;
     margin: 0 auto;
-  }
+}
+
+.dividerLabel {
+    margin-top: 1rem !important;
+    align-self: flex-start;
+}
+
+.spacing {
+    margin: 1rem !important;
+}
+
+.selectFormGroup {
+    margin: 1rem 0;
+    width: 90%;
+    align-self: center;
+}
+
+.inlineElement {
+    width: 50%;
+}
