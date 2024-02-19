@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import { IoIosClose } from 'react-icons/io';
 import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 import Form from '../../components/guidelines/forms/Form';
@@ -116,6 +117,7 @@ const SearchBar = () => {
               ? `${styles.show}`
               : ''}`}
         >
+            <IoIosClose size={50} onClick={toggleVisibility} className={styles.closeIcon} />
             <Form
               className={styles.search}
               onSubmit={handleSubmit}
