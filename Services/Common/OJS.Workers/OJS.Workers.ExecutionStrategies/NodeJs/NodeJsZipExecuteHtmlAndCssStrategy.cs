@@ -76,31 +76,34 @@ fs = undefined;";
         protected override string JsCodePreevaulationCode => $@"
 describe('TestDOMScope', function() {{
     let bgCoderConsole = {{}};
-    before(function(done) {{
-        jsdom.env({{
-            html: userCode,
-            src:[bootstrap],
-            done: function(errors, window) {{
-                global.window = window;
-                global.document = window.document;
-                global.$ = global.jQuery = jq(window);
-                Object.getOwnPropertyNames(window)
-                    .filter(function (prop) {{
-                        return prop.toLowerCase().indexOf('html') >= 0;
-                    }}).forEach(function (prop) {{
-                        global[prop] = window[prop];
-                    }});
+before(function(done) {{
+    const dom = new jsdom.JSDOM(userCode, {{
+        runScripts: ""dangerously"",
+        resources: ""usable""
+    }});
 
-                let head = $(document.head);
-                let style = document.createElement('style');
-                style.type = 'text/css';
-                style.innerHTML = bootstrapCss;
-                head.append(style);
+    const {{ window }} = dom;
 
-                let links = head.find('link');
+    global.window = window;
+    global.document = window.document;
+    global.$ = global.jQuery = jq(window);
+
+    Object.getOwnPropertyNames(window)
+        .filter((prop) => prop.toLowerCase().indexOf('html') >= 0)
+        .forEach((prop) => {{
+            global[prop] = window[prop];
+        }});
+
+    let head = $(document.head);
+    let style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = bootstrapCss;
+    head.append(style);
+
+    let links = head.find('link');
                 links.each((index, el)=>{{
                     let style = document.createElement('style');
-                    style.type = 'test/css';
+                    style.type = 'text/css';
                     let path = '{UserBaseDirectoryPlaceholder}/' + el.href;
                     let css = fs.readFileSync(path, 'utf-8');
                     style.innerHTML = css;
@@ -109,18 +112,17 @@ describe('TestDOMScope', function() {{
 
                 links.remove();
 
-                Object.keys(console)
+
+   Object.keys(console)
                     .forEach(function (prop) {{
                         bgCoderConsole[prop] = console[prop];
                         console[prop] = new Function('');
                     }});
 
-{NodeDisablePlaceholder}
+    {NodeDisablePlaceholder}
 
-                done();
-            }}
-        }});
-    }});
+    done();
+}});
 
     after(function() {{
         Object.keys(bgCoderConsole)
