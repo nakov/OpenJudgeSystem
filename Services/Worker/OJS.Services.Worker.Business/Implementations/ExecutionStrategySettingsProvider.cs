@@ -403,16 +403,16 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             _ => throw new ArgumentOutOfRangeException(nameof(executionStrategyType), executionStrategyType, null),
         };
 
-    private static bool IsJava17(ExecutionStrategyType type)
-        => type.ToString().Contains("17");
+    private static bool IsJava21(ExecutionStrategyType type)
+        => type.ToString().Contains("21");
 
     private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
-        => IsJava17(strategyType)
+        => IsJava21(strategyType)
             ? this.settings.Java17ExecutablePath
             : this.settings.JavaExecutablePath;
 
     private string GetJavaLibsPath(ExecutionStrategyType strategyType)
-        => IsJava17(strategyType)
+        => IsJava21(strategyType)
             ? this.settings.Java17LibsPath
             : this.settings.JavaLibsPath;
 }
