@@ -47,7 +47,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
-            ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck => new
+            ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck => new
                 JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -61,7 +61,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck or
-            ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck => new
+            ExecutionStrategyType.Java21ZipFileCompileExecuteAndCheck => new
                 JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -140,45 +140,6 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.HandlebarsModulePath)
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha => new
-                NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.HandlebarsModulePath,
-                    this.settings.BrowserifyModulePath,
-                    this.settings.BabelifyModulePath,
-                    this.settings.Es2015ImportPluginPath)
-
-                as TSettings,
-            ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy => new
-                NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.HandlebarsModulePath,
-                    this.settings.SinonJsDomModulePath,
-                    this.settings.BabelCoreModulePath,
-                    this.settings.ReactJsxPluginPath,
-                    this.settings.ReactModulePath,
-                    this.settings.ReactDomModulePath,
-                    this.settings.NodeFetchModulePath)
-
-                as TSettings,
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
                 NodeJsZipExecuteHtmlAndCssStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
@@ -196,7 +157,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
-            ExecutionStrategyType.Java17ProjectTestsExecutionStrategy => new
+            ExecutionStrategyType.Java21ProjectTestsExecutionStrategy => new
                 JavaProjectTestsExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -212,7 +173,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaUnitTestsExecutionStrategy or
-            ExecutionStrategyType.Java17UnitTestsExecutionStrategy => new
+            ExecutionStrategyType.Java21UnitTestsExecutionStrategy => new
                 JavaUnitTestsExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -228,14 +189,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy or
-            ExecutionStrategyType.Java17SpringAndHibernateProjectExecution => new
+            ExecutionStrategyType.Java21SpringAndHibernateProjectExecution => new
                 JavaSpringAndHibernateProjectExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
-                    this.settings.MavenPath)
+                    this.settings.MavenPath,
+                    this.settings.JavaSpringAndHibernateStrategyPomFilePath)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectExecutionStrategy => new
@@ -321,7 +283,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.submissionProcessorIdentifier)
 
                 as TSettings,
-            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy => new
+            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy or
+            ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests => new
                 RunSpaAndExecuteMochaTestsExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
@@ -440,16 +403,16 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             _ => throw new ArgumentOutOfRangeException(nameof(executionStrategyType), executionStrategyType, null),
         };
 
-    private static bool IsJava17(ExecutionStrategyType type)
-        => type.ToString().Contains("17");
+    private static bool IsJava21(ExecutionStrategyType type)
+        => type.ToString().Contains("21");
 
     private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
-        => IsJava17(strategyType)
+        => IsJava21(strategyType)
             ? this.settings.Java17ExecutablePath
             : this.settings.JavaExecutablePath;
 
     private string GetJavaLibsPath(ExecutionStrategyType strategyType)
-        => IsJava17(strategyType)
+        => IsJava21(strategyType)
             ? this.settings.Java17LibsPath
             : this.settings.JavaLibsPath;
 }

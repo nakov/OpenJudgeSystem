@@ -21,8 +21,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
-# Setup for installing Node.js 12 (LTS)
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+#Setup for installing Node.js 20 (LTS)
+RUN mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list;
 
 # Setup for installing .NET Core SDK
 RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
@@ -118,7 +120,18 @@ RUN curl https://pyenv.run | bash && \
 # Install Python packages from requirements.txt
 COPY ./python/requirements.txt /tmp/
 
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY ./java-spring-and-hibernate /judge-resources/java/java-spring-and-hibernate
+WORKDIR /judge-resources/java/java-spring-and-hibernate
+RUN mvn dependency:go-offline
+# Needed 2 versions of this package, one in the strategy pom.xml, other one is istalled here
+# Otherwise maven resolves only 1 dependency
+# TODO: Fix this
+RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
+RUN mvn clean install
 
 # Go
 ENV GO111MODULE=off

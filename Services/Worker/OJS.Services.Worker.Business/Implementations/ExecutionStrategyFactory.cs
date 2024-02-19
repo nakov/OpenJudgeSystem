@@ -104,7 +104,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
-                case ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck:
+                case ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck:
                     executionStrategy = new JavaPreprocessCompileExecuteAndCheckExecutionStrategy<JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -112,7 +112,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
-                case ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck:
+                case ExecutionStrategyType.Java21ZipFileCompileExecuteAndCheck:
                     executionStrategy = new JavaZipFileCompileExecuteAndCheckExecutionStrategy<JavaZipFileCompileExecuteAndCheckExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -120,7 +120,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
-                case ExecutionStrategyType.Java17ProjectTestsExecutionStrategy:
+                case ExecutionStrategyType.Java21ProjectTestsExecutionStrategy:
                     executionStrategy = new JavaProjectTestsExecutionStrategy<JavaProjectTestsExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -128,7 +128,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
-                case ExecutionStrategyType.Java17UnitTestsExecutionStrategy:
+                case ExecutionStrategyType.Java21UnitTestsExecutionStrategy:
                     executionStrategy = new JavaUnitTestsExecutionStrategy<JavaUnitTestsExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -136,7 +136,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy:
-                case ExecutionStrategyType.Java17SpringAndHibernateProjectExecution:
+                case ExecutionStrategyType.Java21SpringAndHibernateProjectExecution:
                     executionStrategy = new JavaSpringAndHibernateProjectExecutionStrategy<JavaSpringAndHibernateProjectExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -155,12 +155,6 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.executionStrategySettingsProvider);
                     break;
-                case ExecutionStrategyType.NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMocha:
-                    executionStrategy = new NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategy<NodeJsZipPreprocessExecuteAndRunUnitTestsWithDomAndMochaExecutionStrategySettings>(
-                        type,
-                        processExecutorFactory,
-                        this.executionStrategySettingsProvider);
-                    break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests:
                     executionStrategy = new NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings>(
                         type,
@@ -173,12 +167,6 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.executionStrategySettingsProvider);
                     break;
-                case ExecutionStrategyType.NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy:
-                    executionStrategy = new NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategy<NodeJsExecuteAndRunAsyncJsDomTestsWithReactExecutionStrategySettings>(
-                        type,
-                        processExecutorFactory,
-                        this.executionStrategySettingsProvider);
-                    break;
                 case ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy:
                     executionStrategy = new NodeJsZipExecuteHtmlAndCssStrategy<NodeJsZipExecuteHtmlAndCssStrategySettings>(
                         type,
@@ -187,6 +175,12 @@ namespace OJS.Services.Worker.Business.Implementations
                     break;
                 case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy:
                     executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategy<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
+                        type,
+                        processExecutorFactory,
+                        this.executionStrategySettingsProvider);
+                    break;
+                case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
+                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider);
