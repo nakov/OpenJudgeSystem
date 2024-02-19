@@ -50,7 +50,7 @@ const FooterNavigation = () => {
             </span>
             <span className={styles.links}>
                 <LinkButton
-                  to="https://github.com/NikolayIT/OpenJudgeSystem"
+                  to="https://github.com/SoftUni-Internal/OpenJudgeSystem"
                   type={LinkButtonType.plain}
                   isToExternal
                 >
