@@ -29,8 +29,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private const string StartClassNodeXPath = @"//pomns:properties/pomns:start-class";
         private const string DependencyNodeXPathTemplate = @"//pomns:dependencies/pomns:dependency[pomns:groupId='##' and pomns:artifactId='!!']";
         private const string DependenciesNodeXPath = @"//pomns:dependencies";
-        private const string MavenTestCommand = "test -f {0} -Dtest=\"{1}\"";
-        private const string MavenBuild = "compile";
+        private const string MavenTestCommand = "-o test -f {0} -Dtest=\"{1}\"";
+        private const string MavenBuild = "-o compile";
         private const string PomXmlBuildSettingsPattern = @"<build>(?s:.)*<\/build>";
         private const string TestsFolderPattern = @"src/test/java/*";
         private const string MainCodeFolderPattern = @"src/main/java/";
@@ -81,7 +81,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected override string ClassPathArgument
             => $"-cp {this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
 
-        protected static void PreparePomXml(string submissionFilePath)
+        protected void PreparePomXml(string submissionFilePath)
         {
             var extractionDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
 
@@ -95,8 +95,9 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 throw new FileNotFoundException("Pom.xml not found in submission!");
             }
 
-            AddBuildSettings(pomXmlFilePath);
-            AddDependencies(pomXmlFilePath);
+            this.ReplacePom(pomXmlFilePath);
+            // AddBuildSettings(pomXmlFilePath);
+            // AddDependencies(pomXmlFilePath);
             var mainClassFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
                 .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension)));
@@ -204,7 +205,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.OverwriteApplicationProperties(submissionFilePath);
             this.RemovePropertySourceAnnotationsFromMainClass(submissionFilePath);
             this.AddTestsToUserSubmission(context, submissionFilePath);
-            PreparePomXml(submissionFilePath);
+            this.PreparePomXml(submissionFilePath);
 
             return submissionFilePath;
         }
@@ -427,6 +428,14 @@ namespace OJS.Workers.ExecutionStrategies.Java
             return paths.Any(x => x.StartsWith(MainCodeFolderPattern)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension));
         }
 
+        private void ReplacePom(string pomXmlFilePath)
+        {
+            FileHelpers.DeleteFiles(pomXmlFilePath);
+
+            var newPomFileContent = File.ReadAllText(this.Settings.JavaSpringAndHibernateStrategyPomFilePath);
+            FileHelpers.WriteAllText(pomXmlFilePath, newPomFileContent);
+        }
+
         private string ExtractEntryPointFromPomXml(string submissionFilePath)
         {
             var pomXmlPath = FileHelpers.ExtractFileFromZip(submissionFilePath, "pom.xml", this.WorkingDirectory);
@@ -462,7 +471,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
         string JavaExecutablePath,
         string JavaLibrariesPath,
         int BaseUpdateTimeOffset,
-        string MavenPath)
+        string MavenPath,
+        string JavaSpringAndHibernateStrategyPomFilePath)
         : JavaProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, JavaExecutablePath, JavaLibrariesPath,
             BaseUpdateTimeOffset);
 }

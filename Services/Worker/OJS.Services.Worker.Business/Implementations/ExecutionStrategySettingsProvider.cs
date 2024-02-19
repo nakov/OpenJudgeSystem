@@ -196,7 +196,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
-                    this.settings.MavenPath)
+                    this.settings.MavenPath,
+                    this.settings.JavaSpringAndHibernateStrategyPomFilePath)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectExecutionStrategy => new
