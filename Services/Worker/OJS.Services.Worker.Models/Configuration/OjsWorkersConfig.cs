@@ -56,13 +56,13 @@ public class OjsWorkersConfig : BaseConfig
     public string JavaLibsPath { get; set; } = string.Empty;
 
     [Required]
-    public string Java17CompilerPath { get; set; } = string.Empty;
+    public string Java21CompilerPath { get; set; } = string.Empty;
 
     [Required]
-    public string Java17LibsPath { get; set; } = string.Empty;
+    public string Java21LibsPath { get; set; } = string.Empty;
 
     [Required]
-    public string Java17ExecutablePath { get; set; } = string.Empty;
+    public string Java21ExecutablePath { get; set; } = string.Empty;
 
     [Required]
     public string JavaSpringAndHibernateStrategyPomFilePath { get; set; } = string.Empty;

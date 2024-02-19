@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-3.1 \
       dotnet-sdk-5.0 \
       openjdk-11-jdk \
-      openjdk-17-jdk \
+      openjdk-21-jdk \
       nodejs \
       python3.8 \
       python3-pip \
@@ -73,7 +73,7 @@ RUN ./gradlew
 
 COPY ./java/build.gradle ./build.gradle
 RUN ./gradlew getDeps11
-RUN ./gradlew getDeps17
+RUN ./gradlew getDeps21
 
 # JS and JS SPA
 COPY ./js /judge-resources/js
@@ -86,7 +86,7 @@ RUN npm install && \
     bash /judge-resources/js/chromium-scripts/update-and-run.sh
 
 ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
-ENV JAVA17_LIBS_DIR=/judge-resources/java17Libs/
+ENV JAVA21_LIBS_DIR=/judge-resources/java21Libs/
 
 ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
 

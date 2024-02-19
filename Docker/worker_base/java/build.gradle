@@ -5,7 +5,7 @@ repositories { mavenCentral() }
 dependencies {
     configurations {
         java11
-        java17
+        java21
     }
 
      // Dependencies from https://mvnrepository.com
@@ -41,35 +41,38 @@ dependencies {
     
     
     // Dependencies from https://mvnrepository.com
-    java17 group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.3'
-    java17 group: 'org.mockito', name: 'mockito-core', version: '2.18.3'
+    java21 group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.3'
+    java21 group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.3'
+    java21 group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.3'
+    java21 group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.9.3'
+    java21 group: 'org.apiguardian', name: 'apiguardian-api', version: '1.0.0'
 
-    java17 group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
-    java17 group: 'xml-apis', name: 'xml-apis', version: '1.0.b2'
+    java21 group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+    java21 group: 'xml-apis', name: 'xml-apis', version: '1.0.b2'
 
-    java17 group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
-    java17 group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.3.0.Final'
-    java17 group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.2.Final'
-    java17 group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.10.Final'
-    java17 group: 'org.springframework.boot', name: 'spring-boot', version: '2.0.2.RELEASE'
-    java17 group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '3.1.2'
-    java17 group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.1.1'
-    java17 group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.1.1'
-    java17 group: 'org.springframework', name: 'spring-aop', version: '5.0.6.RELEASE'
-    java17 group: 'org.springframework', name: 'spring-aspects', version: '5.0.6.RELEASE'
-    java17 group: 'org.springframework', name: 'spring-beans', version: '6.0.11'
-    java17 group: 'org.springframework.security', name: 'spring-security-core', version: '5.0.5.RELEASE'
+    java21 group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
+    java21 group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.3.0.Final'
+    java21 group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.2.Final'
+    java21 group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.10.Final'
+    java21 group: 'org.springframework.boot', name: 'spring-boot', version: '2.0.2.RELEASE'
+    java21 group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '3.1.2'
+    java21 group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.1.1'
+    java21 group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.1.1'
+    java21 group: 'org.springframework', name: 'spring-aop', version: '5.0.6.RELEASE'
+    java21 group: 'org.springframework', name: 'spring-aspects', version: '5.0.6.RELEASE'
+    java21 group: 'org.springframework', name: 'spring-beans', version: '6.0.11'
+    java21 group: 'org.springframework.security', name: 'spring-security-core', version: '5.0.5.RELEASE'
 
-    java17 group: 'org.modelmapper', name: 'modelmapper', version: '3.1.0'
-    java17 group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.1'
+    java21 group: 'org.modelmapper', name: 'modelmapper', version: '3.1.0'
+    java21 group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.1'
 
-    java17 group: 'org.apache.maven.plugins', name: 'maven-assembly-plugin', version: '3.6.0'
-    java17 group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.25'
-    java17 group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
-    java17 group: 'jakarta.el', name: 'jakarta.el-api', version: '5.0.0'
-    java17 group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.1'
-    java17 group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
-    java17 group: 'org.ow2.asm', name: 'asm', version: '9.1'
+    java21 group: 'org.apache.maven.plugins', name: 'maven-assembly-plugin', version: '3.6.0'
+    java21 group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.25'
+    java21 group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
+    java21 group: 'jakarta.el', name: 'jakarta.el-api', version: '5.0.0'
+    java21 group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.1'
+    java21 group: 'org.hsqldb', name: 'hsqldb', version: '2.4.1'
+    java21 group: 'org.ow2.asm', name: 'asm', version: '9.1'
 }
 
 
@@ -80,9 +83,9 @@ task getDeps11(type: Copy) {
     // into 'javaLibs/'
 }
 
-task getDeps17(type: Copy) {
-    from configurations.java17
-    into '/judge-resources/java17Libs/'
+task getDeps21(type: Copy) {
+    from configurations.java21
+    into '/judge-resources/java21Libs/'
     // Uncomment the next line and comment the previous for local testing
-    // into 'java17Libs/'
+    // into 'java21Libs/'
 }

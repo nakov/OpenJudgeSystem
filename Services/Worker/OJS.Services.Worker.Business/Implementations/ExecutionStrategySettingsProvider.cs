@@ -408,11 +408,11 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
     private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
         => IsJava21(strategyType)
-            ? this.settings.Java17ExecutablePath
+            ? this.settings.Java21ExecutablePath
             : this.settings.JavaExecutablePath;
 
     private string GetJavaLibsPath(ExecutionStrategyType strategyType)
         => IsJava21(strategyType)
-            ? this.settings.Java17LibsPath
+            ? this.settings.Java21LibsPath
             : this.settings.JavaLibsPath;
 }
