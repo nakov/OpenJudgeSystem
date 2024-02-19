@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-3.1 \
       dotnet-sdk-5.0 \
       openjdk-11-jdk \
-      openjdk-17-jdk \
+      openjdk-21-jdk \
       nodejs \
       python3.8 \
       python3-pip \

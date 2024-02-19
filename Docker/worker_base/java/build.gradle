@@ -42,7 +42,10 @@ dependencies {
     
     // Dependencies from https://mvnrepository.com
     java17 group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.3'
-    java17 group: 'org.mockito', name: 'mockito-core', version: '2.18.3'
+    java17 group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.3'
+    java17 group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.3'
+    java17 group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.9.3'
+    java17 group: 'org.apiguardian', name: 'apiguardian-api', version: '1.0.0'
 
     java17 group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     java17 group: 'xml-apis', name: 'xml-apis', version: '1.0.b2'
