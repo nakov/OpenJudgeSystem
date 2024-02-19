@@ -74,7 +74,7 @@ public class CompilerFactory : ICompilerFactory
         };
 
     private string GetJavaCompilerPath(ExecutionStrategyType strategyType)
-        => strategyType.ToString().Contains("17")
-            ? this.settings.Java17CompilerPath
+        => strategyType.ToString().Contains("21")
+            ? this.settings.Java21CompilerPath
             : this.settings.JavaCompilerPath;
 }

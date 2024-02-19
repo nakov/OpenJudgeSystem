@@ -108,7 +108,7 @@ public class _$TestRunner {{
     }}
 }}";
 
-        protected virtual string JUnit17TestRunnerCode =>
+        protected virtual string JUnit5TestRunnerCode =>
             $@"
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -343,7 +343,7 @@ public class _$TestRunner {{
         {
             // It is important to call the JUintTestRunnerCodeTemplate after the TestClasses have been filled
             // otherwise no tests will be queued in the JUnitTestRunner, which would result in no tests failing.
-            File.WriteAllText(this.JUnitTestRunnerSourceFilePath, this.Type.ToString().Contains("17") ? this.JUnit17TestRunnerCode : this.JUnitTestRunnerCode);
+            File.WriteAllText(this.JUnitTestRunnerSourceFilePath, this.Type.ToString().Contains("21") ? this.JUnit5TestRunnerCode : this.JUnitTestRunnerCode);
             FileHelpers.AddFilesToZipArchive(submissionFilePath, string.Empty, this.JUnitTestRunnerSourceFilePath);
             FileHelpers.DeleteFiles(this.JUnitTestRunnerSourceFilePath);
         }
