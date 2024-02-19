@@ -60,7 +60,6 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.69.5",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^6.1.8",
     "svgo": "2.8.0",
     "types": "^0.1.1",
     "uuid": "^9.0.0",

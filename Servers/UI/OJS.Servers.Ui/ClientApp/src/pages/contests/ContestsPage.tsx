@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prefer-destructuring */
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -44,11 +45,9 @@ const ContestsPage = () => {
             page: selectedPage,
         };
         if (category) {
-            // eslint-disable-next-line prefer-destructuring
             params.category = category.id;
         }
         if (strategy) {
-            // eslint-disable-next-line prefer-destructuring
             params.strategy = strategy.id;
         }
 
