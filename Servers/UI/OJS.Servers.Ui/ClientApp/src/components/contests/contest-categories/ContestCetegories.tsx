@@ -2,6 +2,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable consistent-return */
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
@@ -45,8 +47,46 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
 
     useEffect(() => {
         const selectedCategory = findContestCategoryByIdRecursive(contestCategories, selectedId);
+        const breadcrumbItems = findParentNames(contestCategories, selectedId);
+
         dispatch(setContestCategory(selectedCategory));
+        dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
     }, [ selectedId, contestCategories ]);
+
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const findParentNames = (collection: Array<IContestCategory> | undefined, selectedId: number) => {
+        if (!collection || !selectedId) {
+            return;
+        }
+        const findParentsRecursive = (
+            element: IContestCategory,
+            targetId: number,
+            parents: Array<{ name: string; id: number }> = [],
+        ): Array<{name: string; id: number}> | null => {
+            if (element.id === targetId) {
+                return [ ...parents, { name: element.name, id: element.id } ];
+            }
+
+            for (const child of element.children || []) {
+                const result = findParentsRecursive(child, targetId, [ ...parents, { name: element.name, id: element.id } ]);
+
+                if (result) {
+                    return result;
+                }
+            }
+
+            return null;
+        };
+
+        for (const node of collection) {
+            const parents = findParentsRecursive(node, selectedId);
+            if (parents) {
+                return parents;
+            }
+        }
+
+        return [];
+    };
 
     const findContestCategoryByIdRecursive =
         (elements: Array<IContestCategory> | undefined, id: number, rootIndex = 0): IContestCategory | null => {
@@ -56,7 +96,6 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             // eslint-disable-next-line no-restricted-syntax
             for (const contestCategory of elements) {
                 if (contestCategory.id === id) {
-                    dispatch(updateContestCategoryBreadcrumbItem({ index: rootIndex, element: contestCategory }));
                     return contestCategory;
                 }
                 if (contestCategory.children.length) {
