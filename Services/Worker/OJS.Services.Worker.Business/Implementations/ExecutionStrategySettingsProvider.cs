@@ -47,7 +47,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
-            ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck => new
+            ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck => new
                 JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -61,7 +61,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck or
-            ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck => new
+            ExecutionStrategyType.Java21ZipFileCompileExecuteAndCheck => new
                 JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -157,7 +157,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
-            ExecutionStrategyType.Java17ProjectTestsExecutionStrategy => new
+            ExecutionStrategyType.Java21ProjectTestsExecutionStrategy => new
                 JavaProjectTestsExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -173,7 +173,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaUnitTestsExecutionStrategy or
-            ExecutionStrategyType.Java17UnitTestsExecutionStrategy => new
+            ExecutionStrategyType.Java21UnitTestsExecutionStrategy => new
                 JavaUnitTestsExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,
@@ -189,7 +189,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy or
-            ExecutionStrategyType.Java17SpringAndHibernateProjectExecution => new
+            ExecutionStrategyType.Java21SpringAndHibernateProjectExecution => new
                 JavaSpringAndHibernateProjectExecutionStrategySettings(
                     this.settings.JavaBaseTimeUsedInMilliseconds,
                     this.settings.JavaBaseMemoryUsedInBytes,

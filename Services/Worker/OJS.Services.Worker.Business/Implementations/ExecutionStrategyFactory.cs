@@ -104,7 +104,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck:
-                case ExecutionStrategyType.Java17PreprocessCompileExecuteAndCheck:
+                case ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck:
                     executionStrategy = new JavaPreprocessCompileExecuteAndCheckExecutionStrategy<JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -112,7 +112,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck:
-                case ExecutionStrategyType.Java17ZipFileCompileExecuteAndCheck:
+                case ExecutionStrategyType.Java21ZipFileCompileExecuteAndCheck:
                     executionStrategy = new JavaZipFileCompileExecuteAndCheckExecutionStrategy<JavaZipFileCompileExecuteAndCheckExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -120,7 +120,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaProjectTestsExecutionStrategy:
-                case ExecutionStrategyType.Java17ProjectTestsExecutionStrategy:
+                case ExecutionStrategyType.Java21ProjectTestsExecutionStrategy:
                     executionStrategy = new JavaProjectTestsExecutionStrategy<JavaProjectTestsExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -128,7 +128,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaUnitTestsExecutionStrategy:
-                case ExecutionStrategyType.Java17UnitTestsExecutionStrategy:
+                case ExecutionStrategyType.Java21UnitTestsExecutionStrategy:
                     executionStrategy = new JavaUnitTestsExecutionStrategy<JavaUnitTestsExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
@@ -136,7 +136,7 @@ namespace OJS.Services.Worker.Business.Implementations
                         this.executionStrategySettingsProvider);
                     break;
                 case ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy:
-                case ExecutionStrategyType.Java17SpringAndHibernateProjectExecution:
+                case ExecutionStrategyType.Java21SpringAndHibernateProjectExecution:
                     executionStrategy = new JavaSpringAndHibernateProjectExecutionStrategy<JavaSpringAndHibernateProjectExecutionStrategySettings>(
                         type,
                         processExecutorFactory,
