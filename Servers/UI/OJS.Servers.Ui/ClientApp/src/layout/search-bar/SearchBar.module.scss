@@ -6,7 +6,7 @@
 
 .searchContainer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   background-color: colors.$white-color;
   top: -100%;
@@ -32,6 +32,16 @@
   font-size: variables.$f-size-24;
   margin-right: spacings.$sp-48;
   margin-left: spacings.$sp-12;
+  transition: all .1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.closeIcon {
+  cursor: pointer;
+  color: colors.$white-color;
   transition: all .1s ease-in-out;
 
   &:hover {
