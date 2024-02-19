@@ -19,13 +19,13 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OJS.Servers.Administration.Extensions;
 using OJS.Common;
 using OJS.Services.Administration.Models;
 using OJS.Common.Extensions;
+using OJS.Services.Administration.Business.Submissions;
 using GlobalResource = OJS.Common.Resources.SubmissionsController;
 
 public class SubmissionsController : BaseAutoCrudAdminController<Submission>

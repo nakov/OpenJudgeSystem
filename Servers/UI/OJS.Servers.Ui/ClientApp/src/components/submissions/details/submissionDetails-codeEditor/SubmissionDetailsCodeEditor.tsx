@@ -9,6 +9,7 @@ import { IAuthorizationReduxState } from '../../../../redux/features/authorizati
 import { setDownloadErrorMessage, setSubmission } from '../../../../redux/features/submissionDetailsSlice';
 import { useSaveAttachmentQuery } from '../../../../redux/services/submissionDetailsService';
 import concatClassNames from '../../../../utils/class-names';
+import downloadFile from '../../../../utils/file-download-utils';
 import { getParticipateInContestUrl } from '../../../../utils/urls';
 import CodeEditor from '../../../code-editor/CodeEditor';
 import AlertBox, { AlertBoxType } from '../../../guidelines/alert-box/AlertBox';
@@ -43,21 +44,6 @@ const SubmissionDetailsCodeEditor = () => {
             dispatch(setDownloadErrorMessage(error.error));
         }
     }, [ dispatch, error ]);
-
-    const downloadFile = (blob:Blob, filename: string) => {
-        const blobUrl = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.style.display = 'none';
-        a.href = blobUrl;
-        // eslint-disable-next-line prefer-destructuring
-        a.download = filename;
-
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(blobUrl);
-    };
 
     useEffect(() => {
         if (data?.blob) {

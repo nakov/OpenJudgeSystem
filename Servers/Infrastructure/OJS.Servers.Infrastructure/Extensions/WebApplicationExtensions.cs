@@ -7,6 +7,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
+    using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
     using OJS.Services.Common.Models.Configurations;
@@ -48,6 +49,12 @@ namespace OJS.Servers.Infrastructure.Extensions
             app.UseHangfireDashboard(HangfirePath);
             app.MapHangfireDashboard(dashboardOptions);
 
+            return app;
+        }
+
+        public static WebApplication UseCorsPolicy(this WebApplication app)
+        {
+            app.UseCors(GlobalConstants.CorsDefaultPolicyName);
             return app;
         }
 

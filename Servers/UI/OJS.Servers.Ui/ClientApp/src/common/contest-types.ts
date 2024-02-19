@@ -47,6 +47,13 @@ enum ContestType {
     Compete = 1,
 }
 
+enum ContestVariation {
+    Exercise = 0,
+    OnsitePracticalExam = 1,
+    OnlinePracticalExam = 2,
+    Lab = 3,
+  }
+
 enum ContestStatus {
     All = 'All',
     Active = 'Active',
@@ -71,4 +78,5 @@ export {
     ContestStatus,
     FilterType,
     SortType,
+    ContestVariation,
 };
