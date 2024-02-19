@@ -61,5 +61,6 @@
         Java17UnitTestsExecutionStrategy = 64,
         Java17SpringAndHibernateProjectExecution = 65,
         Java17PreprocessCompileExecuteAndCheck = 66,
+        RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests = 67,
     }
 }

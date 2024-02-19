@@ -120,6 +120,8 @@ RUN curl https://pyenv.run | bash && \
 # Install Python packages from requirements.txt
 COPY ./python/requirements.txt /tmp/
 
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Go

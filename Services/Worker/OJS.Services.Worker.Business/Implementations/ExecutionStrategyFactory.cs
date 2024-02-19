@@ -179,6 +179,12 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.executionStrategySettingsProvider);
                     break;
+                case ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests:
+                    executionStrategy = new RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests<RunSpaAndExecuteMochaTestsExecutionStrategySettings>(
+                        type,
+                        processExecutorFactory,
+                        this.executionStrategySettingsProvider);
+                    break;
                 case ExecutionStrategyType.PythonExecuteAndCheck:
                     executionStrategy = new PythonExecuteAndCheckExecutionStrategy<PythonExecuteAndCheckExecutionStrategySettings>(
                         type,
