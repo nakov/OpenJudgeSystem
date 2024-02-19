@@ -215,8 +215,8 @@ public class _$TestRunner {{
                 }
 
                 var compilerResult = this.CompileProject(executionContext);
-                result.IsCompiledSuccessfully = true;
-                result.CompilerComment = "CompilerComment";
+                result.IsCompiledSuccessfully = compilerResult.IsCompiledSuccessfully;
+                result.CompilerComment = compilerResult.CompilerComment;
                 if (!result.IsCompiledSuccessfully)
                 {
                     return result;
