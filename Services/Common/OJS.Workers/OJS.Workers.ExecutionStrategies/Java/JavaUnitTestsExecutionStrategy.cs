@@ -110,7 +110,9 @@ public class _$TestRunner {{
 
         protected virtual string JUnit5TestRunnerCode =>
             $@"
-import org.junit.platform.launcher.*;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
@@ -120,8 +122,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class _$TestRunner {{
     public static void main(String[] args) {{
@@ -147,9 +150,13 @@ public class _$TestRunner {{
         // Create a summary listener to get the test results
         SummaryGeneratingListener listener = new SummaryGeneratingListener();
 
+        var classSelectors = Arrays.stream(testClasses)
+                .map(DiscoverySelectors::selectClass)
+                .collect(Collectors.toCollection(ArrayList::new));
+
         // Create a LauncherDiscoveryRequest to configure which tests to run
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                .selectors(selectClass(carShop.CarShopTests.class))
+                .selectors(classSelectors)
                 .build();
 
         Launcher launcher = LauncherFactory.create();
