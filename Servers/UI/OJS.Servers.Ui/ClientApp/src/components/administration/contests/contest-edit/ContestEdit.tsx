@@ -1,7 +1,5 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-undefined */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -130,7 +128,6 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     const onChange = (e: any) => {
-        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
         let {
             name: contestName,

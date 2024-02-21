@@ -6,7 +6,6 @@ import { IPagedResultType, IParticiapntsInContestView } from '../../../common/ty
 import { IGetByContestId } from '../../../common/url-types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-// eslint-disable-next-line import/group-exports
 export const participantsAdminService = createApi({
     reducerPath: 'participants',
     baseQuery: getCustomBaseQuery('participants'),
@@ -21,7 +20,6 @@ export const participantsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetByContestIdQuery,
 } = participantsAdminService;

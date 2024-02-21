@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 import { defaultPathIdentifier } from '../../common/constants';

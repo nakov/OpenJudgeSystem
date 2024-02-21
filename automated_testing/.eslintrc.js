@@ -199,7 +199,7 @@ module.exports = {
         'no-octal-escape': 'error',
         // allows calling built-ins
         'no-prototype-builtins': 'off',
-        // disallow declaring the same variable more then once
+        // disallow declaring the same variable more than once
         'no-redeclare': 'error',
         // disallows unnecessary return await
         'no-return-await': 'error',

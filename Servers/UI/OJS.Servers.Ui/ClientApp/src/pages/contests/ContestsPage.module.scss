@@ -22,12 +22,13 @@
 
 .headingWrapper {
   @extend %font-family-roboto;
+
+  align-items: center;
+  display: flex;
   font-size: variables.$f-size-24;
   font-weight: 600;
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-left: spacings.$sp-64;
   margin-bottom: spacings.$sp-24;
+  margin-left: spacings.$sp-64;
   margin-top: spacings.$sp-24;
 }

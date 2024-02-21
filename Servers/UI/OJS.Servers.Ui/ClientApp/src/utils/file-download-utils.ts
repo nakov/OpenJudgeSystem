@@ -5,7 +5,6 @@ const downloadFile = (blob:Blob, filename: string) => {
     document.body.appendChild(a);
     a.style.display = 'none';
     a.href = blobUrl;
-    // eslint-disable-next-line prefer-destructuring
     a.download = filename;
 
     a.click();

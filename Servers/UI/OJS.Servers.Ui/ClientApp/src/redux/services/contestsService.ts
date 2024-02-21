@@ -9,7 +9,6 @@ import {
     IPagedResultType,
 } from '../../common/types';
 
-// eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
     reducerPath: 'contestService',
     baseQuery: fetchBaseQuery({
@@ -40,7 +39,6 @@ export const contestsService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllContestsQuery,
     useGetContestCategoriesQuery,

@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { useLocation } from 'react-router';
 import { Box } from '@mui/material';

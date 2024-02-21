@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
@@ -95,7 +94,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         if (urlSelectedSorters.length) {
             dispatch(setStateAction({ key: location, sorters: urlSelectedSorters }));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -130,7 +128,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         return () => {
             delayedSetOfSearch.cancel();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedSorters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -157,7 +154,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     const removeSingleSorter = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const deletedSorter = selectedSorters[idx];
         const newSortersArray = [ ...selectedSorters.map((sorter) => ({
             ...sorter,

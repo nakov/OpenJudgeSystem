@@ -13,13 +13,11 @@ export interface IAdminSlice {
 
 const initialState: IAdminSlice = {};
 
-// eslint-disable-next-line import/group-exports
 export const submissionsForProcessingAdminSlice = createSlice({
     name: 'adminSubmissionsForProcessing',
     initialState,
     reducers: {
         setAdminSubmissionsForProcessingFilters: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
             const { key, filters } = action.payload;
 
             if (state[key]) {
@@ -33,7 +31,6 @@ export const submissionsForProcessingAdminSlice = createSlice({
             }
         },
         setAdminSubmissionsForProcessingSorters: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
             const { key, sorters } = action.payload;
 
             if (state[key]) {
@@ -49,7 +46,6 @@ export const submissionsForProcessingAdminSlice = createSlice({
     },
 });
 
-// eslint-disable-next-line prefer-destructuring,import/group-exports
 export const {
     setAdminSubmissionsForProcessingFilters,
     setAdminSubmissionsForProcessingSorters,
