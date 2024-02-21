@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable max-len */
 /* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';
@@ -33,7 +32,7 @@ const LoginPage = () => {
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
-    const [ login, { isLoading, isSuccess, error, isError } ] = useLoginMutation();
+    const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
     const { data, isSuccess: isGetInfoSuccessfull, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
@@ -65,7 +64,7 @@ const LoginPage = () => {
             dispatch(setInternalUser(data));
             dispatch(setIsLoggedIn(true));
         }
-    }, [ isGetInfoSuccessfull, data ]);
+    }, [ isGetInfoSuccessfull, data, dispatch ]);
 
     const handleOnChangeUpdatePassword = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -89,7 +88,7 @@ const LoginPage = () => {
         if (error && 'error' in error) {
             setLoginErrorMessage(error.data as string);
         }
-    }, [ isSuccess, isError ]);
+    }, [ isSuccess, error, refetch ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {

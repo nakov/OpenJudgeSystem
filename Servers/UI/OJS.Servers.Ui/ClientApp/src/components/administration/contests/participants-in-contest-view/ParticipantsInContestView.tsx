@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -44,11 +43,11 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filtersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
     }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {

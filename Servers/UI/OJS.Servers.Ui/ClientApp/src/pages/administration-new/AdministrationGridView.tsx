@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react-hooks/rules-of-hooks */
