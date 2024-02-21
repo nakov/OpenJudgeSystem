@@ -13,27 +13,22 @@ export interface IAdminSlice {
 
 const initialState: IAdminSlice = {};
 
-// eslint-disable-next-line import/group-exports
 export const submissionsAdminSlice = createSlice({
     name: 'adminSubmissions',
     initialState,
     reducers: {
         setAdminSubmissionsFilters: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
             const { key, filters } = action.payload;
 
             if (state[key]) {
-                // eslint-disable-next-line no-param-reassign,@typescript-eslint/ban-ts-comment
+                // @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                // eslint-disable-next-line no-param-reassign
                 state[key].selectedFilters = filters;
             } else {
-                // eslint-disable-next-line no-param-reassign
                 state[key] = { selectedFilters: filters, selectedSorters: null };
             }
         },
         setAdminSubmissionsSorters: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
             const { key, sorters } = action.payload;
 
             if (state[key]) {
@@ -49,7 +44,6 @@ export const submissionsAdminSlice = createSlice({
     },
 });
 
-// eslint-disable-next-line prefer-destructuring,import/group-exports
 export const {
     setAdminSubmissionsFilters,
     setAdminSubmissionsSorters,

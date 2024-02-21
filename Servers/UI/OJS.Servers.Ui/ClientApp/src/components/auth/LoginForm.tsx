@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable max-len */
 /* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';

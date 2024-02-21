@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-/* eslint-disable prefer-destructuring */
 /* eslint-disable no-case-declarations */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
@@ -121,7 +120,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     };
 
     const onChange = (e: any) => {
-        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
         let {
             name: contestCategoryName,

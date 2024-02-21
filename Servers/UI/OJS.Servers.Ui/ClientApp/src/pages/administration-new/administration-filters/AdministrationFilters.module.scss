@@ -1,39 +1,39 @@
 .administrationFilters {
-    background-color: #fbfbfb;
-    padding: 10px 50px;
-    margin-left: 380px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgb(0 0 0/ 30%);
-  
-    .buttonsSection {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-    }
-  
-    .removeFilterButton {
-        position: absolute;
-        left: 386px;
-        margin-top: 16px;
-        cursor: pointer;
-        transition: color .2s ease-in-out;
-        
-        &:hover {
-          color: #1976d2;
-        }
-    }
-  
-    .closeIcon {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        cursor: pointer;
+  background-color: #fbfbfb;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgb(0 0 0/ 30%);
+  margin-left: 380px;
+  padding: 10px 50px;
 
-        &:hover {
-            color: #1976d2;
-        }
+  .buttonsSection {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .removeFilterButton {
+    cursor: pointer;
+    left: 386px;
+    margin-top: 16px;
+    position: absolute;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: #1976d2;
     }
   }
+
+  .closeIcon {
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+
+    &:hover {
+      color: #1976d2;
+    }
+  }
+}

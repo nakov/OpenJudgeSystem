@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
@@ -152,7 +151,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         if (urlSelectedFilters.length) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -192,7 +190,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         return () => {
             delayedSetOfSearch.cancel();
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedFilters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -222,7 +219,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const removeSingleFilter = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const deletedFilter = selectedFilters[idx];
         const newFiltersArray = [ ...selectedFilters.map((filter) => ({
             ...filter,
@@ -268,7 +264,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const renderInputField = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const { inputType } = selectedFilters[idx];
         if (inputType === FilterColumnTypeEnum.BOOL) {
             return (

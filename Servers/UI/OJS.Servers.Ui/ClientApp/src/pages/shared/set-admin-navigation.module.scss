@@ -1,23 +1,24 @@
+@use 'src/styles/colors';
+
 .adminHeaderWrapper {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
   padding: 0 20px;
   width: 100%;
 }
 
 .adminHeaderLink {
-  color: white;
+  color: colors.$white-color;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
   text-decoration: none;
   text-transform: uppercase;
-  font-family: Roboto,"Helvetica","Arial",sans-serif;
 }
 
 .adminNavLink {
-  text-decoration: none;
   color: #3e4c5d;
+  text-decoration: none;
   width: 100%;
-
 }
 
 .activeAdminNavLink {
@@ -25,21 +26,21 @@
 }
 
 .locationTitle {
-  font-family: 'montserrat', sans-serif;
+  font-family: montserrat, sans-serif;
   font-size: 20px;
 }
 
 .arrowCommon {
-  margin: 0;
-  position: absolute;
-  z-index: 3;
-  top: 430px;
-  width: 35px;
+  background-color: colors.$white-color !important;
+  box-shadow: 6px 0 7px -4px rgb(22 0 0 / 75%);
   height: 35px;
+  margin: 0;
   padding: 0 !important;
-  background-color: white !important;
-  box-shadow: 6px 0 7px -4px rgba(22,0,0,75%);
+  position: absolute;
+  top: 430px;
   transition: 225ms ease-in-out, transform 225ms ease-in-out !important;
+  width: 35px;
+  z-index: 3;
 }
 
 .arrow {

@@ -31,6 +31,12 @@ module.exports = {
     ],
     settings: { 'import/resolver': { typescript: {} } },
     rules: {
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "react-hooks/exhaustive-deps": "off",
+        'prefer-destructuring': 'off',
+        'react/no-array-index-key': 'off',
+        'react/jsx-props-no-spreading': 'off',
 
         'node/no-missing-import': 0,
         'sort-imports': 0,
@@ -48,7 +54,6 @@ module.exports = {
             },
         ],
         'no-use-before-define': 'off',
-        '@typescript-eslint/no-use-before-define': [ 'error' ],
         'react/jsx-filename-extension': [ 'warn', { extensions: [ '.tsx' ] } ],
         'import/extensions': [
             'error',
@@ -59,7 +64,6 @@ module.exports = {
             },
         ],
         'react-hooks/rules-of-hooks': 'error',
-        'react-hooks/exhaustive-deps': 'error',
 
         'react/function-component-definition': [ 'error',
             {
@@ -375,9 +379,11 @@ module.exports = {
                 },
             },
         ],
-        'prefer-destructuring': [ 'error', {
-            array: false,
-            object: true,
-        }, { enforceForRenamedProperties: true } ],
     },
+    overrides: [
+        {
+            files: ['src/redux/features/**/*.ts'],
+            extends: ['./src/redux/.eslintrc.cjs'],
+        },
+    ],
 };

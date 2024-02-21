@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable prefer-destructuring */
-
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IContestStrategyFilter, IFilter } from '../../common/contest-types';
@@ -17,7 +14,6 @@ const initialState: IContestState = {
     breadcrumbItems: [],
 };
 
-// eslint-disable-next-line import/group-exports
 export const contestSlice = createSlice({
     name: 'contests',
     initialState,
@@ -41,7 +37,6 @@ export const contestSlice = createSlice({
     },
 });
 
-// eslint-disable-next-line import/group-exports,prefer-destructuring
 export const {
     setContestCategory,
     setContestStrategy,

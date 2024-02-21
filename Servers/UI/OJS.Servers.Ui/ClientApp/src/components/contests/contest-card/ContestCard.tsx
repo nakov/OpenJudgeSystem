@@ -138,7 +138,7 @@ const ContestCard = (props: IContestCardProps) => {
                     )}
                 </div>
             </div>
-            <div className={styles.contestBtnsWrapper}>
+            <div>
                 <ContestButton
                   isCompete
                   isDisabled={!canBeCompeted}

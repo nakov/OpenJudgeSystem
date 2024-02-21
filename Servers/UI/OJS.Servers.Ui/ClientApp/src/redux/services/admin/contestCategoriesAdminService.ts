@@ -10,7 +10,6 @@ import {
 import { IContestCategoriesUrlParams } from '../../../common/url-types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-// eslint-disable-next-line import/group-exports
 export const contestCategoriesAdminService = createApi({
     reducerPath: 'contestCategories',
     baseQuery: getCustomBaseQuery('contestCategories'),
@@ -55,7 +54,6 @@ export const contestCategoriesAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetCategoriesQuery,
     useGetAllAdminContestCategoriesQuery,

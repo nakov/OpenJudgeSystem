@@ -1,13 +1,9 @@
-/* eslint-disable import/group-exports */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IAdminSlice } from './contestsAdminSlice';
 
 const initialState: IAdminSlice = {};
 
-// eslint-disable-next-line import/group-exports
 export const problemGroupsAdminSlice = createSlice({
     name: 'adminProblemGroups',
     initialState,

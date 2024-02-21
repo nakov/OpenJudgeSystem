@@ -1,8 +1,6 @@
 /* eslint-disable default-case */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undefined */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';

@@ -9,7 +9,7 @@ import {
     ISubmissionsAdminGridViewType,
 } from '../../../common/types';
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
-// eslint-disable-next-line import/group-exports
+
 export const submissionsAdminService = createApi({
     reducerPath: 'submissions',
     baseQuery: fetchBaseQuery({
@@ -69,7 +69,6 @@ export const submissionsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllSubmissionsQuery,
     useDownloadFileSubmissionQuery,

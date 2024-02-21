@@ -40,7 +40,6 @@ const useTheme = () => {
         },
     };
 
-    // eslint-disable-next-line prefer-destructuring
     const selectedThemeColors = themeColors[mode];
 
     return { mode, toggleSelectedTheme, themeColors: selectedThemeColors };
