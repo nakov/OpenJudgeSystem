@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';

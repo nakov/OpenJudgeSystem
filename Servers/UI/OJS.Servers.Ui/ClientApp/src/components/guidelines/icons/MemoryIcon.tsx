@@ -1,4 +1,3 @@
-import React from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 
 import IconSize from './common/icon-sizes';

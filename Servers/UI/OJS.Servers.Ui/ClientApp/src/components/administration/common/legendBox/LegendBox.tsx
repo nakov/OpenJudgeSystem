@@ -1,6 +1,5 @@
 /* eslint-disable import/exports-last */
 /* eslint-disable import/no-unused-modules */
-import React from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import { Box, List, ListItem, Tooltip } from '@mui/material';
 

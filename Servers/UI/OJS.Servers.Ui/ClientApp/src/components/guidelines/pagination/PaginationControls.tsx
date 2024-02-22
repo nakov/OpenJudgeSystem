@@ -1,4 +1,3 @@
-import React from 'react';
 import Pagination from '@mui/material/Pagination';
 
 import { PAGE_BOUNDARY_COUNT, PAGE_SIBLING_COUNT } from '../../../common/constants';

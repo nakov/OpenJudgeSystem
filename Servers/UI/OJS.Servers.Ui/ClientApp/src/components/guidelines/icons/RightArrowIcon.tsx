@@ -1,4 +1,3 @@
-import React from 'react';
 import { MdChevronRight } from 'react-icons/md';
 
 import IconSize from './common/icon-sizes';

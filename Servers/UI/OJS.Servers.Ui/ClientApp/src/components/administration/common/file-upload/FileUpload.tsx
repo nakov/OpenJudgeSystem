@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
 import { FaFileUpload } from 'react-icons/fa';
 import { MdOutlineRemoveCircle } from 'react-icons/md';
 import { Button, FormControl, FormGroup, IconButton, styled, Tooltip, Typography } from '@mui/material';

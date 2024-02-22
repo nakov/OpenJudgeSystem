@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation } from 'react-router-dom';
 
 import ProblemGroupForm from './problem-group-form/ProblemGroupForm';

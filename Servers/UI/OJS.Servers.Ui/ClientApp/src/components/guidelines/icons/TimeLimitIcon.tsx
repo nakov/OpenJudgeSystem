@@ -1,4 +1,3 @@
-import React from 'react';
 import { BiTime } from 'react-icons/bi';
 
 import concatClassNames from '../../../utils/class-names';

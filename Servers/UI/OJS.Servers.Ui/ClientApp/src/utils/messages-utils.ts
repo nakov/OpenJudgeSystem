@@ -1,5 +1,4 @@
 /* eslint-disable valid-typeof */
-/* eslint-disable no-undefined */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import React from 'react';
 

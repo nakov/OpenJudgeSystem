@@ -37,6 +37,8 @@ module.exports = {
         'prefer-destructuring': 'off',
         'react/no-array-index-key': 'off',
         'react/jsx-props-no-spreading': 'off',
+        'no-undefined': 'off',
+        'react/react-in-jsx-scope': 'off',
 
         'node/no-missing-import': 0,
         'sort-imports': 0,
@@ -232,8 +234,6 @@ module.exports = {
         'no-undef': 'error',
         // disallow use of undefined when initializing variables
         'no-undef-init': 'error',
-        // disallow use of undefined variable (off by default)
-        'no-undefined': 'error',
         // disallow the usage of _ af both ends of an object name,
         // except with class/object functions
         'no-underscore-dangle': [

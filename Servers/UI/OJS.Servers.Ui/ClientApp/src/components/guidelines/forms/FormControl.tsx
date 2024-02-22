@@ -207,7 +207,6 @@ const FormControl = ({
                   checked={checked}
                   placeholder={showPlaceholder
                       ? labelText
-                      // eslint-disable-next-line no-undefined
                       : undefined}
                 />
             );

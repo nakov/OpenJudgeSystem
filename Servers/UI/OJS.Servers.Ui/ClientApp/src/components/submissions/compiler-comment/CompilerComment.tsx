@@ -1,4 +1,3 @@
-import React from 'react';
 import isNil from 'lodash/isNil';
 
 import Text from '../../guidelines/text/Text';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 import styles from './ConfirmDialog.module.scss';

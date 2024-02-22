@@ -1,6 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import React from 'react';
-
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../components/guidelines/alert/Alert';
 
 const renderAlert = (message: string, severity:AlertSeverity, index:number, autoHideDuration?:number | undefined) => (

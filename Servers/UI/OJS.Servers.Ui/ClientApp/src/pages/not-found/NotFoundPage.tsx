@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { LinkButton } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import { setLayout } from '../shared/set-layout';

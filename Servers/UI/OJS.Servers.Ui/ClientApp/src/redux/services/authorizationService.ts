@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { authorizationServiceName } from '../../common/reduxNames';
-import { ILoginDetailsType, IUserResponseType } from '../../common/types';
+import { IUserResponseType } from '../../common/types';
 
 export const authorizationService = createApi({
     reducerPath: authorizationServiceName,
@@ -17,7 +17,7 @@ export const authorizationService = createApi({
     }),
     endpoints: (builder) => ({
         getUserinfo: builder.query<IUserResponseType, null>({ query: () => ({ url: 'users/getuserAuthInfo' }) }),
-        login: builder.mutation<string, ILoginDetailsType>({
+        login: builder.mutation<string, any>({
             query: (loginDetails) => ({
                 url: 'account/Login',
                 method: 'POST',

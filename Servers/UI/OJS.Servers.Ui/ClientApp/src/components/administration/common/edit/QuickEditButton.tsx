@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
 import { MdEdit } from 'react-icons/md';
 import { IconButton, Tooltip } from '@mui/material';
 

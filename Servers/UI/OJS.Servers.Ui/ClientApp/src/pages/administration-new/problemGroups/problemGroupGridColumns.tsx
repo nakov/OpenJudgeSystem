@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/self-closing-comp */
-import React from 'react';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT, PROBLEM_GROUP } from '../../../common/labels';

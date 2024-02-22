@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IUserProfileType } from '../../../hooks/use-users';
 import isNilOrEmpty from '../../../utils/check-utils';
 

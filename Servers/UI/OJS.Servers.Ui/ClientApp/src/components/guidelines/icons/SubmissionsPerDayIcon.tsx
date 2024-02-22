@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaDeezer } from 'react-icons/fa';
 
 import IconSize from './common/icon-sizes';
