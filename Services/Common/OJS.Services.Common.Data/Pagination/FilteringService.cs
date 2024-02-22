@@ -10,6 +10,8 @@ using System.Collections.Generic;
 
 public class FilteringService : IFilteringService
 {
+    private static readonly string NullValue = "null";
+
     public virtual IQueryable<TModel> ApplyFiltering<TEntity, TModel>(IQueryable<TEntity> query, List<FilteringModel> filters)
     {
         if (!filters.Any())
@@ -48,7 +50,7 @@ public class FilteringService : IFilteringService
                  Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(double))
         {
             var propertyType = filter.Property.PropertyType;
-            expression = BuildIntExpression(filter.OperatorType, filter.Value, property, propertyType);
+            expression = BuildNumberExpression(filter.OperatorType, filter.Value, property, propertyType);
         }
         else if (filter.Property.PropertyType == typeof(DateTime) ||
                  Nullable.GetUnderlyingType(filter.Property.PropertyType) == typeof(DateTime))
@@ -64,79 +66,28 @@ public class FilteringService : IFilteringService
         return Expression.Lambda<Func<T, bool>>(expression, parameter);
     }
 
-    private static Expression? BuildIntExpression(OperatorType operatorType, string? value, MemberExpression property, Type? propertyType)
+    private static Expression? BuildNumberExpression(OperatorType operatorType, string? value, MemberExpression property, Type? propertyType)
     {
         Expression? expression;
 
-        if (value == null || value.Equals("null", StringComparison.OrdinalIgnoreCase))
+        if (value == null || value.Equals(NullValue, StringComparison.OrdinalIgnoreCase))
         {
             if (!IsNullableType(property.Type))
             {
                 throw new ArgumentException($"Cannot assign null to a non-nullable integer property: {property.Member.Name}");
             }
 
-            switch (operatorType)
-            {
-                case OperatorType.Equals:
-                    expression = Expression.Equal(property, Expression.Constant(null, property.Type));
-                    break;
-                case OperatorType.NotEquals:
-                    expression = Expression.NotEqual(property, Expression.Constant(null, property.Type));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        $"Property of type int? cannot have {operatorType} operator");
-            }
+            expression = GetNullableTypesOperation(property, operatorType);
         }
         else if (int.TryParse(value, out var intValue) && propertyType == typeof(int))
         {
             var constant = Expression.Constant(intValue, IsNullableType(property.Type) ? typeof(int?) : typeof(int));
-            switch (operatorType)
-            {
-                case OperatorType.Equals:
-                    expression = Expression.Equal(property, constant);
-                    break;
-                case OperatorType.GreaterThan:
-                    expression = Expression.GreaterThan(property, constant);
-                    break;
-                case OperatorType.LessThan:
-                    expression = Expression.LessThan(property, constant);
-                    break;
-                case OperatorType.LessThanOrEqual:
-                    expression = Expression.LessThanOrEqual(property, constant);
-                    break;
-                case OperatorType.GreaterThanOrEqual:
-                    expression = Expression.GreaterThanOrEqual(property, constant);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        $"Property of type int cannot have {operatorType} operator");
-            }
+            expression = GetNumberOperation(property, constant, operatorType);
         }
         else if (double.TryParse(value, out var doubleValue) && propertyType == typeof(double))
         {
             var constant = Expression.Constant(doubleValue, IsNullableType(property.Type) ? typeof(double?) : typeof(double));
-            switch (operatorType)
-            {
-                case OperatorType.Equals:
-                    expression = Expression.Equal(property, constant);
-                    break;
-                case OperatorType.GreaterThan:
-                    expression = Expression.GreaterThan(property, constant);
-                    break;
-                case OperatorType.LessThan:
-                    expression = Expression.LessThan(property, constant);
-                    break;
-                case OperatorType.LessThanOrEqual:
-                    expression = Expression.LessThanOrEqual(property, constant);
-                    break;
-                case OperatorType.GreaterThanOrEqual:
-                    expression = Expression.GreaterThanOrEqual(property, constant);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        $"Property of type int cannot have {operatorType} operator");
-            }
+            expression = GetNumberOperation(property, constant, operatorType);
         }
         else
         {
@@ -150,25 +101,14 @@ public class FilteringService : IFilteringService
     {
         Expression? expression;
 
-        if (value == null || value.Equals("null", StringComparison.OrdinalIgnoreCase))
+        if (value == null || value.Equals(NullValue, StringComparison.OrdinalIgnoreCase))
         {
             if (!IsNullableType(property.Type))
             {
                 throw new ArgumentException($"Cannot assign null to a non-nullable integer property: {property.Member.Name}");
             }
 
-            switch (operatorType)
-            {
-                case OperatorType.Equals:
-                    expression = Expression.Equal(property, Expression.Constant(null, property.Type));
-                    break;
-                case OperatorType.NotEquals:
-                    expression = Expression.NotEqual(property, Expression.Constant(null, property.Type));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        $"Property of type int? cannot have {operatorType} operator");
-            }
+            expression = GetNullableTypesOperation(property, operatorType);
         }
         else if (DateTime.TryParse(value, out var dateTimeValue))
         {
@@ -258,6 +198,42 @@ public class FilteringService : IFilteringService
         }
 
         return expression;
+    }
+
+    private static Expression GetNumberOperation(MemberExpression property,  ConstantExpression constant,  OperatorType operatorType)
+    {
+        switch (operatorType)
+        {
+            case OperatorType.Equals:
+              return Expression.Equal(property, constant);
+            case OperatorType.GreaterThan:
+              return Expression.GreaterThan(property, constant);
+            case OperatorType.LessThan:
+              return Expression.LessThan(property, constant);
+            case OperatorType.LessThanOrEqual:
+              return Expression.LessThanOrEqual(property, constant);
+            case OperatorType.GreaterThanOrEqual:
+              return Expression.GreaterThanOrEqual(property, constant);
+            case OperatorType.NotEquals:
+              return Expression.NotEqual(property, constant);
+            default:
+              throw new ArgumentOutOfRangeException(
+                    $"Property of type int cannot have {operatorType} operator");
+        }
+    }
+
+    private static Expression GetNullableTypesOperation(MemberExpression property,  OperatorType operatorType)
+    {
+        switch (operatorType)
+            {
+                case OperatorType.Equals:
+                    return Expression.Equal(property, Expression.Constant(null, property.Type));
+                case OperatorType.NotEquals:
+                    return Expression.NotEqual(property, Expression.Constant(null, property.Type));
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        $"Property of type int? cannot have {operatorType} operator");
+            }
     }
 
     private static bool IsNullableType(Type type)
