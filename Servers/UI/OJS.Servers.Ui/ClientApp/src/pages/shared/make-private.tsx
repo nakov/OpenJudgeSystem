@@ -32,7 +32,6 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
 
 const makePrivate = (ComponentToWrap: FC) => (props: Anything) => (
     <PrivatePage>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <ComponentToWrap {...props} />
     </PrivatePage>
 );
