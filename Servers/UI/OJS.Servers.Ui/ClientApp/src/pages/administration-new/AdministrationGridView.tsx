@@ -120,6 +120,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                               setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
                           }}
                           pageSize={queryParams.ItemsPerPage}
+                          disableSelectionOnClick
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {

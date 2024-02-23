@@ -1,19 +1,22 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common.Exceptions;
 using OJS.Data.Models.Problems;
+using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Pagination;
-using System.Threading.Tasks;
-using OJS.Services.Administration.Business.Problems.Validators;
-using OJS.Common.Exceptions;
-using OJS.Servers.Administration.Attributes;
-using OJS.Services.Administration.Business.Contests.Permissions;
+using OJS.Services.Infrastructure.Exceptions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -127,5 +130,27 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         }
 
         return this.Ok("Problems successfully copied.");
+    }
+
+    [HttpPost]
+    [ProtectedEntityAction]
+    public async Task<IActionResult> Copy(CopyProblemRequestModel model)
+    {
+        if (!await this.problemsDataService.ExistsById(model.ProblemId))
+        {
+            throw new BusinessServiceException($"Problem with id {model.ProblemId} does not exists.");
+        }
+
+        var result = await this.problemsBusinessService.CopyToContestByIdByContestAndProblemGroup(
+            model.ProblemId,
+            model.DestinationContestId,
+            model.ProblemGroupId);
+
+        if (result.IsError)
+        {
+            return this.BadRequest(result.Error);
+        }
+
+        return this.Ok("Successfully copied problem");
     }
 }

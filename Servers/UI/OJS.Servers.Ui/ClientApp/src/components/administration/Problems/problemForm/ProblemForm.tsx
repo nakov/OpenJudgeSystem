@@ -59,7 +59,7 @@ const ProblemForm = (props: IProblemFormProps) => {
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string>('');
+    const [ successMessages, setSuccessMessages ] = useState<string | null>(null);
     const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
 
     const {
@@ -98,13 +98,10 @@ const ProblemForm = (props: IProblemFormProps) => {
     }, [ updateError, createError, gettingDataError, downloadAdditionalFilesError ]);
 
     useEffect(() => {
-        let successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
-        if (isSuccesfullyDownloaded) {
-            successMessage = 'Additional files succesfully downloaded.';
-        }
-
-        successMessage && setSuccessMessages(successMessage);
-    }, [ updateData, createData, isSuccesfullyDownloaded ]);
+        let successMessage: string | null = '';
+        successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
+        setSuccessMessages(successMessage);
+    }, [ updateData, createData ]);
 
     useEffect(() => {
         (isSuccesfullyDownloaded || isDownloadAdditionalFilesError) && setSkipDownload(false);

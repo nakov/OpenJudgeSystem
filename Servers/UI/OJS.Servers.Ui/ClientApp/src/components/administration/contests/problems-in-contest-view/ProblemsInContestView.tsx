@@ -1,3 +1,5 @@
+/* eslint-disable no-undefined */
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
@@ -14,7 +16,7 @@ import AdministrationGridView from '../../../../pages/administration-new/Adminis
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
 import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
-import { useCopyAllMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCopyAllMutation, useCopyMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { flexCenterObjectStyles, modalStyles } from '../../../../utils/object-utils';
@@ -53,12 +55,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 
     const [ showDeleteAllConfirm, setShowDeleteAllConfirm ] = useState<boolean>(false);
 
+    const [ problemToCopy, setProblemToCopy ] = useState<number | undefined>(undefined);
+    const [newProblemGroup, setNewProblemGroup] = useState<number | undefined>(undefined); 
     const [ openShowCreateProblemModal, setOpenShowCreateProblemModal ] = useState<boolean>(false);
     const [ skipContestAutocomplete, setSkipContestAutocomplete ] = useState<boolean>(true);
     const [ showCopyAllModal, setShowCopyAllModal ] = useState<boolean>(false);
+    const [ showCopyModal, setShowCopyModal ] = useState<boolean>(false);
     const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-
     const {
         refetch: retakeData,
         data: problemsData,
@@ -75,6 +79,15 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             error: copyAllError,
         } ] =
         useCopyAllMutation();
+
+    const [ copy,
+        {
+            data: copyData,
+            isSuccess: isSuccesfullyCoppied,
+            isLoading: isCoppying,
+            error: copyError,
+        } ] =
+            useCopyMutation();
 
     const [ retestById,
         {
@@ -96,13 +109,13 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ deleteAllError, retestError, copyAllError, getContestError ], setErrorMessages);
-    }, [ deleteAllError, retestError, copyAllError, getContestError ]);
+        getAndSetExceptionMessage([ deleteAllError, retestError, copyAllError, getContestError, copyError ], setErrorMessages);
+    }, [ deleteAllError, retestError, copyAllError, getContestError, copyError ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ deleteAllData, retestData, copyAllData ]);
+        const message = getAndSetSuccesfullMessages([ deleteAllData, retestData, copyAllData, copyData ]);
         setSuccessMessage(message);
-    }, [ deleteAllData, retestData, copyAllData ]);
+    }, [ deleteAllData, retestData, copyAllData, copyData ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
@@ -133,18 +146,27 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         if (isSuccesfullyCoppiedAll) {
             setShowCopyAllModal(false);
         }
-    }, [ isSuccesfullyCoppiedAll ]);
+        if (isSuccesfullyCoppied) {
+            setShowCopyModal(false);
+        }
+    }, [ isSuccesfullyCoppiedAll, isSuccesfullyCoppied ]);
 
     const onCopyAllChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
     }, 300);
 
-    const onCopyAllSelect = (contest: IContestAutocomplete) => {
+    const onCopySelect = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);
     };
 
     const onCopyAll = () => {
         copyAll({ sourceContestId: contestId, destinationContestId: contestToCopy!.id });
+        setContestSearchString('');
+    };
+
+    const onCopy = () => {
+        copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopy!, newProblemGroup });
+        setContestSearchString('');
     };
 
     const retestProblem = (currentProblemId: number) => {
@@ -158,6 +180,12 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             };
             retestById(problem);
         }
+    };
+
+    const openCopyModal = (id: number) => {
+        setProblemToCopy(id);
+        setShowCopyModal(true);
+        setSkipContestAutocomplete(false);
     };
 
     const renderProblemModal = (index: number, isCreate: boolean) => (
@@ -182,23 +210,35 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         </Modal>
     );
 
-    const renderCopyAllModal = (index: number) => (
+    const renderCopyModal = (
+        index: number,
+        showModal: boolean,
+        setShowModal: Function,
+        onChange: Function,
+        onInputChange: Function,
+        options:IContestAutocomplete[],
+        sourceName: string | undefined,
+        onSubmit: Function,
+        isLoading: boolean,
+        destination: IContestAutocomplete | null,
+        operation:string
+    ) => (
         <Modal
           key={index}
-          open={showCopyAllModal && problemsData!.totalItemsCount > 0}
-          onClose={() => setShowCopyAllModal(!showCopyAllModal)}
+          open={showModal && problemsData!.totalItemsCount > 0}
+          onClose={() => setShowModal(!showModal)}
         >
             <Box sx={modalStyles}>
-                {isCoppyingAll
+                {isLoading
                     ? <SpinningLoader />
                     : (
                         <>
                             <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
                             <Autocomplete
-                              options={problemsCopyAllData!}
+                              options={options}
                               renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
-                              onChange={(event, newValue) => onCopyAllSelect(newValue!)}
-                              onInputChange={(event) => onCopyAllChange(event)}
+                              onChange={(event, newValue) => onChange(newValue!)}
+                              onInputChange={(event) => onInputChange(event)}
                               value={null}
                               isOptionEqualToValue={(option, value) => option.id === value.id}
                               getOptionLabel={(option) => option?.name}
@@ -208,18 +248,22 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                                   </MenuItem>
                               )}
                             />
-                            {contestToCopy !== null && (
+                            {
+                            operation === 'copy' &&
+                            <TextField sx={{mt:2}} label="Copy To new Problem Group" type="number" onChange={(e) => setNewProblemGroup(Number(e.target.value))} />
+                        }
+                            {destination !== null && (
                             <Box sx={{ padding: '4rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                                    {problemsData?.items![0].contest}
+                                    {sourceName}
                                     {' '}
                                     <FaLongArrowAltRight />
-                                    {contestToCopy?.name}
+                                    {destination?.name}
                                 </Typography>
                             </Box>
                             )}
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                                <Button variant="contained" disabled={contestToCopy === null} onClick={onCopyAll}>Copy</Button>
+                                <Button variant="contained" disabled={destination === null} onClick={() => onSubmit()}>Copy</Button>
                             </Box>
                         </>
                     )}
@@ -279,7 +323,15 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                       data={problemsData}
                       error={getContestError}
                       filterableGridColumnDef={problemFilterableColums}
-                      notFilterableGridColumnDef={returnProblemsNonFilterableColumns(onEditClick, useDeleteProblemMutation, retestProblem)}
+                      notFilterableGridColumnDef={
+                        returnProblemsNonFilterableColumns(
+                            onEditClick,
+                            useDeleteProblemMutation,
+                            openCopyModal,
+                            retestProblem,
+                            retakeData,
+                        )
+}
                       queryParams={queryParams}
                       location={filtersAndSortersLocation}
                       selectedFilters={selectedFilters}
@@ -289,7 +341,38 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                           { showModal: openEditModal, modal: (i) => renderProblemModal(i, false) },
                           { showModal: openShowCreateProblemModal, modal: (i) => renderProblemModal(i, true) },
                           { showModal: showDeleteAllConfirm, modal: (i) => renderDeleteAllModal(i) },
-                          { showModal: showCopyAllModal, modal: (i) => renderCopyAllModal(i) },
+                          {
+                              showModal: showCopyAllModal,
+                              modal: (i) => renderCopyModal(
+                                  i,
+                                  showCopyAllModal,
+                                  setShowCopyAllModal,
+                                  onCopySelect,
+                                  onCopyAllChange,
+                                  problemsCopyAllData,
+                                  problemsData?.items![0].contest,
+                                  onCopyAll,
+                                  isCoppyingAll,
+                                  contestToCopy,
+                                  "copyAll",
+                              ),
+                          },
+                          {
+                              showModal: showCopyModal,
+                              modal: (i) => renderCopyModal(
+                                  i,
+                                  showCopyModal,
+                                  setShowCopyModal,
+                                  onCopySelect,
+                                  onCopyAllChange,
+                                  problemsCopyAllData,
+                                problemsData?.items![0].contest,
+                                onCopy,
+                                isCoppying,
+                                contestToCopy,
+                                "copy",
+                              ),
+                          },
                       ]}
                       renderActionButtons={renderGridSettings}
                       setFilterStateAction={setAdminContestsFilters}

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/react-in-jsx-scope */
+import { FaCopy } from 'react-icons/fa';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT } from '../../../common/labels';
@@ -105,7 +106,9 @@ const problemFilterableColums: GridColDef[] = [
 export const returnProblemsNonFilterableColumns = (
     onEditClick: Function,
     deleteMutation: any,
+    onCopyProblem?: Function,
     retestProblem?: Function,
+    onDeleteSuccess?:() => void,
 ) => [
     {
         field: 'actions',
@@ -124,11 +127,19 @@ export const returnProblemsNonFilterableColumns = (
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
+                  onSuccess={onDeleteSuccess}
                 />
                 {retestProblem && (
                     <IconButton onClick={() => retestProblem(Number(params.row.id))}>
                         <ReplayIcon />
                     </IconButton>
+                )}
+                {onCopyProblem && (
+                <Tooltip title="Copy">
+                    <IconButton onClick={() => onCopyProblem(Number(params.row.id))}>
+                        <FaCopy />
+                    </IconButton>
+                </Tooltip>
                 )}
             </div>
         ),

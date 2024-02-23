@@ -202,7 +202,7 @@ interface IGetContestsForIndexResponseType {
 interface IIndexProblemsType {
     id: number;
     name: string;
-    group: number;
+    problemGroupId: number;
     groupType: string;
     contest: string;
     practiceTestsCount: number;

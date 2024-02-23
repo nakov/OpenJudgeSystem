@@ -1,3 +1,4 @@
+/* eslint-disable no-undefined */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -27,7 +28,7 @@ const AdministrationProblemsPage = () => {
     const [ problemId, setProblemId ] = useState<number | null>(null);
     const selectedFilters = useSelector((state: IRootStore) => state.adminProblems['all-problems']?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminProblems['all-problems']?.selectedSorters);
-    const { data: problemsData, isLoading: isLoadingProblems, error } = useGetAllAdminProblemsQuery(queryParams);
+    const { refetch: retakeProblems, data: problemsData, isLoading: isLoadingProblems, error } = useGetAllAdminProblemsQuery(queryParams);
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
@@ -72,6 +73,8 @@ const AdministrationProblemsPage = () => {
                 returnProblemsNonFilterableColumns(
                     onEditClick,
                     useDeleteProblemMutation,
+                    undefined,
+                    retakeProblems,
                 )
 }
           data={problemsData}

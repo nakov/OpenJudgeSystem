@@ -65,12 +65,19 @@ export const problemsAdminService = createApi({
         }),
         copyAll: builder.mutation<string, {sourceContestId:number; destinationContestId:number} >({
             query: ({ sourceContestId, destinationContestId }) => ({
-                url: 'copyAll',
+                url: 'CopyAll',
                 method: 'POST',
                 body: { sourceContestId, destinationContestId },
             }),
         }),
         downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({ query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }), keepUnusedDataFor: 5 }),
+        copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | undefined} >({
+            query: ({ destinationContestId, problemId, problemGroupId }) => ({
+                url: 'Copy',
+                method: 'POST',
+                body: { destinationContestId, problemId, problemGroupId },
+            }),
+        }),
     }),
 });
 
@@ -86,6 +93,7 @@ export const {
     useCopyAllMutation,
     useCreateProblemMutation,
     useDownloadAdditionalFilesQuery,
+    useCopyMutation,
 
 } = problemsAdminService;
 export default problemsAdminService;
