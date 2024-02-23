@@ -8,7 +8,7 @@
 import React, { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Slide } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -37,7 +37,7 @@ interface IAdministrationGridViewProps<T> {
    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
 
    queryParams: IGetAllAdminParams;
-   setQueryParams: Function;
+   setQueryParams: (params: IGetAllAdminParams) => void;
 
    selectedFilters: Array<IAdministrationFilter>;
    selectedSorters: Array<IAdministrationSorter>;
@@ -111,14 +111,10 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
-                          onPageChange={(e) => {
-                              setQueryParams({ ...queryParams, page: e + 1 });
+                          onPaginationModelChange={(model: GridPaginationModel) => {
+                              setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
                           }}
-                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                          onPageSizeChange={(itemsPerRow: number) => {
-                              setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
-                          }}
-                          pageSize={queryParams.ItemsPerPage}
+                          pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {

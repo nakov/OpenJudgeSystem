@@ -8,8 +8,6 @@ import TabPanel from '@material-ui/lab/TabPanel';
 import Box from '@mui/material/Box';
 import ThemeProvider from '@mui/styles/ThemeProvider';
 
-import { Anything } from '../../../common/common-types';
-
 interface ITabPanelProps {
     labels: string[];
     contents: React.ReactNode[];
@@ -26,10 +24,6 @@ const Tabs = ({ contents, labels, themeOverride, childrenClassName }: ITabPanelP
         themeOverride == null
             ? createTheme({ overrides: { MuiTabs: { indicator: { backgroundColor: '#42abf8', height: 3 } } } })
             : themeOverride;
-
-    const handleChange = (event: React.ChangeEvent<Anything>, newValue: string) => {
-        setValue(newValue);
-    };
 
     const renderTabs = () => labels.map((tl: string, index: number) => (
         <Tab
@@ -55,7 +49,7 @@ const Tabs = ({ contents, labels, themeOverride, childrenClassName }: ITabPanelP
                 <TabContext value={value}>
                     <Box>
                         <TabList
-                          onChange={handleChange}
+                          onChange={(_, newValue) => setValue(newValue)}
                         >
                             {renderTabs()}
                         </TabList>

@@ -117,7 +117,7 @@ const LoginPage = () => {
             return;
         }
 
-        login({ Username: userName, Password: password, RememberMe: rememberMe });
+        login({ userName, password, rememberMe });
     };
 
     const renderLoginErrorMessage = useCallback(
