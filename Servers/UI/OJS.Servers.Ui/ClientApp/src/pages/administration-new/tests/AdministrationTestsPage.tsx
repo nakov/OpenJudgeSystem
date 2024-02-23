@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import TestForm from '../../../components/administration/tests/test-form/TestForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminTestsFilters, setAdminTestsSorters } from '../../../redux/features/admin/testsSlice';
 import { useDeleteTestMutation, useGetAllAdminTestsQuery } from '../../../redux/services/admin/testsAdminService';
@@ -24,8 +25,8 @@ const AdministrationTestsPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
     const [ testId, setTestId ] = useState<number | null>(null);
-    const selectedFilters = useSelector((state: IRootStore) => state.adminProblems['all-tests']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminProblems['all-tests']?.selectedSorters);
+    const selectedFilters = useSelector((state: IRootStore) => state.adminTests['all-tests']?.selectedFilters);
+    const selectedSorters = useSelector((state: IRootStore) => state.adminTests['all-tests']?.selectedSorters);
     const { data: testsData, isLoading: isLoadingTests, error } = useGetAllAdminTestsQuery(queryParams);
 
     const filterParams = searchParams.get('filter');
@@ -50,18 +51,20 @@ const AdministrationTestsPage = () => {
           open={openEditTestModal}
           onClose={() => setOpenEditTestModal(false)}
         >
-            <Box sx={modalStyles} />
+            <Box sx={modalStyles}>
+                <TestForm id={testId!} />
+            </Box>
         </Modal>
     );
 
     const renderGridSettings = () => (
         <div />
-
     );
 
     if (isLoadingTests) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
+
     return (
         <AdministrationGridView
           filterableGridColumnDef={testsFilterableColums}

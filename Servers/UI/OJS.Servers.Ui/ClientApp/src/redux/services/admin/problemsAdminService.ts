@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
+import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, ITestsDropdownData } from '../../../common/types';
 import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -71,6 +71,7 @@ export const problemsAdminService = createApi({
             }),
         }),
         downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({ query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }), keepUnusedDataFor: 5 }),
+        getAllByName: builder.query<Array<ITestsDropdownData>, string>({ query: (queryString) => ({ url: `/GetAllByName?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
     }),
 });
 
@@ -86,6 +87,7 @@ export const {
     useCopyAllMutation,
     useCreateProblemMutation,
     useDownloadAdditionalFilesQuery,
+    useGetAllByNameQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

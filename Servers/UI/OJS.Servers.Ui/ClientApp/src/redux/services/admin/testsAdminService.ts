@@ -3,6 +3,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IPagedResultType } from '../../../common/types';
+import { IGetByProblemId } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import { ITestAdministration, ITestInListData } from '../../../components/administration/tests/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -39,6 +40,17 @@ export const testsAdminService = createApi({
                 body: problemGroup,
             }),
         }),
+        getTestsByProblemId: builder.query<IPagedResultType<ITestInListData>, IGetByProblemId>({
+            query: ({ problemId, filter, page, ItemsPerPage, sorting }) => ({
+                url: `/GetByProblemId/${problemId}`,
+                params: {
+                    filter,
+                    page,
+                    ItemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
 
     }),
 });
@@ -50,6 +62,7 @@ export const {
     useDeleteTestMutation,
     useUpdateTestMutation,
     useGetTestByIdQuery,
+    useGetTestsByProblemIdQuery,
 
 } = testsAdminService;
 export default testsAdminService;

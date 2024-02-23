@@ -81,7 +81,7 @@ export const returnTestsNonFilterableColumns = (
     {
         field: 'actions',
         headerName: 'Actions',
-        flex: 0.5,
+        flex: 1,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

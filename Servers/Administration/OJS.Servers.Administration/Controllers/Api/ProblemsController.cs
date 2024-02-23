@@ -1,19 +1,25 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OJS.Common.Exceptions;
 using OJS.Data.Models.Problems;
+using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Pagination;
-using System.Threading.Tasks;
-using OJS.Services.Administration.Business.Problems.Validators;
-using OJS.Common.Exceptions;
-using OJS.Servers.Administration.Attributes;
-using OJS.Services.Administration.Business.Contests.Permissions;
+using OJS.Services.Common.Models.Users;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
+using System.Linq;
+using OJS.Services.Administration.Models.Tests;
+using System.Threading.Tasks;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -127,5 +133,21 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         }
 
         return this.Ok("Problems successfully copied.");
+    }
+
+    [HttpGet]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> GetAllByName(string? searchString)
+    {
+        var contests =
+            await this.problemsDataService
+                .GetQueryForUser(
+                    this.User.Map<UserInfoModel>(),
+                    contest => contest.Name!.Contains(searchString ?? string.Empty))
+                .MapCollection<ProblemDropdownModel>()
+                .Take(20)
+                .ToListAsync();
+
+        return this.Ok(contests);
     }
 }

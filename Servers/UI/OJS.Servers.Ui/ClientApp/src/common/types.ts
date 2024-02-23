@@ -417,6 +417,10 @@ interface IContestAutocomplete {
     id: number;
     name: string;
 }
+interface ITestsDropdownData {
+    id: number;
+    name: string;
+}
 
 interface IContestCategories {
     id: number;
@@ -439,6 +443,7 @@ interface IRootStore {
     adminContests: IAdminSlice;
     adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
+    adminTests: IAdminSlice;
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
 }
@@ -503,4 +508,5 @@ export type {
     IProblemGroupsData,
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
+    ITestsDropdownData,
 };

@@ -6,6 +6,7 @@ import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLE
 import AdministrationContestPage from '../../components/administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
+import AdministrationTest from '../../components/administration/tests/AdministrationTest';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -155,6 +156,10 @@ const adminRoutes = [
     {
         path: `${TESTS_PATH}`,
         Element: AdministrationTestsPage,
+    },
+    {
+        path: `${TESTS_PATH}/:id`,
+        Element: AdministrationTest,
     },
     {
         path: `${PROBLEMS_PATH}`,

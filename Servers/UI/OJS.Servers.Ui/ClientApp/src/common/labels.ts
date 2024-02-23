@@ -12,6 +12,8 @@ export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
 export const PROBLEM_GROUP = 'Problem Group';
+export const INPUT = 'Input';
+export const OUTPUT = 'Output';
 
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
@@ -31,6 +33,7 @@ export const IS_VISIBLE = 'Is Visible';
 export const ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS = 'Allow parallel submissions in tasks';
 export const AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY = 'Auto change tests feedback visibility';
 export const CREATE_NEW_ENTITY = 'Create new contest';
+export const RECORD = 'Record';
 
 // Contest Categories
 export const CATEGORY_ID = 'Category Id';
@@ -48,8 +51,11 @@ export const ADDITIONAL_FILES = 'Additional Files';
 export const CREATE_NEW_PROBLEM = 'Create new Problem';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
 
+export const SELECT_PROBLEM = 'Select Problem';
+
 // Submission types
 export const SUBMISSION_TYPES = 'Submission Types';
-// Tests
 
+// Tests
 export const TESTS = 'Tests';
+export const HIDE_INPUT = 'Hide Input';

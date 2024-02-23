@@ -1,3 +1,4 @@
+/* eslint-disable no-undefined */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -73,7 +74,6 @@ const DROPDOWN_OPERATORS = {
 const BOOL_DROPDOWN_VALUES = [
     { name: 'True', value: 'true' },
     { name: 'False', value: 'false' },
-    { name: 'Null', value: '' },
 ];
 
 const mapStringToFilterColumnTypeEnum = (type: string) => {
@@ -98,7 +98,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
     };
-console.log(columns)
     useEffect(() => {
         if (selectedFilters.length <= 0) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
@@ -348,7 +347,6 @@ console.log(columns)
             {renderInputField(idx)}
         </div>
     );
-
     return (
         <div>
             <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>
