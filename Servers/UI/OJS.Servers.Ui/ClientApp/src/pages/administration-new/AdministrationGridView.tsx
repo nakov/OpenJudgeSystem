@@ -98,6 +98,10 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         );
     };
 
+    const handlePaginationModelChange = (model: GridPaginationModel) => {
+        setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
+    };
+
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div style={{ height: '745px' }}>
@@ -111,9 +115,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
-                          onPaginationModelChange={(model: GridPaginationModel) => {
-                              setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
-                          }}
+                          onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
