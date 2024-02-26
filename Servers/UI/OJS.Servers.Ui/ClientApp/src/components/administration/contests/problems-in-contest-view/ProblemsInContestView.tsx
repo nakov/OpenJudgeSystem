@@ -13,18 +13,18 @@ import { mapSorterParamsToQueryString } from '../../../../pages/administration-n
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
-import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { flexCenterObjectStyles, modalStyles } from '../../../../utils/object-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
-import ConfirmDialogWithAdditionalProtection from '../../../guidelines/dialog/dialog-with-additional-protection/ConfirmDialogWithAdditionalProtection';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import CopyModal, { AllowedOperations } from '../../Problems/copy-modal/CopyModal';
 import ProblemForm from '../../Problems/problemForm/ProblemForm';
+import ProblemRetest from '../../Problems/retest/ProblemRetest';
 
 interface IProblemsInContestViewProps {
     contestId: number;
@@ -65,14 +65,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         error: getContestError,
     } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
 
-    const [ retestById,
-        {
-            data: retestData,
-            isSuccess: isSuccesfullyRetested,
-            isLoading: isRetesting,
-            error: retestError,
-        } ] = useRetestByIdMutation();
-
     const [ deleteByContest,
         {
             data: deleteAllData,
@@ -86,20 +78,19 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ deleteAllError, retestError, getContestError ], setErrorMessages);
+        getAndSetExceptionMessage([ deleteAllError, getContestError ], setErrorMessages);
         setSuccessMessage(null);
-    }, [ deleteAllError, retestError, getContestError ]);
+    }, [ deleteAllError, getContestError ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
             {
                 message: deleteAllData,
                 shouldGet: isSuccesfullyDeletedAll,
-            },
-            { message: retestData, shouldGet: isSuccesfullyRetested } ]);
+            } ]);
 
         setSuccessMessage(message);
-    }, [ isSuccesfullyRetested, isSuccesfullyDeletedAll ]);
+    }, [ isSuccesfullyDeletedAll ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
@@ -119,19 +110,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             retakeData();
         }
     }, [ isSuccesfullyDeletedAll ]);
-
-    const retestProblem = (currentProblemId: number) => {
-        const currentProblem = problemsData?.items?.find((x) => x.id === currentProblemId);
-        if (currentProblem) {
-            const problem = {
-                id: currentProblemId,
-                name: currentProblem.name,
-                contestName: currentProblem.contest,
-                contestId,
-            };
-            retestById(problem);
-        }
-    };
 
     const onCopySuccess = (message: string | null) => {
         setSuccessMessage(message);
@@ -186,20 +164,22 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         />
     );
 
+    const onSuccesfullRetest = (message: string) => {
+        setSuccessMessage(message);
+        setShowRetestModal(false);
+    };
     const renderRetestModal = (index: number) => (
-        <ConfirmDialogWithAdditionalProtection
+        <ProblemRetest
           key={index}
-          text={`Are you sure you want to retest all submissions for  ${problemsData?.items
-              ? problemsData?.items.find((x) => x.id === problemToRetestId)?.name
-              : ''}`}
-          title="Retest"
-          passWordToMatch="Retest"
-          confirmButtonText="Retest"
+          contestId={contestId}
           declineFunction={() => setShowRetestModal(!showRetestModal)}
-          confirmFunction={() => {
-              retestProblem(problemToRetestId);
-              setShowRetestModal(!showRetestModal);
-          }}
+          index={index}
+          problemData={problemsData}
+          problemName={problemsData?.items
+              ? problemsData?.items.find((x) => x.id === problemToRetestId)?.name
+              : 'problem'}
+          problemToRetest={problemToRetestId}
+          onSuccess={onSuccesfullRetest}
         />
     );
 
@@ -242,11 +222,12 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
           onSuccess={onCopySuccess}
         />
     );
+
     return (
         <div style={{ marginTop: '2rem' }}>
             {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
             {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
-            {isRetesting || isDeletingAll
+            { isDeletingAll
                 ? <SpinningLoader />
                 : (
                     <AdministrationGridView
