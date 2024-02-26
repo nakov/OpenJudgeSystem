@@ -71,7 +71,7 @@ interface ISubmissionResponseModel {
 
 interface IGetAllAdminParams {
     filter?: string;
-    ItemsPerPage: number;
+    itemsPerPage: number;
     page: number;
     sorting?: string;
 }
