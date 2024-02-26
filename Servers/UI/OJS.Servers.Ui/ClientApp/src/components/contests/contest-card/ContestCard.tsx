@@ -62,7 +62,8 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const remainingTime = moment.duration(moment(contestEndTime).diff(moment(contestStartTime)));
+    const diffTime = moment(contestEndTime).diff(moment(contestStartTime));
+    const remainingTime = moment.duration(diffTime);
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
