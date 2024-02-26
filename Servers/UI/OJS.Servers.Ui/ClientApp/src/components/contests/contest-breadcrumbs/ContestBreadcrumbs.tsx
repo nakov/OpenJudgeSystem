@@ -1,14 +1,23 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
+import { ContestBreadcrumb } from '../../../common/contest-types';
 import useTheme from '../../../hooks/use-theme';
 
 import styles from './ContestBreadcrumbs.module.scss';
 
 const ContestBreadcrumbs = () => {
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems } = useSelector((state: any) => state.contests);
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
     const renderBreadcrumbItems = (breadcrumbItem: any, isLast: boolean, idx: number) => (
         <div
@@ -33,13 +42,10 @@ const ContestBreadcrumbs = () => {
         return <div />;
     }
 
-    // eslint-disable-next-line consistent-return
     return (
-        <div
-          className={styles.breadcrumbsWrapper}
-          style={{ color: themeColors.textColor, backgroundColor: themeColors.baseColor500 }}
-        >
-            {breadcrumbItems.map((item: any, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1, idx))}
+        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
+            {breadcrumbItems
+                .map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1, idx))}
         </div>
     );
 };

@@ -3,38 +3,37 @@
 @use 'src/styles/components';
 @use 'src/styles/fonts';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .searchContainer {
-  align-items: center;
-  background-color: colors.$white-color;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
   display: flex;
   justify-content: space-between;
-  left: 0;
-  margin-top: 78px;
-  position: absolute;
+  align-items: center;
+  background-color: colors.$white-color;
   top: -100%;
-  transition: top 0.3s ease-in-out;
+  position: absolute;
+  left:0;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
+  margin-top: 78px;
   width: 100%;
   z-index: 2;
+  transition: top 0.3s ease-in-out;
 }
-
 .show {
   top: 0 !important;
 }
-
 .search {
-  align-items: center;
   display: flex;
+  align-items: center;
   margin-right: 30px;
 }
 
 .searchIcon {
   cursor: pointer;
   font-size: variables.$f-size-24;
-  margin-left: spacings.$sp-12;
   margin-right: spacings.$sp-48;
-  transition: all 0.1s ease-in-out;
+  margin-left: spacings.$sp-12;
+  transition: all .1s ease-in-out;
 
   &:hover {
     transform: scale(1.1);
@@ -42,9 +41,9 @@
 }
 
 .closeIcon {
-  color: colors.$white-color;
   cursor: pointer;
-  transition: all 0.1s ease-in-out;
+  color: colors.$white-color;
+  transition: all .1s ease-in-out;
 
   &:hover {
     transform: scale(1.1);
@@ -76,7 +75,7 @@
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;
-  font-weight: 400;
+  font-weight: font-weights.$font-weight-light;
   line-height: 1.5;
   margin-left: spacings.$sp-4;
   margin-right: spacings.$sp-24;

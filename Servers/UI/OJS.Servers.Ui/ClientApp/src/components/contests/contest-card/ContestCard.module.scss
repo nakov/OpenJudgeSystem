@@ -4,6 +4,7 @@
 @use 'src/styles/border-radiuses';
 @use 'src/styles/variables';
 @use 'src/styles/colors';
+@use 'src/styles/font-weights';
 
 .contestCardWrapper {
   @extend %font-family-roboto;
@@ -43,46 +44,20 @@
       margin-right: spacings.$sp-32;
     }
   }
+}
 
-  .contestBtnWrapper {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-
-    .contestPoints {
-      font-size: variables.$f-size-16;
-      margin-right: spacings.$sp-8;
-    }
-
-    &:first-child {
-      margin-bottom: spacings.$sp-12;
-    }
-  }
-
-  button {
-    @extend %font-family-roboto;
-
-    align-self: flex-end;
-    background-color: colors.$secondary-green;
-    border: 0 solid transparent;
-    border-radius: border-radiuses.$br-6;
-    color: colors.$white-color;
-    cursor: pointer;
+.contestBtnsWrapper {
+  .contestBtn {
     font-size: variables.$f-size-16;
-    font-weight: 500;
-    padding: spacings.$sp-4 0;
-    width: 100px;
 
-    &:first-child {
-      background-color: colors.$primary-blue;
+    > div {
+      align-items: center;
+      display: flex;
+      margin-right: spacings.$sp-12;
     }
 
-    &:disabled {
-      background-color: transparent;
-      border: #687487 2px solid;
-      color: #687487;
-      cursor: auto;
+    &:nth-child(2) {
+      margin-top: spacings.$sp-12;
     }
   }
 }

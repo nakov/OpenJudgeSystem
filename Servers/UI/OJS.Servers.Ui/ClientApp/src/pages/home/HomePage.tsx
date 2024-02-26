@@ -61,10 +61,12 @@ const HomePage = () => {
                 <div className={styles.homeStatistics}>
                     {HOME_STATISTICS.map((el, idx) => {
                         const { iconType, title, dataKey } = el;
+                        // eslint-disable-next-line prefer-destructuring
                         const count = Number(data[dataKey]) > 1000
                             ? `${(Number(data[dataKey]) / 1000).toFixed(1)}K`
                             : data[dataKey];
                         return (
+                            // eslint-disable-next-line react/no-array-index-key
                             <HomePageStatistic key={`home-page-statistic-item-${idx}`} title={title} iconType={iconType} count={count} />
                         );
                     })}

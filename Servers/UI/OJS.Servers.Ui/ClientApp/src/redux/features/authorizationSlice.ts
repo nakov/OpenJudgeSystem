@@ -1,3 +1,7 @@
+/* eslint-disable import/exports-last */
+/* eslint-disable no-param-reassign */
+/* eslint-disable prefer-destructuring */
+/* eslint-disable import/group-exports */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IUserType } from '../../common/types';
@@ -44,5 +48,7 @@ export const authorizationSlice = createSlice({
 });
 
 export const { setInternalUser, setIsLoggedIn, resetInInternalUser } = authorizationSlice.actions;
+
+export const authorizationSliceName = authorizationSlice.name;
 
 export default authorizationSlice.reducer;

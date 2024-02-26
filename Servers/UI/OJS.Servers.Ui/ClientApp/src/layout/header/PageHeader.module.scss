@@ -4,64 +4,59 @@
 @use 'src/styles/shadows';
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .header {
   @extend %font-family-roboto;
-
-  align-items: center;
-  background-color: colors.$primary-blue;
   box-shadow: shadows.$dp-shadow-4;
+  background-color: colors.$primary-blue;
   display: flex;
   justify-content: space-between;
-  padding: spacings.$sp-24 0;
+  align-items: center;
   position: absolute;
   width: 100%;
+  padding: spacings.$sp-24 0;
   z-index: 3;
 
   > div {
     margin-left: spacings.$sp-64;
   }
-
   .logoBtn {
     font-size: variables.$f-size-30 !important;
-    font-weight: 800 !important;
+    font-weight: font-weights.$font-weight-bold !important;
     margin-right: spacings.$sp-12;
   }
-
   .navButton {
     font-size: variables.$f-size-18;
-    font-weight: 500;
-    padding: 0 spacings.$sp-12;
+    font-weight: font-weights.$font-weight-regular;
     text-decoration: none;
-
+    padding: 0 spacings.$sp-12;
     &:visited {
       color: colors.$white-color;
     }
   }
-
   .authButtons {
     margin-right: spacings.$sp-192;
   }
 }
 
 .searchIcon {
-  align-self: center;
-  background-color: colors.$primary-blue;
-  color: colors.$white-color;
   cursor: pointer;
+  color: colors.$white-color;
   font-size: variables.$f-size-18;
+  background-color: colors.$primary-blue;
   margin-right: spacings.$sp-12;
-  transition: all 0.1s ease-in-out;
-
+  align-self: center;
+  transition: all .1s ease-in-out;
   &:hover {
     transform: scale(1.1);
   }
 }
 
 .themeSwitchWrapper {
-  box-shadow: shadows.$dp-shadow-4;
   height: 40px;
   position: absolute;
-  right: 30px;
   top: 22px;
+  right: 30px;
+  box-shadow: shadows.$dp-shadow-4;
 }
