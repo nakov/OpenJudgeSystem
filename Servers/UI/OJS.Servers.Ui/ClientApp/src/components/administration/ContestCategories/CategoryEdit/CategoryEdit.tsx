@@ -100,12 +100,12 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             setSuccessMessage(null);
             setErrorMessages(updateError as Array<ExceptionData>);
         } else
-            if (createError && !isSuccesfullyCreated) {
-                setSuccessMessage(null);
-                setErrorMessages(createError as Array<ExceptionData>);
-            } else {
-                setErrorMessages([]);
-            }
+        if (createError && !isSuccesfullyCreated) {
+            setSuccessMessage(null);
+            setErrorMessages(createError as Array<ExceptionData>);
+        } else {
+            setErrorMessages([]);
+        }
     }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {

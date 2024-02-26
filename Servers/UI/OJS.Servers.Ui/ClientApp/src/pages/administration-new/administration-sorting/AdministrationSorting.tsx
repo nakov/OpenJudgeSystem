@@ -52,7 +52,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         if (selectedSorters.length <= 0) {
             dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
         }
-    }, [ ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const open = Boolean(anchor);
 
@@ -94,6 +95,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         if (urlSelectedSorters.length) {
             dispatch(setStateAction({ key: location, sorters: urlSelectedSorters }));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -128,6 +130,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         return () => {
             delayedSetOfSearch.cancel();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedSorters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {

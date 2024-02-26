@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -160,6 +160,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         if (urlSelectedFilters.length) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -199,6 +200,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         return () => {
             delayedSetOfSearch.cancel();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedFilters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
