@@ -41,6 +41,15 @@ interface IAdministrationFilter {
     availableColumns: IFilterColumn[];
 }
 
+interface IDefaultFilter {
+    column: string;
+    operator: string;
+    value: string;
+    availableOperators: IFiltersColumnOperators[];
+    availableColumns: IFilterColumn[];
+    inputType: FilterColumnTypeEnum;
+}
+
 const DROPDOWN_OPERATORS = {
     [FilterColumnTypeEnum.STRING]: [
         { name: 'Contains', value: 'contains' },
@@ -89,20 +98,20 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
     const dispatch = useDispatch();
-    const defaultFilter = {
+    const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
         value: '',
         availableOperators: [],
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
-    };
+    }), [ columns ]);
 
     useEffect(() => {
         if (selectedFilters.length <= 0) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
         }
-    }, [ ]);
+    }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 

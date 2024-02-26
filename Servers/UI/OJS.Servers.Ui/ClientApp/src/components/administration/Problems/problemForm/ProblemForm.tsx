@@ -1,5 +1,3 @@
-/* eslint-disable default-case */
-/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
@@ -80,7 +78,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
         }
-    }, [ submissionTypes ]);
+    }, [ problemData?.submissionTypes, submissionTypes ]);
 
     useEffect(() => {
         if (problemData) {

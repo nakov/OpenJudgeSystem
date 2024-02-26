@@ -1,6 +1,3 @@
-/* eslint-disable no-restricted-imports */
-/* eslint-disable no-case-declarations */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
@@ -21,7 +18,6 @@ import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVe
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 
-// eslint-disable-next-line import/no-unresolved
 import styles from './CategoryEdit.module.scss';
 
 interface IContestCategoryEditProps {
@@ -104,12 +100,12 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             setSuccessMessage(null);
             setErrorMessages(updateError as Array<ExceptionData>);
         } else
-        if (createError && !isSuccesfullyCreated) {
-            setSuccessMessage(null);
-            setErrorMessages(createError as Array<ExceptionData>);
-        } else {
-            setErrorMessages([]);
-        }
+            if (createError && !isSuccesfullyCreated) {
+                setSuccessMessage(null);
+                setErrorMessages(createError as Array<ExceptionData>);
+            } else {
+                setErrorMessages([]);
+            }
     }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {
@@ -150,13 +146,15 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         case 'isVisible':
             isVisible = checked;
             break;
-        case 'parent':
+        case 'parent': {
             const category = contestCategories?.find((cc) => cc.id === value);
             if (category) {
-                parentId = category.id;
-                parent = category.name;
+                const { id, name: parentName } = category;
+                parentId = id;
+                parent = parentName;
             }
             break;
+        }
         }
         setContestCategoryValidations(contestCategoryValidations1);
         setContestCategory((prevState) => ({

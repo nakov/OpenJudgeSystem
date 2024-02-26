@@ -1,4 +1,4 @@
-/* eslint-disable-next-line import/no-unused-modules,no-undef */
+
 module.exports = {
     env: {
         browser: true,
@@ -16,6 +16,7 @@ module.exports = {
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
+        project: './tsconfig.json',
         ecmaFeatures: { jsx: true },
         ecmaVersion: 2021,
         sourceType: 'module',
@@ -30,13 +31,15 @@ module.exports = {
         'simple-import-sort',
     ],
     settings: { 'import/resolver': { typescript: {} } },
+    ignorePatterns: [
+        '*.cjs',
+        'vite.config.js'
+    ],
     rules: {
         "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/no-static-element-interactions": "off",
-        "react-hooks/exhaustive-deps": "off",
         'prefer-destructuring': 'off',
         'react/no-array-index-key': 'off',
-        'react/jsx-props-no-spreading': 'off',
         'no-undefined': 'off',
         'react/react-in-jsx-scope': 'off',
 
@@ -56,7 +59,10 @@ module.exports = {
             },
         ],
         'no-use-before-define': 'off',
+        '@typescript-eslint/no-use-before-define': [ 'error' ],
+        '@typescript-eslint/no-explicit-any': 'warn',
         'react/jsx-filename-extension': [ 'warn', { extensions: [ '.tsx' ] } ],
+        'react/jsx-props-no-spreading': ['warn', { custom: 'ignore' }],
         'import/extensions': [
             'error',
             'ignorePackages',
@@ -66,6 +72,7 @@ module.exports = {
             },
         ],
         'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'error',
 
         'react/function-component-definition': [ 'error',
             {

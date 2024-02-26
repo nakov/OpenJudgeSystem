@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -11,8 +10,9 @@ import {
     PasswordLengthErrorMessage,
     UsernameFormatErrorMessage, UsernameLengthErrorMessage,
 } from '../../common/constants';
-import { IAuthorizationReduxState, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
@@ -32,11 +32,10 @@ const LoginPage = () => {
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
-    const [ login, { isLoading, isSuccess, error, isError } ] = useLoginMutation();
+    const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
     const { data, isSuccess: isGetInfoSuccessfull, refetch } = useGetUserinfoQuery(null);
-    const { isLoggedIn } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const dispatch = useDispatch();
+    const { isLoggedIn } = useAppSelector((state) => state.authorization);
+    const dispatch = useAppDispatch();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
@@ -64,7 +63,7 @@ const LoginPage = () => {
             dispatch(setInternalUser(data));
             dispatch(setIsLoggedIn(true));
         }
-    }, [ isGetInfoSuccessfull, data ]);
+    }, [ isGetInfoSuccessfull, data, dispatch ]);
 
     const handleOnChangeUpdatePassword = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -88,7 +87,7 @@ const LoginPage = () => {
         if (error && 'error' in error) {
             setLoginErrorMessage(error.data as string);
         }
-    }, [ isSuccess, isError ]);
+    }, [ isSuccess, error, refetch ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
@@ -118,7 +117,7 @@ const LoginPage = () => {
             return;
         }
 
-        login({ Username: userName, Password: password, RememberMe: rememberMe });
+        login({ userName, password, rememberMe });
     };
 
     const renderLoginErrorMessage = useCallback(

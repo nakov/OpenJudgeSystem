@@ -38,6 +38,7 @@ interface ISubmissionDetailsState {
 }
 interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     currentPage: number;
+    retestIsSuccess: false;
 }
 
 interface IPublicSubmissionProblem {
@@ -312,7 +313,7 @@ interface IPage {
 
 interface IUserType {
     id: string;
-    username: string;
+    userName: string;
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;

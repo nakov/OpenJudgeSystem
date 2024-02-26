@@ -1,4 +1,3 @@
-/* eslint-disable react/self-closing-comp */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -32,11 +31,11 @@ const AdministrationProblemGroupsPage = () => {
     const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filterParams ?? '' });
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
     }, [ filterParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
     const onEditClick = () => {

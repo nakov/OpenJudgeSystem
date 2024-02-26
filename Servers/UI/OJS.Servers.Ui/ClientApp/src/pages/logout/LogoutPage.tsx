@@ -16,7 +16,7 @@ const LogoutPage = () => {
             dispatch(resetInInternalUser());
             dispatch(setIsLoggedIn(false));
         }
-    }, [ isSuccess ]);
+    }, [ dispatch, isSuccess ]);
 
     useEffect(() => {
         (async () => {

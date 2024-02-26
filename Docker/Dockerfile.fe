@@ -16,6 +16,7 @@ COPY Servers/UI/OJS.Servers.Ui/ClientApp /src/Servers/UI/OJS.Servers.Ui/ClientAp
 WORKDIR /src/Servers/UI/OJS.Servers.Ui/ClientApp
 
 RUN yarn run lint
+RUN yarn tsc
 RUN yarn ${YARN_BUILD_COMMAND}
 
 # Server using Nginx

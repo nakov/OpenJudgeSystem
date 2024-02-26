@@ -5,6 +5,12 @@ import { defaultPathIdentifier } from '../../common/constants';
 import { authorizationServiceName } from '../../common/reduxNames';
 import { IUserResponseType } from '../../common/types';
 
+interface ILoginDetailsType {
+    userName: string;
+    password: string;
+    rememberMe: boolean;
+}
+
 export const authorizationService = createApi({
     reducerPath: authorizationServiceName,
     baseQuery: fetchBaseQuery({
@@ -17,7 +23,7 @@ export const authorizationService = createApi({
     }),
     endpoints: (builder) => ({
         getUserinfo: builder.query<IUserResponseType, null>({ query: () => ({ url: 'users/getuserAuthInfo' }) }),
-        login: builder.mutation<string, any>({
+        login: builder.mutation<string, ILoginDetailsType>({
             query: (loginDetails) => ({
                 url: 'account/Login',
                 method: 'POST',
