@@ -83,8 +83,13 @@ interface IGetAllContestsOptions {
     category?: number | null;
 }
 
+interface IAllowedStrategyType {
+    id: number;
+    name: string;
+}
+
 interface IContestCategory {
-    allowedStrategyTypes: any;
+    allowedStrategyTypes: Array<IAllowedStrategyType>;
     children: Array<IContestCategory>;
     id: number;
     name: string;
