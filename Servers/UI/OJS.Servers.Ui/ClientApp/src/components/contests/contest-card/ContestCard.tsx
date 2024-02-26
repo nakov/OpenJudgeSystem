@@ -75,22 +75,14 @@ const ContestCard = (props: IContestCardProps) => {
         // eslint-disable-next-line consistent-return
         return (
             <div
-              className={styles.contestDetailsFragment}
-              style={{
-                  color: isGreenColor
-                      ? '#57B99D'
-                      : '',
-              }}
+              className={`${styles.contestDetailsFragment} ${isGreenColor
+                  ? styles.greenColor
+                  : ''}`}
             >
                 <i className={`${iconName}`} />
-                <div style={{
-                    textDecoration: hasUnderLine
-                        ? 'underline'
-                        : '',
-                    cursor: hasUnderLine
-                        ? 'pointer'
-                        : '',
-                }}
+                <div className={`${hasUnderLine
+                    ? styles.hasUnderLine
+                    : ''}`}
                 >
                     {text}
                 </div>

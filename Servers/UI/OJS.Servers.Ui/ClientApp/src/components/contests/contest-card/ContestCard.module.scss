@@ -44,6 +44,13 @@
       margin-right: spacings.$sp-32;
     }
   }
+  .greenColor {
+    color: colors.$secondary-green;
+  }
+  .hasUnderLine {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .contestBtnsWrapper {
