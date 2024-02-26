@@ -27,7 +27,7 @@ const PaginationControls = ({
               '& .Mui-selected': { backgroundColor: '#44a9f8' },
               '& .MuiPaginationItem-root': {
                   color: themeColors.textColor,
-                  borderRadius: '50%',
+                  borderRadius: '10%',
                   '&:hover': {
                       backgroundColor: mode === 'dark'
                           ? '#44a9f8'

@@ -7,26 +7,30 @@ import { ISubmissionResponseModel } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useProblems } from '../../../hooks/use-problems';
+import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import { formatDate } from '../../../utils/dates';
-import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
+import concatClassNames from '../../../utils/class-names';
+import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
 import { encodeUsernameAsUrlParam,
-    getContestDetailsAppUrl,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
     getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
-import IconSize from '../../guidelines/icons/common/icon-sizes';
-import ExecutionResult from '../execution-result/ExecutionResult';
 
 import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
     submission: ISubmissionResponseModel;
+    isFirst: boolean;
     shouldDisplayUsername?: boolean;
 }
 
-const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmissionGridRowProps) => {
+const SubmissionGridRow = ({
+    submission,
+    isFirst,
+    shouldDisplayUsername = true,
+}: ISubmissionGridRowProps) => {
+    const { isDarkMode } = useTheme();
     const {
         id: submissionId,
         createdOn,
@@ -43,11 +47,6 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
             },
         },
         isOfficial,
-        isCompiledSuccessfully,
-        maxMemoryUsed,
-        maxTimeUsed,
-        processed,
-        testRuns,
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
@@ -77,6 +76,8 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
                 participationType,
             });
 
+            // getContestDetailsAppUrl(contestId)
+
             initiateRedirectionToProblem(problemId, participateInContestUrl);
         },
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
@@ -84,7 +85,7 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (userameFromSubmission === internalUser.userName || internalUser.isAdmin) {
+            if (userameFromSubmission === internalUser.username || internalUser.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -94,21 +95,21 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, userameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.username, userameFromSubmission ],
     );
 
-    const renderStrategyIcon = useCallback(
-        () => {
-            const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
-
-            if (isNil(Icon)) {
-                return null;
-            }
-
-            return (<Icon size={IconSize.Large} helperText={strategyName} />);
-        },
-        [ strategyName ],
-    );
+    // const renderStrategyIcon = useCallback(
+    //     () => {
+    //         const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
+    //
+    //         if (isNil(Icon)) {
+    //             return null;
+    //         }
+    //
+    //         return (<Icon size={IconSize.Large} helperText={strategyName} />);
+    //     },
+    //     [ strategyName ],
+    // );
 
     const renderPoints = useCallback(
         () => {
@@ -158,76 +159,86 @@ const SubmissionGridRow = ({ submission, shouldDisplayUsername = true }: ISubmis
 
             return (
                 <div>
-                    <Button
-                      internalClassName={styles.redirectButton}
-                      type={ButtonType.secondary}
-                      text={problemName}
-                      onClick={handleParticipateInContestSubmit}
-                      size={ButtonSize.small}
-                    />
-                    in
-                    <LinkButton
-                      type={LinkButtonType.plain}
-                      to={getContestDetailsAppUrl(contestId)}
-                      text={contestName}
-                      className={styles.link}
-                    />
+                    <span>{problemName}</span>
                 </div>
             );
         },
-        [ contestId, contestName, handleParticipateInContestSubmit, problemId, problemName ],
+        [ problemId, problemName ],
+    );
+
+    const headerClassName = concatClassNames(
+        styles.submissionsGridHeader,
+        isDarkMode
+            ? styles.darkSubmissionsGridHeader
+            : styles.lightSubmissionsGridHeader,
+    );
+
+    const rowClassName = concatClassNames(
+        styles.container,
+        isDarkMode
+            ? styles.darkRow
+            : styles.lightRow,
     );
 
     return (
-        <div className={styles.container}>
-            <div className={styles.strategyContainer}>
-                {renderStrategyIcon()}
+        <>
+            <div>
+                {
+                isFirst
+                    ? (
+                        <div className={headerClassName}>
+                            <div className={styles.smallColumn}>N</div>
+                            <div className={styles.wideColumn}>Task</div>
+                            <div className={styles.wideColumn}>From</div>
+                            <div className={concatClassNames(styles.smallColumn, styles.textAlignRight)}>Result</div>
+                            <div className={styles.wideColumn} />
+                            <div className={styles.smallColumn} />
+                        </div>
+                    )
+                    : null
+            }
             </div>
-            <div
-              className={styles.pointsContainer}
-              style={{
-                  marginRight: !isOfficial
-                      ? '37px'
-                      : '',
-              }}
-            >
-                {renderPoints()}
-            </div>
-            { isOfficial && (
-                <div className={styles.competeIconWrapper}>
-                    <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
-                    <span className={styles.competeIconHoverText}>Compete submission</span>
+            <div className={rowClassName}>
+                <div
+                  className={styles.smallColumn}
+                >
+                    #
+                    {submissionId}
                 </div>
-            ) }
-            <div className={styles.detailsContainer}>
-                {renderProblemInformation()}
-                <div className={styles.IdAndDateAndUsernameContainer}>
-                    <span className={styles.IdContainer}>
-                        #
-                        {submissionId}
-                    </span>
-                    <span className="delimiter">
-                        |
-                    </span>
-                    <span>
-                        {formatDate(createdOn)}
-                        {shouldDisplayUsername && renderUsername()}
-                    </span>
+                <div className={styles.wideColumn}>
+                    {renderProblemInformation()}
+                    <div className={styles.columnContainer}>
+                        <Button
+                          type={ButtonType.secondary}
+                          size={ButtonSize.small}
+                          className={styles.link}
+                          internalClassName={styles.redirectButton}
+                          onClick={handleParticipateInContestSubmit}
+                          text={contestName}
+                        />
+                    </div>
+                </div>
+                <div className={styles.wideColumn}>
+                    <div className={styles.columnContainer}>
+                        <span>
+                            {formatDate(createdOn, defaultDateTimeFormatReverse)}
+                            {shouldDisplayUsername && renderUsername()}
+                        </span>
+                    </div>
+                </div>
+                <div
+                  className={concatClassNames(styles.smallColumn, styles.textAlignRight)}
+                >
+                    {renderPoints()}
+                </div>
+                <div className={concatClassNames(styles.wideColumn)}>
+                    <div>{strategyName}</div>
+                </div>
+                <div className={styles.smallColumn}>
+                    {renderDetailsBtn()}
                 </div>
             </div>
-            <div className={styles.executionResultContainer}>
-                <ExecutionResult
-                  testRuns={testRuns}
-                  maxMemoryUsed={maxMemoryUsed}
-                  maxTimeUsed={maxTimeUsed}
-                  isCompiledSuccessfully={isCompiledSuccessfully}
-                  isProcessed={processed}
-                />
-            </div>
-            <div className={styles.detailsButtonContainer}>
-                {renderDetailsBtn()}
-            </div>
-        </div>
+        </>
     );
 };
 

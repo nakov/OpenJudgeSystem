@@ -1,5 +1,7 @@
 import { createElement } from 'react';
 
+import { ThemeMode } from '../../../common/enums';
+import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -24,7 +26,18 @@ const headingTypeToElementTypeMap = {
     [HeadingType.small]: 'h3',
 };
 
-const Heading = ({ children, type = HeadingType.primary, className = '', style, id = generateId() }: IHeadingProps) => {
+const Heading = ({
+    children,
+    type = HeadingType.primary,
+    className = '', style,
+    id = generateId(),
+}: IHeadingProps) => {
+    const { isDarkMode } = useTheme();
+
+    const colorClassName = isDarkMode
+        ? styles.textWhite
+        : styles.textDarkGray;
+
     const headingTypeClassName = type === HeadingType.primary
         ? styles.primary
         : type === HeadingType.secondary
@@ -34,6 +47,7 @@ const Heading = ({ children, type = HeadingType.primary, className = '', style, 
     const headingClassName = concatClassNames(
         styles.heading,
         headingTypeClassName,
+        colorClassName,
         className,
     );
 

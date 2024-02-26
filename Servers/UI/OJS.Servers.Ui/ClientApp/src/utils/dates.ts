@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
+const defaultDateTimeFormatReverse = 'DD/MMM/yyyy, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
 const calculateTimeUntil = (date: Date) => intervalToDuration({
@@ -130,6 +131,7 @@ export default {
 };
 
 export {
+    defaultDateTimeFormatReverse,
     formatDate,
     preciseFormatDate,
     secondsToFullTime,

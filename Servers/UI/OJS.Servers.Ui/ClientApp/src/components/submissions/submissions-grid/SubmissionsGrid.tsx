@@ -112,49 +112,43 @@ const SubmissionsGrid = () => {
     );
 
     const { pagesCount } = pagesInfo;
+
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isAdmin } = user;
 
             return (
                 isAdmin && (
-                    <>
-                        <Heading type={HeadingType.secondary}>
-                            Submissions awaiting execution:
+                    <Heading
+                      type={HeadingType.secondary}
+                    >
+                        Submissions awaiting execution:
                             {' '}
                             {totalUnprocessedSubmissionsCount}
                             {' '}
-                            (
-                            <SubmissionStateLink
-                              stateIndex={1}
-                              isSelected={selectedActive === 1}
-                              text={selectedSubmissionsStateMapping[1]}
-                              handleOnSelect={handleSelectSubmissionType}
-                            />
-                            /
-                            <SubmissionStateLink
-                              stateIndex={2}
-                              isSelected={selectedActive === 2}
-                              text={selectedSubmissionsStateMapping[2]}
-                              handleOnSelect={handleSelectSubmissionType}
-                            />
-                            /
-                            <SubmissionStateLink
-                              stateIndex={3}
-                              isSelected={selectedActive === 3}
-                              text={selectedSubmissionsStateMapping[3]}
-                              handleOnSelect={handleSelectSubmissionType}
-                            />
-                            )
-                        </Heading>
-                        { publicSubmissions?.length > 0 && (
-                            <PaginationControls
-                              count={pagesCount}
-                              page={currentPage}
-                              onChange={handlePageChange}
-                            />
-                        )}
-                    </>
+                        (
+                        <SubmissionStateLink
+                          stateIndex={1}
+                          isSelected={selectedActive === 1}
+                          text={selectedSubmissionsStateMapping[1]}
+                          handleOnSelect={handleSelectSubmissionType}
+                        />
+                        /
+                        <SubmissionStateLink
+                          stateIndex={2}
+                          isSelected={selectedActive === 2}
+                          text={selectedSubmissionsStateMapping[2]}
+                          handleOnSelect={handleSelectSubmissionType}
+                        />
+                        /
+                        <SubmissionStateLink
+                          stateIndex={3}
+                          isSelected={selectedActive === 3}
+                          text={selectedSubmissionsStateMapping[3]}
+                          handleOnSelect={handleSelectSubmissionType}
+                        />
+                        )
+                    </Heading>
                 )
             );
         },
@@ -171,8 +165,11 @@ const SubmissionsGrid = () => {
     );
 
     const renderSubmissionRow = useCallback(
-        (submission: ISubmissionResponseModel) => (
-            <SubmissionGridRow submission={submission} />
+        (submission: ISubmissionResponseModel, index: number) => (
+            <SubmissionGridRow
+              isFirst={index === 0}
+              submission={submission}
+            />
         ),
         [],
     );
@@ -199,7 +196,7 @@ const SubmissionsGrid = () => {
                 <List
                   values={publicSubmissions}
                   itemFunc={renderSubmissionRow}
-                  itemClassName={styles.submissionRow}
+                  itemClassName={styles.submissionGridRow}
                   fullWidth
                 />
             );
@@ -226,6 +223,13 @@ const SubmissionsGrid = () => {
             </Heading>
             {renderPrivilegedComponent()}
             {renderSubmissionsList()}
+            { publicSubmissions?.length > 0 && (
+                <PaginationControls
+                  count={pagesCount}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                />
+            )}
         </>
     );
 };

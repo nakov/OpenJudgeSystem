@@ -2,49 +2,82 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 @use 'src/styles/responsive';
+@use 'src/styles/shadows';
+
+.textAlignRight {
+  text-align: right;
+}
+
+.lightSubmissionsGridHeader {
+  background: colors.$wrappers-border-color;
+  color: colors.$text-dark-gray-color;
+  box-shadow: shadows.$dp-shadow-1;
+}
+
+.darkSubmissionsGridHeader {
+  background: #1C1C17;
+  color: white;
+  box-shadow: shadows.$dp-shadow-4;
+}
+
+.submissionsGridHeader {
+  @extend %font-family-roboto;
+  
+  display: flex;
+  flex-direction: row;
+  align-content: start;
+  justify-content: flex-start;
+  padding: 8px 25px;
+  
+  & > div {
+    padding: 0 10px;
+  }
+}
+
+.smallColumn {
+  flex: 1 0 2vw;
+  width: 50px;
+}
+
+.wideColumn {
+  display: flex;
+  flex: 3;
+  max-width: 500px;
+  flex-direction: column;
+  gap: 10px;
+  
+  .redirectButton {
+    padding: 0;
+  }
+}
+
+.lightRow {
+  color: colors.$text-dark-gray-color;
+  background: colors.$horizontal-line-gray;
+  border-bottom: 1px solid colors.$wrappers-border-color;
+}
+
+.darkRow {
+  background: colors.$background-color-footer;
+  color: white;
+  border-bottom: 1px solid #212328;
+}
 
 .container {
-  @extend %font-family-lato;
-
+  @extend %font-family-roboto;
+  
   align-items: center;
-  color: colors.$text-dark-gray-color;
   display: flex;
   justify-content: flex-start;
-  padding: 25px;
+  padding: 15px;
 
-  .strategyContainer,
-  .pointsContainer,
-  .detailsContainer,
-  .executionResultContainer {
+  .smallColumn,
+  .wideColumn {
     padding: 0 10px;
   }
 
-  .pointsContainer {
-    @extend %r-heading-primary;
-
-    text-align: center;
-    width: 100px;
-  }
-
-  .detailsContainer {
+  .columnContainer {
     display: flex;
-    flex: 17;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .detailsButtonContainer {
-    flex: 1 0 2vw;
-  }
-
-  .IdAndDateAndUsernameContainer {
-    display: flex;
-    gap: 5px;
-    margin: 0 5px;
-  }
-
-  .IdContainer {
-    color: colors.$text-light-gray-color;
   }
 
   .link {
@@ -62,35 +95,5 @@
     cursor: pointer;
     font: inherit;
     font-size: variables.$f-size-16;
-  }
-
-  .competeIcon {
-    margin: 0 10px;
-  }
-
-  .competeIconHoverText {
-    background-color: colors.$white-color;
-    border: 1px solid colors.$light-blue-color;
-    border-radius: 4px;
-    color: colors.$light-blue-color;
-    font-weight: 400;
-    opacity: 0;
-    padding: 5px 10px;
-    position: absolute;
-    text-align: center;
-    top: -40px;
-    transform: translateX(-50%);
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-
-  .competeIconWrapper {
-    position: relative;
-
-    &:hover {
-      .competeIconHoverText {
-        opacity: 1;
-      }
-    }
   }
 }

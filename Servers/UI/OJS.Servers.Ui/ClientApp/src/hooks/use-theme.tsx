@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ThemeMode } from '../common/enums';
 import { toggleTheme } from '../redux/features/themeSlice';
 
 interface ITheme {
@@ -15,6 +16,8 @@ interface ITheme {
 const useTheme = () => {
     const dispatch = useDispatch();
     const { mode } = useSelector((state: any) => state.theme);
+
+    const isDarkMode = mode === ThemeMode.Dark;
 
     const toggleSelectedTheme = () => {
         dispatch(toggleTheme());
@@ -43,6 +46,11 @@ const useTheme = () => {
     // eslint-disable-next-line prefer-destructuring
     const selectedThemeColors = themeColors[mode];
 
-    return { mode, toggleSelectedTheme, themeColors: selectedThemeColors };
+    return {
+        mode,
+        toggleSelectedTheme,
+        isDarkMode,
+        themeColors: selectedThemeColors,
+    };
 };
 export default useTheme;

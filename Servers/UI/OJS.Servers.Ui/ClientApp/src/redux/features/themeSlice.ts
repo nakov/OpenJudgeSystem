@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-type THEME_VALUES = 'light' | 'dark';
+import { ThemeMode } from '../../common/enums';
 
 interface IThemeState {
-    mode: THEME_VALUES;
+    mode: ThemeMode;
 }
 
-const initialState: IThemeState = { mode: 'dark' };
+const initialState: IThemeState = { mode: ThemeMode.Dark };
 
 // eslint-disable-next-line import/group-exports
 export const themeSlice = createSlice({
@@ -15,11 +15,11 @@ export const themeSlice = createSlice({
     reducers: {
         toggleTheme: (state) => {
             // eslint-disable-next-line no-unused-expressions
-            state.mode === 'light'
+            state.mode === ThemeMode.Light
                 // eslint-disable-next-line no-param-reassign,prefer-destructuring
-                ? state.mode = 'dark'
+                ? state.mode = ThemeMode.Dark
                 // eslint-disable-next-line no-param-reassign,prefer-destructuring
-                : state.mode = 'light';
+                : state.mode = ThemeMode.Light;
         },
     },
 });
