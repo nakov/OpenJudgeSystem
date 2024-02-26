@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -9,7 +8,7 @@
 import React, { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Slide } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
@@ -38,7 +37,7 @@ interface IAdministrationGridViewProps<T> {
    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
 
    queryParams: IGetAllAdminParams;
-   setQueryParams: Function;
+   setQueryParams: (params: IGetAllAdminParams) => void;
 
    selectedFilters: Array<IAdministrationFilter>;
    selectedSorters: Array<IAdministrationSorter>;
@@ -99,6 +98,10 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         );
     };
 
+    const handlePaginationModelChange = (model: GridPaginationModel) => {
+        setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
+    };
+
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div style={{ height: '745px' }}>
@@ -112,14 +115,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
-                          onPageChange={(e) => {
-                              setQueryParams({ ...queryParams, page: e + 1 });
-                          }}
-                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                          onPageSizeChange={(itemsPerRow: number) => {
-                              setQueryParams({ ...queryParams, ItemsPerPage: itemsPerRow });
-                          }}
-                          pageSize={queryParams.ItemsPerPage}
+                          onPaginationModelChange={handlePaginationModelChange}
+                          pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {

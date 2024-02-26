@@ -8,6 +8,7 @@ import isNil from 'lodash/isNil';
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
 import { useUsers } from '../../../hooks/use-users';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
+import { DEFAULT_ROWS_PER_PAGE } from '../../../utils/constants';
 import { formatDate } from '../../../utils/dates';
 import { decodeUsernameFromUrlParam } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -93,9 +94,7 @@ const ProfileContestParticipations = () => {
                   getRowId={(row) => row.id}
                   rows={numberedRows}
                   columns={columns}
-                  pageSize={5}
-                  rowsPerPageOptions={[ 5 ]}
-                  disableSelectionOnClick
+                  pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                 />
             </div>
         </>

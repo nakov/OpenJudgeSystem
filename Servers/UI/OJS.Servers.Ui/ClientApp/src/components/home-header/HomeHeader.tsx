@@ -29,7 +29,6 @@ const keyToNameMap: IDictionary<string> = {
 
 const defaultProps = { className: styles.icon };
 
-/* eslint-disable react/jsx-props-no-spreading */
 const keyToIconComponent: IDictionary<FC> = {
     usersCount: (props: Anything) => (<UsersIcon {...defaultProps} {...props} />),
     submissionsCount: (props: Anything) => (<CodeIcon {...defaultProps} {...props} />),
@@ -38,7 +37,6 @@ const keyToIconComponent: IDictionary<FC> = {
     strategiesCount: (props: Anything) => (<StrategyIcon {...defaultProps} {...props} />),
     contestsCount: (props: Anything) => (<ContestIcon {...defaultProps} {...props} />),
 };
-/* eslint-enable react/jsx-props-no-spreading */
 
 const HomeHeader = () => {
     const {

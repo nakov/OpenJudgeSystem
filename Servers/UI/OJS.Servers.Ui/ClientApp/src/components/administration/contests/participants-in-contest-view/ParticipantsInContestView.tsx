@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -7,7 +6,7 @@ import ShortcutIcon from '@mui/icons-material/Shortcut';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { IRootStore } from '../../../../common/types';
+import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import {
     mapFilterParamsToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
@@ -31,7 +30,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
         useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
     const selectedSorters =
         useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
-    const [ queryParams, setQueryParams ] = useState({
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: mapFilterParamsToQueryString(selectedFilters),
@@ -44,11 +43,11 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filtersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
     }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {

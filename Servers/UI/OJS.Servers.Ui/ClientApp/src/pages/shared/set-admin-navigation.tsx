@@ -236,7 +236,6 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </List>
                 </Drawer>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>

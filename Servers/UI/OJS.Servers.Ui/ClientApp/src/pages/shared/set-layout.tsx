@@ -26,7 +26,6 @@ const Layout = ({ children, isWide }: ILayoutProps) => {
 
 const setLayout = (ComponentToWrap: FC, isWide = false) => (props: Anything) => (
     <Layout isWide={isWide}>
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <ComponentToWrap {...props} />
     </Layout>
 );
