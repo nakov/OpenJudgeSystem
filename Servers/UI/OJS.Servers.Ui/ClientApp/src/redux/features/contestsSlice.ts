@@ -3,17 +3,18 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ContestBreadcrumb, IContestStrategyFilter, IFilter } from '../../common/contest-types';
+import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
+import { IContestCategory } from '../../common/types';
 
 interface IContestState {
-    category: IFilter | null;
-    strategy: IContestStrategyFilter | null;
+    selectedCategory: IContestCategory | null;
+    selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
 }
 
 const initialState: IContestState = {
-    category: null,
-    strategy: null,
+    selectedCategory: null,
+    selectedStrategy: null,
     breadcrumbItems: [],
 };
 
@@ -23,10 +24,10 @@ export const contestSlice = createSlice({
     initialState,
     reducers: {
         setContestCategory: (state, action) => {
-            state.category = action.payload;
+            state.selectedCategory = action.payload;
         },
         setContestStrategy: (state, action) => {
-            state.strategy = action.payload;
+            state.selectedStrategy = action.payload;
         },
         updateContestCategoryBreadcrumbItem: (state, action) => {
             const { elements } = action.payload;

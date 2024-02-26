@@ -1,21 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { ReactNode, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { MenuItem, Select } from '@mui/material';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
 import useTheme from '../../../hooks/use-theme';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
 
 import styles from './ContestStrategies.module.scss';
 
 const ContestStrategies = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
-    const { category, strategy } = useSelector((state: any) => state.contests);
-
+    const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
     const [ selectValue, setSelectValue ] = useState('');
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -27,17 +26,17 @@ const ContestStrategies = () => {
     } = useGetContestStrategiesQuery();
 
     useEffect(() => {
-        if (!strategy) {
+        if (!selectedStrategy) {
             setSelectValue('');
         }
-    }, [ strategy ]);
+    }, [ selectedStrategy ]);
 
     const menuItems: ReactNode[] = React.useMemo(() => {
         if (!contestStrategies) { return []; }
 
-        const displayStrategies = category?.allowedStrategyTypes?.length === 0
+        const displayStrategies = !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
             ? contestStrategies
-            : category?.allowedStrategyTypes;
+            : selectedCategory?.allowedStrategyTypes;
 
         const handleStrategySelect = (s: any) => {
             dispatch(setContestStrategy(s));
@@ -53,7 +52,7 @@ const ContestStrategies = () => {
                 {item.name}
             </MenuItem>
         ));
-    }, [ contestStrategies, category?.allowedStrategyTypes ]);
+    }, [ contestStrategies, selectedCategory?.allowedStrategyTypes ]);
 
     if (strategiesError) { return <div>Error loading strategies...</div>; }
 

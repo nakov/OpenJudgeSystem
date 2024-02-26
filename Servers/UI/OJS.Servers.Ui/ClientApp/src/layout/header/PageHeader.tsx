@@ -4,33 +4,28 @@
 import React, { useEffect } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
 import { RiSunLine } from 'react-icons/ri';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import { useSearch } from '../../hooks/use-search';
 import useTheme from '../../hooks/use-theme';
-import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
+    const { toggleSelectedTheme } = useTheme();
     const { pathname } = useLocation();
-
     const shouldRenderPageHeader = !pathname.includes('administration');
 
     const { actions: { toggleVisibility } } = useSearch();
-    const { mode } = useSelector((state: any) => state.theme);
+    const { mode } = useAppSelector((state) => state.theme);
+    const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
     const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
 
-    const dispatch = useDispatch();
-
-    const { toggleSelectedTheme } = useTheme();
-    const { isLoggedIn } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (isSuccessfullRequest && userData) {

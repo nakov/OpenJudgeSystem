@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prefer-destructuring */
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
@@ -15,6 +14,7 @@ import PaginationControls from '../../components/guidelines/pagination/Paginatio
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
 import { useGetAllContestsQuery } from '../../redux/services/contestsService';
+import { useAppSelector } from '../../redux/store';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { setLayout } from '../shared/set-layout';
 
@@ -22,7 +22,7 @@ import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
     const { themeColors, getColorClassName } = useTheme();
-    const { category, strategy } = useSelector((state: any) => state.contests);
+    const { selectedCategory, selectedStrategy } = useAppSelector((state) => state.contests);
     const [ searchParams, setSearchParams ] = useSearchParams();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -46,15 +46,15 @@ const ContestsPage = () => {
             sortType: 'OrderBy',
             page: selectedPage,
         };
-        if (category) {
-            params.category = category.id;
+        if (selectedCategory) {
+            params.category = selectedCategory.id;
         }
-        if (strategy) {
-            params.strategy = strategy.id;
+        if (selectedStrategy) {
+            params.strategy = selectedStrategy.id;
         }
 
         return params;
-    }, [ category, strategy, selectedPage ]);
+    }, [ selectedCategory, selectedStrategy, selectedPage ]);
 
     const {
         data: allContests,
@@ -106,8 +106,8 @@ const ContestsPage = () => {
                 <div style={{ width: '100%' }}>
                     <div className={`${styles.headingWrapper} ${textColorClassName}`}>
                         <div>
-                            { category
-                                ? category.name
+                            { selectedCategory
+                                ? selectedCategory.name
                                 : 'All Categories'}
                         </div>
                         <ContestStrategies />

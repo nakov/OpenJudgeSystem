@@ -1,6 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
-
 import { toggleTheme } from '../redux/features/themeSlice';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 
 import styles from '../styles/theme-styles.module.scss';
 
@@ -20,8 +19,8 @@ interface IThemeClassName {
 }
 
 const useTheme = () => {
-    const dispatch = useDispatch();
-    const { mode } = useSelector((state: any) => state.theme);
+    const dispatch = useAppDispatch();
+    const { mode } = useAppSelector((state) => state.theme);
 
     const toggleSelectedTheme = () => {
         dispatch(toggleTheme());
@@ -47,6 +46,7 @@ const useTheme = () => {
     };
 
     const colorClassName: IThemeClassName = {
+        // text color class names
         [themeColors.light.textColor]: styles.blackColorClassName,
         [themeColors.dark.textColor]: styles.whiteColorClassName,
         // dark color class names

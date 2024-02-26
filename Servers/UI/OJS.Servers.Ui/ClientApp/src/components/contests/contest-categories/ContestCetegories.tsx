@@ -7,7 +7,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
@@ -19,6 +18,7 @@ import {
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { useAppDispatch } from '../../../redux/store';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestCategories.module.scss';
@@ -31,7 +31,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
 

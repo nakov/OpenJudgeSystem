@@ -3,18 +3,18 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
 import useTheme from '../../../hooks/use-theme';
+import { useAppSelector } from '../../../redux/store';
 
 import styles from './ContestBreadcrumbs.module.scss';
 
 const ContestBreadcrumbs = () => {
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
-    const { breadcrumbItems } = useSelector((state: any) => state.contests);
+    const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
