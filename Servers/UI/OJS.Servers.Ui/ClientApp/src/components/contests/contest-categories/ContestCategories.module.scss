@@ -2,63 +2,73 @@
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
 @use 'src/styles/colors';
+@use 'src/styles/font-weights';
 
 .contestCategoriesWrapper {
   @extend %font-family-roboto;
-  width: 250px;
+
   min-height: 700px;
+  width: 250px;
+
   .contestCategoriesHeader {
-    font-size: variables.$f-size-24;
-    font-weight: 700;
-    display: flex;
     align-items: center;
     cursor: pointer;
+    display: flex;
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-semi-bold;
     margin-bottom: spacings.$sp-32;
     width: 250px;
+
     > div {
       margin-right: spacings.$sp-12;
     }
   }
+
   .contestCategoriesInnerWrapper {
     opacity: 0;
     pointer-events: none;
-    transition: opacity .2s ease-in-out;
+    transition: opacity 0.2s ease-in-out;
   }
+
   .show {
     opacity: 1;
     pointer-events: auto;
   }
+
   .categoryItem {
-    font-size: variables.$f-size-16;
-    font-weight: 500;
-    display: flex;
-    padding: spacings.$sp-12 spacings.$sp-4;
     cursor: pointer;
-    transition: background-color .2s ease-in-out;
+    display: flex;
+    font-size: variables.$f-size-16;
+    font-weight: font-weights.$font-weight-regular;
+    padding: spacings.$sp-12 spacings.$sp-4;
+    transition: background-color 0.2s ease-in-out;
+
     > svg {
       margin-right: spacings.$sp-12;
     }
+
     &:hover {
       background-color: #76a2d2;
     }
   }
+
   .categoryChildren {
     margin-left: 20px;
-    overflow: hidden;
     max-height: 0;
+    overflow: hidden;
     transition: all 0.25s ease-in-out;
 
     &.activeChildren {
-      transition: all 0.25s ease-in-out;
       max-height: 1000px;
+      transition: all 0.25s ease-in-out;
     }
+
     .categoryItem {
       border-bottom: none !important;
     }
   }
+
   .selectedCategory {
     background-color: colors.$primary-blue !important;
   }
 }
-
-

@@ -192,6 +192,11 @@ interface IIndexContestsType {
     numberOfProblems: number;
     practiceResults: number;
     competeResults: number;
+    hasCompeted: boolean;
+    hasPracticed: boolean;
+    competeContestPoints: number;
+    practiceContestPoints: number;
+    maxPoints: number;
 }
 
 interface IParticiapntsInContestView {

@@ -2,6 +2,7 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .homePageWrapper {
   @extend %font-family-roboto;
@@ -11,7 +12,7 @@
   .homePageHeader {
     color: colors.$primary-blue;
     font-size: variables.$f-size-24;
-    font-weight: 700;
+    font-weight: font-weights.$font-weight-semi-bold;
   }
 
   iframe {
@@ -49,11 +50,11 @@
   .homeStatisticCount {
     font-size: variables.$f-size-24;
     margin-top: spacings.$sp-12;
-    font-weight: 800;
+    font-weight: font-weights.$font-weight-bold;
   }
 }
 .homePageStatisticTextWrapper {
   font-size: variables.$f-size-16;
-  font-weight: 400;
+  font-weight: font-weights.$font-weight-light;
   margin-left: spacings.$sp-32;
 }
