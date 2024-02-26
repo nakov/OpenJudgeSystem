@@ -37,7 +37,7 @@ const ContestBreadcrumbs = () => {
     );
 
     if (breadcrumbItems.length === 0) {
-        return <div />;
+        return null;
     }
 
     return (
