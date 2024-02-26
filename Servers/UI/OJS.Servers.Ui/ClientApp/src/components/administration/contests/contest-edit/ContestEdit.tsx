@@ -92,11 +92,13 @@ const ContestEdit = (props:IContestEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             error: updateError,
+            isSuccess: isSuccessfullyUpdating,
         } ] = useUpdateContestMutation();
 
     const [
         createContest, {
             data: createData,
+            isSuccess: isSuccessfullyCreating,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
@@ -111,9 +113,11 @@ const ContestEdit = (props:IContestEditProps) => {
     );
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ updateData, createData ]);
+        const message = getAndSetSuccesfullMessages([
+            { message: updateData, shouldGet: isSuccessfullyUpdating },
+            { message: createData, shouldGet: isSuccessfullyCreating } ]);
         setSuccessMessage(message);
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);

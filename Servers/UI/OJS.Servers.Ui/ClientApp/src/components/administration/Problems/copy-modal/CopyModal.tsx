@@ -1,87 +1,129 @@
+/* eslint-disable import/exports-last */
+/* eslint-disable no-undefined */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typography } from '@mui/material';
 
-import { IContestAutocomplete, IIndexProblemsType, IPagedResultType } from '../../../../common/types';
+import { IContestAutocomplete } from '../../../../common/types';
+import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
-interface ICopyModalProps{
-key? :number;
-showModal: boolean;
-setShowModal: Function;
-getDataQuery: any;
-skipRequest: boolean;
-data: IPagedResultType<IIndexProblemsType>;
-postMutation: any;
-sourceId: number;
-
+export enum AllowedOperations {
+    Copy = 'copy',
+    CopyAll = 'copyAll',
 }
+
+interface ICopyModalProps{
+    index :number;
+    setShowModal: Function;
+    operation: AllowedOperations;
+    sourceId : number;
+    sourceName: string;
+    problemToCopy?: number | null;
+
+    onSuccess: Function;
+}
+
 const CopyModal = (props: ICopyModalProps) => {
-    const { key, showModal, setShowModal, data, skipRequest, getDataQuery, postMutation, sourceId } = props;
-    const [ destination, setDestination ] = useState<IContestAutocomplete| null>(null);
+    const { index, setShowModal, operation, sourceId, sourceName, problemToCopy = null, onSuccess } = props;
+    const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
-    const [ problemsCopyAllData, setContestsAutocomplete ] = useState <Array<IContestAutocomplete>>([]);
-    const { data: autocompleteData, isLoading, error } = getDataQuery(contestSearchString, { skip: skipRequest });
-    const [ post, { data: responseData, isLoading: isPosting, error: postError } ] = postMutation();
-    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
-    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
+    const [ problemGroupId, setNewProblemGroup ] = useState<number | undefined>(undefined);
+    const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
+    const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
 
-    useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ responseData ]);
-        setSuccessMessage(message);
-    }, [ responseData ]);
+    const { data, isLoading } = useGetCopyAllQuery(contestSearchString);
 
-    useEffect(() => {
-        getAndSetExceptionMessage([ error, postError ], setErrorMessages);
-    }, [ error, postError ]);
-
-    useEffect(() => {
-        if (autocompleteData) {
-            setContestsAutocomplete(autocompleteData);
-        }
-    }, [ autocompleteData ]);
-
-    const onCopyAllSelect = (contest: IContestAutocomplete) => {
-        setDestination(contest);
+    const onSelect = (contest: IContestAutocomplete) => {
+        setContestToCopy(contest);
     };
 
-    const onCopyAllChange = debounce((e: any) => {
+    const [ copy,
+        {
+            data: copyData,
+            isSuccess: isSuccesfullyCoppied,
+            isLoading: isCoppying,
+            error: copyError,
+        } ] = useCopyMutation();
+
+    const [ copyAll,
+        {
+            data: copyAllData,
+            isSuccess: isSuccesfullyCoppiedAll,
+            isLoading: isCopyingAll,
+            error: copyAllError,
+        } ] = useCopyAllMutation();
+
+    useEffect(() => {
+        if (data) {
+            setContestsAutocomplete(data);
+        }
+    }, [ data ]);
+
+    useEffect(() => {
+        getAndSetExceptionMessage([ copyError, copyAllError ], setErrorMessages);
+    }, [ copyError, copyAllError ]);
+
+    useEffect(() => {
+        const message = getAndSetSuccesfullMessages([
+            { message: copyData, shouldGet: isSuccesfullyCoppied },
+            { message: copyAllData, shouldGet: isSuccesfullyCoppiedAll } ]);
+
+        onSuccess(message);
+    }, [ copyAllData, copyData, isSuccesfullyCoppied, isSuccesfullyCoppiedAll, onSuccess ]);
+
+    useEffect(() => {
+        if (isSuccesfullyCoppied || isSuccesfullyCoppiedAll) {
+            setShowModal(false);
+        }
+    }, [ isSuccesfullyCoppied, isSuccesfullyCoppiedAll, onSuccess, setShowModal ]);
+
+    useEffect(() => {
+        getAndSetExceptionMessage([ copyError ], setErrorMessages);
+    }, [ copyError ]);
+
+    const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
     }, 300);
 
-    const onCopy = () => {
-        post({ sourceContestId: sourceId, destinationContestId: destination!.id });
+    const onSubmit = () => {
+        if (operation === AllowedOperations.Copy) {
+            copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopy!, problemGroupId });
+        } else {
+            copyAll({ sourceContestId: sourceId, destinationContestId: contestToCopy!.id });
+        }
+        setContestSearchString('');
     };
 
-    if (isPosting) {
+    if (isCoppying || isCopyingAll) {
         return <SpinningLoader />;
     }
 
     return (
         <Modal
-          key={key}
-          open={showModal && data!.totalItemsCount > 0}
-          onClose={() => setShowModal(!showModal)}
+          key={index}
+          open
+          onClose={() => setShowModal(false)}
         >
             <Box sx={modalStyles}>
                 {isLoading
                     ? <SpinningLoader />
                     : (
                         <>
-                            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
                             {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
                             <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
                             <Autocomplete
-                              options={problemsCopyAllData!}
+                              options={contestAutocomplete}
                               renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
-                              onChange={(event, newValue) => onCopyAllSelect(newValue!)}
-                              onInputChange={(event) => onCopyAllChange(event)}
+                              onChange={(event, newValue) => onSelect(newValue!)}
+                              onInputChange={(event) => onInputChange(event)}
                               value={null}
                               isOptionEqualToValue={(option, value) => option.id === value.id}
                               getOptionLabel={(option) => option?.name}
@@ -91,18 +133,28 @@ const CopyModal = (props: ICopyModalProps) => {
                                   </MenuItem>
                               )}
                             />
-                            {destination !== null && (
+                            {
+                          operation === AllowedOperations.Copy && (
+                          <TextField
+                            sx={{ mt: 2 }}
+                            label="Copy To new Problem Group"
+                            type="number"
+                            onChange={(e) => setNewProblemGroup(Number(e.target.value))}
+                          />
+                          )
+}
+                            {contestToCopy !== null && (
                             <Box sx={{ padding: '4rem' }}>
                                 <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                                    {data?.items![0].contest}
+                                    {sourceName}
                                     {' '}
                                     <FaLongArrowAltRight />
-                                    {destination?.name}
+                                    {contestToCopy?.name}
                                 </Typography>
                             </Box>
                             )}
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                                <Button variant="contained" disabled={destination === null} onClick={onCopy}>Copy</Button>
+                                <Button variant="contained" disabled={contestToCopy === null} onClick={() => onSubmit()}>Copy</Button>
                             </Box>
                         </>
                     )}

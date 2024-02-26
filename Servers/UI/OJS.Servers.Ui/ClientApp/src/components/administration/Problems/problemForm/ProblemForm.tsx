@@ -70,8 +70,8 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     const { data: submissionTypes } = useGetForProblemQuery(null);
 
-    const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
-    const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
+    const [ updateProblem, { data: updateData, error: updateError, isSuccess: isSuccessfullyUpdated } ] = useUpdateProblemMutation();
+    const [ createProblem, { data: createData, error: createError, isSuccess: isSuccessfullyCreated } ] = useCreateProblemMutation();
     const {
         data: additionalFilesData,
         isLoading: isDownloadingFiles,
@@ -99,7 +99,16 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     useEffect(() => {
         let successMessage: string | null = '';
-        successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
+        successMessage = getAndSetSuccesfullMessages([
+            {
+                message: updateData,
+                shouldGet: isSuccessfullyUpdated,
+            },
+            {
+                message: createData,
+                shouldGet: isSuccessfullyCreated,
+            },
+        ]);
         setSuccessMessages(successMessage);
     }, [ updateData, createData ]);
 

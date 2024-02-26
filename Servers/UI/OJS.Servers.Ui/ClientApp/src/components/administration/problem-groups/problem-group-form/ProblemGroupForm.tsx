@@ -45,8 +45,23 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
         error: getProblemGroupError,
         isLoading: isGettingProblemGroupData,
     } = useGetProblemGroupByIdQuery(id!, { skip: !isEditMode || !id });
-    const [ updateProblemGroup, { data: updateData, error: updateError, isLoading: isUpdating } ] = useUpdateProblemGroupMutation();
-    const [ createProblemGroup, { data: createData, isLoading: isCreating, error: createError } ] = useCreateProblemGroupMutation();
+    const [
+        updateProblemGroup,
+        {
+            data: updateData,
+            error: updateError,
+            isLoading: isUpdating,
+            isSuccess: isSuccessfullyUpdated,
+        } ] = useUpdateProblemGroupMutation();
+
+    const [
+        createProblemGroup,
+        {
+            data: createData,
+            isLoading: isCreating,
+            error: createError,
+            isSuccess: isSuccessfullyCreated,
+        } ] = useCreateProblemGroupMutation();
 
     useEffect(() => {
         if (contestsAutocompleteData) {
@@ -61,12 +76,21 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
     }, [ problemGroupData ]);
 
     useEffect(() => {
-        const successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
+        const successMessage = getAndSetSuccesfullMessages([
+            {
+                message: updateData,
+                shouldGet: isSuccessfullyUpdated,
+            },
+            {
+                message: createData,
+                shouldGet: isSuccessfullyCreated,
+            },
+        ]);
 
         if (successMessage) {
             setSuccessMessages(successMessage);
         }
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, createError, updateError, getProblemGroupError ], setErrorMessages);

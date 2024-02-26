@@ -3,28 +3,27 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { FaLongArrowAltRight } from 'react-icons/fa';
 import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { Autocomplete, Box, Button, IconButton, MenuItem, Modal, TextField, Tooltip, Typography } from '@mui/material';
-import debounce from 'lodash/debounce';
+import { Box, IconButton, Modal, Tooltip } from '@mui/material';
 
-import { IContestAutocomplete, IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
-import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
-import { useCopyAllMutation, useCopyMutation, useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery, useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { flexCenterObjectStyles, modalStyles } from '../../../../utils/object-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
+import ConfirmDialogWithAdditionalProtection from '../../../guidelines/dialog/dialog-with-additional-protection/ConfirmDialogWithAdditionalProtection';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
+import CopyModal, { AllowedOperations } from '../../Problems/copy-modal/CopyModal';
 import ProblemForm from '../../Problems/problemForm/ProblemForm';
 
 interface IProblemsInContestViewProps {
@@ -51,47 +50,25 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
-    const [ problemsCopyAllData, setContestsAutocomplete ] = useState <Array<IContestAutocomplete>>([]);
 
     const [ showDeleteAllConfirm, setShowDeleteAllConfirm ] = useState<boolean>(false);
-
-    const [ problemToCopy, setProblemToCopy ] = useState<number | undefined>(undefined);
-    const [newProblemGroup, setNewProblemGroup] = useState<number | undefined>(undefined); 
+    const [ showRetestModal, setShowRetestModal ] = useState<boolean>(false);
+    const [ problemToRetestId, setProblemToRetestId ] = useState<number>(0);
     const [ openShowCreateProblemModal, setOpenShowCreateProblemModal ] = useState<boolean>(false);
-    const [ skipContestAutocomplete, setSkipContestAutocomplete ] = useState<boolean>(true);
     const [ showCopyAllModal, setShowCopyAllModal ] = useState<boolean>(false);
     const [ showCopyModal, setShowCopyModal ] = useState<boolean>(false);
-    const [ contestToCopy, setContestToCopy ] = useState<IContestAutocomplete| null>(null);
-    const [ contestSearchString, setContestSearchString ] = useState<string>('');
+    const [ problemToCopy, setProblemToCopy ] = useState<number>(0);
+
     const {
         refetch: retakeData,
         data: problemsData,
         error: getContestError,
     } = useGetContestProblemsQuery({ contestId: Number(contestId), ...queryParams });
 
-    const { data: contestsAutocompleteData } = useGetCopyAllQuery(contestSearchString, { skip: skipContestAutocomplete });
-
-    const [ copyAll,
-        {
-            data: copyAllData,
-            isSuccess: isSuccesfullyCoppiedAll,
-            isLoading: isCoppyingAll,
-            error: copyAllError,
-        } ] =
-        useCopyAllMutation();
-
-    const [ copy,
-        {
-            data: copyData,
-            isSuccess: isSuccesfullyCoppied,
-            isLoading: isCoppying,
-            error: copyError,
-        } ] =
-            useCopyMutation();
-
     const [ retestById,
         {
             data: retestData,
+            isSuccess: isSuccesfullyRetested,
             isLoading: isRetesting,
             error: retestError,
         } ] = useRetestByIdMutation();
@@ -109,13 +86,20 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ deleteAllError, retestError, copyAllError, getContestError, copyError ], setErrorMessages);
-    }, [ deleteAllError, retestError, copyAllError, getContestError, copyError ]);
+        getAndSetExceptionMessage([ deleteAllError, retestError, getContestError ], setErrorMessages);
+        setSuccessMessage(null);
+    }, [ deleteAllError, retestError, getContestError ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ deleteAllData, retestData, copyAllData, copyData ]);
+        const message = getAndSetSuccesfullMessages([
+            {
+                message: deleteAllData,
+                shouldGet: isSuccesfullyDeletedAll,
+            },
+            { message: retestData, shouldGet: isSuccesfullyRetested } ]);
+
         setSuccessMessage(message);
-    }, [ deleteAllData, retestData, copyAllData, copyData ]);
+    }, [ isSuccesfullyRetested, isSuccesfullyDeletedAll ]);
 
     useEffect(() => {
         setQueryParams({ ...queryParams, filter: filtersQueryParams });
@@ -131,43 +115,10 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     useEffect(() => {
-        if (contestsAutocompleteData) {
-            setContestsAutocomplete(contestsAutocompleteData);
-        }
-    }, [ contestsAutocompleteData ]);
-
-    useEffect(() => {
         if (isSuccesfullyDeletedAll) {
             retakeData();
         }
     }, [ isSuccesfullyDeletedAll ]);
-
-    useEffect(() => {
-        if (isSuccesfullyCoppiedAll) {
-            setShowCopyAllModal(false);
-        }
-        if (isSuccesfullyCoppied) {
-            setShowCopyModal(false);
-        }
-    }, [ isSuccesfullyCoppiedAll, isSuccesfullyCoppied ]);
-
-    const onCopyAllChange = debounce((e: any) => {
-        setContestSearchString(e.target.value);
-    }, 300);
-
-    const onCopySelect = (contest: IContestAutocomplete) => {
-        setContestToCopy(contest);
-    };
-
-    const onCopyAll = () => {
-        copyAll({ sourceContestId: contestId, destinationContestId: contestToCopy!.id });
-        setContestSearchString('');
-    };
-
-    const onCopy = () => {
-        copy({ destinationContestId: contestToCopy!.id, problemId: problemToCopy!, newProblemGroup });
-        setContestSearchString('');
-    };
 
     const retestProblem = (currentProblemId: number) => {
         const currentProblem = problemsData?.items?.find((x) => x.id === currentProblemId);
@@ -182,10 +133,18 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         }
     };
 
+    const onCopySuccess = (message: string | null) => {
+        setSuccessMessage(message);
+    };
+
     const openCopyModal = (id: number) => {
-        setProblemToCopy(id);
         setShowCopyModal(true);
-        setSkipContestAutocomplete(false);
+        setProblemToCopy(id);
+    };
+
+    const openRetestModal = (id: number) => {
+        setShowRetestModal(true);
+        setProblemToRetestId(id);
     };
 
     const renderProblemModal = (index: number, isCreate: boolean) => (
@@ -210,67 +169,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         </Modal>
     );
 
-    const renderCopyModal = (
-        index: number,
-        showModal: boolean,
-        setShowModal: Function,
-        onChange: Function,
-        onInputChange: Function,
-        options:IContestAutocomplete[],
-        sourceName: string | undefined,
-        onSubmit: Function,
-        isLoading: boolean,
-        destination: IContestAutocomplete | null,
-        operation:string
-    ) => (
-        <Modal
-          key={index}
-          open={showModal && problemsData!.totalItemsCount > 0}
-          onClose={() => setShowModal(!showModal)}
-        >
-            <Box sx={modalStyles}>
-                {isLoading
-                    ? <SpinningLoader />
-                    : (
-                        <>
-                            <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
-                            <Autocomplete
-                              options={options}
-                              renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
-                              onChange={(event, newValue) => onChange(newValue!)}
-                              onInputChange={(event) => onInputChange(event)}
-                              value={null}
-                              isOptionEqualToValue={(option, value) => option.id === value.id}
-                              getOptionLabel={(option) => option?.name}
-                              renderOption={(properties, option) => (
-                                  <MenuItem {...properties} key={option.id} value={option.id}>
-                                      {option.name}
-                                  </MenuItem>
-                              )}
-                            />
-                            {
-                            operation === 'copy' &&
-                            <TextField sx={{mt:2}} label="Copy To new Problem Group" type="number" onChange={(e) => setNewProblemGroup(Number(e.target.value))} />
-                        }
-                            {destination !== null && (
-                            <Box sx={{ padding: '4rem' }}>
-                                <Typography sx={{ display: 'flex', justifyContent: 'space-around' }}>
-                                    {sourceName}
-                                    {' '}
-                                    <FaLongArrowAltRight />
-                                    {destination?.name}
-                                </Typography>
-                            </Box>
-                            )}
-                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
-                                <Button variant="contained" disabled={destination === null} onClick={() => onSubmit()}>Copy</Button>
-                            </Box>
-                        </>
-                    )}
-            </Box>
-        </Modal>
-    );
-
     const renderDeleteAllModal = (index: number) => (
         <ConfirmDialog
           key={index}
@@ -288,6 +186,23 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         />
     );
 
+    const renderRetestModal = (index: number) => (
+        <ConfirmDialogWithAdditionalProtection
+          key={index}
+          text={`Are you sure you want to retest all submissions for  ${problemsData?.items
+              ? problemsData?.items.find((x) => x.id === problemToRetestId)?.name
+              : ''}`}
+          title="Retest"
+          passWordToMatch="Retest"
+          confirmButtonText="Retest"
+          declineFunction={() => setShowRetestModal(!showRetestModal)}
+          confirmFunction={() => {
+              retestProblem(problemToRetestId);
+              setShowRetestModal(!showRetestModal);
+          }}
+        />
+    );
+
     const renderGridSettings = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
             <CreateButton
@@ -298,7 +213,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             <Tooltip title="Copy All">
                 <IconButton onClick={() => {
                     setShowCopyAllModal(!showCopyAllModal);
-                    setSkipContestAutocomplete(false);
                 }}
                 >
                     <MdCopyAll style={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }} color="primary" />
@@ -312,6 +226,22 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         </div>
     );
 
+    const renderCopyModal = (index: number, operation: AllowedOperations) => (
+        <CopyModal
+          key={index + operation}
+          index={index}
+          operation={operation}
+          setShowModal={operation === AllowedOperations.Copy
+              ? setShowCopyModal
+              : setShowCopyAllModal}
+          sourceId={contestId}
+          sourceName={problemsData?.items
+              ? problemsData?.items[0].contest
+              : ''}
+          problemToCopy={problemToCopy}
+          onSuccess={onCopySuccess}
+        />
+    );
     return (
         <div style={{ marginTop: '2rem' }}>
             {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
@@ -328,7 +258,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                             onEditClick,
                             useDeleteProblemMutation,
                             openCopyModal,
-                            retestProblem,
+                            openRetestModal,
                             retakeData,
                         )
 }
@@ -343,35 +273,15 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                           { showModal: showDeleteAllConfirm, modal: (i) => renderDeleteAllModal(i) },
                           {
                               showModal: showCopyAllModal,
-                              modal: (i) => renderCopyModal(
-                                  i,
-                                  showCopyAllModal,
-                                  setShowCopyAllModal,
-                                  onCopySelect,
-                                  onCopyAllChange,
-                                  problemsCopyAllData,
-                                  problemsData?.items![0].contest,
-                                  onCopyAll,
-                                  isCoppyingAll,
-                                  contestToCopy,
-                                  "copyAll",
-                              ),
+                              modal: (i) => renderCopyModal(i, AllowedOperations.CopyAll),
                           },
                           {
                               showModal: showCopyModal,
-                              modal: (i) => renderCopyModal(
-                                  i,
-                                  showCopyModal,
-                                  setShowCopyModal,
-                                  onCopySelect,
-                                  onCopyAllChange,
-                                  problemsCopyAllData,
-                                problemsData?.items![0].contest,
-                                onCopy,
-                                isCoppying,
-                                contestToCopy,
-                                "copy",
-                              ),
+                              modal: (i) => renderCopyModal(i, AllowedOperations.Copy),
+                          },
+                          {
+                              showModal: showRetestModal,
+                              modal: (i) => renderRetestModal(i),
                           },
                       ]}
                       renderActionButtons={renderGridSettings}

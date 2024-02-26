@@ -30,9 +30,9 @@ const DeleteButton = (props: IDeleteButtonProps) => {
     };
 
     useEffect(() => {
-        const successMessage = getAndSetSuccesfullMessages([ data ]);
+        const successMessage = getAndSetSuccesfullMessages([ { message: data as string, shouldGet: isSuccess } ]);
         setMessage(successMessage);
-    }, [ data ]);
+    }, [ data, isSuccess ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ error ], setErrorMessages);

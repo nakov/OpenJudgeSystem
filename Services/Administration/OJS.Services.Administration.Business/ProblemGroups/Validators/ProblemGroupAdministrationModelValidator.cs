@@ -46,9 +46,8 @@ public class ProblemGroupAdministrationModelValidator : BaseValidator<ProblemGro
 
     private async Task<bool> NotBeActiveOrOnlineContest(ContestCopyProblemsValidationServiceModel model)
     {
-        var isContestActive = await this.contestsActivityService.IsContestActive(model.Id);
         var isOnline = await this.contestsDataService.IsOnlineById(model.Id);
-        if (isContestActive || isOnline)
+        if (isOnline == false)
         {
             return false;
         }
