@@ -2,6 +2,7 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 @use 'src/styles/responsive';
+@use 'src/styles/font-weights';
 
 .problemElement {
   @extend %font-family-lato;
@@ -34,7 +35,7 @@
 .problemCategory {
   color: colors.$text-light-gray-color;
   font-size: variables.$f-size-14;
-  font-weight: bold;
+  font-weight: font-weights.$font-weight-bold;
   margin-left: 10px;
   text-transform: uppercase;
 }
@@ -49,7 +50,7 @@
 .problemCardCountdown {
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-12;
-  font-weight: bold;
+  font-weight: font-weights.$font-weight-bold;
   padding: 10px;
 }
 

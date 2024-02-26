@@ -3,12 +3,12 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import { IContestStrategyFilter, IFilter } from '../../common/contest-types';
+import { ContestBreadcrumb, IContestStrategyFilter, IFilter } from '../../common/contest-types';
 
 interface IContestState {
     category: IFilter | null;
     strategy: IContestStrategyFilter | null;
-    breadcrumbItems: Array<any>;
+    breadcrumbItems: Array<ContestBreadcrumb>;
 }
 
 const initialState: IContestState = {

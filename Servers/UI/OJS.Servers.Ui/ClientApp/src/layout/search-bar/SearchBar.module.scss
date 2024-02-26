@@ -3,6 +3,7 @@
 @use 'src/styles/components';
 @use 'src/styles/fonts';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .searchContainer {
   display: flex;
@@ -74,7 +75,7 @@
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;
-  font-weight: 400;
+  font-weight: font-weights.$font-weight-light;
   line-height: 1.5;
   margin-left: spacings.$sp-4;
   margin-right: spacings.$sp-24;

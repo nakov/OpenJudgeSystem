@@ -2,6 +2,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/font-weights';
 
 .adminAccessibleButton {
   background-color: colors.$bottom-border-color;
@@ -9,7 +10,7 @@
   border-radius: 8px;
   color: colors.$white-color;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: font-weights.$font-weight-semi-bold;
   padding: 10px 16px;
   text-decoration: none;
   text-transform: uppercase;

@@ -2,6 +2,7 @@
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
 @use 'src/styles/responsive';
+@use 'src/styles/font-weights';
 
 .container {
   @extend %font-family-lato;
@@ -73,7 +74,7 @@
     border: 1px solid colors.$light-blue-color;
     border-radius: 4px;
     color: colors.$light-blue-color;
-    font-weight: 400;
+    font-weight: font-weights.$font-weight-light;
     opacity: 0;
     padding: 5px 10px;
     position: absolute;
