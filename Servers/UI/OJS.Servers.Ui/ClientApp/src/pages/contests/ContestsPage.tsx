@@ -21,9 +21,11 @@ import { setLayout } from '../shared/set-layout';
 import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
     const { category, strategy } = useSelector((state: any) => state.contests);
     const [ searchParams, setSearchParams ] = useSearchParams();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     useEffect(() => {
         if (!searchParams.get('page')) {
@@ -67,7 +69,7 @@ const ContestsPage = () => {
     const renderContests = useCallback(() => {
         if (!allContests?.items?.length) {
             return (
-                <Heading type={HeadingType.secondary} style={{ color: themeColors.textColor, marginLeft: 50 }}>
+                <Heading type={HeadingType.secondary} className={`${textColorClassName} ${styles.contestHeading}`}>
                     No contests apply for this filter
                 </Heading>
             );
@@ -102,7 +104,7 @@ const ContestsPage = () => {
             <div className={styles.contestsContainer}>
                 <ContestCategories />
                 <div style={{ width: '100%' }}>
-                    <div className={styles.headingWrapper} style={{ color: themeColors.textColor }}>
+                    <div className={`${styles.headingWrapper} ${textColorClassName}`}>
                         <div>
                             { category
                                 ? category.name

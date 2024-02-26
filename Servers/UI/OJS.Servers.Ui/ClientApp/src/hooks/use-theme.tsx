@@ -28,17 +28,16 @@ const useTheme = () => {
     };
 
     const themeColors: ITheme = {
-        // TBD
         light: {
-            textColor: 'black',
-            baseColor100: '#fdfdfd',
-            baseColor200: '#d7d7d7',
+            textColor: '#14181c',
+            baseColor100: '#6c6c6c',
+            baseColor200: '#9a9a9a',
             baseColor300: '#adadad',
-            baseColor400: '#9a9a9a',
-            baseColor500: '#6c6c6c',
+            baseColor400: '#d7d7d7',
+            baseColor500: '#fdfdfd',
         },
         dark: {
-            textColor: 'white',
+            textColor: '#f3f1f1',
             baseColor100: '#687487',
             baseColor200: '#374151',
             baseColor300: '#2C2F37',

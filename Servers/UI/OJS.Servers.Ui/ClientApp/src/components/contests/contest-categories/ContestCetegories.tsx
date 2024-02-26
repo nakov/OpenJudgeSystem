@@ -33,7 +33,9 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const {
         data: contestCategories,
@@ -176,9 +178,8 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     return (
         <div className={styles.contestCategoriesWrapper}>
             <div
-              className={styles.contestCategoriesHeader}
+              className={`${styles.contestCategoriesHeader} ${textColorClassName}`}
               style={{
-                  color: themeColors.textColor,
                   marginTop: isRenderedOnHomePage
                       ? 0
                       : 32,
@@ -191,13 +192,12 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
                     : <FaAngleUp />}
             </div>
             { categoriesError
-                ? <div style={{ color: themeColors.textColor }}>Error loading categories</div>
+                ? <div className={textColorClassName}>Error loading categories</div>
                 : (
                     <div
-                      className={`${styles.contestCategoriesInnerWrapper} ${isExpanded
+                      className={`${styles.contestCategoriesInnerWrapper} ${textColorClassName} ${isExpanded
                           ? styles.show
                           : ''}`}
-                      style={{ color: themeColors.textColor }}
                     >
                         {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
                     </div>

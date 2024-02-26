@@ -9,12 +9,16 @@ import useTheme from '../../../hooks/use-theme';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
 
+import styles from './ContestStrategies.module.scss';
+
 const ContestStrategies = () => {
     const dispatch = useDispatch();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
     const { category, strategy } = useSelector((state: any) => state.contests);
 
     const [ selectValue, setSelectValue ] = useState('');
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const {
         data: contestStrategies,
@@ -57,12 +61,8 @@ const ContestStrategies = () => {
 
     return (
         <Select
+          className={`${styles.contestStrategiesSelect} ${textColorClassName}`}
           sx={{
-              width: 350,
-              height: 40,
-              color: themeColors.textColor,
-              fontSize: 16,
-              fontWeight: 500,
               '& .MuiSvgIcon-root': { fill: themeColors.textColor },
               '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
           }}

@@ -26,9 +26,13 @@ const iconNames = {
 const ContestCard = (props: IContestCardProps) => {
     const { contest } = props;
 
+    const { themeColors, getColorClassName } = useTheme();
     const { isLoggedIn } =
         useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
+
+    const textColorClass = getColorClassName(themeColors.textColor);
+    const backgroundColorClass = getColorClassName(themeColors.baseColor200);
 
     const {
         id,
@@ -49,8 +53,6 @@ const ContestCard = (props: IContestCardProps) => {
         practiceContestPoints = 0,
         maxPoints = 0,
     } = contest;
-
-    const { themeColors } = useTheme();
 
     const contestStartTime = canBeCompeted
         ? startTime
@@ -138,7 +140,7 @@ const ContestCard = (props: IContestCardProps) => {
     };
 
     return (
-        <div style={{ backgroundColor: themeColors.baseColor200, color: themeColors.textColor }} className={styles.contestCardWrapper}>
+        <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
                 <div className={styles.contestCardTitle}>{name}</div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
