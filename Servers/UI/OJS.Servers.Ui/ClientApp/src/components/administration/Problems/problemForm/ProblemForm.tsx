@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
 
+import { ContestVariation } from '../../../../common/contest-types';
 import { ADDITIONAL_FILES, SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
 import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { PROBLEMS_PATH } from '../../../../common/urls';
@@ -56,6 +57,8 @@ const ProblemForm = (props: IProblemFormProps) => {
         additionalFiles: null,
         tests: null,
         hasAdditionalFiles: false,
+        contestType: ContestVariation.Exercise,
+        problemGroupOrderBy: -1,
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -151,6 +154,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         formData.append('checkerId', currentProblem.checkerId?.toString() || '');
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
         formData.append('showResults', currentProblem.showResults?.toString() || '');
+        formData.append('problemGroupOrderBy', currentProblem.problemGroupOrderBy?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());

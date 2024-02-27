@@ -44,10 +44,6 @@ const AdministrationProblemGroupsPage = () => {
         console.log('Edit button clicked');
     };
 
-    const renderGridSettings = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }} />
-    );
-
     if (isLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
@@ -57,7 +53,6 @@ const AdministrationProblemGroupsPage = () => {
           filterableGridColumnDef={filterableColumns}
           notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
           data={data}
-          renderActionButtons={renderGridSettings}
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}

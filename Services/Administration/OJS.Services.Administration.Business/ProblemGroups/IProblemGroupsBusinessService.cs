@@ -20,5 +20,7 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             ICollection<Problem> problemsToAdd);
 
         Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup);
+
+        Task<ICollection<double>> GetOrderByContestId(int contestId);
     }
 }

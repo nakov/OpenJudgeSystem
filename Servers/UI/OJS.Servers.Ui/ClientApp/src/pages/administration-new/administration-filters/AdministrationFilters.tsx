@@ -29,7 +29,7 @@ interface IAdministrationFilterProps {
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
 }
 
@@ -100,7 +100,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     useEffect(() => {
-        if (selectedFilters.length <= 0) {
+        if (selectedFilters.length <= 0 && setStateAction) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
         }
     }, [ ]);
@@ -149,7 +149,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     useEffect(() => {
         const urlSelectedFilters = mapUrlToFilters();
-        if (urlSelectedFilters.length) {
+        if (urlSelectedFilters.length && setStateAction) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -207,7 +207,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             ...filter,
             availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
         })) ];
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const removeAllFilters = () => {
@@ -215,10 +218,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             searchParams.delete('filter');
             setSearchParams(searchParams);
         }
-        dispatch(setStateAction({
-            key: location,
-            filters: [ defaultFilter ],
-        }));
+        if (setStateAction) {
+            dispatch(setStateAction({
+                key: location,
+                filters: [ defaultFilter ],
+            }));
+        }
     };
 
     const removeSingleFilter = (idx: number) => {
@@ -229,7 +234,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             availableColumns: [ ...filter.availableColumns, { columnName: deletedFilter.column, columnType: deletedFilter.inputType } ],
         })) ];
         newFiltersArray.splice(idx, 1);
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
+
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
             searchParams.delete('filter');
             if (withSearchParams) {
@@ -264,7 +273,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const renderInputField = (idx: number) => {

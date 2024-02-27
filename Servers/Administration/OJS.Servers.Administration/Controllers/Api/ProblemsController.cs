@@ -9,14 +9,14 @@ using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OJS.Services.Administration.Business.Problems.Permissions;
+using OJS.Services.Administration.Models.ProblemResources;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -25,6 +25,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     private readonly IContestsActivityService contestsActivityService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
     private readonly IGridDataService<Problem> problemGridDataService;
+    private readonly IGridDataService<ProblemResource> problemResourceGridDataService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
@@ -33,7 +34,8 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IGridDataService<Problem> problemGridDataService,
         ProblemAdministrationValidator validator,
-        ProblemsDeleteValidator deleteValidator)
+        ProblemsDeleteValidator deleteValidator,
+        IGridDataService<ProblemResource> problemResourceGridDataService)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
@@ -45,6 +47,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         this.contestsActivityService = contestsActivityService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
         this.problemGridDataService = problemGridDataService;
+        this.problemResourceGridDataService = problemResourceGridDataService;
     }
 
     [HttpGet("{contestId:int}")]
@@ -153,4 +156,10 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
 
         return this.Ok("Successfully copied problem");
     }
+
+    [HttpGet("{id:int}")]
+    [ProtectedEntityAction("id", typeof(ProblemIdPermissionsService))]
+    public async Task<IActionResult> GetResources(int id)
+        => this.Ok(await this.problemResourceGridDataService
+            .GetAll<ProblemResourceInListModel>(new PaginationRequestModel(), x => x.ProblemId == id));
 }

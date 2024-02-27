@@ -72,15 +72,13 @@ const AdministrationContestsPage = () => {
     );
 
     const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title={CREATE_NEW_ENTITY}>
-                <IconButton
-                  onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
-        </div>
+        <Tooltip title={CREATE_NEW_ENTITY}>
+            <IconButton
+              onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
+            >
+                <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+            </IconButton>
+        </Tooltip>
     );
 
     if (isLoading) {

@@ -215,6 +215,7 @@ namespace OJS.Services.Administration.Business.Problems
                 .Include(stp => stp.SubmissionTypesInProblems)
                 .ThenInclude(stp => stp.SubmissionType)
                 .Include(p => p.ProblemGroup)
+                .ThenInclude(pg => pg.Contest)
                 .FirstOrDefaultAsync();
             if (problem is null)
             {
@@ -243,13 +244,19 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             problem.MapFrom(model);
+
+            if (model.AdditionalFiles == null)
+            {
+                problem.AdditionalFiles = null;
+            }
+
             problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id)!;
             problem.ProblemGroupId = problem.ProblemGroup.Id;
             problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)
             {
-                problem.ProblemGroup.OrderBy = model.OrderBy;
+                problem.ProblemGroup.OrderBy = model.ProblemGroupOrderBy;
             }
 
             AddSubmissionTypes(problem, model);

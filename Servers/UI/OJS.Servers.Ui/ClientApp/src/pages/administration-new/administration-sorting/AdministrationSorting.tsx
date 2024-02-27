@@ -21,7 +21,7 @@ interface IAdministrationSortProps {
     columns: string[];
     location: string;
     selectedSorters: Array<IAdministrationSorter>;
-    setStateAction: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
@@ -50,7 +50,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     useEffect(() => {
-        if (selectedSorters.length <= 0) {
+        if (selectedSorters.length <= 0 && setStateAction) {
             dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
         }
     }, [ ]);
@@ -92,7 +92,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
     useEffect(() => {
         const urlSelectedSorters = mapUrlToSorters();
-        if (urlSelectedSorters.length) {
+        if (urlSelectedSorters.length && setStateAction) {
             dispatch(setStateAction({ key: location, sorters: urlSelectedSorters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,7 +145,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             ...sorter,
             availableColumns: [ ...availableColumns, sorter.columnName ],
         })) ];
-        dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+        }
     };
 
     const removeAllSorters = () => {
@@ -153,7 +156,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             searchParams.delete('sorting');
             setSearchParams(searchParams);
         }
-        dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
+        }
     };
 
     const removeSingleSorter = (idx: number) => {
@@ -164,7 +170,11 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             availableColumns: [ ...sorter.availableColumns, deletedSorter.columnName ],
         })) ];
         newSortersArray.splice(idx, 1);
-        dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+        }
+
         if (newSortersArray.length === 1) {
             if (searchParams && setSearchParams && withSearchParams) {
                 searchParams.delete('sorting');
@@ -183,7 +193,9 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             return element;
         });
 
-        dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+        }
     };
 
     const renderSorter = (idx: number) => (

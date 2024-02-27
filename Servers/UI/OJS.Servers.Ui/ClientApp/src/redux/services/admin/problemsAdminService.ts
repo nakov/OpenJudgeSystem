@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
+import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel } from '../../../common/types';
 import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -78,6 +78,7 @@ export const problemsAdminService = createApi({
                 body: { destinationContestId, problemId, problemGroupId },
             }),
         }),
+        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, number>({ query: (problemId) => ({ url: `GetResources/${problemId}` }), keepUnusedDataFor: 5 }),
     }),
 });
 
@@ -94,6 +95,7 @@ export const {
     useCreateProblemMutation,
     useDownloadAdditionalFilesQuery,
     useCopyMutation,
+    useGetResourcesQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

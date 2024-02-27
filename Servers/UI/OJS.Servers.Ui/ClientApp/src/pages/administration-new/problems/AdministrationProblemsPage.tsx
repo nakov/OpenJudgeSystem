@@ -110,11 +110,6 @@ const AdministrationProblemsPage = () => {
         />
     );
 
-    const renderGridSettings = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }} />
-
-    );
-
     if (isLoadingProblems) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
@@ -134,7 +129,6 @@ const AdministrationProblemsPage = () => {
                 )
 }
               data={problemsData}
-              renderActionButtons={renderGridSettings}
               error={error}
               queryParams={queryParams}
               setQueryParams={setQueryParams}

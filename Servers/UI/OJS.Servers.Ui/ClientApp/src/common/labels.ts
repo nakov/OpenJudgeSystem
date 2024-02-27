@@ -13,6 +13,7 @@ export const DELETE = 'Delete';
 export const CREATE = 'Create';
 export const CANCEL = 'Cancel';
 export const PROBLEM_GROUP = 'Problem Group';
+export const PROBLEM_RESOURCE = 'Problem Resource';
 
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
