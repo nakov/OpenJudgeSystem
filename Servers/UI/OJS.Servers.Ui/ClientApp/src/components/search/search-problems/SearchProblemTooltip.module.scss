@@ -2,6 +2,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
 @use 'src/styles/responsive';
+@use 'src/styles/font-weights';
 
 .problemText {
   display: block;
@@ -67,7 +68,7 @@
   border-bottom: 1px solid;
   border-bottom-color: colors.$bottom-border-color;
   flex-direction: row;
-  font-weight: 500;
+  font-weight: font-weights.$font-weight-regular;
   justify-content: space-between;
   margin: 10px;
 }

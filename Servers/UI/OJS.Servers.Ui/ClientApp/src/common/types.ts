@@ -38,6 +38,7 @@ interface ISubmissionDetailsState {
 }
 interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     currentPage: number;
+    retestIsSuccess: false;
 }
 
 interface IPublicSubmissionProblem {
@@ -66,6 +67,14 @@ interface ISubmissionResponseModel {
     maxTimeUsed: number;
     testRuns: ITestRunType[];
     processed: boolean;
+}
+
+interface IGetAllContestsOptions {
+    status: string;
+    sortType: string;
+    page: number;
+    category?: number | null;
+    strategy?: number | null;
 }
 
 interface IGetAllAdminParams {
@@ -191,6 +200,11 @@ interface IIndexContestsType {
     numberOfProblems: number;
     practiceResults: number;
     competeResults: number;
+    hasCompeted: boolean;
+    hasPracticed: boolean;
+    competeContestPoints: number;
+    practiceContestPoints: number;
+    maxPoints: number;
 }
 
 interface IParticiapntsInContestView {
@@ -307,7 +321,7 @@ interface IPage {
 
 interface IUserType {
     id: string;
-    username: string;
+    userName: string;
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;

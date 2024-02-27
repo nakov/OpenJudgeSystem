@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/font-weights';
 
 .container {
   align-content: center;
@@ -31,7 +32,7 @@
 
   color: colors.$text-dark-gray-color;
   font-size: 100px;
-  font-weight: bold;
+  font-weight: font-weights.$font-weight-bold;
   text-align: center;
 }
 

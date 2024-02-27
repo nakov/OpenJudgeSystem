@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
@@ -130,14 +128,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         }
 
         setErrorMessages(errors);
-    }, [ isDeleteAllError, isRetestError, isCopyAllError ]);
+    }, [ isDeleteAllError, isRetestError, isCopyAllError, deleteAllError, retestError, copyAllError ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filtersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
     }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {

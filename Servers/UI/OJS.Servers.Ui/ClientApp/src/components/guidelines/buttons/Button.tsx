@@ -53,8 +53,8 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
     isWide?: boolean;
     internalClassName?: string;
     style?: object;
+    isCompete?: boolean;
 }
-
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean;
@@ -104,6 +104,7 @@ const Button = ({
     internalClassName = '',
     imgSrc = '',
     altText = '',
+    isCompete = false,
     style,
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
@@ -120,6 +121,10 @@ const Button = ({
         ? styles.wide
         : '';
 
+    const competeClassName = isCompete
+        ? styles.competeClassName
+        : '';
+
     const buttonClassName =
         isEmpty(internalClassName)
             ? concatClassNames(
@@ -129,6 +134,7 @@ const Button = ({
                 stateClassName,
                 wideClassName,
                 className,
+                competeClassName,
             )
             : internalClassName;
 

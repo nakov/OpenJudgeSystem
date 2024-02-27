@@ -4,38 +4,50 @@
 @use 'src/styles/border-radiuses';
 @use 'src/styles/variables';
 @use 'src/styles/colors';
+@use 'src/styles/font-weights';
 
 .contestCardWrapper {
   @extend %font-family-roboto;
-  display: flex;
+
   align-items: center;
-  justify-content: space-between;
   border-radius: border-radiuses.$br-6;
-  font-size: variables.$f-size-12;
   box-shadow: shadows.$dp-shadow-4;
+  display: flex;
+  font-size: variables.$f-size-12;
+  justify-content: space-between;
   padding: spacings.$sp-16 spacings.$sp-18;
+
   .contestDetailsFragmentsWrapper {
     display: flex;
   }
+
   .contestCardTitle {
     font-size: variables.$f-size-18;
   }
+
   .contestCardSubTitle {
     margin-top: spacings.$sp-4;
   }
+
   .contestDetailsFragment {
+    color: colors.$primary-blue;
     display: flex;
     justify-content: space-between;
-    color: colors.$primary-blue;
     margin-top: spacings.$sp-16;
+
     > i {
       height: 16px;
       width: 16px;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> home-contests-header-hoc-deisgn-style-redesigns
     > div {
       margin-right: spacings.$sp-32;
     }
   }
+<<<<<<< HEAD
   .contestBtnsWrapper {
     .contestBtnWrapper {
       display: flex;
@@ -76,3 +88,22 @@
     }
   }
 }
+=======
+}
+
+.contestBtnsWrapper {
+  .contestBtn {
+    font-size: variables.$f-size-16;
+
+    > div {
+      align-items: center;
+      display: flex;
+      margin-right: spacings.$sp-12;
+    }
+
+    &:nth-child(2) {
+      margin-top: spacings.$sp-12;
+    }
+  }
+}
+>>>>>>> home-contests-header-hoc-deisgn-style-redesigns

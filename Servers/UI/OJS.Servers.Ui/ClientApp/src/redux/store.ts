@@ -1,7 +1,6 @@
+import { TypedUseSelectorHook, useDispatch as useReduxDispatch, useSelector as useReduxSelector } from 'react-redux';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { persistReducer, persistStore } from 'redux-persist';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import storage from 'redux-persist/lib/storage';
 
 // features
@@ -98,6 +97,18 @@ const store = configureStore({
     ]),
 });
 
-export const persistor = persistStore(store);
+const persistor = persistStore(store);
+
+type RootState = ReturnType<typeof store.getState>;
+type AppDispatch = typeof store.dispatch;
+
+const useAppSelector: TypedUseSelectorHook<RootState> = useReduxSelector;
+const useAppDispatch = () => useReduxDispatch<AppDispatch>();
+
+export {
+    persistor,
+    useAppSelector,
+    useAppDispatch,
+};
 
 export default store;

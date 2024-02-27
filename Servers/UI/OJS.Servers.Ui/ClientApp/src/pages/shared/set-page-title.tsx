@@ -17,7 +17,6 @@ const withTitle = (ComponentToWrap: FC, title: string | undefined) => (props: An
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
         <PageWithTitle>
-            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
             <ComponentToWrap {...props} />
         </PageWithTitle>
     );

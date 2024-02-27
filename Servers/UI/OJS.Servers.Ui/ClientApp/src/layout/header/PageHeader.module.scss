@@ -4,6 +4,7 @@
 @use 'src/styles/shadows';
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .header {
   @extend %font-family-roboto;
@@ -22,12 +23,12 @@
   }
   .logoBtn {
     font-size: variables.$f-size-30 !important;
-    font-weight: 800 !important;
+    font-weight: font-weights.$font-weight-bold !important;
     margin-right: spacings.$sp-12;
   }
   .navButton {
     font-size: variables.$f-size-18;
-    font-weight: 500;
+    font-weight: font-weights.$font-weight-regular;
     text-decoration: none;
     padding: 0 spacings.$sp-12;
     &:visited {
@@ -36,6 +37,12 @@
   }
   .authButtons {
     margin-right: spacings.$sp-192;
+  }
+}
+
+.heading {
+  @media only screen and (max-width: 425px) {
+    width: 100px;
   }
 }
 

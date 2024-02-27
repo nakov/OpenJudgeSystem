@@ -1,18 +1,19 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
-
+/* eslint-disable import/group-exports */
 import { createSlice } from '@reduxjs/toolkit';
 
-import { IContestStrategyFilter, IFilter } from '../../common/contest-types';
+import { ContestBreadcrumb, IContestStrategyFilter, IFilter } from '../../common/contest-types';
 
 interface IContestState {
     category: IFilter | null;
+    status: string;
     strategy: IContestStrategyFilter | null;
-    breadcrumbItems: Array<any>;
 }
 
 const initialState: IContestState = {
     category: null,
+    status: 'All',
     strategy: null,
     breadcrumbItems: [],
 };
