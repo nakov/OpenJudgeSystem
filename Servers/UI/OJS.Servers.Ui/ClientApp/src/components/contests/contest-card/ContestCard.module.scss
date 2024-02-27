@@ -39,56 +39,18 @@
       height: 16px;
       width: 16px;
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> home-contests-header-hoc-deisgn-style-redesigns
     > div {
       margin-right: spacings.$sp-32;
     }
   }
-<<<<<<< HEAD
-  .contestBtnsWrapper {
-    .contestBtnWrapper {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-end;
-
-      .contestPoints {
-        font-size: variables.$f-size-16;
-        margin-right: spacings.$sp-8;
-      }
-      &:first-child {
-        margin-bottom: spacings.$sp-12;
-      }
-    }
-
-    button {
-      width: 100px;
-      @extend %font-family-roboto;
-      font-size: variables.$f-size-16;
-      color: colors.$white-color;
-      padding: spacings.$sp-4 0;
-      border-radius: border-radiuses.$br-6;
-      border: none;
-      cursor: pointer;
-      font-weight: 500;
-      align-self: flex-end;
-      background-color: colors.$secondary-green;
-      &:first-child {
-        background-color: colors.$primary-blue;
-      }
-      &:disabled {
-        background-color: transparent;
-        border: #687487 2px solid;
-        color: #687487;
-        cursor: auto;
-      }
-    }
+  .greenColor {
+    color: colors.$secondary-green;
   }
-}
-=======
+  .hasUnderLine {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .contestBtnsWrapper {
@@ -106,4 +68,3 @@
     }
   }
 }
->>>>>>> home-contests-header-hoc-deisgn-style-redesigns

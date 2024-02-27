@@ -14,42 +14,6 @@ interface IContestCardProps {
     contest: IIndexContestsType;
 }
 
-<<<<<<< HEAD
-interface IContestButtonProps {
-    isCompete: boolean;
-    isDisabled: boolean;
-    maxPoints: number;
-    achievedPoints: number;
-    hasParticipated: boolean;
-    onClick: () => void;
-}
-
-const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, maxPoints, achievedPoints, hasParticipated, onClick } = props;
-    return (
-        <div className={styles.contestBtnWrapper}>
-            { hasParticipated && (
-            <div className={styles.contestPoints}>
-                {achievedPoints}
-                /
-                {maxPoints}
-            </div>
-            )}
-            <button
-              type="button"
-              disabled={isDisabled}
-              onClick={onClick}
-            >
-                {isCompete
-                    ? 'COMPETE'
-                    : 'PRACTICE'}
-            </button>
-        </div>
-    );
-};
-
-=======
->>>>>>> home-contests-header-hoc-deisgn-style-redesigns
 const iconNames = {
     time: 'far fa-clock',
     date: 'far fa-calendar-alt',
@@ -62,9 +26,13 @@ const iconNames = {
 const ContestCard = (props: IContestCardProps) => {
     const { contest } = props;
 
+    const { themeColors, getColorClassName } = useTheme();
     const { isLoggedIn } =
         useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
+
+    const textColorClass = getColorClassName(themeColors.textColor);
+    const backgroundColorClass = getColorClassName(themeColors.baseColor200);
 
     const {
         id,
@@ -86,8 +54,6 @@ const ContestCard = (props: IContestCardProps) => {
         maxPoints = 0,
     } = contest;
 
-    const { themeColors } = useTheme();
-
     const contestStartTime = canBeCompeted
         ? startTime
         : practiceStartTime;
@@ -96,7 +62,8 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const remainingTime = moment.duration(moment(contestEndTime).diff(moment(contestStartTime)));
+    const diffTime = moment(contestEndTime).diff(moment(contestStartTime));
+    const remainingTime = moment.duration(diffTime);
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -109,22 +76,14 @@ const ContestCard = (props: IContestCardProps) => {
         // eslint-disable-next-line consistent-return
         return (
             <div
-              className={styles.contestDetailsFragment}
-              style={{
-                  color: isGreenColor
-                      ? '#57B99D'
-                      : '',
-              }}
+              className={`${styles.contestDetailsFragment} ${isGreenColor
+                  ? styles.greenColor
+                  : ''}`}
             >
                 <i className={`${iconName}`} />
-                <div style={{
-                    textDecoration: hasUnderLine
-                        ? 'underline'
-                        : '',
-                    cursor: hasUnderLine
-                        ? 'pointer'
-                        : '',
-                }}
+                <div className={`${hasUnderLine
+                    ? styles.hasUnderLine
+                    : ''}`}
                 >
                     {text}
                 </div>
@@ -146,13 +105,13 @@ const ContestCard = (props: IContestCardProps) => {
         return (
             <div className={styles.contestBtn}>
                 {hasParticipated && (
-                <div>
-                    {participationPoints}
-                    {' '}
-                    /
-                    {' '}
-                    {maxPoints}
-                </div>
+                    <div>
+                        {participationPoints}
+                        {' '}
+                        /
+                        {' '}
+                        {maxPoints}
+                    </div>
                 )}
                 <Button
                   text={btnText}
@@ -174,7 +133,7 @@ const ContestCard = (props: IContestCardProps) => {
     };
 
     return (
-        <div style={{ backgroundColor: themeColors.baseColor200, color: themeColors.textColor }} className={styles.contestCardWrapper}>
+        <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
                 <div className={styles.contestCardTitle}>{name}</div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
