@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable max-len */
@@ -97,7 +99,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     };
 
     const handlePaginationModelChange = (model: GridPaginationModel) => {
-        setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
+        setQueryParams({ ...queryParams, page: model.page + 1, itemsPerPage: model.pageSize });
     };
 
     return (

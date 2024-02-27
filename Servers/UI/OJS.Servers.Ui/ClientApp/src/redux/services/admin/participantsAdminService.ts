@@ -10,11 +10,11 @@ export const participantsAdminService = createApi({
     reducerPath: 'participants',
     baseQuery: getCustomBaseQuery('participants'),
     endpoints: (builder) => ({
-        getByContestId: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetByContestId>({ query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({ url: `/GetByContestId/${contestId}`,
+        getByContestId: builder.query<IPagedResultType<IParticiapntsInContestView>, IGetByContestId>({ query: ({ contestId, filter, page, itemsPerPage, sorting }) => ({ url: `/GetByContestId/${contestId}`,
             params: {
                 filter,
                 page,
-                ItemsPerPage,
+                itemsPerPage,
                 sorting,
             } }) }),
     }),
