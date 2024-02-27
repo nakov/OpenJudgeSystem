@@ -24,10 +24,16 @@ const Breadcrumb = <TValue, >({
     keyFunc = defaultKeyFunc,
     className = '',
 }: IBreadcrumbProps<TValue>) => {
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor300);
+
     const breadcrumbClassName = concatClassNames(
         styles.breadcrumb,
         className,
+        textColorClassName,
+        backgroundColorClassName,
     );
 
     const renderItems = useCallback(
@@ -49,7 +55,6 @@ const Breadcrumb = <TValue, >({
         <Breadcrumbs
           id={id}
           className={breadcrumbClassName}
-          style={{ color: themeColors.textColor, backgroundColor: themeColors.baseColor300 }}
         >
             {renderItems()}
         </Breadcrumbs>

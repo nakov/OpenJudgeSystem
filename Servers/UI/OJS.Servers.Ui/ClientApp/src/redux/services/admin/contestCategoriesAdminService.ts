@@ -15,12 +15,12 @@ export const contestCategoriesAdminService = createApi({
     baseQuery: getCustomBaseQuery('contestCategories'),
     endpoints: (builder) => ({
         getAllAdminContestCategories: builder.query<IPagedResultType<IIndexContestCategoriesType>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: '/getAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),

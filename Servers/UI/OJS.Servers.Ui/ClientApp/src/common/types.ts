@@ -71,20 +71,25 @@ interface ISubmissionResponseModel {
 
 interface IGetAllAdminParams {
     filter?: string;
-    ItemsPerPage: number;
+    itemsPerPage: number;
     page: number;
     sorting?: string;
 }
 
 interface IGetAllContestsOptions {
-    strategy?: string;
+    strategy?: number;
     sortType: string;
     page: number;
     category?: number | null;
 }
 
+interface IAllowedStrategyType {
+    id: number;
+    name: string;
+}
+
 interface IContestCategory {
-    allowedStrategyTypes: any;
+    allowedStrategyTypes: Array<IAllowedStrategyType>;
     children: Array<IContestCategory>;
     id: number;
     name: string;

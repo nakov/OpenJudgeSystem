@@ -15,12 +15,12 @@ export const submissionsForProcessingAdminService = createApi({
     endpoints: (builder) => ({
         getAllSubmissions: builder.query<IPagedResultType<ISubmissionForProcessingAdminGridViewType>, IGetAllAdminParams>({
             query: ({
-                filter, page, ItemsPerPage, sorting }) => ({
+                filter, page, itemsPerPage, sorting }) => ({
                 url: '/getAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 } }) }),
         getById: builder.query<ISubmissionForProcessingAdminGridViewType, { id:number }>({

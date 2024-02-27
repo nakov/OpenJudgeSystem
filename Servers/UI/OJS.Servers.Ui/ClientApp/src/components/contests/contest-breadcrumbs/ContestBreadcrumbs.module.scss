@@ -2,6 +2,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
 @use 'src/styles/shadows';
+@use 'src/styles/colors';
 
 .breadcrumbsWrapper {
   @extend %font-family-roboto;
@@ -15,4 +16,8 @@
   position: absolute;
   top: 105px;
   width: 87%;
+
+  .item {
+    color: colors.$primary-blue;
+  }
 }

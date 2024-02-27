@@ -44,12 +44,12 @@ export const submissionsAdminService = createApi({
     endpoints: (builder) => ({
         getAllSubmissions: builder.query<IPagedResultType<ISubmissionsAdminGridViewType>, IGetAllAdminParams>({
             query: ({
-                filter, page, ItemsPerPage, sorting }) => ({
+                filter, page, itemsPerPage, sorting }) => ({
                 url: '/getAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 } }) }),
         deleteSubmission: builder.mutation({

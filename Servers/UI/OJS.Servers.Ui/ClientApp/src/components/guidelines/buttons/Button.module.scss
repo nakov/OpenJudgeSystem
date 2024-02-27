@@ -111,7 +111,7 @@
     border-color: colors.$secondary-green;
 
     &:hover {
-      box-shadow: 6px 8px 15px 1px rgb(45 189 39 / 20%);
+      box-shadow: 6px 8px 15px 1px rgba(45, 189, 39, 0.2);
     }
   }
 

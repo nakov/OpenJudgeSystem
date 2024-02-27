@@ -10,12 +10,12 @@ export const problemsAdminService = createApi({
     baseQuery: getCustomBaseQuery('problems'),
     endpoints: (builder) => ({
         getAllAdminProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: 'GetAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
@@ -38,12 +38,12 @@ export const problemsAdminService = createApi({
             }),
         }),
         getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
-            query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ contestId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByContestId/${contestId}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),

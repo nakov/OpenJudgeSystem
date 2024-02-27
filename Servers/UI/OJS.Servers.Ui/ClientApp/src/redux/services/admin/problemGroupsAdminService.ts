@@ -12,12 +12,12 @@ export const problemGroupsAdminService = createApi({
     endpoints: (builder) => ({
         getProblemGroupsForProblem: builder.query<any, null>({ query: () => ({ url: '/GetForProblem' }) }),
         getAllAdminProblemGroups: builder.query<IPagedResultType<IProblemGroupsData>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: 'GetAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
