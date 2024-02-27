@@ -1,0 +1,10 @@
+@use 'src/styles/colors';
+@use 'src/styles/font-weights';
+@use 'src/styles/variables';
+
+.contestStrategiesSelect {
+  font-size: variables.$f-size-16;
+  font-weight: font-weights.$font-weight-regular;
+  height: 40px;
+  width: 350px;
+}

@@ -7,7 +7,6 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
@@ -19,6 +18,7 @@ import {
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { useAppDispatch } from '../../../redux/store';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestCategories.module.scss';
@@ -31,9 +31,11 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const {
         data: contestCategories,
@@ -176,9 +178,8 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     return (
         <div className={styles.contestCategoriesWrapper}>
             <div
-              className={styles.contestCategoriesHeader}
+              className={`${styles.contestCategoriesHeader} ${textColorClassName}`}
               style={{
-                  color: themeColors.textColor,
                   marginTop: isRenderedOnHomePage
                       ? 0
                       : 32,
@@ -191,13 +192,12 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
                     : <FaAngleUp />}
             </div>
             { categoriesError
-                ? <div style={{ color: themeColors.textColor }}>Error loading categories</div>
+                ? <div className={textColorClassName}>Error loading categories</div>
                 : (
                     <div
-                      className={`${styles.contestCategoriesInnerWrapper} ${isExpanded
+                      className={`${styles.contestCategoriesInnerWrapper} ${textColorClassName} ${isExpanded
                           ? styles.show
                           : ''}`}
-                      style={{ color: themeColors.textColor }}
                     >
                         {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
                     </div>

@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from 'react-redux';
-
 import { ThemeMode } from '../common/enums';
 import { toggleTheme } from '../redux/features/themeSlice';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 
 import styles from '../styles/theme-styles.module.scss';
 
@@ -21,8 +20,8 @@ interface IThemeClassName {
 }
 
 const useTheme = () => {
-    const dispatch = useDispatch();
-    const { mode } = useSelector((state: any) => state.theme);
+    const dispatch = useAppDispatch();
+    const { mode } = useAppSelector((state) => state.theme);
 
     const isDarkMode = mode === ThemeMode.Dark;
 
@@ -33,15 +32,15 @@ const useTheme = () => {
     const themeColors: ITheme = {
         // TBD
         light: {
-            textColor: 'black',
-            baseColor100: '#fdfdfd',
-            baseColor200: '#d7d7d7',
+            textColor: '#14181c',
+            baseColor100: '#6c6c6c',
+            baseColor200: '#9a9a9a',
             baseColor300: '#adadad',
-            baseColor400: '#9a9a9a',
-            baseColor500: '#6c6c6c',
+            baseColor400: '#d7d7d7',
+            baseColor500: '#fdfdfd',
         },
         dark: {
-            textColor: 'white',
+            textColor: '#f3f1f1',
             baseColor100: '#687487',
             baseColor200: '#374151',
             baseColor300: '#2C2F37',
@@ -51,6 +50,7 @@ const useTheme = () => {
     };
 
     const colorClassName: IThemeClassName = {
+        // text color class names
         [themeColors.light.textColor]: styles.blackColorClassName,
         [themeColors.dark.textColor]: styles.whiteColorClassName,
         // dark color class names

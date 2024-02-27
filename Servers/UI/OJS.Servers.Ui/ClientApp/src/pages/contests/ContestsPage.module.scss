@@ -28,12 +28,17 @@
 
 .headingWrapper {
   @extend %font-family-roboto;
+
+  align-items: center;
+  display: flex;
   font-size: variables.$f-size-24;
   font-weight: font-weights.$font-weight-medium;
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-left: spacings.$sp-64;
   margin-bottom: spacings.$sp-24;
+  margin-left: spacings.$sp-64;
   margin-top: spacings.$sp-24;
+}
+
+.contestHeading {
+  margin-left: 50px;
 }

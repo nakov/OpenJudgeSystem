@@ -19,8 +19,10 @@ interface IHomePageStatistic {
 }
 
 const HomePageStatistic = (props: IHomePageStatistic) => {
-    const { themeColors } = useTheme();
     const { title, iconType, count } = props;
+
+    const { themeColors, getColorClassName } = useTheme();
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     return (
         <div className={styles.homePageStatisticWrapper}>
@@ -31,7 +33,7 @@ const HomePageStatistic = (props: IHomePageStatistic) => {
             />
             <div className={styles.homePageStatisticTextWrapper}>
                 <div style={{ color: '#44a9f8' }}>{title}</div>
-                <div className={styles.homeStatisticCount} style={{ color: themeColors.textColor }}>{count}</div>
+                <div className={`${styles.homeStatisticCount} ${textColorClassName}`}>{count}</div>
             </div>
         </div>
     );
