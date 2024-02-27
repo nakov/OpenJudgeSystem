@@ -1,4 +1,4 @@
-/* eslint-disable-next-line import/no-unused-modules,no-undef */
+
 module.exports = {
     env: {
         browser: true,
@@ -16,6 +16,7 @@ module.exports = {
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
+        project: './tsconfig.json',
         ecmaFeatures: { jsx: true },
         ecmaVersion: 2021,
         sourceType: 'module',
@@ -30,8 +31,11 @@ module.exports = {
         'simple-import-sort',
     ],
     settings: { 'import/resolver': { typescript: {} } },
+    ignorePatterns: [
+        '*.cjs',
+        'vite.config.js'
+    ],
     rules: {
-
         'node/no-missing-import': 0,
         'sort-imports': 0,
         'no-confusing-arrow': 0,
@@ -49,7 +53,9 @@ module.exports = {
         ],
         'no-use-before-define': 'off',
         '@typescript-eslint/no-use-before-define': [ 'error' ],
+        '@typescript-eslint/no-explicit-any': 'warn',
         'react/jsx-filename-extension': [ 'warn', { extensions: [ '.tsx' ] } ],
+        'react/jsx-props-no-spreading': ['warn', { custom: 'ignore' }],
         'import/extensions': [
             'error',
             'ignorePackages',

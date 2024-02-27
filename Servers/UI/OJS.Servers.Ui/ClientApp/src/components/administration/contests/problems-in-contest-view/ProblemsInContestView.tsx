@@ -1,7 +1,3 @@
-/* eslint-disable no-undefined */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
 import { useSelector } from 'react-redux';
@@ -90,14 +86,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             } ]);
 
         setSuccessMessage(message);
-    }, [ isSuccesfullyDeletedAll ]);
+    }, [ deleteAllData, isSuccesfullyDeletedAll ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filtersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortersQueryParams });
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
     }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {
@@ -109,7 +105,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         if (isSuccesfullyDeletedAll) {
             retakeData();
         }
-    }, [ isSuccesfullyDeletedAll ]);
+    }, [ isSuccesfullyDeletedAll, retakeData ]);
 
     const onCopySuccess = (message: string | null) => {
         setSuccessMessage(message);

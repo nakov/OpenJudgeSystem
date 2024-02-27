@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -40,6 +39,15 @@ interface IAdministrationFilter {
     inputType: FilterColumnTypeEnum;
     availableOperators?: IFiltersColumnOperators[];
     availableColumns: IFilterColumn[];
+}
+
+interface IDefaultFilter {
+    column: string;
+    operator: string;
+    value: string;
+    availableOperators: IFiltersColumnOperators[];
+    availableColumns: IFilterColumn[];
+    inputType: FilterColumnTypeEnum;
 }
 
 const DROPDOWN_OPERATORS = {
@@ -90,20 +98,20 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
     const dispatch = useDispatch();
-    const defaultFilter = {
+    const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
         value: '',
         availableOperators: [],
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
-    };
+    }), [ columns ]);
 
     useEffect(() => {
         if (selectedFilters.length <= 0 && setStateAction) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
         }
-    }, [ ]);
+    }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 

@@ -1,5 +1,4 @@
 /* eslint-disable css-modules/no-unused-class */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';

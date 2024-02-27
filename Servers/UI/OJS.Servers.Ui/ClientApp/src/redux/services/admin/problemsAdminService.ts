@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel } from '../../../common/types';
@@ -24,7 +23,7 @@ export const problemsAdminService = createApi({
             keepUnusedDataFor: 10,
         }),
         getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
-        deleteProblem: builder.mutation<string, number >({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+        deleteProblem: builder.mutation<string, number>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
             query: (problem: FormData) => ({
                 url: `/${UPDATE_ENDPOINT}`,
@@ -63,14 +62,17 @@ export const problemsAdminService = createApi({
                 method: 'DELETE',
             }),
         }),
-        copyAll: builder.mutation<string, {sourceContestId:number; destinationContestId:number} >({
+        copyAll: builder.mutation<string, { sourceContestId: number; destinationContestId: number }>({
             query: ({ sourceContestId, destinationContestId }) => ({
                 url: 'CopyAll',
                 method: 'POST',
                 body: { sourceContestId, destinationContestId },
             }),
         }),
-        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({ query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }), keepUnusedDataFor: 5 }),
+        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({
+            query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }),
+            keepUnusedDataFor: 5,
+        }),
         copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | undefined} >({
             query: ({ destinationContestId, problemId, problemGroupId }) => ({
                 url: 'Copy',
@@ -78,7 +80,10 @@ export const problemsAdminService = createApi({
                 body: { destinationContestId, problemId, problemGroupId },
             }),
         }),
-        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, number>({ query: (problemId) => ({ url: `GetResources/${problemId}` }), keepUnusedDataFor: 5 }),
+        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, number>({
+            query: (problemId) => ({ url: `GetResources/${problemId}` }),
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 

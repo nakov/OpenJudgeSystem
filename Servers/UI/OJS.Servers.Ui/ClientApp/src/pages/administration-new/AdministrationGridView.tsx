@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -10,13 +9,13 @@ import React, { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
-import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
+import { DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 import AdministrationFilters, { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps } from './administration-filters/AdministrationFilters';
@@ -37,9 +36,8 @@ interface IAdministrationGridViewProps<T> {
    modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
 
    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
-
    queryParams?: IGetAllAdminParams;
-   setQueryParams?: Function;
+   setQueryParams?: (params: IGetAllAdminParams) => void;
 
    selectedFilters: Array<IAdministrationFilter>;
    selectedSorters: Array<IAdministrationSorter>;
@@ -118,6 +116,12 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         );
     };
 
+    const handlePaginationModelChange = (model: GridPaginationModel) => {
+        if (setQueryParams) {
+            setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
+        }
+    };
+
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div style={{ height: '745px' }}>
@@ -131,17 +135,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
-                          onPageChange={(e) => {
-                              setQueryParams?.({ ...queryParams, page: e + 1 });
-                          }}
-                          rowsPerPageOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
-                          onPageSizeChange={(itemsPerRow: number) => {
-                              setQueryParams?.({ ...queryParams, ItemsPerPage: itemsPerRow });
-                          }}
-                          pageSize={queryParams
-                              ? queryParams.ItemsPerPage
-                              : DEFAULT_ITEMS_PER_PAGE}
-                          disableSelectionOnClick
+                          onPaginationModelChange={handlePaginationModelChange}
+                          pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {
