@@ -25,6 +25,7 @@ import {
     AdministrationSubmissionsForProcessingPage,
 } from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessingPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
+import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
 import ContestsPage from '../../pages/contests/ContestsPage';
 import HomePage from '../../pages/home/HomePage';
@@ -84,8 +85,12 @@ const routes = [
         Element: ContestsPage,
     },
     {
-        path: '/contests/:contestId/:participationType',
+        path: '/contests/:contestId',
         Element: ContestDetailsPage,
+    },
+    {
+        path: '/contests/:contestId/:participationType',
+        Element: ContestPage,
     },
     {
         path: '/contests/:contestId/:participationType/results/:resultType',
