@@ -1,11 +1,11 @@
 @use 'src/styles/colors';
 
 .blackColorClassName {
-  color: colors.$text-dark-gray-color !important;
+  color: colors.$light-text-color !important;
 }
 
 .whiteColorClassName {
-  color: colors.$text-light-gray-color !important;
+  color: colors.$dark-text-color !important;
 }
 
 // dark colors background
