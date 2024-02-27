@@ -3,6 +3,7 @@ import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 
 import ContestCetegories from '../../components/contests/contest-categories/ContestCetegories';
+import IconSize from '../../components/guidelines/icons/common/icon-sizes';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
@@ -27,7 +28,7 @@ const HomePageStatistic = (props: IHomePageStatistic) => {
     return (
         <div className={styles.homePageStatisticWrapper}>
             <Icon
-              size={50}
+              size={IconSize.ExtraLarge}
               Component={iconType}
               color={themeColors.baseColor100}
             />
