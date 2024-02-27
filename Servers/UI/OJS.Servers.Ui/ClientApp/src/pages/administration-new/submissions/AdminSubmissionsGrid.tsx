@@ -101,14 +101,19 @@ export const AdministrationSubmissionsPage = () => {
                             <RefreshIcon size={IconSize.Large} />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Download">
-                        <IconButton
-                          disabled={!params.row.isBinaryFile}
-                          onClick={() => startDownload(Number(params.row.id))}
-                        >
-                            <DownloadIcon size={IconSize.Large} />
-                        </IconButton>
-                    </Tooltip>
+                    {
+                        params.row.isBinaryFile
+                            ? (
+                                <Tooltip title="Download">
+                                    <IconButton
+                                      onClick={() => startDownload(Number(params.row.id))}
+                                    >
+                                        <DownloadIcon size={IconSize.Large} />
+                                    </IconButton>
+                                </Tooltip>
+                            )
+                            : null
+                    }
                     <DeleteButton
                       id={Number(params.row.id)}
                       name="Submission"
@@ -120,12 +125,6 @@ export const AdministrationSubmissionsPage = () => {
         },
     ];
 
-    const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            Grid actions here
-        </div>
-    );
-
     return (
         isLoading || isFetching
             ? <SpinningLoader />
@@ -135,7 +134,7 @@ export const AdministrationSubmissionsPage = () => {
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
-                  renderActionButtons={renderGridActions}
+                  renderActionButtons={() => null}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   selectedFilters={selectedFilters || []}

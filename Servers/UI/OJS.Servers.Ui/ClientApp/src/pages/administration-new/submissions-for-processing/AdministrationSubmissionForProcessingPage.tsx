@@ -63,12 +63,6 @@ export const AdministrationSubmissionsForProcessingPage = () => {
         },
     ];
 
-    const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            Grid actions here
-        </div>
-    );
-
     return (
         isLoading || isFetching
             ? <SpinningLoader />
@@ -78,7 +72,7 @@ export const AdministrationSubmissionsForProcessingPage = () => {
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
-                  renderActionButtons={renderGridActions}
+                  renderActionButtons={() => null}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   selectedFilters={selectedFilters || []}

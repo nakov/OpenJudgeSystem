@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls';
 import { preciseFormatDate } from '../../../utils/dates';
 
 const dataColumns: GridColDef[] = [
@@ -59,7 +59,7 @@ const dataColumns: GridColDef[] = [
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Link
-              to={`/${NEW_ADMINISTRATION_PATH}/{PROBLEMS_PATH}/${Number(params.row?.problem?.id)}`}
+              to={`${PROBLEMS_PATH}/${Number(params.row?.problem?.id)}`}
             >
                 {params.row?.problem?.name}
             </Link>
