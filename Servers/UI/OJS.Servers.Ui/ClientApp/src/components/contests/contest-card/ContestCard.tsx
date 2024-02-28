@@ -1,15 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import moment from 'moment';
 
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { COMPETE_STRING, PRACTICE_STRING } from '../../../utils/constants';
 import {
-    calculateTimeBetweenTwoDates,
-    convertTimeIntervalToHoursMinutesAndSeconds,
+    calculateTimeUntil,
     preciseFormatDate,
 } from '../../../utils/dates';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
@@ -68,8 +66,7 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const diffTime = calculateTimeBetweenTwoDates(new Date(contestEndTime), new Date(contestStartTime));
-    const remainingTime = moment.duration(diffTime);
+    const remainingDuration = calculateTimeUntil(new Date(contestEndTime));
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -149,9 +146,9 @@ const ContestCard = (props: IContestCardProps) => {
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
                     {renderContestDetailsFragment(iconNames.practiceResults, `practice results: ${practiceResults}`, false, true)}
                     {renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`, true, true)}
-                    {canBeCompeted && remainingTime.asSeconds() > 0 && renderContestDetailsFragment(
+                    {canBeCompeted && remainingDuration.seconds! > 0 && renderContestDetailsFragment(
                         iconNames.remainingTime,
-                        `remaining time: ${convertTimeIntervalToHoursMinutesAndSeconds(remainingTime)}`,
+                        `remaining time: ${remainingDuration.hours}:${remainingDuration.minutes}:${remainingDuration.seconds}`,
                         false,
                         true,
                     )}
