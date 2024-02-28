@@ -11,7 +11,9 @@ export const CHECKER = 'Checker';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
+export const CANCEL = 'Cancel';
 export const PROBLEM_GROUP = 'Problem Group';
+export const PROBLEM_RESOURCE = 'Problem Resource';
 
 export const CREATE_NEW_RECORD = 'Create new record';
 

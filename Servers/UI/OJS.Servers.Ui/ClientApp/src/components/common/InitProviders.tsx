@@ -41,7 +41,6 @@ const InitProviders = ({
                 }
 
                 return (
-                    // eslint-disable-next-line react/jsx-props-no-spreading
                     <Provider {...props}>
                         {current}
                     </Provider>

@@ -6,6 +6,7 @@ import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
+import { ContestVariation } from './contest-types';
 import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
@@ -38,6 +39,7 @@ interface ISubmissionDetailsState {
 }
 interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     currentPage: number;
+    retestIsSuccess: false;
 }
 
 interface IPublicSubmissionProblem {
@@ -88,6 +90,16 @@ interface IProblemResourceType {
     name: string;
     link: string;
     type: number;
+}
+
+interface IProblemResouceInLinstModel {
+    id: number;
+    name: string;
+    link: string;
+    type: number;
+    fileExtension: string;
+    orderBy: number;
+    isDeleted: boolean;
 }
 
 interface IProblemType {
@@ -202,7 +214,7 @@ interface IGetContestsForIndexResponseType {
 interface IIndexProblemsType {
     id: number;
     name: string;
-    group: number;
+    problemGroupId: number;
     groupType: string;
     contest: string;
     practiceTestsCount: number;
@@ -295,7 +307,7 @@ interface IPage {
 
 interface IUserType {
     id: string;
-    username: string;
+    userName: string;
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;
@@ -317,10 +329,11 @@ interface IProblemAdministration {
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
+    contestType: ContestVariation;
     additionalFiles: File | null;
     tests: File | null;
     hasAdditionalFiles: boolean;
-
+    problemGroupOrderBy: number;
 }
 
 interface IUserRoleType {
@@ -503,4 +516,5 @@ export type {
     IProblemGroupsData,
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
+    IProblemResouceInLinstModel,
 };

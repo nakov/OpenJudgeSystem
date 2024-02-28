@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable max-len */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -44,11 +43,11 @@ const AdministrationContestsPage = () => {
     const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filterParams ?? '' });
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
     }, [ filterParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
     const renderEditContestModal = (index: number) => (
@@ -72,15 +71,13 @@ const AdministrationContestsPage = () => {
     );
 
     const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title={CREATE_NEW_ENTITY}>
-                <IconButton
-                  onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
-        </div>
+        <Tooltip title={CREATE_NEW_ENTITY}>
+            <IconButton
+              onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
+            >
+                <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+            </IconButton>
+        </Tooltip>
     );
 
     if (isLoading) {

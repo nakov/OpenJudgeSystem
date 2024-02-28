@@ -40,6 +40,8 @@ export const problemGroupsAdminService = createApi({
                 body: problemGroup,
             }),
         }),
+        getIdsByContestId:
+        builder.query<Array<number>, number>({ query: (id) => ({ url: `/ByContestId/${id}` }) }),
 
     }),
 });
@@ -52,5 +54,6 @@ export const {
     useGetProblemGroupByIdQuery,
     useUpdateProblemGroupMutation,
     useCreateProblemGroupMutation,
+    useGetIdsByContestIdQuery,
 } = problemGroupsAdminService;
 export default problemGroupsAdminService;

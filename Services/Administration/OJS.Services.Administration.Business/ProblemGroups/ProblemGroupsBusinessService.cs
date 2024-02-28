@@ -158,41 +158,13 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             await this.problemsOrderableService.ReevaluateOrder(problems);
         }
 
-        private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
-        {
-            var currentNewProblemGroup = new ProblemGroup
-            {
-                ContestId = contestId,
-                OrderBy = problemGroup.OrderBy,
-                Type = problemGroup.Type,
-            };
+        public async Task<ICollection<double>> GetOrderByContestId(int contestId)
+            => await this.problemGroupsData.GetAllByContest(contestId)
+                .Select(x => x.OrderBy)
+                .OrderBy(x => x)
+                .ToListAsync();
 
-            await this.problemGroupsData.Add(currentNewProblemGroup);
-            await this.problemGroupsData.SaveChanges();
-
-            var problemsToAdd = new List<Problem>();
-
-            if (problemGroup.Problems.Count > 0)
-            {
-               await problemGroup.Problems
-                    .Where(p => !p.IsDeleted)
-                    .ToList()
-                    .ForEachSequential(async problem =>
-                       await this.GenerateNewProblem(problem, currentNewProblemGroup, problemsToAdd));
-
-               currentNewProblemGroup.Problems = problemsToAdd;
-
-               await this.submissionTypesInProblemsData.SaveChanges();
-               await this.problemsData.SaveChanges();
-
-               this.problemGroupsData.Update(currentNewProblemGroup);
-               await this.problemGroupsData.SaveChanges();
-
-               await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
-            }
-        }
-
-        private async Task GenerateNewProblem(
+        public async Task GenerateNewProblem(
             Problem problem,
             ProblemGroup currentNewProblemGroup,
             ICollection<Problem> problemsToAdd)
@@ -239,6 +211,40 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             problemsToAdd.Add(currentNewProblem);
 
             this.problemsData.Update(currentNewProblem);
+        }
+
+        private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
+        {
+            var currentNewProblemGroup = new ProblemGroup
+            {
+                ContestId = contestId,
+                OrderBy = problemGroup.OrderBy,
+                Type = problemGroup.Type,
+            };
+
+            await this.problemGroupsData.Add(currentNewProblemGroup);
+            await this.problemGroupsData.SaveChanges();
+
+            var problemsToAdd = new List<Problem>();
+
+            if (problemGroup.Problems.Count > 0)
+            {
+               await problemGroup.Problems
+                    .Where(p => !p.IsDeleted)
+                    .ToList()
+                    .ForEachSequential(async problem =>
+                       await this.GenerateNewProblem(problem, currentNewProblemGroup, problemsToAdd));
+
+               currentNewProblemGroup.Problems = problemsToAdd;
+
+               await this.submissionTypesInProblemsData.SaveChanges();
+               await this.problemsData.SaveChanges();
+
+               this.problemGroupsData.Update(currentNewProblemGroup);
+               await this.problemGroupsData.SaveChanges();
+
+               await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
+            }
         }
 
         private async Task GenerateNewTests(

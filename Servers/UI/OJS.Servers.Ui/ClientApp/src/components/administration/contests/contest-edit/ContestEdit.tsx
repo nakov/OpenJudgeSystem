@@ -2,7 +2,6 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-undefined */
 /* eslint-disable prefer-destructuring */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -92,11 +91,13 @@ const ContestEdit = (props:IContestEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             error: updateError,
+            isSuccess: isSuccessfullyUpdating,
         } ] = useUpdateContestMutation();
 
     const [
         createContest, {
             data: createData,
+            isSuccess: isSuccessfullyCreating,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
@@ -111,9 +112,11 @@ const ContestEdit = (props:IContestEditProps) => {
     );
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ updateData, createData ]);
+        const message = getAndSetSuccesfullMessages([
+            { message: updateData, shouldGet: isSuccessfullyUpdating },
+            { message: createData, shouldGet: isSuccessfullyCreating } ]);
         setSuccessMessage(message);
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);

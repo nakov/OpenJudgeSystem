@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -29,7 +28,7 @@ interface IAdministrationFilterProps {
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
 }
 
@@ -40,6 +39,15 @@ interface IAdministrationFilter {
     inputType: FilterColumnTypeEnum;
     availableOperators?: IFiltersColumnOperators[];
     availableColumns: IFilterColumn[];
+}
+
+interface IDefaultFilter {
+    column: string;
+    operator: string;
+    value: string;
+    availableOperators: IFiltersColumnOperators[];
+    availableColumns: IFilterColumn[];
+    inputType: FilterColumnTypeEnum;
 }
 
 const DROPDOWN_OPERATORS = {
@@ -90,20 +98,20 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
     const dispatch = useDispatch();
-    const defaultFilter = {
+    const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
         value: '',
         availableOperators: [],
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
-    };
+    }), [ columns ]);
 
     useEffect(() => {
-        if (selectedFilters.length <= 0) {
+        if (selectedFilters.length <= 0 && setStateAction) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
         }
-    }, [ ]);
+    }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -149,7 +157,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     useEffect(() => {
         const urlSelectedFilters = mapUrlToFilters();
-        if (urlSelectedFilters.length) {
+        if (urlSelectedFilters.length && setStateAction) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -207,7 +215,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             ...filter,
             availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
         })) ];
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const removeAllFilters = () => {
@@ -215,10 +226,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             searchParams.delete('filter');
             setSearchParams(searchParams);
         }
-        dispatch(setStateAction({
-            key: location,
-            filters: [ defaultFilter ],
-        }));
+        if (setStateAction) {
+            dispatch(setStateAction({
+                key: location,
+                filters: [ defaultFilter ],
+            }));
+        }
     };
 
     const removeSingleFilter = (idx: number) => {
@@ -229,7 +242,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             availableColumns: [ ...filter.availableColumns, { columnName: deletedFilter.column, columnType: deletedFilter.inputType } ],
         })) ];
         newFiltersArray.splice(idx, 1);
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
+
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
             searchParams.delete('filter');
             if (withSearchParams) {
@@ -264,7 +281,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const renderInputField = (idx: number) => {

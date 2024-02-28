@@ -2,12 +2,11 @@
 /* eslint-disable default-case */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undefined */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
 
+import { ContestVariation } from '../../../../common/contest-types';
 import { ADDITIONAL_FILES, SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
 import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { PROBLEMS_PATH } from '../../../../common/urls';
@@ -56,10 +55,12 @@ const ProblemForm = (props: IProblemFormProps) => {
         additionalFiles: null,
         tests: null,
         hasAdditionalFiles: false,
+        contestType: ContestVariation.Exercise,
+        problemGroupOrderBy: -1,
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string>('');
+    const [ successMessages, setSuccessMessages ] = useState<string | null>(null);
     const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
 
     const {
@@ -70,8 +71,8 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     const { data: submissionTypes } = useGetForProblemQuery(null);
 
-    const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
-    const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
+    const [ updateProblem, { data: updateData, error: updateError, isSuccess: isSuccessfullyUpdated } ] = useUpdateProblemMutation();
+    const [ createProblem, { data: createData, error: createError, isSuccess: isSuccessfullyCreated } ] = useCreateProblemMutation();
     const {
         data: additionalFilesData,
         isLoading: isDownloadingFiles,
@@ -84,7 +85,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
         }
-    }, [ submissionTypes ]);
+    }, [ problemData?.submissionTypes, submissionTypes ]);
 
     useEffect(() => {
         if (problemData) {
@@ -98,13 +99,19 @@ const ProblemForm = (props: IProblemFormProps) => {
     }, [ updateError, createError, gettingDataError, downloadAdditionalFilesError ]);
 
     useEffect(() => {
-        let successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
-        if (isSuccesfullyDownloaded) {
-            successMessage = 'Additional files succesfully downloaded.';
-        }
-
-        successMessage && setSuccessMessages(successMessage);
-    }, [ updateData, createData, isSuccesfullyDownloaded ]);
+        let successMessage: string | null = '';
+        successMessage = getAndSetSuccesfullMessages([
+            {
+                message: updateData,
+                shouldGet: isSuccessfullyUpdated,
+            },
+            {
+                message: createData,
+                shouldGet: isSuccessfullyCreated,
+            },
+        ]);
+        setSuccessMessages(successMessage);
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated ]);
 
     useEffect(() => {
         (isSuccesfullyDownloaded || isDownloadAdditionalFilesError) && setSkipDownload(false);
@@ -145,6 +152,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         formData.append('checkerId', currentProblem.checkerId?.toString() || '');
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
         formData.append('showResults', currentProblem.showResults?.toString() || '');
+        formData.append('problemGroupOrderBy', currentProblem.problemGroupOrderBy?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
