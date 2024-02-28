@@ -278,7 +278,17 @@ finally:
                 return result;
             }
 
-            return await this.RunTests(string.Empty, executor, checker, executionContext, result);
+            try
+            {
+                return await this.RunTests(string.Empty, executor, checker, executionContext, result);
+            }
+            catch (Exception e)
+            {
+                result.IsCompiledSuccessfully = false;
+                result.CompilerComment = e.Message;
+
+                return result;
+            }
         }
 
         protected override async Task<IExecutionResult<TestResult>> RunTests(
@@ -327,14 +337,28 @@ finally:
         }
 
         private static Dictionary<string, int> MapTitlesToTestId(IEnumerable<TestContext> tests, IEnumerable<string> titles)
-            => titles.ToDictionary(
-                title => title,
-                title => tests.FirstOrDefault(t => t
-                    .Input
-                    .Contains(title
-                        .Replace(MochaTestsFullTitlePrefix, string.Empty)
-                        .Trim()))?
-                    .Id ?? 0);
+        {
+            try
+            {
+                return titles.ToDictionary(
+                    title => title,
+                    title => tests.FirstOrDefault(t => t
+                            .Input
+                            .Contains(title
+                                .Replace(MochaTestsFullTitlePrefix, string.Empty)
+                                .Trim()))?
+                        .Id ?? 0);
+            }
+            catch (ArgumentException exception)
+            {
+                var keyStr = "Key:";
+                var testName = exception.Message
+                    .Substring(exception.Message.IndexOf(keyStr, StringComparison.Ordinal) + keyStr.Length)
+                    .Trim();
+
+                throw new Exception($"Duplicate naming of tests: {testName}");
+            }
+        }
 
         private static void ValidateAllowedFileExtension<TInput>(IExecutionContext<TInput> executionContext)
         {
