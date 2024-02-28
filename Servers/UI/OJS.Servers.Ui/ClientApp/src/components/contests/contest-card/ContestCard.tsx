@@ -7,6 +7,7 @@ import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { COMPETE_STRING, PRACTICE_STRING } from '../../../utils/constants';
 import {
+    calculatedTimeFormatted,
     calculateTimeUntil,
     preciseFormatDate,
 } from '../../../utils/dates';
@@ -67,6 +68,7 @@ const ContestCard = (props: IContestCardProps) => {
         : practiceEndTime;
 
     const remainingDuration = calculateTimeUntil(new Date(contestEndTime));
+    const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -146,12 +148,16 @@ const ContestCard = (props: IContestCardProps) => {
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
                     {renderContestDetailsFragment(iconNames.practiceResults, `practice results: ${practiceResults}`, false, true)}
                     {renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`, true, true)}
-                    {canBeCompeted && remainingDuration.seconds! > 0 && renderContestDetailsFragment(
-                        iconNames.remainingTime,
-                        `remaining time: ${remainingDuration.hours}:${remainingDuration.minutes}:${remainingDuration.seconds}`,
-                        false,
-                        true,
-                    )}
+                    {canBeCompeted &&
+                        contestEndTime &&
+                        remainingDuration &&
+                        remainingDuration.seconds() > 0 &&
+                        renderContestDetailsFragment(
+                            iconNames.remainingTime,
+                            `remaining time: ${remainingTimeFormatted}`,
+                            false,
+                            true,
+                        )}
                 </div>
             </div>
             <div className={styles.contestBtnsWrapper}>

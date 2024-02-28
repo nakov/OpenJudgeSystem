@@ -7,13 +7,12 @@ const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
 
+const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
+
 const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
-const calculateTimeUntil = (date: Date) => intervalToDuration({
-    start: new Date(),
-    end: date,
-});
+const calculateTimeUntil = (date: Date) => moment.duration(moment(date).diff(Date.now()));
 
 const preciseFormatDate = (
     date: Date,
@@ -134,6 +133,7 @@ export default {
     convertToTwoDigitValues,
     getCurrentTimeInUtc: getCurrentTimeInUTC,
     convertTimeIntervalToHoursMinutesAndSeconds,
+    calculatedTimeFormatted,
 };
 
 export {
@@ -147,4 +147,5 @@ export {
     getDateWithFormat,
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
+    calculatedTimeFormatted,
 };
