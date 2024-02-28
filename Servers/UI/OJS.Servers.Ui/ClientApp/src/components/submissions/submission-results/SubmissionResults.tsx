@@ -32,7 +32,6 @@ const SubmissionResults = ({ testRuns, isCompiledSuccessfully, compilerComment }
               orientation={Orientation.vertical}
               itemFunc={renderTestRunsDetails}
               type={ListType.normal}
-              fullWidth
             />
         </>
     );

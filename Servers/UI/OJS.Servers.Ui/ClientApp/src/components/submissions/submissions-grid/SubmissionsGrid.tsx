@@ -200,7 +200,6 @@ const SubmissionsGrid = () => {
                   values={publicSubmissions}
                   itemFunc={renderSubmissionRow}
                   itemClassName={styles.submissionRow}
-                  fullWidth
                 />
             );
         },

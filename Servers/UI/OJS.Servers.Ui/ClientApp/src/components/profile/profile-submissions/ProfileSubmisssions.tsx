@@ -185,7 +185,6 @@ const ProfileSubmissions = () => {
                         values={currentSubmissions}
                         itemFunc={renderSubmissionRow}
                         itemClassName={styles.submissionRow}
-                        fullWidth
                     />
                 </>
             );
