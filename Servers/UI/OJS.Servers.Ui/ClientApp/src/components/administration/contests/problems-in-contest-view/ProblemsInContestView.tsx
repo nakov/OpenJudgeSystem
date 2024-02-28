@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { Box, IconButton, Modal, Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
@@ -12,12 +12,13 @@ import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../re
 import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { flexCenterObjectStyles, modalStyles } from '../../../../utils/object-utils';
+import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
+import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import CopyModal, { AllowedOperations } from '../../Problems/copy-modal/CopyModal';
 import ProblemForm from '../../Problems/problemForm/ProblemForm';
 import ProblemRetest from '../../Problems/retest/ProblemRetest';
@@ -122,8 +123,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     };
 
     const renderProblemModal = (index: number, isCreate: boolean) => (
-        <Modal
-          key={index}
+        <AdministrationModal
+          index={index}
           open={isCreate
               ? openShowCreateProblemModal
               : openEditModal}
@@ -131,16 +132,14 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
               : setOpenEditModal(false)}
         >
-            <Box sx={modalStyles}>
-                <ProblemForm
-                  contestId={Number(contestId)}
-                  problemId={isCreate
-                      ? null
-                      : problemId}
-                  isEditMode={!isCreate}
-                />
-            </Box>
-        </Modal>
+            <ProblemForm
+              contestId={Number(contestId)}
+              problemId={isCreate
+                  ? null
+                  : problemId}
+              isEditMode={!isCreate}
+            />
+        </AdministrationModal>
     );
 
     const renderDeleteAllModal = (index: number) => (

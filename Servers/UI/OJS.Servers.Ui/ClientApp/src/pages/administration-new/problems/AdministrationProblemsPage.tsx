@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
-import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import CopyModal, { AllowedOperations } from '../../../components/administration/Problems/copy-modal/CopyModal';
 import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
 import ProblemRetest from '../../../components/administration/Problems/retest/ProblemRetest';
@@ -12,7 +12,7 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
 import { useDeleteProblemMutation, useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderAlert } from '../../../utils/render-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -82,15 +82,13 @@ const AdministrationProblemsPage = () => {
     );
 
     const renderProblemsEditModal = (index: number) => (
-        <Modal
-          key={index}
+        <AdministrationModal
+          index={index}
           open={openEditProblemModal}
           onClose={() => setOpenEditProblemModal(false)}
         >
-            <Box sx={modalStyles}>
-                <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
-            </Box>
-        </Modal>
+            <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
+        </AdministrationModal>
     );
 
     const renderCopyModal = (index: number) => (

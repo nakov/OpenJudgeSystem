@@ -324,7 +324,6 @@ const ProblemForm = (props: IProblemFormProps) => {
             {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
 
             <Typography className={formStyles.centralize} variant="h3">{currentProblem?.name}</Typography>
-
             <form className={formStyles.form}>
                 <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} />
                 <FormGroup className={formStyles.row}>
