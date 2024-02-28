@@ -74,7 +74,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return styles.redGridRow;
-        } if (isVisible === false) {
+        } if (!isVisible) {
             return styles.grayGridRow;
         }
         return '';
@@ -99,7 +99,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     };
 
     const handlePaginationModelChange = (model: GridPaginationModel) => {
-        setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
+        setQueryParams({ ...queryParams, page: model.page + 1, itemsPerPage: model.pageSize });
     };
 
     return (
