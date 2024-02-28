@@ -55,7 +55,7 @@ public class GridDataService<TEntity>
             return filteringCollection;
         }
 
-        var conditions = paginationRequestModel.Filter!.Split('&', StringSplitOptions.RemoveEmptyEntries);
+        var conditions = paginationRequestModel.Filter!.Split("&;", StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var condition in conditions)
         {

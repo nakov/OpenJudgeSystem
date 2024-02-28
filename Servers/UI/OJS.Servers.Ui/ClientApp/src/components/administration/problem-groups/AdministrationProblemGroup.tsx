@@ -34,7 +34,7 @@ const AdministrationProblemGroup = () => {
           onTabChange={onTabChange}
           tabName={tabName}
           tabs={[
-              { value: PROBLEM_GROUP_LISTED_DATA.PROBLEMS, label: 'Resources', node: returnProblems },
+              { value: PROBLEM_GROUP_LISTED_DATA.PROBLEMS, label: 'Problems', node: returnProblems },
           ]}
         />
     );

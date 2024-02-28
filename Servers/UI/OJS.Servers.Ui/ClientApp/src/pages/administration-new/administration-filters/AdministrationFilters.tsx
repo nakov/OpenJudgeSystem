@@ -94,6 +94,7 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
     }
     return FilterColumnTypeEnum.STRING;
 };
+const filterSeparator = '&&;';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
@@ -124,7 +125,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         const urlSelectedFilters: IAdministrationFilter[] = [];
 
         const filterParams = searchParams.get('filter') ?? '';
-        const urlParams = filterParams.split('&').filter((param) => param);
+        const urlParams = filterParams.split(filterSeparator).filter((param) => param);
         urlParams.forEach((param: string) => {
             const paramChunks = param.split('~').filter((chunk) => chunk);
 
@@ -188,7 +189,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
 
         const delayedSetOfSearch = debounce(() => {
-            searchParams.set('filter', filtersFormattedArray.join('&'));
+            searchParams.set('filter', filtersFormattedArray.join(filterSeparator));
             if (withSearchParams) {
                 setSearchParams(searchParams);
             }
@@ -412,7 +413,7 @@ const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) 
         }
         queryString.push(`${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`);
     });
-    return queryString.filter((el) => el).join('&') ?? '';
+    return queryString.filter((el) => el).join(filterSeparator) ?? '';
 };
 
 const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
