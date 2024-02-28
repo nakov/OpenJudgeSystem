@@ -15,8 +15,6 @@ public class ContestInListModel : IMapExplicitly
 
     public bool AllowParallelSubmissionsInTasks { get; set; }
 
-    public bool AutoChangeTestsFeedbackVisibility { get; set; }
-
     public int? CategoryId { get; set; }
 
     public DateTime? StartTime { get; set; }
@@ -41,8 +39,6 @@ public class ContestInListModel : IMapExplicitly
                 => opt.MapFrom(c => c.Category!.Name))
             .ForMember(x => x.AllowParallelSubmissionsInTasks, opt
                 => opt.MapFrom(c => c.AllowParallelSubmissionsInTasks))
-            .ForMember(x => x.AutoChangeTestsFeedbackVisibility, opt
-                => opt.MapFrom(c => c.AutoChangeTestsFeedbackVisibility))
             .ForMember(x => x.CategoryId, opt
                 => opt.MapFrom(c => c.CategoryId))
             .ForMember(x => x.StartTime, opt

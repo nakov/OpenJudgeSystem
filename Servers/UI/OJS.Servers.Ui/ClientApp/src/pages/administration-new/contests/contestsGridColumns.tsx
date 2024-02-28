@@ -3,7 +3,7 @@ import React from 'react';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
@@ -102,14 +102,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'allowParallelSubmissionsInTasks',
         headerName: `${ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}`,
-        type: 'boolean',
-        flex: 0,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'autoChangeTestsFeedbackVisibility',
-        headerName: `${AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}`,
         type: 'boolean',
         flex: 0,
         filterable: false,
