@@ -152,7 +152,9 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         let pageTitle = '';
         if (!/^\d+$/.test(lastElementOfThePathname)) {
             const section = administrationItems.find((x) => x.path.split('/').pop() === lastElementOfThePathname);
-            pageTitle = capitalizeFirstLetter(section!.name);
+            pageTitle = capitalizeFirstLetter(section
+                ? section.name
+                : '');
             setLocationTitle(pageTitle);
         } else {
             pageTitle = capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]}
