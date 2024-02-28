@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IUserSearchType } from '../../../common/search-types';
 import concatClassNames from '../../../utils/class-names';
 import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../utils/urls';

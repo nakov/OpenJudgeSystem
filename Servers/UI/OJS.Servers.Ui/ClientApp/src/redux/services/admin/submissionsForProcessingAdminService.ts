@@ -8,7 +8,7 @@ import {
     ISubmissionForProcessingAdminGridViewType,
 } from '../../../common/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
-// eslint-disable-next-line import/group-exports
+
 export const submissionsForProcessingAdminService = createApi({
     reducerPath: 'submissionsForProcessing',
     baseQuery: getCustomBaseQuery('submissionsForProcessing'),
@@ -32,7 +32,6 @@ export const submissionsForProcessingAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllSubmissionsQuery,
     useGetByIdQuery,

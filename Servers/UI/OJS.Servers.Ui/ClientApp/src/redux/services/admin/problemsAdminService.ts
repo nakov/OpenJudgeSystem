@@ -5,7 +5,6 @@ import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-// eslint-disable-next-line import/group-exports
 export const problemsAdminService = createApi({
     reducerPath: 'problems',
     baseQuery: getCustomBaseQuery('problems'),
@@ -76,7 +75,6 @@ export const problemsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllAdminProblemsQuery,
     useGetProblemByIdQuery,

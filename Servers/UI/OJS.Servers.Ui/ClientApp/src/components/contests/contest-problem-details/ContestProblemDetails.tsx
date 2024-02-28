@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from 'react';
 
 import { useCurrentContest } from '../../../hooks/use-current-contest';
 import concatClassNames from '../../../utils/class-names';
@@ -13,7 +13,7 @@ import styles from './ContestProblemDetails.module.scss';
 const ContestProblemDetails = () => {
     const { state: { getParticipantScoresIsLoading } } = useCurrentContest();
 
-    const parentClassNames = React.useMemo(
+    const parentClassNames = useMemo(
         () => concatClassNames(
             styles.problemDetailsContainer,
             'contestTabControls',

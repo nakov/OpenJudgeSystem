@@ -34,9 +34,7 @@ const InitProviders = ({
 
                 // Checking if provider is of type IProvider to pass props
                 if (providerItem.Provider) {
-                    // eslint-disable-next-line prefer-destructuring
                     Provider = providerItem.Provider;
-                    // eslint-disable-next-line prefer-destructuring
                     props = providerItem.props;
                 }
 
