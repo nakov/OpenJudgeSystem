@@ -7,7 +7,11 @@ import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { COMPETE_STRING, PRACTICE_STRING } from '../../../utils/constants';
-import { calculateTimeBetweenTwoDates, convertTimeIntervalToHoursMinutesAndSeconds } from '../../../utils/dates';
+import {
+    calculateTimeBetweenTwoDates,
+    convertTimeIntervalToHoursMinutesAndSeconds,
+    preciseFormatDate,
+} from '../../../utils/dates';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
 
 import styles from './ContestCard.module.scss';
@@ -140,8 +144,8 @@ const ContestCard = (props: IContestCardProps) => {
                 <div className={styles.contestCardTitle}>{name}</div>
                 <div className={styles.contestCardSubTitle}>{category}</div>
                 <div className={styles.contestDetailsFragmentsWrapper}>
-                    {renderContestDetailsFragment(iconNames.time, moment(contestStartTime).format('HH:MM'))}
-                    {renderContestDetailsFragment(iconNames.date, moment(contestStartTime).format('D MMM YY'))}
+                    {renderContestDetailsFragment(iconNames.time, preciseFormatDate(new Date(contestStartTime), 'HH:MM'))}
+                    {renderContestDetailsFragment(iconNames.date, preciseFormatDate(new Date(contestStartTime), 'D MMM YY'))}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
                     {renderContestDetailsFragment(iconNames.practiceResults, `practice results: ${practiceResults}`, false, true)}
                     {renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`, true, true)}
