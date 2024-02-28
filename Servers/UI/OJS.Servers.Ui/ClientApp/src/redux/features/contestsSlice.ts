@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
 import { IContestCategory } from '../../common/types';
@@ -23,13 +23,13 @@ export const contestSlice = createSlice({
     name: 'contests',
     initialState,
     reducers: {
-        setContestCategory: (state, action) => {
+        setContestCategory: (state, action: PayloadAction<IContestCategory | null>) => {
             state.selectedCategory = action.payload;
         },
-        setContestStrategy: (state, action) => {
+        setContestStrategy: (state, action: PayloadAction<IContestStrategyFilter | null>) => {
             state.selectedStrategy = action.payload;
         },
-        updateContestCategoryBreadcrumbItem: (state, action) => {
+        updateContestCategoryBreadcrumbItem: (state, action: PayloadAction<{ elements: Array<ContestBreadcrumb> | undefined}>) => {
             const { elements } = action.payload;
             if (!elements) {
                 return;

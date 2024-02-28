@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-/* eslint-disable import/group-exports */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IPagedResultType, IProblemGroupsData } from '../../../common/types';
@@ -44,7 +43,6 @@ export const problemGroupsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetProblemGroupsForProblemQuery,
     useGetAllAdminProblemGroupsQuery,

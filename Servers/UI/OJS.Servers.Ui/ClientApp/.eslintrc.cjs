@@ -36,6 +36,13 @@ module.exports = {
         'vite.config.js'
     ],
     rules: {
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        'prefer-destructuring': 'off',
+        'react/no-array-index-key': 'off',
+        'no-undefined': 'off',
+        'react/react-in-jsx-scope': 'off',
+
         'node/no-missing-import': 0,
         'sort-imports': 0,
         'no-confusing-arrow': 0,
@@ -234,8 +241,6 @@ module.exports = {
         'no-undef': 'error',
         // disallow use of undefined when initializing variables
         'no-undef-init': 'error',
-        // disallow use of undefined variable (off by default)
-        'no-undefined': 'error',
         // disallow the usage of _ af both ends of an object name,
         // except with class/object functions
         'no-underscore-dangle': [
@@ -381,9 +386,11 @@ module.exports = {
                 },
             },
         ],
-        'prefer-destructuring': [ 'error', {
-            array: false,
-            object: true,
-        }, { enforceForRenamedProperties: true } ],
     },
+    overrides: [
+        {
+            files: ['src/redux/features/**/*.ts'],
+            extends: ['./src/redux/.eslintrc.cjs'],
+        },
+    ],
 };

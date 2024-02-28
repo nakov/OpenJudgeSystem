@@ -99,13 +99,12 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         if (updateError && !isSuccesfullyUpdated) {
             setSuccessMessage(null);
             setErrorMessages(updateError as Array<ExceptionData>);
-        } else
-            if (createError && !isSuccesfullyCreated) {
-                setSuccessMessage(null);
-                setErrorMessages(createError as Array<ExceptionData>);
-            } else {
-                setErrorMessages([]);
-            }
+        } else if (createError && !isSuccesfullyCreated) {
+            setSuccessMessage(null);
+            setErrorMessages(createError as Array<ExceptionData>);
+        } else {
+            setErrorMessages([]);
+        }
     }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {
@@ -116,7 +115,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     };
 
     const onChange = (e: any) => {
-        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
         let {
             name: contestCategoryName,
