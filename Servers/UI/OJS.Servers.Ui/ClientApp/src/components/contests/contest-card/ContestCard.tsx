@@ -6,6 +6,8 @@ import moment from 'moment';
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
+import { COMPETE_STRING, PRACTICE_STRING } from '../../../utils/constants';
+import { calculateTimeBetweenTwoDates, convertTimeIntervalToHoursMinutesAndSeconds } from '../../../utils/dates';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
 
 import styles from './ContestCard.module.scss';
@@ -62,7 +64,7 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const diffTime = moment(contestEndTime).diff(moment(contestStartTime));
+    const diffTime = calculateTimeBetweenTwoDates(new Date(contestEndTime), new Date(contestStartTime));
     const remainingTime = moment.duration(diffTime);
 
     const renderContestDetailsFragment = (
@@ -93,8 +95,8 @@ const ContestCard = (props: IContestCardProps) => {
 
     const renderContestButton = (isCompete: boolean, hasParticipated: boolean, participationPoints: number) => {
         const btnText = isCompete
-            ? 'COMPETE'
-            : 'PRACTICE';
+            ? COMPETE_STRING
+            : PRACTICE_STRING;
         const btnNavigateUrl = isCompete
             ? `/contests/${id}/compete`
             : `/contests/${id}/practice`;
@@ -145,7 +147,7 @@ const ContestCard = (props: IContestCardProps) => {
                     {renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`, true, true)}
                     {canBeCompeted && remainingTime.asSeconds() > 0 && renderContestDetailsFragment(
                         iconNames.remainingTime,
-                        `remaining time: ${Math.floor(remainingTime.asHours())}:${remainingTime.minutes()}:${remainingTime.seconds()}`,
+                        `remaining time: ${convertTimeIntervalToHoursMinutesAndSeconds(remainingTime)}`,
                         false,
                         true,
                     )}

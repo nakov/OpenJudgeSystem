@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import React, { ReactNode, useEffect, useState } from 'react';
 import { MenuItem, Select } from '@mui/material';
 
@@ -52,6 +50,7 @@ const ContestStrategies = () => {
                 {item.name}
             </MenuItem>
         ));
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ contestStrategies, selectedCategory?.allowedStrategyTypes ]);
 
     if (strategiesError) { return <div>Error loading strategies...</div>; }

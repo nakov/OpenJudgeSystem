@@ -1,9 +1,14 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
-import moment from 'moment';
+import moment, { Duration } from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
+
+const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
+
+const convertTimeIntervalToHoursMinutesAndSeconds =
+    (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const calculateTimeUntil = (date: Date) => intervalToDuration({
     start: new Date(),
@@ -124,9 +129,11 @@ export default {
     preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,
+    calculateTimeBetweenTwoDates,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
     getCurrentTimeInUtc: getCurrentTimeInUTC,
+    convertTimeIntervalToHoursMinutesAndSeconds,
 };
 
 export {
@@ -138,4 +145,6 @@ export {
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
     getDateWithFormat,
+    calculateTimeBetweenTwoDates,
+    convertTimeIntervalToHoursMinutesAndSeconds,
 };
