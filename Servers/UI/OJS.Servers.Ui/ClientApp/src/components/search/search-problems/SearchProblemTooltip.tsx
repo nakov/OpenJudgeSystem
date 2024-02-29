@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProblemSearchType } from '../../../common/search-types';
 import concatClassNames from '../../../utils/class-names';
 import { getContestDetailsAppUrl } from '../../../utils/urls';

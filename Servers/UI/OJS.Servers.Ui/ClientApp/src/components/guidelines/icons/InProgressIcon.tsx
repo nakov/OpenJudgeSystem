@@ -1,4 +1,3 @@
-import React from 'react';
 import { MdOutlineNetworkWifi } from 'react-icons/md';
 
 import concatClassNames from '../../../utils/class-names';

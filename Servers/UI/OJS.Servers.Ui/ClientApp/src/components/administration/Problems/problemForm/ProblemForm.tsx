@@ -1,6 +1,3 @@
-/* eslint-disable default-case */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undefined */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
@@ -99,12 +96,15 @@ const ProblemForm = (props: IProblemFormProps) => {
         if (isSuccesfullyDownloaded) {
             successMessage = 'Additional files succesfully downloaded.';
         }
-
-        successMessage && setSuccessMessages(successMessage);
+        if (successMessage) {
+            setSuccessMessages(successMessage);
+        }
     }, [ updateData, createData, isSuccesfullyDownloaded ]);
 
     useEffect(() => {
-        (isSuccesfullyDownloaded || isDownloadAdditionalFilesError) && setSkipDownload(false);
+        if (isSuccesfullyDownloaded || isDownloadAdditionalFilesError) {
+            setSkipDownload(false);
+        }
     }, [ isSuccesfullyDownloaded, isDownloadAdditionalFilesError ]);
 
     useEffect(() => {
@@ -146,17 +146,19 @@ const ProblemForm = (props: IProblemFormProps) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
 
-            type.solutionSkeleton && formData.append(
-                `SubmissionTypes[${index}].SolutionSkeleton`,
-                type.solutionSkeleton!.toString(),
-            );
+            if (type.solutionSkeleton) {
+                formData.append(
+                    `SubmissionTypes[${index}].SolutionSkeleton`,
+                    type?.solutionSkeleton!.toString(),
+                );
+            }
         });
-
-        currentProblem.additionalFiles &&
-        formData.append('additionalFiles', currentProblem.additionalFiles);
-
-        currentProblem.tests &&
-        formData.append('tests', currentProblem.tests);
+        if (currentProblem.additionalFiles) {
+            formData.append('additionalFiles', currentProblem.additionalFiles);
+        }
+        if (currentProblem.tests) {
+            formData.append('tests', currentProblem.tests);
+        }
 
         createProblem(formData);
     };
@@ -238,6 +240,8 @@ const ProblemForm = (props: IProblemFormProps) => {
         case 'additionalFiles':
             additionalFiles = e.target.files[0];
             break;
+        default:
+            break;
         }
         setCurrentProblem((prevState) => ({
             ...prevState,
@@ -255,6 +259,8 @@ const ProblemForm = (props: IProblemFormProps) => {
             break;
         case 'additionalFiles':
             additionalFiles = null;
+            break;
+        default:
             break;
         }
         setCurrentProblem((prevState) => ({

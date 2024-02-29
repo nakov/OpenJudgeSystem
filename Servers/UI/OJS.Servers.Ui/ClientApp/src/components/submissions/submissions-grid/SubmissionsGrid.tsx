@@ -112,7 +112,6 @@ const SubmissionsGrid = () => {
     );
 
     const { pagesCount } = pagesInfo;
-
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isAdmin } = user;

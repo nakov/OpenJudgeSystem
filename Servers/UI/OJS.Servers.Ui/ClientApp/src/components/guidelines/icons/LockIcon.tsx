@@ -1,4 +1,3 @@
-import React from 'react';
 import { AiOutlineLock } from 'react-icons/ai';
 
 import IconSize from './common/icon-sizes';

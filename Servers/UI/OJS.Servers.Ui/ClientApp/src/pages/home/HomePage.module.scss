@@ -6,6 +6,7 @@
 
 .homePageWrapper {
   @extend %font-family-roboto;
+
   display: flex;
   padding: spacings.$sp-32 0 spacings.$sp-64 0;
 
@@ -26,33 +27,36 @@
     padding: 0 160px;
 
     hr {
-      width: 100%;
       margin: spacings.$sp-64 0;
+      width: 100%;
     }
   }
 }
 
 .gridWrapper {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 }
+
 .homeStatistics {
   display: grid;
+  gap: 80px;
   grid-template-columns: repeat(3, 33%);
   grid-template-rows: repeat(2, 1fr);
-  gap: 80px;
 }
+
 .homePageStatisticWrapper {
-  display: flex;
   align-items: center;
+  display: flex;
 
   .homeStatisticCount {
     font-size: variables.$f-size-24;
-    margin-top: spacings.$sp-12;
     font-weight: font-weights.$font-weight-bold;
+    margin-top: spacings.$sp-12;
   }
 }
+
 .homePageStatisticTextWrapper {
   font-size: variables.$f-size-16;
   font-weight: font-weights.$font-weight-light;
