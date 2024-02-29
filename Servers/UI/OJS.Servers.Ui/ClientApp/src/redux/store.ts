@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage';
 import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
+import { problemResourceAdminSlice } from './features/admin/problemResourcesAdminSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
@@ -18,6 +19,7 @@ import contestCategoriesAdminService from './services/admin/contestCategoriesAdm
 import contestsAdminService from './services/admin/contestsAdminService';
 import participantsAdminService from './services/admin/participantsAdminService';
 import problemGroupsAdminService from './services/admin/problemGroupsAdminService';
+import { problemResourcesAdminService } from './services/admin/problemResourcesAdminService';
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
 import submissionsAdminService from './services/admin/submissionsAdminService';
@@ -37,6 +39,7 @@ const rootReducer = combineReducers({
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
     [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
+    [problemResourceAdminSlice.name]: problemResourceAdminSlice.reducer,
 
     // services
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
@@ -51,6 +54,7 @@ const rootReducer = combineReducers({
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
+    [problemResourcesAdminService.reducerPath]: problemResourcesAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -66,6 +70,7 @@ const reducersToPersist = [
     problemsAdminSlice.name,
     problemGroupsAdminSlice.name,
     contestCategoriesAdminSlice.name,
+    problemResourceAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

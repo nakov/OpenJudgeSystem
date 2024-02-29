@@ -25,7 +25,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'name',
         headerName: `${NAME}`,
-        width: 200,
         flex: 2,
         headerAlign: 'center',
         type: 'string',
@@ -55,7 +54,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'contestPassword',
         headerName: `${COMPETE_PASSWORD}`,
-        width: 100,
         flex: 1,
         align: 'center',
         type: 'string',
@@ -65,7 +63,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'startTime',
         headerName: `${COMPETE_START_TIME}`,
-        width: 105,
         flex: 1.5,
         align: 'center',
         type: 'date',
@@ -79,7 +76,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'endTime',
         headerName: `${COMPETE_END_TIME}`,
-        width: 105,
         flex: 1.5,
         align: 'center',
         type: 'date',
@@ -140,7 +136,7 @@ export const returnContestsNonFilterableColumns = (
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
