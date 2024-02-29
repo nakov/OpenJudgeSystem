@@ -20,8 +20,7 @@ import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQu
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { getDateWithFormat } from '../../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -342,8 +341,8 @@ const ContestEdit = (props:IContestEditProps) => {
 
     return (
         <Box className={`${styles.flex}`}>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
                 {contest.name || 'Contest form'}
             </Typography>

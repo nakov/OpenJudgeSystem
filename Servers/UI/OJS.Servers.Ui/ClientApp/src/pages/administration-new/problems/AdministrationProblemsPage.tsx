@@ -7,13 +7,12 @@ import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import CopyModal, { AllowedOperations } from '../../../components/administration/Problems/copy-modal/CopyModal';
 import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
 import ProblemRetest from '../../../components/administration/Problems/retest/ProblemRetest';
-import { AlertSeverity } from '../../../components/guidelines/alert/Alert';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
 import { useDeleteProblemMutation, useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
-import { renderAlert } from '../../../utils/render-utils';
+import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnProblemsNonFilterableColumns } from './problemGridColumns';
@@ -114,7 +113,7 @@ const AdministrationProblemsPage = () => {
 
     return (
         <>
-            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
+            {renderSuccessfullAlert(successMessage)}
             <AdministrationGridView
               filterableGridColumnDef={filterableColumns}
               notFilterableGridColumnDef={

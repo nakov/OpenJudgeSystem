@@ -99,27 +99,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         return this.Ok($"Problems for {contest.Name} were successfully deleted.");
     }
 
-    [HttpGet("{id:int}")]
-    [ProtectedEntityAction]
-    public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
-    {
-        if (id <= 0)
-        {
-            return this.UnprocessableEntity(new ExceptionResponse
-            {
-                Errors = new List<ExceptionResponseModel> { new() { Name = "Id", Message = "Invalid id", }, },
-            });
-        }
-
-        var file = await this.problemsBusinessService.GetAdditionalFiles(id);
-        if (file == null)
-        {
-            return this.BadRequest();
-        }
-
-        return this.File(file.Content!, file.MimeType!, file.FileName);
-    }
-
     [HttpPost]
     [ProtectedEntityAction]
     public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)

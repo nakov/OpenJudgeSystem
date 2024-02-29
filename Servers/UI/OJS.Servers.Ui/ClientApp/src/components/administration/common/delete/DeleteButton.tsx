@@ -4,8 +4,7 @@ import { IconButton, Tooltip } from '@mui/material';
 
 import { DELETE } from '../../../../common/labels';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
@@ -52,8 +51,8 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                     ? { ...style }
                     : {}}
                 >
-                    {message && renderAlert(message, AlertSeverity.Success, 0, 3000)}
-                    {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
+                    {renderSuccessfullAlert(message)}
+                    {renderErrorMessagesAlert(errorMessages) }
                     <Tooltip title={DELETE}>
                         <IconButton onClick={confirmDelete}>
                             <IoMdTrash color="red" />

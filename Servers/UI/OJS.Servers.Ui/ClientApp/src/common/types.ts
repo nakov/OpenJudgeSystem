@@ -329,9 +329,7 @@ interface IProblemAdministration {
     timeLimit: number;
     memoryLimit: number;
     contestType: ContestVariation;
-    additionalFiles: File | null;
     tests: File | null;
-    hasAdditionalFiles: boolean;
     problemGroupOrderBy: number;
 }
 
