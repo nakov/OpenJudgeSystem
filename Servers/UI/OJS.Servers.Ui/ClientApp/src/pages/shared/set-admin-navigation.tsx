@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 import React, { FC, useEffect, useState } from 'react';
@@ -145,9 +146,10 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
 }));
 
+const mobileBreak = 1300;
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
-    const [ open, setOpen ] = useState(true);
+    const [ open, setOpen ] = useState(false);
     const [ locationTitle, setLocationTitle ] = useState('');
 
     const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
@@ -169,6 +171,18 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        return function cleanUp() {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const handleResize = () => {
+        setOpen(!(window.innerWidth < mobileBreak));
+    };
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -177,6 +191,16 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         setOpen(false);
     };
 
+    const renderSectionicon = (name: string, icon: any) => {
+        if (!open) {
+            return (
+                <Tooltip title={name}>
+                    <div>{icon}</div>
+                </Tooltip>
+            );
+        }
+        return icon;
+    };
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -233,7 +257,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                                                     : '#3e4c5d',
                                             }}
                                             >
-                                                {item.icon}
+                                                {renderSectionicon(item.name, item.icon)}
                                             </ListItemIcon>
                                             <ListItemText primary={item.name} />
                                         </ListItemButton>
