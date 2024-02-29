@@ -7,14 +7,13 @@ import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemGroupForm from '../../../components/administration/problem-groups/problem-group-form/ProblemGroupForm';
-import { AlertSeverity } from '../../../components/guidelines/alert/Alert';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemGroupsFilters, setAdminProblemGroupsSorters } from '../../../redux/features/admin/problemGroupsSlice';
 import { useGetAllAdminProblemGroupsQuery } from '../../../redux/services/admin/problemGroupsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { renderAlert } from '../../../utils/render-utils';
+import { renderErrorMessagesAlert } from '../../../utils/render-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnNonFilterableColumns } from './problemGroupGridColumns';
@@ -92,7 +91,7 @@ const AdministrationProblemGroupsPage = () => {
 
     return (
         <>
-            {errorMessages.map((m, i) => renderAlert(m, AlertSeverity.Error, i))}
+            {renderErrorMessagesAlert(errorMessages)}
             <AdministrationGridView
               filterableGridColumnDef={filterableColumns}
               notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
