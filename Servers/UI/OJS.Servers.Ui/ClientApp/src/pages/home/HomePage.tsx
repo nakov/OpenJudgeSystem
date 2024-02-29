@@ -43,14 +43,15 @@ const HomePageStatistic = (props: IHomePageStatistic) => {
 const HOME_STATISTICS = [
     { iconType: FaTrophy, title: 'Contests', dataKey: 'contestsCount' },
     { iconType: FaUsers, title: 'Users', dataKey: 'usersCount' },
+    { iconType: FaTasks, title: 'Test strategies', dataKey: 'strategiesCount' },
     { iconType: FaPuzzlePiece, title: 'Problems', dataKey: 'problemsCount' },
     { iconType: FaDeezer, title: 'Submissions per day', dataKey: 'submissionsPerDayCount' },
-    { iconType: FaTasks, title: 'Test strategies', dataKey: 'strategiesCount' },
     { iconType: FaCode, title: 'Submissions', dataKey: 'submissionsCount' },
 ];
 
 const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
+    const { themeColors } = useTheme();
 
     const renderHomeStatisticIcons = useCallback(() => {
         if (isLoading) {
@@ -66,7 +67,7 @@ const HomePage = () => {
                         const { iconType, title, dataKey } = el;
                         // eslint-disable-next-line prefer-destructuring
                         const count = Number(data[dataKey]) > 1000
-                            ? `${(Number(data[dataKey]) / 1000).toFixed(1)}K`
+                            ? `${(Number(data[dataKey]) / 1000).toFixed(1)} K`
                             : data[dataKey];
                         return (
                             // eslint-disable-next-line react/no-array-index-key
@@ -83,7 +84,7 @@ const HomePage = () => {
             <ContestCetegories isRenderedOnHomePage />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
-                <iframe title="home-video" width={700} height={320} src="https://www.youtube.com/watch?v=zyhYnE4Fnmk&ab_channel=SoftwareUniversity%28SoftUni%29" />
+                <iframe style={{ border: `3px solid ${themeColors.textColor}` }} title="home-video" width={700} height={320} src="https://www.youtube.com/watch?v=zyhYnE4Fnmk&ab_channel=SoftwareUniversity%28SoftUni%29" />
                 <hr />
                 {renderHomeStatisticIcons()}
             </div>
