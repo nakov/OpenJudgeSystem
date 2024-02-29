@@ -4,7 +4,7 @@ public static class Constants
 {
     public static class PublicSubmissions
     {
-        public const int DefaultSubmissionsPerPage = 10;
+        public const int DefaultSubmissionsPerPage = 5;
 
         public const int DefaultSubmissionResultsPerPage = 4;
     }
