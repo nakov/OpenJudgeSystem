@@ -32,11 +32,9 @@ const Heading = ({
     className = '', style,
     id = generateId(),
 }: IHeadingProps) => {
-    const { isDarkMode } = useTheme();
+    const { getColorClassName, themeColors } = useTheme();
 
-    const colorClassName = isDarkMode
-        ? styles.textWhite
-        : styles.textDarkGray;
+    const colorClassName = getColorClassName(themeColors.textColor);
 
     const headingTypeClassName = type === HeadingType.primary
         ? styles.primary

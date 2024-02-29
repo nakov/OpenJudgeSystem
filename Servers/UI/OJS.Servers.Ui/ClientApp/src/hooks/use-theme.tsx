@@ -1,3 +1,4 @@
+import { ThemeMode } from '../common/enums';
 import { toggleTheme } from '../redux/features/themeSlice';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 
@@ -21,6 +22,8 @@ interface IThemeClassName {
 const useTheme = () => {
     const dispatch = useAppDispatch();
     const { mode } = useAppSelector((state) => state.theme);
+
+    const isDarkMode = mode === ThemeMode.Dark;
 
     const toggleSelectedTheme = () => {
         dispatch(toggleTheme());
@@ -68,6 +71,6 @@ const useTheme = () => {
 
     const getColorClassName = (color: string) => colorClassName[color];
 
-    return { mode, toggleSelectedTheme, themeColors: selectedThemeColors, getColorClassName };
+    return { mode, toggleSelectedTheme, isDarkMode, themeColors: selectedThemeColors, getColorClassName };
 };
 export default useTheme;

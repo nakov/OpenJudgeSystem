@@ -46,7 +46,7 @@ const SubmissionsGrid = () => {
     } = usePublicSubmissions();
 
     const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const {
         state: { currentPage, pagesInfo },
         changePage,
@@ -112,6 +112,7 @@ const SubmissionsGrid = () => {
     );
 
     const { pagesCount } = pagesInfo;
+
     const renderPrivilegedComponent = useCallback(
         () => {
             const { isAdmin } = user;
@@ -122,9 +123,9 @@ const SubmissionsGrid = () => {
                       type={HeadingType.secondary}
                     >
                         Submissions awaiting execution:
-                            {' '}
-                            {totalUnprocessedSubmissionsCount}
-                            {' '}
+                        {' '}
+                        {totalUnprocessedSubmissionsCount}
+                        {' '}
                         (
                         <SubmissionStateLink
                           stateIndex={1}
@@ -151,16 +152,7 @@ const SubmissionsGrid = () => {
                 )
             );
         },
-        [
-            user,
-            publicSubmissions,
-            totalUnprocessedSubmissionsCount,
-            selectedActive,
-            handleSelectSubmissionType,
-            pagesCount,
-            currentPage,
-            handlePageChange,
-        ],
+        [ user, totalUnprocessedSubmissionsCount, selectedActive, handleSelectSubmissionType ],
     );
 
     const renderSubmissionRow = useCallback(

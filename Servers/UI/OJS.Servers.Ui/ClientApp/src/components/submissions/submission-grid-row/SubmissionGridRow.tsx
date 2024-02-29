@@ -51,7 +51,7 @@ const SubmissionGridRow = ({
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
     const { internalUser } =
-    useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
+        useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
 
     const userameFromSubmission = isNil(user)
@@ -85,7 +85,7 @@ const SubmissionGridRow = ({
 
     const renderDetailsBtn = useCallback(
         () => {
-            if (userameFromSubmission === internalUser.username || internalUser.isAdmin) {
+            if (userameFromSubmission === internalUser.userName || internalUser.isAdmin) {
                 return (
                     <Button
                       text="Details"
@@ -95,7 +95,7 @@ const SubmissionGridRow = ({
             }
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.username, userameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, userameFromSubmission ],
     );
 
     // const renderStrategyIcon = useCallback(
@@ -184,19 +184,19 @@ const SubmissionGridRow = ({
         <>
             <div>
                 {
-                isFirst
-                    ? (
-                        <div className={headerClassName}>
-                            <div className={styles.smallColumn}>N</div>
-                            <div className={styles.wideColumn}>Task</div>
-                            <div className={styles.wideColumn}>From</div>
-                            <div className={concatClassNames(styles.smallColumn, styles.textAlignRight)}>Result</div>
-                            <div className={styles.wideColumn} />
-                            <div className={styles.smallColumn} />
-                        </div>
-                    )
-                    : null
-            }
+                    isFirst
+                        ? (
+                            <div className={headerClassName}>
+                                <div className={styles.smallColumn}>N</div>
+                                <div className={styles.wideColumn}>Task</div>
+                                <div className={styles.wideColumn}>From</div>
+                                <div className={concatClassNames(styles.smallColumn, styles.textAlignRight)}>Result</div>
+                                <div className={styles.wideColumn} />
+                                <div className={styles.smallColumn} />
+                            </div>
+                        )
+                        : null
+                }
             </div>
             <div className={rowClassName}>
                 <div
