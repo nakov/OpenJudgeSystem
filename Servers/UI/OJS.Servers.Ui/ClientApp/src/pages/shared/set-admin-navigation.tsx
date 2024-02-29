@@ -218,7 +218,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                     <List>
                         {administrationItems.map((item) => (
-                            <>
+                            <Box key={item.name}>
                                 <ListItem key={item.name} disablePadding>
                                     <Link
                                       to={item.path}
@@ -240,7 +240,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                                     </Link>
                                 </ListItem>
                                 <Divider />
-                            </>
+                            </Box>
                         ))}
                     </List>
                 </Drawer>

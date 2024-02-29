@@ -99,7 +99,6 @@ interface IProblemResourceAdministrationModel {
     type: string;
     orderBy: number;
     fileExtension: string;
-    problemName: string;
     file: File | null;
     hasFile: boolean;
 }

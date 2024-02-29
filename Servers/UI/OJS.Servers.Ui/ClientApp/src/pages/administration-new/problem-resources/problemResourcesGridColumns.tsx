@@ -10,7 +10,7 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import DownloadIconButton from '../../../components/administration/common/download/DownloadIconButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import { useDeleteProblemResourceMutation } from '../../../redux/services/admin/problemResourcesAdminService';
+import { useDeleteProblemResourceMutation, useDownloadResourceQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 
 const problemResourceFilterableColumns: GridColDef[] = [
     {
@@ -122,7 +122,7 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function)
                 />
                 <DownloadIconButton
                   args={params.row.id}
-                  mutation={useDeleteProblemResourceMutation}
+                  mutation={useDownloadResourceQuery}
                 />
             </div>
         ),

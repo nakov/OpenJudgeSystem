@@ -5,8 +5,6 @@ using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, IMapFrom<ProblemResource>
 {
-    public int ProblemId { get; set; }
-
     public string Name { get; set; } = string.Empty;
 
     public string? Type { get; set; }

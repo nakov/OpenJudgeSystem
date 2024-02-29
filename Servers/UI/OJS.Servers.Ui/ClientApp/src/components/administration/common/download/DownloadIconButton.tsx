@@ -4,8 +4,7 @@ import { IconButton } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import IconSize from '../../../guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../guidelines/icons/DownloadIcon';
 
@@ -14,12 +13,12 @@ interface IDownloadIconButtonProps {
     onSuccess?: Function;
     onError?: Function;
 
-    // For different mutation there can be different arguments
-    args: any;
+    args: number;
 }
 const DownloadIconButton = (props: IDownloadIconButtonProps) => {
     const { mutation, onSuccess, onError, args } = props;
-    const [ download, { data, error, isSuccess } ] = mutation(args);
+    const [ skip, setSkip ] = useState<boolean>(true);
+    const {refetch, data, error, isSuccess } = mutation(args, { skip });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
     useEffect(() => {
@@ -37,10 +36,15 @@ const DownloadIconButton = (props: IDownloadIconButtonProps) => {
         }
     }, [ error, onError ]);
 
+    const onClick = () => {
+        setSkip(false);
+        refetch();
+    };
+
     return (
         <>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i, 0))}
-            <Tooltip title="Download" onClick={download}>
+            {renderErrorMessagesAlert(errorMessages)}
+            <Tooltip title="Download" onClick={onClick}>
                 <IconButton>
                     <DownloadIcon size={IconSize.Large} />
                 </IconButton>
