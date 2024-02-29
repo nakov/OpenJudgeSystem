@@ -3,10 +3,9 @@
 @use 'src/styles/font-weights';
 
 .privilegedButtonClassName {
-  background-color: colors.$white-color;
+  background: none;
   border: 0;
   color: colors.$light-blue-color;
-  background: none;
   cursor: pointer;
   font-size: variables.$f-size-24;
   font-weight: font-weights.$font-weight-light;

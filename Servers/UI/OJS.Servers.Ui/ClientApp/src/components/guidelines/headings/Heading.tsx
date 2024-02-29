@@ -1,6 +1,5 @@
 import { createElement } from 'react';
 
-import { ThemeMode } from '../../../common/enums';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';

@@ -10,26 +10,26 @@
 
 .lightSubmissionsGridHeader {
   background: colors.$wrappers-border-color;
-  color: colors.$text-dark-gray-color;
   box-shadow: shadows.$dp-shadow-1;
+  color: colors.$text-dark-gray-color;
 }
 
 .darkSubmissionsGridHeader {
-  background: #1C1C17;
-  color: white;
+  background: #1c1c17;
   box-shadow: shadows.$dp-shadow-4;
+  color: white;
 }
 
 .submissionsGridHeader {
   @extend %font-family-roboto;
 
+  align-content: start;
   display: flex;
   flex-direction: row;
-  align-content: start;
   justify-content: flex-start;
   padding: 8px 25px;
 
-  & > div {
+  div {
     padding: 0 10px;
   }
 }
@@ -42,9 +42,9 @@
 .wideColumn {
   display: flex;
   flex: 3;
-  max-width: 500px;
   flex-direction: column;
   gap: 10px;
+  max-width: 500px;
 
   .redirectButton {
     padding: 0;
@@ -52,14 +52,12 @@
 }
 
 .lightRow {
-  color: colors.$text-dark-gray-color;
   background: colors.$horizontal-line-gray;
   border-bottom: 1px solid colors.$wrappers-border-color;
 }
 
 .darkRow {
   background: colors.$background-color-footer;
-  color: white;
   border-bottom: 1px solid #212328;
 }
 

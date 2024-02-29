@@ -45,12 +45,6 @@
   }
 }
 
-.heading {
-  @media only screen and (max-width: 425px) {
-    width: 100px;
-  }
-}
-
 .searchIcon {
   align-self: center;
   background-color: colors.$primary-blue;

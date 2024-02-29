@@ -89,16 +89,13 @@ const List = <TValue, >({
                 return null;
             }
 
-            return values.map((value, idx) => {
-                const isLast = idx === values.length - 1;
-
-                return (
-                    <li
-                      key={keyFunc(value)}
-                      className={itemClassNameCombined}
-                      style={{ width: '100%' }}
-                    >
-                        {
+            return values.map((value, idx) => (
+                <li
+                  key={keyFunc(value)}
+                  className={itemClassNameCombined}
+                  style={{ width: '100%' }}
+                >
+                    {
                             // Render function expects index
                             itemFunc.length === 2
                                 ? itemFunc(value, idx)
@@ -106,9 +103,8 @@ const List = <TValue, >({
                                 // @ts-ignore
                                 : itemFunc(value)
                         }
-                    </li>
-                );
-            });
+                </li>
+            ));
         },
         [ itemClassNameCombined, itemFunc, keyFunc, values ],
     );

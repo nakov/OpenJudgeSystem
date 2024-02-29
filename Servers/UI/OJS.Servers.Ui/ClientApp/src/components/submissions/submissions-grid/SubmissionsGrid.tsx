@@ -187,7 +187,6 @@ const SubmissionsGrid = () => {
                 <List
                   values={publicSubmissions}
                   itemFunc={renderSubmissionRow}
-                  itemClassName={styles.submissionGridRow}
                   fullWidth
                 />
             );

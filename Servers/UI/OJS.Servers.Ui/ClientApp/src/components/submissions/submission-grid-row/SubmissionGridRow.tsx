@@ -30,7 +30,7 @@ const SubmissionGridRow = ({
     isFirst,
     shouldDisplayUsername = true,
 }: ISubmissionGridRowProps) => {
-    const { isDarkMode } = useTheme();
+    const { isDarkMode, mode, getColorClassName, themeColors } = useTheme();
     const {
         id: submissionId,
         createdOn,
@@ -178,6 +178,7 @@ const SubmissionGridRow = ({
         isDarkMode
             ? styles.darkRow
             : styles.lightRow,
+        getColorClassName(themeColors.textColor),
     );
 
     return (
