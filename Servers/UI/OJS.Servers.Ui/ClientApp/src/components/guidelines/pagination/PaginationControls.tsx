@@ -2,6 +2,7 @@ import Pagination from '@mui/material/Pagination';
 
 import { PAGE_BOUNDARY_COUNT, PAGE_SIBLING_COUNT } from '../../../common/constants';
 import useTheme from '../../../hooks/use-theme';
+import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalClassName } from '../../common/Props';
 
 import styles from './PaginationControls.module.scss';
@@ -19,6 +20,7 @@ const PaginationControls = ({
     className = '',
 } : IPaginationControlsProps) => {
     const { themeColors, mode } = useTheme();
+    const paginationClassNames = concatClassNames(styles.paginationControlsMenu, className);
 
     return (
         <Pagination
@@ -26,7 +28,7 @@ const PaginationControls = ({
               '& .Mui-selected': { backgroundColor: '#44a9f8' },
               '& .MuiPaginationItem-root': {
                   color: themeColors.textColor,
-                  borderRadius: '50%',
+                  borderRadius: '10%',
                   '&:hover': {
                       backgroundColor: mode === 'dark'
                           ? '#44a9f8'
@@ -40,7 +42,7 @@ const PaginationControls = ({
           boundaryCount={PAGE_BOUNDARY_COUNT}
           onChange={(ev, value) => onChange(value)}
           page={page}
-          className={`${styles.paginationControlsMenu} ${className}`}
+          className={paginationClassNames}
           showFirstButton
           showLastButton
         />

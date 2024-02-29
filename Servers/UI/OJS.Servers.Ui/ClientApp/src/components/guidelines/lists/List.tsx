@@ -25,12 +25,13 @@ enum Orientation {
 
 interface IListProps<TValue> extends IHaveOptionalClassName {
     values: TValue[];
-    itemFunc: (value: TValue) => React.ReactElement;
+    itemFunc: ((value: TValue) => React.ReactElement) | ((value: TValue, idx: number) => React.ReactElement);
     keyFunc?: (value: TValue) => string;
     itemClassName?: ClassNameType;
     type?: ListType;
     orientation?: Orientation;
     wrap?: boolean;
+    fullWidth?: boolean;
     scrollable?: boolean;
 }
 
@@ -43,6 +44,7 @@ const List = <TValue, >({
     type = ListType.normal,
     orientation = Orientation.vertical,
     wrap = false,
+    fullWidth = false,
     scrollable = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
@@ -76,8 +78,10 @@ const List = <TValue, >({
         listScrollableClassName,
         className,
     );
-
-    const itemClassNameCombined = concatClassNames(itemClassName, styles.fullWidth);
+    const fullWidthItemClassName = fullWidth
+        ? styles.fullWidth
+        : '';
+    const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
 
     const renderItems = useCallback(
         () => {
@@ -85,19 +89,23 @@ const List = <TValue, >({
                 return null;
             }
 
-            return values.map((value, index) => {
-                const isLast = index === values.length - 1;
+            return values.map((value, idx) => {
+                const isLast = idx === values.length - 1;
+
                 return (
                     <li
                       key={keyFunc(value)}
                       className={itemClassNameCombined}
-                      style={{
-                          marginBottom: isLast
-                              ? 0
-                              : 20,
-                      }}
+                      style={{ width: '100%' }}
                     >
-                        {itemFunc(value)}
+                        {
+                            // Render function expects index
+                            itemFunc.length === 2
+                                ? itemFunc(value, idx)
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
+                                : itemFunc(value)
+                        }
                     </li>
                 );
             });
