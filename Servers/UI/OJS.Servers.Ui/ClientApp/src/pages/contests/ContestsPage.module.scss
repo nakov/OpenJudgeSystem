@@ -4,13 +4,8 @@
 @use 'src/styles/spacings';
 @use 'src/styles/font-weights';
 
-.container {
+.contestsContainer {
   display: flex;
-}
-
-.mainHeader {
-  flex: 4;
-  width: 100%;
 }
 
 .contestsListContainer {
