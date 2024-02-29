@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel } from '../../../common/types';
-import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
+import { IGetByContestId, IGetByProblemGroupId, IProblemUrlById } from '../../../common/url-types';
 import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
@@ -41,6 +41,17 @@ export const problemsAdminService = createApi({
         getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
             query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({
                 url: `/GetByContestId/${contestId}`,
+                params: {
+                    filter,
+                    page,
+                    ItemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+        getByProblemGroupId: builder.query<IPagedResultType<IIndexProblemsType>, IGetByProblemGroupId>({
+            query: ({ problemGroupId, filter, page, ItemsPerPage, sorting }) => ({
+                url: `/GetByProblemGroupId/${problemGroupId}`,
                 params: {
                     filter,
                     page,
@@ -96,6 +107,7 @@ export const {
     useCreateProblemMutation,
     useCopyMutation,
     useGetResourcesQuery,
+    useGetByProblemGroupIdQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

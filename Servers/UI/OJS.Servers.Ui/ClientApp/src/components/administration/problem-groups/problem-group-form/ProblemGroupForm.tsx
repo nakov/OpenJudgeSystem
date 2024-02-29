@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable css-modules/no-unused-class */
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
@@ -63,6 +64,10 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     useEffect(() => {
         if (contestsAutocompleteData) {
+            if (problemGroupData) {
+                const actualContestData = [ problemGroupData?.contest ] as Array<IContestAutocomplete>;
+                setContestsData(contestsAutocompleteData.concat(actualContestData));
+            }
             setContestsData(contestsAutocompleteData);
         }
     }, [ contestsAutocompleteData ]);
@@ -156,7 +161,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                 <Typography variant="h4" className="centralize">
                     Problem Group Administration Form
                 </Typography>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={ID}
@@ -166,7 +171,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                       disabled
                     />
                 </FormControl>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={ORDER_BY}
@@ -177,7 +182,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormGroup className={formStyles.inputRow}>
                     <InputLabel id="problemGroupType">{TYPE}</InputLabel>
                     <Select
                       onChange={(e) => onChange(e)}
@@ -193,13 +198,15 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                         ))}
                     </Select>
                 </FormGroup>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <Autocomplete
                       options={contestsData!}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       onChange={(event, newValue) => onSelect(newValue!)}
                       onInputChange={(event) => onAutocompleteChange(event)}
-                      value={currentProblemGroup.contest || null}
+                      value={currentProblemGroup.contest.id
+                          ? currentProblemGroup.contest
+                          : null}
                       isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}
                       getOptionLabel={(option) => option?.name}
                       renderOption={(properties, option) => (

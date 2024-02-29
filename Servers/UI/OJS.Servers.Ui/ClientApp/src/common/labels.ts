@@ -15,6 +15,8 @@ export const CANCEL = 'Cancel';
 export const PROBLEM_GROUP = 'Problem Group';
 export const PROBLEM_RESOURCE = 'Problem Resource';
 
+export const CREATE_NEW_RECORD = 'Create new record';
+
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
 export const CONTEST_ID = 'Contest Id';

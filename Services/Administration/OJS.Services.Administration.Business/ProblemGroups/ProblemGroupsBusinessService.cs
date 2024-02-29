@@ -61,6 +61,14 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             return problemGroup.Map<ProblemGroupsAdministrationModel>();
         }
 
+        public override async Task<ProblemGroupsAdministrationModel> Create(ProblemGroupsAdministrationModel model)
+        {
+            var problemGroup = model.Map<ProblemGroup>();
+            await this.problemGroupsData.Add(problemGroup);
+            await this.problemGroupsData.SaveChanges();
+            return model;
+        }
+
         public override async Task<ProblemGroupsAdministrationModel> Edit(ProblemGroupsAdministrationModel model)
         {
             var problemGroup = model.Map<ProblemGroup>();
