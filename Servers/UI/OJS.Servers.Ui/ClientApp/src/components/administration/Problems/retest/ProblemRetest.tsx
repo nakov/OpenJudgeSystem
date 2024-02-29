@@ -5,8 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { IIndexProblemsType, IPagedResultType } from '../../../../common/types';
 import { useRetestByIdMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import ConfirmDialogWithAdditionalProtection from '../../../guidelines/dialog/dialog-with-additional-protection/ConfirmDialogWithAdditionalProtection';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
@@ -63,7 +62,7 @@ const ProblemRetest = (props: IProblemRetestProps) => {
     }
     return (
         <>
-            {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
+            {renderErrorMessagesAlert(errorMessages)}
             <ConfirmDialogWithAdditionalProtection
               key={index}
               text={`Are you sure you want to retest all submissions for  ${problemName}`}

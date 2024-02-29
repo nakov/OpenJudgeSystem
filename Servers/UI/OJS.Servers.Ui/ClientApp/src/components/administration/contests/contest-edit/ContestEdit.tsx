@@ -11,7 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
@@ -20,8 +20,7 @@ import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQu
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { getDateWithFormat } from '../../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -48,7 +47,6 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
         allowParallelSubmissionsInTasks: false,
-        autoChangeTestsFeedbackVisibility: false,
         categoryId: 0,
         categoryName: '',
         contestPassword: '',
@@ -152,7 +150,6 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceEndTime,
             isVisible,
             allowParallelSubmissionsInTasks,
-            autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
             numberOfProblemGroups,
@@ -253,9 +250,6 @@ const ContestEdit = (props:IContestEditProps) => {
         case 'allowParallelSubmissionsInTasks':
             allowParallelSubmissionsInTasks = checked;
             break;
-        case 'autoChangeTestsFeedbackVisibility':
-            autoChangeTestsFeedbackVisibility = checked;
-            break;
         case 'category':
             const category = contestCategories?.find((cc) => cc.id === value);
             if (category) {
@@ -299,7 +293,6 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceEndTime,
             isVisible,
             allowParallelSubmissionsInTasks,
-            autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
             numberOfProblemGroups,
@@ -348,8 +341,8 @@ const ContestEdit = (props:IContestEditProps) => {
 
     return (
         <Box className={`${styles.flex}`}>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
                 {contest.name || 'Contest form'}
             </Typography>
@@ -595,16 +588,6 @@ const ContestEdit = (props:IContestEditProps) => {
                       name="allowParallelSubmissionsInTasks"
                       onChange={(e) => onChange(e)}
                       label={ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}
-                    />
-                    <FormControlLabel
-                      control={(
-                          <Checkbox
-                            checked={contest?.autoChangeTestsFeedbackVisibility}
-                          />
-                                )}
-                      name="autoChangeTestsFeedbackVisibility"
-                      onChange={(e) => onChange(e)}
-                      label={AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}
                     />
                 </Box>
             </form>

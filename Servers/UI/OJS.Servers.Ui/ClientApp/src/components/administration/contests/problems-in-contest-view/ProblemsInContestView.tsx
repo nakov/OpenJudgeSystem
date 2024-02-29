@@ -13,8 +13,7 @@ import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProb
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../../utils/object-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
@@ -220,8 +219,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 
     return (
         <div style={{ marginTop: '2rem' }}>
-            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
-            {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage)}
             { isDeletingAll
                 ? <SpinningLoader />
                 : (

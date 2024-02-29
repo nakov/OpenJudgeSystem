@@ -10,8 +10,7 @@ import { IContestAutocomplete } from '../../../../common/types';
 import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateProblemGroupMutation, useGetProblemGroupByIdQuery, useUpdateProblemGroupMutation } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { IProblemGroupAdministrationModel } from '../types';
@@ -156,8 +155,8 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     return (
         <>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessages)}
             <form className={formStyles.form}>
                 <Typography variant="h4" className="centralize">
                     Problem Group Administration Form

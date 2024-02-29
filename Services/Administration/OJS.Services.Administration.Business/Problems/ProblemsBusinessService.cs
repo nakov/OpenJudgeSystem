@@ -186,29 +186,6 @@ namespace OJS.Services.Administration.Business.Problems
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
 
-        public async Task<AdditionalFilesDownloadModel?> GetAdditionalFiles(int problemId)
-        {
-            var hasProblem = await this.problemsData.ExistsById(problemId);
-            if (!hasProblem)
-            {
-                throw new BusinessServiceException("Problem not found.");
-            }
-
-            var file = await this.problemsData.GetByIdQuery(problemId).Select(p => p.AdditionalFiles)
-                .FirstOrDefaultAsync();
-            if (file == null)
-            {
-                return null;
-            }
-
-            return new AdditionalFilesDownloadModel
-            {
-                Content = file!,
-                MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
-                FileName = string.Format($"Problem-{problemId}-Additional files.zip"),
-            };
-        }
-
         public override async Task<ProblemAdministrationModel> Get(int id)
         {
             var problem = await this.problemsData.GetByIdQuery(id)
@@ -244,11 +221,6 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             problem.MapFrom(model);
-
-            if (model.AdditionalFiles == null)
-            {
-                problem.AdditionalFiles = null;
-            }
 
             problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id)!;
             problem.ProblemGroupId = problem.ProblemGroup.Id;

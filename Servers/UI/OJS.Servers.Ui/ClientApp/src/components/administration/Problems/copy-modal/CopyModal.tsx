@@ -11,8 +11,7 @@ import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdm
 import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 export enum AllowedOperations {
@@ -117,7 +116,7 @@ const CopyModal = (props: ICopyModalProps) => {
                     ? <SpinningLoader />
                     : (
                         <>
-                            {errorMessages.map((x: string, i:number) => renderAlert(x, AlertSeverity.Error, i))}
+                            {renderErrorMessagesAlert(errorMessages)}
                             <Typography variant="h5" padding="0.5rem">Copy Problems</Typography>
                             <Autocomplete
                               options={contestAutocomplete}

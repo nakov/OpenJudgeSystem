@@ -80,10 +80,6 @@ export const problemsAdminService = createApi({
                 body: { sourceContestId, destinationContestId },
             }),
         }),
-        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({
-            query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }),
-            keepUnusedDataFor: 5,
-        }),
         copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | undefined} >({
             query: ({ destinationContestId, problemId, problemGroupId }) => ({
                 url: 'Copy',
@@ -109,7 +105,6 @@ export const {
     useDeleteByContestMutation,
     useCopyAllMutation,
     useCreateProblemMutation,
-    useDownloadAdditionalFilesQuery,
     useCopyMutation,
     useGetResourcesQuery,
     useGetByProblemGroupIdQuery,

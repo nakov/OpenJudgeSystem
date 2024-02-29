@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 import React, { FC, useEffect, useState } from 'react';
+import { GiFiles } from 'react-icons/gi';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -13,7 +15,7 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Tooltip } from '@mui/material';
+import { Divider, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -27,7 +29,7 @@ import { CSSObject, styled, Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 
 import { Anything } from '../../common/common-types';
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 
 import styles from './set-admin-navigation.module.scss';
 
@@ -72,6 +74,11 @@ const administrationItems = [
         name: 'Problem Groups',
         icon: <TableViewIcon />,
         path: `${PROBLEM_GROUPS_PATH}`,
+    },
+    {
+        name: 'Problem Resources',
+        icon: <GiFiles />,
+        path: `${PROBLEM_RESOURCES_PATH}`,
     },
     {
         name: 'Submission Types',
@@ -139,6 +146,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
 }));
 
+const mobileBreak = 1300;
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
     const [ open, setOpen ] = useState(true);
@@ -163,6 +171,17 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return function cleanUp() {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const handleResize = () => {
+        setOpen(!(window.innerWidth < mobileBreak));
+    };
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -171,6 +190,16 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         setOpen(false);
     };
 
+    const renderSectionicon = (name: string, icon: any) => {
+        if (!open) {
+            return (
+                <Tooltip title={name}>
+                    <div>{icon}</div>
+                </Tooltip>
+            );
+        }
+        return icon;
+    };
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -212,30 +241,33 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                     <List>
                         {administrationItems.map((item) => (
-                            <ListItem key={item.name} disablePadding>
-                                <Link
-                                  to={item.path}
-                                  className={`${location.pathname === item.path
-                                      ? styles.activeAdminNavLink
-                                      : ''} ${styles.adminNavLink}`}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon style={{
-                                            color: location.pathname === item.path
-                                                ? '#42abf8'
-                                                : '#3e4c5d',
-                                        }}
-                                        >
-                                            {item.icon}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                            <Box key={item.name}>
+                                <ListItem key={item.name} disablePadding>
+                                    <Link
+                                      to={item.path}
+                                      className={`${location.pathname === item.path
+                                          ? styles.activeAdminNavLink
+                                          : ''} ${styles.adminNavLink}`}
+                                    >
+                                        <ListItemButton>
+                                            <ListItemIcon style={{
+                                                color: location.pathname === item.path
+                                                    ? '#42abf8'
+                                                    : '#3e4c5d',
+                                            }}
+                                            >
+                                                {renderSectionicon(item.name, item.icon)}
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                                <Divider />
+                            </Box>
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Box component="main" sx={{ flexGrow: 1, p: 3, }}>
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>

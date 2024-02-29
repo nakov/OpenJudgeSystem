@@ -92,14 +92,27 @@ interface IProblemResourceType {
     type: number;
 }
 
+interface IProblemResourceAdministrationModel {
+    id: number;
+    name: string;
+    link: string;
+    type: string;
+    orderBy: number;
+    fileExtension: string;
+    file: File | null;
+    hasFile: boolean;
+}
+
 interface IProblemResouceInLinstModel {
     id: number;
     name: string;
     link: string;
-    type: number;
+    type: string;
     fileExtension: string;
     orderBy: number;
     isDeleted: boolean;
+    problemId: number;
+    problemName: string;
 }
 
 interface IProblemType {
@@ -290,7 +303,6 @@ interface IAdminContestResponseType {
     category: string;
     name: string;
     allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
     categoryId: number;
     startTime: string;
     endTime: string;
@@ -330,9 +342,7 @@ interface IProblemAdministration {
     timeLimit: number;
     memoryLimit: number;
     contestType: ContestVariation;
-    additionalFiles: File | null;
     tests: File | null;
-    hasAdditionalFiles: boolean;
     problemGroupOrderBy: number;
 }
 
@@ -375,7 +385,6 @@ interface IContestAdministration {
     isVisible: boolean;
     newIpPassword: string | null;
     allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
     allowedIps: string;
     numberOfProblemGroups: number;
@@ -517,4 +526,5 @@ export type {
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
     IProblemResouceInLinstModel,
+    IProblemResourceAdministrationModel,
 };

@@ -9,7 +9,6 @@ using System;
 using OJS.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 
-using System.IO;
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
     public string? Name { get; set; }
@@ -41,8 +40,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
 
-    public IFormFile? AdditionalFiles { get; set; }
-
     public IFormFile? Tests { get; set; }
 
     public bool HasAdditionalFiles { get; set; }
@@ -54,8 +51,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
-             .ForMember(pam => pam.AdditionalFiles, opt
-                => opt.Ignore())
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt
@@ -75,9 +70,7 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
              .ForMember(pam => pam.SolutionSkeleton, opt
                  => opt.Ignore())
              .ForMember(p => p.AdditionalFiles, opt
-                 => opt.MapFrom(pam => pam.AdditionalFiles == null
-                     ? null
-                     : pam.AdditionalFiles.GetBytes()))
+                 => opt.Ignore())
              .ForMember(p => p.Tests, opt
                  => opt.Ignore())
              .ForMember(pam => pam.Resources, opt

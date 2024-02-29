@@ -10,9 +10,11 @@ public class ProblemResourceInListModel : IMapFrom<ProblemResource>
 
     public string Name { get; set; } = string.Empty;
 
-    public ProblemResourceType Type { get; set; }
+    public string? Type { get; set; }
 
-    public byte[]? File { get; set; }
+    public int ProblemId { get; set; }
+
+    public string? ProblemName { get; set; }
 
     public string? FileExtension { get; set; }
 
