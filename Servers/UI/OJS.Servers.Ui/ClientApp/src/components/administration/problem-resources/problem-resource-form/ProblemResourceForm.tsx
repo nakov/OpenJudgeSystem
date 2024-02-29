@@ -29,7 +29,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         link: '',
         name: '',
         orderBy: 0,
-        type: '',
+        type: 'ProblemDescription',
         fileExtension: '',
         file: null,
         hasFile: false,

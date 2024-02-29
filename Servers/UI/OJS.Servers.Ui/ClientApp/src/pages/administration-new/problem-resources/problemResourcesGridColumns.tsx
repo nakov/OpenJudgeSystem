@@ -101,7 +101,7 @@ const problemResourceFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnProblemResourceNonFilterableColumns = (onEditClick: Function) => [
+export const returnProblemResourceNonFilterableColumns = (onEditClick: Function, onSuccessFullyDeleted:Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -119,6 +119,7 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function)
                   name={`${PROBLEM_RESOURCE}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={useDeleteProblemResourceMutation}
+                  onSuccess={() => onSuccessFullyDeleted()}
                 />
                 <DownloadIconButton
                   args={params.row.id}

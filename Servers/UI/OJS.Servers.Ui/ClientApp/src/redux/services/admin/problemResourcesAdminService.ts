@@ -37,7 +37,7 @@ export const problemResourcesAdminService = createApi({
             }),
         }),
         downloadResource: builder.query<{ blob: Blob; filename: string }, number>({
-            query: (resourceId) => ({ url: `Download/${resourceId}` }),
+            query: (resourceId) => ({ url: `/Download/${resourceId}` }),
             keepUnusedDataFor: 5,
         }),
         createProblemResource: builder.mutation<string, FormData >({

@@ -93,7 +93,8 @@ const openedMixin = (theme: Theme): CSSObject => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'visible',
+    overflowY: 'visible',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -101,7 +102,8 @@ const closedMixin = (theme: Theme): CSSObject => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'visible',
+    overflowY: 'visible',
     width: `calc(${theme.spacing(7)} + 1px)`,
     [theme.breakpoints.up('sm')]: { width: `calc(${theme.spacing(8)} + 1px)` },
 });
@@ -204,17 +206,6 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         <Box sx={{ zIndex: 0 }}>
-            {!open
-                ? (
-                    <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                )
-                : (
-                    <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-                )}
             <Box sx={{ display: 'flex', zIndex: 0 }}>
                 <AppBar position="fixed" open={open}>
                     <Toolbar>
@@ -230,16 +221,27 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </Toolbar>
                 </AppBar>
                 <Drawer
-                  sx={{ zIndex: 0 }}
                   variant="permanent"
                   open={open}
+                  sx={{ zIndex: 100}}
                 >
+                    {!open
+                        ? (
+                            <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
+                                <ChevronRightIcon />
+                            </IconButton>
+                        )
+                        : (
+                            <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        )}
                     <DrawerHeader>
                         <div />
                     </DrawerHeader>
 
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
-                    <List>
+                    <List sx={{ overflow:'hidden'}}>
                         {administrationItems.map((item) => (
                             <Box key={item.name}>
                                 <ListItem key={item.name} disablePadding>
@@ -267,7 +269,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3, }}>
+                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>

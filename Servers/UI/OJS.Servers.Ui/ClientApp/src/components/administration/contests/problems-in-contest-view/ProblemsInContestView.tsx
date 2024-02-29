@@ -12,7 +12,6 @@ import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../re
 import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -178,7 +177,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     );
 
     const renderGridSettings = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
+        <>
             <CreateButton
               showModal={openShowCreateProblemModal}
               showModalFunc={setOpenShowCreateProblemModal}
@@ -197,7 +196,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                     <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
                 </IconButton>
             </Tooltip>
-        </div>
+        </>
     );
 
     const renderCopyModal = (index: number, operation: AllowedOperations) => (

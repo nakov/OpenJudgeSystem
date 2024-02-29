@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
+import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
+import ProblemResourceForm from '../../../components/administration/problem-resources/problem-resource-form/ProblemResourceForm';
 import { setAdminProblemResourceFilters, setAdminProblemResourceSorters } from '../../../redux/features/admin/problemResourcesAdminSlice';
 import { useGetAllAdminProblemResourcesQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 import { useAppSelector } from '../../../redux/store';
@@ -19,11 +21,12 @@ const AdministrationProblemResourcesPage = () => {
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
-
+    const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
+    const [ problemResourceId, setProblemResourceId ] = useState<number>(0);
     const selectedFilters = useAppSelector((state) => state.adminProblemResources[location]?.selectedFilters);
     const selectedSorters = useAppSelector((state) => state.adminProblemResources[location]?.selectedSorters);
 
-    const { data, error } = useGetAllAdminProblemResourcesQuery(queryParams);
+    const { refetch: retakeData, data, error } = useGetAllAdminProblemResourcesQuery(queryParams);
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
 
@@ -35,14 +38,27 @@ const AdministrationProblemResourcesPage = () => {
         setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
-    const onEditClick = () => {
-        console.log('Edit clicked');
+    const onEditClick = (id: number) => {
+        setOpenEditModal(true);
+        setProblemResourceId(id);
     };
 
+    const renderProblemResourceModal = (index: number) => (
+        <AdministrationModal
+          key={index}
+          index={index}
+          open={openEditModal}
+          onClose={() => setOpenEditModal(false)}
+        >
+            <ProblemResourceForm
+              id={problemResourceId}
+            />
+        </AdministrationModal>
+    );
     return (
         <AdministrationGridView
           filterableGridColumnDef={problemResourceFilterableColumns}
-          notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick)}
+          notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
           data={data}
           error={error}
           selectedFilters={selectedFilters || []}
@@ -53,6 +69,9 @@ const AdministrationProblemResourcesPage = () => {
           setFilterStateAction={setAdminProblemResourceFilters}
           setSorterStateAction={setAdminProblemResourceSorters}
           legendProps={[ { color: '#FFA1A1', message: 'Resource is deleted.' } ]}
+          modals={[
+              { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i) },
+          ]}
         />
     );
 };
