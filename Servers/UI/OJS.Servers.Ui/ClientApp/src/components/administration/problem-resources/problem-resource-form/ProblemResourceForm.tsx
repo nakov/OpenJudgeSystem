@@ -5,7 +5,7 @@ import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextFiel
 import isNaN from 'lodash/isNaN';
 
 import { ProblemResourceType } from '../../../../common/enums';
-import { CREATE, EDIT, FILE_EXTENSION, ID, LINK, NAME, ORDER_BY, PROBLEM, TYPE } from '../../../../common/labels';
+import { CREATE, EDIT, FILE_EXTENSION, ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import { useCreateProblemResourceMutation, useDownloadResourceQuery, useGetProblemResourceByIdQuery, useUpdateProblemResourceMutation } from '../../../../redux/services/admin/problemResourcesAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
@@ -121,13 +121,32 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         }));
     };
 
+    const submitForm = () => {
+        const formData = new FormData();
+        formData.append('name', currentResource.name);
+        formData.append('id', currentResource.id?.toString() ?? '');
+        formData.append('orderBy', currentResource.orderBy?.toString() || '');
+        formData.append('link', currentResource.link);
+        formData.append('fileExtension', currentResource.fileExtension);
+        formData.append('type', currentResource.type);
+
+        if (currentResource.file) {
+            formData.append('file', currentResource.file);
+        }
+        if (isEditMode) {
+            update(formData);
+        } else {
+            create(formData);
+        }
+    };
+
     const renderFormSubmitButtons = () => (
         isEditMode
             ? (
                 <FormActionButton
                   className={formStyles.buttonsWrapper}
                   buttonClassName={formStyles.button}
-                  onClick={() => update(currentResource)}
+                  onClick={() => submitForm()}
                   name={EDIT}
                 />
             )
@@ -135,7 +154,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                 <FormActionButton
                   className={formStyles.buttonsWrapper}
                   buttonClassName={formStyles.button}
-                  onClick={() => create(currentResource)}
+                  onClick={() => submitForm()}
                   name={CREATE}
                 />
             )

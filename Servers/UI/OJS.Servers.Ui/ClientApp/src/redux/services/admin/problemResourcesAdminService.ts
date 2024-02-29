@@ -29,8 +29,8 @@ export const problemResourcesAdminService = createApi({
         getProblemResourceById:
         builder.query<IProblemResourceAdministrationModel, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
 
-        updateProblemResource: builder.mutation<string, IProblemResourceAdministrationModel >({
-            query: (resource) => ({
+        updateProblemResource: builder.mutation<string, FormData >({
+            query: (resource: FormData) => ({
                 url: `/${UPDATE_ENDPOINT}/`,
                 method: 'PATCH',
                 body: resource,
@@ -40,8 +40,8 @@ export const problemResourcesAdminService = createApi({
             query: (resourceId) => ({ url: `Download/${resourceId}` }),
             keepUnusedDataFor: 5,
         }),
-        createProblemResource: builder.mutation<string, IProblemResourceAdministrationModel >({
-            query: (resource) => ({
+        createProblemResource: builder.mutation<string, FormData >({
+            query: (resource:FormData) => ({
                 url: `/${CREATE_ENDPOINT}`,
                 method: 'POST',
                 body: resource,

@@ -6,6 +6,7 @@ using OJS.Services.Administration.Models.ProblemResources;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using OJS.Services.Infrastructure.Exceptions;
 
 public class ProblemResourceBusinessService : AdministrationOperationService<ProblemResource, int, ProblemResourceAdministrationModel>, IProblemResourcesBusinessService
 {
@@ -29,8 +30,16 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
 
     public override async Task<ProblemResourceAdministrationModel> Edit(ProblemResourceAdministrationModel model)
     {
-        var resource = await this.problemResourcesDataService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
-        resource = model.Map<ProblemResource>();
+        var resource = await this.problemResourcesDataService.GetByIdQuery(model.Id)
+            .Include(pr => pr.Problem)
+            .FirstOrDefaultAsync();
+
+        if (resource is null)
+        {
+            throw new BusinessServiceException($"Resource with id {model.Id} not found");
+        }
+
+        resource.MapFrom(model);
 
         this.problemResourcesDataService.Update(resource);
         await this.problemResourcesDataService.SaveChanges();
