@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
 
@@ -53,6 +52,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
 
         dispatch(setContestCategory(selectedCategory));
         dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ selectedId, contestCategories ]);
 
     // eslint-disable-next-line @typescript-eslint/no-shadow

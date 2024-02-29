@@ -13,7 +13,6 @@ enum ButtonState {
     enabled = 1,
     disabled = 2,
 }
-
 enum ButtonType {
     primary = 1,
     secondary = 2,
@@ -23,21 +22,18 @@ enum ButtonType {
     toggled = 6,
     untoggled = 7,
 }
-
 enum LinkButtonType {
     primary = 1,
     secondary = 2,
     plain = 3,
     image = 4,
 }
-
 enum ButtonSize {
     small = 1,
     medium = 2,
     large = 3,
     none = 4,
 }
-
 interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOptionalChildrenProps {
     id?: string;
     size?: ButtonSize;
@@ -47,7 +43,6 @@ interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOpt
     imgSrc?: string;
     altText?: string;
 }
-
 interface IButtonProps extends IButtonBaseProps<ButtonType> {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     isWide?: boolean;

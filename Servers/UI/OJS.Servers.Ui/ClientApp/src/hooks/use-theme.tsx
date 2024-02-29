@@ -1,4 +1,3 @@
-import { ThemeMode } from '../common/enums';
 import { toggleTheme } from '../redux/features/themeSlice';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 
@@ -23,14 +22,11 @@ const useTheme = () => {
     const dispatch = useAppDispatch();
     const { mode } = useAppSelector((state) => state.theme);
 
-    const isDarkMode = mode === ThemeMode.Dark;
-
     const toggleSelectedTheme = () => {
         dispatch(toggleTheme());
     };
 
     const themeColors: ITheme = {
-        // TBD
         light: {
             textColor: '#14181c',
             baseColor100: '#6c6c6c',
@@ -72,12 +68,6 @@ const useTheme = () => {
 
     const getColorClassName = (color: string) => colorClassName[color];
 
-    return {
-        mode,
-        toggleSelectedTheme,
-        isDarkMode,
-        themeColors: selectedThemeColors,
-        getColorClassName,
-    };
+    return { mode, toggleSelectedTheme, themeColors: selectedThemeColors, getColorClassName };
 };
 export default useTheme;

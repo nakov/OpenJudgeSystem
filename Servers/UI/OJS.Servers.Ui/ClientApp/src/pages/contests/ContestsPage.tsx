@@ -13,19 +13,28 @@ import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
+import { clearContestCategoryBreadcrumbItems } from '../../redux/features/contestsSlice';
 import { useGetAllContestsQuery } from '../../redux/services/contestsService';
-import { useAppSelector } from '../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
+    const dispatch = useAppDispatch();
+    const { breadcrumbItems } = useAppSelector((state) => state.contests);
     const { themeColors, getColorClassName } = useTheme();
     const { selectedCategory, selectedStrategy } = useAppSelector((state) => state.contests);
     const [ searchParams, setSearchParams ] = useSearchParams();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
+
+    useEffect(() => {
+        if (!searchParams.get('category') && breadcrumbItems.length > 0) {
+            dispatch(clearContestCategoryBreadcrumbItems());
+        }
+    });
 
     useEffect(() => {
         if (!searchParams.get('page')) {

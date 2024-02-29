@@ -31,7 +31,6 @@ interface IListProps<TValue> extends IHaveOptionalClassName {
     type?: ListType;
     orientation?: Orientation;
     wrap?: boolean;
-    fullWidth?: boolean;
     scrollable?: boolean;
 }
 
@@ -44,7 +43,6 @@ const List = <TValue, >({
     type = ListType.normal,
     orientation = Orientation.vertical,
     wrap = false,
-    fullWidth = false,
     scrollable = false,
 }: IListProps<TValue>) => {
     const listTypeClassName =
@@ -78,10 +76,8 @@ const List = <TValue, >({
         listScrollableClassName,
         className,
     );
-    const fullWidthItemClassName = fullWidth
-        ? styles.fullWidth
-        : '';
-    const itemClassNameCombined = concatClassNames(itemClassName, fullWidthItemClassName);
+
+    const itemClassNameCombined = concatClassNames(itemClassName, styles.fullWidth);
 
     const renderItems = useCallback(
         () => {
@@ -89,23 +85,19 @@ const List = <TValue, >({
                 return null;
             }
 
-            return values.map((value, idx) => {
-                const isLast = idx === values.length - 1;
-
+            return values.map((value, index) => {
+                const isLast = index === values.length - 1;
                 return (
                     <li
                       key={keyFunc(value)}
                       className={itemClassNameCombined}
-                      style={{ width: '100%' }}
+                      style={{
+                          marginBottom: isLast
+                              ? 0
+                              : 20,
+                      }}
                     >
-                        {
-                            // Render function expects index
-                            itemFunc.length === 2
-                                ? itemFunc(value, idx)
-                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                // @ts-ignore
-                                : itemFunc(value)
-                        }
+                        {itemFunc(value)}
                     </li>
                 );
             });
