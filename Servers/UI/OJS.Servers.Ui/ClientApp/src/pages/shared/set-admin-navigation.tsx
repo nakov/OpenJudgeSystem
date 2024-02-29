@@ -14,7 +14,7 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Tooltip } from '@mui/material';
+import { Divider, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -218,26 +218,29 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                     <List>
                         {administrationItems.map((item) => (
-                            <ListItem key={item.name} disablePadding>
-                                <Link
-                                  to={item.path}
-                                  className={`${location.pathname === item.path
-                                      ? styles.activeAdminNavLink
-                                      : ''} ${styles.adminNavLink}`}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon style={{
-                                            color: location.pathname === item.path
-                                                ? '#42abf8'
-                                                : '#3e4c5d',
-                                        }}
-                                        >
-                                            {item.icon}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                            <>
+                                <ListItem key={item.name} disablePadding>
+                                    <Link
+                                      to={item.path}
+                                      className={`${location.pathname === item.path
+                                          ? styles.activeAdminNavLink
+                                          : ''} ${styles.adminNavLink}`}
+                                    >
+                                        <ListItemButton>
+                                            <ListItemIcon style={{
+                                                color: location.pathname === item.path
+                                                    ? '#42abf8'
+                                                    : '#3e4c5d',
+                                            }}
+                                            >
+                                                {item.icon}
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                                <Divider />
+                            </>
                         ))}
                     </List>
                 </Drawer>

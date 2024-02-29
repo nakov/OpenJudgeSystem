@@ -138,6 +138,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           autoHeight
                           onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
+                          disableRowSelectionOnClick
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {
@@ -147,8 +148,10 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                                   },
                               },
                               pagination: {
-                                  page: 1,
-                                  pageSize: DEFAULT_ITEMS_PER_PAGE,
+                                  paginationModel: {
+                                      page: 0,
+                                      pageSize: DEFAULT_ITEMS_PER_PAGE,
+                                  },
                               },
                           }}
                         />

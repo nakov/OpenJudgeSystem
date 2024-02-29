@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 import AdministrationContestPage from '../../components/administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
+import AdministrationProblemResource from '../../components/administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
@@ -175,6 +176,10 @@ const adminRoutes = [
     {
         path: `${PROBLEM_RESOURCES_PATH}`,
         Element: AdministrationProblemResourcesPage,
+    },
+    {
+        path: `${PROBLEM_RESOURCES_PATH}/:id`,
+        Element: AdministrationProblemResource,
     },
     {
         path: `${SUBMISSION_TYPES_PATH}`,

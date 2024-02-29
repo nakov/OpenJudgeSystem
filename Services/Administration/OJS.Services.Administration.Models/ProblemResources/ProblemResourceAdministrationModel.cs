@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Administration.Models.ProblemResources;
 
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
@@ -10,7 +9,7 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
 
     public string Name { get; set; } = string.Empty;
 
-    public ProblemResourceType Type { get; set; }
+    public string? Type { get; set; }
 
     public byte[]? File { get; set; }
 

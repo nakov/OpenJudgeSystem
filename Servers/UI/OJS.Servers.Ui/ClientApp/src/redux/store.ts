@@ -89,6 +89,7 @@ const store = configureStore({
         submissionsForProcessingAdminService.middleware,
         submissionTypesAdminService.middleware,
         checkerAdminService.middleware,
+        problemResourcesAdminService.middleware,
     ]),
 });
 

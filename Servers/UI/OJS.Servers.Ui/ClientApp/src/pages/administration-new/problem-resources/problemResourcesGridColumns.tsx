@@ -1,8 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { PROBLEM_RESOURCE } from '../../../common/labels';
+import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
+import { PROBLEM_RESOURCES_PATH, PROBLEMS_PATH } from '../../../common/urls';
+import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import DownloadIconButton from '../../../components/administration/common/download/DownloadIconButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteProblemResourceMutation } from '../../../redux/services/admin/problemResourcesAdminService';
 
 const problemResourceFilterableColumns: GridColDef[] = [
     {
@@ -19,8 +27,8 @@ const problemResourceFilterableColumns: GridColDef[] = [
     {
         field: 'name',
         headerName: 'Name',
-        flex: 1,
-        type: 'string',
+        flex: 0.5,
+        type: 'number',
         filterable: false,
         sortable: false,
         align: 'center',
@@ -39,7 +47,7 @@ const problemResourceFilterableColumns: GridColDef[] = [
     {
         field: 'fileExtension',
         headerName: 'File Extension',
-        flex: 1,
+        flex: 0,
         type: 'string',
         filterable: false,
         sortable: false,
@@ -53,8 +61,8 @@ const problemResourceFilterableColumns: GridColDef[] = [
         type: 'string',
         filterable: false,
         sortable: false,
-        align: 'center',
         headerAlign: 'center',
+        renderCell: (params) => <Link to={`${params.value}`}>{params.value}</Link>,
     },
     {
         field: 'orderBy',
@@ -65,6 +73,21 @@ const problemResourceFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'problem',
+        headerName: 'Problem',
+        flex: 0.5,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: (params) => (
+            <Link to={`${PROBLEMS_PATH}/${params.row.problemId}`}>
+                {params.row.problemName}
+            </Link>
+        ),
     },
     {
         field: 'isDeleted',
@@ -82,7 +105,7 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function)
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 0.5,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
@@ -90,12 +113,17 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function)
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                {/* <DeleteButton
+                <RedirectButton location="Edit page" path={`${PROBLEM_RESOURCES_PATH}/${Number(params.row.id)}`} />
+                <DeleteButton
                   id={Number(params.row.id)}
                   name={`${PROBLEM_RESOURCE}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={useDeleteProblemResourceMutation}
-                /> */}
+                />
+                <DownloadIconButton
+                  args={params.row.id}
+                  mutation={useDeleteProblemResourceMutation}
+                />
             </div>
         ),
     } ] as GridColDef[];
