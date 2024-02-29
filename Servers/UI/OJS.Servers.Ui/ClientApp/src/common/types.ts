@@ -92,14 +92,28 @@ interface IProblemResourceType {
     type: number;
 }
 
+interface IProblemResourceAdministrationModel {
+    id: number;
+    name: string;
+    link: string;
+    type: string;
+    orderBy: number;
+    fileExtension: string;
+    problemName: string;
+    file: File | null;
+    hasFile: boolean;
+}
+
 interface IProblemResouceInLinstModel {
     id: number;
     name: string;
     link: string;
-    type: number;
+    type: string;
     fileExtension: string;
     orderBy: number;
     isDeleted: boolean;
+    problemId: number;
+    problemName: string;
 }
 
 interface IProblemType {
@@ -513,4 +527,5 @@ export type {
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
     IProblemResouceInLinstModel,
+    IProblemResourceAdministrationModel,
 };

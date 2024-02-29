@@ -1,6 +1,7 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 import React, { FC, useEffect, useState } from 'react';
+import { GiFiles } from 'react-icons/gi';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -13,7 +14,7 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Tooltip } from '@mui/material';
+import { Divider, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -27,7 +28,7 @@ import { CSSObject, styled, Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 
 import { Anything } from '../../common/common-types';
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 
 import styles from './set-admin-navigation.module.scss';
 
@@ -72,6 +73,11 @@ const administrationItems = [
         name: 'Problem Groups',
         icon: <TableViewIcon />,
         path: `${PROBLEM_GROUPS_PATH}`,
+    },
+    {
+        name: 'Problem Resources',
+        icon: <GiFiles />,
+        path: `${PROBLEM_RESOURCES_PATH}`,
     },
     {
         name: 'Submission Types',
@@ -212,26 +218,29 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                     <List>
                         {administrationItems.map((item) => (
-                            <ListItem key={item.name} disablePadding>
-                                <Link
-                                  to={item.path}
-                                  className={`${location.pathname === item.path
-                                      ? styles.activeAdminNavLink
-                                      : ''} ${styles.adminNavLink}`}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon style={{
-                                            color: location.pathname === item.path
-                                                ? '#42abf8'
-                                                : '#3e4c5d',
-                                        }}
-                                        >
-                                            {item.icon}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                            <>
+                                <ListItem key={item.name} disablePadding>
+                                    <Link
+                                      to={item.path}
+                                      className={`${location.pathname === item.path
+                                          ? styles.activeAdminNavLink
+                                          : ''} ${styles.adminNavLink}`}
+                                    >
+                                        <ListItemButton>
+                                            <ListItemIcon style={{
+                                                color: location.pathname === item.path
+                                                    ? '#42abf8'
+                                                    : '#3e4c5d',
+                                            }}
+                                            >
+                                                {item.icon}
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                                <Divider />
+                            </>
                         ))}
                     </List>
                 </Drawer>

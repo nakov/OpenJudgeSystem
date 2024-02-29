@@ -15,7 +15,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
-import { DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 import AdministrationFilters, { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps } from './administration-filters/AdministrationFilters';
@@ -124,7 +124,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
 
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
-            <div style={{ height: '745px' }}>
+            <div>
                 {modals.map((m, i) => m.showModal && m.modal(i))}
                 { renderGridSettings() }
                 { error
@@ -135,14 +135,22 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
+                          autoHeight
                           onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
+                          disableRowSelectionOnClick
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {
                                   columnVisibilityModel: {
                                       isDeleted: false,
                                       isVisible: false,
+                                  },
+                              },
+                              pagination: {
+                                  paginationModel: {
+                                      page: 0,
+                                      pageSize: DEFAULT_ITEMS_PER_PAGE,
                                   },
                               },
                           }}

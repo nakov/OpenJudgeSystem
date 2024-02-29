@@ -1,5 +1,5 @@
 import React from 'react';
-import { IoNavigateOutline } from 'react-icons/io5';
+import { MdEditNote } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 
@@ -13,7 +13,7 @@ const RedirectButton = (props: IRedirectButtonProps) => {
         <Tooltip title={`Go to ${location}`}>
             <Link to={path}>
                 <IconButton>
-                    <IoNavigateOutline color="blue" />
+                    <MdEditNote color="blue" />
                 </IconButton>
             </Link>
         </Tooltip>

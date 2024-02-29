@@ -9,13 +9,13 @@ interface IAdministrationTabModel {
 
 interface ITabsInViewProps {
     form: () => ReactNode;
-    tabs : Array<IAdministrationTabModel>;
-    tabName: string;
-    onTabChange: (event: React.SyntheticEvent, newValue: any) => void;
+    tabs? : Array<IAdministrationTabModel>;
+    tabName?: string;
+    onTabChange?: (event: React.SyntheticEvent, newValue: any) => void;
 }
 
 const TabsInView = (props: ITabsInViewProps) => {
-    const { form, tabs, tabName, onTabChange } = props;
+    const { form, tabs = [], tabName, onTabChange } = props;
 
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={300}>

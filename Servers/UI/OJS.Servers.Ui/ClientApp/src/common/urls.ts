@@ -17,5 +17,6 @@ export const SUBMISSIONS_FOR_PROCESSING_PATH = `/${NEW_ADMINISTRATION_PATH}/subm
 export const TESTS_PATH = `/${NEW_ADMINISTRATION_PATH}/tests`;
 export const PROBLEMS_PATH = `/${NEW_ADMINISTRATION_PATH}/problems`;
 export const PROBLEM_GROUPS_PATH = `/${NEW_ADMINISTRATION_PATH}/problem-groups`;
+export const PROBLEM_RESOURCES_PATH = `/${NEW_ADMINISTRATION_PATH}/problem-resources`;
 export const SUBMISSION_TYPES_PATH = `/${NEW_ADMINISTRATION_PATH}/submission-types`;
 export const PARTICIPANTS_PATH = `/${NEW_ADMINISTRATION_PATH}/participants`;
