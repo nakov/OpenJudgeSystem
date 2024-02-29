@@ -149,7 +149,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mobileBreak = 1300;
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
-    const [ open, setOpen ] = useState(false);
+    const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
 
     const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
@@ -173,7 +173,6 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
 
     useEffect(() => {
         window.addEventListener('resize', handleResize);
-        handleResize();
         return function cleanUp() {
             window.removeEventListener('resize', handleResize);
         };
@@ -268,7 +267,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Box component="main" sx={{ flexGrow: 1, p: 3, }}>
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>
