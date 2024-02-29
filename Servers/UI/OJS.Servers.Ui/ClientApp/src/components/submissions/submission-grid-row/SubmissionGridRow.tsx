@@ -21,7 +21,7 @@ import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
     submission: ISubmissionResponseModel;
-    isFirst: boolean;
+    isFirst?: boolean;
     shouldDisplayUsername?: boolean;
 }
 
