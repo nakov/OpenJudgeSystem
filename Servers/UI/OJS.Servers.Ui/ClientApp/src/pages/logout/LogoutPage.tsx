@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -17,7 +16,7 @@ const LogoutPage = () => {
             dispatch(resetInInternalUser());
             dispatch(setIsLoggedIn(false));
         }
-    }, [ isSuccess ]);
+    }, [ dispatch, isSuccess ]);
 
     useEffect(() => {
         (async () => {
