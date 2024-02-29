@@ -30,9 +30,14 @@ const ContestBreadcrumbs = () => {
               ? textColorClassName
               : ''}`}
         >
-            {`${breadcrumbItem.name} ${!isLast
-                ? ' / '
-                : ''}`}
+            <div className={isLast
+                ? styles.lastItem
+                : ''}
+            >
+                {breadcrumbItem.name}
+                {' '}
+                {!isLast && '/'}
+            </div>
         </div>
     );
 

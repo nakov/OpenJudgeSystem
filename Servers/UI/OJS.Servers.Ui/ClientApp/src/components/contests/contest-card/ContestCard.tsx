@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
@@ -140,7 +141,9 @@ const ContestCard = (props: IContestCardProps) => {
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
-                <div className={styles.contestCardTitle}>{name}</div>
+                <Link className={styles.contestCardTitle} to={`/contests/${id}`}>
+                    {name}
+                </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
                 <div className={styles.contestDetailsFragmentsWrapper}>
                     {renderContestDetailsFragment(iconNames.time, preciseFormatDate(new Date(contestStartTime), 'HH:MM'))}

@@ -13,11 +13,13 @@
   font-size: variables.$f-size-18;
   justify-content: flex-start;
   padding: spacings.$sp-4 spacings.$sp-8;
-  position: absolute;
-  top: 105px;
-  width: 87%;
+  width: 99%;
 
   .item {
     color: colors.$primary-blue;
+  }
+
+  .lastItem {
+    margin-left: spacings.$sp-4;
   }
 }

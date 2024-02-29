@@ -15,6 +15,7 @@
   display: flex;
   font-size: variables.$f-size-12;
   justify-content: space-between;
+  margin: spacings.$sp-8 0;
   padding: spacings.$sp-16 spacings.$sp-18;
 
   .contestDetailsFragmentsWrapper {
@@ -22,7 +23,9 @@
   }
 
   .contestCardTitle {
+    color: inherit;
     font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-regular;
   }
 
   .contestCardSubTitle {

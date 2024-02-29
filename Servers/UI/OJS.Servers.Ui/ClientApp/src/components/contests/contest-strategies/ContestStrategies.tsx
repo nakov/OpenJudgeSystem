@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
+import { IoMdClose } from 'react-icons/io';
 import { MenuItem, Select } from '@mui/material';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
@@ -29,6 +30,10 @@ const ContestStrategies = () => {
         }
     }, [ selectedStrategy ]);
 
+    const removeSelectedStrategy = () => {
+        dispatch(setContestStrategy(null));
+    };
+
     const menuItems: ReactNode[] = React.useMemo(() => {
         if (!contestStrategies) { return []; }
 
@@ -58,21 +63,24 @@ const ContestStrategies = () => {
     if (areStrategiesLoading) { return <div>Loading strategies...</div>; }
 
     return (
-        <Select
-          className={`${styles.contestStrategiesSelect} ${textColorClassName}`}
-          sx={{
-              '& .MuiSvgIcon-root': { fill: themeColors.textColor },
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
-          }}
-          value={selectValue}
-          defaultValue=""
-          labelId="strategy-label"
-          autoWidth
-          displayEmpty
-        >
-            <MenuItem key="strategy-default-item" value="" selected>Select strategy</MenuItem>
-            {[ ...menuItems ]}
-        </Select>
+        <div className={styles.selectWrapper}>
+            <IoMdClose onClick={removeSelectedStrategy} />
+            <Select
+              className={`${styles.contestStrategiesSelect} ${textColorClassName}`}
+              sx={{
+                  '& .MuiSvgIcon-root': { fill: themeColors.textColor },
+                  '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
+              }}
+              value={selectValue}
+              defaultValue=""
+              labelId="strategy-label"
+              autoWidth
+              displayEmpty
+            >
+                <MenuItem key="strategy-default-item" value="" selected>Select strategy</MenuItem>
+                {[ ...menuItems ]}
+            </Select>
+        </div>
     );
 };
 
