@@ -13,6 +13,7 @@
   background-color: colors.$primary-blue;
   box-shadow: shadows.$dp-shadow-4;
   display: flex;
+  height: 30px;
   justify-content: space-between;
   padding: spacings.$sp-24 0;
   position: absolute;
@@ -30,17 +31,15 @@
   }
 
   .navButton {
+    color: colors.$white-color;
     font-size: variables.$f-size-18;
     font-weight: font-weights.$font-weight-regular;
     padding: 0 spacings.$sp-12;
-    text-decoration: none;
-
-    &:visited {
-      color: colors.$white-color;
-    }
   }
 
   .authButtons {
+    align-items: center;
+    display: flex;
     margin-right: spacings.$sp-192;
   }
 }

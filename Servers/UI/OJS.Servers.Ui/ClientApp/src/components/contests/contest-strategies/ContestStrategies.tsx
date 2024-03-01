@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
+import { IoMdClose } from 'react-icons/io';
 import { MenuItem, Select } from '@mui/material';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
@@ -29,6 +30,10 @@ const ContestStrategies = () => {
         }
     }, [ selectedStrategy ]);
 
+    const removeSelectedStrategy = () => {
+        dispatch(setContestStrategy(null));
+    };
+
     const menuItems: ReactNode[] = React.useMemo(() => {
         if (!contestStrategies) { return []; }
 
@@ -43,6 +48,13 @@ const ContestStrategies = () => {
 
         return (displayStrategies || []).map((item: IContestStrategyFilter) => (
             <MenuItem
+              sx={{
+                  color: themeColors.textColor,
+                  backgroundColor: themeColors.baseColor100,
+                  '&:hover': { backgroundColor: themeColors.baseColor200 },
+                  '&.Mui-selected': { backgroundColor: themeColors.baseColor300 },
+                  '&.Mui-selected:hover': { backgroundColor: themeColors.baseColor400 },
+              }}
               key={`contest-strategy-item-${item.id}`}
               value={item.id}
               onClick={() => handleStrategySelect(item)}
@@ -58,21 +70,23 @@ const ContestStrategies = () => {
     if (areStrategiesLoading) { return <div>Loading strategies...</div>; }
 
     return (
-        <Select
-          className={`${styles.contestStrategiesSelect} ${textColorClassName}`}
-          sx={{
-              '& .MuiSvgIcon-root': { fill: themeColors.textColor },
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#44a9f8', borderWidth: 2 },
-          }}
-          value={selectValue}
-          defaultValue=""
-          labelId="strategy-label"
-          autoWidth
-          displayEmpty
-        >
-            <MenuItem key="strategy-default-item" value="" selected>Select strategy</MenuItem>
-            {[ ...menuItems ]}
-        </Select>
+        <div className={styles.selectWrapper}>
+            { selectedStrategy && <IoMdClose onClick={removeSelectedStrategy} />}
+            <Select
+              className={`${styles.contestStrategiesSelect} ${textColorClassName}`}
+              sx={{
+                  border: '2px solid #44a9f8',
+                  '& .MuiSvgIcon-root': { fill: themeColors.textColor },
+                  '& .MuiOutlinedInput-notchedOutline': { borderWidth: 0 },
+              }}
+              value={selectValue}
+              autoWidth
+              displayEmpty
+            >
+                <MenuItem key="strategy-default-item" value="" selected disabled>Select strategy</MenuItem>
+                {[ ...menuItems ]}
+            </Select>
+        </div>
     );
 };
 

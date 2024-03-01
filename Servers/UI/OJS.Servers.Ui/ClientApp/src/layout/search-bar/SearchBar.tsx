@@ -119,7 +119,6 @@ const SearchBar = () => {
               ? `${styles.show}`
               : ''}`}
         >
-            <IoIosClose size={50} onClick={toggleVisibility} className={styles.closeIcon} />
             <Form
               className={styles.search}
               onSubmit={handleSubmit}
@@ -173,6 +172,7 @@ const SearchBar = () => {
                     </span>
                 </div>
             </Form>
+            <IoIosClose size={50} onClick={toggleVisibility} className={styles.closeIcon} />
         </div>
     );
 };

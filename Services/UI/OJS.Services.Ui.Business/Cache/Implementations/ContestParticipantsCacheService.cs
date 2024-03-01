@@ -64,8 +64,8 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
             id => id,
             id => new ContestParticipantsCountCacheModel
             {
-                Official = officialParticipants.GetValuerOrDefault(id),
-                Practice = practiceParticipants.GetValuerOrDefault(id),
+                Official = officialParticipants.GetValueOrDefault(id),
+                Practice = practiceParticipants.GetValueOrDefault(id),
             });
     }
 }

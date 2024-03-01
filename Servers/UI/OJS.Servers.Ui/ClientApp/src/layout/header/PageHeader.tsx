@@ -7,6 +7,7 @@ import { RiSunLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
+import MyProfileSvg from '../../assets/my-profile.svg';
 import { useSearch } from '../../hooks/use-search';
 import useTheme from '../../hooks/use-theme';
 import { resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
@@ -71,7 +72,7 @@ const PageHeader = () => {
     return (
         <header className={styles.header}>
             <div>
-                <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>Softuni Judge</Link>
+                <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>SoftUni Judge</Link>
                 <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
                 <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
                 {user.canAccessAdministration && <Link to="/administration-new" className={styles.navButton}>ADMINISTRATION</Link>}
@@ -82,7 +83,9 @@ const PageHeader = () => {
                     ? (
                         <>
                             {' '}
-                            <Link to="/" className={styles.navButton}>MY PROFILE</Link>
+                            <Link to="/" className={styles.navButton}>
+                                <img height={40} width={40} src={MyProfileSvg} alt="my-profile" />
+                            </Link>
                             <Link to="/logout" className={styles.navButton}>
                                 LOGOUT
                             </Link>
