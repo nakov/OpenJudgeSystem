@@ -1,8 +1,9 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
+import isNil from 'lodash/isNil';
 import moment from 'moment';
 
-const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
+const defaultDateTimeFormat = 'hh:mm, DD/MMM/YYYY';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
 const calculateTimeUntil = (date: Date) => intervalToDuration({
@@ -108,15 +109,22 @@ const convertToTwoDigitValues = ({
     };
 };
 
-// eslint-disable-next-line max-len
-const getDateWithFormat = (date?: string | number | Date | dayjs.Dayjs | null | undefined, format?: string | undefined) => {
+const getDateWithFormat = (
+    date?: string | number | Date | dayjs.Dayjs | null | undefined,
+    format?: string | undefined,
+) => {
     if (!date) {
         return null;
     }
-    if (!format) {
-        return dayjs(date) as unknown as Date;
+
+    const dateDayjs = dayjs(date);
+
+    console.log(format);
+    if (isNil(format)) {
+        return dateDayjs.format(defaultDateTimeFormat);
     }
-    return new Date(dayjs(date).format(format));
+
+    return dateDayjs.format(format);
 };
 
 export default {
@@ -130,6 +138,7 @@ export default {
 };
 
 export {
+    defaultDateTimeFormat,
     formatDate,
     preciseFormatDate,
     secondsToFullTime,

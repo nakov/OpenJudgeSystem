@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls';
-import { preciseFormatDate } from '../../../utils/dates';
+import { PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls';
+import { getDateWithFormat, preciseFormatDate } from '../../../utils/dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -115,7 +115,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
+        valueFormatter: (params) => getDateWithFormat(params.value?.createdOn),
     },
     {
         field: 'modifiedOn',
