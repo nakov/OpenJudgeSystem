@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-indent */
-/* eslint-disable import/prefer-default-export */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -26,7 +25,7 @@ import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-grid-def';
 
-export const AdministrationSubmissionsPage = () => {
+const AdministrationSubmissionsPage = () => {
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
     const [ searchParams ] = useSearchParams();
@@ -146,3 +145,5 @@ export const AdministrationSubmissionsPage = () => {
             )
     );
 };
+
+export default AdministrationSubmissionsPage;
