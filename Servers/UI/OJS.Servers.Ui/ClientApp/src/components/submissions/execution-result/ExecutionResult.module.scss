@@ -4,17 +4,30 @@
 .compileAndUnknownError,
 .maxTimeUsed,
 .maxMemoryUsed {
-  color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;
 }
 
-.testRunIcons {
+.executionResultInfo {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .testResultsList {
   display: flex;
   gap: 10px;
-  justify-content: space-between;
+  justify-content: space-evenly;
+}
+
+.errorContainer {
+  justify-content: end;
+}
+
+.timeAndMemoryContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.testRunsContainer {
+  
 }
