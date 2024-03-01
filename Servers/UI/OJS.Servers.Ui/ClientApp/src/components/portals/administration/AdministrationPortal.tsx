@@ -1,6 +1,5 @@
-/* eslint-disable max-len */
-import React, { FC, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
@@ -12,73 +11,76 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Tooltip } from '@mui/material';
+import { Box, CSSObject, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme, Toolbar, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { CSSObject, styled, Theme } from '@mui/material/styles';
-import Toolbar from '@mui/material/Toolbar';
 
-import { Anything } from '../../common/common-types';
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls';
+import AdministrationPage from '../../../pages/administration/AdministrationPage';
+import Administration from '../../../pages/administration-new/Administration';
+import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
+import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
+import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
+import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
+import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
+import AdminSubmissionForProcessingDetails
+    from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
+import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import { useAppSelector } from '../../../redux/store';
+import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
+import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
+import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
 
-import styles from './set-admin-navigation.module.scss';
-
-const drawerWidth = 240;
+import styles from './AdministrationPortal.module.scss';
 
 interface IAppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
 
+const drawerWidth = 240;
+
 const administrationItems = [
     {
         name: 'Contests',
         icon: <AutoStoriesIcon />,
-        path: `${CONTESTS_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`,
     },
     {
         name: 'Contest Categories',
         icon: <BookmarksIcon />,
-        path: `${CONTEST_CATEGORIES_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`,
     },
     {
         name: 'Submissions',
         icon: <PlaylistAddCheckCircleIcon />,
-        path: `${SUBMISSIONS_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_PATH}`,
     },
     {
         name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
-        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}`,
     },
     {
         name: 'Tests',
         icon: <ScienceIcon />,
-        path: `${TESTS_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`,
     },
     {
         name: 'Problems',
         icon: <NotListedLocationIcon />,
-        path: `${PROBLEMS_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`,
     },
     {
         name: 'Problem Groups',
         icon: <TableViewIcon />,
-        path: `${PROBLEM_GROUPS_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}`,
     },
     {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
-        path: `${SUBMISSION_TYPES_PATH}`,
+        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPES_PATH}`,
     },
 ];
-
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -137,9 +139,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         '& .MuiDrawer-paper': closedMixin(theme),
     },
 }));
-
-const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
+const AdministrationPortal = () => {
     const location = useLocation();
+    console.log(location);
     const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
 
@@ -172,9 +174,66 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         setOpen(false);
     };
 
+    const adminRoutes = [
+        {
+            path: `${CONTESTS_PATH}`,
+            Element: AdministrationContestsPage,
+        },
+        {
+            path: `${CONTESTS_PATH}/:id`,
+            Element: AdministrationContestPage,
+        },
+        {
+            path: `${CONTEST_CATEGORIES_PATH}`,
+            Element: AdministrationContestCategories,
+        },
+        {
+            path: `${SUBMISSIONS_PATH}`,
+            Element: AdministrationSubmissionsPage,
+        },
+        {
+            path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+            Element: AdministrationSubmissionsForProcessingPage,
+        },
+        {
+            path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
+            Element: AdminSubmissionForProcessingDetails,
+        },
+        {
+            path: `${TESTS_PATH}`,
+            Element: Administration,
+        },
+        {
+            path: `${PROBLEMS_PATH}`,
+            Element: AdministrationProblemsPage,
+        },
+        {
+            path: `${PROBLEMS_PATH}/:id`,
+            Element: AdministrationProblem,
+        },
+        {
+            path: `${PROBLEM_GROUPS_PATH}`,
+            Element: AdministrationProblemGroupsPage,
+        },
+        {
+            path: `${PROBLEM_GROUPS_PATH}/:id`,
+            Element: AdministrationProblemGroup,
+        },
+        {
+            path: `${SUBMISSION_TYPES_PATH}`,
+            Element: Administration,
+        },
+        {
+            path: '/administration',
+            Element: AdministrationPage,
+            title: 'Administration',
+        },
+    ];
+
+    const { internalUser: user } =
+    useAppSelector((state) => state.authorization);
+
     return (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         <Box sx={{ zIndex: 0 }}>
             {!open
                 ? (
@@ -209,8 +268,6 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     <DrawerHeader>
                         <div />
                     </DrawerHeader>
-
-                    {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                     <List>
                         {administrationItems.map((item) => (
                             <ListItem key={item.name} disablePadding>
@@ -220,11 +277,16 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                                       ? styles.activeAdminNavLink
                                       : ''} ${styles.adminNavLink}`}
                                 >
-                                    <ListItemButton>
-                                        <ListItemIcon style={{
-                                            color: location.pathname === item.path
-                                                ? '#42abf8'
-                                                : '#3e4c5d',
+                                    <ListItemButton style={{
+                                        backgroundColor: location.pathname === item.path &&
+                                            '#42abf8',
+                                        color: location.pathname === item.path &&
+                                            'white',
+                                    }}
+                                    >
+                                        <ListItemIcon sx={{
+                                            color: location.pathname === item.path &&
+                                            'white',
                                         }}
                                         >
                                             {item.icon}
@@ -237,11 +299,16 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </List>
                 </Drawer>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    <ComponentToWrap {...props} />
+                    <Routes>
+                        {user.canAccessAdministration &&
+                        adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
+
+                        <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
+                    </Routes>
                 </Box>
             </Box>
         </Box>
+
     );
 };
-
-export default withAdministrationNav;
+export default AdministrationPortal;

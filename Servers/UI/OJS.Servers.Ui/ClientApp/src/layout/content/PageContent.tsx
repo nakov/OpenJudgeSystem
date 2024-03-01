@@ -6,6 +6,7 @@ import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLE
 import AdministrationContestPage from '../../components/administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
+import AdministrationPortal from '../../components/portals/administration/AdministrationPortal';
 import useTheme from '../../hooks/use-theme';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
@@ -38,7 +39,6 @@ import { asPage } from '../../pages/shared/set-page-params';
 import { withTitle } from '../../pages/shared/set-page-title';
 import SubmissionDetailsPage from '../../pages/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../pages/submissions/SubmissionsPage';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 
 import styles from './PageContent.module.scss';
 
@@ -120,78 +120,13 @@ const routes = [
     },
 ];
 
-const adminRoutes = [
-    {
-        path: `/${NEW_ADMINISTRATION_PATH}`,
-        Element: AdministrationContestsPage,
-        title: 'Administration',
-    },
-    {
-        path: `${CONTESTS_PATH}`,
-        Element: AdministrationContestsPage,
-    },
-    {
-        path: `${CONTESTS_PATH}/:id`,
-        Element: AdministrationContestPage,
-    },
-    {
-        path: `${CONTEST_CATEGORIES_PATH}`,
-        Element: AdministrationContestCategories,
-    },
-    {
-        path: `${SUBMISSIONS_PATH}`,
-        Element: AdministrationSubmissionsPage,
-    },
-    {
-        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
-        Element: AdministrationSubmissionsForProcessingPage,
-    },
-    {
-        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
-        Element: AdminSubmissionForProcessingDetails,
-    },
-    {
-        path: `${TESTS_PATH}`,
-        Element: Administration,
-    },
-    {
-        path: `${PROBLEMS_PATH}`,
-        Element: AdministrationProblemsPage,
-    },
-    {
-        path: `${PROBLEMS_PATH}/:id`,
-        Element: AdministrationProblem,
-    },
-    {
-        path: `${PROBLEM_GROUPS_PATH}`,
-        Element: AdministrationProblemGroupsPage,
-    },
-    {
-        path: `${PROBLEM_GROUPS_PATH}/:id`,
-        Element: AdministrationProblemGroup,
-    },
-    {
-        path: `${SUBMISSION_TYPES_PATH}`,
-        Element: Administration,
-    },
-    {
-        path: '/administration',
-        Element: AdministrationPage,
-        title: 'Administration',
-    },
-];
-
 const PageContent = () => {
     const { themeColors, getColorClassName } = useTheme();
-    const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor400);
-    const renderRoute = (path: string, Element: FC, title: string | undefined, isAdminRoute: boolean) => {
-        let WrappedElement = asPage(withTitle(Element, title));
-        if (isAdminRoute) {
-            WrappedElement = withAdministrationNav(Element);
-        }
+    const renderRoute = (path: string, Element: FC, title: string | undefined) => {
+        const WrappedElement = asPage(withTitle(Element, title));
+
         return (
             <Route key={path} path={path} element={<WrappedElement />} />
         );
@@ -200,8 +135,8 @@ const PageContent = () => {
     return (
         <main className={`${styles.main} ${backgroundColorClassName}`}>
             <Routes>
-                {routes.map(({ path, Element, title }) => renderRoute(path, Element, title, false))}
-                {user.canAccessAdministration && adminRoutes.map(({ path, Element, title }) => renderRoute(path, Element, title, true))}
+                <Route path={`/${NEW_ADMINISTRATION_PATH}/*`} element={<AdministrationPortal />} />
+                {routes.map(({ path, Element, title }) => renderRoute(path, Element, title))}
             </Routes>
         </main>
     );
