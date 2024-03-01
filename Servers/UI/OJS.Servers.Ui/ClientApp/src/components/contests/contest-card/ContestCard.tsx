@@ -103,7 +103,7 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={`/contests/${id}/${participationType}/results/:resultType`}
+                          to={`/contests/${id}/${participationType}/results/simple`}
                         >
                             {renderBody()}
                         </Link>
