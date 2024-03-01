@@ -16,7 +16,9 @@ public interface IGridDataService<TEntity> : IService
 
     Task<PagedResult<TModel>> GetAll<TModel>(
         PaginationRequestModel paginationRequestModel,
-        Expression<Func<TEntity, bool>>? filter = null);
+        Expression<Func<TEntity, bool>>? filter = null,
+        Expression<Func<TEntity, object>>? orderBy = null,
+        bool descendingOrder = false);
 
     Task<PagedResult<TModel>> GetAllForUser<TModel>(
         PaginationRequestModel paginationRequestModel,
