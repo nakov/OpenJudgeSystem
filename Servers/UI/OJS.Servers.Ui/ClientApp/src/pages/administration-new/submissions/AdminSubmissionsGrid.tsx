@@ -30,6 +30,7 @@ export const AdministrationSubmissionsPage = () => {
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
     const [ searchParams ] = useSearchParams();
+
     const [ queryParams, setQueryParams ] =
         useState<IGetAllAdminParams>({
             page: 1,
@@ -38,8 +39,22 @@ export const AdministrationSubmissionsPage = () => {
             sorting: searchParams.get('sorting') ?? '',
         });
 
-    const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedSorters);
+    const selectedFilters =
+        useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedFilters);
+
+    const selectedSorters =
+        useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedSorters);
+
+    const filterParams = searchParams.get('filter');
+    const sortingParams = searchParams.get('sorting');
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
+    }, [ filterParams ]);
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
+    }, [ sortingParams ]);
 
     const {
         data,
