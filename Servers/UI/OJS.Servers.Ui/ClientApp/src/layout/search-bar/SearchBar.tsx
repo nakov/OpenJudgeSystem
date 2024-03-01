@@ -125,7 +125,7 @@ const SearchBar = () => {
               hideFormButton
             >
                 <FormControl
-                  className={styles.searchInput}
+                  className={`${styles.searchInput} ${textColorClassName}`}
                   name={FieldNameType.search}
                   type={FormControlType.input}
                   labelText={FieldNameType.search}

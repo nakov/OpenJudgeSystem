@@ -57,6 +57,7 @@ const SearchPage = () => {
                   className={styles.searchHeading}
                 >
                     {message}
+                    {' '}
                 </Heading>
             </div>
         ),

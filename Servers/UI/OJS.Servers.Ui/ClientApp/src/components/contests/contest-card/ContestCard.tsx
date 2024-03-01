@@ -74,18 +74,15 @@ const ContestCard = (props: IContestCardProps) => {
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
         isGreenColor?: boolean, hasUnderLine?: boolean,
+        participationType?: string,
     ) => {
         if (!text || !iconName) {
             return;
         }
 
-        // eslint-disable-next-line consistent-return
-        return (
-            <div
-              className={`${styles.contestDetailsFragment} ${isGreenColor
-                  ? styles.greenColor
-                  : ''}`}
-            >
+        const renderBody = () => (
+            <>
+                {' '}
                 <i className={`${iconName}`} />
                 <div className={`${hasUnderLine
                     ? styles.hasUnderLine
@@ -93,7 +90,33 @@ const ContestCard = (props: IContestCardProps) => {
                 >
                     {text}
                 </div>
-            </div>
+            </>
+        );
+
+        // eslint-disable-next-line consistent-return
+        return (
+            // eslint-disable-next-line react/jsx-no-useless-fragment
+            <>
+                {participationType
+                    ? (
+                        <Link
+                          className={`${styles.contestDetailsFragment} ${isGreenColor
+                              ? styles.greenColor
+                              : ''}`}
+                          to={`/contests/${id}/${participationType}/results/:resultType`}
+                        >
+                            {renderBody()}
+                        </Link>
+                    )
+                    : (
+                        <div className={`${styles.contestDetailsFragment} ${isGreenColor
+                            ? styles.greenColor
+                            : ''}`}
+                        >
+                            {renderBody()}
+                        </div>
+                    )}
+            </>
         );
     };
 
@@ -149,8 +172,20 @@ const ContestCard = (props: IContestCardProps) => {
                     {renderContestDetailsFragment(iconNames.time, preciseFormatDate(new Date(contestStartTime), 'HH:MM'))}
                     {renderContestDetailsFragment(iconNames.date, preciseFormatDate(new Date(contestStartTime), 'D MMM YY'))}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
-                    {renderContestDetailsFragment(iconNames.practiceResults, `practice results: ${practiceResults}`, false, true)}
-                    {renderContestDetailsFragment(iconNames.competeResults, `compete results: ${competeResults}`, true, true)}
+                    {renderContestDetailsFragment(
+                        iconNames.practiceResults,
+                        `practice results: ${practiceResults}`,
+                        false,
+                        true,
+                        'practice',
+                    )}
+                    {renderContestDetailsFragment(
+                        iconNames.competeResults,
+                        `compete results: ${competeResults}`,
+                        true,
+                        true,
+                        'compete',
+                    )}
                     {canBeCompeted &&
                         contestEndTime &&
                         remainingDuration &&
@@ -159,7 +194,7 @@ const ContestCard = (props: IContestCardProps) => {
                             iconNames.remainingTime,
                             `remaining time: ${remainingTimeFormatted}`,
                             false,
-                            true,
+                            false,
                         )}
                 </div>
             </div>
