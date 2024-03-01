@@ -31,4 +31,16 @@ public class ProblemResourcesController : BaseAdminApiController<ProblemResource
 
         return this.File(model.Content!, model.MimeType!, model.FileName);
     }
+
+    public override async Task<IActionResult> Create([FromForm] ProblemResourceAdministrationModel model)
+    {
+        var response = await base.Create(model);
+        return response;
+    }
+
+    public override async Task<IActionResult> Edit([FromForm] ProblemResourceAdministrationModel model)
+    {
+        var response = await base.Edit(model);
+        return response;
+    }
 }

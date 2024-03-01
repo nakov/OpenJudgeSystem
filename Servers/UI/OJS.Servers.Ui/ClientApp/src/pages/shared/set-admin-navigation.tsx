@@ -223,7 +223,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                 <Drawer
                   variant="permanent"
                   open={open}
-                  sx={{ zIndex: 100}}
+                  sx={{ zIndex: 100 }}
                 >
                     {!open
                         ? (
@@ -241,7 +241,7 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </DrawerHeader>
 
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
-                    <List sx={{ overflow:'hidden'}}>
+                    <List sx={{ overflow: 'hidden' }}>
                         {administrationItems.map((item) => (
                             <Box key={item.name}>
                                 <ListItem key={item.name} disablePadding>

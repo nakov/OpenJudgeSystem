@@ -20,9 +20,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IProblemResourceFormProps {
     id: number;
     isEditMode?: boolean;
+
+    problemId? : number;
 }
 const ProblemResourceForm = (props :IProblemResourceFormProps) => {
-    const { id, isEditMode = true } = props;
+    const { id, isEditMode = true, problemId = 0 } = props;
 
     const [ currentResource, setCurrentResource ] = useState<IProblemResourceAdministrationModel>({
         id: 0,
@@ -33,6 +35,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         fileExtension: '',
         file: null,
         hasFile: false,
+        problemId: 0,
     });
     const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
@@ -134,8 +137,12 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
             formData.append('file', currentResource.file);
         }
         if (isEditMode) {
+            formData.append('problemId', currentResource.problemId?.toString() || '');
+
             update(formData);
         } else {
+            formData.append('problemId', problemId?.toString() || '');
+
             create(formData);
         }
     };

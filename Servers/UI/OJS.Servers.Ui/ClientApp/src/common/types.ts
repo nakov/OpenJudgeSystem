@@ -101,6 +101,7 @@ interface IProblemResourceAdministrationModel {
     fileExtension: string;
     file: File | null;
     hasFile: boolean;
+    problemId: number;
 }
 
 interface IProblemResouceInLinstModel {

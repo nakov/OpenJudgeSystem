@@ -31,7 +31,7 @@ export const problemResourcesAdminService = createApi({
 
         updateProblemResource: builder.mutation<string, FormData >({
             query: (resource: FormData) => ({
-                url: `/${UPDATE_ENDPOINT}/`,
+                url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
                 body: resource,
             }),

@@ -43,6 +43,7 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
             <ProblemResourceForm
               id={problemResourceId}
               isEditMode={!isCreate}
+              problemId={problemId}
             />
         </AdministrationModal>
     );
