@@ -18,12 +18,10 @@ import AdministrationContestCategories
 import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
-import { AdministrationSubmissionsPage } from '../../pages/administration-new/submissions/AdminSubmissionsGrid';
+import AdministrationSubmissionsPage from '../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
     from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
-import {
-    AdministrationSubmissionsForProcessingPage,
-} from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessingPage';
+import AdministrationSubmissionsForProcessingPage from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';

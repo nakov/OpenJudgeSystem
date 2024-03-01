@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-indent */
-/* eslint-disable import/prefer-default-export */
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -21,7 +20,7 @@ import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
 
-export const AdministrationSubmissionsForProcessingPage = () => {
+const AdministrationSubmissionsForProcessingPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ queryParams, setQueryParams ] =
         useState<IGetAllAdminParams>({
@@ -90,3 +89,5 @@ export const AdministrationSubmissionsForProcessingPage = () => {
             )
     );
 };
+
+export default AdministrationSubmissionsForProcessingPage;
