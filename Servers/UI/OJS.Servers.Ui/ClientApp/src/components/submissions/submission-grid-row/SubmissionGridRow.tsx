@@ -16,6 +16,8 @@ import { encodeUsernameAsUrlParam,
     getSubmissionDetailsRedirectionUrl,
     getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import ErrorResult from '../execution-result/ErrorResult';
+import ExecutionResult from '../execution-result/ExecutionResult';
 
 import styles from './SubmissionGridRow.module.scss';
 
@@ -47,6 +49,11 @@ const SubmissionGridRow = ({
             },
         },
         isOfficial,
+        isCompiledSuccessfully,
+        maxMemoryUsed,
+        maxTimeUsed,
+        processed,
+        testRuns,
     } = submission;
 
     const { actions: { initiateRedirectionToProblem } } = useProblems();
@@ -114,13 +121,17 @@ const SubmissionGridRow = ({
     const renderPoints = useCallback(
         () => {
             if (state === PublicSubmissionState.Ready) {
+                if (!isCompiledSuccessfully) {
+                    return <ErrorResult />;
+                }
+
                 return (
-                    <>
+                    <span className={styles.textAlignRight}>
                         {points}
                         {' '}
                         /
                         {maxPoints}
-                    </>
+                    </span>
                 );
             }
 
@@ -130,7 +141,7 @@ const SubmissionGridRow = ({
                 </>
             );
         },
-        [ state, maxPoints, points ],
+        [ state, isCompiledSuccessfully, points, maxPoints ],
     );
 
     const renderUsername = useCallback(
@@ -184,22 +195,31 @@ const SubmissionGridRow = ({
 
     return (
         <>
-            <div>
-                {
-                    isFirst
-                        ? (
-                            <div className={headerClassName}>
-                                <div className={styles.smallColumn}>N</div>
-                                <div className={styles.wideColumn}>Task</div>
-                                <div className={styles.wideColumn}>From</div>
-                                <div className={concatClassNames(styles.smallColumn, styles.textAlignRight)}>Result</div>
-                                <div className={styles.wideColumn} />
-                                <div className={styles.smallColumn} />
+            {
+                isFirst
+                    ? (
+                        <div className={headerClassName}>
+                            <div className={styles.smallColumn}>N</div>
+                            <div className={styles.wideColumn}>Task</div>
+                            <div className={styles.wideColumn}>From</div>
+                            <div className={styles.mediumColumn}>
+                                Result
                             </div>
-                        )
-                        : null
-                }
-            </div>
+                            {
+                                internalUser.isAdmin
+                                    ? ( // Rendering full execution result if is admin
+                                        <div className={styles.wideColumn}>
+                                            Execution Result
+                                        </div>
+                                    )
+                                    : null
+                            }
+                            <div className={styles.mediumColumn}>Submission Type</div>
+                            <div className={styles.mediumColumn} />
+                        </div>
+                    )
+                    : null
+            }
             <div className={rowClassName}>
                 <div
                   className={styles.smallColumn}
@@ -209,34 +229,47 @@ const SubmissionGridRow = ({
                 </div>
                 <div className={styles.wideColumn}>
                     {renderProblemInformation()}
-                    <div className={styles.columnContainer}>
-                        <Button
-                          type={ButtonType.secondary}
-                          size={ButtonSize.small}
-                          className={styles.link}
-                          internalClassName={styles.redirectButton}
-                          onClick={handleParticipateInContestSubmit}
-                          text={contestName}
-                        />
-                    </div>
+                    <Button
+                      type={ButtonType.secondary}
+                      size={ButtonSize.small}
+                      className={styles.link}
+                      internalClassName={styles.redirectButton}
+                      onClick={handleParticipateInContestSubmit}
+                      text={contestName}
+                    />
                 </div>
                 <div className={styles.wideColumn}>
-                    <div className={styles.columnContainer}>
-                        <span>
-                            {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                            {shouldDisplayUsername && renderUsername()}
-                        </span>
-                    </div>
+                    <span>
+                        {formatDate(createdOn, defaultDateTimeFormatReverse)}
+                        {shouldDisplayUsername && renderUsername()}
+                    </span>
                 </div>
                 <div
-                  className={concatClassNames(styles.smallColumn, styles.textAlignRight)}
+                  className={concatClassNames(styles.mediumColumn, styles.textAlignRight)}
                 >
                     {renderPoints()}
                 </div>
-                <div className={concatClassNames(styles.wideColumn)}>
+                {
+                    internalUser.isAdmin
+                        ? (
+                            <div
+                              className={concatClassNames(styles.wideColumn)}
+                            >
+                                <ExecutionResult
+                                  testRuns={testRuns}
+                                  maxMemoryUsed={maxMemoryUsed}
+                                  maxTimeUsed={maxTimeUsed}
+                                  isCompiledSuccessfully={isCompiledSuccessfully}
+                                  isProcessed={processed}
+                                />
+                            </div>
+                        )
+                        : null
+                }
+                <div className={concatClassNames(styles.mediumColumn)}>
                     <div>{strategyName}</div>
                 </div>
-                <div className={styles.smallColumn}>
+                <div className={styles.mediumColumn}>
                     {renderDetailsBtn()}
                 </div>
             </div>
