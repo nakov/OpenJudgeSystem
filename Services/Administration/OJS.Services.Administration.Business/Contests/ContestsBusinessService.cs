@@ -119,7 +119,11 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     {
         var contest = model.Map<Contest>();
 
-        AddProblemGroupsToContest(contest, model.NumberOfProblemGroups);
+        if (model.IsOnlineExam && model.NumberOfProblemGroups == 0)
+        {
+            AddProblemGroupsToContest(contest, model.NumberOfProblemGroups);
+        }
+
         await this.AddIpsToContest(contest, model.AllowedIps);
 
         await this.contestsData.Add(contest);
