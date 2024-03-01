@@ -26,6 +26,10 @@
     color: inherit;
     font-size: variables.$f-size-18;
     font-weight: font-weights.$font-weight-regular;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .contestCardSubTitle {

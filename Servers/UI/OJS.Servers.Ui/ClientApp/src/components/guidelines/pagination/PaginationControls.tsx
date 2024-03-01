@@ -36,6 +36,7 @@ const PaginationControls = ({
                       color: themeColors.textColor,
                   },
               },
+              '& .MuiPaginationItem-icon': { color: themeColors.textColor },
           }}
           count={count}
           siblingCount={PAGE_SIBLING_COUNT}

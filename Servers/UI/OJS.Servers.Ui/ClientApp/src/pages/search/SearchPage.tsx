@@ -29,7 +29,6 @@ const SearchPage = () => {
         actions: {
             initiateSearchResultsUrlQuery,
             setSearchingError,
-            toggleVisibility,
         },
     } = useSearch();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -57,6 +56,7 @@ const SearchPage = () => {
                   className={styles.searchHeading}
                 >
                     {message}
+                    {' '}
                 </Heading>
             </div>
         ),
@@ -74,10 +74,6 @@ const SearchPage = () => {
         },
         [ renderErrorHeading, searchError ],
     );
-
-    useEffect(() => () => {
-        toggleVisibility();
-    }, [ toggleVisibility ]);
 
     const renderContest = useCallback(
         (contest: IContestSearchType) => <ContestCard contest={(contest as IIndexContestsType)} />,
