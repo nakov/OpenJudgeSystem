@@ -13,8 +13,7 @@ import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
-import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
-import { getDateWithFormat } from '../../../../utils/dates';
+import { convertToUtc, getDateAsLocal } from '../../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
@@ -224,31 +223,19 @@ const ContestEdit = (props:IContestEditProps) => {
             break;
         }
         case 'startTime': {
-            startTime = null;
-            if (value) {
-                startTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
-            }
+            startTime = convertToUtc(value);
             break;
         }
         case 'endTime': {
-            endTime = null;
-            if (value) {
-                endTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
-            }
+            endTime = convertToUtc(value);
             break;
         }
         case 'practiceStartTime': {
-            practiceStartTime = null;
-            if (value) {
-                practiceStartTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
-            }
+            practiceStartTime = convertToUtc(value);
             break;
         }
         case 'practiceEndTime': {
-            practiceEndTime = null;
-            if (value) {
-                practiceEndTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
-            }
+            practiceEndTime = convertToUtc(value);
             break;
         }
         case 'isVisible': {
@@ -560,14 +547,14 @@ const ContestEdit = (props:IContestEditProps) => {
                           sx={{ width: '48%' }}
                           name="startTime"
                           label={COMPETE_START_TIME}
-                          value={getDateWithFormat(contest.startTime)}
+                          value={getDateAsLocal(contest.startTime)}
                           onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
                         />
                         <DateTimePicker
                           sx={{ width: '48%' }}
                           name="endTime"
                           label={COMPETE_END_TIME}
-                          value={getDateWithFormat(contest.endTime)}
+                          value={getDateAsLocal(contest.endTime)}
                           onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
                         />
                     </LocalizationProvider>
@@ -578,14 +565,14 @@ const ContestEdit = (props:IContestEditProps) => {
                           sx={{ width: '48%', margin: '20px 0' }}
                           name="practiceStartTime"
                           label={PRACTICE_START_TIME}
-                          value={getDateWithFormat(contest.practiceStartTime)}
+                          value={getDateAsLocal(contest.practiceStartTime)}
                           onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
                         />
                         <DateTimePicker
                           sx={{ width: '48%', margin: '20px 0' }}
                           name="practiceEndTime"
                           label={PRACTICE_END_TIME}
-                          value={getDateWithFormat(contest.practiceEndTime)}
+                          value={getDateAsLocal(contest.practiceEndTime)}
                           onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
                         />
                     </LocalizationProvider>

@@ -1,10 +1,13 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import moment, { Duration } from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
 const defaultDateTimeFormatReverse = 'DD/MMM/yyyy, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
+
+dayjs.extend(utc);
 
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
 
@@ -113,28 +116,20 @@ const convertToTwoDigitValues = ({
     };
 };
 
-// eslint-disable-next-line max-len
-const getDateWithFormat = (date?: string | number | Date | dayjs.Dayjs | null | undefined, format?: string | undefined) => {
+const convertToUtc = (date?: string | number | Date | dayjs.Dayjs | null | undefined) => {
     if (!date) {
         return null;
     }
-    if (!format) {
-        return dayjs(date) as unknown as Date;
-    }
-    return new Date(dayjs(date).format(format));
+
+    return new Date(dayjs.utc(date).toISOString());
 };
 
-export default {
-    formatDate,
-    preciseFormatDate,
-    secondsToFullTime,
-    calculateTimeUntil,
-    calculateTimeBetweenTwoDates,
-    convertToSecondsRemaining,
-    convertToTwoDigitValues,
-    getCurrentTimeInUtc: getCurrentTimeInUTC,
-    convertTimeIntervalToHoursMinutesAndSeconds,
-    calculatedTimeFormatted,
+const getDateAsLocal = (date?: Date | null | undefined) => {
+    if (!date) {
+        return null;
+    }
+
+    return dayjs(date);
 };
 
 export {
@@ -146,7 +141,8 @@ export {
     convertToSecondsRemaining,
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
-    getDateWithFormat,
+    convertToUtc,
+    getDateAsLocal,
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
