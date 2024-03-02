@@ -5,7 +5,6 @@ namespace OJS.Services.Ui.Data.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
@@ -17,7 +16,7 @@ namespace OJS.Services.Ui.Data.Implementations
         private readonly IParticipantsDataService participantsData;
 
         public ParticipantScoresDataService(
-            OjsDbContext db,
+            DbContext db,
             IParticipantsDataService participantsData)
             : base(db)
             => this.participantsData = participantsData;
