@@ -42,21 +42,16 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
     public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
     {
-        var (latestSubmissions, allSubmissionTypes)
-            = await TasksUtils.WhenAll(
-                this.submissionsData
-                    .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
-                        LatestSubmissionsCountForSubmissionTypesUsage),
-                this.submissionTypesData
-                    .AllTo<SubmissionTypeFilterServiceModel>()
-                    .ToListAsync());
-
-        var submissionTypesUsageGroups = latestSubmissions
+        var submissionTypesUsageGroups = (await this.submissionsData
+                .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
+                    LatestSubmissionsCountForSubmissionTypesUsage))
             .GroupBy(x => x.SubmissionTypeId)
             .Where(x => x.Key.HasValue)
             .ToDictionary(x => x.Key!.Value, x => x.Count());
 
-        return allSubmissionTypes
+        return (await this.submissionTypesData
+                .AllTo<SubmissionTypeFilterServiceModel>()
+                .ToListAsync())
             .OrderByDescending(x => submissionTypesUsageGroups.GetOrDefault(x.Id));
     }
 
