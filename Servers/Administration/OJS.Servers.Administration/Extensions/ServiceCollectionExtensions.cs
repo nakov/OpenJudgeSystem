@@ -9,7 +9,6 @@ using OJS.Common.Enumerations;
 using OJS.Common.Exceptions;
 using OJS.Data;
 using OJS.Data.Models.Users;
-using OJS.Servers.Administration.JsonConverters;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
@@ -73,11 +72,7 @@ internal static class ServiceCollectionExtensions
                     return new BadRequestObjectResult(errorsList);
                 };
             })
-            .AddJsonOptions(jo =>
-            {
-                jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                jo.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
-            });
+            .AddJsonOptions(jo => jo.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
     private static IServiceCollection AddValidators(this IServiceCollection services)
         => services

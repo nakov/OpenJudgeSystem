@@ -124,12 +124,20 @@ const convertToUtc = (date?: string | number | Date | dayjs.Dayjs | null | undef
     return new Date(dayjs.utc(date).toISOString());
 };
 
-const getDateAsLocal = (date?: Date | null | undefined) => {
+const getDateForGrid = (date?: Date | null | undefined) => {
     if (!date) {
         return null;
     }
 
-    return dayjs(date);
+    return dayjs.utc(date).local().format('DD.MM.YYYY HH:mm, ddd');
+};
+
+const getDateForDateTimePicker = (date?: Date | null | undefined) => {
+    if (!date) {
+        return null;
+    }
+
+    return dayjs.utc(date).local();
 };
 
 export {
@@ -142,7 +150,8 @@ export {
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
     convertToUtc,
-    getDateAsLocal,
+    getDateForGrid,
+    getDateForDateTimePicker,
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,

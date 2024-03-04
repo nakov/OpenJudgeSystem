@@ -13,7 +13,7 @@ import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
-import { convertToUtc, getDateAsLocal } from '../../../../utils/dates';
+import { convertToUtc, getDateForDateTimePicker } from '../../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
@@ -547,14 +547,14 @@ const ContestEdit = (props:IContestEditProps) => {
                           sx={{ width: '48%' }}
                           name="startTime"
                           label={COMPETE_START_TIME}
-                          value={getDateAsLocal(contest.startTime)}
+                          value={getDateForDateTimePicker(contest.startTime)}
                           onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
                         />
                         <DateTimePicker
                           sx={{ width: '48%' }}
                           name="endTime"
                           label={COMPETE_END_TIME}
-                          value={getDateAsLocal(contest.endTime)}
+                          value={getDateForDateTimePicker(contest.endTime)}
                           onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
                         />
                     </LocalizationProvider>
@@ -565,14 +565,14 @@ const ContestEdit = (props:IContestEditProps) => {
                           sx={{ width: '48%', margin: '20px 0' }}
                           name="practiceStartTime"
                           label={PRACTICE_START_TIME}
-                          value={getDateAsLocal(contest.practiceStartTime)}
+                          value={getDateForDateTimePicker(contest.practiceStartTime)}
                           onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
                         />
                         <DateTimePicker
                           sx={{ width: '48%', margin: '20px 0' }}
                           name="practiceEndTime"
                           label={PRACTICE_END_TIME}
-                          value={getDateAsLocal(contest.practiceEndTime)}
+                          value={getDateForDateTimePicker(contest.practiceEndTime)}
                           onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
                         />
                     </LocalizationProvider>
