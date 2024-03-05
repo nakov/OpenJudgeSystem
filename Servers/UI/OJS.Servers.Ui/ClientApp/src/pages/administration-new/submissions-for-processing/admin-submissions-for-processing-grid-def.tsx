@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { getDateWithFormat, preciseFormatDate } from '../../../utils/dates';
+import { getDateWithFormat } from '../../../utils/dates';
 
 const dateGridColumnFormatter = (params : any) => getDateWithFormat(params.value);
 

@@ -29,9 +29,6 @@ const DeleteButton = (props: IDeleteButtonProps) => {
 
     const [ deleteRequest, { data, isLoading, isSuccess, error } ] = mutation();
 
-    useEffect(() => {
-        console.log(id);
-    }, []);
     const confirmDelete = () => {
         setShowConfirmDelete(!showConfirmDelete);
     };
