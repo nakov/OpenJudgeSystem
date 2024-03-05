@@ -1,15 +1,16 @@
 /* eslint-disable max-len */
 import React, { useEffect, useState } from 'react';
 import ReactJson from 'react-json-view';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import {
     Box, FormControl, FormLabel,
     TextField,
 } from '@mui/material';
 import isNil from 'lodash/isNil';
 
-import { ISubmissionForProcessingAdminGridViewType } from '../../../common/types';
+import { IGetAllAdminParams, ISubmissionForProcessingAdminGridViewType } from '../../../common/types';
 import { useGetByIdQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { preciseFormatDate } from '../../../utils/dates';
 
 import styles from './AdminSubmissionForProcessingDetails.module.scss';

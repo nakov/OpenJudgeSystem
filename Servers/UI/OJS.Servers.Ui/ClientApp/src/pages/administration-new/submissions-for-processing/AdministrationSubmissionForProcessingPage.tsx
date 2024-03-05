@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-indent */
 /* eslint-disable import/prefer-default-export */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useSearchParams } from 'react-router-dom';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -29,6 +29,17 @@ export const AdministrationSubmissionsForProcessingPage = () => {
             filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         });
+
+    const filterParams = searchParams.get('filter');
+    const sortingParams = searchParams.get('sorting');
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
+    }, [ filterParams ]);
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
+    }, [ sortingParams ]);
 
     const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions-for-processing']?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions-for-processing']?.selectedSorters);
@@ -68,6 +79,7 @@ export const AdministrationSubmissionsForProcessingPage = () => {
             : (
                 <AdministrationGridView
                   data={data}
+                  queryParams={queryParams}
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
