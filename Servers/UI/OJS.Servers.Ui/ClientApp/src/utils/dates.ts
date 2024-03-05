@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import moment, { Duration } from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
+const defaultDateTimeFormatReverse = 'DD/MMM/yyyy, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
@@ -140,6 +141,7 @@ export default {
 
 export {
     defaultDateTimeFormat,
+    defaultDateTimeFormatReverse,
     formatDate,
     preciseFormatDate,
     secondsToFullTime,
