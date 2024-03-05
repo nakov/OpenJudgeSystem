@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -26,6 +27,7 @@ import AdministrationSubmissionsPage from '../../../pages/administration-new/sub
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
@@ -43,42 +45,42 @@ const administrationItems = [
     {
         name: 'Contests',
         icon: <AutoStoriesIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`,
+        path: `${CONTESTS_PATH}`,
     },
     {
         name: 'Contest Categories',
         icon: <BookmarksIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`,
+        path: `${CONTEST_CATEGORIES_PATH}`,
     },
     {
         name: 'Submissions',
         icon: <PlaylistAddCheckCircleIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_PATH}`,
+        path: `${SUBMISSIONS_PATH}`,
     },
     {
         name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+        path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
     },
     {
         name: 'Tests',
         icon: <ScienceIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`,
+        path: `${TESTS_PATH}`,
     },
     {
         name: 'Problems',
         icon: <NotListedLocationIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`,
+        path: `${PROBLEMS_PATH}`,
     },
     {
         name: 'Problem Groups',
         icon: <TableViewIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}`,
+        path: `${PROBLEM_GROUPS_PATH}`,
     },
     {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
-        path: `/${NEW_ADMINISTRATION_PATH}/${SUBMISSION_TYPES_PATH}`,
+        path: `${SUBMISSION_TYPES_PATH}`,
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -141,11 +143,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 }));
 const AdministrationPortal = () => {
     const location = useLocation();
-    console.log(location);
     const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
-
-    const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
@@ -166,6 +165,15 @@ const AdministrationPortal = () => {
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
+    const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+    const isSelected = (pathName: string) => {
+        const sectionPathName = location.pathname.split('/');
+        if (sectionPathName[sectionPathName.length - 1].toLocaleLowerCase() === pathName.toLocaleLowerCase()) {
+            return true;
+        }
+        return false;
+    };
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -247,7 +255,7 @@ const AdministrationPortal = () => {
                     </IconButton>
                 )}
             <Box sx={{ display: 'flex', zIndex: 0 }}>
-                <AppBar position="fixed" open={open}>
+                <AppBar position="fixed" open={open} className={styles.appBar}>
                     <Toolbar>
                         <div className={styles.adminHeaderWrapper}>
                             <Link to="/" className={styles.adminHeaderLink}>
@@ -273,21 +281,17 @@ const AdministrationPortal = () => {
                             <ListItem key={item.name} disablePadding>
                                 <Link
                                   to={item.path}
-                                  className={`${location.pathname === item.path
+                                  className={`${isSelected(item.path)
                                       ? styles.activeAdminNavLink
                                       : ''} ${styles.adminNavLink}`}
                                 >
-                                    <ListItemButton style={{
-                                        backgroundColor: location.pathname === item.path &&
-                                            '#42abf8',
-                                        color: location.pathname === item.path &&
-                                            'white',
-                                    }}
+                                    <ListItemButton className={isSelected(item.path)
+                                        ? styles.selectedSection
+                                        : ''}
                                     >
-                                        <ListItemIcon sx={{
-                                            color: location.pathname === item.path &&
-                                            'white',
-                                        }}
+                                        <ListItemIcon className={isSelected(item.path)
+                                            ? styles.listItemIcon
+                                            : ''}
                                         >
                                             {item.icon}
                                         </ListItemIcon>
@@ -298,12 +302,13 @@ const AdministrationPortal = () => {
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Box component="main" sx={{ flexGrow: 1, p: 4 }}>
                     <Routes>
                         {user.canAccessAdministration &&
                         adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
 
                         <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
+                        <Route path="*" element={<NotFoundPage />} />
                     </Routes>
                 </Box>
             </Box>

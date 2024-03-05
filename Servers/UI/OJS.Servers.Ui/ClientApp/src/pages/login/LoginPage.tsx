@@ -10,14 +10,14 @@ const LoginPage = () => {
     const location = useLocation();
     const { isLoggedIn, internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+
     useEffect(() => {
         if (isLoggedIn) {
             // Needed ignore...
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const origin = location.state?.from?.pathname || '/';
-
-            navigate(origin);
+            navigate(`${origin}`);
         }
     }, [ isLoggedIn, location, navigate, user ]);
 

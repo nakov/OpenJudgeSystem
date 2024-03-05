@@ -22,7 +22,7 @@
 }
 
 .activeAdminNavLink {
-  color: #42abf8;
+  color: #42abf8 !important;
 }
 
 .locationTitle {
@@ -49,4 +49,17 @@
 
 .arrowRight {
   left: 45px;
+}
+
+.selectedSection {
+  background-color: #2196F3 !important;
+  color: white !important;
+}
+
+.appBar {
+  background-color: #2196F3 !important;
+}
+
+.listItemIcon {
+  color: inherit !important;
 }
