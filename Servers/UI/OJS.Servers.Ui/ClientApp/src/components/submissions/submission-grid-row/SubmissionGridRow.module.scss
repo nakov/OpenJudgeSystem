@@ -44,20 +44,20 @@
 
 .wideColumn {
   flex: 6;
-  width: 200px;
   flex-direction: column;
+  width: 200px;
 
   .redirectButton {
-    text-align: left;
     padding: 0;
+    text-align: left;
   }
 }
 
 .smallColumn,
 .mediumColumn,
 .wideColumn {
-  text-align: left;
   justify-content: start;
+  text-align: left;
 }
 
 .lightRow {

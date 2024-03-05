@@ -63,7 +63,7 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
             { isProcessed && isCompiledSuccessfully
                 ? (
                     <div className={styles.executionResultInfo}>
-                        <div className={styles.testRunsContainer}>
+                        <div>
                             {renderTestRunIcons(testRuns)}
                         </div>
                         <div className={styles.timeAndMemoryContainer}>
