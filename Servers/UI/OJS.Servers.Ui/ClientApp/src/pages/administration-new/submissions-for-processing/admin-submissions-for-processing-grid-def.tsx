@@ -14,8 +14,8 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
         width: 10,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueFormatter: (params) => params.value.toString(),
     },
     {
@@ -25,7 +25,7 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         type: 'boolean',
         width: 100,
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -35,7 +35,7 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         type: 'boolean',
         width: 100,
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -45,7 +45,7 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         width: 250,
         type: 'string',
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -55,7 +55,7 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         width: 250,
         type: 'string',
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -65,7 +65,7 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         width: 300,
         type: 'string',
-        filterable: true,
+        filterable: false,
         sortable: false,
     },
     {
@@ -75,8 +75,8 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         type: 'number',
         width: 100,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Link
               to={`/submissions/${Number(params.row?.submissionId)}/details`}
@@ -92,8 +92,8 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         type: 'dateTime',
         width: 150,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueFormatter: dateGridColumnFormatter,
     },
     {
@@ -103,8 +103,8 @@ const dataColumns: GridColDef[] = [
         headerAlign: 'center',
         type: 'dateTime',
         width: 150,
-        filterable: true,
-        sortable: true,
+        filterable: false,
+        sortable: false,
         valueFormatter: dateGridColumnFormatter,
     },
 ];

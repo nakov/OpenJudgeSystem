@@ -79,7 +79,6 @@ export const AdministrationSubmissionsForProcessingPage = () => {
             : (
                 <AdministrationGridView
                   data={data}
-                  queryParams={queryParams}
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
