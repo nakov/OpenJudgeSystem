@@ -1,6 +1,3 @@
-/* eslint-disable no-case-declarations */
-/* eslint-disable no-undefined */
-/* eslint-disable prefer-destructuring */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -129,7 +126,6 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     const onChange = (e: any) => {
-        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
         let {
             name: contestName,
@@ -156,7 +152,7 @@ const ContestEdit = (props:IContestEditProps) => {
         const currentContestValidations = contestValidations;
         // eslint-disable-next-line default-case
         switch (name) {
-        case NAME_PROP:
+        case NAME_PROP: {
             contestName = value;
             currentContestValidations.isNameTouched = true;
             currentContestValidations.isNameValid = true;
@@ -164,13 +160,15 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isNameValid = false;
             }
             break;
-        case 'type':
+        }
+        case 'type': {
             contestType = value;
             currentContestValidations.isTypeTouched = true;
             const isValid = !!Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).some((x) => x === value);
             currentContestValidations.isTypeValid = isValid;
             break;
-        case 'limitBetweenSubmissions':
+        }
+        case 'limitBetweenSubmissions': {
             currentContestValidations.isLimitBetweenSubmissionsTouched = true;
             currentContestValidations.isLimitBetweenSubmissionsValid = true;
             limitBetweenSubmissions = value;
@@ -178,7 +176,8 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isLimitBetweenSubmissionsValid = false;
             }
             break;
-        case 'orderBy':
+        }
+        case 'orderBy': {
             currentContestValidations.isOrderByTouched = true;
             currentContestValidations.isOrderByValid = true;
             orderBy = value;
@@ -186,22 +185,26 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isOrderByValid = false;
             }
             break;
-        case 'contestPassword':
+        }
+        case 'contestPassword': {
             contestPassword = value;
             if (!value) {
                 contestPassword = null;
             }
             break;
-        case 'practicePassword':
+        }
+        case 'practicePassword': {
             practicePassword = value;
             if (!value) {
                 practicePassword = null;
             }
             break;
-        case 'allowedIps':
+        }
+        case 'allowedIps': {
             allowedIps = value;
             break;
-        case 'newIpPassword':
+        }
+        case 'newIpPassword': {
             currentContestValidations.isNewIpPasswordTouched = true;
             currentContestValidations.isNewIpPasswordValid = true;
             newIpPassword = value;
@@ -212,58 +215,69 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isNewIpPasswordValid = false;
             }
             break;
-        case 'description':
+        }
+        case 'description': {
             description = value;
             if (!value) {
                 description = null;
             }
             break;
-        case 'startTime':
+        }
+        case 'startTime': {
             startTime = null;
             if (value) {
                 startTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'endTime':
+        }
+        case 'endTime': {
             endTime = null;
             if (value) {
                 endTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'practiceStartTime':
+        }
+        case 'practiceStartTime': {
             practiceStartTime = null;
             if (value) {
                 practiceStartTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'practiceEndTime':
+        }
+        case 'practiceEndTime': {
             practiceEndTime = null;
             if (value) {
                 practiceEndTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'isVisible':
+        }
+        case 'isVisible': {
             isVisible = checked;
             break;
-        case 'allowParallelSubmissionsInTasks':
+        }
+        case 'allowParallelSubmissionsInTasks': {
             allowParallelSubmissionsInTasks = checked;
             break;
-        case 'autoChangeTestsFeedbackVisibility':
+        }
+        case 'autoChangeTestsFeedbackVisibility': {
             autoChangeTestsFeedbackVisibility = checked;
             break;
-        case 'category':
+        }
+        case 'category': {
             const category = contestCategories?.find((cc) => cc.id === value);
             if (category) {
                 categoryId = category.id;
                 categoryName = category.name;
             }
             break;
-        case 'numberOfProblemGroups':
+        }
+        case 'numberOfProblemGroups': {
             if (value) {
                 numberOfProblemGroups = Number(value);
             }
             break;
-        case 'duration':
+        }
+        case 'duration': {
             let currentValue = value;
 
             if (currentValue === '') {
@@ -275,6 +289,8 @@ const ContestEdit = (props:IContestEditProps) => {
             currentContestValidations.isDurationTouched = true;
             duration = currentValue;
             break;
+        }
+        default: { break; }
         }
         setContestValidations(currentContestValidations);
         setContest((prevState) => ({

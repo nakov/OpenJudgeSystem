@@ -1,17 +1,18 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
-import isNil from 'lodash/isNil';
-import moment from 'moment';
+import moment, { Duration } from 'moment';
 
-const defaultDateTimeFormat = 'hh:mm DD/MMM/YYYY';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const defaultDateTimeFormatReverse = 'DD/MMM/yyyy HH:MM';
+const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
-const calculateTimeUntil = (date: Date) => intervalToDuration({
-    start: new Date(),
-    end: date,
-});
+const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
+
+const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
+
+const convertTimeIntervalToHoursMinutesAndSeconds =
+    (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
+
+const calculateTimeUntil = (date: Date) => moment.duration(moment(date).diff(Date.now()));
 
 const preciseFormatDate = (
     date: Date,
@@ -118,14 +119,10 @@ const getDateWithFormat = (
     if (!date) {
         return null;
     }
-
-    const dateDayjs = dayjs(date);
-
-    if (isNil(format)) {
-        return dateDayjs.format(defaultDateTimeFormat);
+    if (!format) {
+        return dayjs(date) as unknown as Date;
     }
-
-    return dateDayjs.format(format);
+    return new Date(dayjs(date).format(format));
 };
 
 export default {
@@ -133,9 +130,12 @@ export default {
     preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,
+    calculateTimeBetweenTwoDates,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
     getCurrentTimeInUtc: getCurrentTimeInUTC,
+    convertTimeIntervalToHoursMinutesAndSeconds,
+    calculatedTimeFormatted,
 };
 
 export {
@@ -148,4 +148,7 @@ export {
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
     getDateWithFormat,
+    calculateTimeBetweenTwoDates,
+    convertTimeIntervalToHoursMinutesAndSeconds,
+    calculatedTimeFormatted,
 };

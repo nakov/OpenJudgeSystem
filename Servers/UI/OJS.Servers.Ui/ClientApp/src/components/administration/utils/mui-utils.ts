@@ -1,5 +1,3 @@
-/* eslint-disable no-undefined */
-/* eslint-disable prefer-destructuring */
 /* eslint-disable @typescript-eslint/ban-types */
 const handleDateTimePickerChange = (name: string, newValue:any, onChange: Function) => {
     const event = {

@@ -1,79 +1,67 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/components';
+@use 'src/styles/shadows';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/font-weights';
 
 .header {
+  @extend %font-family-roboto;
+
+  align-items: center;
+  background-color: colors.$primary-blue;
+  box-shadow: shadows.$dp-shadow-4;
   display: flex;
-  height: 75px;
-  justify-content: center;
+  height: 30px;
+  justify-content: space-between;
+  padding: spacings.$sp-24 0;
   position: absolute;
   width: 100%;
-  z-index: 1;
+  z-index: 3;
 
-  @media only screen and (max-width: 425px) {
-    padding: 0 5px;
+  > div {
+    margin-left: spacings.$sp-64;
   }
 
-  h1 {
+  .logoBtn {
+    font-size: variables.$f-size-30 !important;
+    font-weight: font-weights.$font-weight-bold !important;
+    margin-right: spacings.$sp-12;
+  }
+
+  .navButton {
     color: colors.$white-color;
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-regular;
+    padding: 0 spacings.$sp-12;
   }
 
-  img {
-    max-height: 40px;
-  }
-}
-
-.headerSize {
-  @extend %contentSize;
-
-  align-items: center;
-  background-color: colors.$white-color;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 14%), 0 3px 4px rgb(0 0 0 / 12%), 0 1px 5px rgb(0 0 0 / 20%);
-  display: flex;
-  justify-content: space-between;
-  padding: 0 30px;
-
-  @media only screen and (max-width: 425px) {
-    box-shadow: none;
-    padding: 0;
+  .authButtons {
+    align-items: center;
+    display: flex;
+    margin-right: spacings.$sp-192;
   }
 }
 
-.heading {
-  @media only screen and (max-width: 425px) {
-    width: 100px;
-  }
-}
-
-.headerLinks {
-  align-items: center;
-  display: flex;
-  font-family: fonts.$font-family-lato;
-  gap: 10px;
-  justify-content: center;
-}
-
-.searchButton {
-  background-color: colors.$white-color;
-  border: 0;
-  box-shadow: none;
+.searchIcon {
+  align-self: center;
+  background-color: colors.$primary-blue;
+  color: colors.$white-color;
   cursor: pointer;
-  margin-bottom: 15px;
-  margin-right: 15px;
-  margin-top: 10px;
-  padding: 10px;
+  font-size: variables.$f-size-18;
+  margin-right: spacings.$sp-12;
+  transition: all 0.1s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
-.navbarContainer {
-  display: flex;
-}
-
-.administrationsNavWrapper {
-  display: flex;
-  align-items: center;
-}
-
-.newIcon {
-  color: #42abf8;
+.themeSwitchWrapper {
+  box-shadow: shadows.$dp-shadow-4;
+  height: 40px;
+  position: absolute;
+  right: 30px;
+  top: 22px;
 }

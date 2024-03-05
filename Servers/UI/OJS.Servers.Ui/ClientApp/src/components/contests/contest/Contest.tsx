@@ -20,7 +20,7 @@ import Countdown, { Metric } from '../../guidelines/countdown/Countdown';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import Text, { TextType } from '../../guidelines/text/Text';
-import ContestBreadcrumb from '../contest-breadcrumb/ContestBreadcrumb';
+import ContestBreadcrumbs from '../contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblemDetails from '../contest-problem-details/ContestProblemDetails';
 import ContestTasksNavigation from '../contest-tasks-navigation/ContestTasksNavigation';
 import SubmissionBox from '../submission-box/SubmissionBox';
@@ -54,7 +54,7 @@ const Contest = () => {
     } = useProblems();
     const { actions: { changePreviousProblemSubmissionsPage } } = useProblemSubmissions();
     const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
     const navigate = useNavigate();
     const { actions: { setPageTitle } } = usePageTitles();
     const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
@@ -240,7 +240,7 @@ const Contest = () => {
                         : (
                             <>
                                 <div className={styles.breadcrumbContainer}>
-                                    <ContestBreadcrumb />
+                                    <ContestBreadcrumbs />
                                 </div>
                                 <div className={styles.headingContest}>
                                     <Heading
@@ -272,19 +272,19 @@ const Contest = () => {
                                         <ContestTasksNavigation />
                                     </div>
                                     {
-                                    !isEmpty(contest?.problems)
-                                        ? (
-                                            <>
-                                                <div className={submissionBoxClassName}>
-                                                    <SubmissionBox />
-                                                </div>
-                                                <div className={problemInfoClassName}>
-                                                    <ContestProblemDetails />
-                                                </div>
-                                            </>
-                                        )
-                                        : null
-                                }
+                                        !isEmpty(contest?.problems)
+                                            ? (
+                                                <>
+                                                    <div className={submissionBoxClassName}>
+                                                        <SubmissionBox />
+                                                    </div>
+                                                    <div className={problemInfoClassName}>
+                                                        <ContestProblemDetails />
+                                                    </div>
+                                                </>
+                                            )
+                                            : null
+                                    }
                                 </div>
                             </>
                         )

@@ -69,19 +69,33 @@ interface ISubmissionResponseModel {
     processed: boolean;
 }
 
+interface IGetAllAdminParams {
+    filter?: string;
+    itemsPerPage: number;
+    page: number;
+    sorting?: string;
+}
+
 interface IGetAllContestsOptions {
-    status: string;
+    strategy?: number;
     sortType: string;
     page: number;
     category?: number | null;
-    strategy?: number | null;
 }
 
-interface IGetAllAdminParams {
-    filter?: string;
-    ItemsPerPage: number;
-    page: number;
-    sorting?: string;
+interface IAllowedStrategyType {
+    id: number;
+    name: string;
+}
+
+interface IContestCategory {
+    allowedStrategyTypes: Array<IAllowedStrategyType>;
+    children: Array<IContestCategory>;
+    id: number;
+    name: string;
+    nameUrl: string;
+    orderBy: number;
+    parentId: null | number;
 }
 
 interface IProblemResourceType {
@@ -180,6 +194,14 @@ interface IIndexContestsType {
     hasPracticePassword: boolean;
     category: string;
     isLoading: boolean;
+    numberOfProblems: number;
+    practiceResults: number;
+    competeResults: number;
+    hasCompeted: boolean;
+    hasPracticed: boolean;
+    competeContestPoints: number;
+    practiceContestPoints: number;
+    maxPoints: number;
 }
 
 interface IParticiapntsInContestView {
@@ -484,6 +506,7 @@ export type {
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
     IGetAllContestsOptions,
+    IContestCategory,
     IGetAllAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,
