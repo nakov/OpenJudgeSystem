@@ -87,7 +87,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
             <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
                 { renderActionButtons() }
                 {showFiltersAndSorters && (
-                <div style={{ ...flexCenterObjectStyles, width: '100%' }}>
+                <div style={{ ...flexCenterObjectStyles, width: '100%', gap: '20px' }}>
                     <AdministrationFilters searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
                     <AdministrationSorting searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
                 </div>
