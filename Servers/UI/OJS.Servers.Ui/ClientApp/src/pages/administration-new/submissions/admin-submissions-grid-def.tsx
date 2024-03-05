@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls';
-import { getDateWithFormat, preciseFormatDate } from '../../../utils/dates';
+import { getDateWithFormat } from '../../../utils/dates';
+
+const dateGridColumnFormatter = (params : any) => getDateWithFormat(params.value);
 
 const dataColumns: GridColDef[] = [
     {
@@ -111,11 +113,11 @@ const dataColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: 'Created On',
         align: 'center',
-        type: 'dateTime',
+        type: 'date',
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => getDateWithFormat(params.value?.createdOn),
+        valueFormatter: dateGridColumnFormatter,
     },
     {
         field: 'modifiedOn',
@@ -125,7 +127,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
+        valueFormatter: dateGridColumnFormatter,
     },
     {
         field: 'startedExecutionOn',
@@ -135,7 +137,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.startedExecutionOn),
+        valueFormatter: dateGridColumnFormatter,
     },
     {
         field: 'completedExecutionOn',
@@ -145,7 +147,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.completedExecutionOn),
+        valueFormatter: dateGridColumnFormatter,
     },
 ];
 

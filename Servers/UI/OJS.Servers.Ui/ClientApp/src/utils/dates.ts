@@ -3,7 +3,9 @@ import dayjs from 'dayjs';
 import isNil from 'lodash/isNil';
 import moment from 'moment';
 
-const defaultDateTimeFormat = 'hh:mm, DD/MMM/YYYY';
+const defaultDateTimeFormat = 'hh:mm DD/MMM/YYYY';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const defaultDateTimeFormatReverse = 'DD/MMM/yyyy HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
 const calculateTimeUntil = (date: Date) => intervalToDuration({
@@ -119,7 +121,6 @@ const getDateWithFormat = (
 
     const dateDayjs = dayjs(date);
 
-    console.log(format);
     if (isNil(format)) {
         return dateDayjs.format(defaultDateTimeFormat);
     }
