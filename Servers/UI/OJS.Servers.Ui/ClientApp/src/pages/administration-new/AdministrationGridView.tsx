@@ -1,9 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 /* eslint-disable no-undef */
-/* eslint-disable react/no-array-index-key */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable max-len */
 /* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable func-style */
 import React, { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -74,7 +74,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return styles.redGridRow;
-        } if (isVisible === false) {
+        } if (!isVisible) {
             return styles.grayGridRow;
         }
         return '';

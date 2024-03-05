@@ -106,7 +106,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     };
 
     const onChange = (e: any) => {
-        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
         let {
             name: contestCategoryName,

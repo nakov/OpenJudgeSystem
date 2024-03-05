@@ -1,5 +1,3 @@
-import React from 'react';
-
 import concatClassNames from '../../../utils/class-names';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 

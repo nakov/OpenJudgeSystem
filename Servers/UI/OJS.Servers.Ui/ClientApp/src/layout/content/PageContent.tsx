@@ -7,6 +7,7 @@ import AdministrationContestPage from '../../components/administration/contests/
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../components/administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
+import useTheme from '../../hooks/use-theme';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../pages/administration/ContestProblemsPage';
@@ -19,12 +20,10 @@ import AdministrationContestsPage from '../../pages/administration-new/contests/
 import AdministrationProblemResourcesPage from '../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
-import { AdministrationSubmissionsPage } from '../../pages/administration-new/submissions/AdminSubmissionsGrid';
+import AdministrationSubmissionsPage from '../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
     from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
-import {
-    AdministrationSubmissionsForProcessingPage,
-} from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessingPage';
+import AdministrationSubmissionsForProcessingPage from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -86,12 +85,12 @@ const routes = [
         Element: ContestsPage,
     },
     {
-        path: '/contests/:contestId/:participationType',
-        Element: ContestPage,
-    },
-    {
         path: '/contests/:contestId',
         Element: ContestDetailsPage,
+    },
+    {
+        path: '/contests/:contestId/:participationType',
+        Element: ContestPage,
     },
     {
         path: '/contests/:contestId/:participationType/results/:resultType',
@@ -193,9 +192,11 @@ const adminRoutes = [
 ];
 
 const PageContent = () => {
+    const { themeColors, getColorClassName } = useTheme();
     const { internalUser: user } =
     useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor400);
     const renderRoute = (path: string, Element: FC, title: string | undefined, isAdminRoute: boolean) => {
         let WrappedElement = asPage(withTitle(Element, title));
         if (isAdminRoute) {
@@ -207,7 +208,7 @@ const PageContent = () => {
     };
 
     return (
-        <main className={styles.main}>
+        <main className={`${styles.main} ${backgroundColorClassName}`}>
             <Routes>
                 {routes.map(({ path, Element, title }) => renderRoute(path, Element, title, false))}
                 {user.canAccessAdministration && adminRoutes.map(({ path, Element, title }) => renderRoute(path, Element, title, true))}

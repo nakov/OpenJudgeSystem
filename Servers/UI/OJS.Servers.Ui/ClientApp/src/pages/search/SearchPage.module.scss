@@ -1,10 +1,11 @@
 @use 'src/styles/colors';
 @use 'src/styles/components';
 @use 'src/styles/global';
+@use 'src/styles/spacings';
 
 .searchHeading {
   border: 0;
-  margin-bottom: 30px;
+  margin: spacings.$sp-32 0;
   padding: 0;
   text-align: center;
 }

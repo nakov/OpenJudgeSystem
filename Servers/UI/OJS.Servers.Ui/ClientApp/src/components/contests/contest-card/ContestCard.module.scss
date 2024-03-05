@@ -1,0 +1,79 @@
+@use 'src/styles/shadows';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/border-radiuses';
+@use 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/font-weights';
+
+.contestCardWrapper {
+  @extend %font-family-roboto;
+
+  align-items: center;
+  border-radius: border-radiuses.$br-6;
+  box-shadow: shadows.$dp-shadow-4;
+  display: flex;
+  font-size: variables.$f-size-12;
+  justify-content: space-between;
+  margin: spacings.$sp-8 0;
+  padding: spacings.$sp-16 spacings.$sp-18;
+
+  .contestDetailsFragmentsWrapper {
+    display: flex;
+  }
+
+  .contestCardTitle {
+    color: inherit;
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-regular;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .contestCardSubTitle {
+    margin-top: spacings.$sp-4;
+  }
+
+  .contestDetailsFragment {
+    color: colors.$primary-blue;
+    display: flex;
+    justify-content: space-between;
+    margin-top: spacings.$sp-16;
+
+    > i {
+      height: 16px;
+      width: 16px;
+    }
+
+    > div {
+      margin-right: spacings.$sp-32;
+    }
+  }
+
+  .greenColor {
+    color: colors.$secondary-green;
+  }
+
+  .hasUnderLine {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}
+
+.contestBtnsWrapper {
+  .contestBtn {
+    font-size: variables.$f-size-16;
+
+    > div {
+      align-items: center;
+      display: flex;
+      margin-right: spacings.$sp-12;
+    }
+
+    &:nth-child(2) {
+      margin-top: spacings.$sp-12;
+    }
+  }
+}

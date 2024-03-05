@@ -1,5 +1,3 @@
-/* eslint-disable import/exports-last */
-/* eslint-disable import/group-exports */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { submissionDetailsSliceName } from '../../common/reduxNames';
@@ -25,34 +23,23 @@ export const submissionDetailsSlice = createSlice({
     initialState,
     reducers: {
         setSubmission: (state:ISubmissionDetailsReduxState, action) => {
-            // refer to https://eslint.org/docs/latest/rules/no-param-reassign section When Not To Use It
-            // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentSubmission = action.payload;
         },
         setCurrentSubmissionResults: (state:ISubmissionDetailsReduxState, action) => {
-            // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
-            // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentSubmissionResults = action.payload;
         },
         setDownloadErrorMessage: (state:ISubmissionDetailsReduxState, action) => {
-            // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
-            // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.downloadErrorMessage = action.payload;
         },
         setCurrentPage: (state:ISubmissionDetailsReduxState, action) => {
-            // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
-            // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.currentPage = action.payload;
         },
         setRetestIsSuccess: (state:ISubmissionDetailsReduxState, action) => {
-            // refer to https://eslint.org/docs/latest/rules/no-param-reassign section (When Not To Use It)
-            // eslint-disable-next-line prefer-destructuring, no-param-reassign
             state.retestIsSuccess = action.payload;
         },
     },
 });
 
-// eslint-disable-next-line prefer-destructuring
 const {
     setSubmission,
     setCurrentSubmissionResults,

@@ -47,7 +47,7 @@ const ContestPage = () => {
     } = useCurrentContest();
 
     const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const contestIdToNumber = useMemo(
         () => Number(contestId),
