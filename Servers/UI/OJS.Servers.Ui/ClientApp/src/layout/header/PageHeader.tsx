@@ -38,28 +38,15 @@ const PageHeader = () => {
         }
     }, [ isSuccessfullRequest, userData, dispatch ]);
 
-    const toggleButtonSxProps = {
-        width: 50,
-        backgroundColor: 'white',
-        transition: 'background-color 0.1s ease-in-out',
-        '&.Mui-selected': {
-            backgroundColor: '#42abf8',
-            color: 'white',
-        },
-        '&.Mui-selected:hover': { backgroundColor: { backgroundColor: '#00457a' } },
-    };
-
     const renderThemeSwitcher = () => (
         <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
             <ToggleButton
-              sx={{ ...toggleButtonSxProps }}
               value="light"
               onClick={toggleSelectedTheme}
             >
                 <RiSunLine />
             </ToggleButton>
             <ToggleButton
-              sx={{ ...toggleButtonSxProps }}
               value="dark"
               onClick={toggleSelectedTheme}
             >
