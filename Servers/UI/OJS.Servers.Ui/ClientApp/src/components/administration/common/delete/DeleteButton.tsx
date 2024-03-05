@@ -17,11 +17,21 @@ interface IDeleteButtonProps {
 }
 
 const DeleteButton = (props: IDeleteButtonProps) => {
-    const { onSuccess, id, name, style = {}, text, mutation } = props;
+    const {
+        onSuccess,
+        id,
+        name,
+        style = {},
+        text, mutation,
+    } = props;
     const [ showConfirmDelete, setShowConfirmDelete ] = useState<boolean>(false);
     const [ message, setMessage ] = useState<string | null>(null);
 
     const [ deleteRequest, { data, isLoading, isSuccess, error } ] = mutation();
+
+    useEffect(() => {
+        console.log(id);
+    }, []);
     const confirmDelete = () => {
         setShowConfirmDelete(!showConfirmDelete);
     };
@@ -64,15 +74,15 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                             <IoMdTrash color="red" />
                         </IconButton>
                     </Tooltip>
-                    {showConfirmDelete && (
-                    <ConfirmDialog
-                      title={`Delete: ${name}`}
-                      text={text}
-                      confirmButtonText="Delete"
-                      declineButtonText="Cancel"
-                      onClose={() => setShowConfirmDelete(!showConfirmDelete)}
-                      confirmFunction={() => deleteRequest(id)}
-                    />
+                    { showConfirmDelete && (
+                        <ConfirmDialog
+                          title={`Delete: ${name}`}
+                          text={text}
+                          confirmButtonText="Delete"
+                          declineButtonText="Cancel"
+                          onClose={() => setShowConfirmDelete(!showConfirmDelete)}
+                          confirmFunction={() => deleteRequest(id)}
+                        />
                     )}
                 </div>
             )

@@ -146,7 +146,6 @@ const dataColumns: GridColDef[] = [
     {
         field: 'startedExecutionOn',
         headerName: 'Started Execution On',
-        headerAlign: 'center',
         align: 'center',
         headerAlign: 'center',
         type: 'dateTime',
