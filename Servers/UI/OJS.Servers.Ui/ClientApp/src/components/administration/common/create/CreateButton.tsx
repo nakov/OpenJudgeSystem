@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { IconType } from 'react-icons/lib/cjs/iconBase';
 import { RiAddBoxFill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { CREATE_NEW_RECORD } from '../../../../common/labels';
-import { IconType } from 'react-icons/lib/cjs/iconBase';
 
 interface ICreateButtonProps {
     showModal: boolean;

@@ -118,10 +118,9 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
 
     const handlePaginationModelChange = (model: GridPaginationModel) => {
         if (setQueryParams) {
-            setQueryParams({ ...queryParams, page: model.page + 1, ItemsPerPage: model.pageSize });
+            setQueryParams({ ...queryParams, page: model.page + 1, itemsPerPage: model.pageSize });
         }
     };
-
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
             <div>

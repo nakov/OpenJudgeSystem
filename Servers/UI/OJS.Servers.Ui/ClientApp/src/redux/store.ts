@@ -7,7 +7,7 @@ import storage from 'redux-persist/lib/storage';
 import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
 import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
-import { problemResourceAdminSlice } from './features/admin/problemResourcesAdminSlice';
+import { problemResourcesAdminSlice } from './features/admin/problemResourcesAdminSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
@@ -42,6 +42,7 @@ const rootReducer = combineReducers({
     [submissionsForProcessingAdminSlice.name]: submissionsForProcessingAdminSlice.reducer,
     [problemsAdminSlice.name]: problemsAdminSlice.reducer,
     [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
+    [problemResourcesAdminSlice.name]: problemResourcesAdminSlice.reducer,
     [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
     [themeSlice.name]: themeSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
@@ -76,8 +77,8 @@ const reducersToPersist = [
     authorizationSlice.name,
     problemsAdminSlice.name,
     problemGroupsAdminSlice.name,
+    problemResourcesAdminSlice.name,
     contestCategoriesAdminSlice.name,
-    problemResourceAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams } from '../../../common/types';
+import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemResourceForm from '../../../components/administration/problem-resources/problem-resource-form/ProblemResourceForm';
 import { setAdminProblemResourceFilters, setAdminProblemResourceSorters } from '../../../redux/features/admin/problemResourcesAdminSlice';
 import { useGetAllAdminProblemResourcesQuery } from '../../../redux/services/admin/problemResourcesAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -17,14 +17,14 @@ const AdministrationProblemResourcesPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
-        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemResourceId, setProblemResourceId ] = useState<number>(0);
-    const selectedFilters = useAppSelector((state) => state.adminProblemResources[location]?.selectedFilters);
-    const selectedSorters = useAppSelector((state) => state.adminProblemResources[location]?.selectedSorters);
+    const selectedFilters = useSelector((state : IRootStore) => state.adminProblemResources[location]?.selectedFilters);
+    const selectedSorters = useSelector((state : IRootStore) => state.adminProblemResources[location]?.selectedSorters);
 
     const { refetch: retakeData, data, error } = useGetAllAdminProblemResourcesQuery(queryParams);
     const filterParams = searchParams.get('filter');

@@ -10,12 +10,12 @@ export const problemResourcesAdminService = createApi({
     baseQuery: getCustomBaseQuery('problemResources'),
     endpoints: (builder) => ({
         getAllAdminProblemResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: 'GetAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),

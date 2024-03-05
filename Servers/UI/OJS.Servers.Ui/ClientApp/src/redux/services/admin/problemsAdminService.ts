@@ -49,12 +49,12 @@ export const problemsAdminService = createApi({
             }),
         }),
         getByProblemGroupId: builder.query<IPagedResultType<IIndexProblemsType>, IGetByProblemGroupId>({
-            query: ({ problemGroupId, filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ problemGroupId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByProblemGroupId/${problemGroupId}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
