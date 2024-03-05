@@ -1,5 +1,13 @@
+@use 'src/styles/colors';
+
 .paginationControlsMenu {
   display: flex;
-  justify-content: center;
-  padding: 15px 0;
+  justify-content: flex-start;
+  padding: 55px 0;
+
+  button {
+    svg {
+      color: colors.$primary-blue;
+    }
+  }
 }

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BiInfoCircle, BiMemoryCard, BiTime } from 'react-icons/bi';
 
 import { SubmissionResultType } from '../../../common/constants';

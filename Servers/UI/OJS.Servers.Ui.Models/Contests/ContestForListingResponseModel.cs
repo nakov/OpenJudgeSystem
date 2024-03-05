@@ -23,4 +23,10 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
     public bool CanBePracticed { get; set; }
 
     public string Category { get; set; } = null!;
+
+    public int NumberOfProblems { get; set; }
+
+    public int CompeteResults { get; set; }
+
+    public int PracticeResults { get; set; }
 }

@@ -1,0 +1,9 @@
+@use 'src/styles/variables';
+
+.errorContainer {
+  justify-content: end;
+}
+
+.compileAndUnknownError {
+  font-size: variables.$f-size-16;
+}

@@ -25,7 +25,7 @@ enum Orientation {
 
 interface IListProps<TValue> extends IHaveOptionalClassName {
     values: TValue[];
-    itemFunc: (value: TValue) => React.ReactElement;
+    itemFunc: ((value: TValue) => React.ReactElement) | ((value: TValue, idx: number) => React.ReactElement);
     keyFunc?: (value: TValue) => string;
     itemClassName?: ClassNameType;
     type?: ListType;
@@ -88,9 +88,21 @@ const List = <TValue, >({
             if (isNil(values) || isEmpty(values)) {
                 return null;
             }
-            return values.map((value) => (
-                <li key={keyFunc(value)} className={itemClassNameCombined}>
-                    {itemFunc(value)}
+
+            return values.map((value, idx) => (
+                <li
+                  key={keyFunc(value)}
+                  className={itemClassNameCombined}
+                  style={{ width: '100%' }}
+                >
+                    {
+                            // Render function expects index
+                            itemFunc.length === 2
+                                ? itemFunc(value, idx)
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
+                                : itemFunc(value)
+                        }
                 </li>
             ));
         },

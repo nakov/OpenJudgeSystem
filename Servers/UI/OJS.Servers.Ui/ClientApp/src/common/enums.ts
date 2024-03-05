@@ -1,3 +1,8 @@
+enum ThemeMode {
+    Light = 'light',
+    Dark = 'dark',
+}
+
 enum FilterColumnTypeEnum {
     STRING = 'text',
     BOOL = 'boolean',
@@ -15,6 +20,7 @@ enum ProblemGroupTypes {
     ExcludedFromHomework = 1,
 }
 export {
+    ThemeMode,
     FilterColumnTypeEnum,
     SortingEnum,
     ProblemGroupTypes,

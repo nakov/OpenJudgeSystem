@@ -230,7 +230,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const removeSingleFilter = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const deletedFilter = selectedFilters[idx];
         const newFiltersArray = [ ...selectedFilters.map((filter) => ({
             ...filter,
@@ -276,7 +275,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const renderInputField = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const { inputType } = selectedFilters[idx];
         if (inputType === FilterColumnTypeEnum.BOOL) {
             return (

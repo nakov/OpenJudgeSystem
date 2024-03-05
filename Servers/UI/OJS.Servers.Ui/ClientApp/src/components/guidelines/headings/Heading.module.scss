@@ -1,12 +1,13 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/font-weights';
 
 .heading {
   @extend %font-family-montserrat;
 
   color: colors.$text-dark-gray-color;
-  font-weight: 500;
+  font-weight: font-weights.$font-weight-regular;
 
   &.primary {
     border-bottom: 1px solid;
@@ -18,7 +19,7 @@
 
   &.secondary {
     font-size: variables.$f-size-24;
-    font-weight: 400;
+    font-weight: font-weights.$font-weight-regular;
     line-height: 30px;
     padding: 10px;
 

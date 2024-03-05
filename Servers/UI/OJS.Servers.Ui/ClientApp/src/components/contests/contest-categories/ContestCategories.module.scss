@@ -1,7 +1,74 @@
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
 @use 'src/styles/colors';
+@use 'src/styles/font-weights';
 
-.heading {
-  border-bottom: 1px solid colors.$bottom-border-color;
-  padding-bottom: 10px;
-  text-align: left;
+.contestCategoriesWrapper {
+  @extend %font-family-roboto;
+
+  min-height: 700px;
+  width: 250px;
+
+  .contestCategoriesHeader {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-semi-bold;
+    margin-bottom: spacings.$sp-32;
+    width: 250px;
+
+    > div {
+      margin-right: spacings.$sp-12;
+    }
+  }
+
+  .contestCategoriesInnerWrapper {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .categoryItem {
+    cursor: pointer;
+    display: flex;
+    font-size: variables.$f-size-16;
+    font-weight: font-weights.$font-weight-regular;
+    padding: spacings.$sp-12 spacings.$sp-4;
+    transition: background-color 0.2s ease-in-out;
+
+    > svg {
+      margin-right: spacings.$sp-12;
+    }
+
+    &:hover {
+      background-color: #76a2d2;
+    }
+  }
+
+  .categoryChildren {
+    margin-left: 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.25s ease-in-out;
+
+    &.activeChildren {
+      max-height: 1000px;
+      transition: all 0.25s ease-in-out;
+    }
+
+    .categoryItem {
+      border-bottom-width: 0 !important;
+    }
+  }
+
+  .selectedCategory {
+    background-color: colors.$primary-blue !important;
+  }
 }

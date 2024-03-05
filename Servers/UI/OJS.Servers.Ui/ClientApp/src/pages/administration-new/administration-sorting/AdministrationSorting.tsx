@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
@@ -53,7 +52,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         if (selectedSorters.length <= 0) {
             dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
         }
-    }, [ ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const open = Boolean(anchor);
 
@@ -157,7 +157,6 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     };
 
     const removeSingleSorter = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const deletedSorter = selectedSorters[idx];
         const newSortersArray = [ ...selectedSorters.map((sorter) => ({
             ...sorter,

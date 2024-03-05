@@ -9,7 +9,7 @@ import {
     ISubmissionsAdminGridViewType,
 } from '../../../common/types';
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
-// eslint-disable-next-line import/group-exports
+
 export const submissionsAdminService = createApi({
     reducerPath: 'submissions',
     baseQuery: fetchBaseQuery({
@@ -44,12 +44,12 @@ export const submissionsAdminService = createApi({
     endpoints: (builder) => ({
         getAllSubmissions: builder.query<IPagedResultType<ISubmissionsAdminGridViewType>, IGetAllAdminParams>({
             query: ({
-                filter, page, ItemsPerPage, sorting }) => ({
+                filter, page, itemsPerPage, sorting }) => ({
                 url: '/getAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 } }) }),
         deleteSubmission: builder.mutation({
@@ -69,7 +69,6 @@ export const submissionsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllSubmissionsQuery,
     useDownloadFileSubmissionQuery,
