@@ -38,8 +38,13 @@ public class GridDataService<TEntity>
 
     public virtual Task<PagedResult<TModel>> GetAll<TModel>(
         PaginationRequestModel paginationRequestModel,
+        Expression<Func<TEntity, bool>>? filter = null)
+        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter));
+
+    public virtual Task<PagedResult<TModel>> GetAll<TModel>(
+        PaginationRequestModel paginationRequestModel,
+        Expression<Func<TEntity, object>> orderBy,
         Expression<Func<TEntity, bool>>? filter = null,
-        Expression<Func<TEntity, object>>? orderBy = null,
         bool descending = false)
         => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter, orderBy, descending));
 

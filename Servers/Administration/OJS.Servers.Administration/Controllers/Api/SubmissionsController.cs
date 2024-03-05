@@ -57,10 +57,10 @@ public class SubmissionsController : BaseAdminApiController<
 
         return this.Ok(await this.submissionsGridDataService.GetAll<SubmissionAdministrationServiceModel>(
             model,
-            this.lecturerPrivilegesBusinessService.GetSubmissionsUserPrivilegesExpression(
+            orderBy: submission => submission.Id,
+            filter: this.lecturerPrivilegesBusinessService.GetSubmissionsUserPrivilegesExpression(
                 user.Id,
                 user.IsAdmin),
-            submission => submission.Id,
             descendingOrder: true));
     }
 
