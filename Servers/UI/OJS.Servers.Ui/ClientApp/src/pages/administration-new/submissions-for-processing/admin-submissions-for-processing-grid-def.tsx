@@ -2,13 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { preciseFormatDate } from '../../../utils/dates';
+import { getDateWithFormat, preciseFormatDate } from '../../../utils/dates';
+
+const dateGridColumnFormatter = (params : any) => getDateWithFormat(params.value);
 
 const dataColumns: GridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
         type: 'number',
+        align: 'center',
+        headerAlign: 'center',
         width: 10,
         filterable: true,
         sortable: true,
@@ -18,8 +22,9 @@ const dataColumns: GridColDef[] = [
         field: 'processed',
         headerName: 'Processed',
         align: 'center',
+        headerAlign: 'center',
         type: 'boolean',
-        width: 200,
+        width: 100,
         filterable: true,
         sortable: false,
     },
@@ -27,8 +32,9 @@ const dataColumns: GridColDef[] = [
         field: 'processing',
         headerName: 'Processing',
         align: 'center',
+        headerAlign: 'center',
         type: 'boolean',
-        width: 200,
+        width: 100,
         filterable: true,
         sortable: false,
     },
@@ -36,7 +42,8 @@ const dataColumns: GridColDef[] = [
         field: 'serializedException',
         headerName: 'Serialized Exception',
         align: 'center',
-        width: 200,
+        headerAlign: 'center',
+        width: 250,
         type: 'string',
         filterable: true,
         sortable: false,
@@ -45,7 +52,8 @@ const dataColumns: GridColDef[] = [
         field: 'serializedExecutionDetails',
         headerName: 'Serialized Execution Details',
         align: 'center',
-        width: 200,
+        headerAlign: 'center',
+        width: 250,
         type: 'string',
         filterable: true,
         sortable: false,
@@ -54,7 +62,8 @@ const dataColumns: GridColDef[] = [
         field: 'serializedExecutionResult',
         headerName: 'Serialized Execution Result',
         align: 'center',
-        width: 200,
+        headerAlign: 'center',
+        width: 300,
         type: 'string',
         filterable: true,
         sortable: false,
@@ -62,8 +71,10 @@ const dataColumns: GridColDef[] = [
     {
         field: 'submissionId',
         headerName: 'Submission ID',
+        align: 'center',
+        headerAlign: 'center',
         type: 'number',
-        width: 200,
+        width: 100,
         filterable: true,
         sortable: true,
         renderCell: (params: GridRenderCellParams) => (
@@ -78,21 +89,23 @@ const dataColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: 'Created On',
         align: 'center',
+        headerAlign: 'center',
         type: 'dateTime',
-        width: 200,
+        width: 150,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
+        valueFormatter: dateGridColumnFormatter,
     },
     {
         field: 'modifiedOn',
         headerName: 'Modified On',
         align: 'center',
+        headerAlign: 'center',
         type: 'dateTime',
-        width: 200,
+        width: 150,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
+        valueFormatter: dateGridColumnFormatter,
     },
 ];
 
