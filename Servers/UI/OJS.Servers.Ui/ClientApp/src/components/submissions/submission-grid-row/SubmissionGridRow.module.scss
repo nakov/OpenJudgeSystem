@@ -4,60 +4,8 @@
 @use 'src/styles/responsive';
 @use 'src/styles/shadows';
 
-.textAlignRight {
-  text-align: right;
-}
-
-.lightSubmissionsGridHeader {
-  background: colors.$wrappers-border-color;
-  box-shadow: shadows.$dp-shadow-1;
-}
-
-.darkSubmissionsGridHeader {
-  background: #1c1c17;
-  box-shadow: shadows.$dp-shadow-4;
-}
-
-.submissionsGridHeader {
+.row {
   @extend %font-family-roboto;
-
-  align-content: start;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  padding: 8px 25px;
-
-  div {
-    padding: 0 10px;
-  }
-}
-
-.smallColumn {
-  flex: 1;
-  width: 50px;
-}
-
-.mediumColumn {
-  flex: 4;
-  width: 180px;
-}
-
-.wideColumn {
-  flex: 6;
-  flex-direction: column;
-  width: 200px;
-
-  .redirectButton {
-    padding: 0;
-    text-align: left;
-  }
-}
-
-.smallColumn,
-.mediumColumn,
-.wideColumn {
-  justify-content: start;
-  text-align: left;
 }
 
 .lightRow {
@@ -70,34 +18,20 @@
   border-bottom: 1px solid #212328;
 }
 
-.container {
-  @extend %font-family-roboto;
+.redirectButton {
+  background-color: inherit;
+  border: 0;
+  padding-left: 0;
+  color: colors.$light-blue-color;
+  cursor: pointer;
+  font: inherit;
+  font-size: variables.$f-size-16;
+}
 
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  padding: 15px;
+.link {
+  @extend %r-heading-primary;
 
-  .smallColumn,
-  .wideColumn {
-    padding: 0 10px;
-  }
-
-  .link {
-    @extend %r-heading-primary;
-
-    color: colors.$light-blue-color;
-    display: inline-block;
-    margin: 0 5px;
-  }
-
-  .redirectButton {
-    background-color: inherit;
-    border: 0;
-    color: colors.$light-blue-color;
-    cursor: pointer;
-    font: inherit;
-    font-size: variables.$f-size-16;
-  }
+  color: colors.$light-blue-color;
+  display: inline-block;
+  margin: 0 5px;
 }

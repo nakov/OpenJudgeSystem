@@ -23,13 +23,11 @@ import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
     submission: ISubmissionResponseModel;
-    isFirst?: boolean;
     shouldDisplayUsername?: boolean;
 }
 
 const SubmissionGridRow = ({
     submission,
-    isFirst,
     shouldDisplayUsername = true,
 }: ISubmissionGridRowProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
@@ -126,7 +124,7 @@ const SubmissionGridRow = ({
                 }
 
                 return (
-                    <span className={styles.textAlignRight}>
+                    <span>
                         {points}
                         {' '}
                         /
@@ -177,16 +175,8 @@ const SubmissionGridRow = ({
         [ problemId, problemName ],
     );
 
-    const headerClassName = concatClassNames(
-        styles.submissionsGridHeader,
-        isDarkMode
-            ? styles.darkSubmissionsGridHeader
-            : styles.lightSubmissionsGridHeader,
-        getColorClassName(themeColors.textColor),
-    );
-
     const rowClassName = concatClassNames(
-        styles.container,
+        styles.row,
         isDarkMode
             ? styles.darkRow
             : styles.lightRow,
@@ -194,86 +184,51 @@ const SubmissionGridRow = ({
     );
 
     return (
-        <>
+        <tr className={rowClassName}>
+            <td>
+                #
+                {submissionId}
+            </td>
+            <td>
+                {renderProblemInformation()}
+                <Button
+                  type={ButtonType.secondary}
+                  size={ButtonSize.small}
+                  className={styles.link}
+                  internalClassName={styles.redirectButton}
+                  onClick={handleParticipateInContestSubmit}
+                  text={contestName}
+                />
+            </td>
+            <td>
+                <span>
+                    {formatDate(createdOn, defaultDateTimeFormatReverse)}
+                    {shouldDisplayUsername && renderUsername()}
+                </span>
+            </td>
+            <td className={styles.tdRight}>
+                {renderPoints()}
+            </td>
             {
-                isFirst
+                internalUser.isAdmin
                     ? (
-                        <div className={headerClassName}>
-                            <div className={styles.smallColumn}>N</div>
-                            <div className={styles.wideColumn}>Task</div>
-                            <div className={styles.wideColumn}>From</div>
-                            <div className={styles.mediumColumn}>
-                                Result
-                            </div>
-                            {
-                                internalUser.isAdmin
-                                    ? ( // Rendering full execution result if is admin
-                                        <div className={styles.wideColumn}>
-                                            Execution Result
-                                        </div>
-                                    )
-                                    : null
-                            }
-                            <div className={styles.mediumColumn}>Submission Type</div>
-                            <div className={styles.mediumColumn} />
-                        </div>
+                        <ExecutionResult
+                          testRuns={testRuns}
+                          maxMemoryUsed={maxMemoryUsed}
+                          maxTimeUsed={maxTimeUsed}
+                          isCompiledSuccessfully={isCompiledSuccessfully}
+                          isProcessed={processed}
+                        />
                     )
                     : null
             }
-            <div className={rowClassName}>
-                <div
-                  className={styles.smallColumn}
-                >
-                    #
-                    {submissionId}
-                </div>
-                <div className={styles.wideColumn}>
-                    {renderProblemInformation()}
-                    <Button
-                      type={ButtonType.secondary}
-                      size={ButtonSize.small}
-                      className={styles.link}
-                      internalClassName={styles.redirectButton}
-                      onClick={handleParticipateInContestSubmit}
-                      text={contestName}
-                    />
-                </div>
-                <div className={styles.wideColumn}>
-                    <span>
-                        {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                        {shouldDisplayUsername && renderUsername()}
-                    </span>
-                </div>
-                <div
-                  className={concatClassNames(styles.mediumColumn, styles.textAlignRight)}
-                >
-                    {renderPoints()}
-                </div>
-                {
-                    internalUser.isAdmin
-                        ? (
-                            <div
-                              className={concatClassNames(styles.wideColumn)}
-                            >
-                                <ExecutionResult
-                                  testRuns={testRuns}
-                                  maxMemoryUsed={maxMemoryUsed}
-                                  maxTimeUsed={maxTimeUsed}
-                                  isCompiledSuccessfully={isCompiledSuccessfully}
-                                  isProcessed={processed}
-                                />
-                            </div>
-                        )
-                        : null
-                }
-                <div className={concatClassNames(styles.mediumColumn)}>
-                    <div>{strategyName}</div>
-                </div>
-                <div className={styles.mediumColumn}>
-                    {renderDetailsBtn()}
-                </div>
-            </div>
-        </>
+            <td>
+                {strategyName}
+            </td>
+            <td>
+                {renderDetailsBtn()}
+            </td>
+        </tr>
     );
 };
 

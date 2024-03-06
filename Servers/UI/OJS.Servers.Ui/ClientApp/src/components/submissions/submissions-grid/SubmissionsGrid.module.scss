@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
+@use 'src/styles/shadows';
 
 .noSubmissionsFound {
   @extend %font-family-montserrat;
@@ -9,4 +10,37 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+.submissionsGrid {
+  table-layout: auto;
+  margin-top: 20px;
+  width: 100%;
+  color: white;
+
+  td {
+    padding: 15px 10px;
+    overflow: auto;
+    text-overflow: ellipsis;
+    text-align: left;
+    vertical-align: middle;
+    
+    .tdRight {
+      text-align: right;
+    }
+  }
+
+  .submissionsGridHeader {
+    @extend %font-family-roboto;
+  }
+
+  .lightSubmissionsGridHeader {
+    background: colors.$wrappers-border-color;
+    box-shadow: shadows.$dp-shadow-1;
+  }
+
+  .darkSubmissionsGridHeader {
+    background: #1c1c17;
+    box-shadow: shadows.$dp-shadow-4;
+  }
 }
