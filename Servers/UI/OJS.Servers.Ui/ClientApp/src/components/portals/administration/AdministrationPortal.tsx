@@ -15,6 +15,10 @@ import TableViewIcon from '@mui/icons-material/TableView';
 import { Box, CSSObject, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme, Toolbar, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+import 'dayjs/locale/bg';
 
 import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
@@ -303,17 +307,18 @@ const AdministrationPortal = () => {
                     </List>
                 </Drawer>
                 <Box component="main" sx={{ flexGrow: 1, p: 4 }}>
-                    <Routes>
-                        {user.canAccessAdministration &&
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
+                        <Routes>
+                            {user.canAccessAdministration &&
                         adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
 
-                        <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
-                        <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
+                            <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </LocalizationProvider>
                 </Box>
             </Box>
         </Box>
-
     );
 };
 export default AdministrationPortal;

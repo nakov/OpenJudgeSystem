@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
@@ -554,40 +552,36 @@ const ContestEdit = (props:IContestEditProps) => {
                     />
                 </FormControl>
                 <Box className={formStyles.row}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker
-                          sx={{ width: '48%' }}
-                          name="startTime"
-                          label={COMPETE_START_TIME}
-                          value={getDateAsLocal(contest.startTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
-                        />
-                        <DateTimePicker
-                          sx={{ width: '48%' }}
-                          name="endTime"
-                          label={COMPETE_END_TIME}
-                          value={getDateAsLocal(contest.endTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
-                        />
-                    </LocalizationProvider>
+                    <DateTimePicker
+                      sx={{ width: '48%' }}
+                      name="startTime"
+                      label={COMPETE_START_TIME}
+                      value={getDateAsLocal(contest.startTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
+                    />
+                    <DateTimePicker
+                      sx={{ width: '48%' }}
+                      name="endTime"
+                      label={COMPETE_END_TIME}
+                      value={getDateAsLocal(contest.endTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
+                    />
                 </Box>
                 <Box className={formStyles.row}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker
-                          sx={{ width: '48%', margin: '20px 0' }}
-                          name="practiceStartTime"
-                          label={PRACTICE_START_TIME}
-                          value={getDateAsLocal(contest.practiceStartTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
-                        />
-                        <DateTimePicker
-                          sx={{ width: '48%', margin: '20px 0' }}
-                          name="practiceEndTime"
-                          label={PRACTICE_END_TIME}
-                          value={getDateAsLocal(contest.practiceEndTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
-                        />
-                    </LocalizationProvider>
+                    <DateTimePicker
+                      sx={{ width: '48%', margin: '20px 0' }}
+                      name="practiceStartTime"
+                      label={PRACTICE_START_TIME}
+                      value={getDateAsLocal(contest.practiceStartTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
+                    />
+                    <DateTimePicker
+                      sx={{ width: '48%', margin: '20px 0' }}
+                      name="practiceEndTime"
+                      label={PRACTICE_END_TIME}
+                      value={getDateAsLocal(contest.practiceEndTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
+                    />
                 </Box>
                 <Box className={styles.checkboxes}>
                     <FormControlLabel
