@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable react/react-in-jsx-scope */
+import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { TESTS_PATH } from '../../../common/urls';
+import { PROBLEMS_PATH, TESTS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
@@ -60,6 +60,11 @@ const testsFilterableColums: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        renderCell: (params) => (
+            <Link to={`${PROBLEMS_PATH}/${params.row.problemId}`}>
+                {params.row.problemName}
+            </Link>
+        ),
     },
     {
         field: 'problemId',

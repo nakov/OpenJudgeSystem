@@ -83,6 +83,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
              .ForMember(pam => pam.CreatedOn, opt
                  => opt.Ignore())
              .ForMember(pam => pam.ModifiedOn, opt
-                 => opt.Ignore());
+                 => opt.Ignore())
+             .ForMember(pam => pam.AdditionalFiles, opt
+             => opt.Ignore());
     }
 }

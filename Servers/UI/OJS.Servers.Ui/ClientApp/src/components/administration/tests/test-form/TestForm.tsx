@@ -15,8 +15,7 @@ import { TESTS_PATH } from '../../../../common/urls';
 import { useGetAllByNameQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useCreateTestMutation, useDeleteTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -50,8 +49,14 @@ const TestForm = (props: ITestFormProps) => {
 
     const { data: testData, error: getTestError, isLoading: isGettingData } = useGetTestByIdQuery(id, { skip: !isEditMode });
     const { data: dropdownDataResponse, error: dropdownError } = useGetAllByNameQuery(searchString);
-    const [ editTest, { data: editData, error: editError, isLoading: isEditing } ] = useUpdateTestMutation();
-    const [ createTest, { data: createData, error: createError, isLoading: isCreating } ] = useCreateTestMutation();
+    const [
+        editTest,
+        { data: editData, error: editError, isLoading: isEditing, isSuccess: isSuccessfullyEdited },
+    ] = useUpdateTestMutation();
+    const [
+        createTest,
+        { data: createData, error: createError, isLoading: isCreating, isSuccess: isSuccessfullyCreated },
+    ] = useCreateTestMutation();
 
     useEffect(() => {
         if (testData) {
@@ -64,7 +69,10 @@ const TestForm = (props: ITestFormProps) => {
     }, [ getTestError, dropdownError, editError, createError ]);
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ editData, createData ]);
+        const message = getAndSetSuccesfullMessages([
+            { message: editData, shouldGet: isSuccessfullyEdited },
+            { message: createData, shouldGet: isSuccessfullyCreated },
+        ]);
         setSuccessfullMessage(message);
     }, [ editData, createData ]);
 
@@ -90,7 +98,7 @@ const TestForm = (props: ITestFormProps) => {
     };
 
     const handleAutocompleteChange = (problem: ITestsDropdownData | null) => {
-        console.log('HERE')
+        console.log('HERE');
         if (problem) {
             setTest((prevState) => ({
                 ...prevState,
@@ -101,7 +109,6 @@ const TestForm = (props: ITestFormProps) => {
     };
 
     const onSearchStringChange = debounce((value:string) => {
-        console.log('HERE')
         setSearchString(value);
     }, 300);
 
@@ -142,8 +149,8 @@ const TestForm = (props: ITestFormProps) => {
 
     return (
         <>
-            {exceptionMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successfullMessage && renderAlert(successfullMessage, AlertSeverity.Success, 0, 3000)}
+            {renderSuccessfullAlert(successfullMessage)}
+            {renderErrorMessagesAlert(exceptionMessages)}
             <Typography className={formStyles.centralize} variant="h4">Test administration form</Typography>
             <form className={formStyles.form}>
                 <Box className={formStyles.inputRow}>
@@ -164,7 +171,7 @@ const TestForm = (props: ITestFormProps) => {
                               className={formStyles.inputRow}
                               onChange={(event, problem) => handleAutocompleteChange(problem)}
                               onInputChange={(event, value) => onSearchStringChange(value)}
-                              value={dropdownData?.find((data) => data.id === test.problemId) ?? dropdownData[0]}
+                              value={dropdownData?.find((data) => data.id === test.problemId) ?? null}
                               options={dropdownData!}
                               renderInput={(params) => <TextField {...params} label={SELECT_PROBLEM} key={params.id} />}
                               getOptionLabel={(option) => option?.name}

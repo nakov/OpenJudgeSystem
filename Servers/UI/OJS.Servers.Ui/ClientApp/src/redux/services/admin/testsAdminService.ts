@@ -2,7 +2,7 @@
 /* eslint-disable import/group-exports */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType } from '../../../common/types';
+import { IFileModel, IGetAllAdminParams, IPagedResultType } from '../../../common/types';
 import { IGetByProblemId } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import { ITestAdministration, ITestInListData } from '../../../components/administration/tests/types';
@@ -13,12 +13,12 @@ export const testsAdminService = createApi({
     baseQuery: getCustomBaseQuery('tests'),
     endpoints: (builder) => ({
         getAllAdminTests: builder.query<IPagedResultType<ITestInListData>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: 'GetAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
@@ -27,30 +27,44 @@ export const testsAdminService = createApi({
         getTestById:
         builder.query<ITestAdministration, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
         updateTest: builder.mutation<string, ITestAdministration >({
-            query: (problemGroup) => ({
+            query: (test) => ({
                 url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
-                body: problemGroup,
+                body: test,
             }),
         }),
         createTest: builder.mutation<string, ITestAdministration >({
-            query: (problemGroup) => ({
+            query: (test) => ({
                 url: `/${CREATE_ENDPOINT}`,
                 method: 'POST',
-                body: problemGroup,
+                body: test,
             }),
         }),
         getTestsByProblemId: builder.query<IPagedResultType<ITestInListData>, IGetByProblemId>({
-            query: ({ problemId, filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ problemId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByProblemId/${problemId}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
         }),
+        deleteByProblem: builder.mutation<string, number>({
+            query: (problemId) => ({
+                url: `/DeleteAll/${problemId}`,
+                method: 'DELETE',
+            }),
+        }),
+        importTests: builder.mutation<string, FormData>({
+            query: (tests) => ({
+                url: '/Import',
+                method: 'POST',
+                body: tests,
+            }),
+        }),
+        exportZip: builder.query<IFileModel, number>({ query: (problemId) => ({ url: `/ExportZip/${problemId}` }), keepUnusedDataFor: 5 }),
 
     }),
 });
@@ -63,6 +77,9 @@ export const {
     useUpdateTestMutation,
     useGetTestByIdQuery,
     useGetTestsByProblemIdQuery,
+    useDeleteByProblemMutation,
+    useImportTestsMutation,
+    useExportZipQuery,
 
 } = testsAdminService;
 export default testsAdminService;

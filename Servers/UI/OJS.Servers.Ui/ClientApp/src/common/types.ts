@@ -462,11 +462,22 @@ interface IContestAutocomplete {
     id: number;
     name: string;
 }
+
+interface ITestsUploadModel {
+    problemId: number;
+    tests: File | null;
+    retestProblem: boolean;
+    deleteOldTests: boolean;
+}
 interface ITestsDropdownData {
     id: number;
     name: string;
 }
 
+interface IFileModel {
+    blob: Blob;
+    filename: string;
+}
 interface IContestCategories {
     id: number;
     name: string;
@@ -558,4 +569,6 @@ export type {
     ITestsDropdownData,
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
+    ITestsUploadModel,
+    IFileModel,
 };

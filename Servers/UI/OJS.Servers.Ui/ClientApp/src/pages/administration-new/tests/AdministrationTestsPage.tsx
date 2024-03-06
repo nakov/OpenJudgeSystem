@@ -1,16 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
-import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import TestForm from '../../../components/administration/tests/test-form/TestForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminTestsFilters, setAdminTestsSorters } from '../../../redux/features/admin/testsSlice';
 import { useDeleteTestMutation, useGetAllAdminTestsQuery } from '../../../redux/services/admin/testsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import testsFilterableColums, { returnTestsNonFilterableColumns } from './testsGridColumns';
@@ -20,7 +19,7 @@ const AdministrationTestsPage = () => {
     const [ openEditTestModal, setOpenEditTestModal ] = useState(false);
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
-        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
@@ -41,28 +40,22 @@ const AdministrationTestsPage = () => {
     }, [ sortingParams ]);
 
     const onEditClick = (id: number) => {
-        setOpenEditTestModal(true);
         setTestId(id);
+        setOpenEditTestModal(true);
     };
 
     const renderTestEditModal = (index: number) => (
-        <Modal
-          key={index}
+        <AdministrationModal
+          index={index}
           open={openEditTestModal}
           onClose={() => setOpenEditTestModal(false)}
         >
-            <Box sx={modalStyles}>
-                <TestForm id={testId!} />
-            </Box>
-        </Modal>
-    );
-
-    const renderGridSettings = () => (
-        <div />
+            <TestForm id={testId!} />
+        </AdministrationModal>
     );
 
     if (isLoadingTests) {
-        return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
+        return <SpinningLoader />;
     }
 
     return (
@@ -75,7 +68,6 @@ const AdministrationTestsPage = () => {
                 )
 }
           data={testsData}
-          renderActionButtons={renderGridSettings}
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
