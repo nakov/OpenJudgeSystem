@@ -51,7 +51,6 @@ const ContestModal = ({ contest, showModal }: IContestModalProps) => {
             <div>
                 <Modal
                   open={isShowing}
-                  sx={{ '& .MuiBackdrop-root': { backgroundColor: 'transparent' }, backdropFilter: 'blur(5px)' }}
                   onClose={() => toggleAndRedirectToHomePage()}
                 >
                     <div className={styles.modal}>
