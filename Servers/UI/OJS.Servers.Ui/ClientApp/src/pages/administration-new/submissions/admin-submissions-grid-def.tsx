@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls';
-import { getDateWithFormat } from '../../../utils/dates';
+import { defaultDateTimeFormatPreciseTime, getDateWithFormat } from '../../../utils/dates';
 
-const dateGridColumnFormatter = (params : any) => getDateWithFormat(params.value);
+const dateGridColumnFormatter = (params : any) => getDateWithFormat(params.value, defaultDateTimeFormatPreciseTime);
 
 const dataColumns: GridColDef[] = [
     {
