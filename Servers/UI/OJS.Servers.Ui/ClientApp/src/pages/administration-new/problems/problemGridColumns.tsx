@@ -7,9 +7,9 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { EDIT } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { PROBLEMS_PATH } from '../../../common/urls';
-import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
-import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
-import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import DeleteButton from '../../../components/administration/common/buttons/delete/DeleteButton';
+import EditRedirectButton from '../../../components/administration/common/buttons/edit/EditRedirectButton';
+import QuickEditButton from '../../../components/administration/common/buttons/edit/QuickEditButton';
 
 const problemFilterableColums: GridColDef[] = [
     {
@@ -118,7 +118,7 @@ export const returnProblemsNonFilterableColumns = (
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton path={`${PROBLEMS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
+                <EditRedirectButton path={`${PROBLEMS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}

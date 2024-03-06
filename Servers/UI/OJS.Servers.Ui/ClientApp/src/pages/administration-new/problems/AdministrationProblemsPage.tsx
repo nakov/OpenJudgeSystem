@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Box, Modal } from '@mui/material';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
+import ProblemForm from '../../../components/administration/problems/problem-form/ProblemForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
 import { useDeleteProblemMutation, useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';

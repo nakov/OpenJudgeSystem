@@ -19,8 +19,8 @@ import { flexCenterObjectStyles } from '../../../../utils/object-utils';
 import { Alert, AlertSeverity, AlertVariant } from '../../../guidelines/alert/Alert';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import CreateButton from '../../common/create/CreateButton';
-import ProblemForm from '../../Problems/problemForm/ProblemForm';
+import CreateButton from '../../common/buttons/create/CreateButton';
+import ProblemForm from '../../problems/problem-form/ProblemForm';
 
 interface IProblemsInContestViewProps {
     contestId: number;

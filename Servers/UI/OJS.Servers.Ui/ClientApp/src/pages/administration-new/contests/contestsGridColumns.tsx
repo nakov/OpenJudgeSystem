@@ -5,9 +5,9 @@ import dayjs from 'dayjs';
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH } from '../../../common/urls';
-import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
-import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
-import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import DeleteButton from '../../../components/administration/common/buttons/delete/DeleteButton';
+import EditRedirectButton from '../../../components/administration/common/buttons/edit/EditRedirectButton';
+import QuickEditButton from '../../../components/administration/common/buttons/edit/QuickEditButton';
 
 const contestFilterableColumns: GridColDef[] = [
     {
@@ -147,7 +147,7 @@ export const returnContestsNonFilterableColumns = (
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton path={`${CONTESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
+                <EditRedirectButton path={`${CONTESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}

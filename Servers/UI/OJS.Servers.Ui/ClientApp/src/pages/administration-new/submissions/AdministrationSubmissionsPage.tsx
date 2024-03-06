@@ -6,7 +6,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import DeleteButton from '../../../components/administration/common/buttons/delete/DeleteButton';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';

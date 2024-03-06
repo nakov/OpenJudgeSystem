@@ -2,7 +2,7 @@
 import { RiAddBoxFill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 
-import { CREATE_NEW_PROBLEM } from '../../../../common/labels';
+import { CREATE_NEW_PROBLEM } from '../../../../../common/labels';
 
 interface ICreateButtonProps {
     showModal: boolean;

@@ -11,6 +11,7 @@ export const CHECKER = 'Checker';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
+export const VIEW = 'View';
 export const PROBLEM_GROUP = 'Problem Group';
 
 // Contests

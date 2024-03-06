@@ -19,7 +19,7 @@ import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../..
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
+import DeleteButton from '../../common/buttons/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 

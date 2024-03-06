@@ -3,7 +3,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import DeleteButton from '../../../components/administration/common/buttons/delete/DeleteButton';
 
 const categoriesFilterableColumns: GridColDef[] = [
     {

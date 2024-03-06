@@ -8,13 +8,13 @@ import {
 } from '@mui/material';
 import isNil from 'lodash/isNil';
 
-import { ISubmissionForProcessingAdminGridViewType } from '../../../common/types';
-import { useGetByIdQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
-import { preciseFormatDate } from '../../../utils/dates';
+import { ISubmissionForProcessingAdminGridViewType } from '../../../../common/types';
+import { useGetByIdQuery } from '../../../../redux/services/admin/submissionsForProcessingAdminService';
+import { preciseFormatDate } from '../../../../utils/dates';
 
-import styles from './AdminSubmissionForProcessingDetails.module.scss';
+import styles from '../AdminSubmissionForProcessingDetails.module.scss';
 
-const AdministrationSubmissionForProcessing = () => {
+const AdministrationSubmissionForProcessingDetailsPage = () => {
     const { pathname } = useLocation();
     const [ , , , contestId ] = pathname.split('/');
     const [ submission, setSubmission ] = useState<ISubmissionForProcessingAdminGridViewType | null>(null);
@@ -119,4 +119,4 @@ const AdministrationSubmissionForProcessing = () => {
             : null
     );
 };
-export default AdministrationSubmissionForProcessing;
+export default AdministrationSubmissionForProcessingDetailsPage;

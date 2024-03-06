@@ -3,7 +3,7 @@ import { FaFileUpload } from 'react-icons/fa';
 import { MdOutlineRemoveCircle } from 'react-icons/md';
 import { Button, FormControl, FormGroup, IconButton, styled, Tooltip, Typography } from '@mui/material';
 
-import { CLEAR_SELECTION } from '../../../../common/messages';
+import { CLEAR_SELECTION } from '../../../../../common/messages';
 
 interface IFileUploadProps {
     handleFileUpload: Function;

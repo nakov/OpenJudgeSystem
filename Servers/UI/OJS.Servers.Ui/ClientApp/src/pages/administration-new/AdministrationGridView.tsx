@@ -13,7 +13,7 @@ import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
-import LegendBox from '../../components/administration/common/legendBox/LegendBox';
+import LegendBox from '../../components/administration/common/legend-box/LegendBox';
 import { DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 

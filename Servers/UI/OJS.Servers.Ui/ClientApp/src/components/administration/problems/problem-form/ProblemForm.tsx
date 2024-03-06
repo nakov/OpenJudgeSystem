@@ -12,17 +12,15 @@ import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../..
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
-import FileUpload from '../../common/file-upload/FileUpload';
+import DeleteButton from '../../common/buttons/delete/DeleteButton';
+import FileUpload from '../../common/buttons/file-upload/FileUpload';
 import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissionTypes';
 
 import ProblemFormBasicInfo from './problem-form-basic-info.tsx/ProblemFormBasicInfo';
 
 interface IProblemFormProps {
     problemId: number | null;
-
     isEditMode?: boolean;
-
     contestId: number | null;
 }
 

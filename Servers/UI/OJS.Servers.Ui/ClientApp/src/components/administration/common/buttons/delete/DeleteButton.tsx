@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io';
 import { IconButton, Tooltip } from '@mui/material';
 
-import { DELETE } from '../../../../common/labels';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
-import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
-import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import { DELETE } from '../../../../../common/labels';
+import { Alert,
+    AlertHorizontalOrientation,
+    AlertSeverity,
+    AlertVariant,
+    AlertVerticalOrientation } from '../../../../guidelines/alert/Alert';
+import ConfirmDialog from '../../../../guidelines/dialog/ConfirmDialog';
+import SpinningLoader from '../../../../guidelines/spinning-loader/SpinningLoader';
 
 interface IDeleteButtonProps {
     onSuccess?: () => void;

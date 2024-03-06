@@ -16,7 +16,7 @@ import {
 } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
+import DeleteButton from '../../common/buttons/delete/DeleteButton';
 
 import styles from './CategoryEdit.module.scss';
 

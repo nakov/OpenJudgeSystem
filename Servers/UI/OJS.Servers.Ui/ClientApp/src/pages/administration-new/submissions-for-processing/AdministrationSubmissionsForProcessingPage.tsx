@@ -2,13 +2,13 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useSearchParams } from 'react-router-dom';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { Tooltip } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import { SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
+import ViewRedirectButton from '../../../components/administration/common/buttons/edit/ViewRedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
@@ -63,11 +63,10 @@ const AdministrationSubmissionsForProcessingPage = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Tooltip title="View">
-                        <Link to={`${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}>
-                            <RemoveRedEyeIcon color="primary" />
-                        </Link>
-                    </Tooltip>
+                    <ViewRedirectButton
+                      path={`${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}
+                      location={`${VIEW} page`}
+                    />
                 </div>
             ),
         },

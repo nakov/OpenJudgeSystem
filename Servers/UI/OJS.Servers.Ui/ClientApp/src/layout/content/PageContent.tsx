@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 import AdministrationContestPage from '../../components/administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../components/administration/problem-groups/AdministrationProblemGroup';
-import AdministrationProblem from '../../components/administration/Problems/AdministrationProblem';
+import AdministrationProblem from '../../components/administration/problems/AdministrationProblem';
 import useTheme from '../../hooks/use-theme';
 import AdministrationPage from '../../pages/administration/AdministrationPage';
 import ContestEditPage from '../../pages/administration/ContestEditPage';
@@ -14,14 +14,14 @@ import SubmissionRetestPage from '../../pages/administration/SubmissionRetestPag
 import TestEditPage from '../../pages/administration/TestEditPage';
 import Administration from '../../pages/administration-new/Administration';
 import AdministrationContestCategories
-    from '../../pages/administration-new/categoriesContest/AdministrationContestCategories';
+    from '../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../pages/administration-new/contests/AdministrationContests';
-import AdministrationProblemGroupsPage from '../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
+import AdministrationProblemGroupsPage from '../../pages/administration-new/problem-groups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationSubmissionsPage from '../../pages/administration-new/submissions/AdministrationSubmissionsPage';
-import AdminSubmissionForProcessingDetails
-    from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import AdministrationSubmissionForProcessingDetailsPage
+    from '../../pages/administration-new/submissions-for-processing/details/AdministrationSubmissionForProcessingDetailsPage';
 import ContestDetailsPage from '../../pages/contest/ContestDetailsPage';
 import ContestPage from '../../pages/contest/ContestPage';
 import ContestResultsPage from '../../pages/contest-results/ContestResultsPage';
@@ -148,7 +148,7 @@ const adminRoutes = [
     },
     {
         path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
-        Element: AdminSubmissionForProcessingDetails,
+        Element: AdministrationSubmissionForProcessingDetailsPage,
     },
     {
         path: `${TESTS_PATH}`,

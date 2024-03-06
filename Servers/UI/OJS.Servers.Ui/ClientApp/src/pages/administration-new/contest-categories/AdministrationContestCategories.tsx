@@ -8,7 +8,7 @@ import { IconButton, Modal, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import CategoryEdit from '../../../components/administration/ContestCategories/CategoryEdit/CategoryEdit';
+import CategoryEdit from '../../../components/administration/contest-categories/edit/CategoryEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestCategoriesFilters, setAdminContestCategoriesSorters } from '../../../redux/features/admin/contestCategoriesAdminSlice';
 import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery } from '../../../redux/services/admin/contestCategoriesAdminService';

@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router';
 import { Box } from '@mui/material';
 
-import ProblemForm from './problemForm/ProblemForm';
+import ProblemForm from './problem-form/ProblemForm';
 
 const AdministrationProblem = () => {
     const { pathname } = useLocation();
