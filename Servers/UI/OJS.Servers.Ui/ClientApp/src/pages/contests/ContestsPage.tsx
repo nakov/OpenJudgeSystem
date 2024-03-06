@@ -104,7 +104,7 @@ const ContestsPage = () => {
         );
     }, [ allContests ]);
 
-    if (allContestsError) { return <>Error loading contests</>; }
+    if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
     return (
         <div style={{ padding: '20px 40px' }}>
