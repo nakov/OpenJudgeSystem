@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import MuiUiThemeProvider from '../../../hooks/use-muiUiTheme';
 import useTheme from '../../../hooks/use-theme';
 import PageFooter from '../../../layout/footer/PageFooter';
 import PageHeader from '../../../layout/header/PageHeader';
@@ -109,7 +110,7 @@ const ClientPortal = () => {
     const backgroundColorClassName = getColorClassName(themeColors.baseColor400);
 
     return (
-        <>
+        <MuiUiThemeProvider>
             <PageHeader />
             <SearchBar />
             <main className={`${styles.main} ${backgroundColorClassName}`}>
@@ -118,7 +119,7 @@ const ClientPortal = () => {
                 </Routes>
             </main>
             <PageFooter />
-        </>
+        </MuiUiThemeProvider>
 
     );
 };
