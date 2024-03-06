@@ -6,7 +6,6 @@ namespace OJS.Services.Ui.Business
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
-    using OJS.Services.Common.Models.Cache;
     using SoftUni.Services.Infrastructure;
 
     public interface IParticipantsBusinessService : IService
@@ -36,9 +35,5 @@ namespace OJS.Services.Ui.Business
             DateTime participationStartTimeRangeEnd);
 
         Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions);
-
-        Task<int> GetPracticeParticipantsCount(int contestId);
-
-        Task<int> GetCompeteParticipantsCount(int contestId);
     }
 }

@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { contestParticipationType } from '../../common/contest-helpers';
-import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
+import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -34,7 +34,7 @@ interface IContestResultsTypeWithRowNumber extends IContestResultsParticipationT
 }
 
 const getBestSubmission = (
-    params: GridRenderCellParams<number>,
+    params: GridRenderCellParams<any>,
     problem : IContestResultsProblemType,
 ) => {
     const problemResult = params.row.problemResults
@@ -151,7 +151,7 @@ const ContestResultsPage = () => {
         minWidth: 50,
         flex: 1,
         sortable: true,
-        valueGetter: (parameters: GridRenderCellParams<number>) => {
+        valueGetter: (parameters: GridRenderCellParams<any>) => {
             const bestSubmission = getBestSubmission(parameters, p);
             return bestSubmission?.points ?? -1;
         },
@@ -160,7 +160,7 @@ const ContestResultsPage = () => {
         headerAlign: 'center',
         headerClassName: styles.headerContent,
         align: 'center',
-        renderCell: (cellParams: GridRenderCellParams<number>) => {
+        renderCell: (cellParams: GridRenderCellParams<any>) => {
             const problemResult = cellParams.row.problemResults
                 .find((pr: IContestResultsParticipationProblemType) => pr.problemId === p.id) as IContestResultsParticipationProblemType;
             const bestSubmission = problemResult?.bestSubmission;
@@ -243,7 +243,7 @@ const ContestResultsPage = () => {
         () => (
             <>
                 <div className={styles.breadcrumbContainer}>
-                    <ContestBreadcrumb />
+                    <ContestBreadcrumbs />
                 </div>
                 <Heading
                   type={HeadingType.primary}

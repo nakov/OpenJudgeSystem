@@ -1,6 +1,4 @@
-/* eslint-disable no-undefined */
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -30,7 +28,7 @@ interface IAdministrationFilterProps {
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
 }
 
@@ -41,6 +39,15 @@ interface IAdministrationFilter {
     inputType: FilterColumnTypeEnum;
     availableOperators?: IFiltersColumnOperators[];
     availableColumns: IFilterColumn[];
+}
+
+interface IDefaultFilter {
+    column: string;
+    operator: string;
+    value: string;
+    availableOperators: IFiltersColumnOperators[];
+    availableColumns: IFilterColumn[];
+    inputType: FilterColumnTypeEnum;
 }
 
 const DROPDOWN_OPERATORS = {
@@ -86,23 +93,25 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
     }
     return FilterColumnTypeEnum.STRING;
 };
+const filterSeparator = '&&;';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
     const dispatch = useDispatch();
-    const defaultFilter = {
+    const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
         value: '',
         availableOperators: [],
         availableColumns: columns,
         inputType: FilterColumnTypeEnum.STRING,
-    };
+    }), [ columns ]);
+
     useEffect(() => {
-        if (selectedFilters.length <= 0) {
+        if (selectedFilters.length <= 0 && setStateAction) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
         }
-    }, [ ]);
+    }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -115,7 +124,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         const urlSelectedFilters: IAdministrationFilter[] = [];
 
         const filterParams = searchParams.get('filter') ?? '';
-        const urlParams = filterParams.split('&').filter((param) => param);
+        const urlParams = filterParams.split(filterSeparator).filter((param) => param);
         urlParams.forEach((param: string) => {
             const paramChunks = param.split('~').filter((chunk) => chunk);
 
@@ -148,7 +157,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     useEffect(() => {
         const urlSelectedFilters = mapUrlToFilters();
-        if (urlSelectedFilters.length) {
+        if (urlSelectedFilters.length && setStateAction) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,7 +188,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
 
         const delayedSetOfSearch = debounce(() => {
-            searchParams.set('filter', filtersFormattedArray.join('&'));
+            searchParams.set('filter', filtersFormattedArray.join(filterSeparator));
             if (withSearchParams) {
                 setSearchParams(searchParams);
             }
@@ -206,7 +215,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             ...filter,
             availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
         })) ];
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const removeAllFilters = () => {
@@ -214,21 +226,26 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             searchParams.delete('filter');
             setSearchParams(searchParams);
         }
-        dispatch(setStateAction({
-            key: location,
-            filters: [ defaultFilter ],
-        }));
+        if (setStateAction) {
+            dispatch(setStateAction({
+                key: location,
+                filters: [ defaultFilter ],
+            }));
+        }
     };
 
     const removeSingleFilter = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const deletedFilter = selectedFilters[idx];
         const newFiltersArray = [ ...selectedFilters.map((filter) => ({
             ...filter,
             availableColumns: [ ...filter.availableColumns, { columnName: deletedFilter.column, columnType: deletedFilter.inputType } ],
         })) ];
         newFiltersArray.splice(idx, 1);
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
+
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
             searchParams.delete('filter');
             if (withSearchParams) {
@@ -263,11 +280,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const renderInputField = (idx: number) => {
-        // eslint-disable-next-line prefer-destructuring
         const { inputType } = selectedFilters[idx];
         if (inputType === FilterColumnTypeEnum.BOOL) {
             return (
@@ -391,7 +409,7 @@ const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) 
         }
         queryString.push(`${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`);
     });
-    return queryString.filter((el) => el).join('&') ?? '';
+    return queryString.filter((el) => el).join(filterSeparator) ?? '';
 };
 
 const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {

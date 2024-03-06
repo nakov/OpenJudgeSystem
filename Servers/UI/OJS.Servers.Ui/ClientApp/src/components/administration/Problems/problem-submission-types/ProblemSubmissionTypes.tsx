@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
 import { MdOutlineRemoveCircle } from 'react-icons/md';
 import { FormControl, FormGroup, FormLabel, IconButton, TextareaAutosize, TextField } from '@mui/material';
 
@@ -49,6 +48,7 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
                 <TextareaAutosize
                   placeholder={SOLUTION_SKELETON_PLACEHOLDER}
                   minRows={10}
+                  maxRows={20}
                   value={strategy.solutionSkeleton ?? ''}
                   name="description"
                   onChange={(e) => onSkeletonChange(e.target.value, strategy.id)}

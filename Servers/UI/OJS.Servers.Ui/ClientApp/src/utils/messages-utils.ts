@@ -1,5 +1,4 @@
 /* eslint-disable valid-typeof */
-/* eslint-disable no-undefined */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import React from 'react';
 
@@ -10,9 +9,13 @@ const getAndSetExceptionMessage = (exceptions: Array<unknown>, setState: React.D
     setState(messages);
 };
 
-const getAndSetSuccesfullMessages = (data: Array<any>) => {
-    const filteredData = data.filter((x) => x !== undefined);
-    const message = filteredData[0] as string;
+const getAndSetSuccesfullMessages = (data: Array<{message:string | undefined; shouldGet: boolean}>) => {
+    const filteredData = data.filter((x) => x.message !== undefined && x.shouldGet === true);
+
+    let message: string | null = null;
+    if (filteredData.length > 0) {
+        message = filteredData[0].message as string;
+    }
     if (message) {
         return message;
     }

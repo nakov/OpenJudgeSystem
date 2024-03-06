@@ -1,6 +1,6 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable max-len */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { FC, useEffect, useState } from 'react';
+import { GiFiles } from 'react-icons/gi';
 import { Link, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -13,7 +13,7 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Tooltip } from '@mui/material';
+import { Divider, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -27,7 +27,7 @@ import { CSSObject, styled, Theme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
 
 import { Anything } from '../../common/common-types';
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
 
 import styles from './set-admin-navigation.module.scss';
 
@@ -74,6 +74,11 @@ const administrationItems = [
         path: `${PROBLEM_GROUPS_PATH}`,
     },
     {
+        name: 'Problem Resources',
+        icon: <GiFiles />,
+        path: `${PROBLEM_RESOURCES_PATH}`,
+    },
+    {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: `${SUBMISSION_TYPES_PATH}`,
@@ -86,7 +91,8 @@ const openedMixin = (theme: Theme): CSSObject => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'visible',
+    overflowY: 'visible',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -94,7 +100,8 @@ const closedMixin = (theme: Theme): CSSObject => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'visible',
+    overflowY: 'visible',
     width: `calc(${theme.spacing(7)} + 1px)`,
     [theme.breakpoints.up('sm')]: { width: `calc(${theme.spacing(8)} + 1px)` },
 });
@@ -139,6 +146,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
 }));
 
+const mobileBreak = 1300;
 const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const location = useLocation();
     const [ open, setOpen ] = useState(true);
@@ -152,7 +160,9 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         let pageTitle = '';
         if (!/^\d+$/.test(lastElementOfThePathname)) {
             const section = administrationItems.find((x) => x.path.split('/').pop() === lastElementOfThePathname);
-            pageTitle = capitalizeFirstLetter(section!.name);
+            pageTitle = capitalizeFirstLetter(section
+                ? section.name
+                : '');
             setLocationTitle(pageTitle);
         } else {
             pageTitle = capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]}
@@ -163,6 +173,17 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return function cleanUp() {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const handleResize = () => {
+        setOpen(!(window.innerWidth < mobileBreak));
+    };
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -171,21 +192,20 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         setOpen(false);
     };
 
+    const renderSectionicon = (name: string, icon: any) => {
+        if (!open) {
+            return (
+                <Tooltip title={name}>
+                    <div>{icon}</div>
+                </Tooltip>
+            );
+        }
+        return icon;
+    };
     return (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         <Box sx={{ zIndex: 0 }}>
-            {!open
-                ? (
-                    <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                )
-                : (
-                    <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-                )}
             <Box sx={{ display: 'flex', zIndex: 0 }}>
                 <AppBar position="fixed" open={open}>
                     <Toolbar>
@@ -201,42 +221,55 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     </Toolbar>
                 </AppBar>
                 <Drawer
-                  sx={{ zIndex: 0 }}
                   variant="permanent"
                   open={open}
+                  sx={{ zIndex: 100 }}
                 >
+                    {!open
+                        ? (
+                            <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
+                                <ChevronRightIcon />
+                            </IconButton>
+                        )
+                        : (
+                            <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        )}
                     <DrawerHeader>
                         <div />
                     </DrawerHeader>
 
                     {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
-                    <List>
+                    <List sx={{ overflow: 'hidden' }}>
                         {administrationItems.map((item) => (
-                            <ListItem key={item.name} disablePadding>
-                                <Link
-                                  to={item.path}
-                                  className={`${location.pathname === item.path
-                                      ? styles.activeAdminNavLink
-                                      : ''} ${styles.adminNavLink}`}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon style={{
-                                            color: location.pathname === item.path
-                                                ? '#42abf8'
-                                                : '#3e4c5d',
-                                        }}
-                                        >
-                                            {item.icon}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                            <Box key={item.name}>
+                                <ListItem key={item.name} disablePadding>
+                                    <Link
+                                      to={item.path}
+                                      className={`${location.pathname === item.path
+                                          ? styles.activeAdminNavLink
+                                          : ''} ${styles.adminNavLink}`}
+                                    >
+                                        <ListItemButton>
+                                            <ListItemIcon style={{
+                                                color: location.pathname === item.path
+                                                    ? '#42abf8'
+                                                    : '#3e4c5d',
+                                            }}
+                                            >
+                                                {renderSectionicon(item.name, item.icon)}
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                                <Divider />
+                            </Box>
                         ))}
                     </List>
                 </Drawer>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                     <ComponentToWrap {...props} />
                 </Box>
             </Box>

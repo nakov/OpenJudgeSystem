@@ -3,7 +3,8 @@ import { IoMdTrash } from 'react-icons/io';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { DELETE } from '../../../../common/labels';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
+import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
@@ -20,6 +21,7 @@ const DeleteButton = (props: IDeleteButtonProps) => {
     const { onSuccess, id, name, style = {}, text, mutation } = props;
     const [ showConfirmDelete, setShowConfirmDelete ] = useState<boolean>(false);
     const [ message, setMessage ] = useState<string | null>(null);
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
     const [ deleteRequest, { data, isLoading, isSuccess, error } ] = mutation();
     const confirmDelete = () => {
@@ -27,18 +29,19 @@ const DeleteButton = (props: IDeleteButtonProps) => {
     };
 
     useEffect(() => {
-        if (error && !isSuccess) {
-            // The data by default is of type unknown
-            setMessage(error.data as string);
-        } else if (isSuccess) {
-            setMessage(data as string);
-            if (onSuccess) {
-                onSuccess();
-            }
-        } else {
-            setMessage(null);
+        const successMessage = getAndSetSuccesfullMessages([ { message: data as string, shouldGet: isSuccess } ]);
+        setMessage(successMessage);
+    }, [ data, isSuccess ]);
+
+    useEffect(() => {
+        getAndSetExceptionMessage([ error ], setErrorMessages);
+    }, [ error ]);
+
+    useEffect(() => {
+        if (isSuccess && onSuccess) {
+            onSuccess();
         }
-    }, [ data, error, isSuccess, onSuccess ]);
+    }, [ isSuccess, onSuccess ]);
 
     return (
         isLoading
@@ -48,17 +51,8 @@ const DeleteButton = (props: IDeleteButtonProps) => {
                     ? { ...style }
                     : {}}
                 >
-                    { message && (
-                    <Alert
-                      variant={AlertVariant.Filled}
-                      vertical={AlertVerticalOrientation.Top}
-                      horizontal={AlertHorizontalOrientation.Right}
-                      severity={error
-                          ? AlertSeverity.Error
-                          : AlertSeverity.Success}
-                      message={message}
-                    />
-                    )}
+                    {renderSuccessfullAlert(message)}
+                    {renderErrorMessagesAlert(errorMessages) }
                     <Tooltip title={DELETE}>
                         <IconButton onClick={confirmDelete}>
                             <IoMdTrash color="red" />

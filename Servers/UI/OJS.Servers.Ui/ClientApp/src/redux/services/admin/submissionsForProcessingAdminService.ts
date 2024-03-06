@@ -8,19 +8,19 @@ import {
     ISubmissionForProcessingAdminGridViewType,
 } from '../../../common/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
-// eslint-disable-next-line import/group-exports
+
 export const submissionsForProcessingAdminService = createApi({
     reducerPath: 'submissionsForProcessing',
     baseQuery: getCustomBaseQuery('submissionsForProcessing'),
     endpoints: (builder) => ({
         getAllSubmissions: builder.query<IPagedResultType<ISubmissionForProcessingAdminGridViewType>, IGetAllAdminParams>({
             query: ({
-                filter, page, ItemsPerPage, sorting }) => ({
+                filter, page, itemsPerPage, sorting }) => ({
                 url: '/getAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 } }) }),
         getById: builder.query<ISubmissionForProcessingAdminGridViewType, { id:number }>({
@@ -32,7 +32,6 @@ export const submissionsForProcessingAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllSubmissionsQuery,
     useGetByIdQuery,

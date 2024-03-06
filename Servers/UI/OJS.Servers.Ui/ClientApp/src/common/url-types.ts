@@ -19,6 +19,10 @@ interface IGetByContestId extends IGetAllAdminParams {
 interface IGetByProblemId extends IGetAllAdminParams {
     problemId: number;
 }
+interface IGetByProblemGroupId extends IGetAllAdminParams {
+    problemGroupId: number;
+
+}
 
 interface IGetContestByProblemUrlParams {
     problemId: number;
@@ -152,4 +156,5 @@ export type {
     IGetByContestId,
     IProblemUrlById,
     IGetByProblemId,
+    IGetByProblemGroupId,
 };

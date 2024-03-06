@@ -69,7 +69,9 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
     public override async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model)
     {
-        var contest = await this.contestsData.GetByIdQuery(model.Id).FirstOrDefaultAsync();
+        var contest = await this.contestsData.GetByIdQuery(model.Id)
+            .Include(c => c.ProblemGroups)
+            .FirstOrDefaultAsync();
 
         if (!model.IsOnlineExam && model.Duration != null)
         {

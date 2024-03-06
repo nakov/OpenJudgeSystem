@@ -40,20 +40,5 @@ public class ProblemAdministrationValidator : BaseValidator<ProblemAdministratio
                 .WithMessage("Checker cannot be null")
                 .GreaterThanOrEqualTo(1)
                 .WithMessage("Checker must be valid type");
-
-            this.RuleFor(model => model.AdditionalFiles)
-                .Must(this.BeValidFile)
-                .WithMessage($"Only {GlobalConstants.FileExtensions.Zip} files are allowed.");
         }
-
-    private bool BeValidFile(IFormFile? file)
-    {
-        if (file == null)
-        {
-            return true;
-        }
-
-        var fileExtension = this.fileSystemService.GetFileExtension(file) == GlobalConstants.FileExtensions.Zip;
-        return fileExtension;
-    }
 }

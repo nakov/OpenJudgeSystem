@@ -17,7 +17,5 @@ namespace OJS.Services.Administration.Business.Problems
         Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin);
 
         Task ReevaluateProblemsOrder(int contestId, Problem problem);
-
-        Task<AdditionalFilesDownloadModel?> GetAdditionalFiles(int problemId);
     }
 }

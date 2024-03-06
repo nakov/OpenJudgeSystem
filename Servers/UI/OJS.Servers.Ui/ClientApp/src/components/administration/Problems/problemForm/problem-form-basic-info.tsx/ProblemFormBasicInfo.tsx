@@ -1,13 +1,15 @@
 /* eslint-disable css-modules/no-unused-class */
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
+import { ContestVariation } from '../../../../../common/contest-types';
 import { ProblemGroupTypes } from '../../../../../common/enums';
 import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../../common/labels';
 import { IProblemAdministration } from '../../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../../redux/services/admin/checkersAdminService';
+import { useGetIdsByContestIdQuery } from '../../../../../redux/services/admin/problemGroupsAdminService';
 
 import formStyles from '../../../common/styles/FormStyles.module.scss';
 
@@ -18,6 +20,16 @@ interface IProblemFormBasicInfoProps {
 const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
     const { onChange, currentProblem } = props;
     const { data: checkers } = useGetCheckersForProblemQuery(null);
+    const [ problemGroupIds, setProblemGroupsIds ] = useState<Array<number>>([]);
+
+    const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
+
+    useEffect(() => {
+        if (problemGroupData) {
+            setProblemGroupsIds(problemGroupData);
+        }
+    }, [ problemGroupData ]);
+
     return (
         <Box className={formStyles.inputRow}>
             <Typography className={formStyles.dividerLabel} variant="h4">Basic info</Typography>
@@ -132,6 +144,24 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                     ))}
                 </Select>
             </FormGroup>
+            {currentProblem.contestType === ContestVariation.OnlinePracticalExam && (
+            <FormGroup className={formStyles.selectFormGroup}>
+                <InputLabel id="problemGroupOrderBy">Problem Group Order By</InputLabel>
+                <Select
+                  onChange={(e) => onChange(e)}
+                  onBlur={(e) => onChange(e)}
+                  labelId="problemGroupId"
+                  value={currentProblem.problemGroupOrderBy}
+                  name="problemGroupOrderBy"
+                >
+                    {problemGroupIds.map((key) => (
+                        <MenuItem key={key} value={key}>
+                            {key}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormGroup>
+            )}
             <FormGroup className={formStyles.selectFormGroup}>
                 <InputLabel id="problemGroupType">{CHECKER}</InputLabel>
                 <Select

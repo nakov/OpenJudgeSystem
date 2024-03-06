@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using OJS.Data.Models.Problems;
 using OJS.Common.Enumerations;
 using System;
-using OJS.Common.Extensions;
 using Microsoft.AspNetCore.Http;
+
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
     public string? Name { get; set; }
@@ -28,6 +28,9 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public int ContestId { get; set; }
 
+    public ContestType ContestType { get; set; }
+
+    public double ProblemGroupOrderBy { get; set; }
     public int MemoryLimit { get; set; }
 
     public int TimeLimit { get; set; }
@@ -36,11 +39,7 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
 
-    public IFormFile? AdditionalFiles { get; set; }
-
     public IFormFile? Tests { get; set; }
-
-    public bool HasAdditionalFiles { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
     {
@@ -49,14 +48,12 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
-             .ForMember(pam => pam.AdditionalFiles, opt
-                => opt.Ignore())
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt
                 => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)))
-             .ForMember(pam => pam.HasAdditionalFiles, opt
-                 => opt.MapFrom(p => p.AdditionalFiles != null));
+             .ForMember(pam => pam.ContestType, opt
+             => opt.MapFrom(p => p.ProblemGroup.Contest.Type));
 
          configuration.CreateMap<ProblemAdministrationModel, Problem>()
              .ForMember(pam => pam.SubmissionTypesInProblems, opt
@@ -67,10 +64,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.SolutionSkeleton, opt
                  => opt.Ignore())
-             .ForMember(pam => pam.AdditionalFiles, opt
-                 => opt.MapFrom(pam => pam.AdditionalFiles == null
-                     ? null
-                     : pam.AdditionalFiles.GetBytes()))
              .ForMember(p => p.Tests, opt
                  => opt.Ignore())
              .ForMember(pam => pam.Resources, opt

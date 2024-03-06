@@ -1,8 +1,5 @@
 /* eslint-disable css-modules/no-unused-class */
-/* eslint-disable no-case-declarations */
-/* eslint-disable no-undefined */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable react/jsx-props-no-spreading */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -12,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
@@ -21,8 +18,7 @@ import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQu
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
 import { getDateWithFormat } from '../../../../utils/dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -49,7 +45,6 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
         allowParallelSubmissionsInTasks: false,
-        autoChangeTestsFeedbackVisibility: false,
         categoryId: 0,
         categoryName: '',
         contestPassword: '',
@@ -92,11 +87,13 @@ const ContestEdit = (props:IContestEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             error: updateError,
+            isSuccess: isSuccessfullyUpdating,
         } ] = useUpdateContestMutation();
 
     const [
         createContest, {
             data: createData,
+            isSuccess: isSuccessfullyCreating,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
@@ -111,9 +108,11 @@ const ContestEdit = (props:IContestEditProps) => {
     );
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ updateData, createData ]);
+        const message = getAndSetSuccesfullMessages([
+            { message: updateData, shouldGet: isSuccessfullyUpdating },
+            { message: createData, shouldGet: isSuccessfullyCreating } ]);
         setSuccessMessage(message);
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
@@ -131,7 +130,6 @@ const ContestEdit = (props:IContestEditProps) => {
     };
 
     const onChange = (e: any) => {
-        // eslint-disable-next-line prefer-destructuring
         const { name, value, checked } = e.target;
         let {
             name: contestName,
@@ -149,7 +147,6 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceEndTime,
             isVisible,
             allowParallelSubmissionsInTasks,
-            autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
             numberOfProblemGroups,
@@ -158,7 +155,7 @@ const ContestEdit = (props:IContestEditProps) => {
         const currentContestValidations = contestValidations;
         // eslint-disable-next-line default-case
         switch (name) {
-        case NAME_PROP:
+        case NAME_PROP: {
             contestName = value;
             currentContestValidations.isNameTouched = true;
             currentContestValidations.isNameValid = true;
@@ -166,13 +163,15 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isNameValid = false;
             }
             break;
-        case 'type':
+        }
+        case 'type': {
             contestType = value;
             currentContestValidations.isTypeTouched = true;
             const isValid = !!Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).some((x) => x === value);
             currentContestValidations.isTypeValid = isValid;
             break;
-        case 'limitBetweenSubmissions':
+        }
+        case 'limitBetweenSubmissions': {
             currentContestValidations.isLimitBetweenSubmissionsTouched = true;
             currentContestValidations.isLimitBetweenSubmissionsValid = true;
             limitBetweenSubmissions = value;
@@ -180,7 +179,8 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isLimitBetweenSubmissionsValid = false;
             }
             break;
-        case 'orderBy':
+        }
+        case 'orderBy': {
             currentContestValidations.isOrderByTouched = true;
             currentContestValidations.isOrderByValid = true;
             orderBy = value;
@@ -188,22 +188,26 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isOrderByValid = false;
             }
             break;
-        case 'contestPassword':
+        }
+        case 'contestPassword': {
             contestPassword = value;
             if (!value) {
                 contestPassword = null;
             }
             break;
-        case 'practicePassword':
+        }
+        case 'practicePassword': {
             practicePassword = value;
             if (!value) {
                 practicePassword = null;
             }
             break;
-        case 'allowedIps':
+        }
+        case 'allowedIps': {
             allowedIps = value;
             break;
-        case 'newIpPassword':
+        }
+        case 'newIpPassword': {
             currentContestValidations.isNewIpPasswordTouched = true;
             currentContestValidations.isNewIpPasswordValid = true;
             newIpPassword = value;
@@ -214,58 +218,65 @@ const ContestEdit = (props:IContestEditProps) => {
                 currentContestValidations.isNewIpPasswordValid = false;
             }
             break;
-        case 'description':
+        }
+        case 'description': {
             description = value;
             if (!value) {
                 description = null;
             }
             break;
-        case 'startTime':
+        }
+        case 'startTime': {
             startTime = null;
             if (value) {
                 startTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'endTime':
+        }
+        case 'endTime': {
             endTime = null;
             if (value) {
                 endTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'practiceStartTime':
+        }
+        case 'practiceStartTime': {
             practiceStartTime = null;
             if (value) {
                 practiceStartTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'practiceEndTime':
+        }
+        case 'practiceEndTime': {
             practiceEndTime = null;
             if (value) {
                 practiceEndTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
             }
             break;
-        case 'isVisible':
+        }
+        case 'isVisible': {
             isVisible = checked;
             break;
-        case 'allowParallelSubmissionsInTasks':
+        }
+        case 'allowParallelSubmissionsInTasks': {
             allowParallelSubmissionsInTasks = checked;
             break;
-        case 'autoChangeTestsFeedbackVisibility':
-            autoChangeTestsFeedbackVisibility = checked;
-            break;
-        case 'category':
+        }
+        case 'category': {
             const category = contestCategories?.find((cc) => cc.id === value);
             if (category) {
                 categoryId = category.id;
                 categoryName = category.name;
             }
             break;
-        case 'numberOfProblemGroups':
+        }
+        case 'numberOfProblemGroups': {
             if (value) {
                 numberOfProblemGroups = Number(value);
             }
             break;
-        case 'duration':
+        }
+        case 'duration': {
             let currentValue = value;
 
             if (currentValue === '') {
@@ -277,6 +288,8 @@ const ContestEdit = (props:IContestEditProps) => {
             currentContestValidations.isDurationTouched = true;
             duration = currentValue;
             break;
+        }
+        default: { break; }
         }
         setContestValidations(currentContestValidations);
         setContest((prevState) => ({
@@ -296,7 +309,6 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceEndTime,
             isVisible,
             allowParallelSubmissionsInTasks,
-            autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
             numberOfProblemGroups,
@@ -345,8 +357,8 @@ const ContestEdit = (props:IContestEditProps) => {
 
     return (
         <Box className={`${styles.flex}`}>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
                 {contest.name || 'Contest form'}
             </Typography>
@@ -592,16 +604,6 @@ const ContestEdit = (props:IContestEditProps) => {
                       name="allowParallelSubmissionsInTasks"
                       onChange={(e) => onChange(e)}
                       label={ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}
-                    />
-                    <FormControlLabel
-                      control={(
-                          <Checkbox
-                            checked={contest?.autoChangeTestsFeedbackVisibility}
-                          />
-                                )}
-                      name="autoChangeTestsFeedbackVisibility"
-                      onChange={(e) => onChange(e)}
-                      label={AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}
                     />
                 </Box>
             </form>

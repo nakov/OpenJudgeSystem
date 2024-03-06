@@ -1,0 +1,22 @@
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/shadows';
+@use 'src/styles/colors';
+
+.breadcrumbsWrapper {
+  @extend %font-family-roboto;
+
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: variables.$f-size-18;
+  justify-content: flex-start;
+  padding: spacings.$sp-4 spacings.$sp-8;
+  width: 99%;
+
+  .item {
+    color: colors.$primary-blue;
+    margin-left: spacings.$sp-4;
+  }
+}

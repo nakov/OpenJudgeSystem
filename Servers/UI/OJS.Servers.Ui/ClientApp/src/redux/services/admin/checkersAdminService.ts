@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 import { BaseQueryApi, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
@@ -41,13 +40,11 @@ const customBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions:
     return result;
 };
 
-// eslint-disable-next-line import/group-exports
 export const checkerAdminService = createApi({
     reducerPath: 'checkersAdmin',
     baseQuery: customBaseQuery,
     endpoints: (builder) => ({ getCheckersForProblem: builder.query<Array<{id: number; name: string}>, null>({ query: () => ({ url: '/GetForProblems' }) }) }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const { useGetCheckersForProblemQuery } = checkerAdminService;
 export default checkerAdminService;

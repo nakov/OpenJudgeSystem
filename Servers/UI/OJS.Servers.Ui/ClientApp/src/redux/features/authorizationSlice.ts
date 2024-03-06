@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable import/group-exports */
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { IUserType } from '../../common/types';
 
@@ -28,14 +28,14 @@ const initialState: IAuthorizationReduxState = {
 
 };
 
-export const authorizationSlide = createSlice({
+export const authorizationSlice = createSlice({
     name: 'authorization',
     initialState,
     reducers: {
         setInternalUser: (state, action) => {
             state.internalUser = action.payload;
         },
-        setIsLoggedIn: (state, action) => {
+        setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
             state.isLoggedIn = action.payload;
             if (state.isLoggedIn && state.internalUser.isAdmin) {
                 state.internalUser.canAccessAdministration = true;
@@ -47,6 +47,8 @@ export const authorizationSlide = createSlice({
     },
 });
 
-export const { setInternalUser, setIsLoggedIn, resetInInternalUser } = authorizationSlide.actions;
+export const { setInternalUser, setIsLoggedIn, resetInInternalUser } = authorizationSlice.actions;
 
-export default authorizationSlide.reducer;
+export const authorizationSliceName = authorizationSlice.name;
+
+export default authorizationSlice.reducer;

@@ -133,7 +133,6 @@ const SubmissionsList = ({
               itemFunc={renderSubmissionListItem}
               type={ListType.normal}
               orientation={Orientation.vertical}
-              fullWidth
               scrollable={false}
             />
         </div>

@@ -6,6 +6,7 @@ import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
+import { ContestVariation } from './contest-types';
 import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
@@ -38,6 +39,7 @@ interface ISubmissionDetailsState {
 }
 interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     currentPage: number;
+    retestIsSuccess: false;
 }
 
 interface IPublicSubmissionProblem {
@@ -68,19 +70,33 @@ interface ISubmissionResponseModel {
     processed: boolean;
 }
 
+interface IGetAllAdminParams {
+    filter?: string;
+    itemsPerPage: number;
+    page: number;
+    sorting?: string;
+}
+
 interface IGetAllContestsOptions {
-    status: string;
+    strategy?: number;
     sortType: string;
     page: number;
     category?: number | null;
-    strategy?: number | null;
 }
 
-interface IGetAllAdminParams {
-    filter?: string;
-    ItemsPerPage: number;
-    page: number;
-    sorting?: string;
+interface IAllowedStrategyType {
+    id: number;
+    name: string;
+}
+
+interface IContestCategory {
+    allowedStrategyTypes: Array<IAllowedStrategyType>;
+    children: Array<IContestCategory>;
+    id: number;
+    name: string;
+    nameUrl: string;
+    orderBy: number;
+    parentId: null | number;
 }
 
 interface IProblemResourceType {
@@ -88,6 +104,30 @@ interface IProblemResourceType {
     name: string;
     link: string;
     type: number;
+}
+
+interface IProblemResourceAdministrationModel {
+    id: number;
+    name: string;
+    link: string;
+    type: string;
+    orderBy: number;
+    fileExtension: string;
+    file: File | null;
+    hasFile: boolean;
+    problemId: number;
+}
+
+interface IProblemResouceInLinstModel {
+    id: number;
+    name: string;
+    link: string;
+    type: string;
+    fileExtension: string;
+    orderBy: number;
+    isDeleted: boolean;
+    problemId: number;
+    problemName: string;
 }
 
 interface IProblemType {
@@ -179,6 +219,14 @@ interface IIndexContestsType {
     hasPracticePassword: boolean;
     category: string;
     isLoading: boolean;
+    numberOfProblems: number;
+    practiceResults: number;
+    competeResults: number;
+    hasCompeted: boolean;
+    hasPracticed: boolean;
+    competeContestPoints: number;
+    practiceContestPoints: number;
+    maxPoints: number;
 }
 
 interface IParticiapntsInContestView {
@@ -202,7 +250,7 @@ interface IGetContestsForIndexResponseType {
 interface IIndexProblemsType {
     id: number;
     name: string;
-    group: number;
+    problemGroupId: number;
     groupType: string;
     contest: string;
     practiceTestsCount: number;
@@ -278,7 +326,6 @@ interface IAdminContestResponseType {
     category: string;
     name: string;
     allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
     categoryId: number;
     startTime: string;
     endTime: string;
@@ -295,7 +342,7 @@ interface IPage {
 
 interface IUserType {
     id: string;
-    username: string;
+    userName: string;
     email: string;
     permissions: IUserPermissionsType;
     isInRole: boolean;
@@ -317,10 +364,9 @@ interface IProblemAdministration {
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
-    additionalFiles: File | null;
+    contestType: ContestVariation;
     tests: File | null;
-    hasAdditionalFiles: boolean;
-
+    problemGroupOrderBy: number;
 }
 
 interface IUserRoleType {
@@ -362,7 +408,6 @@ interface IContestAdministration {
     isVisible: boolean;
     newIpPassword: string | null;
     allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
     allowedIps: string;
     numberOfProblemGroups: number;
@@ -446,6 +491,7 @@ interface IRootStore {
     adminTests: IAdminSlice;
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
+    adminProblemResources: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -488,6 +534,7 @@ export type {
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
     IGetAllContestsOptions,
+    IContestCategory,
     IGetAllAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,
@@ -509,4 +556,6 @@ export type {
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
     ITestsDropdownData,
+    IProblemResouceInLinstModel,
+    IProblemResourceAdministrationModel,
 };

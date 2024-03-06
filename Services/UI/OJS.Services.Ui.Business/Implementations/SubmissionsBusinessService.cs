@@ -1,35 +1,36 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using OJS.Common.Enumerations;
 using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
+using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
+using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
+using OJS.Services.Common;
 using OJS.Services.Common.Data;
-using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
+using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Business.Extensions;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
+using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
-using SoftUni.Common.Models;
+using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.Common.Extensions;
+using SoftUni.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
 using System.Threading.Tasks;
-using SoftUni.Common.Extensions;
-using OJS.Services.Ui.Business.Validations.Implementations.Contests;
-using OJS.Services.Ui.Models.Contests;
-using OJS.Services.Common;
-using OJS.Services.Infrastructure.Extensions;
-using OJS.Data.Models.Problems;
-using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using OJS.Services.Common.Models.Submissions;
-using OJS.Workers.Common.Models;
-using Microsoft.Extensions.Logging;
+using System.Transactions;
 using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
@@ -496,7 +497,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
-        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToJson());
+        await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToSerializedDetails());
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
@@ -531,6 +532,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var serializedExecutionResultServiceModel =
             submissionExecutionResult.Map<SerializedSubmissionExecutionResultServiceModel>();
+
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (executionResult != null)
         {

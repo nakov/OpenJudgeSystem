@@ -2,6 +2,8 @@ import React, { useCallback } from 'react';
 
 import { SubmissionResultType } from '../../../common/constants';
 import { ITestRunType } from '../../../hooks/submissions/types';
+import useTheme from '../../../hooks/use-theme';
+import concatClassNames from '../../../utils/class-names';
 import { toLowerCase } from '../../../utils/string-utils';
 import ErrorIcon from '../../guidelines/icons/ErrorIcon';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
@@ -9,6 +11,8 @@ import RuntimeErrorIcon from '../../guidelines/icons/RuntimeErrorIcon';
 import TickIcon from '../../guidelines/icons/TickIcon';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
+
+import ErrorResult from './ErrorResult';
 
 import styles from './ExecutionResult.module.scss';
 
@@ -21,6 +25,7 @@ interface IExecutionResultDetailsProps {
 }
 
 const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
+    const { getColorClassName, themeColors } = useTheme();
     const renderTestRunIcon = useCallback(
         (testRun: ITestRunType) => {
             switch (toLowerCase(testRun.resultType)) {
@@ -48,38 +53,41 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
         [ renderTestRunIcon ],
     );
 
+    const listClassName = concatClassNames(
+        styles.testResultsList,
+        getColorClassName(themeColors.textColor),
+    );
+
     return (
-        isProcessed
-            ? isCompiledSuccessfully
+        <div className={listClassName}>
+            { isProcessed && isCompiledSuccessfully
                 ? (
-                    <div className={styles.testResultsList}>
-                        <div className={styles.testRunIcons}>{renderTestRunIcons(testRuns)}</div>
-                        <div className={styles.maxMemoryUsed}>
-                            <MemoryIcon />
-                            {' '}
-                            {(maxMemoryUsed / 1000000).toFixed(2)}
-                            {' '}
-                            MB
+                    <div className={styles.executionResultInfo}>
+                        <div>
+                            {renderTestRunIcons(testRuns)}
                         </div>
-                        <div className={styles.maxTimeUsed}>
-                            <TimeLimitIcon />
-                            {' '}
-                            {maxTimeUsed / 1000}
-                            {' '}
-                            s.
+                        <div className={styles.timeAndMemoryContainer}>
+                            <div className={styles.maxMemoryUsed}>
+                                <MemoryIcon />
+                                {' '}
+                                {(maxMemoryUsed / 1000000).toFixed(2)}
+                                {' '}
+                                MB
+                            </div>
+                            <div className={styles.maxTimeUsed}>
+                                <TimeLimitIcon />
+                                {' '}
+                                {maxTimeUsed / 1000}
+                                {' '}
+                                s.
+                            </div>
                         </div>
                     </div>
                 )
                 : (
-                    <div className={styles.testResultsList}>
-                        <ErrorIcon />
-                        <span className={styles.compileAndUnknownError}>
-                            {' '}
-                            Compile time error
-                        </span>
-                    </div>
-                )
-            : null
+                    <ErrorResult />
+                )}
+        </div>
     );
 };
 

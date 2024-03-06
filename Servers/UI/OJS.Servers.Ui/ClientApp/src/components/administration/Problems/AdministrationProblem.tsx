@@ -1,50 +1,47 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
-import { Box, Slide, Tab, Tabs } from '@mui/material';
 
-import { TESTS } from '../../../common/labels';
+import TabsInView from '../common/tabs/TabsInView';
 
+import ResourcesInProblemView from './problem-resources/problem-resources-in-problem-view/ResourcesInProblemView';
 import ProblemForm from './problemForm/ProblemForm';
 import TestsInProblemView from './tests-in-problem-view/TestsInProblemView';
 
-enum ProblemsListData {
-    Tests = 'tests',
+enum PROBLEM_LISTED_DATA {
+    TESTS = 'tests',
+    RESOURCES = 'resources'
 }
-
 const AdministrationProblem = () => {
     const { pathname } = useLocation();
     const [ , , , problemId ] = pathname.split('/');
-    const [ tabName, setTabName ] = useState(ProblemsListData.Tests);
+    const [ tabName, setTabName ] = useState(PROBLEM_LISTED_DATA.RESOURCES);
 
-    const onTabChange = (event: React.SyntheticEvent, newValue: ProblemsListData) => {
+    const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_LISTED_DATA) => {
         setTabName(newValue);
     };
 
+    const returnProblemForm = () => (
+        <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
+    );
+
+    const returnResourceInProblemView = (key:string) => (
+        <ResourcesInProblemView key={key} problemId={Number(problemId)} />
+    );
+
+    const returnTests = (key: string) => (
+        <TestsInProblemView key={key} problemId={Number(problemId)} />
+    );
+
     return (
-        <Slide direction="left" in mountOnEnter unmountOnExit timeout={300}>
-            <Box>
-                <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
-                <Box sx={{ padding: '2rem' }}>
-                    <Tabs
-                      sx={{ minWidth: '100%', display: 'flex', justifyContent: 'space-around' }}
-                      value={tabName}
-                      onChange={onTabChange}
-                      aria-label="wrapped label tabs example"
-                    >
-                        <Tab
-                          sx={{ minWidth: '45%', display: 'flex', justifyContent: 'space-evenly' }}
-                          value="tests"
-                          label={TESTS}
-                          wrapped
-                        />
-                    </Tabs>
-                    {tabName === 'tests' &&
-                        <TestsInProblemView problemId={Number(problemId)} />}
-                </Box>
-            </Box>
-        </Slide>
+        <TabsInView
+          form={returnProblemForm}
+          onTabChange={onTabChange}
+          tabName={tabName}
+          tabs={[
+              { value: PROBLEM_LISTED_DATA.RESOURCES, label: 'Resources', node: returnResourceInProblemView },
+              { value: PROBLEM_LISTED_DATA.TESTS, label: 'Tests', node: returnTests },
+          ]}
+        />
     );
 };
 

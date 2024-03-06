@@ -1,22 +1,16 @@
 /* eslint-disable css-modules/no-unused-class */
-/* eslint-disable default-case */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undefined */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
 
-import { ADDITIONAL_FILES, SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
+import { ContestVariation } from '../../../../common/contest-types';
+import { SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
 import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { PROBLEMS_PATH } from '../../../../common/urls';
-import { useCreateProblemMutation, useDeleteProblemMutation, useDownloadAdditionalFilesQuery, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
-import downloadFile from '../../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FileUpload from '../../common/file-upload/FileUpload';
@@ -34,6 +28,11 @@ interface IProblemFormProps {
     contestId: number | null;
 }
 
+const defaultMaxPoints = 100;
+const defaultMemoryLimit = 16777216;
+const defaultTimeLimit = 100;
+const defaultSourceCodeSizeLimit = 16384;
+
 const ProblemForm = (props: IProblemFormProps) => {
     const { problemId, isEditMode = true, contestId } = props;
     const navigate = useNavigate();
@@ -43,24 +42,23 @@ const ProblemForm = (props: IProblemFormProps) => {
         checkerId: '1',
         contestId: contestId ?? -1,
         id: 0,
-        maximumPoints: 0,
-        memoryLimit: 0,
+        maximumPoints: defaultMaxPoints,
+        memoryLimit: defaultMemoryLimit,
         name: '',
         orderBy: 0,
         problemGroupType: 'None',
         showDetailedFeedback: false,
         showResults: false,
-        sourceCodeSizeLimit: 0,
+        sourceCodeSizeLimit: defaultSourceCodeSizeLimit,
         submissionTypes: [],
-        timeLimit: 0,
-        additionalFiles: null,
+        timeLimit: defaultTimeLimit,
         tests: null,
-        hasAdditionalFiles: false,
+        contestType: ContestVariation.Exercise,
+        problemGroupOrderBy: -1,
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const [ successMessages, setSuccessMessages ] = useState<string>('');
-    const [ skipDownload, setSkipDownload ] = useState<boolean>(true);
+    const [ successMessages, setSuccessMessages ] = useState<string | null>(null);
 
     const {
         data: problemData,
@@ -70,21 +68,14 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     const { data: submissionTypes } = useGetForProblemQuery(null);
 
-    const [ updateProblem, { data: updateData, error: updateError } ] = useUpdateProblemMutation();
-    const [ createProblem, { data: createData, error: createError } ] = useCreateProblemMutation();
-    const {
-        data: additionalFilesData,
-        isLoading: isDownloadingFiles,
-        isSuccess: isSuccesfullyDownloaded,
-        error: downloadAdditionalFilesError,
-        isError: isDownloadAdditionalFilesError,
-    } = useDownloadAdditionalFilesQuery(Number(problemId), { skip: skipDownload });
+    const [ updateProblem, { data: updateData, error: updateError, isSuccess: isSuccessfullyUpdated } ] = useUpdateProblemMutation();
+    const [ createProblem, { data: createData, error: createError, isSuccess: isSuccessfullyCreated } ] = useCreateProblemMutation();
 
     useEffect(() => {
         if (submissionTypes) {
             setFilteredSubmissionTypes(submissionTypes.filter((st) => !problemData?.submissionTypes.some((x) => x.id === st.id)));
         }
-    }, [ submissionTypes ]);
+    }, [ problemData?.submissionTypes, submissionTypes ]);
 
     useEffect(() => {
         if (problemData) {
@@ -93,28 +84,24 @@ const ProblemForm = (props: IProblemFormProps) => {
     }, [ problemData ]);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ gettingDataError, createError, updateError, downloadAdditionalFilesError ], setErrorMessages);
+        getAndSetExceptionMessage([ gettingDataError, createError, updateError ], setErrorMessages);
         setSuccessMessages('');
-    }, [ updateError, createError, gettingDataError, downloadAdditionalFilesError ]);
+    }, [ updateError, createError, gettingDataError ]);
 
     useEffect(() => {
-        let successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
-        if (isSuccesfullyDownloaded) {
-            successMessage = 'Additional files succesfully downloaded.';
-        }
-
-        successMessage && setSuccessMessages(successMessage);
-    }, [ updateData, createData, isSuccesfullyDownloaded ]);
-
-    useEffect(() => {
-        (isSuccesfullyDownloaded || isDownloadAdditionalFilesError) && setSkipDownload(false);
-    }, [ isSuccesfullyDownloaded, isDownloadAdditionalFilesError ]);
-
-    useEffect(() => {
-        if (additionalFilesData?.blob) {
-            downloadFile(additionalFilesData.blob, additionalFilesData.filename);
-        }
-    }, [ additionalFilesData ]);
+        let successMessage: string | null = '';
+        successMessage = getAndSetSuccesfullMessages([
+            {
+                message: updateData,
+                shouldGet: isSuccessfullyUpdated,
+            },
+            {
+                message: createData,
+                shouldGet: isSuccessfullyCreated,
+            },
+        ]);
+        setSuccessMessages(successMessage);
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -145,25 +132,26 @@ const ProblemForm = (props: IProblemFormProps) => {
         formData.append('checkerId', currentProblem.checkerId?.toString() || '');
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
         formData.append('showResults', currentProblem.showResults?.toString() || '');
+        formData.append('problemGroupOrderBy', currentProblem.problemGroupOrderBy?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
 
-            type.solutionSkeleton && formData.append(
-                `SubmissionTypes[${index}].SolutionSkeleton`,
-                type.solutionSkeleton!.toString(),
-            );
+            if (type.solutionSkeleton) {
+                formData.append(
+                    `SubmissionTypes[${index}].SolutionSkeleton`,
+                    type?.solutionSkeleton!.toString(),
+                );
+            }
         });
+        if (currentProblem.tests) {
+            formData.append('tests', currentProblem.tests);
+        }
 
-        currentProblem.additionalFiles &&
-        formData.append('additionalFiles', currentProblem.additionalFiles);
-
-        currentProblem.tests &&
-        formData.append('tests', currentProblem.tests);
-
-        isEditMode
-            ? updateProblem(formData)
-            : createProblem(formData);
+        if (isEditMode) {
+            updateProblem(formData);
+        }
+        createProblem(formData);
     };
 
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {
@@ -233,40 +221,21 @@ const ProblemForm = (props: IProblemFormProps) => {
         }));
     };
 
-    const handleFileUpload = (e: any, propName:string) => {
-        let { additionalFiles } = currentProblem;
+    const handleFileUpload = (e: any) => {
         let { tests } = currentProblem;
-        switch (propName) {
-        case 'tests':
-            tests = e.target.files[0];
-            break;
-        case 'additionalFiles':
-            additionalFiles = e.target.files[0];
-            break;
-        }
+        tests = e.target.files[0];
         setCurrentProblem((prevState) => ({
             ...prevState,
-            additionalFiles,
             tests,
         }));
     };
 
-    const handleFileClearance = (propName: string) => {
-        let { additionalFiles, tests, hasAdditionalFiles } = currentProblem;
-        switch (propName) {
-        case 'tests':
-            tests = null;
-            break;
-        case 'additionalFiles':
-            additionalFiles = null;
-            hasAdditionalFiles = false;
-            break;
-        }
+    const handleFileClearance = () => {
+        let { tests } = currentProblem;
+        tests = null;
         setCurrentProblem((prevState) => ({
             ...prevState,
-            additionalFiles,
             tests,
-            hasAdditionalFiles,
         }));
     };
 
@@ -307,32 +276,18 @@ const ProblemForm = (props: IProblemFormProps) => {
         </FormGroup>
     );
 
-    if (isGettingData || isDownloadingFiles) {
+    if (isGettingData) {
         return <SpinningLoader />;
     }
     return (
         <>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessages)}
 
             <Typography className={formStyles.centralize} variant="h3">{currentProblem?.name}</Typography>
-
             <form className={formStyles.form}>
                 <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} />
                 <FormGroup className={formStyles.row}>
-                    <Typography className={formStyles.spacing} variant="h4">{ADDITIONAL_FILES}</Typography>
-                    <Divider className={formStyles.inputRow} />
-                    <FileUpload
-                      handleFileUpload={handleFileUpload}
-                      propName="additionalFiles"
-                      setSkipDownload={setSkipDownload}
-                      uploadButtonName={currentProblem.additionalFiles?.name}
-                      showDownloadButton={currentProblem.hasAdditionalFiles}
-                      onClearSelectionClicked={handleFileClearance}
-                      disableClearButton={!currentProblem.hasAdditionalFiles && !currentProblem.additionalFiles}
-                      buttonLabel={ADDITIONAL_FILES}
-                    />
-
                     {!isEditMode && (
                         <>
                             <Typography className={formStyles.spacing} variant="h4">{TESTS}</Typography>
@@ -340,7 +295,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                             <FileUpload
                               handleFileUpload={handleFileUpload}
                               propName="tests"
-                              setSkipDownload={setSkipDownload}
+                              setSkipDownload={() => { console.log('Skip download'); }}
                               uploadButtonName={currentProblem.tests?.name}
                               showDownloadButton={false}
                               disableClearButton

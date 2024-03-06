@@ -1,10 +1,15 @@
 /* eslint-disable max-len */
-/* eslint-disable import/group-exports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { authorizationServiceName } from '../../common/reduxNames';
-import { ILoginDetailsType, IUserResponseType } from '../../common/types';
+import { IUserResponseType } from '../../common/types';
+
+interface ILoginDetailsType {
+    userName: string;
+    password: string;
+    rememberMe: boolean;
+}
 
 export const authorizationService = createApi({
     reducerPath: authorizationServiceName,
