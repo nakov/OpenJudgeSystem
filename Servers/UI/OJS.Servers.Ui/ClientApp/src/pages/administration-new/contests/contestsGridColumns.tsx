@@ -7,7 +7,7 @@ import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import { getDateForGrid } from '../../../utils/dates';
+import { getDateAsLocal } from '../../../utils/dates';
 
 const contestFilterableColumns: GridColDef[] = [
     {
@@ -71,7 +71,7 @@ const contestFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => getDateForGrid(params.value),
+        valueFormatter: (params) => getDateAsLocal(params.value),
     },
     {
         field: 'endTime',
@@ -83,7 +83,7 @@ const contestFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => getDateForGrid(params.value),
+        valueFormatter: (params) => getDateAsLocal(params.value),
     },
     {
         field: 'limitBetweenSubmissions',
