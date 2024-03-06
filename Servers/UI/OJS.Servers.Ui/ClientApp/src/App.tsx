@@ -24,9 +24,6 @@ import SearchProvider from './hooks/use-search';
 import ServicesProvider from './hooks/use-services';
 import UsersProvider from './hooks/use-users';
 import PageContent from './layout/content/PageContent';
-import PageFooter from './layout/footer/PageFooter';
-import PageHeader from './layout/header/PageHeader';
-import SearchBar from './layout/search-bar/SearchBar';
 import store, { persistor } from './redux/store';
 
 import './styles/global.scss';
@@ -60,10 +57,7 @@ const App = () => {
             <PersistGate persistor={persistor}>
                 <Router>
                     <InitProviders providers={providers}>
-                        <PageHeader />
-                        <SearchBar />
                         <PageContent />
-                        <PageFooter />
                     </InitProviders>
                 </Router>
             </PersistGate>

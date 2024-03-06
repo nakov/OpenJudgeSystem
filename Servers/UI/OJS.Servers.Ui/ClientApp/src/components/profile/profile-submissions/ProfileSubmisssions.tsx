@@ -107,8 +107,6 @@ const ProfileSubmissions = () => {
                         border: '2px solid #42abf8',
                         borderRadius: 2,
                         transition: 'all .2s ease-in-out',
-                        '&& fieldset': { border: 'none' },
-                        '&:hover': { backgroundColor: '#e3f3fd' },
                     }}
                     defaultValue=""
                     labelId="contest-submissions-label"
