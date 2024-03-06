@@ -1,9 +1,5 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import moment, { Duration } from 'moment';
-
-dayjs.extend(utc);
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
 const defaultDateTimeFormatReverse = 'DD/MMM/yyyy, HH:MM';
@@ -116,22 +112,6 @@ const convertToTwoDigitValues = ({
     };
 };
 
-const convertToUtc = (date?: Date | null | undefined) => {
-    if (!date) {
-        return null;
-    }
-
-    return new Date(dayjs.utc(date).toISOString());
-};
-
-const getDateAsLocal = (date?: string | number | Date | dayjs.Dayjs | null | undefined) => {
-    if (!date) {
-        return null;
-    }
-
-    return dayjs.utc(date).local();
-};
-
 export default {
     formatDate,
     preciseFormatDate,
@@ -154,8 +134,6 @@ export {
     convertToSecondsRemaining,
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
-    convertToUtc,
-    getDateAsLocal,
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,

@@ -11,7 +11,7 @@ import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
-import { convertToUtc, getDateAsLocal } from '../../../../utils/dates';
+import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderAlert } from '../../../../utils/render-utils';
 import { AlertSeverity } from '../../../guidelines/alert/Alert';
