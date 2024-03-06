@@ -74,7 +74,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return styles.redGridRow;
-        } if (!isVisible) {
+        } if (isVisible === false) {
             return styles.grayGridRow;
         }
         return '';
