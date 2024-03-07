@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IDictionary } from '../../../common/common-types';
-import { ISubmissionResponseModel } from '../../../common/types';
 import { usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { usePages } from '../../../hooks/use-pages';
 import useTheme from '../../../hooks/use-theme';
@@ -11,7 +10,6 @@ import concatClassNames from '../../../utils/class-names';
 import { format } from '../../../utils/number-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
@@ -159,16 +157,6 @@ const SubmissionsGrid = () => {
         [ user, totalUnprocessedSubmissionsCount, selectedActive, handleSelectSubmissionType ],
     );
 
-    const renderSubmissionRow = useCallback(
-        (submission: ISubmissionResponseModel, index: number) => (
-            <SubmissionGridRow
-              isFirst={index === 0}
-              submission={submission}
-            />
-        ),
-        [],
-    );
-
     const headerClassName = concatClassNames(
         styles.submissionsGridHeader,
         isDarkMode
@@ -177,7 +165,7 @@ const SubmissionsGrid = () => {
         getColorClassName(themeColors.textColor),
     );
 
-    const renderSubmissionsList = useCallback(
+    const renderSubmissionsGrid = useCallback(
         () => {
             if (areSubmissionsLoading) {
                 return (
@@ -218,7 +206,7 @@ const SubmissionsGrid = () => {
                 </table>
             );
         },
-        [ areSubmissionsLoading, publicSubmissions, user.isAdmin ],
+        [ areSubmissionsLoading, headerClassName, publicSubmissions, user.isAdmin ],
     );
 
     return (
@@ -235,7 +223,7 @@ const SubmissionsGrid = () => {
                 total
             </Heading>
             {renderPrivilegedComponent()}
-            {renderSubmissionsList()}
+            {renderSubmissionsGrid()}
             {publicSubmissions?.length > 0 && (
                 <PaginationControls
                   count={pagesCount}

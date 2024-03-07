@@ -11,11 +11,13 @@ import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import concatClassNames from '../../../utils/class-names';
 import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
+import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import { encodeUsernameAsUrlParam,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
     getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
 import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
 
@@ -103,18 +105,23 @@ const SubmissionGridRow = ({
         [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, userameFromSubmission ],
     );
 
-    // const renderStrategyIcon = useCallback(
-    //     () => {
-    //         const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
-    //
-    //         if (isNil(Icon)) {
-    //             return null;
-    //         }
-    //
-    //         return (<Icon size={IconSize.Large} helperText={strategyName} />);
-    //     },
-    //     [ strategyName ],
-    // );
+    const renderStrategyIcon = useCallback(
+        () => {
+            const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
+
+            if (isNil(Icon)) {
+                return null;
+            }
+
+            return (
+                <Icon
+                  size={IconSize.Large}
+                  className={getColorClassName(themeColors.textColor)}
+                />
+            );
+        },
+        [ getColorClassName, strategyName, themeColors.textColor ],
+    );
 
     const renderPoints = useCallback(
         () => {
@@ -206,24 +213,31 @@ const SubmissionGridRow = ({
                     {shouldDisplayUsername && renderUsername()}
                 </span>
             </td>
-            <td className={styles.tdRight}>
+            <td>
                 {renderPoints()}
             </td>
             {
                 internalUser.isAdmin
                     ? (
-                        <ExecutionResult
-                          testRuns={testRuns}
-                          maxMemoryUsed={maxMemoryUsed}
-                          maxTimeUsed={maxTimeUsed}
-                          isCompiledSuccessfully={isCompiledSuccessfully}
-                          isProcessed={processed}
-                        />
+                        <td>
+                            <ExecutionResult
+                              testRuns={testRuns}
+                              maxMemoryUsed={maxMemoryUsed}
+                              maxTimeUsed={maxTimeUsed}
+                              isCompiledSuccessfully={isCompiledSuccessfully}
+                              isProcessed={processed}
+                            />
+                        </td>
                     )
                     : null
             }
-            <td>
-                {strategyName}
+            <td className={styles.strategy}>
+                {
+                    internalUser.isAdmin
+                        ? renderStrategyIcon()
+                        : null
+                }
+                <div>{strategyName}</div>
             </td>
             <td>
                 {renderDetailsBtn()}

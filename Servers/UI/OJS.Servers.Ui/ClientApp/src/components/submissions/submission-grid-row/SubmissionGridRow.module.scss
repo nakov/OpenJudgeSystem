@@ -26,6 +26,7 @@
   cursor: pointer;
   font: inherit;
   font-size: variables.$f-size-16;
+  text-align: left;
 }
 
 .link {
@@ -34,4 +35,12 @@
   color: colors.$light-blue-color;
   display: inline-block;
   margin: 0 5px;
+}
+
+.strategy {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: start;
 }
