@@ -7,6 +7,5 @@
         Strategy = 2,
         Runtime = 3,
         Remote = 4,
-        Checker = 5,
     }
 }
