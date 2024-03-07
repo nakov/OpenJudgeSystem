@@ -83,8 +83,6 @@ const SubmissionGridRow = ({
                 participationType,
             });
 
-            // getContestDetailsAppUrl(contestId)
-
             initiateRedirectionToProblem(problemId, participateInContestUrl);
         },
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
@@ -213,6 +211,17 @@ const SubmissionGridRow = ({
                     {shouldDisplayUsername && renderUsername()}
                 </span>
             </td>
+            { internalUser.isAdmin
+                ? isOfficial
+                    ? (
+                        <td>
+                            <div className={styles.competeIconWrapper}>
+                                <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
+                            </div>
+                        </td>
+                    )
+                    : <td />
+                : null}
             <td>
                 {renderPoints()}
             </td>

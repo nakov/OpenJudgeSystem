@@ -189,13 +189,18 @@ const SubmissionsGrid = () => {
                         <td>ID</td>
                         <td>Task</td>
                         <td>From</td>
+                        {
+                            user.isAdmin
+                                ? <td />
+                                : null
+                        }
                         <td className={styles.tdRight}>Result</td>
                         {
                             user.isAdmin
                                 ? <td>Execution Result</td>
                                 : null
                         }
-                        <td />
+                        <td className={styles.tdRight}>Strategy</td>
                         <td />
                     </tr>
                     {
