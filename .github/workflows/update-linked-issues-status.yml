@@ -34,7 +34,7 @@ jobs:
           ORGANIZATION_NAME: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
-          STATUS_NAME: ${{ github.event.inputs.status_name }}
+          STATUS_NAME: ${{ inputs.status_name }}
         run: |
           cd projects-workflow-scripts
           node update-linked-issues-status.js
