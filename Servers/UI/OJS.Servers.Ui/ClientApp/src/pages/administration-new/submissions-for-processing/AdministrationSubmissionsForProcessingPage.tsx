@@ -2,9 +2,7 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useSearchParams } from 'react-router-dom';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { Tooltip } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { VIEW } from '../../../common/labels';
