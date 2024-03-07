@@ -8,7 +8,6 @@ on:
 
 jobs:
   build-and-deploy-to-dev-on-pr-merge:
-    needs: check-if-merged
     if: github.event.pull_request.merged == true
     uses: ./.github/workflows/deploy-dev-all.yml
     with:
