@@ -182,7 +182,6 @@ namespace OJS.Services.Administration.Business.ProblemGroups
                 Checker = problem.Checker,
                 OrderBy = problem.OrderBy,
                 SolutionSkeleton = problem.SolutionSkeleton,
-                AdditionalFiles = problem.AdditionalFiles,
                 ShowResults = problem.ShowResults,
                 ShowDetailedFeedback = problem.ShowDetailedFeedback,
                 TagsInProblems = problem.TagsInProblems,

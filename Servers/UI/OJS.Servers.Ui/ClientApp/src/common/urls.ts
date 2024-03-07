@@ -17,6 +17,6 @@ export const SUBMISSIONS_FOR_PROCESSING_PATH = 'submissions-for-processing';
 export const TESTS_PATH = 'tests';
 export const PROBLEMS_PATH = 'problems';
 export const PROBLEM_GROUPS_PATH = 'problem-groups';
-export const PROBLEM_RESOURCES_PATH = `problem-resources`;
+export const PROBLEM_RESOURCES_PATH = 'problem-resources';
 export const SUBMISSION_TYPES_PATH = 'submission-types';
 export const PARTICIPANTS_PATH = 'participants';

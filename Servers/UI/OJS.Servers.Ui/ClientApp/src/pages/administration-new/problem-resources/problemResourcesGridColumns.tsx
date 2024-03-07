@@ -5,7 +5,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { PROBLEM_RESOURCE } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { PROBLEM_RESOURCES_PATH, PROBLEMS_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import DownloadIconButton from '../../../components/administration/common/download/DownloadIconButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
@@ -113,7 +113,10 @@ export const returnProblemResourceNonFilterableColumns = (onEditClick: Function,
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton location="Edit page" path={`${PROBLEM_RESOURCES_PATH}/${Number(params.row.id)}`} />
+                <RedirectButton
+                  location="Edit page"
+                  path={`/${NEW_ADMINISTRATION_PATH}/${PROBLEM_RESOURCES_PATH}/${Number(params.row.id)}`}
+                />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={`${PROBLEM_RESOURCE}`}

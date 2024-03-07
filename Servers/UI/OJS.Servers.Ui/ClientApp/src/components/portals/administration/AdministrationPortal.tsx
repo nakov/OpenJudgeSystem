@@ -23,6 +23,7 @@ import AdministrationPage from '../../../pages/administration/AdministrationPage
 import Administration from '../../../pages/administration-new/Administration';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
+import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
@@ -33,6 +34,7 @@ import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
+import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
 
 import styles from './AdministrationPortal.module.scss';
@@ -252,6 +254,14 @@ const AdministrationPortal = () => {
             Element: AdministrationProblemGroup,
         },
         {
+            path: `${PROBLEM_RESOURCES_PATH}`,
+            Element: AdministrationProblemResourcesPage,
+        },
+        {
+            path: `${PROBLEM_RESOURCES_PATH}/:id`,
+            Element: AdministrationProblemResource,
+        },
+        {
             path: `${SUBMISSION_TYPES_PATH}`,
             Element: Administration,
         },
@@ -340,7 +350,7 @@ const AdministrationPortal = () => {
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 4 }}>
+                <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
                     <Routes>
                         {user.canAccessAdministration &&
                         adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}

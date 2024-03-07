@@ -141,9 +141,11 @@ export const returnProblemsNonFilterableColumns = (
                   onSuccess={onDeleteSuccess}
                 />
                 {retestProblem && (
+                <Tooltip title="Retest">
                     <IconButton onClick={() => retestProblem(Number(params.row.id))}>
                         <ReplayIcon />
                     </IconButton>
+                </Tooltip>
                 )}
                 {onCopyProblem && (
                 <Tooltip title="Copy">

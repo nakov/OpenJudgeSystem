@@ -14,6 +14,7 @@ public class ProblemResourceAdministrationModelValidator : BaseValidator<Problem
 
         this.RuleFor(model => model.Id)
             .GreaterThanOrEqualTo(0);
+
         this.RuleFor(model => model.ProblemId)
             .GreaterThanOrEqualTo(0);
     }
