@@ -281,7 +281,6 @@ const ContestEdit = (props:IContestEditProps) => {
             }
             break;
         }
-
         case 'numberOfProblemGroups':
             currentContestValidations.isNumberOfProblemGroupsTouched = true;
             if (value) {
