@@ -21,11 +21,11 @@
 .redirectButton {
   background-color: inherit;
   border: 0;
-  padding-left: 0;
   color: colors.$light-blue-color;
   cursor: pointer;
   font: inherit;
   font-size: variables.$f-size-16;
+  padding-left: 0;
   text-align: left;
 }
 
@@ -38,31 +38,15 @@
 }
 
 .strategy {
+  align-items: center;
   display: flex;
   flex-direction: row;
   gap: 10px;
-  align-items: center;
   justify-content: start;
 }
 
 .competeIcon {
   margin: 0 10px;
-}
-
-.competeIconHoverText {
-  background-color: colors.$white-color;
-  border: 1px solid colors.$light-blue-color;
-  border-radius: 4px;
-  color: colors.$light-blue-color;
-  font-weight: 400;
-  opacity: 0;
-  padding: 5px 10px;
-  position: absolute;
-  text-align: center;
-  top: -40px;
-  transform: translateX(-50%);
-  transition: all 0.3s ease;
-  white-space: nowrap;
 }
 
 .competeIconWrapper {
