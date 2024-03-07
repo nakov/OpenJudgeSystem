@@ -1,5 +1,3 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable css-modules/no-unused-class */
 import React, { useEffect, useState } from 'react';
 import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
@@ -15,6 +13,11 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import FileUpload from '../../common/file-upload/FileUpload';
 import FormActionButton from '../../form-action-button/FormActionButton';
 
+/*
+The rule is disabled because the formStyles are common scss file.
+It is used in most of the forms in the administration.
+*/
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IProblemResourceFormProps {
@@ -179,7 +182,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                 <Typography variant="h4" className="centralize">
                     Problem Resource Administration Form
                 </Typography>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={ID}
@@ -189,7 +192,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       disabled
                     />
                 </FormControl>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={NAME}
@@ -200,7 +203,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormGroup className={formStyles.inputRow}>
                     <InputLabel id="problemGroupType">{TYPE}</InputLabel>
                     <Select
                       onChange={(e) => onChange(e)}
@@ -216,7 +219,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                         ))}
                     </Select>
                 </FormGroup>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={FILE_EXTENSION}
@@ -227,7 +230,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={LINK}
@@ -238,7 +241,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={ORDER_BY}
@@ -249,7 +252,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <Typography variant="h4">File</Typography>
                     <Divider />
                     <FileUpload

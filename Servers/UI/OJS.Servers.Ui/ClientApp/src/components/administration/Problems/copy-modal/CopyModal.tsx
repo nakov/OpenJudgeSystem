@@ -1,8 +1,5 @@
-/* eslint-disable import/exports-last */
-/* eslint-disable no-undefined */
-/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typography } from '@mui/material';
 
@@ -14,7 +11,7 @@ import { modalStyles } from '../../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
-export enum AllowedOperations {
+ enum AllowedOperations {
     Copy = 'copy',
     CopyAll = 'copyAll',
 }
@@ -161,4 +158,10 @@ const CopyModal = (props: ICopyModalProps) => {
         </Modal>
     );
 };
+
+export
+{
+    AllowedOperations,
+};
+
 export default CopyModal;

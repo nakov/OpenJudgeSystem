@@ -3,13 +3,16 @@
 /* eslint-disable react/self-closing-comp */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { ProblemGroupTypes } from '../../../common/enums';
 import { EDIT, PROBLEM_GROUP } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { PROBLEM_GROUPS_PATH } from '../../../common/urls';
+import { IEnumType } from '../../../common/types';
+import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteProblemGroupMutation } from '../../../redux/services/admin/problemGroupsAdminService';
+import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const filterableColumns: GridColDef[] = [
     {
@@ -57,18 +60,19 @@ const filterableColumns: GridColDef[] = [
         field: 'type',
         headerName: 'Type',
         flex: 1,
-        type: 'string',
+        type: 'enum',
         filterable: false,
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        enumValues: getStringObjectKeys(ProblemGroupTypes),
         valueFormatter: (params) => {
             if (params.value === '') {
                 return 'None';
             }
             return params.value.toString();
         },
-    },
+    } as GridColDef & IEnumType,
 ];
 
 export const returnNonFilterableColumns = (onEditClick: Function) => [
@@ -83,7 +87,10 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton path={`${PROBLEM_GROUPS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
+                <RedirectButton
+                  path={`/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}/${Number(params.row.id)}`}
+                  location={`${EDIT} page`}
+                />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={`${PROBLEM_GROUP}`}

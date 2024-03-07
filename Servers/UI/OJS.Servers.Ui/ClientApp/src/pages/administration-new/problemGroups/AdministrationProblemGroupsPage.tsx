@@ -31,7 +31,7 @@ const AdministrationProblemGroupsPage = () => {
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
     const [ problemGroupId, setProblemGroupId ] = useState<number | undefined>(undefined);
-    const { data, isLoading, error } = useGetAllAdminProblemGroupsQuery(queryParams);
+    const { refetch: retakeGroups, data, isLoading, error } = useGetAllAdminProblemGroupsQuery(queryParams);
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const selectedFilters = useSelector((state: IRootStore) => state.adminProblemGroups[LOCATION]?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminProblemGroups[LOCATION]?.selectedSorters);
@@ -56,6 +56,16 @@ const AdministrationProblemGroupsPage = () => {
         setProblemGroupId(id);
     };
 
+    const onFormModalClose = (isCreate: boolean) => {
+        if (isCreate) {
+            setOpenCreateModal(false);
+        } else {
+            setOpenEditModal(false);
+        }
+
+        retakeGroups();
+    };
+
     const renderGridSettings = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
             <CreateButton
@@ -72,13 +82,12 @@ const AdministrationProblemGroupsPage = () => {
 
     const renderProblemModal = (index: number, isCreate: boolean) => (
         <AdministrationModal
+          key={index}
           index={index}
           open={isCreate
               ? openCreateModal
               : openEditModal}
-          onClose={() => isCreate
-              ? setOpenCreateModal(false)
-              : setOpenEditModal(false)}
+          onClose={() => onFormModalClose(isCreate)}
         >
             <ProblemGroupForm
               id={isCreate

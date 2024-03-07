@@ -23,7 +23,7 @@ const DeleteButton = (props: IDeleteButtonProps) => {
     const [ message, setMessage ] = useState<string | null>(null);
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
-    const [ deleteRequest, { data, isLoading, isSuccess, error } ] = mutation();
+    const [ deleteRequest, { data, isLoading, isSuccess, error, reset } ] = mutation();
     const confirmDelete = () => {
         setShowConfirmDelete(!showConfirmDelete);
     };
@@ -38,10 +38,11 @@ const DeleteButton = (props: IDeleteButtonProps) => {
     }, [ error ]);
 
     useEffect(() => {
-        if (isSuccess && onSuccess) {
+        if (data && onSuccess) {
+            reset();
             onSuccess();
         }
-    }, [ isSuccess, onSuccess ]);
+    }, [ data, onSuccess, reset ]);
 
     return (
         isLoading
