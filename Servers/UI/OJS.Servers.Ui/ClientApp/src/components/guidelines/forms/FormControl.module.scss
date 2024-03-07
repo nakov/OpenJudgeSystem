@@ -13,6 +13,13 @@ input:-webkit-autofill:active {
   transition-property: background-color, color;
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
 .formControlContainer {
   margin-top: 10px;
   position: relative;
