@@ -1,4 +1,4 @@
-name: PR merged
+name: PR merged to development
 
 on:
   pull_request:
@@ -6,21 +6,9 @@ on:
     branches:
       - v2-development
 
-jobs:
-  check-if-merged:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
-    outputs:
-      isMerged: ${{ steps.check-merged.outputs.isMerged }}
-
-    steps:
-      - name: Check if PR was merged
-        id: check-merged
-        run: echo "::set-output name=isMerged::true"
-
   build-and-deploy:
     needs: check-if-merged
-    if: needs.check-if-merged.outputs.isMerged == 'true'
+    if: github.event.pull_request.merged == true
     uses: ./.github/workflows/deploy-dev-all.yml
     with:
       branch_name: v2-development
