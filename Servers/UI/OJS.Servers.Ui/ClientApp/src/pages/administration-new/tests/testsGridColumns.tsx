@@ -4,7 +4,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { PROBLEMS_PATH, TESTS_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH, TESTS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
@@ -94,7 +94,7 @@ export const returnTestsNonFilterableColumns = (
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton path={`${TESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
+                <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}

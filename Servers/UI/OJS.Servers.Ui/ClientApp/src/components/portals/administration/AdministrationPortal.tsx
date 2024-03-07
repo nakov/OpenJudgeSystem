@@ -30,12 +30,14 @@ import AdministrationSubmissionsPage from '../../../pages/administration-new/sub
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
+import AdministrationTest from '../../administration/tests/AdministrationTest';
 
 import styles from './AdministrationPortal.module.scss';
 
@@ -235,7 +237,11 @@ const AdministrationPortal = () => {
         },
         {
             path: `${TESTS_PATH}`,
-            Element: Administration,
+            Element: AdministrationTestsPage,
+        },
+        {
+            path: `${TESTS_PATH}/:id`,
+            Element: AdministrationTest,
         },
         {
             path: `${PROBLEMS_PATH}`,
