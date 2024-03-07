@@ -16,7 +16,6 @@ const LoginPage = () => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const origin = location.state?.from?.pathname || '/';
-
             navigate(origin);
         }
     }, [ isLoggedIn, location, navigate, user ]);
