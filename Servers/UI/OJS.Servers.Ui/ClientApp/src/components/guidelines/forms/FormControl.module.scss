@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
+@use 'src/styles/font-weights';
 @use 'src/components/guidelines/buttons/Button.module';
 
 input:-webkit-autofill,
@@ -41,7 +42,7 @@ input:-webkit-autofill:active {
     border-radius: 6px;
     color: colors.$grey-color;
     display: block;
-    font-weight: 400;
+    font-weight: font-weights.$font-weight-light;
     max-height: 50px;
     outline: none;
     padding: 16px;

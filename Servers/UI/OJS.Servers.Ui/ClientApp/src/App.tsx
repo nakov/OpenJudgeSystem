@@ -1,4 +1,3 @@
-import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -15,10 +14,7 @@ import SubmissionsProvider from './hooks/submissions/use-submissions';
 import ContestCategoriesProvider from './hooks/use-contest-categories';
 import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 import ContestStrategyFiltersProvider from './hooks/use-contest-strategy-filters';
-import ContestsProvider from './hooks/use-contests';
 import CurrentContestsProvider from './hooks/use-current-contest';
-import HomeContestsProvider from './hooks/use-home-contests';
-import HomeStatisticsProvider from './hooks/use-home-statistics';
 import NotificationsProvider from './hooks/use-notifications';
 import PageWithTitleProvider from './hooks/use-page-titles';
 import PageProvider from './hooks/use-pages';
@@ -28,9 +24,6 @@ import SearchProvider from './hooks/use-search';
 import ServicesProvider from './hooks/use-services';
 import UsersProvider from './hooks/use-users';
 import PageContent from './layout/content/PageContent';
-import PageFooter from './layout/footer/PageFooter';
-import PageHeader from './layout/header/PageHeader';
-import SearchBar from './layout/search-bar/SearchBar';
 import store, { persistor } from './redux/store';
 
 import './styles/global.scss';
@@ -48,15 +41,12 @@ const App = () => {
         ContestCategoriesProvider,
         ContestStrategyFiltersProvider,
         CategoriesBreadcrumbProvider,
-        ContestsProvider,
-        HomeContestsProvider,
         ParticipationsProvider,
         CurrentContestsProvider,
         CurrentContestResultsProvider,
         ProblemSubmissionsProvider,
         ProblemsProvider,
         SubmissionsProvider,
-        HomeStatisticsProvider,
         PublicSubmissionsProvider,
         ProfileSubmissionsProvider,
         SearchProvider,
@@ -67,10 +57,7 @@ const App = () => {
             <PersistGate persistor={persistor}>
                 <Router>
                     <InitProviders providers={providers}>
-                        <PageHeader />
-                        <SearchBar />
                         <PageContent />
-                        <PageFooter />
                     </InitProviders>
                 </Router>
             </PersistGate>

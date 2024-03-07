@@ -2,8 +2,6 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/prefer-default-export */
-import React from 'react';
-
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../components/guidelines/alert/Alert';
 
 const renderSuccessfullAlert = (message: string | null, autoHideDuration?:number) => {

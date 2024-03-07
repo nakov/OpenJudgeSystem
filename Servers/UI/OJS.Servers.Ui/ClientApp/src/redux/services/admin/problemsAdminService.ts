@@ -5,18 +5,17 @@ import { IGetByContestId, IGetByProblemGroupId, IProblemUrlById } from '../../..
 import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-// eslint-disable-next-line import/group-exports
 export const problemsAdminService = createApi({
     reducerPath: 'problems',
     baseQuery: getCustomBaseQuery('problems'),
     endpoints: (builder) => ({
         getAllAdminProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: 'GetAll',
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
@@ -39,23 +38,23 @@ export const problemsAdminService = createApi({
             }),
         }),
         getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
-            query: ({ contestId, filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ contestId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByContestId/${contestId}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
         }),
         getByProblemGroupId: builder.query<IPagedResultType<IIndexProblemsType>, IGetByProblemGroupId>({
-            query: ({ problemGroupId, filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ problemGroupId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByProblemGroupId/${problemGroupId}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
@@ -94,7 +93,6 @@ export const problemsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllAdminProblemsQuery,
     useGetProblemByIdQuery,

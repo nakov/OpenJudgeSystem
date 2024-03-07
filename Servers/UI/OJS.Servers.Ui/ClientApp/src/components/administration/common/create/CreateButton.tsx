@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
-import { IconType } from 'react-icons/lib';
+import { IconType } from 'react-icons/lib/cjs/iconBase';
 import { RiAddBoxFill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 

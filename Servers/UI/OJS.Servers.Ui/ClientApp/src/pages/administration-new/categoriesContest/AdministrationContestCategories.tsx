@@ -21,7 +21,7 @@ import categoriesFilterableColumns, { returnCategoriesNonFilterableColumns } fro
 
 const AdministrationContestCategoriesPage = () => {
     const [ searchParams ] = useSearchParams();
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, ItemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, itemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
     const [ openEditContestCategoryModal, setOpenEditContestCategoryModal ] = useState(false);
     const [ openShowCreateContestCategoryModal, setOpenShowCreateContestCategoryModal ] = useState<boolean>(false);
     const [ contestCategoryId, setContestCategoryId ] = useState<number>();

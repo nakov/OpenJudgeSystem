@@ -26,6 +26,11 @@ type SortInfo = {
     value: string;
 }
 
+type ContestBreadcrumb = {
+    name: string;
+    id: number;
+}
+
 interface IContestParam<T> {
     name: string;
     value: string;
@@ -71,6 +76,7 @@ export type {
     FilterSortType,
     IContestStrategyFilter,
     ToggleParam,
+    ContestBreadcrumb,
 };
 
 export {

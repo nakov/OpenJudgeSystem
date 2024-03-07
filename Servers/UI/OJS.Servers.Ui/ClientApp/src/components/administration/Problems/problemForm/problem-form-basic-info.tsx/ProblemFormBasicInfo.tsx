@@ -1,6 +1,6 @@
 /* eslint-disable css-modules/no-unused-class */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 

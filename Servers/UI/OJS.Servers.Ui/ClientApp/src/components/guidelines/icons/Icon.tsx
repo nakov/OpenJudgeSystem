@@ -11,6 +11,7 @@ import styles from './Icon.module.scss';
 interface IIconProps extends IHaveOptionalClassName {
     size?: IconSize;
     helperText?: string;
+    color?: string;
 }
 
 interface IIconInternalProps extends IIconProps {
@@ -22,6 +23,7 @@ const Icon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
+    color = '',
 }: IIconInternalProps) => {
     const sizeClassName =
         size === IconSize.Small
@@ -55,7 +57,7 @@ const Icon = ({
 
     return (
         <div className={iconContainerClassName}>
-            <Component className={iconClassName} />
+            <Component className={iconClassName} color={color} />
             {renderHelperText()}
         </div>
     );

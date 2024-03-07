@@ -1,14 +1,19 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import dayjs from 'dayjs';
-import moment from 'moment';
+import moment, { Duration } from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
+const defaultDateTimeFormatReverse = 'DD/MMM/yyyy, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
 
-const calculateTimeUntil = (date: Date) => intervalToDuration({
-    start: new Date(),
-    end: date,
-});
+const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
+
+const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
+
+const convertTimeIntervalToHoursMinutesAndSeconds =
+    (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
+
+const calculateTimeUntil = (date: Date) => moment.duration(moment(date).diff(Date.now()));
 
 const preciseFormatDate = (
     date: Date,
@@ -124,12 +129,16 @@ export default {
     preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,
+    calculateTimeBetweenTwoDates,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
     getCurrentTimeInUtc: getCurrentTimeInUTC,
+    convertTimeIntervalToHoursMinutesAndSeconds,
+    calculatedTimeFormatted,
 };
 
 export {
+    defaultDateTimeFormatReverse,
     formatDate,
     preciseFormatDate,
     secondsToFullTime,
@@ -138,4 +147,7 @@ export {
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
     getDateWithFormat,
+    calculateTimeBetweenTwoDates,
+    convertTimeIntervalToHoursMinutesAndSeconds,
+    calculatedTimeFormatted,
 };

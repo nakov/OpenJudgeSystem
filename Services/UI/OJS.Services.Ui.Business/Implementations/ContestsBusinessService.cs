@@ -26,7 +26,7 @@ namespace OJS.Services.Ui.Business.Implementations
     public class ContestsBusinessService : IContestsBusinessService
     {
         private const int DefaultContestsToTake = 4;
-        private const int DefaultContestsPerPage = 12;
+        private const int DefaultContestsPerPage = 10;
 
         private readonly IContestsDataService contestsData;
         private readonly ISubmissionsDataService submissionsData;
@@ -135,8 +135,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(x => new ContestDetailsSubmissionTypeServiceModel { Id = x.SubmissionTypeId, Name = x.SubmissionType.Name })
                 .ToList();
 
-            contestDetailsServiceModel.CompeteParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(id);
-            contestDetailsServiceModel.PracticeParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(id);
+            var participantsCount = await this.contestParticipantsCacheService.GetParticipantsCountForContest(id);
+
+            contestDetailsServiceModel.CompeteParticipantsCount = participantsCount.Official;
+            contestDetailsServiceModel.PracticeParticipantsCount = participantsCount.Practice;
 
             return contestDetailsServiceModel;
         }
@@ -283,14 +285,12 @@ namespace OJS.Services.Ui.Business.Implementations
                     .FirstOrDefault();
             });
 
-            if (model.IsOfficial)
-            {
-                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetCompeteContestParticipantsCount(model.ContestId);
-            }
-            else
-            {
-                participationModel.ParticipantsCount = await this.contestParticipantsCacheService.GetPracticeContestParticipantsCount(model.ContestId);
-            }
+            var participantsCount =
+                await this.contestParticipantsCacheService.GetParticipantsCountForContest(model.ContestId);
+
+            participationModel.ParticipantsCount = model.IsOfficial
+                ? participantsCount.Official
+                : participantsCount.Practice;
 
             return participationModel;
         }
@@ -339,9 +339,18 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var pagedContests =
                 await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
+            var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
+
+            var participantsCount = await this.contestParticipantsCacheService
+                .GetParticipantsCountForContestsPage(contestIds, model.PageNumber);
 
             //set CanBeCompeted and CanBePracticed properties in each contest for the page
-            pagedContests.Items.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+            pagedContests.Items.ForEach(c =>
+            {
+                this.activityService.SetCanBeCompetedAndPracticed(c);
+                c.CompeteResults = participantsCount[c.Id].Official;
+                c.PracticeResults = participantsCount[c.Id].Practice;
+            });
 
             return pagedContests;
         }

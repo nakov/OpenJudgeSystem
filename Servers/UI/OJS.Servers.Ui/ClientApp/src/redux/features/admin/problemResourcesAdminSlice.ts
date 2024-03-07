@@ -1,13 +1,10 @@
-/* eslint-disable import/group-exports */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IAdminSlice } from './contestsAdminSlice';
 
 const initialState: IAdminSlice = {};
 
-export const problemResourceAdminSlice = createSlice({
+export const problemResourcesAdminSlice = createSlice({
     name: 'adminProblemResources',
     initialState,
     reducers: {
@@ -35,6 +32,6 @@ export const problemResourceAdminSlice = createSlice({
 export const {
     setAdminProblemResourceFilters,
     setAdminProblemResourceSorters,
-} = problemResourceAdminSlice.actions;
+} = problemResourcesAdminSlice.actions;
 
-export default problemResourceAdminSlice.reducer;
+export default problemResourcesAdminSlice.reducer;

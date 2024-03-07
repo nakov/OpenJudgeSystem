@@ -1,213 +1,130 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prefer-destructuring */
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { ContestStatus, FilterType, IFilter, SortType } from '../../common/contest-types';
-import { PageParams } from '../../common/pages-types';
-import { IIndexContestsType } from '../../common/types';
-import ContestBreadcrumb from '../../components/contests/contest-breadcrumb/ContestBreadcrumb';
-import ContestFilters from '../../components/contests/contests-filters/ContestFilters';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../components/guidelines/alert/Alert';
+import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
+import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
+import ContestCard from '../../components/contests/contest-card/ContestCard';
+import ContestCategories from '../../components/contests/contest-categories/ContestCetegories';
+import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import ContestCard from '../../components/home-contests/contest-card/ContestCard';
-import { useUrlParams } from '../../hooks/common/use-url-params';
-import { useContestCategories } from '../../hooks/use-contest-categories';
-import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
-import { useContestStrategyFilters } from '../../hooks/use-contest-strategy-filters';
-import { useContests } from '../../hooks/use-contests';
-import { usePages } from '../../hooks/use-pages';
+import useTheme from '../../hooks/use-theme';
+import { clearContestCategoryBreadcrumbItems } from '../../redux/features/contestsSlice';
+import { useGetAllContestsQuery } from '../../redux/services/contestsService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
-import { toLowerCase } from '../../utils/string-utils';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
+    const dispatch = useAppDispatch();
+    const { breadcrumbItems } = useAppSelector((state) => state.contests);
+    const { themeColors, getColorClassName } = useTheme();
+    const { selectedCategory, selectedStrategy } = useAppSelector((state) => state.contests);
+    const [ searchParams, setSearchParams ] = useSearchParams();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
+
+    useEffect(() => {
+        if (!searchParams.get('category') && breadcrumbItems.length > 0) {
+            dispatch(clearContestCategoryBreadcrumbItems());
+        }
+    });
+
+    useEffect(() => {
+        if (!searchParams.get('page')) {
+            searchParams.set('page', '1');
+            setSearchParams(searchParams);
+        }
+    }, []);
+
+    const selectedPage = useMemo(() => {
+        if (!searchParams.get('page')) {
+            return 1;
+        }
+        return Number(searchParams.get('page'));
+    }, [ searchParams ]);
+
+    const contestParams = useMemo(() => {
+        const params: IGetAllContestsOptions = {
+            sortType: 'OrderBy',
+            page: selectedPage,
+        };
+        if (selectedCategory) {
+            params.category = selectedCategory.id;
+        }
+        if (selectedStrategy) {
+            params.strategy = selectedStrategy.id;
+        }
+
+        return params;
+    }, [ selectedCategory, selectedStrategy, selectedPage ]);
+
     const {
-        state: {
-            contests,
-            isLoaded,
-            contestsAreLoading,
-        },
-        actions: {
-            toggleParam,
-            initiateGetAllContestsQuery,
-        },
-    } = useContests();
-    const {
-        state: { currentPage, pagesInfo },
-        changePage,
-    } = usePages();
-    const { state: { breadcrumbItems } } = useCategoriesBreadcrumbs();
-    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
-    const { state: params, actions: { clearParams } } = useUrlParams();
-    const {
-        state: { strategies },
-        actions: { load: loadStrategies },
-    } = useContestStrategyFilters();
-    const [ showAlert, setShowAlert ] = useState<boolean>(false);
+        data: allContests,
+        isLoading: areContestsLoading,
+        error: allContestsError,
+    } = useGetAllContestsQuery({ ...contestParams });
 
-    useEffect(
-        () => {
-            if (isEmpty(categoriesFlat)) {
-                (async () => {
-                    await loadCategories();
-                })();
-            }
+    const renderContest = useCallback((contest: IIndexContestsType) => (
+        <ContestCard contest={contest} />
+    ), []);
 
-            if (isEmpty(strategies)) {
-                (async () => {
-                    await loadStrategies();
-                })();
-            }
-        },
-        [ categoriesFlat, loadCategories, loadStrategies, strategies ],
-    );
-
-    useEffect(() => { initiateGetAllContestsQuery(); }, [ initiateGetAllContestsQuery ]);
-
-    const filtersArray = useMemo(
-        () => [ FilterType.Status, FilterType.Category, FilterType.Strategy, PageParams.page, FilterType.Sort ],
-        [],
-    );
-
-    const areQueryParamsValid = useCallback(
-        () => {
-            const queryParamsArray = Object.values(params).flat();
-
-            const { length: initialQueryParamsCount } = Object.values(params).flat();
-
-            const resultQueryParamsArray = queryParamsArray.filter((y) => {
-                const filter = filtersArray.find((x) => toLowerCase(x) === toLowerCase(y.key.toString()));
-                const filterValue = toLowerCase(y.value.toString());
-
-                if (isNil(filter) ||
-                    (filter === FilterType.Status &&
-                        (filterValue !== toLowerCase(ContestStatus.All) &&
-                            filterValue !== toLowerCase(ContestStatus.Active) &&
-                            filterValue !== toLowerCase(ContestStatus.Past) &&
-                            filterValue !== toLowerCase(ContestStatus.Upcoming) &&
-                            (filterValue !== toLowerCase(ContestStatus.Practice))))) {
-                    return false;
-                }
-
-                if (filter === FilterType.Category) {
-                    return !isNil(categoriesFlat.find(({ id }) => id.toString() === filterValue));
-                }
-
-                if (filter === FilterType.Strategy) {
-                    return !isNil(strategies.find(({ id }) => id.toString() === filterValue));
-                }
-
-                if (filter === PageParams.page) {
-                    return !Number.isNaN(Number(filterValue)) && Number(filterValue) > 0;
-                }
-
-                return !(toLowerCase(filter) === FilterType.Sort &&
-                    (filterValue !== toLowerCase(SortType.Name) &&
-                        filterValue !== toLowerCase(SortType.StartDate) &&
-                        filterValue !== toLowerCase(SortType.EndDate)));
-            });
-
-            return initialQueryParamsCount === resultQueryParamsArray.length;
-        },
-        [ filtersArray, params, categoriesFlat, strategies ],
-    );
-
-    const handlePageChange = useCallback(
-        (page: number) => changePage(page),
-        [ changePage ],
-    );
-
-    const handleFilterClick = useCallback(
-        (filter: IFilter) => toggleParam(filter),
-        [ toggleParam ],
-    );
-
-    const renderContest = useCallback(
-        (contest: IIndexContestsType) => (
-            <ContestCard contest={contest} />
-        ),
-        [],
-    );
-
-    const renderContests = useCallback(
-        () => {
-            if (!isLoaded) {
-                return null;
-            }
-
-            if (isNil(contests) || isEmpty(contests)) {
-                return (
-                    <Heading type={HeadingType.secondary}>
-                        No contests apply for this filter
-                    </Heading>
-                );
-            }
-
-            const { pagesCount } = pagesInfo;
+    const renderContests = useCallback(() => {
+        if (!allContests?.items?.length) {
             return (
-                <div className={styles.contestsListContainer}>
-                    <PaginationControls
-                      count={pagesCount}
-                      page={currentPage}
-                      onChange={handlePageChange}
-                    />
-                    <List
-                      values={contests}
-                      itemFunc={renderContest}
-                      className={styles.contestsList}
-                      orientation={Orientation.horizontal}
-                      wrap
-                    />
-                </div>
+                <Heading type={HeadingType.secondary} className={`${textColorClassName} ${styles.contestHeading}`}>
+                    No contests apply for this filter
+                </Heading>
             );
-        },
-        [ contests, currentPage, handlePageChange, isLoaded, pagesInfo, renderContest ],
-    );
+        }
 
-    useEffect(
-        () => {
-            if (!areQueryParamsValid() && isLoaded) {
-                setShowAlert(true);
-                clearParams();
-            }
-        },
-        [
-            areQueryParamsValid,
-            isLoaded,
-            clearParams,
-            breadcrumbItems,
-            handleFilterClick,
-            renderContests,
-        ],
-    );
+        return (
+            <div className={styles.contestsListContainer}>
+                <List
+                  values={allContests?.items}
+                  itemFunc={renderContest}
+                  className={styles.contestsList}
+                  orientation={Orientation.vertical}
+                />
+                <PaginationControls
+                  count={allContests?.pagesCount}
+                  page={selectedPage}
+                  onChange={(page:number) => {
+                      searchParams.set('page', page.toString());
+                      setSearchParams(searchParams);
+                  }}
+                />
+            </div>
+        );
+    }, [ allContests ]);
+
+    if (allContestsError) { return <>Error loading contests</>; }
 
     return (
-        <>
-            {contestsAreLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
-            {showAlert &&
-                (
-                    <Alert
-                      message="The category you requested was not valid, all contests were loaded."
-                      severity={AlertSeverity.Error}
-                      variant={AlertVariant.Filled}
-                      autoHideDuration={3000}
-                      vertical={AlertVerticalOrientation.Bottom}
-                      horizontal={AlertHorizontalOrientation.Right}
-                    />
-                )}
-            <ContestBreadcrumb isLastBreadcrumbGrey />
-            <div className={styles.container}>
-                <ContestFilters onFilterClick={handleFilterClick} />
-                <div className={styles.mainHeader}>
+        <div style={{ padding: '20px 40px' }}>
+            {areContestsLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
+            <ContestBreadcrumbs />
+            <div className={styles.contestsContainer}>
+                <ContestCategories />
+                <div style={{ width: '100%' }}>
+                    <div className={`${styles.headingWrapper} ${textColorClassName}`}>
+                        <div>
+                            { selectedCategory
+                                ? selectedCategory.name
+                                : 'All Categories'}
+                        </div>
+                        <ContestStrategies />
+                    </div>
                     {renderContests()}
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

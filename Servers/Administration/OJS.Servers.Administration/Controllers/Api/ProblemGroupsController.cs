@@ -35,6 +35,6 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
 
     [HttpGet("{contestId:int}")]
     [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
-    public async Task<IActionResult> ByContestId(int contestId) =>
-        this.Ok(await this.problemGroupsBusinessService.GetOrderByContestId(contestId));
+    public IActionResult ByContestId(int contestId) =>
+        this.Ok(this.problemGroupsBusinessService.GetOrderByContestId(contestId));
 }

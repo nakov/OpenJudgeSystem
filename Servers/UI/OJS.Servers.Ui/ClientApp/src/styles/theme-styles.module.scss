@@ -1,0 +1,51 @@
+@use 'src/styles/colors';
+
+.blackColorClassName {
+  color: colors.$light-text-color !important;
+}
+
+.whiteColorClassName {
+  color: colors.$dark-text-color !important;
+}
+
+// dark colors background
+.darkBaseColor100ClassName {
+  background-color: colors.$dark-base-color-100;
+}
+
+.darkBaseColor200ClassName {
+  background-color: colors.$dark-base-color-200;
+}
+
+.darkBaseColor300ClassName {
+  background-color: colors.$dark-base-color-300;
+}
+
+.darkBaseColor400ClassName {
+  background-color: colors.$dark-base-color-400;
+}
+
+.darkBaseColor500ClassName {
+  background-color: colors.$dark-base-color-500;
+}
+
+// light colors background
+.lightBaseColor100ClassName {
+  background-color: colors.$light-base-color-100;
+}
+
+.lightBaseColor200ClassName {
+  background-color: colors.$light-base-color-200;
+}
+
+.lightBaseColor300ClassName {
+  background-color: colors.$light-base-color-300;
+}
+
+.lightBaseColor400ClassName {
+  background-color: colors.$light-base-color-400;
+}
+
+.lightBaseColor500ClassName {
+  background-color: colors.$light-base-color-500;
+}

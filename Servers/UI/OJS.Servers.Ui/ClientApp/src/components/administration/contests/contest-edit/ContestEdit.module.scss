@@ -1,32 +1,32 @@
 .fieldBox {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-    height: auto;
-    width: 90%;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  justify-content: space-between;
+  width: 90%;
 }
 
 .fieldBox > div > div {
-    width: 95%;
+  width: 95%;
 }
 
 .textArea {
-    width: 90%;
+  width: 90%;
 }
 
 .flex {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    margin: 1rem, auto;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1rem, auto;
 }
 
 .checkboxes {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    align-self: flex-start;
-    margin-left: 5rem;
+  align-items: flex-start;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  margin-left: 5rem;
 }

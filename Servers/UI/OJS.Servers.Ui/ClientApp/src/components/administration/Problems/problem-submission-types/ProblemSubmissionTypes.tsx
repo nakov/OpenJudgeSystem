@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
 import { MdOutlineRemoveCircle } from 'react-icons/md';
 import { FormControl, FormGroup, FormLabel, IconButton, TextareaAutosize, TextField } from '@mui/material';
 

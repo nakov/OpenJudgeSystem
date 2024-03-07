@@ -1,7 +1,4 @@
 /* eslint-disable css-modules/no-unused-class */
-/* eslint-disable default-case */
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-undefined */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
@@ -140,18 +137,22 @@ const ProblemForm = (props: IProblemFormProps) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
 
-            type.solutionSkeleton && formData.append(
-                `SubmissionTypes[${index}].SolutionSkeleton`,
-                type.solutionSkeleton!.toString(),
-            );
+            if (type.solutionSkeleton) {
+                formData.append(
+                    `SubmissionTypes[${index}].SolutionSkeleton`,
+                    type?.solutionSkeleton!.toString(),
+                );
+            }
         });
+        if (currentProblem.tests) {
+            formData.append('tests', currentProblem.tests);
+        }
 
-        currentProblem.tests &&
-        formData.append('tests', currentProblem.tests);
-
-        isEditMode
-            ? updateProblem(formData)
-            : createProblem(formData);
+        if (isEditMode) {
+            updateProblem(formData);
+        } else {
+            createProblem(formData);
+        }
     };
 
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {

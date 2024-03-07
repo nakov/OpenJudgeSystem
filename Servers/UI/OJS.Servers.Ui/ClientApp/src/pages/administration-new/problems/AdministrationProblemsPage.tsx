@@ -22,7 +22,7 @@ const AdministrationProblemsPage = () => {
     const [ openEditProblemModal, setOpenEditProblemModal ] = useState(false);
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
-        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });

@@ -15,7 +15,7 @@ const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => 
 
     const queryParams: IGetAllAdminParams = {
         page: 1,
-        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: '',
         sorting: '',
     };

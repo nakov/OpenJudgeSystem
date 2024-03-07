@@ -1,90 +1,33 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import FiberNewIcon from '@mui/icons-material/FiberNew';
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { CONTESTS_PATH } from '../../common/urls';
-import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import SearchIcon from '../../components/guidelines/icons/SearchIcon';
+import React, { useEffect } from 'react';
+import { BsFillMoonFill } from 'react-icons/bs';
+import { RiSunLine } from 'react-icons/ri';
+import { Link, useLocation } from 'react-router-dom';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
+
+import MyProfileSvg from '../../assets/my-profile.svg';
 import { useSearch } from '../../hooks/use-search';
-import { IAuthorizationReduxState, resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import useTheme from '../../hooks/use-theme';
+import { resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
-import concatClassNames from '../../utils/class-names';
-import generateId from '../../utils/id-generator';
-import PageNav from '../nav/PageNav';
-
-import logo from './softuni-logo-horizontal.svg';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
+    const { toggleSelectedTheme } = useTheme();
     const { pathname } = useLocation();
-
     const shouldRenderPageHeader = !pathname.includes('administration');
 
     const { actions: { toggleVisibility } } = useSearch();
-
+    const { mode } = useAppSelector((state) => state.theme);
+    const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
     const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
-    const { internalUser: user } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-
-    const renderLinks = useCallback(() => {
-        const administrationLink = user.canAccessAdministration
-            ? (
-                <div className={styles.administrationsNavWrapper}>
-                    <LinkButton
-                      type={LinkButtonType.plain}
-                      size={ButtonSize.none}
-                      to="administration"
-                      text="Administration"
-                      isToExternal
-                    />
-                    <div style={{ marginLeft: '10px' }}>
-                        <LinkButton
-                          type={LinkButtonType.plain}
-                          size={ButtonSize.none}
-                          to={`${CONTESTS_PATH}`}
-                          text="Administration"
-                          isToExternal
-                        />
-                    </div>
-                    <FiberNewIcon className={styles.newIcon} />
-                </div>
-            )
-            : null;
-
-        return (
-            <>
-                <LinkButton
-                  id="nav-contests-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/contests"
-                  text="Contests"
-                />
-                <LinkButton
-                  id="nav-submissions-link"
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to="/submissions"
-                  text="Submissions"
-                />
-                { administrationLink }
-            </>
-        );
-    }, [ user.canAccessAdministration ]);
-
-    const btnId = useMemo(
-        () => {
-            const searchIdBtn = generateId();
-            return `btn-submit-${searchIdBtn}`;
-        },
-        [],
-    );
     useEffect(() => {
         if (isSuccessfullRequest && userData) {
             dispatch(setInternalUser(userData));
@@ -95,54 +38,56 @@ const PageHeader = () => {
         }
     }, [ isSuccessfullRequest, userData, dispatch ]);
 
-    const handleSearchClick = useCallback(
-        () => toggleVisibility(),
-        [ toggleVisibility ],
-    );
-
-    const searchBtnClassName = concatClassNames('searchButton', styles.searchButton);
-
-    const searchButton = useCallback(
-        () => (
-            <Button
-              id={btnId}
-              onClick={handleSearchClick}
-              type={ButtonType.submit}
-              internalClassName={searchBtnClassName}
+    const renderThemeSwitcher = () => (
+        <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
+            <ToggleButton
+              value="light"
+              onClick={toggleSelectedTheme}
             >
-                <SearchIcon />
-            </Button>
-        ),
-        [ btnId, handleSearchClick, searchBtnClassName ],
+                <RiSunLine />
+            </ToggleButton>
+            <ToggleButton
+              value="dark"
+              onClick={toggleSelectedTheme}
+            >
+                <BsFillMoonFill />
+            </ToggleButton>
+        </ToggleButtonGroup>
     );
-
-    const headingSecondaryClass = 'headingSeconary';
-    const headingSecondaryClassName = concatClassNames(styles.heading, headingSecondaryClass);
 
     if (!shouldRenderPageHeader) { return null; }
     return (
-        <header id="pageHeader" className={styles.header}>
-            <div className={styles.headerSize}>
-                <div className={styles.headerLinks}>
-                    <Heading
-                      id="page-header-h2"
-                      type={HeadingType.secondary}
-                      className={headingSecondaryClassName}
-                    >
-                        <LinkButton
-                          to="/"
-                          type={LinkButtonType.image}
-                          altText="Softuni logo"
-                          imgSrc={logo}
-                        />
-                    </Heading>
-                    { renderLinks() }
-                </div>
-                <div className={styles.navbarContainer}>
-                    { searchButton() }
-                    <PageNav />
-                </div>
+        <header className={styles.header}>
+            <div>
+                <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>SoftUni Judge</Link>
+                <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
+                <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
+                {user.canAccessAdministration && <Link to="/administration-new" className={styles.navButton}>ADMINISTRATION</Link>}
             </div>
+            <div className={styles.authButtons}>
+                <i className={`fas fa-search ${styles.searchIcon}`} onClick={toggleVisibility} />
+                {isLoggedIn
+                    ? (
+                        <>
+                            {' '}
+                            <Link to="/profile" className={styles.navButton}>
+                                <img height={40} width={40} src={MyProfileSvg} alt="my-profile" />
+                            </Link>
+                            <Link to="/logout" className={styles.navButton}>
+                                LOGOUT
+                            </Link>
+                        </>
+                    )
+                    : (
+                        <>
+                            <Link to="/login" className={styles.navButton}>LOGIN</Link>
+                            <Link to="/register" className={styles.navButton}>
+                                REGISTER
+                            </Link>
+                        </>
+                    )}
+            </div>
+            {renderThemeSwitcher()}
         </header>
     );
 };

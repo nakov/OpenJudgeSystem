@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import TabsInView from '../common/tabs/TabsInView';
@@ -16,7 +16,7 @@ const AdministrationProblemGroup = () => {
 
     const [ tabName, setTabName ] = useState(PROBLEM_GROUP_LISTED_DATA.PROBLEMS);
 
-    const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_GROUP_LISTED_DATA) => {
+    const onTabChange = (event: SyntheticEvent, newValue: PROBLEM_GROUP_LISTED_DATA) => {
         setTabName(newValue);
     };
 

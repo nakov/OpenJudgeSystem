@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 /* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
@@ -9,18 +8,17 @@ import { IContestDetailsUrlParams } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
-// eslint-disable-next-line import/group-exports
 export const contestService = createApi({
-    reducerPath: 'contests',
+    reducerPath: 'contestsAdminService',
     baseQuery: getCustomBaseQuery('contests'),
     endpoints: (builder) => ({
         getAllAdminContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllAdminParams>({
-            query: ({ filter, page, ItemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: `/${GETALL_ENDPOINT}`,
                 params: {
                     filter,
                     page,
-                    ItemsPerPage,
+                    itemsPerPage,
                     sorting,
                 },
             }),
@@ -34,7 +32,6 @@ export const contestService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllAdminContestsQuery,
     useGetContestByIdQuery,
