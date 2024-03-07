@@ -1,5 +1,8 @@
 ﻿namespace OJS.Workers.Common.Models
 {
+    /// <summary>
+    /// Exception type that can be thrown by the workers.
+    /// </summary>
     public enum ExceptionType
     {
         None = 0,
