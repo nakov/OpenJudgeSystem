@@ -22,7 +22,7 @@ import SpinningLoader from '../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './LoginForm.module.scss';
 
-const LoginPage = () => {
+const LoginForm = () => {
     const [ userName, setUsername ] = useState<string>('');
     const [ password, setPassword ] = useState<string>('');
     const [ rememberMe, setRememberMe ] = useState<boolean>(false);
@@ -197,4 +197,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default LoginForm;

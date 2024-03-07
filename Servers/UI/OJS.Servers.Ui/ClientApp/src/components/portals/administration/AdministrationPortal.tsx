@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { FC, useEffect, useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import { GiFiles } from 'react-icons/gi';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
 import BorderAllIcon from '@mui/icons-material/BorderAll';
@@ -13,29 +14,34 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Divider, Tooltip } from '@mui/material';
+import { Box, CSSObject, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme, Toolbar, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import { CSSObject, styled, Theme } from '@mui/material/styles';
-import Toolbar from '@mui/material/Toolbar';
 
-import { Anything } from '../../common/common-types';
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls';
+import AdministrationPage from '../../../pages/administration/AdministrationPage';
+import Administration from '../../../pages/administration-new/Administration';
+import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
+import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
+import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
+import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
+import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
+import AdminSubmissionForProcessingDetails
+    from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
+import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import NotFoundPage from '../../../pages/not-found/NotFoundPage';
+import { useAppSelector } from '../../../redux/store';
+import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
+import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
+import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
 
-import styles from './set-admin-navigation.module.scss';
-
-const drawerWidth = 240;
+import styles from './AdministrationPortal.module.scss';
 
 interface IAppBarProps extends MuiAppBarProps {
     open?: boolean;
 }
+
+const drawerWidth = 240;
 
 const administrationItems = [
     {
@@ -84,7 +90,6 @@ const administrationItems = [
         path: `${SUBMISSION_TYPES_PATH}`,
     },
 ];
-
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -147,12 +152,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 }));
 
 const mobileBreak = 1300;
-const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
+
+const AdministrationPortal = () => {
     const location = useLocation();
     const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
-
-    const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
@@ -184,6 +188,16 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         setOpen(!(window.innerWidth < mobileBreak));
     };
 
+    const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+    const isSelected = (pathName: string) => {
+        const sectionPathName = location.pathname.split('/');
+        if (sectionPathName[sectionPathName.length - 1].toLocaleLowerCase() === pathName.toLocaleLowerCase()) {
+            return true;
+        }
+        return false;
+    };
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -191,6 +205,62 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    const adminRoutes = [
+        {
+            path: `${CONTESTS_PATH}`,
+            Element: AdministrationContestsPage,
+        },
+        {
+            path: `${CONTESTS_PATH}/:id`,
+            Element: AdministrationContestPage,
+        },
+        {
+            path: `${CONTEST_CATEGORIES_PATH}`,
+            Element: AdministrationContestCategories,
+        },
+        {
+            path: `${SUBMISSIONS_PATH}`,
+            Element: AdministrationSubmissionsPage,
+        },
+        {
+            path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+            Element: AdministrationSubmissionsForProcessingPage,
+        },
+        {
+            path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
+            Element: AdminSubmissionForProcessingDetails,
+        },
+        {
+            path: `${TESTS_PATH}`,
+            Element: Administration,
+        },
+        {
+            path: `${PROBLEMS_PATH}`,
+            Element: AdministrationProblemsPage,
+        },
+        {
+            path: `${PROBLEMS_PATH}/:id`,
+            Element: AdministrationProblem,
+        },
+        {
+            path: `${PROBLEM_GROUPS_PATH}`,
+            Element: AdministrationProblemGroupsPage,
+        },
+        {
+            path: `${PROBLEM_GROUPS_PATH}/:id`,
+            Element: AdministrationProblemGroup,
+        },
+        {
+            path: `${SUBMISSION_TYPES_PATH}`,
+            Element: Administration,
+        },
+        {
+            path: '/administration',
+            Element: AdministrationPage,
+            title: 'Administration',
+        },
+    ];
 
     const renderSectionicon = (name: string, icon: any) => {
         if (!open) {
@@ -202,12 +272,14 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
         }
         return icon;
     };
+
+    const { internalUser: user } =
+    useAppSelector((state) => state.authorization);
+
     return (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         <Box sx={{ zIndex: 0 }}>
             <Box sx={{ display: 'flex', zIndex: 0 }}>
-                <AppBar position="fixed" open={open}>
+                <AppBar position="fixed" open={open} className={styles.appBar}>
                     <Toolbar>
                         <div className={styles.adminHeaderWrapper}>
                             <Link to="/" className={styles.adminHeaderLink}>
@@ -239,24 +311,23 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                     <DrawerHeader>
                         <div />
                     </DrawerHeader>
-
-                    {/* <Box sx={{ overflow: 'auto', marginTop: '20px' }}> */}
                     <List sx={{ overflow: 'hidden' }}>
                         {administrationItems.map((item) => (
-                            <Box key={item.name}>
+                            <>
                                 <ListItem key={item.name} disablePadding>
                                     <Link
                                       to={item.path}
-                                      className={`${location.pathname === item.path
+                                      className={`${isSelected(item.path)
                                           ? styles.activeAdminNavLink
                                           : ''} ${styles.adminNavLink}`}
                                     >
-                                        <ListItemButton>
-                                            <ListItemIcon style={{
-                                                color: location.pathname === item.path
-                                                    ? '#42abf8'
-                                                    : '#3e4c5d',
-                                            }}
+                                        <ListItemButton className={isSelected(item.path)
+                                            ? styles.selectedSection
+                                            : ''}
+                                        >
+                                            <ListItemIcon className={isSelected(item.path)
+                                                ? styles.listItemIcon
+                                                : ''}
                                             >
                                                 {renderSectionicon(item.name, item.icon)}
                                             </ListItemIcon>
@@ -265,16 +336,22 @@ const withAdministrationNav = (ComponentToWrap: FC) => (props: Anything) => {
                                     </Link>
                                 </ListItem>
                                 <Divider />
-                            </Box>
+                            </>
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                    <ComponentToWrap {...props} />
+                <Box component="main" sx={{ flexGrow: 1, p: 4 }}>
+                    <Routes>
+                        {user.canAccessAdministration &&
+                        adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
+
+                        <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
                 </Box>
             </Box>
         </Box>
+
     );
 };
-
-export default withAdministrationNav;
+export default AdministrationPortal;
