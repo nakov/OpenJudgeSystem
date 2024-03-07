@@ -1,6 +1,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
 @use 'src/styles/colors';
+@use 'src/styles/font-weights';
 
 .wrapper {
   display: flex;
@@ -9,6 +10,7 @@
 .problemsWrapper {
   font-size: variables.$f-size-18;
   height: 685px;
+  overflow-x: hidden;
   overflow-y: auto;
   padding: spacings.$sp-16 spacings.$sp-24;
   transition: all 0.5s ease-in-out;
@@ -27,6 +29,7 @@
     display: flex;
     justify-content: space-between;
     padding: spacings.$sp-12;
+    transition: all 0.1s ease-in-out;
 
     > div {
       &:nth-child(2) {
@@ -37,10 +40,10 @@
 
   .activeProblem {
     color: colors.$primary-blue !important;
+    font-weight: font-weights.$font-weight-bold;
   }
 
   &.closedProblems {
-    overflow-x: hidden !important;
     overflow-y: hidden !important;
     padding-left: spacings.$sp-4 !important;
     padding-right: spacings.$sp-4 !important;
