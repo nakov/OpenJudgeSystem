@@ -8,6 +8,8 @@ export const DESCRIPTION = 'Description';
 export const CATEGORY = 'Category';
 export const IS_DELETED = 'Is Deleted';
 export const CHECKER = 'Checker';
+
+export const VIEW = 'View';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';

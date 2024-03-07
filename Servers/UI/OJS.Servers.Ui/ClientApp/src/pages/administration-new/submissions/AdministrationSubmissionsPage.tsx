@@ -5,8 +5,10 @@ import { useSearchParams } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
@@ -126,6 +128,10 @@ const AdministrationSubmissionsPage = () => {
                             )
                             : null
                     }
+                    <ViewRedirectButton
+                      path={`/submissions/${Number(params.row.id)}/details`}
+                      location={VIEW}
+                    />
                     <DeleteButton
                       id={Number(params.row.id)}
                       name="Submission"
