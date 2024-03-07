@@ -9,7 +9,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import { SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
 import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
@@ -66,7 +66,7 @@ const AdministrationSubmissionsForProcessingPage = () => {
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <ViewRedirectButton
-                      path={`${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}
+                      path={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}
                       location={VIEW}
                     />
                 </div>

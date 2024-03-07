@@ -100,14 +100,14 @@ const AdministrationSubmissionsPage = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 140,
+            flex: 1,
             headerAlign: 'center',
             align: 'center',
             filterable: false,
             sortable: false,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between' }}>
                     <Tooltip title="Retest">
                         <IconButton
                           onClick={() => retest(Number(params.row.id))}
@@ -115,6 +115,30 @@ const AdministrationSubmissionsPage = () => {
                             <RefreshIcon size={IconSize.Large} />
                         </IconButton>
                     </Tooltip>
+                    <ViewRedirectButton
+                      path={`/submissions/${Number(params.row.id)}/details`}
+                      location={VIEW}
+                    />
+                    <DeleteButton
+                      id={Number(params.row.id)}
+                      name="Submission"
+                      text={`Are you sure that you want to delete submission #${params.row.id}?`}
+                      mutation={useDeleteSubmissionMutation}
+                    />
+                </div>
+            ),
+        },
+        {
+            field: 'download',
+            headerName: 'Download',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            filterable: false,
+            sortable: false,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            renderCell: (params: GridRenderCellParams) => (
+                <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between' }}>
                     {
                         params.row.isBinaryFile
                             ? (
@@ -128,16 +152,6 @@ const AdministrationSubmissionsPage = () => {
                             )
                             : null
                     }
-                    <ViewRedirectButton
-                      path={`/submissions/${Number(params.row.id)}/details`}
-                      location={VIEW}
-                    />
-                    <DeleteButton
-                      id={Number(params.row.id)}
-                      name="Submission"
-                      text={`Are you sure that you want to delete submission #${params.row.id}?`}
-                      mutation={useDeleteSubmissionMutation}
-                    />
                 </div>
             ),
         },
