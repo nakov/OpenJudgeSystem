@@ -7,5 +7,6 @@
         Strategy = 2,
         Runtime = 3,
         Remote = 4,
+        Security = 5,
     }
 }
