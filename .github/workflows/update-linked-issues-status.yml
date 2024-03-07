@@ -6,6 +6,7 @@ on:
       status_name:
         description: 'Status name'
         required: true
+        type: string
 jobs:
   move-issue-to-milestone:
     runs-on: ubuntu-latest
