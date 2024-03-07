@@ -1,0 +1,16 @@
+name: PR merged to development
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - v2-development
+
+jobs:
+  build-and-deploy-dev-all:
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/deploy-dev-all.yml
+    with:
+      branch_name: v2-development
+    secrets: inherit
