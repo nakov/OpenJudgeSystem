@@ -6,6 +6,7 @@ on:
     branches:
       - v2-development
 
+jobs:
   build-and-deploy:
     needs: check-if-merged
     if: github.event.pull_request.merged == true
