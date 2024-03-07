@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useSearchParams } from 'react-router-dom';
 import { MenuItem, Select } from '@mui/material';
@@ -46,7 +46,7 @@ const ContestStrategies = () => {
         dispatch(setContestStrategy(null));
     };
 
-    const menuItems: ReactNode[] = React.useMemo(() => {
+    const menuItems: ReactNode[] = useMemo(() => {
         if (!contestStrategies) { return []; }
 
         const displayStrategies = !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0

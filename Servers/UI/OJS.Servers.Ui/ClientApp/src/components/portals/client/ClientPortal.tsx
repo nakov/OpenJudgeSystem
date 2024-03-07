@@ -10,9 +10,9 @@ import ContestEditPage from '../../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../../pages/administration/ContestProblemsPage';
 import SubmissionRetestPage from '../../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../../pages/administration/TestEditPage';
-import ContestPage from '../../../pages/contest/ContestPage';
 import ContestResultsPage from '../../../pages/contest-results/ContestResultsPage';
 import ContestDetailsPage from '../../../pages/contests/contest-details/ContestDetailsPage';
+import ContestSolutionSubmitPage from '../../../pages/contests/contest-solution-submit/ContestSolutionSubmitPage';
 import ContestsPage from '../../../pages/contests/ContestsPage';
 import HomePage from '../../../pages/home/HomePage';
 import LoginPage from '../../../pages/login/LoginPage';
@@ -74,7 +74,7 @@ const ClientPortal = () => {
         },
         {
             path: 'contests/:contestId/:participationType',
-            Element: ContestPage,
+            Element: ContestSolutionSubmitPage,
         },
         {
             path: 'contests/:contestId/:participationType/results/:resultType',

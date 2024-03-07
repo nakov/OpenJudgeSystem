@@ -161,7 +161,7 @@ interface IContestDetailsResponseType {
     id: number;
     name: string;
     description: string;
-    problems: IContestDetailsProblemType[];
+    problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
     canBeCompeted: boolean;

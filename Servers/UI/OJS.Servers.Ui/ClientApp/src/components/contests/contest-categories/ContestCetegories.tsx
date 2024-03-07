@@ -3,8 +3,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
-
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FaAngleDown, FaAngleUp, FaRegFileAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';

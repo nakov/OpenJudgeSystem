@@ -1,0 +1,21 @@
+@use 'src/styles/fonts';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/font-weights';
+
+.contestSolutionSubmitWrapper {
+  @extend %font-family-roboto;
+
+  padding: spacings.$sp-64;
+
+  .title {
+    font-size: variables.$f-size-30;
+    font-weight: font-weights.$font-weight-bold;
+    margin: spacings.$sp-24 0;
+  }
+
+  .problemsAndEditorWrapper {
+    display: flex;
+  }
+}
