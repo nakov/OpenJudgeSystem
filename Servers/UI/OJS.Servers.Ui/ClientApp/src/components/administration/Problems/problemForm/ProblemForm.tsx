@@ -150,8 +150,9 @@ const ProblemForm = (props: IProblemFormProps) => {
 
         if (isEditMode) {
             updateProblem(formData);
+        } else {
+            createProblem(formData);
         }
-        createProblem(formData);
     };
 
     const onStrategyAdd = (submissionType: ISubmissionTypeInProblem) => {

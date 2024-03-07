@@ -158,11 +158,11 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             await this.problemsOrderableService.ReevaluateOrder(problems);
         }
 
-        public async Task<ICollection<double>> GetOrderByContestId(int contestId)
-            => await this.problemGroupsData.GetAllByContest(contestId)
+        public ICollection<double> GetOrderByContestId(int contestId)
+            => this.problemGroupsData.GetAllByContest(contestId)
                 .Select(x => x.OrderBy)
                 .OrderBy(x => x)
-                .ToListAsync();
+                .ToHashSet();
 
         public async Task GenerateNewProblem(
             Problem problem,

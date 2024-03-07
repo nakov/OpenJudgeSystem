@@ -3,9 +3,7 @@ import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import CloseIcon from '@mui/icons-material/Close';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
@@ -13,7 +11,7 @@ import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
-import { IFilterColumn } from '../../../common/types';
+import { IEnumType, IFilterColumn } from '../../../common/types';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -57,6 +55,9 @@ const DROPDOWN_OPERATORS = {
         { name: 'Starts with', value: 'startswith' },
         { name: 'Ends with', value: 'endswith' },
     ],
+    [FilterColumnTypeEnum.ENUM]: [
+        { name: 'Equals', value: 'equals' },
+    ],
     [FilterColumnTypeEnum.BOOL]: [
         { name: 'Equals', value: 'equals' },
     ],
@@ -91,6 +92,9 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
         return FilterColumnTypeEnum.BOOL;
     } if (type === 'date') {
         return FilterColumnTypeEnum.DATE;
+    }
+    if (type === 'enum') {
+        return FilterColumnTypeEnum.ENUM;
     }
     return FilterColumnTypeEnum.STRING;
 };
@@ -287,8 +291,8 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const renderInputField = (idx: number) => {
-        const { inputType } = selectedFilters[idx];
-        if (inputType === FilterColumnTypeEnum.BOOL) {
+        const selectedFilter = selectedFilters[idx];
+        if (selectedFilter.inputType === FilterColumnTypeEnum.BOOL) {
             return (
                 <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
                     <InputLabel id="value-select-label" shrink>Value</InputLabel>
@@ -299,6 +303,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                       onChange={(e) => updateFilterColumnData(idx, e, 'value')}
                       disabled={!selectedFilters[idx].operator || idx > 0}
                     >
+
                         { BOOL_DROPDOWN_VALUES.map((column) => (
                             <MenuItem
                               key={`s-c-${column.value}`}
@@ -311,13 +316,38 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                 </FormControl>
             );
         }
+        if (selectedFilter.inputType === FilterColumnTypeEnum.ENUM) {
+            const column = columns.filter((c) => c.columnType === selectedFilter.inputType && selectedFilter.column === c.columnName)[0];
+            return (
+                <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
+                    <InputLabel id="value-select-label" shrink>Value</InputLabel>
+                    <Select
+                      labelId="value-select-label"
+                      value={selectedFilters[idx]?.value}
+                      label="Value"
+                      onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+                      disabled={!selectedFilters[idx].operator || idx > 0}
+                    >
+
+                        { column.enumValues?.map((value) => (
+                            <MenuItem
+                              key={`s-c-${value}`}
+                              value={value}
+                            >
+                                {value}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            );
+        }
         return (
             <TextField
-              label={inputType === FilterColumnTypeEnum.DATE
+              label={selectedFilter.inputType === FilterColumnTypeEnum.DATE
                   ? ' '
                   : 'Value'}
               variant="standard"
-              type={inputType}
+              type={selectedFilter.inputType}
               value={selectedFilters[idx]?.value}
               onChange={(e) => updateFilterColumnData(idx, e, 'value')}
               disabled={!selectedFilters[idx].operator || idx > 0}
@@ -414,9 +444,16 @@ const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) 
     return queryString.filter((el) => el).join(filterSeparator) ?? '';
 };
 
-const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
+const mapGridColumnsToAdministrationFilterProps =
+(dataColumns: Array<GridColDef& IEnumType>): IFilterColumn[] => dataColumns.map((column) => {
     const mappedEnumType = mapStringToFilterColumnTypeEnum(column.type || '');
-    return { columnName: column.headerName?.replace(/\s/g, '') ?? '', columnType: mappedEnumType };
+    return {
+        columnName: column.headerName?.replace(/\s/g, '') ?? '',
+        columnType: mappedEnumType,
+        enumValues: mappedEnumType === FilterColumnTypeEnum.ENUM
+            ? column.enumValues
+            : null,
+    };
 });
 
 export {

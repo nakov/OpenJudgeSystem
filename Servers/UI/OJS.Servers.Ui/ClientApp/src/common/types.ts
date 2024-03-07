@@ -468,9 +468,14 @@ interface IContestCategories {
     name: string;
 }
 
+interface IEnumType {
+    enumValues?: Array<string>;
+}
+
 interface IFilterColumn {
     columnName: string;
     columnType: FilterColumnTypeEnum;
+    enumValues?: Array<string> | null;
 }
 
 interface IAdminSlice {
@@ -552,4 +557,5 @@ export type {
     IContestCategoryAdministration,
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
+    IEnumType,
 };

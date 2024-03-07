@@ -323,7 +323,7 @@ const AdministrationPortal = () => {
                     </DrawerHeader>
                     <List sx={{ overflow: 'hidden' }}>
                         {administrationItems.map((item) => (
-                            <>
+                            <Box key={item.path}>
                                 <ListItem key={item.name} disablePadding>
                                     <Link
                                       to={item.path}
@@ -346,7 +346,7 @@ const AdministrationPortal = () => {
                                     </Link>
                                 </ListItem>
                                 <Divider />
-                            </>
+                            </Box>
                         ))}
                     </List>
                 </Drawer>

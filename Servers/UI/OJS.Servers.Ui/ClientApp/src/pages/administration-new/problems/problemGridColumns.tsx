@@ -5,12 +5,15 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { ProblemGroupTypes } from '../../../common/enums';
 import { EDIT } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
+import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemFilterableColums: GridColDef[] = [
     {
@@ -70,18 +73,19 @@ const problemFilterableColums: GridColDef[] = [
         field: 'problemGroup',
         headerName: 'Problem Group Type',
         flex: 1,
-        type: 'string',
+        type: 'enum',
         filterable: false,
         align: 'center',
         sortable: false,
         headerAlign: 'center',
+        enumValues: getStringObjectKeys(ProblemGroupTypes),
         valueFormatter: (params) => {
             if (params.value === '') {
                 return 'None';
             }
             return params.value.toString();
         },
-    },
+    } as GridColDef & IEnumType,
     {
         field: 'practiceTestsCount',
         headerName: 'Practice Tests',

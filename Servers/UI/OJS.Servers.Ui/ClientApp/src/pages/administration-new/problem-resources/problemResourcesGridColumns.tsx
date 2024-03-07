@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { ProblemResourceType } from '../../../common/enums';
 import { PROBLEM_RESOURCE } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
+import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import DownloadIconButton from '../../../components/administration/common/download/DownloadIconButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteProblemResourceMutation, useDownloadResourceQuery } from '../../../redux/services/admin/problemResourcesAdminService';
+import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemResourceFilterableColumns: GridColDef[] = [
     {
@@ -28,7 +30,7 @@ const problemResourceFilterableColumns: GridColDef[] = [
         field: 'name',
         headerName: 'Name',
         flex: 0.5,
-        type: 'number',
+        type: 'string',
         filterable: false,
         sortable: false,
         align: 'center',
@@ -38,12 +40,13 @@ const problemResourceFilterableColumns: GridColDef[] = [
         field: 'type',
         headerName: 'Type',
         flex: 0,
-        type: 'string',
         filterable: false,
         sortable: false,
         align: 'center',
+        type: 'enum',
         headerAlign: 'center',
-    },
+        enumValues: getStringObjectKeys(ProblemResourceType),
+    } as GridColDef & IEnumType,
     {
         field: 'fileExtension',
         headerName: 'File Extension',
@@ -75,8 +78,8 @@ const problemResourceFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
     },
     {
-        field: 'problem',
-        headerName: 'Problem',
+        field: 'problemName',
+        headerName: 'Problem Name',
         flex: 0.5,
         type: 'string',
         filterable: false,

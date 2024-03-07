@@ -19,15 +19,21 @@ export const problemResourcesAdminService = createApi({
                     sorting,
                 },
             }),
+            keepUnusedDataFor: 0,
         }),
+
         deleteProblemResource: builder.mutation<string, number >({
             query: (id) => ({
                 url: `/${DELETE_ENDPOINT}/${id}`,
                 method: 'DELETE',
             }),
         }),
+
         getProblemResourceById:
-        builder.query<IProblemResourceAdministrationModel, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
+        builder.query<IProblemResourceAdministrationModel, number>({
+            query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }),
+            keepUnusedDataFor: 0,
+        }),
 
         updateProblemResource: builder.mutation<string, FormData >({
             query: (resource: FormData) => ({

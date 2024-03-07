@@ -21,6 +21,6 @@ namespace OJS.Services.Administration.Business.ProblemGroups
 
         Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup);
 
-        Task<ICollection<double>> GetOrderByContestId(int contestId);
+        ICollection<double> GetOrderByContestId(int contestId);
     }
 }
