@@ -20,7 +20,7 @@ const ContestDetailsPage = () => {
     const { contestId } = useParams();
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
     const { themeColors, getColorClassName } = useTheme();
-    const { contestDetails } = useAppSelector((state) => state.contests);
+    const { contestDetails, selectedCategory } = useAppSelector((state) => state.contests);
     const { data, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -45,8 +45,9 @@ const ContestDetailsPage = () => {
     const renderAllowedLanguages = () => allowedSubmissionTypes?.map((allowedSubmissionType) => (
         <>
             <Link
+              key={`contest-sub-strat-btn-${allowedSubmissionType.id}`}
               className={styles.allowedLanguageLink}
-              to={`/contests?strategy=${allowedSubmissionType.id}`}
+              to={`/contests?category=${selectedCategory?.id}&strategy=${allowedSubmissionType.id}`}
             >
                 {allowedSubmissionType.name}
             </Link>

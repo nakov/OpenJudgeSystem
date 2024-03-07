@@ -41,6 +41,10 @@ const ContestsPage = () => {
             searchParams.set('page', '1');
             setSearchParams(searchParams);
         }
+        if (!searchParams.get('category') || searchParams.get('category') === 'undefined') {
+            searchParams.delete('category');
+            setSearchParams(searchParams);
+        }
     }, []);
 
     const selectedPage = useMemo(() => {
