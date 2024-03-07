@@ -7,7 +7,10 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px #fff inset !important;
+  outline: none;
+  // box-shadow: 0 0 0 30px inset !important;
+  transition-delay: 9999s;
+  transition-property: background-color, color;
 }
 
 .formControlContainer {
@@ -15,13 +18,31 @@ input:-webkit-autofill:active {
   position: relative;
 }
 
+.darkBackground {
+  background-color: colors.$dark-base-color-200;
+}
+
+.lightBackground {
+  background-color: colors.$white-color;
+}
+
+.lightFormControl {
+  @extend .lightBackground;
+
+  border: 1px solid colors.$dark-base-color-200;
+}
+
+.darkFormControl {
+  @extend .darkBackground;
+
+  border: 1px solid colors.$white-color;
+}
+
 .formControl {
   @extend %font-family-lato;
 
-  border: 1px solid colors.$text-dark-gray-color;
   border-radius: 6px;
   box-sizing: border-box;
-  color: colors.$text-dark-gray-color;
   font-size: 16px;
   margin-top: 15px;
   min-height: 40px;
@@ -31,14 +52,12 @@ input:-webkit-autofill:active {
 
   &:focus + label,
   &:not(:placeholder-shown) + label {
-    background: #fff;
     padding: 5px;
     transform: translateX(-13%) translateY(-130%) scale(0.8);
   }
 
   &[type='text'],
   &.formControlTextArea {
-    border: 1px solid colors.$grey-color;
     border-radius: 6px;
     color: colors.$grey-color;
     display: block;

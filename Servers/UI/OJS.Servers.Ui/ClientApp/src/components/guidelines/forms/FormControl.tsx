@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import isNil from 'lodash/isNil';
 
+import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { ClassNameType, IHaveChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -54,6 +55,8 @@ const LabelInternal = ({
     children,
     fieldType,
 }: ILabelInternalProps) => {
+    const { isDarkMode } = useTheme();
+
     if (!text && !className) {
         return (
             <div>
@@ -72,6 +75,9 @@ const LabelInternal = ({
         fieldType !== FormControlType.checkbox
             ? styles.formLabel
             : null,
+        isDarkMode
+            ? styles.darkBackground
+            : styles.lightBackground,
         className,
     );
 
@@ -107,9 +113,18 @@ const FormControl = ({
 
     const [ isChecked, setIsChecked ] = useState<boolean>(checked);
 
-    const componentClassName = concatClassNames(type !== FormControlType.checkbox
-        ? styles.formControl
-        : null, className);
+    const { isDarkMode, getColorClassName, themeColors } = useTheme();
+
+    const componentClassName = concatClassNames(
+        type !== FormControlType.checkbox
+            ? styles.formControl
+            : null,
+        isDarkMode
+            ? styles.darkFormControl
+            : styles.lightFormControl,
+        getColorClassName(themeColors.textColor),
+        className,
+    );
 
     const handleOnChange = useCallback(
         (ev: ChangeEvent<TextAreaOrInputElement>) => {
