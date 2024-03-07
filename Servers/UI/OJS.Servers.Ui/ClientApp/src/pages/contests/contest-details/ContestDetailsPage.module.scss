@@ -68,6 +68,11 @@
     margin-right: spacings.$sp-12;
   }
 
+  .disabledLink {
+    color: colors.$color-btn-disabled !important;
+    pointer-events: none !important;
+  }
+
   > a {
     align-items: center;
     display: flex;

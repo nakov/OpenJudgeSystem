@@ -68,8 +68,8 @@ const ContestDetailsPage = () => {
 
     const renderContestActionButton = (isCompete: boolean) => {
         const navigateToUrl = isCompete
-            ? `contests/${id}/compete`
-            : `contests/${id}/practice`;
+            ? `/contests/${id}/compete`
+            : `/contests/${id}/practice`;
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
@@ -93,7 +93,9 @@ const ContestDetailsPage = () => {
                   }}
                 />
                 <Link
-                  className={`${isCompete
+                  className={`${isDisabled
+                      ? styles.disabledLink
+                      : ''} ${isCompete
                       ? styles.greenColor
                       : ''}`}
                   to={`/contests/${id}/compete/results/simple`}
