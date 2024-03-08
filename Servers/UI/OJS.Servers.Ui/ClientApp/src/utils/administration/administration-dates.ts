@@ -3,8 +3,8 @@ import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
 
-const ADMIN_DEFAULT_DATE_AND_TIME_FORMAT = 'DD.MM.YYYY, HH:mm, Z';
-const ADMIN_PRECISE_DATE_AND_TIME_FORMAT = 'DD.MM.yyyy, HH:mm:ss:SSS Z';
+const ADMIN_DEFAULT_DATE_AND_TIME_FORMAT = 'DD.MM.YYYY, HH:mm';
+const ADMIN_PRECISE_DATE_AND_TIME_FORMAT = 'DD.MM.yyyy, HH:mm:ss:SSS';
 
 const convertToUtc = (date?: Date | null | undefined) => {
     if (!date) {
