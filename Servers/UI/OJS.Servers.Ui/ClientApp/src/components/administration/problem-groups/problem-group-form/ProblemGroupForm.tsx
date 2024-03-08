@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable css-modules/no-unused-class */
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
@@ -70,7 +69,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
             }
             setContestsData(contestsAutocompleteData);
         }
-    }, [ contestsAutocompleteData ]);
+    }, [ contestsAutocompleteData, problemGroupData ]);
 
     useEffect(() => {
         if (problemGroupData) {
