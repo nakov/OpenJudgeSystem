@@ -4,6 +4,7 @@ namespace OJS.Services.Administration.Business.ProblemGroups
     using OJS.Services.Common.Models;
     using System.Threading.Tasks;
     using OJS.Services.Administration.Models.ProblemGroups;
+    using System.Collections.Generic;
 
     public interface IProblemGroupsBusinessService : IAdministrationOperationService<ProblemGroup, int, ProblemGroupsAdministrationModel>
     {
@@ -13,6 +14,13 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             int sourceContestId,
             int destinationContestId);
 
+        Task GenerateNewProblem(
+            Problem problem,
+            ProblemGroup currentNewProblemGroup,
+            ICollection<Problem> problemsToAdd);
+
         Task ReevaluateProblemsAndProblemGroupsOrder(int contestId, ProblemGroup problemGroup);
+
+        ICollection<double> GetOrderByContestId(int contestId);
     }
 }

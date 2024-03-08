@@ -1,6 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.Problems;
+﻿namespace OJS.Services.Administration.Models.ProblemResources;
 
-public class AdditionalFilesDownloadModel
+public class ResourceServiceModel
 {
     public byte[]? Content { get; set; }
 
