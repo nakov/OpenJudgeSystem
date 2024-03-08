@@ -2,7 +2,6 @@ namespace OJS.Services.Administration.Data.Implementations
 {
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
     using System.Collections.Generic;
     using OJS.Data.Models;
     using OJS.Services.Common.Data.Implementations;
@@ -10,7 +9,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
     public class IpsDataService : DataService<Ip>, IIpsDataService
     {
-        public IpsDataService(OjsDbContext db)
+        public IpsDataService(DbContext db)
             : base(db)
         {
         }
