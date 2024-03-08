@@ -5,7 +5,6 @@ using OJS.Common.Extensions;
 using OJS.Services.Common.Models.Configurations;
 using Serilog;
 using Serilog.Events;
-using System;
 using System.IO;
 
 public static class HostBuilderExtensions
@@ -20,7 +19,6 @@ public static class HostBuilderExtensions
             var projectLogsDirectoryPath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName());
             var filePath = Path.Combine(projectLogsDirectoryPath, "log.txt");
             var errorFilePath = Path.Combine(projectLogsDirectoryPath, "error.txt");
-            Func<LogEvent, bool> errorsFilter = e => e.Level is LogEventLevel.Error or LogEventLevel.Fatal;
 
             configuration
                 .ReadFrom
@@ -36,7 +34,7 @@ public static class HostBuilderExtensions
                     rollOnFileSizeLimit: true,
                     retainedFileCountLimit: null)
                 .WriteTo
-                .Logger(l => l.Filter.ByIncludingOnly(errorsFilter)
+                .Logger(l => l.Filter.ByIncludingOnly(e => e.Level is LogEventLevel.Error or LogEventLevel.Fatal)
                     .WriteTo
                     .File(
                         errorFilePath,
