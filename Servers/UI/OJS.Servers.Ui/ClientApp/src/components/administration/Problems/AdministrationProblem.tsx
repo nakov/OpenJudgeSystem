@@ -11,7 +11,6 @@ enum PROBLEM_LISTED_DATA {
     TESTS = 'tests',
     RESOURCES = 'resources'
 }
-
 const AdministrationProblem = () => {
     const { pathname } = useLocation();
     const [ , , , problemId ] = pathname.split('/');
@@ -32,7 +31,6 @@ const AdministrationProblem = () => {
     const returnTests = (key: string) => (
         <TestsInProblemView key={key} problemId={Number(problemId)} />
     );
-
     return (
         <TabsInView
           form={returnProblemForm}

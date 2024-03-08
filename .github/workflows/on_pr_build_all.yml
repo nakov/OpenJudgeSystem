@@ -13,39 +13,43 @@ on:
     branches:
       - "*"
 jobs:
-  build-and-push-fe:
-    name: Front-End build and push
+  build-fe:
+    name: Front-End build
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_fe
       dockerfile_name: Dockerfile.fe
+      push_to_registry: false
       build_args: YARN_BUILD_COMMAND=build
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
         export NODE_OPTIONS=--max-old-space-size=8192
     secrets: inherit
-  build-and-push-ui:
-    name: UI api build and push
+  build-ui:
+    name: UI api build
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_ui
       dockerfile_name: Dockerfile.ui
+      push_to_registry: false
     secrets: inherit
-  build-and-push-admin:
-    name: Admin build and push
+  build-admin:
+    name: Administration api build
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_administration
       dockerfile_name: Dockerfile.administration
+      push_to_registry: false
     secrets: inherit
-  build-and-push-worker:
-    name: Worker build and push
+  build-worker:
+    name: Worker build
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_worker
       dockerfile_name: Dockerfile.worker
+      push_to_registry: false
     secrets: inherit

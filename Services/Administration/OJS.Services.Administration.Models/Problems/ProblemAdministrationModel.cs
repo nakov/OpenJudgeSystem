@@ -64,6 +64,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.SolutionSkeleton, opt
                  => opt.Ignore())
+             .ForMember(p => p.AdditionalFiles, opt
+                 => opt.Ignore())
              .ForMember(p => p.Tests, opt
                  => opt.Ignore())
              .ForMember(pam => pam.Resources, opt
