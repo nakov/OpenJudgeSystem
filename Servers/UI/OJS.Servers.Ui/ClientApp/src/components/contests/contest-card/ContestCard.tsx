@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import { COMPETE_STRING, PRACTICE_STRING } from '../../../utils/constants';
+import { COMPETE_STRING, generateContestBtnUrlString, PRACTICE_STRING } from '../../../utils/constants';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil,
@@ -125,8 +125,8 @@ const ContestCard = (props: IContestCardProps) => {
             ? COMPETE_STRING
             : PRACTICE_STRING;
         const btnNavigateUrl = isCompete
-            ? `/contests/${id}/compete`
-            : `/contests/${id}/practice`;
+            ? generateContestBtnUrlString(true, id)
+            : generateContestBtnUrlString(false, id);
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
@@ -154,7 +154,7 @@ const ContestCard = (props: IContestCardProps) => {
                           navigate('/login');
                           return;
                       }
-                      navigate(btnNavigateUrl);
+                      navigate(btnNavigateUrl!);
                   }}
                 />
             </div>

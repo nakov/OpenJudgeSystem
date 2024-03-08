@@ -10,6 +10,7 @@ import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { COMPETE_STRING, generateContestBtnUrlString, PRACTICE_STRING } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './ContestDetailsPage.module.scss';
@@ -56,7 +57,7 @@ const ContestDetailsPage = () => {
     ));
 
     const renderProblemsNames = () => {
-        if (!problems || problems.length === 0) {
+        if (!problems) {
             return 'The problems for this contest are not public.';
         }
         return problems.map((problem) => (
@@ -68,8 +69,8 @@ const ContestDetailsPage = () => {
 
     const renderContestActionButton = (isCompete: boolean) => {
         const navigateToUrl = isCompete
-            ? `/contests/${id}/compete`
-            : `/contests/${id}/practice`;
+            ? generateContestBtnUrlString(true, id)
+            : generateContestBtnUrlString(false, id);
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
@@ -77,8 +78,8 @@ const ContestDetailsPage = () => {
             <div className={styles.actionBtnWrapper}>
                 <Button
                   text={isCompete
-                      ? 'COMPETE'
-                      : 'PRACTICE'}
+                      ? COMPETE_STRING
+                      : PRACTICE_STRING}
                   state={isDisabled
                       ? ButtonState.disabled
                       : ButtonState.enabled}
@@ -89,7 +90,7 @@ const ContestDetailsPage = () => {
                           navigate('/login');
                           return;
                       }
-                      navigate(navigateToUrl);
+                      navigate(navigateToUrl!);
                   }}
                 />
                 <Link
@@ -98,7 +99,9 @@ const ContestDetailsPage = () => {
                       : ''} ${isCompete
                       ? styles.greenColor
                       : ''}`}
-                  to={`/contests/${id}/compete/results/simple`}
+                  to={`/contests/${id}/${isCompete
+                      ? 'compete'
+                      : 'practice'}/results/simple`}
                 >
                     <i className="fas fa-user" />
                     <div className={`${styles.underlinedBtnText}`}>
