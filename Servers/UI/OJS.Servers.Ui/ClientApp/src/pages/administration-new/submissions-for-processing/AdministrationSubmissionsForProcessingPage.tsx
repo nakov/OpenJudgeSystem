@@ -15,7 +15,6 @@ import {
 } from '../../../redux/features/admin/submissionsAdminSlice';
 import { useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
@@ -62,12 +61,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
         },
     ];
 
-    const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            Grid actions here
-        </div>
-    );
-
     return (
         isLoading || isFetching
             ? <SpinningLoader />
@@ -77,7 +70,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
-                  renderActionButtons={renderGridActions}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   selectedFilters={selectedFilters || []}

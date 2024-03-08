@@ -4,15 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { IconButton, Modal, Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import CategoryEdit from '../../../components/administration/ContestCategories/CategoryEdit/CategoryEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestCategoriesFilters, setAdminContestCategoriesSorters } from '../../../redux/features/admin/contestCategoriesAdminSlice';
 import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
-// import { useGetAllAdminContestsQuery } from '../../redux/services/admin/contestsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
@@ -51,23 +51,21 @@ const AdministrationContestCategoriesPage = () => {
     }, [ sortingParams ]);
 
     const renderEditContestCategoryModal = (index: number) => (
-        <Modal
-          key={index}
+        <AdministrationModal
+          index={index}
           open={openEditContestCategoryModal}
           onClose={() => setOpenEditContestCategoryModal(false)}
         >
             <Box sx={modalStyles}>
                 <CategoryEdit contestCategoryId={Number(contestCategoryId)} />
             </Box>
-        </Modal>
+        </AdministrationModal>
     );
 
     const renderCreateContestCategoryModal = (index: number) => (
-        <Modal key={index} open={openShowCreateContestCategoryModal} onClose={() => setOpenShowCreateContestCategoryModal(!openShowCreateContestCategoryModal)}>
-            <Box sx={modalStyles}>
-                <CategoryEdit contestCategoryId={null} isEditMode={false} />
-            </Box>
-        </Modal>
+        <AdministrationModal index={index} open={openShowCreateContestCategoryModal} onClose={() => setOpenShowCreateContestCategoryModal(!openShowCreateContestCategoryModal)}>
+            <CategoryEdit contestCategoryId={null} isEditMode={false} />
+        </AdministrationModal>
     );
 
     const renderGridActions = () => (

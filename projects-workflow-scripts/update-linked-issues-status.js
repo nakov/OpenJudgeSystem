@@ -44,7 +44,7 @@ async function getIssueRepoMilestones(owner, repo) {
 async function updateIssueMilestone(issueId, milestoneId) {
     const result = await fetchGitHubAPI(
         `mutation updateIssueMilestone($issueId:ID!, $milestoneId:ID!) {
-        updateIssue(input: {id: $issueId, milestoneId: $milestoneId}){
+        updateIssue(input: {id: $issueId, milestoneId: $milestoneId, state: OPEN}){
           clientMutationId
         }
       }`,

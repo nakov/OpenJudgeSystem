@@ -8,7 +8,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
-    public int OrderBy { get; set; }
+    public double OrderBy { get; set; }
 
     public string? Type { get; set; }
 

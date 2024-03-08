@@ -52,6 +52,7 @@ namespace OJS.Data.Models.Problems
         /// Gets or sets Problem specific dependencies that will be compiled and executed with the user code
         /// such as Solution skeletons, mocks or data and text files.
         /// </summary>
+        // Deprecated
         public byte[]? AdditionalFiles { get; set; }
 
         [DefaultValue(true)]

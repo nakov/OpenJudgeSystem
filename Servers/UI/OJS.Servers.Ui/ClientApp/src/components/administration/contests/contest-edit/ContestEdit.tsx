@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable css-modules/no-unused-class */
+
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
-import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
+import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { getEnumMemberName } from '../../../../utils/string-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -41,7 +43,6 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
         allowParallelSubmissionsInTasks: false,
-        autoChangeTestsFeedbackVisibility: false,
         categoryId: 0,
         categoryName: '',
         contestPassword: '',
@@ -51,10 +52,10 @@ const ContestEdit = (props:IContestEditProps) => {
         id: 0,
         isVisible: false,
         limitBetweenSubmissions: 0,
-        newIpPassword: '',
+        newIpPassword: null,
         orderBy: 0,
         practiceEndTime: null,
-        practicePassword: '',
+        practicePassword: null,
         practiceStartTime: null,
         startTime: null,
         type: 'Exercise',
@@ -74,9 +75,11 @@ const ContestEdit = (props:IContestEditProps) => {
         isNewIpPasswordValid: true,
         isDurationTouched: false,
         isDurationValid: true,
+        isNumberOfProblemGroupsTouched: false,
+        isNUmberOfProblemGroupsValid: true,
     });
 
-    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
+    const { refetch: retake, data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
     const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
 
     const [
@@ -84,11 +87,13 @@ const ContestEdit = (props:IContestEditProps) => {
             data: updateData,
             isLoading: isUpdating,
             error: updateError,
+            isSuccess: isSuccessfullyUpdating,
         } ] = useUpdateContestMutation();
 
     const [
         createContest, {
             data: createData,
+            isSuccess: isSuccessfullyCreating,
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestMutation();
@@ -103,14 +108,22 @@ const ContestEdit = (props:IContestEditProps) => {
     );
 
     useEffect(() => {
-        const message = getAndSetSuccesfullMessages([ updateData, createData ]);
+        const message = getAndSetSuccesfullMessages([
+            { message: updateData, shouldGet: isSuccessfullyUpdating },
+            { message: createData, shouldGet: isSuccessfullyCreating } ]);
         setSuccessMessage(message);
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccessfullyUpdating, isSuccessfullyCreating ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
         setSuccessMessage(null);
     }, [ updateError, createError ]);
+
+    useEffect(() => {
+        if (isSuccessfullyUpdating) {
+            retake();
+        }
+    }, [ isSuccessfullyUpdating, retake ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
@@ -118,7 +131,8 @@ const ContestEdit = (props:IContestEditProps) => {
         contestValidations.isLimitBetweenSubmissionsValid &&
         contestValidations.isOrderByValid &&
         contestValidations.isNewIpPasswordValid &&
-        contestValidations.isDurationValid;
+        contestValidations.isDurationValid &&
+        contestValidations.isNUmberOfProblemGroupsValid;
         setIsValidForm(isValid);
     };
 
@@ -140,7 +154,6 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceEndTime,
             isVisible,
             allowParallelSubmissionsInTasks,
-            autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
             numberOfProblemGroups,
@@ -256,10 +269,6 @@ const ContestEdit = (props:IContestEditProps) => {
             allowParallelSubmissionsInTasks = checked;
             break;
         }
-        case 'autoChangeTestsFeedbackVisibility': {
-            autoChangeTestsFeedbackVisibility = checked;
-            break;
-        }
         case 'category': {
             const category = contestCategories?.find((cc) => cc.id === value);
             if (category) {
@@ -268,12 +277,13 @@ const ContestEdit = (props:IContestEditProps) => {
             }
             break;
         }
-        case 'numberOfProblemGroups': {
+        case 'numberOfProblemGroups':
+            currentContestValidations.isNumberOfProblemGroupsTouched = true;
             if (value) {
+                currentContestValidations.isNUmberOfProblemGroupsValid = value >= 0;
                 numberOfProblemGroups = Number(value);
             }
             break;
-        }
         case 'duration': {
             let currentValue = value;
 
@@ -307,7 +317,6 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceEndTime,
             isVisible,
             allowParallelSubmissionsInTasks,
-            autoChangeTestsFeedbackVisibility,
             categoryId,
             categoryName,
             numberOfProblemGroups,
@@ -356,8 +365,8 @@ const ContestEdit = (props:IContestEditProps) => {
 
     return (
         <Box className={`${styles.flex}`}>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessage && renderAlert(successMessage, AlertSeverity.Success, 0, 3000)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
                 {contest.name || 'Contest form'}
             </Typography>
@@ -429,6 +438,13 @@ const ContestEdit = (props:IContestEditProps) => {
                           onChange={(e) => onChange(e)}
                           InputLabelProps={{ shrink: true }}
                           name="numberOfProblemGroups"
+                          disabled={isEditMode ||
+                            contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
+                          error={(contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid)}
+                          helperText={(
+                              contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid
+                          ) &&
+                          CONTEST_NUMBER_OF_PROBLEM_GROUPS}
                         />
                     </Box>
                     <Box>
@@ -488,6 +504,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               : undefined}
                           name="duration"
                           onChange={(e) => onChange(e)}
+                          disabled={contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
                           InputLabelProps={{ shrink: true }}
                           error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
                           helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
@@ -599,16 +616,6 @@ const ContestEdit = (props:IContestEditProps) => {
                       name="allowParallelSubmissionsInTasks"
                       onChange={(e) => onChange(e)}
                       label={ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}
-                    />
-                    <FormControlLabel
-                      control={(
-                          <Checkbox
-                            checked={contest?.autoChangeTestsFeedbackVisibility}
-                          />
-                                )}
-                      name="autoChangeTestsFeedbackVisibility"
-                      onChange={(e) => onChange(e)}
-                      label={AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}
                     />
                 </Box>
             </form>

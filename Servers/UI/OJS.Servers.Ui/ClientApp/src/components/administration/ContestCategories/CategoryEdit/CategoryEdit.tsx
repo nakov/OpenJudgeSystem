@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
 import {
-    ExceptionData,
     IContestCategories,
     IContestCategoryAdministration,
 } from '../../../../common/types';
@@ -14,7 +13,8 @@ import {
     useGetCategoriesQuery,
     useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation,
 } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
+import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 
@@ -41,7 +41,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     const { contestCategoryId, isEditMode = true } = props;
 
     const navigate = useNavigate();
-    const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
 
@@ -84,7 +84,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     );
 
     useEffect(() => {
-        setErrorMessages([]);
         if (isSuccesfullyUpdated) {
             setSuccessMessage(updateData as string);
             setErrorMessages([]);
@@ -96,15 +95,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     }, [ createData, isSuccesfullyCreated, isSuccesfullyUpdated, updateData ]);
 
     useEffect(() => {
-        if (updateError && !isSuccesfullyUpdated) {
-            setSuccessMessage(null);
-            setErrorMessages(updateError as Array<ExceptionData>);
-        } else if (createError && !isSuccesfullyCreated) {
-            setSuccessMessage(null);
-            setErrorMessages(createError as Array<ExceptionData>);
-        } else {
-            setErrorMessages([]);
-        }
+        getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
     }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
     const validateForm = () => {
@@ -194,27 +185,8 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             ? <SpinningLoader />
             : (
                 <div className={`${styles.flex}`}>
-                    {errorMessages.map((x, i) => (
-                        <Alert
-                          key={x.name}
-                          variant={AlertVariant.Filled}
-                          vertical={AlertVerticalOrientation.Top}
-                          horizontal={AlertHorizontalOrientation.Right}
-                          severity={AlertSeverity.Error}
-                          message={x.message}
-                          styles={{ marginTop: `${i * 4}rem` }}
-                        />
-                    ))}
-                    {successMessage && (
-                        <Alert
-                          variant={AlertVariant.Filled}
-                          autoHideDuration={3000}
-                          vertical={AlertVerticalOrientation.Top}
-                          horizontal={AlertHorizontalOrientation.Right}
-                          severity={AlertSeverity.Success}
-                          message={successMessage}
-                        />
-                    )}
+                    {renderErrorMessagesAlert(errorMessages)}
+                    {renderSuccessfullAlert(successMessage)}
                     <Typography className={styles.centralize} variant="h4">
                         {isEditMode
                             ? contestCategory.name

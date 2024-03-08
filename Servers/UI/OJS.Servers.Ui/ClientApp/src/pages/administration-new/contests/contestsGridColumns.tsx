@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
@@ -24,7 +24,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'name',
         headerName: `${NAME}`,
-        width: 200,
         flex: 2,
         headerAlign: 'center',
         type: 'string',
@@ -54,7 +53,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'contestPassword',
         headerName: `${COMPETE_PASSWORD}`,
-        width: 100,
         flex: 1,
         align: 'center',
         type: 'string',
@@ -64,7 +62,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'startTime',
         headerName: `${COMPETE_START_TIME}`,
-        width: 105,
         flex: 1.5,
         align: 'center',
         type: 'date',
@@ -76,7 +73,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'endTime',
         headerName: `${COMPETE_END_TIME}`,
-        width: 105,
         flex: 1.5,
         align: 'center',
         type: 'date',
@@ -97,14 +93,6 @@ const contestFilterableColumns: GridColDef[] = [
     {
         field: 'allowParallelSubmissionsInTasks',
         headerName: `${ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS}`,
-        type: 'boolean',
-        flex: 0,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'autoChangeTestsFeedbackVisibility',
-        headerName: `${AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY}`,
         type: 'boolean',
         flex: 0,
         filterable: false,
@@ -135,7 +123,7 @@ export const returnContestsNonFilterableColumns = (
     {
         field: 'actions',
         headerName: 'Actions',
-        width: 140,
+        flex: 1,
         headerAlign: 'center',
         align: 'center',
         filterable: false,

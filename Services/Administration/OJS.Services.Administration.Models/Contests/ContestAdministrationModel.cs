@@ -45,8 +45,6 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public bool AllowParallelSubmissionsInTasks { get; set; }
 
-    public bool AutoChangeTestsFeedbackVisibility { get; set; }
-
     public double OrderBy { get; set; }
 
     public bool IsOnlineExam => this.Type == ContestType.OnlinePracticalExam.ToString();
@@ -84,6 +82,8 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
             .ForMember(crm => crm.CreatedOn, opt
                 => opt.Ignore())
             .ForMember(crm => crm.ModifiedOn, opt
-                => opt.Ignore());
+                => opt.Ignore())
+            .ForMember(crm => crm.AutoChangeTestsFeedbackVisibility, opt
+            => opt.Ignore());
     }
 }
