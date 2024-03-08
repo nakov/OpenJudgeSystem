@@ -369,6 +369,15 @@ interface IProblemAdministration {
     problemGroupOrderBy: number;
 }
 
+interface ISubmissionTypesInListModel{
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    allowBinaryFilesUpload: boolean;
+    allowedFileExtensions: string;
+}
+
 interface IUserRoleType {
     id: string;
     name: string;
@@ -558,4 +567,5 @@ export type {
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
     IEnumType,
+    ISubmissionTypesInListModel,
 };

@@ -10,7 +10,7 @@ using OJS.Services.Administration.Models.SubmissionTypes;
 using OJS.Services.Administration.Models.Validation;
 using System.Threading.Tasks;
 
-public class SubmissionTypesController : BaseAdminApiController<SubmissionType, int, SubmissionType, SubmissionTypesAdministrationModel>
+public class SubmissionTypesController : BaseAdminApiController<SubmissionType, int, SubmissionTypesInListModel, SubmissionTypesAdministrationModel>
 {
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
 
