@@ -44,8 +44,6 @@ interface ISubmissionType {
     contestId:number;
 }
 
-interface I
-
 interface ITestRunDetailsType extends ITestRunType {
     isTrialTest: boolean;
     input: string;

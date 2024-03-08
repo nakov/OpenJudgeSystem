@@ -182,7 +182,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         var zipFile = await this.zipArchivesService.GetZipArchive(files);
         var zipFileName = $"{problem.Name}_Tests_{DateTime.Now}{GlobalConstants.FileExtensions.Zip}";
 
-        return new TestsZipExportModel()
+        return new TestsZipExportModel
         {
             Content = zipFile, FileName = zipFileName, MimeType = GlobalConstants.MimeTypes.ApplicationZip,
         };
