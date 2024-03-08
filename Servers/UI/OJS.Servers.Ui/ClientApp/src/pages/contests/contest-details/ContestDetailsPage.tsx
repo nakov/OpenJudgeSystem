@@ -19,7 +19,7 @@ const ContestDetailsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { contestId } = useParams();
-    const { isLoggedIn } = useAppSelector((state) => state.authorization);
+    const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
     const { themeColors, getColorClassName } = useTheme();
     const { contestDetails, selectedCategory } = useAppSelector((state) => state.contests);
     const { data, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
@@ -66,6 +66,13 @@ const ContestDetailsPage = () => {
             </div>
         ));
     };
+
+    const renderAdministrationButtons = () => (
+        <div>
+            <Button onClick={() => navigate(`/administration-new/contests/${id}`)}>Edit</Button>
+            <Button className={styles.adminBtn} onClick={() => navigate(`/contests/${id}/compete/results/full`)}>Full Results</Button>
+        </div>
+    );
 
     const renderContestActionButton = (isCompete: boolean) => {
         const navigateToUrl = isCompete
@@ -156,6 +163,9 @@ const ContestDetailsPage = () => {
                     <div className={styles.title}>Problems</div>
                     <div>{renderProblemsNames()}</div>
                 </div>
+            </div>
+            <div>
+                {user.canAccessAdministration && renderAdministrationButtons()}
             </div>
             <div className={styles.actionButtonsWrapper}>
                 {renderContestActionButton(true)}
