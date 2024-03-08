@@ -21,10 +21,11 @@ export const problemGroupsAdminService = createApi({
                     sorting,
                 },
             }),
+            keepUnusedDataFor: 0,
         }),
         deleteProblemGroup: builder.mutation<string, number >({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
         getProblemGroupById:
-        builder.query<IProblemGroupAdministrationModel, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
+        builder.query<IProblemGroupAdministrationModel, number>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }), keepUnusedDataFor: 0 }),
         updateProblemGroup: builder.mutation<string, IProblemGroupAdministrationModel >({
             query: (problemGroup) => ({
                 url: `/${UPDATE_ENDPOINT}`,
@@ -39,6 +40,8 @@ export const problemGroupsAdminService = createApi({
                 body: problemGroup,
             }),
         }),
+        getIdsByContestId:
+        builder.query<Array<number>, number>({ query: (id) => ({ url: `/ByContestId/${id}` }) }),
 
     }),
 });
@@ -50,5 +53,6 @@ export const {
     useGetProblemGroupByIdQuery,
     useUpdateProblemGroupMutation,
     useCreateProblemGroupMutation,
+    useGetIdsByContestIdQuery,
 } = problemGroupsAdminService;
 export default problemGroupsAdminService;
