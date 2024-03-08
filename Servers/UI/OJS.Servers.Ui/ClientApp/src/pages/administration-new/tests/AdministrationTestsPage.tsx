@@ -46,6 +46,7 @@ const AdministrationTestsPage = () => {
 
     const renderTestEditModal = (index: number) => (
         <AdministrationModal
+          key={index}
           index={index}
           open={openEditTestModal}
           onClose={() => setOpenEditTestModal(false)}

@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import testRunsFilterableColumns from '../../../../pages/administration-new/test-runs/testRunsGridColumns';
 import { setAdminTestsFilters, setAdminTestsSorters } from '../../../../redux/features/admin/testsSlice';
@@ -27,21 +29,22 @@ const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
-    const selectedFilters = useSelector((state: IRootStore) => state.adminTests[location]?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminTests[location]?.selectedSorters);
+    const selectedFilters = useSelector((state: IRootStore) => state.adminTests[location]?.selectedFilters) ?? [];
+    const selectedSorters = useSelector((state: IRootStore) => state.adminTests[location]?.selectedSorters) ?? [];
 
     const { data: testData, error, isLoading } = useGetTestRunsByTestIdQuery({ testId, ...queryParams });
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
+    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
+
+    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filterParams ?? '' });
-    }, [ filterParams ]);
+        setQueryParams({ ...queryParams, filter: filtersQueryParams ?? '' });
+    }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
-    }, [ sortingParams ]);
+        setQueryParams({ ...queryParams, sorting: sortersQueryParams ?? '' });
+    }, [ sortersQueryParams ]);
 
     if (isLoading) {
         return (

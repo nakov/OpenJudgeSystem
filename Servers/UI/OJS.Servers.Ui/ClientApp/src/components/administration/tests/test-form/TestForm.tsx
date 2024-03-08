@@ -1,8 +1,3 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-undefined */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable css-modules/no-unused-class */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Box, Checkbox, debounce, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -21,6 +16,7 @@ import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { ITestAdministration, TestTypes } from '../types';
 
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface ITestFormProps {
@@ -74,7 +70,7 @@ const TestForm = (props: ITestFormProps) => {
             { message: createData, shouldGet: isSuccessfullyCreated },
         ]);
         setSuccessfullMessage(message);
-    }, [ editData, createData ]);
+    }, [ editData, createData, isSuccessfullyEdited, isSuccessfullyCreated ]);
 
     useEffect(() => {
         if (dropdownDataResponse) {
@@ -98,7 +94,6 @@ const TestForm = (props: ITestFormProps) => {
     };
 
     const handleAutocompleteChange = (problem: ITestsDropdownData | null) => {
-        console.log('HERE');
         if (problem) {
             setTest((prevState) => ({
                 ...prevState,
@@ -110,7 +105,7 @@ const TestForm = (props: ITestFormProps) => {
 
     const onSearchStringChange = debounce((value:string) => {
         setSearchString(value);
-    }, 300);
+    }, 500);
 
     const renderFormSubmitButtons = () => (
         isEditMode
@@ -171,7 +166,7 @@ const TestForm = (props: ITestFormProps) => {
                               className={formStyles.inputRow}
                               onChange={(event, problem) => handleAutocompleteChange(problem)}
                               onInputChange={(event, value) => onSearchStringChange(value)}
-                              value={dropdownData?.find((data) => data.id === test.problemId) ?? null}
+                              value={dropdownData?.find((dropdDown) => dropdDown.id === test.problemId) ?? null}
                               options={dropdownData!}
                               renderInput={(params) => <TextField {...params} label={SELECT_PROBLEM} key={params.id} />}
                               getOptionLabel={(option) => option?.name}
