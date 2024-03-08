@@ -1,18 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/self-closing-comp */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { ProblemGroupTypes } from '../../../common/enums';
-import { EDIT, PROBLEM_GROUP } from '../../../common/labels';
+import { PROBLEM_GROUP } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { IEnumType } from '../../../common/types';
-import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
-import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import { useDeleteProblemGroupMutation } from '../../../redux/services/admin/problemGroupsAdminService';
-import { getStringObjectKeys } from '../../../utils/object-utils';
+import { useDeleteSubmissionTypeMutation } from '../../../redux/services/admin/submissionTypesAdminService';
 
 const submissionTypesFilterableColumns: GridColDef[] = [
     {
@@ -28,7 +21,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
     },
     {
         field: 'name',
-        headerName: 'name',
+        headerName: 'Name',
         flex: 2,
         type: 'string',
         filterable: false,
@@ -90,15 +83,11 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton
-                  path={`/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}/${Number(params.row.id)}`}
-                  location={`${EDIT} page`}
-                />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={`${PROBLEM_GROUP}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={useDeleteProblemGroupMutation}
+                  mutation={useDeleteSubmissionTypeMutation}
                 />
             </div>
         ),

@@ -501,6 +501,7 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminSubmissionTypes: IAdminSlice;
 }
 type ExceptionData = {
     name: string;

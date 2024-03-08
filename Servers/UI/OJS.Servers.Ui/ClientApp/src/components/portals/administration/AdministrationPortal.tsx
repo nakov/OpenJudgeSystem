@@ -26,6 +26,7 @@ import AdministrationContestsPage from '../../../pages/administration-new/contes
 import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
+import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
@@ -263,7 +264,7 @@ const AdministrationPortal = () => {
         },
         {
             path: `${SUBMISSION_TYPES_PATH}`,
-            Element: Administration,
+            Element: AdministrationSubmissionTypesPage,
         },
         {
             path: '/administration',

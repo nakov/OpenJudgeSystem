@@ -3,11 +3,13 @@ import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminSUbmissionTypesFilters, setAdminSUbmissionTypesSorters } from '../../../redux/features/admin/submissionTypesAdminSlice';
+import { useGetAllSubmissionTypesQuery } from '../../../redux/services/admin/submissionTypesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
-import submissionTypesFilterableColumns from './submissionTypesGridColumns';
+import submissionTypesFilterableColumns, { returnNonFilterableColumns } from './submissionTypesGridColumns';
 
 const location = 'all-submission-types';
 const AdministrationSubmissionTypesPage = () => {
@@ -20,8 +22,9 @@ const AdministrationSubmissionTypesPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
-    const selectedFilters = useSelector((state: IRootStore) => state.adminProblems[location]?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminProblems[location]?.selectedSorters);
+    const { data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
+    const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissionTypes[location]?.selectedFilters);
+    const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissionTypes[location]?.selectedSorters);
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
@@ -34,19 +37,19 @@ const AdministrationSubmissionTypesPage = () => {
         setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
+    const onEditClick = (id: number) => {
+        console.log(`Edit clicked.${id}`);
+    };
+
+    if (isGettingData) {
+        return <SpinningLoader />;
+    }
+
     return (
         <AdministrationGridView
           filterableGridColumnDef={submissionTypesFilterableColumns}
-          notFilterableGridColumnDef={
-                returnNonFilterableColumns(
-                    onEditClick,
-                    useDeleteProblemMutation,
-                    openCopyModal,
-                    openRetestModal,
-                    retakeProblems,
-                )
-}
-          data={problemsData}
+          notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
+          data={submissionTypesData}
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
