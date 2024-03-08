@@ -2,8 +2,8 @@
 /* eslint-disable import/group-exports */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IFileModel, IGetAllAdminParams, IPagedResultType } from '../../../common/types';
-import { IGetByProblemId } from '../../../common/url-types';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, ITestRunInListModel } from '../../../common/types';
+import { IGetByProblemId, IGetByTestId } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
 import { ITestAdministration, ITestInListData } from '../../../components/administration/tests/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -65,7 +65,17 @@ export const testsAdminService = createApi({
             }),
         }),
         exportZip: builder.query<IFileModel, number>({ query: (problemId) => ({ url: `/ExportZip/${problemId}` }), keepUnusedDataFor: 5 }),
-
+        getTestRunsByTestId: builder.query<IPagedResultType<ITestRunInListModel>, IGetByTestId>({
+            query: ({ testId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetTestRunsByTestId/${testId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
     }),
 });
 
@@ -80,6 +90,7 @@ export const {
     useDeleteByProblemMutation,
     useImportTestsMutation,
     useExportZipQuery,
+    useGetTestRunsByTestIdQuery,
 
 } = testsAdminService;
 export default testsAdminService;

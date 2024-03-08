@@ -54,6 +54,16 @@ interface IPublicSubmissionResult {
     maxPoints: number;
 }
 
+interface ITestRunInListModel {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
+}
+
 interface ISubmissionResponseModel {
     id: number;
     createdOn: Date;
@@ -577,4 +587,5 @@ export type {
     ITestsUploadModel,
     IFileModel,
     IEnumType,
+    ITestRunInListModel,
 };

@@ -11,6 +11,7 @@ enum PROBLEM_LISTED_DATA {
     TESTS = 'tests',
     RESOURCES = 'resources'
 }
+
 const AdministrationProblem = () => {
     const { pathname } = useLocation();
     const [ , , , problemId ] = pathname.split('/');
