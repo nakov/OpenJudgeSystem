@@ -7,7 +7,6 @@ var statusName = process.env.STATUS_NAME;
 async function main() {
     var result = await getPrLinkedIssues(repositoryName, owner, prNumber);
     var resultIssues = result.data?.repository?.pullRequest?.closingIssuesReferences?.nodes;
-    console.log('found resultIssues: ', resultIssues.length, 'for pr #', prNumber);
 
     if (resultIssues !== undefined && resultIssues.length > 0) {
         resultIssues.forEach(async issue => {
@@ -17,7 +16,6 @@ async function main() {
             let milestonesResult = await getIssueRepoMilestones(owner, issueRepo);
             let milestonesData = milestonesResult?.data?.repository?.milestones?.nodes;
             let milestoneId = milestonesData?.find(obj => obj.title === statusName)?.id;
-            console.log('milestoneId', milestoneId, 'issue', issue['id'])
 
             if(milestoneId !== undefined){
                 updateIssueMilestone(issue['id'], milestoneId);
@@ -46,7 +44,7 @@ async function getIssueRepoMilestones(owner, repo) {
 async function updateIssueMilestone(issueId, milestoneId) {
     const result = await fetchGitHubAPI(
         `mutation updateIssueMilestone($issueId:ID!, $milestoneId:ID!) {
-        updateIssue(input: {id: $issueId, milestoneId: $milestoneId}){
+        updateIssue(input: {id: $issueId, milestoneId: $milestoneId, state: OPEN}){
           clientMutationId
         }
       }`,
