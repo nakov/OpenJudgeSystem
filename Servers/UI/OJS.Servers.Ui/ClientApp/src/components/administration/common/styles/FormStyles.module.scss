@@ -32,30 +32,30 @@
 }
 
 .form {
-    min-height: 400px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    margin: 0 auto;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin: 0 auto;
+  min-height: 400px;
+  width: 100%;
 }
 
 .dividerLabel {
-    margin-top: 1rem !important;
-    align-self: flex-start;
+  align-self: flex-start;
+  margin-top: 1rem !important;
 }
 
 .spacing {
-    margin: 1rem !important;
+  margin: 1rem !important;
 }
 
 .selectFormGroup {
-    margin: 1rem 0;
-    width: 90%;
-    align-self: center;
+  align-self: center;
+  margin: 1rem 0;
+  width: 90%;
 }
 
 .inlineElement {
-    width: 50%;
+  width: 50%;
 }
