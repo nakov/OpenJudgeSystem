@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
-import Button, { ButtonSize, ButtonState } from '../../../components/guidelines/buttons/Button';
+import ContestButton from '../../../components/contests/contest-button/ContestButton';
+import Button from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { COMPETE_STRING, generateContestBtnUrlString, PRACTICE_STRING } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './ContestDetailsPage.module.scss';
@@ -19,7 +19,7 @@ const ContestDetailsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { contestId } = useParams();
-    const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
     const { themeColors, getColorClassName } = useTheme();
     const { contestDetails, selectedCategory } = useAppSelector((state) => state.contests);
     const { data, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
@@ -75,31 +75,12 @@ const ContestDetailsPage = () => {
     );
 
     const renderContestActionButton = (isCompete: boolean) => {
-        const navigateToUrl = isCompete
-            ? generateContestBtnUrlString(true, id)
-            : generateContestBtnUrlString(false, id);
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
         return (
             <div className={styles.actionBtnWrapper}>
-                <Button
-                  text={isCompete
-                      ? COMPETE_STRING
-                      : PRACTICE_STRING}
-                  state={isDisabled
-                      ? ButtonState.disabled
-                      : ButtonState.enabled}
-                  size={ButtonSize.small}
-                  isCompete={isCompete}
-                  onClick={() => {
-                      if (!isLoggedIn) {
-                          navigate('/login');
-                          return;
-                      }
-                      navigate(navigateToUrl!);
-                  }}
-                />
+                <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id!} />
                 <Link
                   className={`${isDisabled
                       ? styles.disabledLink

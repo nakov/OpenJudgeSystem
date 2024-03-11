@@ -1,18 +1,13 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import { IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import { COMPETE_STRING, generateContestBtnUrlString, PRACTICE_STRING } from '../../../utils/constants';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil,
     preciseFormatDate,
 } from '../../../utils/dates';
-import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
+import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCard.module.scss';
 
@@ -33,9 +28,6 @@ const ContestCard = (props: IContestCardProps) => {
     const { contest } = props;
 
     const { themeColors, getColorClassName } = useTheme();
-    const { isLoggedIn } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const navigate = useNavigate();
 
     const textColorClass = getColorClassName(themeColors.textColor);
     const backgroundColorClass = getColorClassName(themeColors.baseColor200);
@@ -121,12 +113,6 @@ const ContestCard = (props: IContestCardProps) => {
     };
 
     const renderContestButton = (isCompete: boolean, hasParticipated: boolean, participationPoints: number) => {
-        const btnText = isCompete
-            ? COMPETE_STRING
-            : PRACTICE_STRING;
-        const btnNavigateUrl = isCompete
-            ? generateContestBtnUrlString(true, id)
-            : generateContestBtnUrlString(false, id);
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
@@ -142,21 +128,7 @@ const ContestCard = (props: IContestCardProps) => {
                     {maxPoints}
                 </div>
                 )}
-                <Button
-                  text={btnText}
-                  state={isDisabled
-                      ? ButtonState.disabled
-                      : ButtonState.enabled}
-                  size={ButtonSize.small}
-                  isCompete={isCompete}
-                  onClick={() => {
-                      if (!isLoggedIn) {
-                          navigate('/login');
-                          return;
-                      }
-                      navigate(btnNavigateUrl!);
-                  }}
-                />
+                <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
             </div>
         );
     };
