@@ -10,7 +10,7 @@ import {flexCenterObjectStyles} from "../../../utils/object-utils";
 import SpinningLoader from "../../guidelines/spinning-loader/SpinningLoader";
 import List from "../../guidelines/lists/List";
 import isEmpty from "lodash/isEmpty";
-import {ISubmissionResponseModel} from "../../../common/types";
+import {IPublicSubmission} from "../../../common/types";
 import SubmissionGridRow from "../../submissions/submission-grid-row/SubmissionGridRow";
 import PaginationControls from "../../guidelines/pagination/PaginationControls";
 import Button, {ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
@@ -131,7 +131,7 @@ const ProfileSubmissions = () => {
     );
 
     const renderSubmissionRow = useCallback(
-        (submission: ISubmissionResponseModel) => (
+        (submission: IPublicSubmission) => (
             <SubmissionGridRow
                 submission={submission}
                 shouldDisplayUsername={false}

@@ -22,6 +22,7 @@ using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
+using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;
@@ -581,7 +582,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(
+    public async Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
         SubmissionStatus status,
         int page)
     {
@@ -601,13 +602,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             if (user.IsAdminOrLecturer)
             {
                 return await this.submissionsData
-                    .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                    .GetLatestSubmissions<TServiceModel>(
                         DefaultSubmissionsPerPage, page);
             }
 
-            var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
+            var modelResult = new PagedResult<TServiceModel>
             {
-                Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
+                Items = await this.submissionsData.GetLatestSubmissions<TServiceModel>(
                     DefaultSubmissionsPerPage),
             };
 
@@ -616,7 +617,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         return await query
             .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
+            .MapCollection<TServiceModel>()
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 

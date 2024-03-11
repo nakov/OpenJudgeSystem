@@ -41,6 +41,11 @@ interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     retestIsSuccess: false;
 }
 
+interface IRecentSubmissionsReduxState {
+    submissions: IPagedResultType<IPublicSubmission>;
+    currentPage: number;
+}
+
 interface IPublicSubmissionProblem {
     id: number;
     name: string;
@@ -53,7 +58,7 @@ interface IPublicSubmissionResult {
     maxPoints: number;
 }
 
-interface ISubmissionResponseModel {
+interface IPublicSubmission {
     id: number;
     createdOn: Date;
     strategyName: string;
@@ -493,7 +498,8 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
-    ISubmissionResponseModel,
+    IRecentSubmissionsReduxState,
+    IPublicSubmission,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,

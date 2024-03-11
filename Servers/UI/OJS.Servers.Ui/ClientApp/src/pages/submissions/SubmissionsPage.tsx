@@ -1,30 +1,11 @@
-import React, { useEffect } from 'react';
+import React  from 'react';
 
-import SubmissionsGrid from '../../components/submissions/submissions-grid/SubmissionsGrid';
-import { usePublicSubmissions } from '../../hooks/submissions/use-public-submissions';
+import RecentSubmissions from '../../components/submissions/recent-submissions/RecentSubmissions';
 import { setLayout } from '../shared/set-layout';
 
 const SubmissionsPage = () => {
-    const {
-        state: { totalSubmissionsCount },
-        actions: { loadTotalSubmissionsCount },
-    } = usePublicSubmissions();
-
-    useEffect(
-        () => {
-            if (totalSubmissionsCount !== 0) {
-                return;
-            }
-
-            (async () => {
-                await loadTotalSubmissionsCount();
-            })();
-        },
-        [ loadTotalSubmissionsCount, totalSubmissionsCount ],
-    );
-
     return (
-        <SubmissionsGrid />
+        <RecentSubmissions />
     );
 };
 

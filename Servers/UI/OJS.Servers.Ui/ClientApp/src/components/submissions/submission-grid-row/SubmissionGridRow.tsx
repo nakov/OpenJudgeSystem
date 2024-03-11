@@ -3,9 +3,8 @@ import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { ISubmissionResponseModel } from '../../../common/types';
+import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
-import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
@@ -22,9 +21,10 @@ import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
 
 import styles from './SubmissionGridRow.module.scss';
+import {PublicSubmissionState} from "../../../common/enums";
 
 interface ISubmissionGridRowProps {
-    submission: ISubmissionResponseModel;
+    submission: IPublicSubmission;
     shouldDisplayUsername?: boolean;
 }
 
@@ -189,7 +189,7 @@ const SubmissionGridRow = ({
     );
 
     return (
-        <tr className={rowClassName}>
+        <tr key={submission.id} className={rowClassName}>
             <td>
                 #
                 {submissionId}
