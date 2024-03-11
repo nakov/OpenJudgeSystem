@@ -2,7 +2,24 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
+@use 'src/styles/shadows';
 @use 'src/styles/font-weights';
+
+.participantsWrapper {
+  box-shadow: shadows.$dp-shadow-4;
+  display: flex;
+  justify-content: flex-end;
+  padding: spacings.$sp-12 spacings.$sp-24;
+
+  span {
+    display: flex;
+
+    > div {
+      font-weight: font-weights.$font-weight-semi-bold;
+      margin-left: spacings.$sp-4;
+    }
+  }
+}
 
 .contestSolutionSubmitWrapper {
   @extend %font-family-roboto;
@@ -17,5 +34,70 @@
 
   .problemsAndEditorWrapper {
     display: flex;
+  }
+
+  .submissionsWrapper {
+    display: flex;
+    flex-direction: column;
+
+    > div {
+      font-size: variables.$f-size-30;
+      font-weight: font-weights.$font-weight-semi-bold;
+    }
+  }
+}
+
+.selectedProblemWrapper {
+  margin-left: spacings.$sp-16;
+  width: 90%;
+
+  .problemName {
+    color: colors.$primary-blue;
+    font-size: variables.$f-size-30;
+    font-weight: font-weights.$font-weight-bold;
+  }
+
+  .problemDescriptionsWrapper {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    > svg {
+      color: colors.$primary-blue;
+      cursor: pointer;
+    }
+
+    .problemDescriptions {
+      display: flex;
+      margin: spacings.$sp-24 0;
+
+      > div {
+        align-items: center;
+        color: colors.$secondary-green;
+        cursor: pointer;
+        display: flex;
+        text-decoration: underline;
+
+        svg {
+          margin-right: spacings.$sp-4;
+        }
+
+        &:not(:first-child) {
+          margin-left: spacings.$sp-48;
+        }
+      }
+    }
+  }
+}
+
+.submitSettings {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  margin: spacings.$sp-24 0;
+
+  button {
+    margin-left: spacings.$sp-24;
+    width: 200px;
   }
 }

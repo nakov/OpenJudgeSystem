@@ -4,13 +4,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import { IContestCategory, IContestDetailsResponseType } from '../../common/types';
+import {IContestCategory, IContestDetailsResponseType, IProblemType} from '../../common/types';
 
 interface IContestState {
     selectedCategory: IContestCategory | null;
     selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
     contestDetails: IContestDetailsResponseType | null;
+    selectedContestDetailsProblem: IProblemType | null;
 }
 
 const initialState: IContestState = {
@@ -18,6 +19,7 @@ const initialState: IContestState = {
     selectedStrategy: null,
     breadcrumbItems: [],
     contestDetails: null,
+    selectedContestDetailsProblem: null,
 };
 
 // eslint-disable-next-line import/group-exports
@@ -41,6 +43,10 @@ export const contestSlice = createSlice({
         clearContestCategoryBreadcrumbItems: (state) => {
             state.breadcrumbItems = [];
         },
+        setSelectedContestDetailsProblem: (state, action: PayloadAction<{ selectedProblem: IProblemType | null }>) => {
+            const { selectedProblem } = action.payload;
+            state.selectedContestDetailsProblem = selectedProblem;
+        },
         setContestDetails: (state, action: PayloadAction<{ contest: IContestDetailsResponseType | null }>) => {
             const { contest } = action.payload;
             state.contestDetails = contest;
@@ -55,6 +61,7 @@ export const {
     setContestStrategy,
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
+    setSelectedContestDetailsProblem
 } = contestSlice.actions;
 
 export default contestSlice.reducer;

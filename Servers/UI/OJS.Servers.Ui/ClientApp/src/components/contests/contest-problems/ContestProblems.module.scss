@@ -1,6 +1,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/spacings';
 @use 'src/styles/colors';
+@use 'src/styles/shadows';
 @use 'src/styles/font-weights';
 
 .wrapper {
@@ -28,7 +29,7 @@
     cursor: pointer;
     display: flex;
     justify-content: space-between;
-    padding: spacings.$sp-12;
+    padding: spacings.$sp-18;
     transition: all 0.1s ease-in-out;
 
     > div {
@@ -63,4 +64,14 @@
   cursor: pointer !important;
   margin-left: spacings.$sp-8;
   margin-top: spacings.$sp-8;
+}
+
+.resultsSection {
+  box-shadow: shadows.$dp-shadow-4;
+  color: colors.$secondary-green;
+  cursor: pointer;
+  font-weight: font-weights.$font-weight-semi-bold;
+  padding: spacings.$sp-12 spacings.$sp-24;
+  text-decoration: underline;
+  width: 350px;
 }
