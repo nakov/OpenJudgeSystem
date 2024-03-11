@@ -8,6 +8,7 @@ enum FilterColumnTypeEnum {
     BOOL = 'boolean',
     NUMBER = 'number',
     DATE = 'date',
+    ENUM = 'enum',
 }
 
 enum SortingEnum {

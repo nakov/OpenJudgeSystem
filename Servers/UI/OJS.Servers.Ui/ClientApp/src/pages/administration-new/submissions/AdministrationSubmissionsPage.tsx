@@ -20,7 +20,6 @@ import { useDeleteSubmissionMutation,
     useGetAllSubmissionsQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-grid-def';
@@ -118,12 +117,6 @@ const AdministrationSubmissionsPage = () => {
         },
     ];
 
-    const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            Grid actions here
-        </div>
-    );
-
     return (
         isLoading || isFetching
             ? <SpinningLoader />
@@ -133,7 +126,6 @@ const AdministrationSubmissionsPage = () => {
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
-                  renderActionButtons={renderGridActions}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   selectedFilters={selectedFilters || []}
