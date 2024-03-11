@@ -21,7 +21,7 @@ jobs:
       - name: Determine if branch is v2 and set push_to_registry
         id: set-vars
         run: |
-          echo "::set-output name=push_to_registry::${{ github.event_name == 'push' && github.ref == 'refs/heads/v2' }}"
+          echo "push_to_registry=${{ github.event_name == 'push' && github.ref == 'refs/heads/v2' }}" >> $GITHUB_OUTPUT
 
   build-fe:
     name: Front-End build
