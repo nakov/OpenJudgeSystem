@@ -18,19 +18,20 @@ jobs:
     outputs:
       push_to_registry: ${{ steps.set-vars.outputs.push_to_registry }}
     steps:
-      - name: Determine if branch is v2 and set push_to_registry
-        id: set-vars
+      - id: set-vars
+        name: Determine if branch is v2 and set push_to_registry
         run: |
-          echo "push_to_registry=${{ github.event_name == 'push' && github.ref == 'refs/heads/v2' }}" >> "$GITHUB_OUTPUT"
+          echo "push_to_registry=${{ github.event_name == 'push' && github.ref == 'refs/heads/v2' }}" >> $GITHUB_OUTPUT
 
   build-fe:
     name: Front-End build
+    needs: check-branch
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_fe
       dockerfile_name: Dockerfile.fe
-      push_to_registry: "${{ needs.check-branch.outputs.push_to_registry }}"
+      push_to_registry: ${{ needs.check-branch.outputs.push_to_registry }}
       build_args: YARN_BUILD_COMMAND=build
       additional_run_commands: |
         echo "NODE_OPTIONS=--max_old_space_size=8192" >> $GITHUB_ENV
@@ -38,28 +39,31 @@ jobs:
     secrets: inherit
   build-ui:
     name: UI api build
+    needs: check-branch
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_ui
       dockerfile_name: Dockerfile.ui
-      push_to_registry: "${{ needs.check-branch.outputs.push_to_registry }}"
+      push_to_registry: ${{ needs.check-branch.outputs.push_to_registry }}
     secrets: inherit
   build-admin:
     name: Administration api build
+    needs: check-branch
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_web_administration
       dockerfile_name: Dockerfile.administration
-      push_to_registry: "${{ needs.check-branch.outputs.push_to_registry }}"
+      push_to_registry: ${{ needs.check-branch.outputs.push_to_registry }}
     secrets: inherit
   build-worker:
     name: Worker build
+    needs: check-branch
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-and-push.yml
     with:
       docker_image_name: judge_worker
       dockerfile_name: Dockerfile.worker
-      push_to_registry: "${{ needs.check-branch.outputs.push_to_registry }}"
+      push_to_registry: ${{ needs.check-branch.outputs.push_to_registry }}
     secrets: inherit
