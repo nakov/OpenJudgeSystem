@@ -165,7 +165,7 @@ const RecentSubmissions = () => {
                 {' '}
                 submissions out of
                 {' '}
-                {format(isNil(totalSubmissionsCount) ? 0 : totalSubmissionsCount)}
+                {isNil(totalSubmissionsCount) ? '...' : totalSubmissionsCount }
                 {' '}
                 total
             </Heading>

@@ -33,11 +33,19 @@ enum SubmissionStatus {
     Pending = 3,
 }
 
+enum ProblemResourceType
+{
+    ProblemDescription = 1,
+    AuthorsSolution = 2,
+    Link = 3,
+}
+
 export {
     ThemeMode,
     FilterColumnTypeEnum,
     SortingEnum,
     ProblemGroupTypes,
+    ProblemResourceType,
     SubmissionStatus,
     PublicSubmissionState,
 };
