@@ -18,6 +18,8 @@ import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
 import SubmissionStateLink from './SubmissionStateLink';
 
+import styles from './RecentSubmissions.module.scss';
+
 const selectedSubmissionsStateMapping = {
     1: 'All',
     2: 'In Queue',
@@ -150,7 +152,12 @@ const RecentSubmissions = () => {
 
     return (
         <>
-            <Heading type={HeadingType.primary}>
+            <Heading
+              type={HeadingType.primary}
+              className={user.isAdmin
+                  ? styles.headingBorder
+                  : ''}
+            >
                 Latest
                 {' '}
                 {submissions.items?.length}

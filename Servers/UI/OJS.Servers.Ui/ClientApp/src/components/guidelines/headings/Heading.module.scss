@@ -10,8 +10,6 @@
   font-weight: font-weights.$font-weight-regular;
 
   &.primary {
-    border-bottom: 1px solid;
-    border-bottom-color: colors.$bottom-border-color;
     font-size: variables.$f-size-30;
     line-height: 36px;
     padding: 10px;
