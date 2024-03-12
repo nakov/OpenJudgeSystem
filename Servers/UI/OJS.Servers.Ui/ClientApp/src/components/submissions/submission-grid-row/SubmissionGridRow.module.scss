@@ -3,6 +3,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/responsive';
 @use 'src/styles/shadows';
+@use 'src/styles/spacings';
 
 .row {
   @extend %font-family-roboto;
@@ -34,19 +35,19 @@
 
   color: colors.$light-blue-color;
   display: inline-block;
-  margin: 0 5px;
+  margin: spacings.$sp-8;
 }
 
 .strategy {
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: spacings.$sp-12;
   justify-content: start;
 }
 
 .competeIcon {
-  margin: 0 10px;
+  margin: 0 spacings.$sp-12;
 }
 
 .competeIconWrapper {
@@ -56,7 +57,7 @@
 .executionResultContainer {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: spacings.$sp-18
 }
 
 .maxTimeUsed,
@@ -76,5 +77,5 @@
   align-items: center;
   text-align: center;
   justify-content: center;
-  gap: 10px;
+  gap: spacings.$sp-12;
 }

@@ -1,13 +1,12 @@
 import React from 'react';
 
 import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
-import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
 import { ContestVariation } from './contest-types';
-import { FilterColumnTypeEnum } from './enums';
+import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {

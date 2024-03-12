@@ -2,6 +2,7 @@
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
 @use 'src/styles/shadows';
+@use 'src/styles/spacings';
 
 .noSubmissionsFound {
   @extend %font-family-montserrat;
@@ -20,7 +21,7 @@
 
   td {
     overflow: hidden;
-    padding: 15px 10px;
+    padding: spacings.$sp-16 spacings.$sp-12;
     text-align: left;
     text-overflow: ellipsis;
     vertical-align: middle;

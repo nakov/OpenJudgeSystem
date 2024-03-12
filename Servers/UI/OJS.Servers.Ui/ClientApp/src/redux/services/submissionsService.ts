@@ -22,7 +22,6 @@ const submissionsService = createApi({
             return response.json();
         },
     }),
-    keepUnusedDataFor: 0,
     endpoints: (builder) => ({
         getTotalCount: builder.query<
             number,

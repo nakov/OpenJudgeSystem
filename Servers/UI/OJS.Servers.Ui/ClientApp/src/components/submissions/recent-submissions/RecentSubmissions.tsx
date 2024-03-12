@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -13,6 +12,7 @@ import {
     useGetLatestSubmissionsInRoleQuery,
     useGetLatestSubmissionsQuery, useGetTotalCountQuery,
 } from '../../../redux/services/submissionsService';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
@@ -24,10 +24,8 @@ const selectedSubmissionsStateMapping = {
     3: 'Pending',
 } as IDictionary<string>;
 
-const defaultState = { state: { selectedActive: 1 } };
-
 const RecentSubmissions = () => {
-    const [ selectedActive, setSelectedActive ] = useState<number>(defaultState.state.selectedActive);
+    const [ selectedActive, setSelectedActive ] = useState<number>(1);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ onPageCurrentPage, setOnPageCurrentPage ] = useState<number>(1);
     const [ queryParams, setQueryParams ] = useState<IGetSubmissionsUrlParams>({
@@ -35,12 +33,12 @@ const RecentSubmissions = () => {
         page: onPageCurrentPage,
     });
 
-    const dispatch = useDispatch();
+    const appDispatch = useAppDispatch();
 
-    const { submissions } = useSelector((state: { latestSubmissions: IRecentSubmissionsReduxState }) => state.latestSubmissions);
+    const { submissions } = useAppSelector((state: { latestSubmissions: IRecentSubmissionsReduxState }) => state.latestSubmissions);
 
     const { internalUser: user } =
-        useSelector((state: { authorization: IAuthorizationReduxState }) => state.authorization);
+        useAppSelector((state: { authorization: IAuthorizationReduxState }) => state.authorization);
 
     const loggedInUserInRole = !isEmpty(user.id) && user.isAdmin;
 
@@ -73,14 +71,14 @@ const RecentSubmissions = () => {
 
     useEffect(() => {
         if (inRoleSubmissionsReady) {
-            dispatch(setSubmissions(inRoleData));
+            appDispatch(setSubmissions(inRoleData));
             return;
         }
 
         if (regularUserSubmissionsReady) {
-            dispatch(setSubmissions(regularUserData));
+            appDispatch(setSubmissions(regularUserData));
         }
-    }, [ dispatch, inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
+    }, [ appDispatch, inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
 
     const handlePageChange = useCallback(
         (newPage: number) => {
@@ -95,7 +93,7 @@ const RecentSubmissions = () => {
     const handleSelectSubmissionState = useCallback(
         (typeKey: number) => {
             if (selectedActive) {
-                dispatch(setCurrentPage(1));
+                appDispatch(setCurrentPage(1));
 
                 setQueryParams({
                     status: queryParams.status,
@@ -105,7 +103,7 @@ const RecentSubmissions = () => {
                 setSelectedActive(typeKey);
             }
         },
-        [ dispatch, queryParams, selectedActive ],
+        [ appDispatch, queryParams, selectedActive ],
     );
 
     const renderPrivilegedComponent = useCallback(

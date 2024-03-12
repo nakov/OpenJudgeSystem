@@ -16,7 +16,7 @@ const ContestBreadcrumbs = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
-    const textColorClassName = `getColorClassName(themeColors.textColor)`;
+    const textColorClassName = getColorClassName(themeColors.textColor);
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean, idx: number) => (
