@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { preciseFormatDate } from '../../../utils/dates';
+import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -81,7 +81,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.createdOn),
     },
     {
         field: 'modifiedOn',
@@ -91,7 +91,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.modifiedOn),
     },
 ];
 

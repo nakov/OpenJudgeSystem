@@ -214,7 +214,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId)
     {
         var submissionDetailsServiceModel = this.submissionsData
-            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
+            .GetSubmissionById<SubmissionFileDetailsServiceModel>(submissionId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
 

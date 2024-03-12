@@ -1,13 +1,15 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
     public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
     {
@@ -95,5 +97,10 @@
             => await this.GetAllByProblem(problemId)
                 .Select(s => s.Id)
                 .ToListAsync();
+
+        protected override Expression<Func<Submission, bool>> GetUserFilter(UserInfoModel user)
+            => submission => user.IsAdmin ||
+                             submission.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
+                             submission.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
     }
 }

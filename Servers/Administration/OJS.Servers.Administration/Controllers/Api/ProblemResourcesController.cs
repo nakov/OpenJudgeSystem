@@ -1,13 +1,12 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.ProblemResources;
+using OJS.Services.Administration.Business.ProblemResources.GridData;
 using OJS.Services.Administration.Business.ProblemResources.Permissions;
 using OJS.Services.Administration.Business.ProblemResources.Validators;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemResources;
 using System.Threading.Tasks;
 
@@ -16,7 +15,7 @@ public class ProblemResourcesController : BaseAdminApiController<ProblemResource
     private readonly IProblemResourcesBusinessService problemResourcesBusinessService;
 
     public ProblemResourcesController(
-        IGridDataService<ProblemResource> problemResourceGridService,
+        IProblemResourcesGridDataService problemResourceGridService,
         IProblemResourcesBusinessService problemResourcesBusinessService,
         ProblemResourceAdministrationModelValidator modelValidator,
         ProblemResourceDeleteValidator deleteValidator)
