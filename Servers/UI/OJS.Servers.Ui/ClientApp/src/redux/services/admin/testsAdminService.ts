@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable import/group-exports */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IFileModel, IGetAllAdminParams, IPagedResultType, ITestRunInListModel } from '../../../common/types';
@@ -79,7 +77,6 @@ export const testsAdminService = createApi({
     }),
 });
 
-// eslint-disable-next-line import/group-exports
 export const {
     useGetAllAdminTestsQuery,
     useCreateTestMutation,

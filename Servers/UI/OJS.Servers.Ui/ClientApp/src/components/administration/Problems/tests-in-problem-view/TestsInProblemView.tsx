@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { FaFileImport } from 'react-icons/fa';
 import { MdDeleteForever } from 'react-icons/md';
@@ -94,11 +93,11 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filtersQueryParams });
+        setQueryParams((prevState) => ({ ...prevState, filter: filtersQueryParams ?? '' }));
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortersQueryParams });
+        setQueryParams((prevState) => ({ ...prevState, sorting: sortersQueryParams ?? '' }));
     }, [ sortersQueryParams ]);
 
     useEffect(() => {
@@ -111,11 +110,11 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
         if (isSuccesfullyDeletedAll) {
             retakeTests();
         }
-    }, [ deleteAllData, isSuccesfullyDeletedAll, importTestsData, isSuccessfullyImported ]);
+    }, [ deleteAllData, isSuccesfullyDeletedAll, importTestsData, isSuccessfullyImported, retakeTests ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, importTestsError, exportZipError ], setErrorMessages);
-    }, [ deleteAllError, importTestsError ]);
+    }, [ deleteAllError, exportZipError, importTestsError ]);
 
     useEffect(() => {
         if (zipData) {

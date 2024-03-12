@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 interface ITestAdministration{
     id: number;
     input: string;

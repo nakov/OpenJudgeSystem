@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -32,11 +31,11 @@ const AdministrationTestsPage = () => {
     const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filterParams ?? '' });
+        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
     }, [ filterParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortingParams ?? '' });
+        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
     const onEditClick = (id: number) => {

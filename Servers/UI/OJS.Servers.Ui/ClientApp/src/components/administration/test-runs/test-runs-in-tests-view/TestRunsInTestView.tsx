@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -39,11 +38,11 @@ const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
     const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, filter: filtersQueryParams ?? '' });
+        setQueryParams((prevState) => ({ ...prevState, filter: filtersQueryParams ?? '' }));
     }, [ filtersQueryParams ]);
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, sorting: sortersQueryParams ?? '' });
+        setQueryParams((prevState) => ({ ...prevState, sorting: sortersQueryParams ?? '' }));
     }, [ sortersQueryParams ]);
 
     if (isLoading) {
