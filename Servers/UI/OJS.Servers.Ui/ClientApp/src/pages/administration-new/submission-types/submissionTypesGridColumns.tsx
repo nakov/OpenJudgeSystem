@@ -71,7 +71,7 @@ const submissionTypesFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnNonFilterableColumns = (onEditClick: Function) => [
+export const returnNonFilterableColumns = (onEditClick: Function, onSuccessFullDelete: () => void) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -88,6 +88,7 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
                   name={`${PROBLEM_GROUP}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={useDeleteSubmissionTypeMutation}
+                  onSuccess={onSuccessFullDelete}
                 />
             </div>
         ),

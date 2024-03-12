@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
+import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SubmissionTypesForm from '../../../components/administration/submission-types/form/SubmissionTypeForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -17,6 +18,7 @@ const location = 'all-submission-types';
 const AdministrationSubmissionTypesPage = () => {
     const [ searchParams ] = useSearchParams();
 
+    const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
     const [ showEditModal, setShowEditModal ] = useState<boolean>(false);
     const [ submissionTypeId, setSubmissionTypeId ] = useState<number | null>(null);
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
@@ -26,7 +28,7 @@ const AdministrationSubmissionTypesPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
-    const { data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
+    const { refetch, data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
     const selectedFilters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedFilters);
     const selectedSorters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedSorters);
 
@@ -49,16 +51,43 @@ const AdministrationSubmissionTypesPage = () => {
     if (isGettingData) {
         return <SpinningLoader />;
     }
+    const onModalClose = (isEditMode : boolean) => {
+        if (isEditMode) {
+            setShowEditModal(false);
+        } else {
+            setShowCreateModal(false);
+        }
+        refetch();
+    };
+    const onSuccessFullDelete = () => {
+        refetch();
+    };
 
     const renderFormModal = (index: number, isEditMode: boolean) => (
-        <AdministrationModal key={index} index={index} open={showEditModal} onClose={() => setShowEditModal(false)}>
+        <AdministrationModal
+          key={index}
+          index={index}
+          open={isEditMode
+              ? showEditModal
+              : showCreateModal}
+          onClose={() => onModalClose(isEditMode)}
+        >
             <SubmissionTypesForm id={submissionTypeId} isEditMode={isEditMode} />
         </AdministrationModal>
     );
+
+    const renderGridSettings = () => (
+        <CreateButton
+          showModal={showCreateModal}
+          showModalFunc={setShowCreateModal}
+          styles={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }}
+        />
+    );
+
     return (
         <AdministrationGridView
           filterableGridColumnDef={submissionTypesFilterableColumns}
-          notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick)}
+          notFilterableGridColumnDef={returnNonFilterableColumns(onEditClick, onSuccessFullDelete)}
           data={submissionTypesData}
           error={error}
           queryParams={queryParams}
@@ -70,7 +99,9 @@ const AdministrationSubmissionTypesPage = () => {
           location={location}
           modals={[
               { showModal: showEditModal, modal: (i) => renderFormModal(i, true) },
+              { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },
           ]}
+          renderActionButtons={renderGridSettings}
         />
     );
 };

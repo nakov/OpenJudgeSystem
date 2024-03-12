@@ -1,10 +1,10 @@
 ﻿namespace OJS.Services.Administration.Models.SubmissionTypes;
 
+using AutoMapper;
 using OJS.Data.Models.Submissions;
-using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class SubmissionTypesAdministrationModel : BaseAdministrationModel<int>, IMapFrom<SubmissionType>
+public class SubmissionTypesAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
     public string? Name { get; set; }
 
@@ -21,4 +21,15 @@ public class SubmissionTypesAdministrationModel : BaseAdministrationModel<int>, 
     public string? AllowedFileExtensions { get; set; }
 
     public string? Description { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+    {
+        configuration.CreateMap<SubmissionType, SubmissionTypesAdministrationModel>();
+
+        configuration.CreateMap<SubmissionTypesAdministrationModel, SubmissionType>()
+            .ForMember(st => st.SubmissionTypesInProblems, opt
+                => opt.Ignore())
+            .ForMember(st => st.AllowedFileExtensionsList, opt
+                => opt.Ignore());
+    }
 }
