@@ -1,14 +1,13 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Common.Data.Implementations;
     using System.Threading.Tasks;
 
     public class IpsDataService : DataService<Ip>, IIpsDataService
     {
-        public IpsDataService(OjsDbContext db)
+        public IpsDataService(DbContext db)
             : base(db)
         {
         }

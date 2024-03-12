@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import dayjs from 'dayjs';
 
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
@@ -8,6 +7,7 @@ import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const contestFilterableColumns: GridColDef[] = [
     {
@@ -68,9 +68,7 @@ const contestFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => params.value
-            ? dayjs(params.value)
-            : null,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'endTime',
@@ -81,9 +79,7 @@ const contestFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => params.value
-            ? dayjs(params.value)
-            : null,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'limitBetweenSubmissions',

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Contests.GridData;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
@@ -23,7 +24,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     public ContestsController(
         IContestsBusinessService contestsBusinessService,
         ContestAdministrationModelValidator validator,
-        IGridDataService<Contest> contestGridDataService,
+        IContestsGridDataService contestGridDataService,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator,
         IContestsDataService contestsData)
     : base(

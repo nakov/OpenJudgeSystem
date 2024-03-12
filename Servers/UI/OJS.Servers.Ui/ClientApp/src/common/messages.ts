@@ -10,6 +10,7 @@ export const CLEAR_SELECTION = 'Clear selection';
 export const CONTEST_NAME_VALIDATION = 'Contest name length must be between 4 and 100 characters long';
 export const CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION = 'Limit between submissions cannot be less than 0';
 export const CONTEST_ORDER_BY_VALIDATION = 'Order by cannot be less than 0';
+export const CONTEST_NUMBER_OF_PROBLEM_GROUPS = 'Number of problem groups cannot be less than 0';
 export const CONTEST_NEW_IP_PASSWORD_VALIDATION = 'New Ip password cannot be more than 20 characters long';
 export const CONTEST_DURATION_VALIDATION = 'Duration must be valid time with format hh:mm:ss';
 export const CONTEST_TYPE_VALIDATION = 'Contest type is invalid';

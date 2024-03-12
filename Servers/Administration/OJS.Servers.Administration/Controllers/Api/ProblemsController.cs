@@ -8,6 +8,7 @@ using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
 using OJS.Services.Administration.Business.ProblemGroups.Permissions;
 using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Business.Problems.GridData;
 using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Data;
@@ -36,7 +37,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        IGridDataService<Problem> problemGridDataService,
+        IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
         ProblemsDeleteValidator deleteValidator,
         IGridDataService<ProblemResource> problemResourceGridDataService)

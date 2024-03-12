@@ -1,24 +1,22 @@
 /* eslint-disable css-modules/no-unused-class */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
-import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
+import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH } from '../../../../common/urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
-import { DEFAULT_DATE_FORMAT } from '../../../../utils/constants';
-import { getDateWithFormat } from '../../../../utils/dates';
+import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import { getEnumMemberName } from '../../../../utils/string-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
@@ -54,10 +52,10 @@ const ContestEdit = (props:IContestEditProps) => {
         id: 0,
         isVisible: false,
         limitBetweenSubmissions: 0,
-        newIpPassword: '',
+        newIpPassword: null,
         orderBy: 0,
         practiceEndTime: null,
-        practicePassword: '',
+        practicePassword: null,
         practiceStartTime: null,
         startTime: null,
         type: 'Exercise',
@@ -77,9 +75,11 @@ const ContestEdit = (props:IContestEditProps) => {
         isNewIpPasswordValid: true,
         isDurationTouched: false,
         isDurationValid: true,
+        isNumberOfProblemGroupsTouched: false,
+        isNUmberOfProblemGroupsValid: true,
     });
 
-    const { data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
+    const { refetch: retake, data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
     const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
 
     const [
@@ -119,13 +119,20 @@ const ContestEdit = (props:IContestEditProps) => {
         setSuccessMessage(null);
     }, [ updateError, createError ]);
 
+    useEffect(() => {
+        if (isSuccessfullyUpdating) {
+            retake();
+        }
+    }, [ isSuccessfullyUpdating, retake ]);
+
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
         contestValidations.isTypeValid &&
         contestValidations.isLimitBetweenSubmissionsValid &&
         contestValidations.isOrderByValid &&
         contestValidations.isNewIpPasswordValid &&
-        contestValidations.isDurationValid;
+        contestValidations.isDurationValid &&
+        contestValidations.isNUmberOfProblemGroupsValid;
         setIsValidForm(isValid);
     };
 
@@ -229,28 +236,28 @@ const ContestEdit = (props:IContestEditProps) => {
         case 'startTime': {
             startTime = null;
             if (value) {
-                startTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
+                startTime = convertToUtc(e.target.value);
             }
             break;
         }
         case 'endTime': {
             endTime = null;
             if (value) {
-                endTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
+                endTime = convertToUtc(e.target.value);
             }
             break;
         }
         case 'practiceStartTime': {
             practiceStartTime = null;
             if (value) {
-                practiceStartTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
+                practiceStartTime = convertToUtc(e.target.value);
             }
             break;
         }
         case 'practiceEndTime': {
             practiceEndTime = null;
             if (value) {
-                practiceEndTime = getDateWithFormat(e.target.value, DEFAULT_DATE_FORMAT);
+                practiceEndTime = convertToUtc(e.target.value);
             }
             break;
         }
@@ -270,12 +277,13 @@ const ContestEdit = (props:IContestEditProps) => {
             }
             break;
         }
-        case 'numberOfProblemGroups': {
+        case 'numberOfProblemGroups':
+            currentContestValidations.isNumberOfProblemGroupsTouched = true;
             if (value) {
+                currentContestValidations.isNUmberOfProblemGroupsValid = value >= 0;
                 numberOfProblemGroups = Number(value);
             }
             break;
-        }
         case 'duration': {
             let currentValue = value;
 
@@ -430,6 +438,13 @@ const ContestEdit = (props:IContestEditProps) => {
                           onChange={(e) => onChange(e)}
                           InputLabelProps={{ shrink: true }}
                           name="numberOfProblemGroups"
+                          disabled={isEditMode ||
+                            contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
+                          error={(contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid)}
+                          helperText={(
+                              contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid
+                          ) &&
+                          CONTEST_NUMBER_OF_PROBLEM_GROUPS}
                         />
                     </Box>
                     <Box>
@@ -489,6 +504,7 @@ const ContestEdit = (props:IContestEditProps) => {
                               : undefined}
                           name="duration"
                           onChange={(e) => onChange(e)}
+                          disabled={contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
                           InputLabelProps={{ shrink: true }}
                           error={(contestValidations.isDurationTouched && !contestValidations.isDurationValid)}
                           helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
@@ -553,40 +569,36 @@ const ContestEdit = (props:IContestEditProps) => {
                     />
                 </FormControl>
                 <Box className={formStyles.row}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker
-                          sx={{ width: '48%' }}
-                          name="startTime"
-                          label={COMPETE_START_TIME}
-                          value={getDateWithFormat(contest.startTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
-                        />
-                        <DateTimePicker
-                          sx={{ width: '48%' }}
-                          name="endTime"
-                          label={COMPETE_END_TIME}
-                          value={getDateWithFormat(contest.endTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
-                        />
-                    </LocalizationProvider>
+                    <DateTimePicker
+                      sx={{ width: '48%' }}
+                      name="startTime"
+                      label={COMPETE_START_TIME}
+                      value={getDateAsLocal(contest.startTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('startTime', newValue, onChange)}
+                    />
+                    <DateTimePicker
+                      sx={{ width: '48%' }}
+                      name="endTime"
+                      label={COMPETE_END_TIME}
+                      value={getDateAsLocal(contest.endTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('endTime', newValue, onChange)}
+                    />
                 </Box>
                 <Box className={formStyles.row}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateTimePicker
-                          sx={{ width: '48%', margin: '20px 0' }}
-                          name="practiceStartTime"
-                          label={PRACTICE_START_TIME}
-                          value={getDateWithFormat(contest.practiceStartTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
-                        />
-                        <DateTimePicker
-                          sx={{ width: '48%', margin: '20px 0' }}
-                          name="practiceEndTime"
-                          label={PRACTICE_END_TIME}
-                          value={getDateWithFormat(contest.practiceEndTime)}
-                          onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
-                        />
-                    </LocalizationProvider>
+                    <DateTimePicker
+                      sx={{ width: '48%', margin: '20px 0' }}
+                      name="practiceStartTime"
+                      label={PRACTICE_START_TIME}
+                      value={getDateAsLocal(contest.practiceStartTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('practiceStartTime', newValue, onChange)}
+                    />
+                    <DateTimePicker
+                      sx={{ width: '48%', margin: '20px 0' }}
+                      name="practiceEndTime"
+                      label={PRACTICE_END_TIME}
+                      value={getDateAsLocal(contest.practiceEndTime)}
+                      onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
+                    />
                 </Box>
                 <Box className={styles.checkboxes}>
                     <FormControlLabel
