@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SubmissionTypesForm from '../../../components/administration/submission-types/form/SubmissionTypeForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminSUbmissionTypesFilters, setAdminSUbmissionTypesSorters } from '../../../redux/features/admin/submissionTypesAdminSlice';
 import { useGetAllSubmissionTypesQuery } from '../../../redux/services/admin/submissionTypesAdminService';
+import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -27,8 +27,8 @@ const AdministrationSubmissionTypesPage = () => {
     });
 
     const { data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
-    const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissionTypes[location]?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissionTypes[location]?.selectedSorters);
+    const selectedFilters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedFilters);
+    const selectedSorters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedSorters);
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');

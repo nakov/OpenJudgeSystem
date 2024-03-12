@@ -17,4 +17,8 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
 
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
         await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
+
+    public override Task<SubmissionTypesAdministrationModel> Get(int id) =>
+        this.submissionTypesDataService.GetByIdQuery(id).FirstOrDefaultAsync()
+            .Map<SubmissionTypesAdministrationModel>();
 }

@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, ISubmissionTypeInProblem, ISubmissionTypesInListModel } from '../../../common/types';
+import { IGetAllAdminParams, IPagedResultType, ISubmissionTypeAdministrationModel, ISubmissionTypeInProblem, ISubmissionTypesInListModel } from '../../../common/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const submissionTypesAdminService = createApi({
@@ -23,7 +23,10 @@ export const submissionTypesAdminService = createApi({
         deleteSubmissionType: builder.mutation<string, number>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         getCompilers: builder.query<Array<string>, null>({ query: () => ({ url: '/GetCompilers' }) }),
         getExecutionStrategies: builder.query<Array<string>, null>({ query: () => ({ url: '/GetExecutionStrategies' }) }),
-        getById: builder.query<string, number>({ query: () => ({ url: '/GetExecutionStrategies' }) }),
+        getById: builder.query<ISubmissionTypeAdministrationModel, number>({
+            query: (id) => ({ url: `/Get/${id}` }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -33,5 +36,6 @@ export const {
     useDeleteSubmissionTypeMutation,
     useGetCompilersQuery,
     useGetExecutionStrategiesQuery,
+    useGetByIdQuery,
 } = submissionTypesAdminService;
 export default submissionTypesAdminService;

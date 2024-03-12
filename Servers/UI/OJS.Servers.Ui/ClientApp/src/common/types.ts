@@ -524,10 +524,15 @@ interface IProblemSubmissionType{
 interface ISubmissionTypeAdministrationModel {
     id: number;
     name: string;
-    executionStrategy: string;
-    compiler: string;
-    additionalCompilerArgument: stringl
+    executionStrategyType: string;
+    compilerType: string;
+    additionalCompilerArguments: string;
+    description: string;
+    allowedFileExtensions: string;
+    isSelectedByDefault: boolean;
+    allowBinaryFilesUpload: boolean;
 }
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -576,4 +581,5 @@ export type {
     IProblemResourceAdministrationModel,
     IEnumType,
     ISubmissionTypesInListModel,
+    ISubmissionTypeAdministrationModel,
 };

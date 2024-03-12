@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField } from '@mui/material';
 
 import { ADDITIONAL_COMPILER_ARGUMENTS, ALLOW_BINARY_FILES_UPLOAD, ALLOWED_FILE_EXTENSIONS, COMPILER, DESCRIPTION, EXECUTION_STRATEGY, ID, IS_SELECTED, NAME } from '../../../../common/labels';
-import { useGetCompilersQuery, useGetExecutionStrategiesQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
+import { IExecutionStrategyTypes, ISubmissionTypeAdministrationModel } from '../../../../common/types';
+import { useGetByIdQuery, useGetCompilersQuery, useGetExecutionStrategiesQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
+import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
@@ -14,6 +16,19 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
     const { id, isEditMode } = props;
     const [ compilersData, setCompilersData ] = useState<Array<string>>([]);
     const [ strategiesData, setStrategiesData ] = useState<Array<string>>([]);
+
+    const [ currentSubmissionType, setCurrentSubmissionType ] = useState<ISubmissionTypeAdministrationModel>({
+        name: '',
+        additionalCompilerArguments: '',
+        compilerType: '',
+        description: '',
+        executionStrategyType: '',
+        id: 0,
+        isSelectedByDefault: false,
+        allowedFileExtensions: '',
+        allowBinaryFilesUpload: false,
+
+    });
     const {
         data: compilers,
         isSuccess: isSuccesfullyGetingCompilers,
@@ -22,11 +37,24 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
     } = useGetCompilersQuery(null);
 
     const {
+        data: submissionType,
+        isLoading: isGettingSubmissionType,
+        error: gettingSubmissionTypeError,
+        isSuccess: isSuccessfullyGettingST,
+    } = useGetByIdQuery(id || 0, { skip: !isEditMode });
+
+    const {
         data: executionStrategies,
         isSuccess: isSuccesfullyGetingStrategies,
         error: strategiesError,
         isLoading: isGettingStrategies,
     } = useGetExecutionStrategiesQuery(null);
+
+    useEffect(() => {
+        if (submissionType) {
+            setCurrentSubmissionType(submissionType);
+        }
+    }, [ submissionType ]);
 
     useEffect(() => {
         if (compilers) {
@@ -41,8 +69,23 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
     }, [ executionStrategies ]);
 
     const onChange = (e: any) => {
-        console.log('OnChange');
+        const { target } = e;
+        const { name, type, value, checked } = target;
+        setCurrentSubmissionType((prevState) => ({
+            ...prevState,
+            [name]: type === 'checkbox'
+                ? checked
+                : type === 'number'
+                    ? value === ''
+                        ? ''
+                        : Number(value)
+                    : value,
+        }));
     };
+
+    if (isGettingCompilers || isGettingStrategies || isGettingSubmissionType) {
+        return <SpinningLoader />;
+    }
 
     return (
         <form className={formStyles.form}>
@@ -52,7 +95,8 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                   label={ID}
                   InputLabelProps={{ shrink: true }}
                   type="number"
-                  onChange={(e) => onChange(e)}
+                  value={currentSubmissionType.id}
+                  disabled
                 />
             </FormControl>
             <FormControl className={formStyles.inputRow}>
@@ -63,6 +107,7 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                   name="name"
                   label={NAME}
                   onChange={(e) => onChange(e)}
+                  value={currentSubmissionType.name}
                 />
             </FormControl>
             <FormControl className={formStyles.inputRow}>
@@ -70,7 +115,7 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                 <Select
                   sx={{ width: '100%' }}
                   variant="standard"
-                //   value={contest.type}
+                  value={currentSubmissionType.executionStrategyType}
                   name="executionStrategy"
                   labelId="execution-Strategy"
                   onChange={(e) => onChange(e)}
@@ -88,7 +133,7 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                 <Select
                   sx={{ width: '100%' }}
                   variant="standard"
-                //   value={contest.type}
+                  value={currentSubmissionType.compilerType}
                   name="compiler"
                   labelId="compiler"
                   onChange={(e) => onChange(e)}
@@ -109,18 +154,16 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                   label={ADDITIONAL_COMPILER_ARGUMENTS}
                   name="additionalCompilerArguments"
                   onChange={(e) => onChange(e)}
+                  value={currentSubmissionType.additionalCompilerArguments}
                 />
             </FormControl>
             <FormControl className={formStyles.inputRow}>
                 <FormLabel>{DESCRIPTION}</FormLabel>
                 <TextareaAutosize
-                //   placeholder={CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE}
-                //   value={contest.description === null
-                //       ? ''
-                //       : contest.description}
                   minRows={10}
                   name="description"
                   onChange={(e) => onChange(e)}
+                  value={currentSubmissionType.description ?? ''}
                 />
             </FormControl>
             <FormControl className={formStyles.inputRow}>
@@ -131,19 +174,20 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                   label={ALLOWED_FILE_EXTENSIONS}
                   name="allowedFileExtensions"
                   onChange={(e) => onChange(e)}
+                  value={currentSubmissionType.allowedFileExtensions}
                 />
             </FormControl>
             <FormControl className={formStyles.inputRow}>
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={<Checkbox checked={currentSubmissionType.isSelectedByDefault} />}
                   label={IS_SELECTED}
-                  name="isSelected"
+                  name="isSelectedByDefault"
                   onChange={(e) => onChange(e)}
                 />
             </FormControl>
             <FormControl className={formStyles.inputRow}>
                 <FormControlLabel
-                  control={<Checkbox />}
+                  control={<Checkbox checked={currentSubmissionType.allowBinaryFilesUpload} />}
                   label={ALLOW_BINARY_FILES_UPLOAD}
                   name="allowBinaryFilesUpload"
                   onChange={(e) => onChange(e)}
