@@ -7,7 +7,7 @@ import {
     calculateTimeUntil,
     preciseFormatDate,
 } from '../../../utils/dates';
-import { generateContestLinkUrl } from '../../../utils/urls';
+import { getContestTypeResultsUrl } from '../../../utils/urls';
 import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCard.module.scss';
@@ -96,7 +96,7 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={generateContestLinkUrl(participationType === 'compete', true, id!)}
+                          to={getContestTypeResultsUrl(participationType === 'compete', true, id!)}
                         >
                             {renderBody()}
                         </Link>

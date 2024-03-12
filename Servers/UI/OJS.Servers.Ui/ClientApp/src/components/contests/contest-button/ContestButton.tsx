@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import { useAppSelector } from '../../../redux/store';
-import { generateContestBtnUrlString } from '../../../utils/constants';
+import { getContestBtnUrlString } from '../../../utils/urls';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
 
 interface IContestButtonProps {
@@ -22,7 +22,7 @@ const ContestButton = (props: IContestButtonProps) => {
     const btnText = isCompete
         ? COMPETE_STRING
         : PRACTICE_STRING;
-    const btnNavigateUrl = generateContestBtnUrlString(isCompete, id);
+    const btnNavigateUrl = getContestBtnUrlString(isCompete, id);
 
     return (
         <Button
