@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../../common/common-types';
 import { IRecentSubmissionsReduxState } from '../../../common/types';
+import { IGetSubmissionsUrlParams } from '../../../common/url-types';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { setCurrentPage } from '../../../redux/features/submissionDetailsSlice';
 import { setSubmissions } from '../../../redux/features/submissionsSlice';
@@ -12,12 +13,10 @@ import {
     useGetLatestSubmissionsInRoleQuery,
     useGetLatestSubmissionsQuery, useGetTotalCountQuery,
 } from '../../../redux/services/submissionsService';
-import { format } from '../../../utils/number-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
 import SubmissionStateLink from './SubmissionStateLink';
-import {IGetSubmissionsUrlParams} from "../../../common/url-types";
 
 const selectedSubmissionsStateMapping = {
     1: 'All',
@@ -29,7 +28,7 @@ const defaultState = { state: { selectedActive: 1 } };
 
 const RecentSubmissions = () => {
     const [ selectedActive, setSelectedActive ] = useState<number>(defaultState.state.selectedActive);
-    // const [ shouldLoadOnLoad, setShouldLoadOnLoad ] = useState<number>(defaultState.state.selectedActive);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ onPageCurrentPage, setOnPageCurrentPage ] = useState<number>(1);
     const [ queryParams, setQueryParams ] = useState<IGetSubmissionsUrlParams>({
         status: selectedActive,
@@ -38,10 +37,7 @@ const RecentSubmissions = () => {
 
     const dispatch = useDispatch();
 
-    const {
-        submissions,
-        currentPage,
-    } = useSelector((state: { latestSubmissions: IRecentSubmissionsReduxState }) => state.latestSubmissions);
+    const { submissions } = useSelector((state: { latestSubmissions: IRecentSubmissionsReduxState }) => state.latestSubmissions);
 
     const { internalUser: user } =
         useSelector((state: { authorization: IAuthorizationReduxState }) => state.authorization);
@@ -56,17 +52,15 @@ const RecentSubmissions = () => {
         { skip: loggedInUserInRole },
     );
 
-    const {
-        isLoading: totalSubmissionsCountLoading,
-        data: totalSubmissionsCount,
-    } = useGetTotalCountQuery(null);
+    const { data: totalSubmissionsCount } = useGetTotalCountQuery(null);
 
     const {
         isLoading: inRoleLoading,
         data: inRoleData,
     } = useGetLatestSubmissionsInRoleQuery(
-        queryParams, 
-        { skip: !loggedInUserInRole });
+        queryParams,
+        { skip: !loggedInUserInRole },
+    );
 
     const areSubmissionsLoading =
         loggedInUserInRole
@@ -92,10 +86,10 @@ const RecentSubmissions = () => {
         (newPage: number) => {
             setQueryParams({
                 status: queryParams.status,
-                page: newPage
-            })
+                page: newPage,
+            });
         },
-        [ dispatch ],
+        [ queryParams ],
     );
 
     const handleSelectSubmissionState = useCallback(
@@ -105,13 +99,13 @@ const RecentSubmissions = () => {
 
                 setQueryParams({
                     status: queryParams.status,
-                    page: typeKey
-                })
-                
+                    page: typeKey,
+                });
+
                 setSelectedActive(typeKey);
             }
         },
-        [ dispatch, selectedActive ],
+        [ dispatch, queryParams, selectedActive ],
     );
 
     const renderPrivilegedComponent = useCallback(
@@ -165,15 +159,23 @@ const RecentSubmissions = () => {
                 {' '}
                 submissions out of
                 {' '}
-                {isNil(totalSubmissionsCount) ? '...' : totalSubmissionsCount }
+                {isNil(totalSubmissionsCount)
+                    ? '...'
+                    : totalSubmissionsCount }
                 {' '}
                 total
             </Heading>
             {renderPrivilegedComponent()}
             <SubmissionsGrid
-                isDataLoaded={!areSubmissionsLoading}
-                submissions={submissions}
-                handlePageChange={handlePageChange}
+              isDataLoaded={!areSubmissionsLoading}
+              submissions={submissions}
+              handlePageChange={handlePageChange}
+              options={{
+                  showDetailedResults: user.isAdmin,
+                  showTaskDetails: true,
+                  showCompeteMarker: user.isAdmin,
+                  showSubmissionTypeInfo: user.isAdmin,
+              }}
             />
         </>
     );

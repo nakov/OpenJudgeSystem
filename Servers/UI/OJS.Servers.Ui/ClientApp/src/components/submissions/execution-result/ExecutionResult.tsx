@@ -67,20 +67,20 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
                             {renderTestRunIcons(testRuns)}
                         </div>
                         <div className={styles.timeAndMemoryContainer}>
-                            <div className={styles.maxMemoryUsed}>
-                                <MemoryIcon />
-                                {' '}
-                                {(maxMemoryUsed / 1000000).toFixed(2)}
-                                {' '}
-                                MB
-                            </div>
-                            <div className={styles.maxTimeUsed}>
-                                <TimeLimitIcon />
-                                {' '}
-                                {maxTimeUsed / 1000}
-                                {' '}
-                                s.
-                            </div>
+                            {/* <div className={styles.maxMemoryUsed}> */}
+                            {/*    <MemoryIcon /> */}
+                            {/*    {' '} */}
+                            {/*    {(maxMemoryUsed / 1000000).toFixed(2)} */}
+                            {/*    {' '} */}
+                            {/*    MB */}
+                            {/* </div> */}
+                            {/* <div className={styles.maxTimeUsed}> */}
+                            {/*    <TimeLimitIcon /> */}
+                            {/*    {' '} */}
+                            {/*    {maxTimeUsed / 1000} */}
+                            {/*    {' '} */}
+                            {/*    s. */}
+                            {/* </div> */}
                         </div>
                     </div>
                 )

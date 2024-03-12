@@ -52,3 +52,29 @@
 .competeIconWrapper {
   position: relative;
 }
+
+.executionResultContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.maxTimeUsed,
+.maxMemoryUsed {
+  font-size: variables.$f-size-16;
+  display: flex;
+  flex-direction: column;
+  
+  .iconContainer {
+    align-self: center;
+  }
+}
+
+.timeAndMemoryContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  gap: 10px;
+}

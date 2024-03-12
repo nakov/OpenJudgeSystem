@@ -135,6 +135,7 @@ const ProfileSubmissions = () => {
             <SubmissionGridRow
                 submission={submission}
                 shouldDisplayUsername={false}
+                showIsCompeteMarker
             />
         ),
         [],

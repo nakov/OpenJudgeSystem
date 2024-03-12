@@ -1,11 +1,9 @@
-import React, {useCallback, useState} from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
@@ -18,17 +16,23 @@ interface ISubmissionsGridProps {
     isDataLoaded: boolean;
     submissions: IPagedResultType<IPublicSubmission>;
     handlePageChange: (page: number) => void;
+    options: ISubmissionsGridOptions;
+}
+
+interface ISubmissionsGridOptions {
+    showTaskDetails: boolean;
+    showDetailedResults: boolean;
+    showCompeteMarker: boolean;
+    showSubmissionTypeInfo: boolean;
 }
 
 const SubmissionsGrid = ({
     isDataLoaded,
     submissions,
     handlePageChange,
+    options,
 }: ISubmissionsGridProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
-
-    const { internalUser: user } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const onPageChange = useCallback(
         (page: number) => {
@@ -58,8 +62,10 @@ const SubmissionsGrid = ({
             if (isEmpty(submissions.items)) {
                 return (
                     <div className={concatClassNames(
-                        styles.noSubmissionsFound, 
-                        getColorClassName(themeColors.textColor))}>
+                        styles.noSubmissionsFound,
+                        getColorClassName(themeColors.textColor),
+                    )}
+                    >
                         No submissions found.
                     </div>
                 );
@@ -68,38 +74,45 @@ const SubmissionsGrid = ({
             return (
                 <table className={styles.submissionsGrid}>
                     <thead>
-                    <tr className={headerClassName}>
-                        <td>ID</td>
-                        <td>Task</td>
-                        <td>From</td>
-                        {
-                            user.isAdmin
-                                ? <td/>
-                                : null
-                        }
-                        <td className={styles.tdRight}>Result</td>
-                        {
-                            user.isAdmin
-                                ? <td>Execution Result</td>
-                                : null
-                        }
-                        <td className={styles.tdRight}>Strategy</td>
-                        <td/>
-                    </tr>
+                        <tr className={headerClassName}>
+                            <td>ID</td>
+                            <td>Task</td>
+                            <td>From</td>
+                            {
+                                options.showCompeteMarker
+                                    ? <td />
+                                    : null
+                            }
+                            {
+                                options.showDetailedResults
+                                    ? <td>Time and Memory Used</td>
+                                    : null
+                            }
+                            <td className={styles.tdRight}>Result</td>
+                            {
+                                options.showSubmissionTypeInfo
+                                    ? <td className={styles.tdRight}>Strategy</td>
+                                    : null
+                            }
+                            <td />
+                        </tr>
                     </thead>
                     <tbody>
                         {
                             !isNil(submissions.items) && !isEmpty(submissions.items)
                                 ? submissions.items.map((s) => (
-                                    <SubmissionGridRow submission={s}/>
+                                    <SubmissionGridRow
+                                      submission={s}
+                                      options={options}
+                                    />
                                 ))
                                 : null
                         }
                     </tbody>
                 </table>
-        );
+            );
         },
-        [ isDataLoaded, headerClassName, submissions, user.isAdmin ],
+        [ isDataLoaded, submissions.items, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
 
     return (
@@ -115,5 +128,7 @@ const SubmissionsGrid = ({
         </>
     );
 };
+
+export type { ISubmissionsGridOptions };
 
 export default SubmissionsGrid;
