@@ -242,6 +242,12 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
     return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
 };
 
+const generateContestLinkUrl = (isCompete: boolean, isSimple: boolean, id: number) => `/contests/${id}/${isCompete
+    ? 'compete'
+    : 'practice'}/results/${isSimple
+    ? 'simple'
+    : 'full'}`;
+
 // Username url utils for decoding/encoding usernames containing '.'
 
 const encodeUsernameAsUrlParam = (username: string) => username.replace(/\./g, '~');
@@ -307,4 +313,5 @@ export {
     getSubmissionsUrl,
     encodeUsernameAsUrlParam,
     decodeUsernameFromUrlParam,
+    generateContestLinkUrl,
 };

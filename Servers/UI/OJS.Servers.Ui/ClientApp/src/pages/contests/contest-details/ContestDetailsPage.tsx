@@ -12,6 +12,7 @@ import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { generateContestLinkUrl } from '../../../utils/urls';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -87,9 +88,7 @@ const ContestDetailsPage = () => {
                       : ''} ${isCompete
                       ? styles.greenColor
                       : ''}`}
-                  to={`/contests/${id}/${isCompete
-                      ? 'compete'
-                      : 'practice'}/results/simple`}
+                  to={generateContestLinkUrl(isCompete, true, id!)}
                 >
                     <i className="fas fa-user" />
                     <div className={`${styles.underlinedBtnText}`}>
