@@ -521,6 +521,13 @@ interface IProblemSubmissionType{
     solutionSkeleton: string | null;
 }
 
+interface ISubmissionTypeAdministrationModel {
+    id: number;
+    name: string;
+    executionStrategy: string;
+    compiler: string;
+    additionalCompilerArgument: stringl
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,

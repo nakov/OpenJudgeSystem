@@ -8,6 +8,9 @@ using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
 using OJS.Services.Administration.Models.Validation;
+using OJS.Workers.Common.Models;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 public class SubmissionTypesController : BaseAdminApiController<SubmissionType, int, SubmissionTypesInListModel, SubmissionTypesAdministrationModel>
@@ -29,4 +32,12 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
     [HttpGet]
     public async Task<IActionResult> GetForProblem()
         => this.Ok(await this.submissionTypesBusinessService.GetForProblem());
+
+    [HttpGet]
+    public IActionResult GetCompilers()
+        => this.Ok(Enum.GetNames(typeof(CompilerType)).ToList());
+
+    [HttpGet]
+    public IActionResult GetExecutionStrategies()
+        => this.Ok(Enum.GetNames(typeof(ExecutionStrategyType)).ToList());
 }

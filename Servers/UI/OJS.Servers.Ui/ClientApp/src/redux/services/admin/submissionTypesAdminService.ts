@@ -21,8 +21,17 @@ export const submissionTypesAdminService = createApi({
             keepUnusedDataFor: 5,
         }),
         deleteSubmissionType: builder.mutation<string, number>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+        getCompilers: builder.query<Array<string>, null>({ query: () => ({ url: '/GetCompilers' }) }),
+        getExecutionStrategies: builder.query<Array<string>, null>({ query: () => ({ url: '/GetExecutionStrategies' }) }),
+        getById: builder.query<string, number>({ query: () => ({ url: '/GetExecutionStrategies' }) }),
     }),
 });
 
-export const { useGetForProblemQuery, useGetAllSubmissionTypesQuery, useDeleteSubmissionTypeMutation } = submissionTypesAdminService;
+export const {
+    useGetForProblemQuery,
+    useGetAllSubmissionTypesQuery,
+    useDeleteSubmissionTypeMutation,
+    useGetCompilersQuery,
+    useGetExecutionStrategiesQuery,
+} = submissionTypesAdminService;
 export default submissionTypesAdminService;
