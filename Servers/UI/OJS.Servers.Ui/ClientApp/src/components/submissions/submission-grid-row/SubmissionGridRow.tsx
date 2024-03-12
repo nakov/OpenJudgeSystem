@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
+import { PublicSubmissionState } from '../../../common/enums';
 import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
@@ -21,7 +22,6 @@ import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
 
 import styles from './SubmissionGridRow.module.scss';
-import {PublicSubmissionState} from "../../../common/enums";
 
 interface ISubmissionGridRowProps {
     submission: IPublicSubmission;

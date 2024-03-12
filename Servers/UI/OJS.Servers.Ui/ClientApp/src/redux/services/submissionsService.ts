@@ -1,10 +1,9 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
-import { submissionsPageServiceName} from '../../common/reduxNames';
-import {IPagedResultType, IPublicSubmission} from '../../common/types';
+import { submissionsPageServiceName } from '../../common/reduxNames';
+import { IPagedResultType, IPublicSubmission } from '../../common/types';
 import { IGetSubmissionsUrlParams } from '../../common/url-types';
-import getCustomBaseQuery from "../middlewares/customBaseQuery";
 
 const submissionsService = createApi({
     reducerPath: submissionsPageServiceName,
@@ -15,7 +14,7 @@ const submissionsService = createApi({
             return headers;
         },
         credentials: 'include',
-        responseHandler: async (response: Response) => {    
+        responseHandler: async (response: Response) => {
             if (response.headers.get('Content-Length')) {
                 return '';
             }
@@ -50,6 +49,6 @@ const {
 export {
     useGetTotalCountQuery,
     useGetLatestSubmissionsQuery, 
-    useGetLatestSubmissionsInRoleQuery 
+    useGetLatestSubmissionsInRoleQuery,
 };
 export default submissionsService;
