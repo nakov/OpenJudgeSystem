@@ -249,13 +249,11 @@ const getContestTypeResultsUrl = (isCompete: boolean, isSimple: boolean, id: num
     : 'full'}`;
 
 // eslint-disable-next-line consistent-return
-const getContestBtnUrlString = (isCompete: boolean, id?: number) => {
-    if (id) {
-        if (isCompete) {
-            return `/contests/${id}/compete`;
-        }
-        return `/contests/${id}/practice`;
+const getContestBtnUrlString = (isCompete: boolean, id: number) => {
+    if (isCompete) {
+        return `/contests/${id}/compete`;
     }
+    return `/contests/${id}/practice`;
 };
 
 // Username url utils for decoding/encoding usernames containing '.'
