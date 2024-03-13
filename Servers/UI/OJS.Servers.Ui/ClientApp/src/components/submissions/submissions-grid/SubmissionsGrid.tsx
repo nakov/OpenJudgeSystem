@@ -104,6 +104,7 @@ const SubmissionsGrid = ({
                                     <SubmissionGridRow
                                       submission={s}
                                       options={options}
+                                      key={s.id}
                                     />
                                 ))
                                 : null

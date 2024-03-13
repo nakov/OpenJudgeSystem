@@ -10,7 +10,7 @@ import { setCurrentPage } from '../../../redux/features/submissionDetailsSlice';
 import { setSubmissions } from '../../../redux/features/submissionsSlice';
 import {
     useGetLatestSubmissionsInRoleQuery,
-    useGetLatestSubmissionsQuery, useGetTotalCountQuery,
+    useGetLatestSubmissionsQuery, useGetTotalCountQuery, useGetUnprocessedCountQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -53,6 +53,8 @@ const RecentSubmissions = () => {
     );
 
     const { data: totalSubmissionsCount } = useGetTotalCountQuery(null);
+
+    const { data: unprocessedCount } = useGetUnprocessedCountQuery(null);
 
     const {
         isLoading: inRoleLoading,
@@ -119,7 +121,7 @@ const RecentSubmissions = () => {
                     >
                         Submissions awaiting execution:
                         {' '}
-                        {15}
+                        {unprocessedCount}
                         {' '}
                         (
                         <SubmissionStateLink
@@ -147,7 +149,7 @@ const RecentSubmissions = () => {
                 )
             );
         },
-        [ user, selectedActive, handleSelectSubmissionState ],
+        [ user, unprocessedCount, selectedActive, handleSelectSubmissionState ],
     );
 
     return (
@@ -179,7 +181,7 @@ const RecentSubmissions = () => {
                   showDetailedResults: user.isAdmin,
                   showTaskDetails: true,
                   showCompeteMarker: user.isAdmin,
-                  showSubmissionTypeInfo: user.isAdmin,
+                  showSubmissionTypeInfo: true,
               }}
             />
         </>

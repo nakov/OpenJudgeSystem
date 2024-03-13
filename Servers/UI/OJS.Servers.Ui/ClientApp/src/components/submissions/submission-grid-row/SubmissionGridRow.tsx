@@ -214,6 +214,7 @@ const SubmissionGridRow = ({
                         ? (
                             <>
                                 {renderProblemInformation()}
+                                {/* TODO: Fix this to use Link */}
                                 <Button
                                   type={ButtonType.secondary}
                                   size={ButtonSize.small}

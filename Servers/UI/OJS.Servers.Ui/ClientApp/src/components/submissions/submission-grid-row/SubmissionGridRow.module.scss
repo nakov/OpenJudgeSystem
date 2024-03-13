@@ -7,6 +7,8 @@
 
 .row {
   @extend %font-family-roboto;
+  
+  height: 100%;
 }
 
 .lightRow {
@@ -20,6 +22,7 @@
 }
 
 .redirectButton {
+  margin-top: spacings.$sp-4;
   background-color: inherit;
   border: 0;
   color: colors.$light-blue-color;
@@ -39,11 +42,12 @@
 }
 
 .strategy {
-  align-items: center;
   display: flex;
-  flex-direction: row;
-  gap: spacings.$sp-12;
   justify-content: start;
+  align-items: center;
+  flex-direction: row;
+  height: 100%;
+  gap: spacings.$sp-12;
 }
 
 .competeIcon {

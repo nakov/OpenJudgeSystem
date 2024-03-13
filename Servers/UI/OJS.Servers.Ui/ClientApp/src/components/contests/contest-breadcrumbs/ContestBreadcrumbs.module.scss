@@ -4,7 +4,7 @@
 @use 'src/styles/shadows';
 @use 'src/styles/colors';
 
-.breadcrumbsWrapper {
+.contestBreadcrumbsWrapper {
   @extend %font-family-roboto;
 
   align-items: center;
@@ -15,7 +15,7 @@
   padding: spacings.$sp-4 spacings.$sp-8;
   width: 99%;
 
-  .item {
+  .contestBreadcrumbsItem {
     color: colors.$primary-blue;
     margin-left: spacings.$sp-4;
   }

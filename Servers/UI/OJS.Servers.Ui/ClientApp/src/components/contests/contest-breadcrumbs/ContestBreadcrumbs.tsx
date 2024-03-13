@@ -26,7 +26,7 @@ const ContestBreadcrumbs = () => {
               searchParams.set('category', breadcrumbItem.id.toString());
               setSearchParams(searchParams);
           }}
-          className={`${styles.item} ${isLast
+          className={`${styles.contestBreadcrumbsItem} ${isLast
               ? textColorClassName
               : ''}`}
         >
@@ -43,7 +43,7 @@ const ContestBreadcrumbs = () => {
     }
 
     return (
-        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
+        <div className={`${styles.contestBreadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
             {breadcrumbItems
                 .map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1, idx))}
         </div>

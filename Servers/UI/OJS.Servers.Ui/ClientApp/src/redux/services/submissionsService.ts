@@ -27,6 +27,10 @@ const submissionsService = createApi({
             number,
             null>({ query: () =>
                 ({ url: `/${defaultPathIdentifier}/Submissions/TotalCount` }) }),
+        getUnprocessedCount: builder.query<
+            number,
+            null>({ query: () =>
+                ({ url: `/${defaultPathIdentifier}/Submissions/UnprocessedTotalCount` }) }),
         // eslint-disable-next-line max-len
         getLatestSubmissions: builder.query<
             IPagedResultType<IPublicSubmission>,
@@ -41,12 +45,14 @@ const submissionsService = createApi({
 
 const {
     useGetTotalCountQuery,
+    useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
 } = submissionsService;
 
 export {
     useGetTotalCountQuery,
+    useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery, 
     useGetLatestSubmissionsInRoleQuery,
 };

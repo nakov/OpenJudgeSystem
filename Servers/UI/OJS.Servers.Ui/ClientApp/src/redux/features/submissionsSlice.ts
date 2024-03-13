@@ -19,7 +19,6 @@ export const submissionsSlice = createSlice({
     initialState,
     reducers: {
         setSubmissions: (state: IRecentSubmissionsReduxState, action) => {
-            console.log(action.payload);
             state.submissions = action.payload;
         },
         setCurrentPage: (state: IRecentSubmissionsReduxState, action) => {
