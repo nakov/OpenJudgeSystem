@@ -1,11 +1,14 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Models.Users;
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
     public class ProblemsDataService : DataService<Problem>, IProblemsDataService
     {
@@ -68,5 +71,10 @@
             this.GetByIdQuery(id)
                 .Select(p => p.Name)
                 .FirstOrDefault();
+
+        protected override Expression<Func<Problem, bool>> GetUserFilter(UserInfoModel user)
+            => problem => user.IsAdmin ||
+                          problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
+                          problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
     }
 }

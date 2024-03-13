@@ -70,7 +70,7 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
             throw new BusinessServiceException("File not found.");
         }
 
-        return new ResourceServiceModel()
+        return new ResourceServiceModel
         {
             Content = file.File!,
             MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,

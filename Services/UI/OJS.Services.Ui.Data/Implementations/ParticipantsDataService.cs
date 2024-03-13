@@ -2,7 +2,6 @@ namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Enumerations;
-    using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Data.Implementations;
     using System;
@@ -13,7 +12,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ParticipantsDataService : DataService<Participant>, IParticipantsDataService
     {
-        public ParticipantsDataService(OjsDbContext db)
+        public ParticipantsDataService(DbContext db)
             : base(db)
         {
         }

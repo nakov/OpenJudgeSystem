@@ -1,5 +1,4 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
-import dayjs from 'dayjs';
 import moment, { Duration } from 'moment';
 
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
@@ -113,17 +112,6 @@ const convertToTwoDigitValues = ({
     };
 };
 
-// eslint-disable-next-line max-len
-const getDateWithFormat = (date?: string | number | Date | dayjs.Dayjs | null | undefined, format?: string | undefined) => {
-    if (!date) {
-        return null;
-    }
-    if (!format) {
-        return dayjs(date) as unknown as Date;
-    }
-    return new Date(dayjs(date).format(format));
-};
-
 export default {
     formatDate,
     preciseFormatDate,
@@ -146,7 +134,6 @@ export {
     convertToSecondsRemaining,
     convertToTwoDigitValues,
     getCurrentTimeInUTC,
-    getDateWithFormat,
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,

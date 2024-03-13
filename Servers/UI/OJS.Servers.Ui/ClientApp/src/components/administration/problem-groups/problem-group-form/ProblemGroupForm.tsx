@@ -70,7 +70,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
             }
             setContestsData(contestsAutocompleteData);
         }
-    }, [ contestsAutocompleteData ]);
+    }, [ contestsAutocompleteData, problemGroupData ]);
 
     useEffect(() => {
         if (problemGroupData) {
