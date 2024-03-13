@@ -173,7 +173,7 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                       label={ID}
                       InputLabelProps={{ shrink: true }}
                       type="number"
-                      value={currentSubmissionType.id}
+                      value={id ?? 0}
                       disabled
                     />
                 </FormControl>
@@ -241,7 +241,9 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                       minRows={10}
                       name="description"
                       onChange={(e) => onChange(e)}
-                      value={currentSubmissionType.description ?? ''}
+                      value={currentSubmissionType.description === null
+                          ? ''
+                          : currentSubmissionType.description}
                     />
                 </FormControl>
                 <FormControl className={formStyles.inputRow}>
