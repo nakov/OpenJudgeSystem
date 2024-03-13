@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 
-import { NEW_ADMINISTRATION_PATH } from '../../common/urls';
+import { NEW_ADMINISTRATION_PATH } from '../../common/urls/administration-urls';
 import AdministrationPortal from '../../components/portals/administration/AdministrationPortal';
 import ClientPortal from '../../components/portals/client/ClientPortal';
 import { useAppSelector } from '../../redux/store';

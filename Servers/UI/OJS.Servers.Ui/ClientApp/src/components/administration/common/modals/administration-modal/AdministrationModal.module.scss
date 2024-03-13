@@ -1,5 +1,7 @@
+@use 'src/styles/fonts';
 @use 'src/styles/variables';
 @use 'src/styles/colors';
+@use 'src/styles/shadows';
 
 .closeIcon {
   left: 95%;
@@ -7,10 +9,11 @@
 }
 
 .wrapper {
+  @extend %font-family-roboto;
+
   background-color: colors.$white-color;
   border-radius: variables.$f-size-12;
-  box-shadow: '0px 0px 19px -4px rgba(0,0,0,0.75)';
-  font-family: 'Roboto, Helvetica , Arial', serif;
+  box-shadow: shadows.$dp-shadow-4;
   height: 90%;
   left: 50%;
   overflow: auto;

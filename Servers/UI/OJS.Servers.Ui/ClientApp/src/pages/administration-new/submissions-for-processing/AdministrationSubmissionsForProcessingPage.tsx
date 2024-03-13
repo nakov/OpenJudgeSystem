@@ -7,7 +7,7 @@ import { Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import { SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
+import { SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
