@@ -18,29 +18,30 @@ const submissionsService = createApi({
             if (response.headers.get('Content-Length')) {
                 return '';
             }
-    
+
             return response.json();
         },
     }),
     endpoints: (builder) => ({
         getTotalCount: builder.query<
             number,
-            null>({ 
-                query: () =>
-                ({ url: `/${defaultPathIdentifier}/Submissions/TotalCount` }) }),
+            null>({ query: () => ({ url: `/${defaultPathIdentifier}/Submissions/TotalCount` }) }),
         getUnprocessedCount: builder.query<
             number,
-            null>({ query: () =>
-                ({ url: `/${defaultPathIdentifier}/Submissions/UnprocessedTotalCount` }) }),
+            null>({ query: () => ({ url: `/${defaultPathIdentifier}/Submissions/UnprocessedTotalCount` }) }),
         // eslint-disable-next-line max-len
         getLatestSubmissions: builder.query<
             IPagedResultType<IPublicSubmission>,
-            IGetSubmissionsUrlParams>({ query: ({ status, page }) => 
-                ({ url: `/${defaultPathIdentifier}/Submissions/GetSubmissions?status=${status}&page=${page}` }) }),
+            IGetSubmissionsUrlParams>({
+                query: ({ status, page }) => (
+                    { url: `/${defaultPathIdentifier}/Submissions/GetSubmissions?status=${status}&page=${page}` }),
+            }),
         getLatestSubmissionsInRole: builder.query<
             IPagedResultType<IPublicSubmission>,
-            IGetSubmissionsUrlParams>({ query: ({ status, page }) => 
-                ({ url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }) }),
+            IGetSubmissionsUrlParams>({
+                query: ({ status, page }) => (
+                    { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
+            }),
     }),
 });
 
@@ -54,7 +55,7 @@ const {
 export {
     useGetTotalCountQuery,
     useGetUnprocessedCountQuery,
-    useGetLatestSubmissionsQuery, 
+    useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
 };
 export default submissionsService;

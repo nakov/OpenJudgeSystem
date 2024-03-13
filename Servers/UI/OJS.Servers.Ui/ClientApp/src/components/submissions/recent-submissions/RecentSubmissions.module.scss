@@ -2,10 +2,10 @@
 @use 'src/styles/spacings';
 
 .headingBorder {
-    border-bottom: 1px solid;
-    border-bottom-color: colors.$bottom-border-color;
+  border-bottom: 1px solid;
+  border-bottom-color: colors.$bottom-border-color;
 }
 
 .recentSubmissionsGrid {
-    margin-top: spacings.$sp-18;
+  margin-top: spacings.$sp-18;
 }

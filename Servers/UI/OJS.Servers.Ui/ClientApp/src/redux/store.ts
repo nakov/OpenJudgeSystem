@@ -13,8 +13,8 @@ import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import { submissionsSlice } from './features/submissionsSlice';
 import { submissionDetailsSlice } from './features/submissionDetailsSlice';
+import { submissionsSlice } from './features/submissionsSlice';
 import { themeSlice } from './features/themeSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
@@ -30,10 +30,10 @@ import submissionsForProcessingAdminService from './services/admin/submissionsFo
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 // services
 import authorizationService from './services/authorizationService';
-import submissionsService from './services/submissionsService';
 import { contestsService } from './services/contestsService';
 import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionDetailsService from './services/submissionDetailsService';
+import submissionsService from './services/submissionsService';
 
 const rootReducer = combineReducers({
     // reducers

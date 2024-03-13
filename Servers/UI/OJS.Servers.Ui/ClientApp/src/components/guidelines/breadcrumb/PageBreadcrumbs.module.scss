@@ -5,14 +5,14 @@
 
 .breadcrumbsWrapper {
   @extend %font-family-roboto;
-  
-  display: flex;
-  justify-content: flex-start;
+
   align-items: center;
+  cursor: pointer;
+  display: flex;
   font-size: variables.$f-size-18;
+  justify-content: flex-start;
   padding: spacings.$sp-8 spacings.$sp-8;
   width: 99%;
-  cursor: pointer;
 
   .item {
     color: colors.$primary-blue;

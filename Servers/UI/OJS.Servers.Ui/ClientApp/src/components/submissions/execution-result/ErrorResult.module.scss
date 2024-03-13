@@ -2,6 +2,6 @@
 @use 'src/styles/colors';
 
 .compileAndUnknownError {
-  font-size: variables.$f-size-16;
   color: colors.$primary-red;
+  font-size: variables.$f-size-16;
 }

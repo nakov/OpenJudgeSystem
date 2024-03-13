@@ -2,21 +2,21 @@
 @use 'src/styles/colors';
 
 .closeIcon {
-    position: relative;
-    left: 95%;
+  left: 95%;
+  position: relative;
 }
 
 .wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    height: 90%;
-    background-color: colors.$white-color;
-    border-radius: variables.$f-size-12;
-    box-shadow: '0px 0px 19px -4px rgba(0,0,0,0.75)';
-    padding: variables.$f-size-18;
-    font-family: 'Roboto, Helvetica , Arial';
-    overflow: auto;
+  background-color: colors.$white-color;
+  border-radius: variables.$f-size-12;
+  box-shadow: '0px 0px 19px -4px rgba(0,0,0,0.75)';
+  font-family: 'Roboto, Helvetica , Arial', serif;
+  height: 90%;
+  left: 50%;
+  overflow: auto;
+  padding: variables.$f-size-18;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
 }
