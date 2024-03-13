@@ -25,9 +25,7 @@ public class TestIdPermissionService : IEntityPermissionsService<Test, int>
     {
         var contestId = await this.testsDataService
             .GetByIdQuery(value)
-            .Include(t => t.Problem)
-            .ThenInclude(p => p.ProblemGroup)
-            .Select(t => t.Problem.ProblemGroup.ContestId)
+            .Select(x => x.Problem.ProblemGroup.ContestId)
             .FirstOrDefaultAsync();
 
         return await this.contestsBusinessService.UserHasContestPermissions(
