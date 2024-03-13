@@ -24,7 +24,7 @@ export const contestCategoriesAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 10,
+            keepUnusedDataFor: 5,
         }),
         getContestCategoryById: builder.query<IContestCategoryAdministration, IContestCategoriesUrlParams>({
             query: ({ id }) => ({ url: `Get/${id}` }),
@@ -45,8 +45,8 @@ export const contestCategoriesAdminService = createApi({
                 body: contestCategoryAdministrationModel,
             }),
         }),
-        deleteContestCategory: builder.mutation<string, IContestCategoriesUrlParams >({
-            query: ({ id }) => ({
+        deleteContestCategory: builder.mutation<string, number >({
+            query: (id) => ({
                 url: `/Delete/${id}`,
                 method: 'DELETE',
             }),

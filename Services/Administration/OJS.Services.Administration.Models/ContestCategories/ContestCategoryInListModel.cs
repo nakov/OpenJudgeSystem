@@ -15,6 +15,8 @@ public class ContestCategoryInListModel : IMapExplicitly
 
     public string? Parent { get; set; }
 
+    public int? ParentId { get; set; }
+
     public bool IsDeleted { get; set; }
 
     public bool IsVisible { get; set; }
