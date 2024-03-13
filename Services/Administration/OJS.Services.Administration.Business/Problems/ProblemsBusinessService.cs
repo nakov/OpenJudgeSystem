@@ -228,6 +228,10 @@ namespace OJS.Services.Administration.Business.Problems
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)
             {
+                problem.ProblemGroup.OrderBy = model.OrderBy;
+            }
+            else
+            {
                 problem.ProblemGroup.OrderBy = model.ProblemGroupOrderBy;
             }
 

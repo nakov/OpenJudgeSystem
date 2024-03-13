@@ -65,6 +65,11 @@ const AdministrationProblemsPage = () => {
         setProblemId(id);
     };
 
+    const onEditModalClose = () => {
+        setOpenEditProblemModal(false);
+        retakeProblems();
+    };
+
     const renderRetestModal = (index: number) => (
         <ProblemRetest
           key={index}
@@ -84,7 +89,7 @@ const AdministrationProblemsPage = () => {
         <AdministrationModal
           index={index}
           open={openEditProblemModal}
-          onClose={() => setOpenEditProblemModal(false)}
+          onClose={() => onEditModalClose()}
         >
             <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
         </AdministrationModal>

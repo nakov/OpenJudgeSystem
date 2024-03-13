@@ -1,5 +1,3 @@
-/* eslint-disable css-modules/no-unused-class */
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -22,6 +20,7 @@ import DeleteButton from '../../common/delete/DeleteButton';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 import styles from './ContestEdit.module.scss';
 

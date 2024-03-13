@@ -6,7 +6,7 @@ import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextFi
 import { ContestVariation } from '../../../../common/contest-types';
 import { SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
 import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
-import { PROBLEMS_PATH } from '../../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../../common/urls';
 import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -257,7 +257,7 @@ const ProblemForm = (props: IProblemFormProps) => {
                           id={problemId!}
                           name={currentProblem.name}
                           style={{ alignSelf: 'flex-end' }}
-                          onSuccess={(() => navigate(`${PROBLEMS_PATH}`))}
+                          onSuccess={(() => navigate(`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`))}
                           text="Are you sure you want to delete this problem."
                           mutation={useDeleteProblemMutation}
                         />
