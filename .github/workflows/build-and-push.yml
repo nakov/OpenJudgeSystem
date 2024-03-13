@@ -52,7 +52,7 @@ jobs:
       shell: bash
       run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
     - name: Get branch name
-      if: github.event_name == 'workflow_dispatch'
+      if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
       shell: bash
       # Set BRANCH_NAME to be the provided image tag, as it will be used to push the image with
       run: echo "BRANCH_NAME=${{ inputs.docker_tag }}" >> $GITHUB_ENV
