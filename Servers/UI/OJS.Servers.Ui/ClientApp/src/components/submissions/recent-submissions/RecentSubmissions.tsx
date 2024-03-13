@@ -38,10 +38,9 @@ const RecentSubmissions = () => {
 
     const appDispatch = useAppDispatch();
 
-    const { submissions } = useAppSelector((state: { latestSubmissions: IRecentSubmissionsReduxState }) => state.latestSubmissions);
+    const { submissions } = useAppSelector((state) => state.latestSubmissions);
 
-    const { internalUser: user } =
-        useAppSelector((state: { authorization: IAuthorizationReduxState }) => state.authorization);
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     const loggedInUserInRole = !isEmpty(user.id) && user.isAdmin;
 
