@@ -1,12 +1,25 @@
 import { CONTESTS_PATH } from './client-urls';
 
 const composeParticipationTypeResultsFullRoute =
-    (id: number, participationType: string) => `/${CONTESTS_PATH}/${id}/${participationType}/results/full`;
+    (id: number, participationType: string, isSimple: boolean) => `/${CONTESTS_PATH}/${id}/${participationType}/results/${isSimple
+        ? 'simple'
+        : 'full'}`;
 
 const composeContestsWithSelectedCategoryAndStrategyUrl =
-    (categoryId?: number, strategyId?: number) => `/${CONTESTS_PATH}?category=${categoryId}&strategy=${strategyId}`;
+    (categoryId?: number, strategyId?: number) => {
+        const returnUrl = `/${CONTESTS_PATH}`;
+        const prefixes = [ `${categoryId
+            ? `category=${categoryId}`
+            : ''}`, `${strategyId
+            ? `strategy=${strategyId}`
+            : ''}` ];
+        const composedString = prefixes.filter((prefix) => prefix).join('&');
+        if (composedString.length > 0) {
+            return `${returnUrl}?${composedString}`;
+        }
 
-const composeContestBreadcrumbUrl = (breadcrumbItemId: number) => `/${CONTESTS_PATH}?category=${breadcrumbItemId}`;
+        return returnUrl;
+    };
 
 const composeContestParticipateUrl = (isCompete: boolean, id: number) => {
     if (isCompete) {
@@ -15,16 +28,8 @@ const composeContestParticipateUrl = (isCompete: boolean, id: number) => {
     return `/${CONTESTS_PATH}/${id}/practice`;
 };
 
-const composeContestResultsUrl = (isCompete: boolean, isSimple: boolean, id: number) => `/contests/${id}/${isCompete
-    ? 'compete'
-    : 'practice'}/results/${isSimple
-    ? 'simple'
-    : 'full'}`;
-
 export {
     composeParticipationTypeResultsFullRoute,
     composeContestsWithSelectedCategoryAndStrategyUrl,
-    composeContestBreadcrumbUrl,
     composeContestParticipateUrl,
-    composeContestResultsUrl,
 };

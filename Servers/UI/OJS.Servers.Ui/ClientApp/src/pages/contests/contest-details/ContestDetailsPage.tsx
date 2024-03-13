@@ -4,7 +4,6 @@ import { Link, useParams } from 'react-router-dom';
 
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import {
-    composeContestResultsUrl,
     composeContestsWithSelectedCategoryAndStrategyUrl,
     composeParticipationTypeResultsFullRoute,
 } from '../../../common/urls/compose-client-urls';
@@ -78,7 +77,7 @@ const ContestDetailsPage = () => {
             <Button onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}>Edit</Button>
             <Button
               className={styles.adminBtn}
-              onClick={() => navigate(composeParticipationTypeResultsFullRoute(id!, 'compete'))}
+              onClick={() => navigate(composeParticipationTypeResultsFullRoute(id!, 'compete', true))}
             >
                 Full Results
             </Button>
@@ -98,7 +97,9 @@ const ContestDetailsPage = () => {
                       : ''} ${isCompete
                       ? styles.greenColor
                       : ''}`}
-                  to={composeContestResultsUrl(isCompete, true, id!)}
+                  to={composeParticipationTypeResultsFullRoute(id!, isCompete
+                      ? 'compete'
+                      : 'practice', true)}
                 >
                     <i className="fas fa-user" />
                     <div className={`${styles.underlinedBtnText}`}>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { IIndexContestsType } from '../../../common/types';
-import { composeContestResultsUrl } from '../../../common/urls/compose-client-urls';
+import { composeParticipationTypeResultsFullRoute } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
     calculatedTimeFormatted,
@@ -96,7 +96,7 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={composeContestResultsUrl(participationType === 'compete', true, id!)}
+                          to={composeParticipationTypeResultsFullRoute(id!, participationType, true)}
                         >
                             {renderBody()}
                         </Link>
