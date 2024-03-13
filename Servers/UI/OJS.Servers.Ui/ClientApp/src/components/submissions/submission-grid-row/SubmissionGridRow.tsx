@@ -283,8 +283,6 @@ const SubmissionGridRow = ({
                             ? (
                                 <ExecutionResult
                                   testRuns={testRuns}
-                                  maxMemoryUsed={maxMemoryUsed}
-                                  maxTimeUsed={maxTimeUsed}
                                   isCompiledSuccessfully={isCompiledSuccessfully}
                                   isProcessed={processed}
                                 />
