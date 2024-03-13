@@ -51,8 +51,7 @@ jobs:
       if: github.event_name == 'pull_request'
       shell: bash
       run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-    - name: Get branch name
-      if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_call'
+    - name: Get docker tag
       shell: bash
       run: echo "DOCKER_TAG=${{ inputs.docker_tag }}" >> $GITHUB_ENV
 
@@ -74,7 +73,10 @@ jobs:
       id: prepare_docker_tags
       shell: bash
       run: |
-        TAGS="${{ env.IMAGE }}:${{ env.GIT_SHA }},${{ env.IMAGE }}:${{ env.BUILD_VER }},${{ env.IMAGE }}:${{ env.BRANCH_NAME }}"
+        TAGS="${{ env.IMAGE }}:${{ env.GIT_SHA }},${{ env.IMAGE }}:${{ env.BUILD_VER }}"
+        if [[ -n "${{ env.BRANCH_NAME }}" ]]; then
+          TAGS="$TAGS,${{ env.IMAGE }}:${{ env.BRANCH_NAME }}"
+        fi
         if [[ -n "${{ env.DOCKER_TAG }}" ]]; then
           TAGS="$TAGS,${{ env.IMAGE }}:${{ env.DOCKER_TAG }}"
         fi
