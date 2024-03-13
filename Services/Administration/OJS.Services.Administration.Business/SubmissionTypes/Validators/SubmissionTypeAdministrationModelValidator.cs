@@ -6,9 +6,9 @@ using OJS.Services.Common.Validation;
 using OJS.Workers.Common.Models;
 using System;
 
-public class SubmissionTypesAdministrationModelValidator : BaseValidator<SubmissionTypesAdministrationModel>
+public class SubmissionTypeAdministrationModelValidator : BaseValidator<SubmissionTypeAdministrationModel>
 {
-    public SubmissionTypesAdministrationModelValidator()
+    public SubmissionTypeAdministrationModelValidator()
     {
         this.RuleFor(model => model.Id)
             .GreaterThanOrEqualTo(0)

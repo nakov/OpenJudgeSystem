@@ -9,7 +9,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypesAdministrationModel>, ISubmissionTypesBusinessService
+public class SubmissionTypesBusinessService : AdministrationOperationService<SubmissionType, int, SubmissionTypeAdministrationModel>, ISubmissionTypesBusinessService
 {
     private readonly ISubmissionTypesDataService submissionTypesDataService;
 
@@ -19,11 +19,11 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
     public async Task<List<SubmissionTypesInProblemView>> GetForProblem() =>
         await this.submissionTypesDataService.GetAll().MapCollection<SubmissionTypesInProblemView>().ToListAsync();
 
-    public override Task<SubmissionTypesAdministrationModel> Get(int id) =>
+    public override Task<SubmissionTypeAdministrationModel> Get(int id) =>
         this.submissionTypesDataService.GetByIdQuery(id).FirstOrDefaultAsync()
-            .Map<SubmissionTypesAdministrationModel>();
+            .Map<SubmissionTypeAdministrationModel>();
 
-    public override async Task<SubmissionTypesAdministrationModel> Create(SubmissionTypesAdministrationModel model)
+    public override async Task<SubmissionTypeAdministrationModel> Create(SubmissionTypeAdministrationModel model)
     {
         var submissionType = model.Map<SubmissionType>();
         await this.submissionTypesDataService.Add(submissionType);
@@ -32,7 +32,7 @@ public class SubmissionTypesBusinessService : AdministrationOperationService<Sub
         return model;
     }
 
-    public override async Task<SubmissionTypesAdministrationModel> Edit(SubmissionTypesAdministrationModel model)
+    public override async Task<SubmissionTypeAdministrationModel> Edit(SubmissionTypeAdministrationModel model)
     {
         var submissionType =
             await this.submissionTypesDataService

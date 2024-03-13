@@ -3,7 +3,7 @@
 using OJS.Data.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class SubmissionTypesInListModel : IMapFrom<SubmissionType>
+public class SubmissionTypeInListModel : IMapFrom<SubmissionType>
 {
     public int Id { get; set; }
 

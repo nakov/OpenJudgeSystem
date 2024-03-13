@@ -4,7 +4,7 @@ using AutoMapper;
 using OJS.Data.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class SubmissionTypesAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
+public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
     public string? Name { get; set; }
 
@@ -24,9 +24,9 @@ public class SubmissionTypesAdministrationModel : BaseAdministrationModel<int>, 
 
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<SubmissionType, SubmissionTypesAdministrationModel>();
+        configuration.CreateMap<SubmissionType, SubmissionTypeAdministrationModel>();
 
-        configuration.CreateMap<SubmissionTypesAdministrationModel, SubmissionType>()
+        configuration.CreateMap<SubmissionTypeAdministrationModel, SubmissionType>()
             .ForMember(st => st.SubmissionTypesInProblems, opt
                 => opt.Ignore())
             .ForMember(st => st.AllowedFileExtensionsList, opt

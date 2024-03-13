@@ -1,10 +1,9 @@
-/* eslint-disable import/exports-last */
 import { createSlice } from '@reduxjs/toolkit';
 
 import { IAdministrationFilter } from '../../../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../../../pages/administration-new/administration-sorting/AdministrationSorting';
 
-export interface IAdminSlice {
+interface IAdminSlice {
     [key: string]: null | {
         selectedFilters: null | IAdministrationFilter[];
         selectedSorters: null | IAdministrationSorter[];

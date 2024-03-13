@@ -13,14 +13,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class SubmissionTypesController : BaseAdminApiController<SubmissionType, int, SubmissionTypesInListModel, SubmissionTypesAdministrationModel>
+public class SubmissionTypesController : BaseAdminApiController<SubmissionType, int, SubmissionTypeInListModel, SubmissionTypeAdministrationModel>
 {
     private readonly ISubmissionTypesBusinessService submissionTypesBusinessService;
 
     public SubmissionTypesController(
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
-        SubmissionTypesAdministrationModelValidator validator,
+        SubmissionTypeAdministrationModelValidator validator,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator)
             : base(
                 submissionTypesGridDataService,
