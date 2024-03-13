@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH } from '../../../common/urls';
-import { preciseFormatDate } from '../../../utils/dates';
+import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -114,7 +114,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.createdOn),
     },
     {
         field: 'modifiedOn',
@@ -124,7 +124,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.modifiedOn),
     },
     {
         field: 'startedExecutionOn',
@@ -134,7 +134,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.startedExecutionOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.startedExecutionOn),
     },
     {
         field: 'completedExecutionOn',
@@ -144,7 +144,7 @@ const dataColumns: GridColDef[] = [
         width: 200,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => preciseFormatDate(params.value?.completedExecutionOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.completedExecutionOn),
     },
 ];
 

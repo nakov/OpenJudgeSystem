@@ -5,8 +5,8 @@ using AutoCrudAdmin.Extensions;
 using Microsoft.AspNetCore.Builder;
 using OJS.Data;
 using OJS.Servers.Administration.Filters;
+using OJS.Servers.Administration.Middleware;
 using OJS.Servers.Infrastructure.Extensions;
-using OJS.Servers.Infrastructure.Middleware;
 
 internal static class WebApplicationExtensions
 {

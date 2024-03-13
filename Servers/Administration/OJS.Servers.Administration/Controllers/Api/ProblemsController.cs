@@ -1,23 +1,22 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
-using OJS.Common.Exceptions;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
+using OJS.Services.Administration.Business.ProblemGroups.Permissions;
 using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Business.Problems.GridData;
+using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.ProblemResources;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Infrastructure.Exceptions;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using OJS.Services.Administration.Business.Problems.Permissions;
-using OJS.Services.Administration.Models.ProblemResources;
-using OJS.Services.Administration.Business.ProblemGroups.Permissions;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -33,7 +32,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        IGridDataService<Problem> problemGridDataService,
+        IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
         ProblemsDeleteValidator deleteValidator,
         IGridDataService<ProblemResource> problemResourceGridDataService)

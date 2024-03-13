@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Infrastructure.Middleware;
+﻿namespace OJS.Servers.Administration.Middleware;
 
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Exceptions;
