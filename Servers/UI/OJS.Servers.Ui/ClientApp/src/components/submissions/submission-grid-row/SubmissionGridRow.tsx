@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
@@ -132,25 +133,25 @@ const SubmissionGridRow = ({
 
     const renderPoints = useCallback(
         () => {
-            if (state === PublicSubmissionState.Ready) {
-                if (!isCompiledSuccessfully) {
-                    return <ErrorResult />;
-                }
-
+            if (state === PublicSubmissionState.Processing) {
                 return (
-                    <span>
-                        {points}
-                        {' '}
-                        /
-                        {maxPoints}
-                    </span>
+                    <>
+                        Processing
+                    </>
                 );
             }
 
+            if (!isCompiledSuccessfully) {
+                return <ErrorResult />;
+            }
+
             return (
-                <>
-                    Processing
-                </>
+                <span>
+                    {points}
+                    {' '}
+                    /
+                    {maxPoints}
+                </span>
             );
         },
         [ state, isCompiledSuccessfully, points, maxPoints ],
@@ -238,7 +239,7 @@ const SubmissionGridRow = ({
                         ? (
                             <td>
                                 <div className={styles.competeIconWrapper}>
-                                    <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
+                                    <FaFlagCheckered className={styles.competeIcon} />
                                 </div>
                             </td>
                         )

@@ -57,7 +57,8 @@
 .executionResultContainer {
   display: flex;
   flex-direction: row;
-  gap: spacings.$sp-18
+  gap: spacings.$sp-18;
+  max-width: 12vw;
 }
 
 .maxTimeUsed,
