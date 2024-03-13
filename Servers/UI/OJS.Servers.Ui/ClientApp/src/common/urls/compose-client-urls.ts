@@ -4,15 +4,15 @@ const composeParticipationTypeResultsFullRoute =
     (id: number, participationType: string) => `/${CONTESTS_PATH}/${id}/${participationType}/results/full`;
 
 const composeContestsWithSelectedCategoryAndStrategyUrl =
-    (categoryId?: number, strategyId?: number) => `/contests?category=${categoryId}&strategy=${strategyId}`;
+    (categoryId?: number, strategyId?: number) => `/${CONTESTS_PATH}?category=${categoryId}&strategy=${strategyId}`;
 
-const composeContestBreadcrumbUrl = (breadcrumbItemId: number) => `/contests?category=${breadcrumbItemId}`;
+const composeContestBreadcrumbUrl = (breadcrumbItemId: number) => `/${CONTESTS_PATH}?category=${breadcrumbItemId}`;
 
 const composeContestParticipateUrl = (isCompete: boolean, id: number) => {
     if (isCompete) {
-        return `/contests/${id}/compete`;
+        return `/${CONTESTS_PATH}/${id}/compete`;
     }
-    return `/contests/${id}/practice`;
+    return `/${CONTESTS_PATH}/${id}/practice`;
 };
 
 const composeContestResultsUrl = (isCompete: boolean, isSimple: boolean, id: number) => `/contests/${id}/${isCompete
