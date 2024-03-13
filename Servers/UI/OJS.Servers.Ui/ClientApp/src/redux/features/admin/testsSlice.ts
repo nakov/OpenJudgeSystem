@@ -1,4 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { IFilterReducerActionType, ISorterReducerActionType } from '../../../common/types';
 
 import { IAdminSlice } from './contestsAdminSlice';
 
@@ -8,7 +10,7 @@ export const testsAdminSlice = createSlice({
     name: 'adminTests',
     initialState,
     reducers: {
-        setAdminTestsFilters: (state, action) => {
+        setAdminTestsFilters: (state, action: PayloadAction<IFilterReducerActionType>) => {
             const { key, filters } = action.payload;
 
             if (state[key]) {
@@ -17,7 +19,7 @@ export const testsAdminSlice = createSlice({
                 state[key] = { selectedFilters: filters, selectedSorters: null };
             }
         },
-        setAdminTestsSorters: (state, action) => {
+        setAdminTestsSorters: (state, action: PayloadAction<ISorterReducerActionType>) => {
             const { key, sorters } = action.payload;
 
             if (state[key]) {

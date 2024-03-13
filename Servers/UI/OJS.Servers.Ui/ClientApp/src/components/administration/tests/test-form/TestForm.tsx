@@ -6,7 +6,7 @@ import isNaN from 'lodash/isNaN';
 import { CREATE, EDIT, HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, RECORD, SELECT_PROBLEM, TYPE } from '../../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { ITestsDropdownData } from '../../../../common/types';
-import { TESTS_PATH } from '../../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, TESTS_PATH } from '../../../../common/urls';
 import { useGetAllByNameQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useCreateTestMutation, useDeleteTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -32,14 +32,14 @@ const TestForm = (props: ITestFormProps) => {
     const [ searchString, setSearchString ] = useState<string>('');
     const [ dropdownData, setDropdownData ] = useState<Array<ITestsDropdownData>>([]);
     const [ test, setTest ] = useState<ITestAdministration>({
-        id: 0,
+        id,
         input: '',
         output: '',
         orderBy: 0,
         retestProblem: false,
         type: Object.keys(TestTypes).filter((key) => isNaN(Number(key)))[0],
         hideInput: false,
-        problemId: 0,
+        problemId: id,
         problemName: '',
     });
 
@@ -114,14 +114,14 @@ const TestForm = (props: ITestFormProps) => {
                     <FormActionButton
                       className={formStyles.buttonsWrapper}
                       buttonClassName={formStyles.button}
-                      onClick={editTest}
+                      onClick={() => editTest(test)}
                       name={EDIT}
                     />
                     <Box sx={{ alignSelf: 'flex-end' }}>
                         <DeleteButton
                           id={Number(id!)}
                           name={RECORD}
-                          onSuccess={() => navigate(`${TESTS_PATH}`)}
+                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`)}
                           mutation={useDeleteTestMutation}
                           text={DELETE_CONFIRMATION_MESSAGE}
                         />
@@ -132,7 +132,7 @@ const TestForm = (props: ITestFormProps) => {
                 <FormActionButton
                   className={formStyles.buttonsWrapper}
                   buttonClassName={formStyles.button}
-                  onClick={createTest}
+                  onClick={() => createTest(test)}
                   name={CREATE}
                 />
             )
@@ -226,6 +226,7 @@ const TestForm = (props: ITestFormProps) => {
                                 ))}
                             </Select>
                         </FormControl>
+                        {isEditMode && (
                         <FormControl className={formStyles.spacing}>
                             <FormControlLabel
                               control={<Checkbox checked={test.retestProblem ?? false} />}
@@ -234,6 +235,7 @@ const TestForm = (props: ITestFormProps) => {
                               onChange={(e) => onChange(e)}
                             />
                         </FormControl>
+                        )}
                         <FormControl className={formStyles.spacing}>
                             <FormControlLabel
                               control={<Checkbox checked={test.hideInput} />}

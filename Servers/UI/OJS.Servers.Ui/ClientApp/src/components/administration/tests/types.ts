@@ -18,6 +18,7 @@ interface ITestInListData {
     orderBy:number;
     problemId:number;
     problemName:string;
+    retestProblem: boolean;
 }
 
 enum TestTypes {

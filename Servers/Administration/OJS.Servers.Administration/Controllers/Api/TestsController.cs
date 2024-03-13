@@ -8,6 +8,7 @@ using OJS.Servers.Administration.Attributes;
 using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Business.Tests;
+using OJS.Services.Administration.Business.Tests.Permissions;
 using OJS.Services.Administration.Business.Tests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
@@ -57,7 +58,7 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
     }
 
     [HttpPost]
-    [ProtectedEntityAction(false)]
+    [ProtectedEntityAction("model", typeof(TestsImportPermissionService))]
     public async Task<IActionResult> Import([FromForm]TestsImportRequestModel model)
         => this.Ok(await this.testsBusinessService.Import(model));
 
@@ -72,5 +73,5 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
     [HttpGet("{id:int}")]
     [ProtectedEntityAction("id", AdministrationConstants.AdministrationOperations.Read)]
     public async Task<IActionResult> GetTestRunsByTestId([FromQuery] PaginationRequestModel model, [FromRoute] int id)
-        => this.Ok(await this.testRunsGridDataService.GetAll<TestRunsInListModel>(model, tr => tr.TestId == id));
+        => this.Ok(await this.testRunsGridDataService.GetAll<TestRunInListModel>(model, tr => tr.TestId == id));
 }

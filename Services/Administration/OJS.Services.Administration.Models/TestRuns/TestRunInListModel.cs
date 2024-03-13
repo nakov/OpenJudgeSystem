@@ -3,7 +3,7 @@
 using OJS.Data.Models.Tests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
-public class TestRunsInListModel : IMapFrom<TestRun>
+public class TestRunInListModel : IMapFrom<TestRun>
 {
     public int Id { get; set; }
 

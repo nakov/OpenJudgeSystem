@@ -497,6 +497,16 @@ interface IEnumType {
     enumValues?: Array<string>;
 }
 
+interface IFilterReducerActionType {
+    key: string;
+    filters: Array<IAdministrationFilter> | null;
+}
+
+interface ISorterReducerActionType {
+    key: string;
+    sorters: Array<IAdministrationSorter> | null;
+}
+
 interface IFilterColumn {
     columnName: string;
     columnType: FilterColumnTypeEnum;
@@ -588,4 +598,6 @@ export type {
     IFileModel,
     IEnumType,
     ITestRunInListModel,
+    ISorterReducerActionType,
+    IFilterReducerActionType,
 };

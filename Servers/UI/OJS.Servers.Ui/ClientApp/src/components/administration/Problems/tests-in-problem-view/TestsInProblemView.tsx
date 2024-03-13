@@ -198,12 +198,23 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
         />
     );
 
+    const onClose = (isEditMode: boolean) => {
+        if (isEditMode) {
+            setOpenEditTestModal(false);
+        } else {
+            setOpenCreateModal(false);
+        }
+        retakeTests();
+    };
+
+    const onSuccessDelete = () => {
+        retakeTests();
+    };
+
     const renderModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           index={index}
-          onClose={() => isEditMode
-              ? setOpenEditTestModal(false)
-              : setOpenCreateModal(false)}
+          onClose={() => onClose(isEditMode)}
           open={isEditMode
               ? openEditTestModal
               : openCreateModal}
@@ -290,6 +301,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
                 returnTestsNonFilterableColumns(
                     onEditClick,
                     useDeleteTestMutation,
+                    onSuccessDelete,
                 )
 }
               data={testsData}

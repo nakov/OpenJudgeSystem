@@ -25,7 +25,7 @@ const AdministrationTestsPage = () => {
     const [ testId, setTestId ] = useState<number | null>(null);
     const selectedFilters = useSelector((state: IRootStore) => state.adminTests['all-tests']?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminTests['all-tests']?.selectedSorters);
-    const { data: testsData, isLoading: isLoadingTests, error } = useGetAllAdminTestsQuery(queryParams);
+    const { refetch: retakeTests, data: testsData, isLoading: isLoadingTests, error } = useGetAllAdminTestsQuery(queryParams);
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
@@ -41,6 +41,10 @@ const AdministrationTestsPage = () => {
     const onEditClick = (id: number) => {
         setTestId(id);
         setOpenEditTestModal(true);
+    };
+
+    const onSuccessDelete = () => {
+        retakeTests();
     };
 
     const renderTestEditModal = (index: number) => (
@@ -65,6 +69,7 @@ const AdministrationTestsPage = () => {
                 returnTestsNonFilterableColumns(
                     onEditClick,
                     useDeleteTestMutation,
+                    onSuccessDelete,
                 )
 }
           data={testsData}

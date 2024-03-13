@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using FluentExtensions.Extensions;
 
 public class TestsBusinessService : AdministrationOperationService<Test, int, TestAdministrationModel>, ITestsBusinessService
 {
@@ -53,7 +54,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
     public override async Task<TestAdministrationModel> Get(int id)
     {
         var test = await this.testsDataService.GetByIdQuery(id)
-            .Include(t => t.Problem)
+            .MapCollection<TestAdministrationModel>()
             .FirstOrDefaultAsync();
 
         if (test is null)
@@ -62,6 +63,61 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         }
 
         return test.Map<TestAdministrationModel>();
+    }
+
+    public override async Task<TestAdministrationModel> Create(TestAdministrationModel model)
+    {
+        var test = model.Map<Test>();
+
+        UpdateInputAndOutput(test, model);
+        UpdateType(test, model);
+
+        await this.testsDataService.Add(test);
+        await this.testsDataService.SaveChanges();
+
+        return model;
+    }
+
+    public override async Task<TestAdministrationModel> Edit(TestAdministrationModel model)
+    {
+        var test = await this.testsDataService.GetByIdQuery(model.Id)
+            .Include(t => t.Problem)
+            .Include(t => t.TestRuns).FirstOrDefaultAsync();
+
+        if (test == null)
+        {
+            throw new BusinessServiceException("Test not found.");
+        }
+
+        test.MapFrom(model);
+
+        UpdateInputAndOutput(test, model);
+        UpdateType(test, model);
+
+        this.testsDataService.Update(test);
+        await this.testsDataService.SaveChanges();
+
+        if (model.RetestProblem)
+        {
+            await this.problemsBusinessService.RetestById(model.ProblemId);
+        }
+        else
+        {
+            var submissionIds = await this.submissionsDataService.GetIdsByProblemId(test.ProblemId);
+
+            if (submissionIds.Any())
+            {
+                await this.testRunsDataService.DeleteInBatchesBySubmissionIds(submissionIds);
+            }
+        }
+
+        return model;
+    }
+
+    public override async Task Delete(int id)
+    {
+        await this.testsDataService.DeleteById(id);
+        await this.testsDataService.SaveChanges();
     }
 
     public async Task DeleteAll(int problemId)
@@ -186,5 +242,33 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         {
             Content = zipFile, FileName = zipFileName, MimeType = GlobalConstants.MimeTypes.ApplicationZip,
         };
+    }
+
+    private static void UpdateInputAndOutput(Test entity, TestAdministrationModel model)
+    {
+        entity.InputData = model.Input!.Compress();
+        entity.OutputData = model.Output!.Compress();
+    }
+
+    private static void UpdateType(Test entity, TestAdministrationModel model)
+    {
+        Enum.TryParse<TestTypeEnum>(model.Type, out var testType);
+        switch (testType)
+        {
+            case TestTypeEnum.Practice:
+                entity.IsTrialTest = true;
+                entity.IsOpenTest = false;
+                break;
+            case TestTypeEnum.Compete:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = true;
+                break;
+            case TestTypeEnum.Standard:
+                entity.IsTrialTest = false;
+                entity.IsOpenTest = false;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(testType), testType, null);
+        }
     }
 }

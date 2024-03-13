@@ -82,6 +82,7 @@ const testsFilterableColums: GridColDef[] = [
 export const returnTestsNonFilterableColumns = (
     onEditClick: Function,
     deleteMutation: any,
+    onSuccessFullDelete: () => void,
 ) => [
     {
         field: 'actions',
@@ -100,6 +101,7 @@ export const returnTestsNonFilterableColumns = (
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
+                  onSuccess={onSuccessFullDelete}
                 />
             </div>
         ),
