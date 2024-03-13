@@ -6,6 +6,8 @@ public static class Constants
     {
         public const int DefaultSubmissionsPerPage = 5;
 
+        public const int DefaultAdminSubmissionsPerPage = 25;
+
         public const int DefaultSubmissionResultsPerPage = 4;
     }
 

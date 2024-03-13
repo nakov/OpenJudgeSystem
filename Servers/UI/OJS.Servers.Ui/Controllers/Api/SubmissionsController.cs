@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
+using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
 public class SubmissionsController : BaseApiController
 {
@@ -180,8 +181,14 @@ public class SubmissionsController : BaseApiController
 
     [Authorize(Roles = AdministratorOrLecturer)]
     [ProducesResponseType(typeof(PagedResultResponse<AdminPublicSubmissionsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissionsForUserInRole([FromQuery] SubmissionStatus status, [FromQuery] int page)
-        => await this.submissionsBusiness.GetSubmissions<AdminPublicSubmissionsServiceModel>(status, page)
+    public async Task<IActionResult> GetSubmissionsForUserInRole(
+        [FromQuery] SubmissionStatus status,
+        [FromQuery] int page,
+        int itemsPerPage = DefaultAdminSubmissionsPerPage)
+        => await this.submissionsBusiness.GetSubmissions<AdminPublicSubmissionsServiceModel>(
+                status,
+                page,
+                itemsPerPage)
             .Map<PagedResultResponse<AdminPublicSubmissionsResponseModel>>()
             .ToOkResult();
 }
