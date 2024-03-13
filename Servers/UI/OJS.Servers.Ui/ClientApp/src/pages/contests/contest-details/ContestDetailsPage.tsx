@@ -4,8 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import {
-    composeContestsWithSelectedCategoryAndStrategyUrl,
-    composeParticipationTypeResultsFullRoute,
+    getAllContestsUrl,
+    getContestsResultsUrl,
 } from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
@@ -53,7 +53,7 @@ const ContestDetailsPage = () => {
             <Link
               key={`contest-sub-strat-btn-${allowedSubmissionType.id}`}
               className={styles.allowedLanguageLink}
-              to={composeContestsWithSelectedCategoryAndStrategyUrl(selectedCategory?.id, allowedSubmissionType.id)}
+              to={getAllContestsUrl(selectedCategory?.id, allowedSubmissionType.id)}
             >
                 {allowedSubmissionType.name}
             </Link>
@@ -77,7 +77,7 @@ const ContestDetailsPage = () => {
             <Button onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}>Edit</Button>
             <Button
               className={styles.adminBtn}
-              onClick={() => navigate(composeParticipationTypeResultsFullRoute(id!, 'compete', true))}
+              onClick={() => navigate(getContestsResultsUrl(id!, 'compete', true))}
             >
                 Full Results
             </Button>
@@ -97,7 +97,7 @@ const ContestDetailsPage = () => {
                       : ''} ${isCompete
                       ? styles.greenColor
                       : ''}`}
-                  to={composeParticipationTypeResultsFullRoute(id!, isCompete
+                  to={getContestsResultsUrl(id!, isCompete
                       ? 'compete'
                       : 'practice', true)}
                 >

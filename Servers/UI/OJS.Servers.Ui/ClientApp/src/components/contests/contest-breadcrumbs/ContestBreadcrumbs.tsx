@@ -6,7 +6,7 @@ import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
-import { composeContestsWithSelectedCategoryAndStrategyUrl } from '../../../common/urls/compose-client-urls';
+import { getAllContestsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 
@@ -21,7 +21,7 @@ const ContestBreadcrumbs = () => {
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean, idx: number) => (
-        <Link to={composeContestsWithSelectedCategoryAndStrategyUrl(breadcrumbItem.id)}>
+        <Link to={getAllContestsUrl(breadcrumbItem.id)}>
             <div
               key={`contest-breadcrumb-item-${idx}`}
               onClick={() => {

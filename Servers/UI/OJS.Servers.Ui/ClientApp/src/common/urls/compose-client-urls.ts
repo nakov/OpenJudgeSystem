@@ -1,11 +1,11 @@
 import { CONTESTS_PATH } from './client-urls';
 
-const composeParticipationTypeResultsFullRoute =
+const getContestsResultsUrl =
     (id: number, participationType: string, isSimple: boolean) => `/${CONTESTS_PATH}/${id}/${participationType}/results/${isSimple
         ? 'simple'
         : 'full'}`;
 
-const composeContestsWithSelectedCategoryAndStrategyUrl =
+const getAllContestsUrl =
     (categoryId?: number, strategyId?: number) => {
         const returnUrl = `/${CONTESTS_PATH}`;
         const prefixes = [ `${categoryId
@@ -21,7 +21,7 @@ const composeContestsWithSelectedCategoryAndStrategyUrl =
         return returnUrl;
     };
 
-const composeContestParticipateUrl = (isCompete: boolean, id: number) => {
+const getContestSubmissionPageUrl = (isCompete: boolean, id: number) => {
     if (isCompete) {
         return `/${CONTESTS_PATH}/${id}/compete`;
     }
@@ -29,7 +29,7 @@ const composeContestParticipateUrl = (isCompete: boolean, id: number) => {
 };
 
 export {
-    composeParticipationTypeResultsFullRoute,
-    composeContestsWithSelectedCategoryAndStrategyUrl,
-    composeContestParticipateUrl,
+    getContestsResultsUrl,
+    getAllContestsUrl,
+    getContestSubmissionPageUrl,
 };
