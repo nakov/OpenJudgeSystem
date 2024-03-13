@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
+import {
+    composeContestResultsUrl,
+    composeContestsWithSelectedCategoryAndStrategyUrl,
+    composeParticipationTypeResultsFullRoute,
+} from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
 import Button from '../../../components/guidelines/buttons/Button';
@@ -12,7 +18,6 @@ import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { getContestTypeResultsUrl } from '../../../utils/urls';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -49,7 +54,7 @@ const ContestDetailsPage = () => {
             <Link
               key={`contest-sub-strat-btn-${allowedSubmissionType.id}`}
               className={styles.allowedLanguageLink}
-              to={`/contests?category=${selectedCategory?.id}&strategy=${allowedSubmissionType.id}`}
+              to={composeContestsWithSelectedCategoryAndStrategyUrl(selectedCategory?.id, allowedSubmissionType.id)}
             >
                 {allowedSubmissionType.name}
             </Link>
@@ -58,7 +63,7 @@ const ContestDetailsPage = () => {
     ));
 
     const renderProblemsNames = () => {
-        if (!problems) {
+        if (!problems || problems.length === 0) {
             return 'The problems for this contest are not public.';
         }
         return problems.map((problem) => (
@@ -70,8 +75,13 @@ const ContestDetailsPage = () => {
 
     const renderAdministrationButtons = () => (
         <div>
-            <Button onClick={() => navigate(`/administration-new/contests/${id}`)}>Edit</Button>
-            <Button className={styles.adminBtn} onClick={() => navigate(`/contests/${id}/compete/results/full`)}>Full Results</Button>
+            <Button onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}>Edit</Button>
+            <Button
+              className={styles.adminBtn}
+              onClick={() => navigate(composeParticipationTypeResultsFullRoute(id!, 'compete'))}
+            >
+                Full Results
+            </Button>
         </div>
     );
 
@@ -88,7 +98,7 @@ const ContestDetailsPage = () => {
                       : ''} ${isCompete
                       ? styles.greenColor
                       : ''}`}
-                  to={getContestTypeResultsUrl(isCompete, true, id!)}
+                  to={composeContestResultsUrl(isCompete, true, id!)}
                 >
                     <i className="fas fa-user" />
                     <div className={`${styles.underlinedBtnText}`}>

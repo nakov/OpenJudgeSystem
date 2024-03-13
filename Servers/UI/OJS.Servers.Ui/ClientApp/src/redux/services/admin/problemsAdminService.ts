@@ -2,7 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel } from '../../../common/types';
 import { IGetByContestId, IGetByProblemGroupId, IProblemUrlById } from '../../../common/url-types';
-import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
+import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const problemsAdminService = createApi({

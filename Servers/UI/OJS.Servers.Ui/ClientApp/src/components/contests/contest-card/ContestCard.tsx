@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 
 import { IIndexContestsType } from '../../../common/types';
+import { composeContestResultsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil,
     preciseFormatDate,
 } from '../../../utils/dates';
-import { getContestTypeResultsUrl } from '../../../utils/urls';
 import ContestButton from '../contest-button/ContestButton';
 
 import styles from './ContestCard.module.scss';
@@ -96,7 +96,7 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={getContestTypeResultsUrl(participationType === 'compete', true, id!)}
+                          to={composeContestResultsUrl(participationType === 'compete', true, id!)}
                         >
                             {renderBody()}
                         </Link>
