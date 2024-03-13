@@ -180,6 +180,7 @@ const RecentSubmissions = () => {
                   showTaskDetails: true,
                   showCompeteMarker: user.isAdmin,
                   showSubmissionTypeInfo: true,
+                  showParticipantUsername: true,
               }}
             />
         </>

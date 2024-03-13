@@ -31,13 +31,11 @@ import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
     submission: IPublicSubmission;
-    shouldDisplayUsername?: boolean;
     options: ISubmissionsGridOptions;
 }
 
 const SubmissionGridRow = ({
     submission,
-    shouldDisplayUsername = true,
     options,
 }: ISubmissionGridRowProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
@@ -232,7 +230,7 @@ const SubmissionGridRow = ({
             <td>
                 <span>
                     {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                    {shouldDisplayUsername && renderUsername()}
+                    {options.showParticipantUsername && renderUsername()}
                 </span>
             </td>
             {

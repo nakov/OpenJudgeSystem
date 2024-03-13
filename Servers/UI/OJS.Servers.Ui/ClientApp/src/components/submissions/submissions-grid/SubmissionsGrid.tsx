@@ -25,6 +25,7 @@ interface ISubmissionsGridOptions {
     showDetailedResults: boolean;
     showCompeteMarker: boolean;
     showSubmissionTypeInfo: boolean;
+    showParticipantUsername: boolean;
 }
 
 const SubmissionsGrid = ({
