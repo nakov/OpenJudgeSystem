@@ -66,9 +66,19 @@
 
 .maxTimeUsed,
 .maxMemoryUsed {
-  font-size: variables.$f-size-16;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  
+  .memoryIcon,
+  .timeIcon {
+    color: colors.$text-light-gray-color;
+  }
+  
+  .timeAndMemoryText {
+    margin-top: spacings.$sp-4;
+    font-size: variables.$f-size-16 !important;
+  }
 }
 
 .timeAndMemoryContainer {

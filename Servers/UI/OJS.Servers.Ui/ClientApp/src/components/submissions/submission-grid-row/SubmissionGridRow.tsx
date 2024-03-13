@@ -255,16 +255,22 @@ const SubmissionGridRow = ({
                                 ? (
                                     <div className={styles.timeAndMemoryContainer}>
                                         <div className={styles.maxMemoryUsed}>
-                                            <MemoryIcon />
-                                            <span>
+                                            <MemoryIcon
+                                              size={IconSize.Large}
+                                              className={styles.memoryIcon}
+                                            />
+                                            <span className={styles.timeAndMemoryText}>
                                                 {(maxMemoryUsed / 1000000).toFixed(2)}
                                                 {' '}
                                                 MB
                                             </span>
                                         </div>
                                         <div className={styles.maxTimeUsed}>
-                                            <TimeLimitIcon />
-                                            <span>
+                                            <TimeLimitIcon
+                                              size={IconSize.Large}
+                                              className={styles.timeIcon}
+                                            />
+                                            <span className={styles.timeAndMemoryText}>
                                                 {maxTimeUsed / 1000}
                                                 {' '}
                                                 s.
