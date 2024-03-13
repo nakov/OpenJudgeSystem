@@ -6,13 +6,14 @@ import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { IHaveOptionalClassName } from '../../common/Props';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 
 import styles from './SubmissionsGrid.module.scss';
 
-interface ISubmissionsGridProps {
+interface ISubmissionsGridProps extends IHaveOptionalClassName {
     isDataLoaded: boolean;
     submissions: IPagedResultType<IPublicSubmission>;
     handlePageChange: (page: number) => void;
@@ -27,6 +28,7 @@ interface ISubmissionsGridOptions {
 }
 
 const SubmissionsGrid = ({
+    className,
     isDataLoaded,
     submissions,
     handlePageChange,
@@ -72,7 +74,7 @@ const SubmissionsGrid = ({
             }
 
             return (
-                <table className={styles.submissionsGrid}>
+                <table className={concatClassNames(className, styles.submissionsGrid)}>
                     <thead>
                         <tr className={headerClassName}>
                             <td>ID</td>
@@ -113,7 +115,7 @@ const SubmissionsGrid = ({
                 </table>
             );
         },
-        [ isDataLoaded, submissions.items, headerClassName, options, getColorClassName, themeColors.textColor ],
+        [ isDataLoaded, submissions, className, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
 
     return (

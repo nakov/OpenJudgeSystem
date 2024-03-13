@@ -13,6 +13,7 @@ import {
     useGetLatestSubmissionsQuery, useGetTotalCountQuery, useGetUnprocessedCountQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import concatClassNames from '../../../utils/class-names';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
@@ -174,6 +175,7 @@ const RecentSubmissions = () => {
             </Heading>
             {renderPrivilegedComponent()}
             <SubmissionsGrid
+              className={styles.recentSubmissionsGrid}
               isDataLoaded={!areSubmissionsLoading}
               submissions={submissions}
               handlePageChange={handlePageChange}
