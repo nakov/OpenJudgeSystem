@@ -41,7 +41,7 @@ export const problemGroupsAdminService = createApi({
             }),
         }),
         getIdsByContestId:
-        builder.query<Array<number>, number>({ query: (id) => ({ url: `/ByContestId/${id}` }) }),
+        builder.query<Array<number>, number>({ query: (id) => ({ url: `/ByContestId/${id}` }), keepUnusedDataFor: 3 }),
 
     }),
 });

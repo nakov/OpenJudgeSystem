@@ -35,7 +35,6 @@ import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
@@ -287,9 +286,6 @@ const AdministrationPortal = () => {
         return icon;
     };
 
-    const { internalUser: user } =
-    useAppSelector((state) => state.authorization);
-
     return (
         <Box sx={{ zIndex: 0 }}>
             <Box sx={{ display: 'flex', zIndex: 0 }}>
@@ -357,9 +353,7 @@ const AdministrationPortal = () => {
                 <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
                         <Routes>
-                            {user.canAccessAdministration &&
-                            adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
-
+                            {adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
                             <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
                             <Route path="*" element={<NotFoundPage />} />
                         </Routes>
