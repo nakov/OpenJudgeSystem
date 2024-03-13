@@ -79,7 +79,7 @@ public class FilteringService : IFilteringService
 
             expression = GetNullableTypesOperation(property, operatorType);
         }
-        else if (int.TryParse(value, out var intValue) && propertyType == typeof(int))
+        else if (int.TryParse(value, out var intValue) && (propertyType == typeof(int) || propertyType == typeof(int?)))
         {
             var constant = Expression.Constant(intValue, IsNullableType(property.Type) ? typeof(int?) : typeof(int));
             expression = GetNumberOperation(property, constant, operatorType);
