@@ -7,7 +7,7 @@ import { ProblemGroupTypes } from '../../../common/enums';
 import { EDIT, PROBLEM_GROUP } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
-import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
