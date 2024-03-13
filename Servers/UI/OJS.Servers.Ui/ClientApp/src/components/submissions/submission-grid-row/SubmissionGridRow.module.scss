@@ -4,6 +4,8 @@
 @use 'src/styles/responsive';
 @use 'src/styles/shadows';
 @use 'src/styles/spacings';
+@use 'src/styles/font-weights.scss';
+@use 'src/styles/border-radiuses.scss';
 
 .row {
   @extend %font-family-roboto;
@@ -17,7 +19,7 @@
 }
 
 .darkRow {
-  background: colors.$background-color-footer;
+  background: colors.$primary-dark-grey-color;
   border-bottom: 1px solid #212328;
 }
 
@@ -72,7 +74,7 @@
   
   .memoryIcon,
   .timeIcon {
-    color: colors.$text-light-gray-color;
+    color: colors.$dark-base-color-100;
   }
   
   .timeAndMemoryText {
@@ -88,4 +90,27 @@
   text-align: center;
   justify-content: center;
   gap: spacings.$sp-12;
+}
+
+.detailsButton {
+  @extend %font-family-lato;
+
+  border: 2px solid colors.$primary-blue;
+  border-radius: border-radiuses.$br-6;
+  background-color: colors.$primary-dark-grey-color;
+  color: colors.$primary-blue;
+  cursor: pointer;
+  font-weight: font-weights.$font-weight-semi-bold;
+  margin: 0;
+  outline: none;
+  padding: 10px 16px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.28s ease-in-out;
+  
+
+  &:hover {
+    cursor: pointer;
+  }
 }

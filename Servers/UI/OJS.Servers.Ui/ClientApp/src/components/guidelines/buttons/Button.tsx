@@ -128,8 +128,8 @@ const Button = ({
                 sizeClassName,
                 stateClassName,
                 wideClassName,
-                className,
                 competeClassName,
+                className,
             )
             : internalClassName;
 

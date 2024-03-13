@@ -102,6 +102,7 @@ const SubmissionGridRow = ({
                 return (
                     <Button
                       text="Details"
+                      internalClassName={styles.detailsButton}
                       onClick={handleDetailsButtonSubmit}
                       type={ButtonType.plain}
                     />
