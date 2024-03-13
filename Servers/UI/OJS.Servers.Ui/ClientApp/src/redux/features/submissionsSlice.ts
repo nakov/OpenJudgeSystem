@@ -11,7 +11,7 @@ const initialState: IRecentSubmissionsReduxState = {
         pagesCount: 0,
         pageNumber: 0,
     },
-    currentPage: 1
+    currentPage: 1,
 };
 
 export const submissionsSlice = createSlice({

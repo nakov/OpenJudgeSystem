@@ -3,9 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../../common/common-types';
-import { IRecentSubmissionsReduxState } from '../../../common/types';
 import { IGetSubmissionsUrlParams } from '../../../common/url-types';
-import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { setCurrentPage } from '../../../redux/features/submissionDetailsSlice';
 import { setSubmissions } from '../../../redux/features/submissionsSlice';
 import {
@@ -13,7 +11,6 @@ import {
     useGetLatestSubmissionsQuery, useGetTotalCountQuery, useGetUnprocessedCountQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import concatClassNames from '../../../utils/class-names';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import SubmissionsGrid from '../submissions-grid/SubmissionsGrid';
 
