@@ -1,8 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Tests;
 
 using OJS.Data.Models.Tests;
-using OJS.Servers.Administration.Models.Contests;
-using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Models.Tests;
 using System.Threading.Tasks;
 

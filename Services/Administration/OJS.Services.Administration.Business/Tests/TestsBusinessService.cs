@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
 using OJS.Data.Models.Tests;
-using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Tests;

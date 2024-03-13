@@ -12,5 +12,9 @@
       <ProjectReference Include="..\..\..\Data\OJS.Data.Models\OJS.Data.Models.csproj" />
       <ProjectReference Include="..\..\..\Services\Administration\OJS.Services.Administration.Models\OJS.Services.Administration.Models.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Tests\" />
+    </ItemGroup>
 
 </Project>

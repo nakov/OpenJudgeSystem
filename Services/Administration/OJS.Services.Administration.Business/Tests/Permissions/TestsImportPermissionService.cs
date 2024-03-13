@@ -2,9 +2,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Tests;
-using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common.Models.Users;
 using System.Linq;
 using System.Threading.Tasks;
