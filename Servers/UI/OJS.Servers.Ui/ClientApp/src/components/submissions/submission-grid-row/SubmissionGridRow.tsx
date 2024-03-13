@@ -106,6 +106,7 @@ const SubmissionGridRow = ({
                     />
                 );
             }
+
             return null;
         },
         [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, usernameFromSubmission ],
@@ -207,15 +208,23 @@ const SubmissionGridRow = ({
                 {submissionId}
             </td>
             <td>
-                {renderProblemInformation()}
-                <Button
-                  type={ButtonType.secondary}
-                  size={ButtonSize.small}
-                  className={styles.link}
-                  internalClassName={styles.redirectButton}
-                  onClick={handleParticipateInContestSubmit}
-                  text={contestName}
-                />
+                {
+                    options.showTaskDetails
+                        ? (
+                            <>
+                                {renderProblemInformation()}
+                                <Button
+                                  type={ButtonType.secondary}
+                                  size={ButtonSize.small}
+                                  className={styles.link}
+                                  internalClassName={styles.redirectButton}
+                                  onClick={handleParticipateInContestSubmit}
+                                  text={contestName}
+                                />
+                            </>
+                        )
+                        : null
+                }
             </td>
             <td>
                 <span>
@@ -223,17 +232,19 @@ const SubmissionGridRow = ({
                     {shouldDisplayUsername && renderUsername()}
                 </span>
             </td>
-            { options.showCompeteMarker
-                ? isOfficial
-                    ? (
-                        <td>
-                            <div className={styles.competeIconWrapper}>
-                                <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
-                            </div>
-                        </td>
-                    )
-                    : <td />
-                : null}
+            {
+                options.showCompeteMarker
+                    ? isOfficial
+                        ? (
+                            <td>
+                                <div className={styles.competeIconWrapper}>
+                                    <i className={`${styles.competeIcon} fas fa-flag-checkered`} />
+                                </div>
+                            </td>
+                        )
+                        : <td />
+                    : null
+            }
             {
                 options.showDetailedResults
                     ? (
