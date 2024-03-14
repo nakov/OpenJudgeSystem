@@ -42,7 +42,7 @@ interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
 }
 
 interface IRecentSubmissionsReduxState {
-    submissions: IPagedResultType<IPublicSubmission>;
+    latestSubmissions: IPagedResultType<IPublicSubmission>;
     currentPage: number;
 }
 

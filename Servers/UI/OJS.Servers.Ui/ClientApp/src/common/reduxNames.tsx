@@ -1,17 +1,17 @@
 // Submissions
-const submissionsSliceName = 'latestSubmissions';
+const submissionsSliceName = 'submissions';
+const submissionsServiceName = 'submissionsService';
 
 // Submission Details
 const submissionDetailsSliceName = 'submissionDetails';
 const submissionDetailsPageServiceName = 'submissionDetailsPage';
 
-const submissionsPageServiceName = 'latestSubmissionPage';
 const authorizationServiceName = 'authorizationService';
 
 export {
     submissionsSliceName,
     submissionDetailsSliceName,
     submissionDetailsPageServiceName,
-    submissionsPageServiceName,
+    submissionsServiceName,
     authorizationServiceName,
 };

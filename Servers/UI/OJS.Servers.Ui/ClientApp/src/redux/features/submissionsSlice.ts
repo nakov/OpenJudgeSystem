@@ -4,7 +4,7 @@ import { submissionsSliceName } from '../../common/reduxNames';
 import { IRecentSubmissionsReduxState } from '../../common/types';
 
 const initialState: IRecentSubmissionsReduxState = {
-    submissions: {
+    latestSubmissions: {
         items: [],
         totalItemsCount: 0,
         itemsPerPage: 0,
@@ -18,8 +18,8 @@ export const submissionsSlice = createSlice({
     name: submissionsSliceName,
     initialState,
     reducers: {
-        setSubmissions: (state: IRecentSubmissionsReduxState, action) => {
-            state.submissions = action.payload;
+        setLatestSubmissions: (state: IRecentSubmissionsReduxState, action) => {
+            state.latestSubmissions = action.payload;
         },
         setCurrentPage: (state: IRecentSubmissionsReduxState, action) => {
             state.currentPage = action.payload;
@@ -28,12 +28,12 @@ export const submissionsSlice = createSlice({
 });
 
 const {
-    setSubmissions,
+    setLatestSubmissions,
     setCurrentPage,
 } = submissionsSlice.actions;
 
 export {
-    setSubmissions,
+    setLatestSubmissions,
     setCurrentPage,
 };
 

@@ -4,7 +4,7 @@ import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../../common/common-types';
 import { IGetSubmissionsUrlParams } from '../../../common/url-types';
-import { setCurrentPage, setSubmissions } from '../../../redux/features/submissionsSlice';
+import { setCurrentPage, setLatestSubmissions } from '../../../redux/features/submissionsSlice';
 import {
     useGetLatestSubmissionsInRoleQuery,
     useGetLatestSubmissionsQuery,
@@ -37,9 +37,9 @@ const RecentSubmissions = () => {
     const appDispatch = useAppDispatch();
 
     const {
-        submissions,
+        latestSubmissions,
         currentPage,
-    } = useAppSelector((state) => state.latestSubmissions);
+    } = useAppSelector((state) => state.submissions);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
@@ -88,12 +88,12 @@ const RecentSubmissions = () => {
 
     useEffect(() => {
         if (inRoleSubmissionsReady) {
-            appDispatch(setSubmissions(inRoleData));
+            appDispatch(setLatestSubmissions(inRoleData));
             return;
         }
 
         if (regularUserSubmissionsReady) {
-            appDispatch(setSubmissions(regularUserData));
+            appDispatch(setLatestSubmissions(regularUserData));
         }
     }, [ appDispatch, inRoleData, inRoleSubmissionsReady, regularUserData, regularUserSubmissionsReady ]);
 
@@ -177,13 +177,13 @@ const RecentSubmissions = () => {
             >
                 Latest
                 {' '}
-                {submissions.items?.length}
+                {latestSubmissions.items?.length}
                 {' '}
                 submissions out of
                 {' '}
-                {isNil(submissions.totalItemsCount)
+                {isNil(latestSubmissions.totalItemsCount)
                     ? '...'
-                    : submissions.totalItemsCount }
+                    : latestSubmissions.totalItemsCount }
                 {' '}
                 total
             </Heading>
@@ -191,7 +191,7 @@ const RecentSubmissions = () => {
             <SubmissionsGrid
               className={styles.recentSubmissionsGrid}
               isDataLoaded={!areSubmissionsLoading}
-              submissions={submissions}
+              submissions={latestSubmissions}
               handlePageChange={handlePageChange}
               options={{
                   showDetailedResults: user.isAdmin,

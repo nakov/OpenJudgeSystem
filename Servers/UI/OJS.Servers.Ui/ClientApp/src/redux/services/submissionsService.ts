@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
-import { submissionsPageServiceName } from '../../common/reduxNames';
+import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
 import { IGetSubmissionsUrlParams } from '../../common/url-types';
 
 const submissionsService = createApi({
-    reducerPath: submissionsPageServiceName,
+    reducerPath: submissionsServiceName,
     baseQuery: fetchBaseQuery({
         baseUrl: window.URLS.UI_URL,
         prepareHeaders: (headers: Headers) => {
