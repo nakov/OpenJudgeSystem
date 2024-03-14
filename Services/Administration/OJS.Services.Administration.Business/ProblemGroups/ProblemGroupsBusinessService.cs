@@ -158,10 +158,10 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             await this.problemsOrderableService.ReevaluateOrder(problems);
         }
 
-        public ICollection<double> GetOrderByContestId(int contestId)
+        public ICollection<ProblemGroupDropdownModel> GetOrderByContestId(int contestId)
             => this.problemGroupsData.GetAllByContest(contestId)
-                .Select(x => x.OrderBy)
-                .OrderBy(x => x)
+                .OrderBy(x => x.OrderBy)
+                .MapCollection<ProblemGroupDropdownModel>()
                 .ToHashSet();
 
         public async Task GenerateNewProblem(

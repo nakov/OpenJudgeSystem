@@ -25,7 +25,7 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public int CheckerId { get; set; }
 
-    public string? ProblemGroupId { get; set; }
+    public int ProblemGroupId { get; set; }
 
     public int ContestId { get; set; }
 
@@ -57,6 +57,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)))
              .ForMember(pam => pam.HasAdditionalFiles, opt
                  => opt.MapFrom(p => p.AdditionalFiles != null))
+             .ForMember(pam => pam.ProblemGroupOrderBy, opt
+                 => opt.MapFrom(p => p.ProblemGroup.OrderBy))
              .ForMember(pam => pam.ContestType, opt
              => opt.MapFrom(p => p.ProblemGroup.Contest.Type));
 
