@@ -37,12 +37,9 @@ const SubmissionsGrid = ({
 }: ISubmissionsGridProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
-    const onPageChange = useCallback(
-        (page: number) => {
-            handlePageChange(page);
-        },
-        [ handlePageChange ],
-    );
+    const onPageChange = (page: number) => {
+        handlePageChange(page);
+    };
 
     const headerClassName = concatClassNames(
         styles.submissionsGridHeader,

@@ -1,8 +1,9 @@
+@use 'src/styles/spacings';
+
 .main {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-bottom: 75px;
-  // padding-bottom: 75px;
-  padding-top: 75px;
+  padding-top: spacings.$sp-96;
+  padding-bottom: spacings.$sp-96;
 }
