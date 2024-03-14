@@ -367,8 +367,13 @@ interface IProblemAdministration {
     contestType: ContestVariation;
     tests: File | null;
     problemGroupOrderBy: number;
+    problemGroupId : number;
 }
 
+interface IProblemGroupDropdownModel {
+    id: number;
+    orderBy: number;
+}
 interface IUserRoleType {
     id: string;
     name: string;
@@ -558,4 +563,5 @@ export type {
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
     IEnumType,
+    IProblemGroupDropdownModel,
 };
