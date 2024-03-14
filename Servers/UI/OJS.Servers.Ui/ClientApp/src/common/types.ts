@@ -112,7 +112,6 @@ interface IProblemResourceAdministrationModel {
     link: string;
     type: string;
     orderBy: number;
-    fileExtension: string;
     file: File | null;
     hasFile: boolean;
     problemId: number;

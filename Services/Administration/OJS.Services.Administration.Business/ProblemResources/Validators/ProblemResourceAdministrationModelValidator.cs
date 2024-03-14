@@ -10,12 +10,29 @@ public class ProblemResourceAdministrationModelValidator : BaseValidator<Problem
     {
         this.RuleFor(model => model.Name)
             .NotNull()
-            .NotEmpty();
+            .NotEmpty()
+            .WithMessage("Resource name is mandatory");
 
         this.RuleFor(model => model.Id)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Id cannot be less than 0.");
 
         this.RuleFor(model => model.ProblemId)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Problem Id cannot be less than 0.");
+
+        this.RuleFor(model => model)
+            .Must(NotContainBothLinkAndFile)
+            .WithMessage("Resource cannot contain both links and files.");
+    }
+
+    private static bool NotContainBothLinkAndFile(ProblemResourceAdministrationModel model)
+    {
+        if (model.File != null && !string.IsNullOrEmpty(model.Link))
+        {
+            return false;
+        }
+
+        return true;
     }
 }
