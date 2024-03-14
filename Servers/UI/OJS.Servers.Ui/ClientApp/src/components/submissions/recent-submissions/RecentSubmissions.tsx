@@ -4,11 +4,11 @@ import isNil from 'lodash/isNil';
 
 import { IDictionary } from '../../../common/common-types';
 import { IGetSubmissionsUrlParams } from '../../../common/url-types';
-import { setCurrentPage } from '../../../redux/features/submissionDetailsSlice';
-import { setSubmissions } from '../../../redux/features/submissionsSlice';
+import { setCurrentPage, setSubmissions } from '../../../redux/features/submissionsSlice';
 import {
     useGetLatestSubmissionsInRoleQuery,
-    useGetLatestSubmissionsQuery, useGetTotalCountQuery, useGetUnprocessedCountQuery,
+    useGetLatestSubmissionsQuery,
+    useGetUnprocessedCountQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -26,16 +26,20 @@ const selectedSubmissionsStateMapping = {
 
 const RecentSubmissions = () => {
     const [ selectedActive, setSelectedActive ] = useState<number>(1);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [ onPageCurrentPage, setOnPageCurrentPage ] = useState<number>(1);
+    const [ shouldLoadRegularUserSubmissions, setShouldLoadRegularUserSubmissions ] = useState<boolean>(false);
+    const [ shouldLoadAdminUserSubmissions, setShouldLoadAdminUserSubmissions ] = useState<boolean>(false);
+    const [ shouldLoadUnprocessedCount, setShouldLoadUnprocessedCount ] = useState<boolean>(false);
     const [ queryParams, setQueryParams ] = useState<IGetSubmissionsUrlParams>({
         status: selectedActive,
-        page: onPageCurrentPage,
+        page: 1,
     });
 
     const appDispatch = useAppDispatch();
 
-    const { submissions } = useAppSelector((state) => state.latestSubmissions);
+    const {
+        submissions,
+        currentPage,
+    } = useAppSelector((state) => state.latestSubmissions);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
 
@@ -45,21 +49,33 @@ const RecentSubmissions = () => {
         isLoading: regularUserIsLoading,
         data: regularUserData,
     } = useGetLatestSubmissionsQuery(
-        queryParams,
-        { skip: loggedInUserInRole },
+        { status: selectedActive, page: currentPage },
+        { skip: !shouldLoadRegularUserSubmissions },
     );
 
-    const { data: totalSubmissionsCount } = useGetTotalCountQuery(null);
-
-    const { data: unprocessedCount } = useGetUnprocessedCountQuery(null);
+    const { data: unprocessedCount } = useGetUnprocessedCountQuery(null, { skip: !shouldLoadUnprocessedCount });
 
     const {
         isLoading: inRoleLoading,
         data: inRoleData,
     } = useGetLatestSubmissionsInRoleQuery(
         queryParams,
-        { skip: !loggedInUserInRole },
+        { skip: !shouldLoadAdminUserSubmissions },
     );
+
+    useEffect(() => {
+        if (isEmpty(user.id)) {
+            return;
+        }
+
+        if (user.isAdmin) {
+            setShouldLoadAdminUserSubmissions(true);
+            setShouldLoadUnprocessedCount(true);
+            return;
+        }
+
+        setShouldLoadRegularUserSubmissions(true);
+    }, [ user ]);
 
     const areSubmissionsLoading =
         loggedInUserInRole
@@ -87,8 +103,10 @@ const RecentSubmissions = () => {
                 status: queryParams.status,
                 page: newPage,
             });
+
+            appDispatch(setCurrentPage(newPage));
         },
-        [ queryParams ],
+        [ appDispatch, queryParams.status ],
     );
 
     const handleSelectSubmissionState = useCallback(
@@ -107,7 +125,7 @@ const RecentSubmissions = () => {
         [ appDispatch, queryParams, selectedActive ],
     );
 
-    const renderPrivilegedComponent = useCallback(
+    const renderSubmissionsStateAdminToggle = useCallback(
         () => {
             const { isAdmin } = user;
 
@@ -163,13 +181,13 @@ const RecentSubmissions = () => {
                 {' '}
                 submissions out of
                 {' '}
-                {isNil(totalSubmissionsCount)
+                {isNil(submissions.totalItemsCount)
                     ? '...'
-                    : totalSubmissionsCount }
+                    : submissions.totalItemsCount }
                 {' '}
                 total
             </Heading>
-            {renderPrivilegedComponent()}
+            {renderSubmissionsStateAdminToggle()}
             <SubmissionsGrid
               className={styles.recentSubmissionsGrid}
               isDataLoaded={!areSubmissionsLoading}

@@ -23,9 +23,6 @@ const submissionsService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getTotalCount: builder.query<
-            number,
-            null>({ query: () => ({ url: `/${defaultPathIdentifier}/Submissions/TotalCount` }) }),
         getUnprocessedCount: builder.query<
             number,
             null>({ query: () => ({ url: `/${defaultPathIdentifier}/Submissions/UnprocessedTotalCount` }) }),
@@ -46,14 +43,12 @@ const submissionsService = createApi({
 });
 
 const {
-    useGetTotalCountQuery,
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
 } = submissionsService;
 
 export {
-    useGetTotalCountQuery,
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
