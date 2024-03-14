@@ -3,7 +3,7 @@ import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextFiel
 import isNaN from 'lodash/isNaN';
 
 import { ProblemResourceType } from '../../../../common/enums';
-import { CREATE, EDIT, FILE_EXTENSION, ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
+import { CREATE, EDIT, ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import { useCreateProblemResourceMutation, useDownloadResourceQuery, useGetProblemResourceByIdQuery, useUpdateProblemResourceMutation } from '../../../../redux/services/admin/problemResourcesAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
@@ -35,7 +35,6 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         name: '',
         orderBy: 0,
         type: 'ProblemDescription',
-        fileExtension: '',
         file: null,
         hasFile: false,
         problemId: 0,
@@ -132,8 +131,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         formData.append('name', currentResource.name);
         formData.append('id', currentResource.id?.toString() ?? '');
         formData.append('orderBy', currentResource.orderBy?.toString() || '');
-        formData.append('link', currentResource.link);
-        formData.append('fileExtension', currentResource.fileExtension);
+        formData.append('link', currentResource.link || '');
         formData.append('type', currentResource.type);
 
         if (currentResource.file) {
@@ -219,17 +217,6 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                         ))}
                     </Select>
                 </FormGroup>
-                <FormControl className={formStyles.inputRow}>
-                    <TextField
-                      variant="standard"
-                      label={FILE_EXTENSION}
-                      value={currentResource.fileExtension}
-                      name="fileExtension"
-                      InputLabelProps={{ shrink: true }}
-                      type="text"
-                      onChange={(e) => onChange(e)}
-                    />
-                </FormControl>
                 <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
