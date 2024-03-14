@@ -3,6 +3,7 @@ import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 import { IconButton, Tooltip } from '@mui/material';
 
+import { ContestVariation } from '../../../../common/contest-types';
 import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
@@ -23,10 +24,11 @@ import ProblemRetest from '../../Problems/retest/ProblemRetest';
 
 interface IProblemsInContestViewProps {
     contestId: number;
+    contestType: ContestVariation | undefined;
 }
 
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
-    const { contestId } = props;
+    const { contestId, contestType } = props;
     const filtersAndSortersLocation = `contest-details-problems-${contestId}`;
 
     const selectedFilters =
@@ -130,13 +132,21 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
               ? setOpenShowCreateProblemModal(!openShowCreateProblemModal)
               : setOpenEditModal(false)}
         >
-            <ProblemForm
-              contestId={Number(contestId)}
-              problemId={isCreate
-                  ? null
-                  : problemId}
-              isEditMode={!isCreate}
-            />
+            {isCreate
+                ? (
+                    <ProblemForm
+                      contestId={Number(contestId)}
+                      problemId={null}
+                      isEditMode={false}
+                      contestType={contestType!}
+                    />
+                )
+                : (
+                    <ProblemForm
+                      problemId={problemId}
+                      contestType={null}
+                    />
+                )}
         </AdministrationModal>
     );
 

@@ -1,12 +1,12 @@
-/* eslint-disable css-modules/no-unused-class */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
-import { IProblemAdministration, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
+import { IProblemAdministration, IProblemGroupDropdownModel, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../../common/urls/administration-urls';
+import { useGetIdsByContestIdQuery } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -18,14 +18,23 @@ import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissio
 
 import ProblemFormBasicInfo from './problem-form-basic-info.tsx/ProblemFormBasicInfo';
 
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IProblemFormProps {
-    problemId: number | null;
-
     isEditMode?: boolean;
+}
 
-    contestId: number | null;
+interface IProblemFormCreateProps extends IProblemFormProps{
+    contestId: number;
+    contestType: ContestVariation;
+    problemId: null;
+}
+
+interface IProblemFormEditProps extends IProblemFormProps{
+    contestId?: null;
+    contestType?: null;
+    problemId: number;
 }
 
 const defaultMaxPoints = 100;
@@ -33,11 +42,12 @@ const defaultMemoryLimit = 16777216;
 const defaultTimeLimit = 100;
 const defaultSourceCodeSizeLimit = 16384;
 
-const ProblemForm = (props: IProblemFormProps) => {
-    const { problemId, isEditMode = true, contestId } = props;
+const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => {
+    const { problemId, isEditMode = true, contestId, contestType } = props;
     const navigate = useNavigate();
 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
+    const [ problemGroupIds, setProblemGroupsIds ] = useState<Array<IProblemGroupDropdownModel>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
         checkerId: '1',
         contestId: contestId ?? -1,
@@ -53,8 +63,9 @@ const ProblemForm = (props: IProblemFormProps) => {
         submissionTypes: [],
         timeLimit: defaultTimeLimit,
         tests: null,
-        contestType: ContestVariation.Exercise,
+        contestType: contestType || ContestVariation.Exercise,
         problemGroupOrderBy: -1,
+        problemGroupId: 0,
     });
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -70,6 +81,14 @@ const ProblemForm = (props: IProblemFormProps) => {
 
     const [ updateProblem, { data: updateData, error: updateError, isSuccess: isSuccessfullyUpdated } ] = useUpdateProblemMutation();
     const [ createProblem, { data: createData, error: createError, isSuccess: isSuccessfullyCreated } ] = useCreateProblemMutation();
+
+    const { data: problemGroupData } = useGetIdsByContestIdQuery(currentProblem.contestId, { skip: currentProblem.contestId <= 0 });
+
+    useEffect(() => {
+        if (problemGroupData) {
+            setProblemGroupsIds(problemGroupData);
+        }
+    }, [ problemGroupData ]);
 
     useEffect(() => {
         if (submissionTypes) {
@@ -132,7 +151,7 @@ const ProblemForm = (props: IProblemFormProps) => {
         formData.append('checkerId', currentProblem.checkerId?.toString() || '');
         formData.append('showDetailedFeedback', currentProblem.showDetailedFeedback?.toString() || '');
         formData.append('showResults', currentProblem.showResults?.toString() || '');
-        formData.append('problemGroupOrderBy', currentProblem.problemGroupOrderBy?.toString() || '');
+        formData.append('problemGroupId', currentProblem.problemGroupId?.toString() || '');
         currentProblem.submissionTypes?.forEach((type, index) => {
             formData.append(`SubmissionTypes[${index}].Id`, type.id.toString());
             formData.append(`SubmissionTypes[${index}].Name`, type.name.toString());
@@ -287,7 +306,7 @@ const ProblemForm = (props: IProblemFormProps) => {
 
             <Typography className={formStyles.centralize} variant="h3">{currentProblem?.name}</Typography>
             <form className={formStyles.form}>
-                <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} />
+                <ProblemFormBasicInfo currentProblem={currentProblem} onChange={onChange} problemGroups={problemGroupIds} />
                 <FormGroup className={formStyles.row}>
                     {!isEditMode && (
                         <>
