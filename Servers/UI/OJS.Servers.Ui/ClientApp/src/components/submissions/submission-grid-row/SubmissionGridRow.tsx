@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { FaFlagCheckered } from 'react-icons/fa';
+import { FaFlagCheckered } from 'react-icons/all';
 import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
@@ -100,7 +100,11 @@ const SubmissionGridRow = ({
                 return (
                     <Button
                       text="Details"
-                      internalClassName={styles.detailsButton}
+                      internalClassName={
+                        concatClassNames(styles.detailsButton, isDarkMode
+                            ? styles.darkDetailsButton
+                            : styles.lightDetailsButton)
+                        }
                       onClick={handleDetailsButtonSubmit}
                       type={ButtonType.plain}
                     />
@@ -109,7 +113,7 @@ const SubmissionGridRow = ({
 
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, usernameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser, isDarkMode, usernameFromSubmission ],
     );
 
     const renderStrategyIcon = useCallback(
