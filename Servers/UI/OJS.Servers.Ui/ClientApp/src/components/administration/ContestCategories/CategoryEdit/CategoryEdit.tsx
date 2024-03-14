@@ -6,7 +6,7 @@ import {
     IContestCategories,
     IContestCategoryAdministration,
 } from '../../../../common/types';
-import { CONTEST_CATEGORIES_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls';
+import { CONTEST_CATEGORIES_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import {
     useCreateContestCategoryMutation,
     useDeleteContestCategoryMutation,
