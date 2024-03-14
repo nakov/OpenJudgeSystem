@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
@@ -24,11 +23,34 @@ export const contestService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${GET_ENDPOINT}/${id}` }), keepUnusedDataFor: 10 }),
+
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({
+            query: ({ id }) => ({ url: `/${GET_ENDPOINT}/${id}` }),
+            keepUnusedDataFor: 10,
+        }),
+
         deleteContest: builder.mutation<string, number >({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
-        updateContest: builder.mutation<string, IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: `/${UPDATE_ENDPOINT}`, method: 'PATCH', body: contestAdministrationModel }) }),
-        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: `/${CREATE_ENDPOINT}`, method: 'POST', body: contestAdministrationModel }) }),
-        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
+
+        updateContest: builder.mutation<string, IContestAdministration >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: `/${UPDATE_ENDPOINT}`,
+                method: 'PATCH',
+                body: contestAdministrationModel,
+            }),
+        }),
+
+        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: `/${CREATE_ENDPOINT}`,
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
+
+        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({
+            query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }),
+            keepUnusedDataFor: 10,
+        }),
     }),
 });
 
