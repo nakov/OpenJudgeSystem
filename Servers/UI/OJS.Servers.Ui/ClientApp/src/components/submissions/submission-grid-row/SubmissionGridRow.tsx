@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { FaFlagCheckered } from 'react-icons/all';
+import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
@@ -94,44 +94,16 @@ const SubmissionGridRow = ({
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
 
-    const renderDetailsBtn = useCallback(
-        () => {
-            if (usernameFromSubmission === internalUser.userName || internalUser.isAdmin) {
-                return (
-                    <Button
-                      text="Details"
-                      internalClassName={
-                        concatClassNames(styles.detailsButton, isDarkMode
-                            ? styles.darkDetailsButton
-                            : styles.lightDetailsButton)
-                        }
-                      onClick={handleDetailsButtonSubmit}
-                      type={ButtonType.plain}
-                    />
-                );
-            }
+    const hasTestRuns = (s: IPublicSubmission) => (s.testRuns && s.testRuns.length > 0) ?? false;
 
-            return null;
-        },
-        [ handleDetailsButtonSubmit, internalUser, isDarkMode, usernameFromSubmission ],
-    );
+    const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
 
-    const renderStrategyIcon = useCallback(
-        () => {
-            const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
-
-            if (isNil(Icon)) {
-                return null;
-            }
-
-            return (
-                <Icon
-                  size={IconSize.Large}
-                  className={getColorClassName(themeColors.textColor)}
-                />
-            );
-        },
-        [ getColorClassName, strategyName, themeColors.textColor ],
+    const rowClassName = concatClassNames(
+        styles.row,
+        isDarkMode
+            ? styles.darkRow
+            : styles.lightRow,
+        getColorClassName(themeColors.textColor),
     );
 
     const renderPoints = useCallback(
@@ -193,16 +165,44 @@ const SubmissionGridRow = ({
         [ problemId, problemName ],
     );
 
-    const hasTestRuns = (s: IPublicSubmission) => (s.testRuns && s.testRuns.length > 0) ?? false;
+    const renderStrategyIcon = useCallback(
+        () => {
+            const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
 
-    const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
+            if (isNil(Icon)) {
+                return null;
+            }
 
-    const rowClassName = concatClassNames(
-        styles.row,
-        isDarkMode
-            ? styles.darkRow
-            : styles.lightRow,
-        getColorClassName(themeColors.textColor),
+            return (
+                <Icon
+                  size={IconSize.Large}
+                  className={getColorClassName(themeColors.textColor)}
+                />
+            );
+        },
+        [ getColorClassName, strategyName, themeColors.textColor ],
+    );
+
+    const renderDetailsBtn = useCallback(
+        () => {
+            if (usernameFromSubmission === internalUser.userName || internalUser.isAdmin) {
+                return (
+                    <Button
+                      text="Details"
+                      internalClassName={
+                            concatClassNames(styles.detailsButton, isDarkMode
+                                ? styles.darkDetailsButton
+                                : styles.lightDetailsButton)
+                        }
+                      onClick={handleDetailsButtonSubmit}
+                      type={ButtonType.plain}
+                    />
+                );
+            }
+
+            return null;
+        },
+        [ handleDetailsButtonSubmit, internalUser, isDarkMode, usernameFromSubmission ],
     );
 
     return (
