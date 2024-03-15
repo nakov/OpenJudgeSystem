@@ -61,6 +61,14 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             return problemGroup.Map<ProblemGroupsAdministrationModel>();
         }
 
+        public override async Task<ProblemGroupsAdministrationModel> Create(ProblemGroupsAdministrationModel model)
+        {
+            var problemGroup = model.Map<ProblemGroup>();
+            await this.problemGroupsData.Add(problemGroup);
+            await this.problemGroupsData.SaveChanges();
+            return model;
+        }
+
         public override async Task<ProblemGroupsAdministrationModel> Edit(ProblemGroupsAdministrationModel model)
         {
             var problemGroup = model.Map<ProblemGroup>();
@@ -150,6 +158,60 @@ namespace OJS.Services.Administration.Business.ProblemGroups
             await this.problemsOrderableService.ReevaluateOrder(problems);
         }
 
+        public ICollection<ProblemGroupDropdownModel> GetOrderByContestId(int contestId)
+            => this.problemGroupsData.GetAllByContest(contestId)
+                .OrderBy(x => x.OrderBy)
+                .MapCollection<ProblemGroupDropdownModel>()
+                .ToHashSet();
+
+        public async Task GenerateNewProblem(
+            Problem problem,
+            ProblemGroup currentNewProblemGroup,
+            ICollection<Problem> problemsToAdd)
+        {
+            var currentNewProblem = new Problem
+            {
+                ProblemGroupId = currentNewProblemGroup.Id,
+                ProblemGroup = currentNewProblemGroup,
+                Name = problem.Name,
+                MaximumPoints = problem.MaximumPoints,
+                TimeLimit = problem.MaximumPoints,
+                MemoryLimit = problem.MemoryLimit,
+                SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
+                CheckerId = problem.CheckerId,
+                Checker = problem.Checker,
+                OrderBy = problem.OrderBy,
+                SolutionSkeleton = problem.SolutionSkeleton,
+                ShowResults = problem.ShowResults,
+                ShowDetailedFeedback = problem.ShowDetailedFeedback,
+                TagsInProblems = problem.TagsInProblems,
+            };
+
+            await this.problemsData.Add(currentNewProblem);
+            await this.problemsData.SaveChanges();
+
+            var newSubmissionTypeInSourceProblemsToAdd = new List<SubmissionTypeInProblem>();
+            var newResourcesToAdd = new List<ProblemResource>();
+            var newTestsToAdd = new List<Test>();
+
+            await this.GenerateNewTests(problem.Id, newTestsToAdd, currentNewProblem);
+
+            await this.GenerateNewResources(problem.Id, newResourcesToAdd, currentNewProblem);
+
+            this.submissionTypesInProblemsData
+                .GetAllByProblem(problem.Id)
+                .AsNoTracking()
+                .ForEach(stp =>
+                    this.GenerateNewSubmissionTypesInProblem(stp, newSubmissionTypeInSourceProblemsToAdd, currentNewProblem));
+
+            currentNewProblem.Resources = newResourcesToAdd;
+            currentNewProblem.Tests = newTestsToAdd;
+            currentNewProblem.SubmissionTypesInProblems = newSubmissionTypeInSourceProblemsToAdd;
+            problemsToAdd.Add(currentNewProblem);
+
+            this.problemsData.Update(currentNewProblem);
+        }
+
         private async Task CopyProblemGroupToContest(ProblemGroup problemGroup, int contestId)
         {
             var currentNewProblemGroup = new ProblemGroup
@@ -182,55 +244,6 @@ namespace OJS.Services.Administration.Business.ProblemGroups
 
                await this.ReevaluateProblemsAndProblemGroupsOrder(contestId, currentNewProblemGroup);
             }
-        }
-
-        private async Task GenerateNewProblem(
-            Problem problem,
-            ProblemGroup currentNewProblemGroup,
-            ICollection<Problem> problemsToAdd)
-        {
-            var currentNewProblem = new Problem
-            {
-                ProblemGroupId = currentNewProblemGroup.Id,
-                ProblemGroup = currentNewProblemGroup,
-                Name = problem.Name,
-                MaximumPoints = problem.MaximumPoints,
-                TimeLimit = problem.MaximumPoints,
-                MemoryLimit = problem.MemoryLimit,
-                SourceCodeSizeLimit = problem.SourceCodeSizeLimit,
-                CheckerId = problem.CheckerId,
-                Checker = problem.Checker,
-                OrderBy = problem.OrderBy,
-                SolutionSkeleton = problem.SolutionSkeleton,
-                AdditionalFiles = problem.AdditionalFiles,
-                ShowResults = problem.ShowResults,
-                ShowDetailedFeedback = problem.ShowDetailedFeedback,
-                TagsInProblems = problem.TagsInProblems,
-            };
-
-            await this.problemsData.Add(currentNewProblem);
-            await this.problemsData.SaveChanges();
-
-            var newSubmissionTypeInSourceProblemsToAdd = new List<SubmissionTypeInProblem>();
-            var newResourcesToAdd = new List<ProblemResource>();
-            var newTestsToAdd = new List<Test>();
-
-            await this.GenerateNewTests(problem.Id, newTestsToAdd, currentNewProblem);
-
-            await this.GenerateNewResources(problem.Id, newResourcesToAdd, currentNewProblem);
-
-            this.submissionTypesInProblemsData
-                .GetAllByProblem(problem.Id)
-                .AsNoTracking()
-                .ForEach(stp =>
-                    this.GenerateNewSubmissionTypesInProblem(stp, newSubmissionTypeInSourceProblemsToAdd, currentNewProblem));
-
-            currentNewProblem.Resources = newResourcesToAdd;
-            currentNewProblem.Tests = newTestsToAdd;
-            currentNewProblem.SubmissionTypesInProblems = newSubmissionTypeInSourceProblemsToAdd;
-            problemsToAdd.Add(currentNewProblem);
-
-            this.problemsData.Update(currentNewProblem);
         }
 
         private async Task GenerateNewTests(

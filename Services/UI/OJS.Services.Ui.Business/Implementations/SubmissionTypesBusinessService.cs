@@ -14,7 +14,6 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using OJS.Data.Models;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {
@@ -43,14 +42,13 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 
     public async Task<IEnumerable<SubmissionTypeFilterServiceModel>> GetAllOrderedByLatestUsage()
     {
-        var (latestSubmissions, allSubmissionTypes)
-            = await TasksUtils.WhenAll(
-                this.submissionsData
-                    .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
-                        LatestSubmissionsCountForSubmissionTypesUsage),
-                this.submissionTypesData
-                    .AllTo<SubmissionTypeFilterServiceModel>()
-                    .ToListAsync());
+        var latestSubmissions = await this.submissionsData
+            .GetLatestSubmissions<SubmissionForSubmissionTypesFilterServiceModel>(
+                LatestSubmissionsCountForSubmissionTypesUsage);
+
+        var allSubmissionTypes = await this.submissionTypesData
+            .AllTo<SubmissionTypeFilterServiceModel>()
+            .ToListAsync();
 
         var submissionTypesUsageGroups = latestSubmissions
             .GroupBy(x => x.SubmissionTypeId)

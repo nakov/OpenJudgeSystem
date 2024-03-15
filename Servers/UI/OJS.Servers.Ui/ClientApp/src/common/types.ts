@@ -6,6 +6,7 @@ import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
+import { ContestVariation } from './contest-types';
 import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
@@ -103,6 +104,29 @@ interface IProblemResourceType {
     name: string;
     link: string;
     type: number;
+}
+
+interface IProblemResourceAdministrationModel {
+    id: number;
+    name: string;
+    link: string;
+    type: string;
+    orderBy: number;
+    file: File | null;
+    hasFile: boolean;
+    problemId: number;
+}
+
+interface IProblemResouceInLinstModel {
+    id: number;
+    name: string;
+    link: string;
+    type: string;
+    fileExtension: string;
+    orderBy: number;
+    isDeleted: boolean;
+    problemId: number;
+    problemName: string;
 }
 
 interface IProblemType {
@@ -225,7 +249,7 @@ interface IGetContestsForIndexResponseType {
 interface IIndexProblemsType {
     id: number;
     name: string;
-    group: number;
+    problemGroupId: number;
     groupType: string;
     contest: string;
     practiceTestsCount: number;
@@ -301,7 +325,6 @@ interface IAdminContestResponseType {
     category: string;
     name: string;
     allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
     categoryId: number;
     startTime: string;
     endTime: string;
@@ -340,12 +363,16 @@ interface IProblemAdministration {
     submissionTypes: Array<IProblemSubmissionType>;
     timeLimit: number;
     memoryLimit: number;
-    additionalFiles: File | null;
+    contestType: ContestVariation;
     tests: File | null;
-    hasAdditionalFiles: boolean;
-
+    problemGroupOrderBy: number;
+    problemGroupId : number;
 }
 
+interface IProblemGroupDropdownModel {
+    id: number;
+    orderBy: number;
+}
 interface IUserRoleType {
     id: string;
     name: string;
@@ -385,7 +412,6 @@ interface IContestAdministration {
     isVisible: boolean;
     newIpPassword: string | null;
     allowParallelSubmissionsInTasks: boolean;
-    autoChangeTestsFeedbackVisibility: boolean;
     orderBy: number;
     allowedIps: string;
     numberOfProblemGroups: number;
@@ -446,9 +472,14 @@ interface IContestCategories {
     name: string;
 }
 
+interface IEnumType {
+    enumValues?: Array<string>;
+}
+
 interface IFilterColumn {
     columnName: string;
     columnType: FilterColumnTypeEnum;
+    enumValues?: Array<string> | null;
 }
 
 interface IAdminSlice {
@@ -464,6 +495,7 @@ interface IRootStore {
     adminProblems: IAdminSlice;
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
+    adminProblemResources: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -527,4 +559,8 @@ export type {
     IProblemGroupsData,
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
+    IProblemResouceInLinstModel,
+    IProblemResourceAdministrationModel,
+    IEnumType,
+    IProblemGroupDropdownModel,
 };

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useEffect, useState } from 'react';
+
+import { useEffect, useState } from 'react';
+import { GiFiles } from 'react-icons/gi';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -12,15 +14,20 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Box, CSSObject, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme, Toolbar, Tooltip } from '@mui/material';
+import { Box, CSSObject, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme, Toolbar, Tooltip } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls';
+import 'dayjs/locale/bg';
+
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import Administration from '../../../pages/administration-new/Administration';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
+import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
@@ -28,9 +35,9 @@ import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
+import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
 
 import styles from './AdministrationPortal.module.scss';
@@ -78,6 +85,11 @@ const administrationItems = [
         path: `${PROBLEM_GROUPS_PATH}`,
     },
     {
+        name: 'Problem Resources',
+        icon: <GiFiles />,
+        path: `${PROBLEM_RESOURCES_PATH}`,
+    },
+    {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: `${SUBMISSION_TYPES_PATH}`,
@@ -89,7 +101,8 @@ const openedMixin = (theme: Theme): CSSObject => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'visible',
+    overflowY: 'visible',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -97,7 +110,8 @@ const closedMixin = (theme: Theme): CSSObject => ({
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    overflowX: 'hidden',
+    overflowX: 'visible',
+    overflowY: 'visible',
     width: `calc(${theme.spacing(7)} + 1px)`,
     [theme.breakpoints.up('sm')]: { width: `calc(${theme.spacing(8)} + 1px)` },
 });
@@ -141,6 +155,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         '& .MuiDrawer-paper': closedMixin(theme),
     },
 }));
+
+const mobileBreak = 1300;
+
 const AdministrationPortal = () => {
     const location = useLocation();
     const [ open, setOpen ] = useState(true);
@@ -165,6 +182,17 @@ const AdministrationPortal = () => {
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return function cleanUp() {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    const handleResize = () => {
+        setOpen(!(window.innerWidth < mobileBreak));
+    };
+
     const capitalizeFirstLetter = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
     const isSelected = (pathName: string) => {
@@ -174,6 +202,7 @@ const AdministrationPortal = () => {
         }
         return false;
     };
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -228,6 +257,14 @@ const AdministrationPortal = () => {
             Element: AdministrationProblemGroup,
         },
         {
+            path: `${PROBLEM_RESOURCES_PATH}`,
+            Element: AdministrationProblemResourcesPage,
+        },
+        {
+            path: `${PROBLEM_RESOURCES_PATH}/:id`,
+            Element: AdministrationProblemResource,
+        },
+        {
             path: `${SUBMISSION_TYPES_PATH}`,
             Element: Administration,
         },
@@ -238,22 +275,19 @@ const AdministrationPortal = () => {
         },
     ];
 
-    const { internalUser: user } =
-    useAppSelector((state) => state.authorization);
+    const renderSectionicon = (name: string, icon: any) => {
+        if (!open) {
+            return (
+                <Tooltip title={name}>
+                    <div>{icon}</div>
+                </Tooltip>
+            );
+        }
+        return icon;
+    };
 
     return (
         <Box sx={{ zIndex: 0 }}>
-            {!open
-                ? (
-                    <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
-                        <ChevronRightIcon />
-                    </IconButton>
-                )
-                : (
-                    <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-                )}
             <Box sx={{ display: 'flex', zIndex: 0 }}>
                 <AppBar position="fixed" open={open} className={styles.appBar}>
                     <Toolbar>
@@ -269,51 +303,64 @@ const AdministrationPortal = () => {
                     </Toolbar>
                 </AppBar>
                 <Drawer
-                  sx={{ zIndex: 0 }}
                   variant="permanent"
                   open={open}
+                  sx={{ zIndex: 100 }}
                 >
+                    {!open
+                        ? (
+                            <IconButton className={`${styles.arrowRight} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerOpen}>
+                                <ChevronRightIcon />
+                            </IconButton>
+                        )
+                        : (
+                            <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        )}
                     <DrawerHeader>
                         <div />
                     </DrawerHeader>
-                    <List>
+                    <List sx={{ overflow: 'hidden' }}>
                         {administrationItems.map((item) => (
-                            <ListItem key={item.name} disablePadding>
-                                <Link
-                                  to={item.path}
-                                  className={`${isSelected(item.path)
-                                      ? styles.activeAdminNavLink
-                                      : ''} ${styles.adminNavLink}`}
-                                >
-                                    <ListItemButton className={isSelected(item.path)
-                                        ? styles.selectedSection
-                                        : ''}
+                            <Box key={item.path}>
+                                <ListItem key={item.name} disablePadding>
+                                    <Link
+                                      to={item.path}
+                                      className={`${isSelected(item.path)
+                                          ? styles.activeAdminNavLink
+                                          : ''} ${styles.adminNavLink}`}
                                     >
-                                        <ListItemIcon className={isSelected(item.path)
-                                            ? styles.listItemIcon
+                                        <ListItemButton className={isSelected(item.path)
+                                            ? styles.selectedSection
                                             : ''}
                                         >
-                                            {item.icon}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                                            <ListItemIcon className={isSelected(item.path)
+                                                ? styles.listItemIcon
+                                                : ''}
+                                            >
+                                                {renderSectionicon(item.name, item.icon)}
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                                <Divider />
+                            </Box>
                         ))}
                     </List>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 4 }}>
-                    <Routes>
-                        {user.canAccessAdministration &&
-                        adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
-
-                        <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
-                        <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
+                <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
+                        <Routes>
+                            {adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
+                            <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </LocalizationProvider>
                 </Box>
             </Box>
         </Box>
-
     );
 };
 export default AdministrationPortal;

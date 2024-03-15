@@ -1,0 +1,25 @@
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/shadows';
+
+.closeIcon {
+  left: 95%;
+  position: relative;
+}
+
+.wrapper {
+  @extend %font-family-roboto;
+
+  background-color: colors.$white-color;
+  border-radius: variables.$f-size-12;
+  box-shadow: shadows.$dp-shadow-4;
+  height: 90%;
+  left: 50%;
+  overflow: auto;
+  padding: variables.$f-size-18;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+}

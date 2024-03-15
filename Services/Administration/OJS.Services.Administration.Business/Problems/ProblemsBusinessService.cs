@@ -148,6 +148,7 @@ namespace OJS.Services.Administration.Business.Problems
                 .Include(p => p.Tests)
                 .Include(p => p.Resources)
                 .Include(p => p.ProblemGroup)
+                .Include(p => p.SubmissionTypesInProblems)
                 .SingleOrDefaultAsync();
 
             if (problem?.ProblemGroup.ContestId == contestId)
@@ -185,35 +186,13 @@ namespace OJS.Services.Administration.Business.Problems
         public Task ReevaluateProblemsOrder(int contestId, Problem problem)
             => this.problemGroupsBusiness.ReevaluateProblemsAndProblemGroupsOrder(contestId, problem.ProblemGroup);
 
-        public async Task<AdditionalFilesDownloadModel?> GetAdditionalFiles(int problemId)
-        {
-            var hasProblem = await this.problemsData.ExistsById(problemId);
-            if (!hasProblem)
-            {
-                throw new BusinessServiceException("Problem not found.");
-            }
-
-            var file = await this.problemsData.GetByIdQuery(problemId).Select(p => p.AdditionalFiles)
-                .FirstOrDefaultAsync();
-            if (file == null)
-            {
-                return null;
-            }
-
-            return new AdditionalFilesDownloadModel
-            {
-                Content = file!,
-                MimeType = GlobalConstants.MimeTypes.ApplicationOctetStream,
-                FileName = string.Format($"Problem-{problemId}-Additional files.zip"),
-            };
-        }
-
         public override async Task<ProblemAdministrationModel> Get(int id)
         {
             var problem = await this.problemsData.GetByIdQuery(id)
                 .Include(stp => stp.SubmissionTypesInProblems)
                 .ThenInclude(stp => stp.SubmissionType)
                 .Include(p => p.ProblemGroup)
+                .ThenInclude(pg => pg.Contest)
                 .FirstOrDefaultAsync();
             if (problem is null)
             {
@@ -233,6 +212,7 @@ namespace OJS.Services.Administration.Business.Problems
             var problem = await this.problemsData.GetByIdQuery(model.Id)
                 .Include(s => s.SubmissionTypesInProblems)
                 .Include(s => s.ProblemGroup)
+                .Include(s => s.Checker)
                 .FirstOrDefaultAsync();
 
             if (problem is null)
@@ -241,7 +221,13 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             problem.MapFrom(model);
-            problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id)!;
+
+            problem.ProblemGroupId = model.ProblemGroupId;
+            problem.ProblemGroup = await this.problemGroupsDataService
+                .GetByIdQuery(model.ProblemGroupId)
+                .Include(pg => pg.Contest)
+                .FirstAsync();
+
             problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)
@@ -250,7 +236,6 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             AddSubmissionTypes(problem, model);
-
             this.problemsData.Update(problem);
             await this.problemsData.SaveChanges();
             return model;
@@ -308,6 +293,7 @@ namespace OJS.Services.Administration.Business.Problems
 
                 problem.ProblemGroup = null!;
                 problem.ProblemGroupId = problemGroupId.Value;
+                problem.ProblemGroup = this.problemGroupsDataService.GetByIdQuery(problemGroupId.Value).First();
             }
             else
             {
@@ -321,12 +307,8 @@ namespace OJS.Services.Administration.Business.Problems
             }
 
             problem.OrderBy = orderBy;
-            problem.SubmissionTypesInProblems = await this.submissionTypesData
-                .GetAllByProblem(problem.Id)
-                .SelectMany(x => x.SubmissionTypesInProblems)
-                .ToListAsync();
 
-            await this.problemsData.Add(problem);
+            await this.problemGroupsBusiness.GenerateNewProblem(problem, problem.ProblemGroup, new List<Problem>());
             await this.problemsData.SaveChanges();
         }
 

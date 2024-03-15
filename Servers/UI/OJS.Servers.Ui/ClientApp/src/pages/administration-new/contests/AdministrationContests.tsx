@@ -4,18 +4,18 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { IconButton, Modal, Tooltip } from '@mui/material';
-import Box from '@mui/material/Box';
+import { IconButton, Tooltip } from '@mui/material';
 
 import { CREATE_NEW_ENTITY } from '../../../common/labels';
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
 import { useDeleteContestMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import contestFilterableColumns, { returnContestsNonFilterableColumns } from './contestsGridColumns';
@@ -51,35 +51,30 @@ const AdministrationContestsPage = () => {
     }, [ sortingParams ]);
 
     const renderEditContestModal = (index: number) => (
-        <Modal
+        <AdministrationModal
           key={index}
+          index={index}
           open={openEditContestModal}
           onClose={() => setOpenEditContestModal(false)}
         >
-            <Box sx={modalStyles}>
-                <ContestEdit contestId={Number(contestId)} />
-            </Box>
-        </Modal>
+            <ContestEdit contestId={Number(contestId)} />
+        </AdministrationModal>
     );
 
     const renderCreateContestModal = (index: number) => (
-        <Modal key={index} open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
-            <Box sx={modalStyles}>
-                <ContestEdit contestId={null} isEditMode={false} />
-            </Box>
-        </Modal>
+        <AdministrationModal key={index} index={index} open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
+            <ContestEdit contestId={null} isEditMode={false} />
+        </AdministrationModal>
     );
 
     const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title={CREATE_NEW_ENTITY}>
-                <IconButton
-                  onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
-        </div>
+        <Tooltip title={CREATE_NEW_ENTITY}>
+            <IconButton
+              onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
+            >
+                <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
+            </IconButton>
+        </Tooltip>
     );
 
     if (isLoading) {

@@ -11,7 +11,11 @@ export const CHECKER = 'Checker';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
+export const CANCEL = 'Cancel';
 export const PROBLEM_GROUP = 'Problem Group';
+export const PROBLEM_RESOURCE = 'Problem Resource';
+
+export const CREATE_NEW_RECORD = 'Create new record';
 
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
@@ -31,6 +35,8 @@ export const IS_VISIBLE = 'Is Visible';
 export const ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS = 'Allow parallel submissions in tasks';
 export const AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY = 'Auto change tests feedback visibility';
 export const CREATE_NEW_ENTITY = 'Create new contest';
+export const PROBLEM = 'Problem';
+export const LINK = 'Link';
 
 // Contest Categories
 export const CATEGORY_ID = 'Category Id';
@@ -44,7 +50,6 @@ export const TIME_LIMIT = 'Time Limit';
 export const PROBLEM_GROUP_TYPE = 'Problem Group Type';
 export const SHOW_DETAILED_FEEDBACK = 'Show Detailed feedback';
 export const SHOW_RESULTS = 'Show Results';
-export const ADDITIONAL_FILES = 'Additional Files';
 export const CREATE_NEW_PROBLEM = 'Create new Problem';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
 
@@ -53,3 +58,5 @@ export const SUBMISSION_TYPES = 'Submission Types';
 // Tests
 
 export const TESTS = 'Tests';
+
+// Problem Resources

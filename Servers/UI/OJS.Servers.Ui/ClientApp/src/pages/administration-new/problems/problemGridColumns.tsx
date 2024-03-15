@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/react-in-jsx-scope */
+import { FaCopy } from 'react-icons/fa';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { ProblemGroupTypes } from '../../../common/enums';
 import { EDIT } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls';
+import { IEnumType } from '../../../common/types';
+import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemFilterableColums: GridColDef[] = [
     {
@@ -55,21 +59,33 @@ const problemFilterableColums: GridColDef[] = [
         valueFormatter: (params) => params.value.toString(),
     },
     {
+        field: 'problemGroupOrderBy',
+        headerName: 'Problem Group Order By',
+        flex: 0.5,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        valueFormatter: (params) => params.value.toString(),
+    },
+    {
         field: 'problemGroup',
-        headerName: 'Problem Group',
+        headerName: 'Problem Group Type',
         flex: 1,
-        type: 'string',
+        type: 'enum',
         filterable: false,
         align: 'center',
         sortable: false,
         headerAlign: 'center',
+        enumValues: getStringObjectKeys(ProblemGroupTypes),
         valueFormatter: (params) => {
             if (params.value === '') {
                 return 'None';
             }
             return params.value.toString();
         },
-    },
+    } as GridColDef & IEnumType,
     {
         field: 'practiceTestsCount',
         headerName: 'Practice Tests',
@@ -105,12 +121,14 @@ const problemFilterableColums: GridColDef[] = [
 export const returnProblemsNonFilterableColumns = (
     onEditClick: Function,
     deleteMutation: any,
+    onCopyProblem?: Function,
     retestProblem?: Function,
+    onDeleteSuccess?:() => void,
 ) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        flex: 1,
+        flex: 1.5,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
@@ -124,11 +142,21 @@ export const returnProblemsNonFilterableColumns = (
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
+                  onSuccess={onDeleteSuccess}
                 />
                 {retestProblem && (
+                <Tooltip title="Retest">
                     <IconButton onClick={() => retestProblem(Number(params.row.id))}>
                         <ReplayIcon />
                     </IconButton>
+                </Tooltip>
+                )}
+                {onCopyProblem && (
+                <Tooltip title="Copy">
+                    <IconButton onClick={() => onCopyProblem(Number(params.row.id))}>
+                        <FaCopy />
+                    </IconButton>
+                </Tooltip>
                 )}
             </div>
         ),

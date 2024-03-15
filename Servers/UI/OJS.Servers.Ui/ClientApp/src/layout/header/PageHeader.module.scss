@@ -21,6 +21,8 @@
   z-index: 3;
 
   > div {
+    align-items: center;
+    display: flex;
     margin-left: spacings.$sp-64;
   }
 

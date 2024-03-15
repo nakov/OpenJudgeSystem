@@ -7,8 +7,8 @@ using OJS.Data.Models.Submissions;
 using OJS.Servers.Administration.Attributes;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Submissions;
+using OJS.Services.Administration.Business.Submissions.GridData;
 using OJS.Services.Administration.Business.Submissions.Validation;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Administration.Models.Validation;
 using System.Threading.Tasks;
@@ -22,10 +22,10 @@ public class SubmissionsController : BaseAdminApiController<
     private readonly ISubmissionsBusinessService submissionsBusinessService;
 
     public SubmissionsController(
-        IGridDataService<Submission> submissionsGridDataService,
-        ISubmissionsBusinessService submissionsBusinessService,
-        SubmissionsAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator)
+       ISubmissionsGridDataService submissionsGridDataService,
+       ISubmissionsBusinessService submissionsBusinessService,
+       SubmissionsAdministrationModelValidator validator,
+       IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator)
         : base(
             submissionsGridDataService,
             submissionsBusinessService,

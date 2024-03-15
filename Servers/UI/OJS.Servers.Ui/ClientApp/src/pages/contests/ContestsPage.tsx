@@ -41,6 +41,10 @@ const ContestsPage = () => {
             searchParams.set('page', '1');
             setSearchParams(searchParams);
         }
+        if (!searchParams.get('category') || searchParams.get('category') === 'undefined') {
+            searchParams.delete('category');
+            setSearchParams(searchParams);
+        }
     }, []);
 
     const selectedPage = useMemo(() => {
@@ -104,7 +108,7 @@ const ContestsPage = () => {
         );
     }, [ allContests ]);
 
-    if (allContestsError) { return <>Error loading contests</>; }
+    if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
     return (
         <div style={{ padding: '20px 40px' }}>
