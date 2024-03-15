@@ -4,6 +4,14 @@
 @use 'src/components/guidelines/buttons/Button.module';
 @use 'src/styles/spacings';
 
+%lightBackground {
+  background-color: colors.$white-color;
+}
+
+%darkBackground {
+  background-color: colors.$dark-base-color-200;
+}
+
 input:focus,
 select:focus,
 textarea:focus,
@@ -26,22 +34,14 @@ input:-webkit-autofill:active {
   position: relative;
 }
 
-.darkBackground {
-  background-color: colors.$dark-base-color-200;
-}
-
-.lightBackground {
-  background-color: colors.$white-color;
-}
-
 .lightFormControl {
-  @extend .lightBackground;
+  @extend %lightBackground;
 
   border: 1px solid colors.$dark-base-color-200;
 }
 
 .darkFormControl {
-  @extend .darkBackground;
+  @extend %darkBackground;
 
   border: 1px solid colors.$white-color;
 }
@@ -119,6 +119,7 @@ input:-webkit-autofill:active {
 }
 
 .formLabel {
+  background: none;
   display: block;
   margin-left: 15px;
   position: absolute;

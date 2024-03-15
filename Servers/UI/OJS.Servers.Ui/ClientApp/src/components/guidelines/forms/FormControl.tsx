@@ -56,16 +56,6 @@ const LabelInternal = ({
     children,
     fieldType,
 }: ILabelInternalProps) => {
-    const { isDarkMode } = useTheme();
-
-    if (!text && !className) {
-        return (
-            <div>
-                {children}
-            </div>
-        );
-    }
-
     const containerClassname = concatClassNames(
         fieldType !== FormControlType.checkbox
             ? styles.formControlContainer
@@ -76,11 +66,16 @@ const LabelInternal = ({
         fieldType !== FormControlType.checkbox
             ? styles.formLabel
             : null,
-        isDarkMode
-            ? styles.darkBackground
-            : styles.lightBackground,
         className,
     );
+
+    if (!text && !className) {
+        return (
+            <div>
+                {children}
+            </div>
+        );
+    }
 
     return (
         <div className={containerClassname}>
