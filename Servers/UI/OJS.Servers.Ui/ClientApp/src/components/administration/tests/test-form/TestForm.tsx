@@ -6,6 +6,7 @@ import isNaN from 'lodash/isNaN';
 import { CREATE, EDIT, HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, RECORD, SELECT_PROBLEM, TYPE } from '../../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { ITestsDropdownData } from '../../../../common/types';
+import { NEW_ADMINISTRATION_PATH, TESTS_PATH } from '../../../../common/urls/administration-urls';
 import { useGetAllByNameQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useCreateTestMutation, useDeleteTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -17,7 +18,6 @@ import { ITestAdministration, TestTypes } from '../types';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
-import { NEW_ADMINISTRATION_PATH } from '../../../../common/urls';
 
 interface ITestFormProps {
     id?:number;
