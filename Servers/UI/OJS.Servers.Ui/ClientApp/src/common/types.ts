@@ -74,6 +74,16 @@ interface IPublicSubmission {
     processed: boolean;
 }
 
+interface ITestRunInListModel {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
+}
+
 interface IGetAllAdminParams {
     filter?: string;
     itemsPerPage: number;
@@ -471,6 +481,21 @@ interface IContestAutocomplete {
     name: string;
 }
 
+interface ITestsUploadModel {
+    problemId: number;
+    tests: File | null;
+    retestProblem: boolean;
+    deleteOldTests: boolean;
+}
+interface ITestsDropdownData {
+    id: number;
+    name: string;
+}
+
+interface IFileModel {
+    blob: Blob;
+    filename: string;
+}
 interface IContestCategories {
     id: number;
     name: string;
@@ -478,6 +503,16 @@ interface IContestCategories {
 
 interface IEnumType {
     enumValues?: Array<string>;
+}
+
+interface IFilterReducerActionType {
+    key: string;
+    filters: Array<IAdministrationFilter> | null;
+}
+
+interface ISorterReducerActionType {
+    key: string;
+    sorters: Array<IAdministrationSorter> | null;
 }
 
 interface IFilterColumn {
@@ -497,6 +532,7 @@ interface IRootStore {
     adminContests: IAdminSlice;
     adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
+    adminTests: IAdminSlice;
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
@@ -564,8 +600,14 @@ export type {
     IProblemGroupsData,
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
+    ITestsDropdownData,
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
+    ITestsUploadModel,
+    IFileModel,
     IEnumType,
+    ITestRunInListModel,
+    ISorterReducerActionType,
+    IFilterReducerActionType,
     IProblemGroupDropdownModel,
 };

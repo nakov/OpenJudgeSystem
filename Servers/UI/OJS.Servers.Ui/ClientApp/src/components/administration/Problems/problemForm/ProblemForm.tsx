@@ -315,10 +315,10 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                             <FileUpload
                               handleFileUpload={handleFileUpload}
                               propName="tests"
-                              setSkipDownload={() => { console.log('Skip download'); }}
+                              setSkipDownload={() => {}}
                               uploadButtonName={currentProblem.tests?.name}
                               showDownloadButton={false}
-                              disableClearButton
+                              disableClearButton={!currentProblem.tests}
                               onClearSelectionClicked={handleFileClearance}
                               buttonLabel={TESTS}
                             />

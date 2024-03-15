@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using OJS.Data.Models.Problems;
 using OJS.Common.Enumerations;
 using System;
-using OJS.Common.Extensions;
 using Microsoft.AspNetCore.Http;
 
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -42,8 +41,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public IFormFile? Tests { get; set; }
 
-    public bool HasAdditionalFiles { get; set; }
-
     public void RegisterMappings(IProfileExpression configuration)
     {
          configuration.CreateMap<Problem, ProblemAdministrationModel>()
@@ -55,8 +52,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt
                 => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)))
-             .ForMember(pam => pam.HasAdditionalFiles, opt
-                 => opt.MapFrom(p => p.AdditionalFiles != null))
              .ForMember(pam => pam.ProblemGroupOrderBy, opt
                  => opt.MapFrom(p => p.ProblemGroup.OrderBy))
              .ForMember(pam => pam.ContestType, opt
@@ -92,6 +87,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
              .ForMember(pam => pam.CreatedOn, opt
                  => opt.Ignore())
              .ForMember(pam => pam.ModifiedOn, opt
-                 => opt.Ignore());
+                 => opt.Ignore())
+             .ForMember(pam => pam.AdditionalFiles, opt
+             => opt.Ignore());
     }
 }
