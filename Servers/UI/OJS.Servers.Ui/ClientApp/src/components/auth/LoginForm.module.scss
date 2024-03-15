@@ -22,6 +22,11 @@
   text-align: center;
   width: 400px;
 
+  .logo {
+    align-self: center;
+    width: fit-content;
+  }
+
   h2 {
     align-self: center;
     border-bottom: 3px solid colors.$primary-blue;
