@@ -60,5 +60,3 @@ export const SUBMISSION_TYPES = 'Submission Types';
 export const TESTS = 'Tests';
 
 // Problem Resources
-
-export const FILE_EXTENSION = 'File Extension';
