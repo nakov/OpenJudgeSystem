@@ -146,6 +146,7 @@ const LoginForm = () => {
               to="/"
               type={LinkButtonType.image}
               altText="Softuni logo"
+              className={styles.logo}
               imgSrc={isDarkMode
                   ? darkSoftuniLogo
                   : lightSoftuniLogo}
