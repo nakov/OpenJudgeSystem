@@ -4,6 +4,13 @@
 @use 'src/components/guidelines/buttons/Button.module';
 @use 'src/styles/spacings';
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -12,13 +19,6 @@ input:-webkit-autofill:active {
   // box-shadow: 0 0 0 30px inset !important;
   transition-delay: 9999s;
   transition-property: background-color, color;
-}
-
-input:focus,
-select:focus,
-textarea:focus,
-button:focus {
-  outline: none;
 }
 
 .formControlContainer {
