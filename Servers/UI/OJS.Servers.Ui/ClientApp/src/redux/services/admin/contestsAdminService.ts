@@ -4,7 +4,7 @@ import { IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const contestService = createApi({

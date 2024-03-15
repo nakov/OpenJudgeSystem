@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH } from '../../../common/urls/administration-urls';
 import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [

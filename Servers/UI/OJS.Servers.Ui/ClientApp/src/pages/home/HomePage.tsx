@@ -51,14 +51,16 @@ const HOME_STATISTICS = [
 
 const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const renderHomeStatisticIcons = useCallback(() => {
         if (isLoading) {
             return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
         if (error) {
-            return <div>Error fetching statistics data. Please try again!</div>;
+            return <div className={textColorClassName}>Error fetching statistics data. Please try again!</div>;
         }
         return (
             <div className={styles.gridWrapper}>
@@ -77,7 +79,7 @@ const HomePage = () => {
                 </div>
             </div>
         );
-    }, [ data, error, isLoading ]);
+    }, [ data, error, isLoading, textColorClassName ]);
 
     return (
         <div className={styles.homePageWrapper}>

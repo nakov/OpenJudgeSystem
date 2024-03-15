@@ -137,6 +137,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
         searchParams.set('page', '1');
         searchParams.set('category', id.toString());
+        searchParams.delete('strategy');
 
         setSearchParams(searchParams);
         dispatch(setContestCategory(selectedContestCategory));

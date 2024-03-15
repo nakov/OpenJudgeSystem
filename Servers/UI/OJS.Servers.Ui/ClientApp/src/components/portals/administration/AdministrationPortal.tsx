@@ -22,7 +22,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls';
+import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import Administration from '../../../pages/administration-new/Administration';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
@@ -36,7 +36,6 @@ import AdminSubmissionForProcessingDetails
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
@@ -293,9 +292,6 @@ const AdministrationPortal = () => {
         return icon;
     };
 
-    const { internalUser: user } =
-    useAppSelector((state) => state.authorization);
-
     return (
         <Box sx={{ zIndex: 0 }}>
             <Box sx={{ display: 'flex', zIndex: 0 }}>
@@ -363,9 +359,7 @@ const AdministrationPortal = () => {
                 <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
                         <Routes>
-                            {user.canAccessAdministration &&
-                            adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
-
+                            {adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
                             <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
                             <Route path="*" element={<NotFoundPage />} />
                         </Routes>

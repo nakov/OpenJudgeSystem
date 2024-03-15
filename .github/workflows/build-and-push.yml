@@ -51,11 +51,9 @@ jobs:
       if: github.event_name == 'pull_request'
       shell: bash
       run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-    - name: Get branch name
-      if: github.event_name == 'workflow_dispatch'
+    - name: Get docker tag
       shell: bash
-      # Set BRANCH_NAME to be the provided image tag, as it will be used to push the image with
-      run: echo "BRANCH_NAME=${{ inputs.docker_tag }}" >> $GITHUB_ENV
+      run: echo "DOCKER_TAG=${{ inputs.docker_tag }}" >> $GITHUB_ENV
 
     - name: Checkout
       if: inputs.branch_name == ''
@@ -70,6 +68,19 @@ jobs:
         ref: ${{ inputs.branch_name }}
         submodules: recursive
         token: ${{ secrets.SOFTUNIBUILD_PAT }}
+
+    - name: Prepare Docker Tags
+      id: prepare_docker_tags
+      shell: bash
+      run: |
+        TAGS="${{ env.IMAGE }}:${{ env.GIT_SHA }},${{ env.IMAGE }}:${{ env.BUILD_VER }}"
+        if [[ -n "${{ env.BRANCH_NAME }}" ]]; then
+          TAGS="$TAGS,${{ env.IMAGE }}:${{ env.BRANCH_NAME }}"
+        fi
+        if [[ -n "${{ env.DOCKER_TAG }}" ]]; then
+          TAGS="$TAGS,${{ env.IMAGE }}:${{ env.DOCKER_TAG }}"
+        fi
+        echo "DOCKER_TAGS=$TAGS" >> $GITHUB_ENV
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v2
@@ -105,10 +116,7 @@ jobs:
           org.opencontainers.image.revision=${{ github.sha }}
           org.opencontainers.image.source=https://github.com/${{ github.repository }}
           org.opencontainers.image.version=${{ env.BUILD_VER }}
-        tags: |
-          ${{ env.IMAGE }}:${{ env.GIT_SHA }}
-          ${{ env.IMAGE }}:${{ env.BUILD_VER }}
-          ${{ env.IMAGE }}:${{ env.BRANCH_NAME }}
+        tags: ${{ env.DOCKER_TAGS }}
         push: ${{ inputs.push_to_registry }}
         platforms: linux/amd64
         cache-from: type=local,src=/tmp/.buildx-cache
