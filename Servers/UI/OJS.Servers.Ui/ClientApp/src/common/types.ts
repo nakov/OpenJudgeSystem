@@ -519,8 +519,8 @@ interface IFilterColumn {
 
 interface IAdminSlice {
     [key: string]: null | {
-        selectedFilters: IAdministrationFilter[];
-        selectedSorters: IAdministrationSorter[];
+        selectedFilters: IAdministrationFilter[] | null;
+        selectedSorters: IAdministrationSorter[] | null;
     };
 }
 
