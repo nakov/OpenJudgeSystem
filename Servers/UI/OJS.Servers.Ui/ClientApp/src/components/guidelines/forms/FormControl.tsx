@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import isNil from 'lodash/isNil';
 
 import useTheme from '../../../hooks/use-theme';
@@ -110,6 +111,7 @@ const FormControl = ({
     showPlaceholder = true,
 }: IFormControlProps) => {
     const [ formControlValue, setFormControlValue ] = useState(value);
+    const [ showPassword, setShowPassword ] = useState(false);
 
     const [ isChecked, setIsChecked ] = useState<boolean>(checked);
 
@@ -123,6 +125,9 @@ const FormControl = ({
             ? styles.darkFormControl
             : styles.lightFormControl,
         getColorClassName(themeColors.textColor),
+        isDarkMode
+            ? styles.darkInputPlaceholder
+            : styles.lightInputPlaceholder,
         className,
     );
 
@@ -210,6 +215,51 @@ const FormControl = ({
                 );
             }
 
+            if (type === FormControlType.password) {
+                return (
+                    <>
+                        <input
+                          type={
+                            showPassword
+                                ? 'text'
+                                : 'password'
+                          }
+                          className={concatClassNames(componentClassName)}
+                          name={name}
+                          id={id}
+                          onChange={handleOnChange}
+                          onInput={handleOnInput}
+                          value={formControlValue}
+                          checked={checked}
+                          placeholder={showPlaceholder
+                              ? labelText
+                              : undefined}
+                        />
+                        {
+                            showPassword
+                                ? (
+                                    <FaEyeSlash
+                                      onClick={() => { setShowPassword(!showPassword); }}
+                                      className={concatClassNames(
+                                          styles.passwordIcon,
+                                          getColorClassName(themeColors.textColor),
+                                      )}
+                                    />
+                                )
+                                : (
+                                    <FaEye
+                                      onClick={() => { setShowPassword(!showPassword); }}
+                                      className={concatClassNames(
+                                          styles.passwordIcon,
+                                          getColorClassName(themeColors.textColor),
+                                      )}
+                                    />
+                                )
+                        }
+                    </>
+                );
+            }
+
             return (
                 <input
                   type={type}
@@ -226,8 +276,9 @@ const FormControl = ({
                 />
             );
         },
-        [ checked, componentClassName, formControlValue, handleOnChange, handleOnInput, id,
-            isChecked, labelText, name, onChange, onClick, showPlaceholder, type, value ],
+        [ checked, componentClassName, formControlValue, getColorClassName,
+            handleOnChange, handleOnInput, id, isChecked, labelText, name, onChange,
+            onClick, showPassword, showPlaceholder, themeColors.textColor, type, value ],
     );
 
     const generateFormControlWithLabel = useCallback(

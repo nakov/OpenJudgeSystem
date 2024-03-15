@@ -11,7 +11,8 @@ import {
     UsernameFormatErrorMessage, UsernameLengthErrorMessage,
 } from '../../common/constants';
 import useTheme from '../../hooks/use-theme';
-import logo from '../../layout/footer/softuni-logo-horizontal-white.svg';
+import lightSoftuniLogo from '../../layout/footer/softuni-logo-horizontal-colored.svg';
+import darkSoftuniLogo from '../../layout/footer/softuni-logo-horizontal-white.svg';
 import { setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -145,7 +146,9 @@ const LoginForm = () => {
               to="/"
               type={LinkButtonType.image}
               altText="Softuni logo"
-              imgSrc={logo}
+              imgSrc={isDarkMode
+                  ? darkSoftuniLogo
+                  : lightSoftuniLogo}
             />
             <div className={formClassName}>
                 <Form
@@ -166,6 +169,7 @@ const LoginForm = () => {
                       onChange={handleOnChangeUpdateUsername}
                       value=""
                       showPlaceholder
+                      shouldDisableLabel
                     />
                     <FormControl
                       id={passwordFieldName.toLowerCase()}
@@ -175,6 +179,7 @@ const LoginForm = () => {
                       onChange={handleOnChangeUpdatePassword}
                       value=""
                       showPlaceholder
+                      shouldDisableLabel
                     />
                     <div className={styles.loginFormControls}>
                         <FormControl

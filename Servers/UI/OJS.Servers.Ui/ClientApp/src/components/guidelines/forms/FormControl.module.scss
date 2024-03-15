@@ -64,6 +64,7 @@ button:focus {
   }
 
   &[type='text'],
+  &[type='password'],
   &.formControlTextArea {
     border-radius: 6px;
     color: colors.$grey-color;
@@ -121,11 +122,20 @@ button:focus {
   margin-left: 15px;
   position: absolute;
   top: 60%;
-  transform: translateY(-50%);
 }
 
-input::placeholder {
-  opacity: 0;
+.lightInputPlaceholder {
+  &::placeholder {
+    opacity: 1;
+    color: colors.$light-text-color;
+  }
+}
+
+.darkInputPlaceholder {
+  &::placeholder {
+    opacity: 1;
+    color: colors.$dark-text-color;
+  }
 }
 
 .fileInput {
@@ -138,4 +148,9 @@ input::file-selector-button {
 
   color: colors.$color-btn-secondary;
   margin-right: 10px;
+}
+
+.passwordIcon {
+  font-size: 18px;
+  transform: translateX(800%) translateY(-200%) scale(1);
 }
