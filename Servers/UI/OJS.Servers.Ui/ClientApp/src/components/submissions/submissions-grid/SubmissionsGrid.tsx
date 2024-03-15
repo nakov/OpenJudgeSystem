@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IDictionary } from '../../../common/common-types';
+import { ISubmissionResponseModel } from '../../../common/types';
 import { usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
 import { usePages } from '../../../hooks/use-pages';
-import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import concatClassNames from '../../../utils/class-names';
 import { format } from '../../../utils/number-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
+import List from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
@@ -44,8 +44,6 @@ const SubmissionsGrid = () => {
             clearPageInformation,
         },
     } = usePublicSubmissions();
-
-    const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
     const { internalUser: user } =
         useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
@@ -157,15 +155,17 @@ const SubmissionsGrid = () => {
         [ user, totalUnprocessedSubmissionsCount, selectedActive, handleSelectSubmissionType ],
     );
 
-    const headerClassName = concatClassNames(
-        styles.submissionsGridHeader,
-        isDarkMode
-            ? styles.darkSubmissionsGridHeader
-            : styles.lightSubmissionsGridHeader,
-        getColorClassName(themeColors.textColor),
+    const renderSubmissionRow = useCallback(
+        (submission: ISubmissionResponseModel, index: number) => (
+            <SubmissionGridRow
+              isFirst={index === 0}
+              submission={submission}
+            />
+        ),
+        [],
     );
 
-    const renderSubmissionsGrid = useCallback(
+    const renderSubmissionsList = useCallback(
         () => {
             if (areSubmissionsLoading) {
                 return (
@@ -184,34 +184,18 @@ const SubmissionsGrid = () => {
             }
 
             return (
-                <table className={styles.submissionsGrid}>
-                    <tr className={headerClassName}>
-                        <td>ID</td>
-                        <td>Task</td>
-                        <td>From</td>
-                        {
-                            user.isAdmin
-                                ? <td />
-                                : null
-                        }
-                        <td className={styles.tdRight}>Result</td>
-                        {
-                            user.isAdmin
-                                ? <td>Execution Result</td>
-                                : null
-                        }
-                        <td className={styles.tdRight}>Strategy</td>
-                        <td />
-                    </tr>
-                    {
-                        publicSubmissions.map((s) => (
-                            <SubmissionGridRow submission={s} />
-                        ))
-                    }
-                </table>
+                <List
+                  values={publicSubmissions}
+                  itemFunc={renderSubmissionRow}
+                  fullWidth
+                />
             );
         },
-        [ areSubmissionsLoading, headerClassName, publicSubmissions, user.isAdmin ],
+        [
+            publicSubmissions,
+            renderSubmissionRow,
+            areSubmissionsLoading,
+        ],
     );
 
     return (
@@ -228,8 +212,8 @@ const SubmissionsGrid = () => {
                 total
             </Heading>
             {renderPrivilegedComponent()}
-            {renderSubmissionsGrid()}
-            {publicSubmissions?.length > 0 && (
+            {renderSubmissionsList()}
+            { publicSubmissions?.length > 0 && (
                 <PaginationControls
                   count={pagesCount}
                   page={currentPage}
