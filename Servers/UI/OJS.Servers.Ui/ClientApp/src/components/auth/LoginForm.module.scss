@@ -1,26 +1,26 @@
 @use 'src/styles/colors';
 
 .loginFormContentContainer {
+  align-content: start;
   display: flex;
   flex-direction: column;
-  align-content: start;
   justify-content: center;
   padding-top: 75px;
 }
 
 .loginForm {
-  display: flex;
-  flex-direction: column;
   align-content: center;
   border-radius: 4px;
   box-shadow: colors.$box-shadow-color;
+  display: flex;
+  flex-direction: column;
   font-family: Lato, serif;
   margin: 20px auto;
   max-width: 768px;
   padding: 3vw;
   text-align: center;
   width: 20vw;
-  
+
   h2 {
     align-self: center;
     border-bottom: 3px solid colors.$primary-blue;

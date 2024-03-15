@@ -126,15 +126,15 @@ button:focus {
 
 .lightInputPlaceholder {
   &::placeholder {
-    opacity: 1;
     color: colors.$light-text-color;
+    opacity: 1;
   }
 }
 
 .darkInputPlaceholder {
   &::placeholder {
-    opacity: 1;
     color: colors.$dark-text-color;
+    opacity: 1;
   }
 }
 
