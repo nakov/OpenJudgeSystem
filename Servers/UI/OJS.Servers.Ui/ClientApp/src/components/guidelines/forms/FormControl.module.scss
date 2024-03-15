@@ -2,6 +2,7 @@
 @use 'src/styles/fonts';
 @use 'src/styles/font-weights';
 @use 'src/components/guidelines/buttons/Button.module';
+@use 'src/styles/spacings';
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -59,7 +60,7 @@ button:focus {
 
   &:focus + label,
   &:not(:placeholder-shown) + label {
-    padding: 5px;
+    padding: spacings.$sp-8;
     transform: translateX(-13%) translateY(-130%) scale(0.8);
   }
 
@@ -152,5 +153,5 @@ input::file-selector-button {
 
 .passwordIcon {
   font-size: 18px;
-  transform: translateX(800%) translateY(-200%) scale(1);
+  transform: translateX(950%) translateY(-200%) scale(1);
 }
