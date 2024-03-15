@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import lightSoftuniLogo from '../../assets/softuni-logo-horizontal-colored.svg';
+import darkSoftuniLogo from '../../assets/softuni-logo-horizontal-white.svg';
 import {
     EmptyPasswordErrorMessage,
     EmptyUsernameErrorMessage,
@@ -11,8 +13,6 @@ import {
     UsernameFormatErrorMessage, UsernameLengthErrorMessage,
 } from '../../common/constants';
 import useTheme from '../../hooks/use-theme';
-import lightSoftuniLogo from '../../layout/footer/softuni-logo-horizontal-colored.svg';
-import darkSoftuniLogo from '../../layout/footer/softuni-logo-horizontal-white.svg';
 import { setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
