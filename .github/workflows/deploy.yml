@@ -7,6 +7,10 @@ on:
         required: true
       webhook_secret:
         required: true
+      docker_username:
+        required: true
+      docker_password:
+        required: true
 
 jobs:
   deploy:
@@ -14,6 +18,7 @@ jobs:
     steps:
     - name: Invoke deployment hook
       uses: distributhor/workflow-webhook@v3
-      env:
+      with:
         webhook_url: ${{ secrets.webhook_url }}
         webhook_secret: ${{ secrets.webhook_secret }}
+        data: '{ "username": "${{ secrets.docker_username }}", "password": "${{ secrets.docker_password }}" }'
