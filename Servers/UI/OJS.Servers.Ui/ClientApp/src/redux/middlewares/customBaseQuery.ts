@@ -53,7 +53,11 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
                 }
             });
         } catch {
-            data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
+            let message = SOMETHING_WENT_WRONG_MESSAGE;
+            if (response.status === 401 || response.status === 403) {
+                message = 'You do not have a permission to perform this operation.';
+            }
+            data = [ { message, name: '' } ] as Array<ExceptionData>;
         }
         return { error: data };
     }
