@@ -492,6 +492,8 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminExamGroups: IAdminSlice;
+    adminUsers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -509,6 +511,41 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+}
+
+interface IIndexExamGroupsType {
+    id: number;
+    name: string;
+    contest: string;
+    externalAppId: string;
+    externalExamGroupId: string;
+}
+
+interface IExamGroupAdministration {
+    id: number;
+    name: string;
+    contest: string;
+    contestId: number;
+    externalAppId: string;
+    externalExamGroupId: number;
+}
+
+interface IUserAdministration {
+    id: string;
+    username: string;
+    isDeleted: boolean;
+    createdOn: Date | null;
+    deletedOn: Date | null;
+}
+
+interface IUserInExamGroupModel {
+    id: string;
+    username: string;
+}
+
+interface IUserAutocomplete {
+    id: string;
+    userName: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -558,4 +595,9 @@ export type {
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
     IEnumType,
+    IIndexExamGroupsType,
+    IExamGroupAdministration,
+    IUserAdministration,
+    IUserInExamGroupModel,
+    IUserAutocomplete,
 };

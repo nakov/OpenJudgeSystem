@@ -12,12 +12,24 @@ interface IContestDetailsUrlParams {
     id: number;
 }
 
+interface IExamGroupUrlParams {
+    id: number;
+}
+
+interface IUserUrlParams {
+    id: number;
+}
+
 interface IGetByContestId extends IGetAllAdminParams {
     contestId: number;
 }
 
 interface IGetByProblemGroupId extends IGetAllAdminParams {
     problemGroupId: number;
+}
+
+interface IGetByExamGroupId extends IGetAllAdminParams {
+    examGroupId: number;
 }
 
 interface IGetContestByProblemUrlParams {
@@ -146,10 +158,13 @@ export type {
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
     IGetUserSubmissionsForProfileUrlParams,
+    IGetByExamGroupId,
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
     IGetByContestId,
     IProblemUrlById,
     IGetByProblemGroupId,
+    IExamGroupUrlParams,
+    IUserUrlParams,
 };

@@ -62,3 +62,6 @@ export const TESTS = 'Tests';
 // Problem Resources
 
 export const FILE_EXTENSION = 'File Extension';
+
+// Exam groups
+export const CREATE_NEW_EXAM_GROUP = 'Create new exam group';
