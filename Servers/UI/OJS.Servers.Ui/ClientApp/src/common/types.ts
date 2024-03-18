@@ -284,8 +284,8 @@ interface IIndexContestCategoriesType {
 interface IContestCategoryAdministration {
     id: number;
     name: string;
-    parent: string;
-    parentId: number;
+    parent: string | null;
+    parentId: number | null;
     isDeleted: boolean;
     isVisible: boolean;
     orderBy: number;
