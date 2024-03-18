@@ -1,6 +1,7 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
@@ -13,9 +14,13 @@ using OJS.Services.Administration.Business.Problems.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemResources;
 using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Pagination;
+using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Exceptions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Linq;
 using System.Threading.Tasks;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
@@ -120,6 +125,22 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         }
 
         return this.Ok("Problems successfully copied.");
+    }
+
+    [HttpGet]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> GetAllByName(string? searchString)
+    {
+        var contests =
+            await this.problemsDataService
+                .GetQueryForUser(
+                    this.User.Map<UserInfoModel>(),
+                    contest => contest.Name!.Contains(searchString ?? string.Empty))
+                .MapCollection<ProblemDropdownModel>()
+                .Take(20)
+                .ToListAsync();
+
+        return this.Ok(contests);
     }
 
     [HttpPost]

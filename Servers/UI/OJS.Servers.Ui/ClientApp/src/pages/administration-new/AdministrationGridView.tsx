@@ -41,9 +41,9 @@ interface IAdministrationGridViewProps<T> {
 
    selectedFilters: Array<IAdministrationFilter>;
    selectedSorters: Array<IAdministrationSorter>;
-   setFilterStateAction?: ActionCreatorWithPayload<unknown, string>;
+   setFilterStateAction?: ActionCreatorWithPayload<any, string>;
 
-   setSorterStateAction?: ActionCreatorWithPayload<unknown, string>;
+   setSorterStateAction?: ActionCreatorWithPayload<any, string>;
 
    location: string;
    withSearchParams?: boolean;

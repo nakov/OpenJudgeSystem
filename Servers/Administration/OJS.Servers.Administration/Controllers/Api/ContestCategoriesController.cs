@@ -32,6 +32,7 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         => this.Ok(
              this.contestCategoriesBusinessService
             .GetAllVisible()
+            .Where(x => !x.IsDeleted)
             .ToHashSet()
             .MapCollection<ContestCategoriesInContestView>());
 }

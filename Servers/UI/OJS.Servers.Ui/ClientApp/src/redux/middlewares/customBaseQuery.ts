@@ -11,10 +11,11 @@ type ResultError = {
 
 const errorStatusCodes = [ 400, 401, 403, 422, 500 ];
 const succesfullStatusCodes = [ 200, 204 ];
-const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
+const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
         credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/${baseUrl}`,
+        // TODO: Make this usable by UI
+        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/${baseQueryName}`,
         prepareHeaders: (headers) => headers,
         responseHandler: async (response: Response) => {
             const contentType = response.headers.get('Content-Type');
@@ -53,7 +54,11 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
                 }
             });
         } catch {
-            data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
+            let message = SOMETHING_WENT_WRONG_MESSAGE;
+            if (response.status === 401 || response.status === 403) {
+                message = 'You do not have a permission to perform this operation.';
+            }
+            data = [ { message, name: '' } ] as Array<ExceptionData>;
         }
         return { error: data };
     }

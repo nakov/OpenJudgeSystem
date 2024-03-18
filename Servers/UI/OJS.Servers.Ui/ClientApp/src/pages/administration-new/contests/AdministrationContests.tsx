@@ -52,6 +52,7 @@ const AdministrationContestsPage = () => {
 
     const renderEditContestModal = (index: number) => (
         <AdministrationModal
+          key={index}
           index={index}
           open={openEditContestModal}
           onClose={() => setOpenEditContestModal(false)}
@@ -61,7 +62,7 @@ const AdministrationContestsPage = () => {
     );
 
     const renderCreateContestModal = (index: number) => (
-        <AdministrationModal index={index} open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
+        <AdministrationModal key={index} index={index} open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
             <ContestEdit contestId={null} isEditMode={false} />
         </AdministrationModal>
     );

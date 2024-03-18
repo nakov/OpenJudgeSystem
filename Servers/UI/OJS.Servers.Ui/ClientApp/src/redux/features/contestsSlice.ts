@@ -11,6 +11,7 @@ interface IContestState {
     selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
     contestDetails: IContestDetailsResponseType | null;
+    contestCategories: Array<IContestCategory>;
     selectedContestDetailsProblem: IProblemType | null;
 }
 
@@ -19,6 +20,7 @@ const initialState: IContestState = {
     selectedStrategy: null,
     breadcrumbItems: [],
     contestDetails: null,
+    contestCategories: [],
     selectedContestDetailsProblem: null,
 };
 
@@ -51,6 +53,10 @@ export const contestSlice = createSlice({
             const { contest } = action.payload;
             state.contestDetails = contest;
         },
+        setContestCategories: (state, action: PayloadAction<{ contestCategories: Array<IContestCategory> }>) => {
+            const { contestCategories } = action.payload;
+            state.contestCategories = contestCategories;
+        },
     },
 });
 
@@ -62,6 +68,7 @@ export const {
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
     setSelectedContestDetailsProblem
+    setContestCategories,
 } = contestSlice.actions;
 
 export default contestSlice.reducer;

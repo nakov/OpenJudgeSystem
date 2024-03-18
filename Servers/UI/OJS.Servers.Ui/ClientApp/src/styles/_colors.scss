@@ -5,7 +5,8 @@ $grey-color: #565656;
 $light-blue-color: #42abf8;
 
 $primary-blue: #44a9f8;
-$background-color-footer: #3e4c5d;
+$primary-dark-grey-color: #3e4c5d;
+$background-color-footer: $primary-dark-grey-color;
 $background-color-light-gray: #fff;
 $wrappers-border-color: #cbcbcb;
 $success-background-color: #42abf8;
@@ -18,7 +19,7 @@ $background-color-btn-secondary: #fff;
 $background-color-btn-secondary-hover: #e3f3fd;
 $bottom-border-color: #bebebe;
 $text-light-gray-color: #b8bbbe;
-$text-dark-gray-color: #3e4c5d;
+$text-dark-gray-color: $primary-dark-grey-color;
 $text-dark-red: #a33338;
 $box-shadow-color: 0 1px 5px rgb(0 0 0 / 20%), 0 3px 4px rgb(0 0 0 / 12%), 0 2px 4px rgb(0 0 0 / 14%);
 $primary-red: #fc4c50;

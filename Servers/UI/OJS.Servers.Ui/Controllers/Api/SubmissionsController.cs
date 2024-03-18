@@ -8,30 +8,36 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Servers.Ui.Models.Submissions.Profile;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
+using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
+using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
 public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
     private readonly ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness;
     private readonly ISubmissionCacheService submissionCache;
+    private readonly IUserProviderService userProviderService;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
         ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness,
-        ISubmissionCacheService submissionCache)
+        ISubmissionCacheService submissionCache,
+        IUserProviderService userProviderService)
     {
         this.submissionsBusiness = submissionsBusiness;
         this.submissionsForProcessingBusiness = submissionsForProcessingBusiness;
         this.submissionCache = submissionCache;
+        this.userProviderService = userProviderService;
     }
 
     /// <summary>
@@ -167,9 +173,22 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
-         => await this.submissionsBusiness.GetSubmissions(status, page)
-             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+         => await this.submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
+             .Map<PagedResultResponse<PublicSubmissionsResponseModel>>()
              .ToOkResult();
+
+    [Authorize(Roles = AdministratorOrLecturer)]
+    [ProducesResponseType(typeof(PagedResultResponse<AdminPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionsForUserInRole(
+        [FromQuery] SubmissionStatus status,
+        [FromQuery] int page,
+        int itemsPerPage = DefaultAdminSubmissionsPerPage)
+        => await this.submissionsBusiness.GetSubmissions<AdminPublicSubmissionsServiceModel>(
+                status,
+                page,
+                itemsPerPage)
+            .Map<PagedResultResponse<AdminPublicSubmissionsResponseModel>>()
+            .ToOkResult();
 }
