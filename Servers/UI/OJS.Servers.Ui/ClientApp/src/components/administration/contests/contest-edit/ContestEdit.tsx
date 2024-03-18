@@ -8,7 +8,7 @@ import { ContestVariation } from '../../../../common/contest-types';
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
-import { CONTESTS_PATH } from '../../../../common/urls/administration-urls';
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
@@ -60,8 +60,8 @@ const ContestEdit = (props:IContestEditProps) => {
         practicePassword: null,
         practiceStartTime: null,
         startTime: null,
-        type: 'Exercise',
-        numberOfProblemGroups: 0,
+        type: getEnumMemberName(ContestVariation, ContestVariation.Exercise).toString(),
+        numberOfProblemGroups: 2,
         duration: undefined,
     });
 
@@ -443,6 +443,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
                             CONTEST_ORDER_BY_VALIDATION}
                         />
+                        { contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
                         <TextField
                           className={formStyles.inputRow}
                           type="number"
@@ -452,14 +453,14 @@ const ContestEdit = (props:IContestEditProps) => {
                           onChange={(e) => onChange(e)}
                           InputLabelProps={{ shrink: true }}
                           name="numberOfProblemGroups"
-                          disabled={isEditMode ||
-                            contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
+                          disabled={isEditMode}
                           error={(contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid)}
                           helperText={(
                               contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid
                           ) &&
                           CONTEST_NUMBER_OF_PROBLEM_GROUPS}
                         />
+                        )}
                     </Box>
                     <Box>
                         <TextField
@@ -638,7 +639,7 @@ const ContestEdit = (props:IContestEditProps) => {
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}
-                  onSuccess={() => navigate(`${CONTESTS_PATH}`)}
+                  onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`)}
                   mutation={useDeleteContestMutation}
                   text={DELETE_CONFIRMATION_MESSAGE}
                 />

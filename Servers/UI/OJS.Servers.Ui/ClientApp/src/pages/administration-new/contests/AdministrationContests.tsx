@@ -1,19 +1,15 @@
-/* eslint-disable no-restricted-globals */
-/* eslint-disable max-len */
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import { IconButton, Tooltip } from '@mui/material';
 
-import { CREATE_NEW_ENTITY } from '../../../common/labels';
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
+import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
 import { useDeleteContestMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
+import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
@@ -25,10 +21,17 @@ const AdministrationContestsPage = () => {
     const [ openEditContestModal, setOpenEditContestModal ] = useState(false);
     const [ openShowCreateContestModal, setOpenShowCreateContestModal ] = useState<boolean>(false);
     const [ contestId, setContestId ] = useState<number>();
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, itemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
-    const selectedFilters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminContests['all-contests']?.selectedSorters);
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
+        page: 1,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        filter: searchParams.get('filter') ?? '',
+        sorting: searchParams.get('sorting') ?? '',
+    });
+
+    const selectedFilters = useAppSelector((state) => state.adminContests['all-contests']?.selectedFilters);
+    const selectedSorters = useAppSelector((state) => state.adminContests['all-contests']?.selectedSorters);
     const {
+        refetch: retakeContests,
         data,
         error,
         isLoading,
@@ -50,31 +53,38 @@ const AdministrationContestsPage = () => {
         setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
-    const renderEditContestModal = (index: number) => (
+    const onClose = (isEditMode: boolean) => {
+        if (isEditMode) {
+            setOpenEditContestModal(false);
+        } else {
+            setOpenShowCreateContestModal(false);
+        }
+        retakeContests();
+    };
+    const renderContestModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           key={index}
           index={index}
-          open={openEditContestModal}
-          onClose={() => setOpenEditContestModal(false)}
+          open={isEditMode
+              ? openEditContestModal
+              : openShowCreateContestModal}
+          onClose={() => onClose(isEditMode)}
         >
-            <ContestEdit contestId={Number(contestId)} />
-        </AdministrationModal>
-    );
-
-    const renderCreateContestModal = (index: number) => (
-        <AdministrationModal key={index} index={index} open={openShowCreateContestModal} onClose={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}>
-            <ContestEdit contestId={null} isEditMode={false} />
+            <ContestEdit
+              contestId={isEditMode
+                  ? Number(contestId)
+                  : null}
+              isEditMode={isEditMode}
+            />
         </AdministrationModal>
     );
 
     const renderGridActions = () => (
-        <Tooltip title={CREATE_NEW_ENTITY}>
-            <IconButton
-              onClick={() => setOpenShowCreateContestModal(!openShowCreateContestModal)}
-            >
-                <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-            </IconButton>
-        </Tooltip>
+        <CreateButton
+          showModal={openShowCreateContestModal}
+          showModalFunc={setOpenShowCreateContestModal}
+          styles={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }}
+        />
     );
 
     if (isLoading) {
@@ -86,7 +96,7 @@ const AdministrationContestsPage = () => {
           data={data}
           error={error}
           filterableGridColumnDef={contestFilterableColumns}
-          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick, useDeleteContestMutation)}
+          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick, useDeleteContestMutation, retakeContests)}
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
@@ -96,8 +106,8 @@ const AdministrationContestsPage = () => {
           setFilterStateAction={setAdminContestsFilters}
           location="all-contests"
           modals={[
-              { showModal: openShowCreateContestModal, modal: (i) => renderCreateContestModal(i) },
-              { showModal: openEditContestModal, modal: (i) => renderEditContestModal(i) },
+              { showModal: openShowCreateContestModal, modal: (i) => renderContestModal(i, false) },
+              { showModal: openEditContestModal, modal: (i) => renderContestModal(i, true) },
           ]}
           legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
         />
