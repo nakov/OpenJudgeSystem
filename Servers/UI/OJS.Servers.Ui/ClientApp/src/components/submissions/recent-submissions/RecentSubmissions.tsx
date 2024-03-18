@@ -64,10 +64,6 @@ const RecentSubmissions = () => {
     );
 
     useEffect(() => {
-        if (isEmpty(user.id)) {
-            return;
-        }
-
         if (user.isAdmin) {
             setShouldLoadAdminUserSubmissions(true);
             setShouldLoadUnprocessedCount(true);
