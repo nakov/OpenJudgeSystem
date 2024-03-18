@@ -27,6 +27,11 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
     {
         var problemResource = model.Map<ProblemResource>();
 
+        if (model.File != null)
+        {
+            AssignFileExtension(problemResource, model.File.FileName);
+        }
+
         await this.problemResourcesDataService.Add(problemResource);
         await this.problemResourcesDataService.SaveChanges();
 
@@ -48,6 +53,11 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
         }
 
         resource.MapFrom(model);
+
+        if (model.File != null)
+        {
+            AssignFileExtension(resource, model.File.FileName);
+        }
 
         this.problemResourcesDataService.Update(resource);
         await this.problemResourcesDataService.SaveChanges();
@@ -77,4 +87,7 @@ public class ProblemResourceBusinessService : AdministrationOperationService<Pro
             FileName = string.Format($"{file.Name}.{file.FileExtension}"),
         };
     }
+
+    private static void AssignFileExtension(ProblemResource resource, string fileName)
+        => resource!.FileExtension = fileName.Substring(fileName.LastIndexOf('.') + 1);
 }

@@ -19,7 +19,7 @@ public class ContestCategoryAdministrationModelValidator : BaseValidator<Contest
             .NotEmpty();
 
         this.RuleFor(model => model.OrderBy)
-            .GreaterThanOrEqualTo(model => 0)
+            .GreaterThanOrEqualTo(0)
             .WithMessage("Order By cannot be negative number");
 
         this.RuleFor(model => model)

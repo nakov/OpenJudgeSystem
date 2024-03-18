@@ -27,11 +27,14 @@ import styles from './ContestEdit.module.scss';
 interface IContestEditProps {
     contestId: number | null;
     isEditMode?: boolean;
+    currentContest?: IContestAdministration;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    onSuccess?: Function;
 }
 
 const NAME_PROP = 'name';
 const ContestEdit = (props:IContestEditProps) => {
-    const { contestId, isEditMode = true } = props;
+    const { contestId, isEditMode = true, currentContest, onSuccess } = props;
 
     const navigate = useNavigate();
 
@@ -61,6 +64,7 @@ const ContestEdit = (props:IContestEditProps) => {
         numberOfProblemGroups: 0,
         duration: undefined,
     });
+
     const [ contestValidations, setContestValidations ] = useState({
         isNameTouched: false,
         isNameValid: !!isEditMode,
@@ -78,7 +82,11 @@ const ContestEdit = (props:IContestEditProps) => {
         isNUmberOfProblemGroupsValid: true,
     });
 
-    const { refetch: retake, data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) }, { skip: !isEditMode });
+    const { data, isLoading } = useGetContestByIdQuery(
+        { id: Number(contestId) },
+        { skip: !isEditMode || (isEditMode && !currentContest === undefined) },
+    );
+
     const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
 
     const [
@@ -99,12 +107,19 @@ const ContestEdit = (props:IContestEditProps) => {
 
     useEffect(
         () => {
-            if (data) {
-                setContest(data);
+            if (isEditMode && currentContest) {
+                setContest(currentContest!);
             }
         },
-        [ data ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [ ],
     );
+
+    useEffect(() => {
+        if (data) {
+            setContest(data);
+        }
+    }, [ data ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
@@ -119,10 +134,10 @@ const ContestEdit = (props:IContestEditProps) => {
     }, [ updateError, createError ]);
 
     useEffect(() => {
-        if (isSuccessfullyUpdating) {
-            retake();
+        if (isSuccessfullyUpdating && onSuccess) {
+            onSuccess();
         }
-    }, [ isSuccessfullyUpdating, retake ]);
+    }, [ isSuccessfullyUpdating, onSuccess ]);
 
     const validateForm = () => {
         const isValid = contestValidations.isNameValid &&
@@ -358,7 +373,7 @@ const ContestEdit = (props:IContestEditProps) => {
             )
     );
 
-    if (isFetching || isLoading || isGettingCategories || isUpdating || isCreating) {
+    if (isGettingCategories || isUpdating || isCreating || isLoading) {
         return (<SpinningLoader />);
     }
 
