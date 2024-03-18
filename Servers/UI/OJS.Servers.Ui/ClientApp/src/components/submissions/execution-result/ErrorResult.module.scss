@@ -1,9 +1,7 @@
 @use 'src/styles/variables';
-
-.errorContainer {
-  justify-content: end;
-}
+@use 'src/styles/colors';
 
 .compileAndUnknownError {
+  color: colors.$primary-red;
   font-size: variables.$f-size-16;
 }

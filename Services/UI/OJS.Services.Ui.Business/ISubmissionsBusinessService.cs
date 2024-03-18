@@ -1,14 +1,14 @@
 ﻿namespace OJS.Services.Ui.Business
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
     using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
 
     public interface ISubmissionsBusinessService : IService
     {
@@ -38,7 +38,10 @@
 
         Task<int> GetTotalCount();
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionStatus status, int page);
+        Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
+            SubmissionStatus status,
+            int page,
+            int itemsPerPage = DefaultSubmissionsPerPage);
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
     }

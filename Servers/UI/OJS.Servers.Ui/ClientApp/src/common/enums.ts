@@ -21,6 +21,18 @@ enum ProblemGroupTypes {
     ExcludedFromHomework = 1,
 }
 
+enum PublicSubmissionState {
+    Ready = 1,
+    Processing = 2,
+    Queued = 3,
+}
+
+enum SubmissionStatus {
+    All = 1,
+    Processing = 2,
+    Pending = 3,
+}
+
 enum ProblemResourceType
 {
     ProblemDescription = 1,
@@ -34,4 +46,6 @@ export {
     SortingEnum,
     ProblemGroupTypes,
     ProblemResourceType,
+    SubmissionStatus,
+    PublicSubmissionState,
 };

@@ -1,9 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 
-.compileAndUnknownError,
-.maxTimeUsed,
-.maxMemoryUsed {
+.compileAndUnknownError {
   font-size: variables.$f-size-16;
 }
 
@@ -14,12 +12,9 @@
 
 .testResultsList {
   display: flex;
-  gap: 10px;
   justify-content: space-evenly;
 }
 
-.timeAndMemoryContainer {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
+.testRunsContainer {
+  max-width: 10vw;
 }
