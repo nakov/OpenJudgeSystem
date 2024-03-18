@@ -18,6 +18,7 @@ namespace OJS.Data.Models.Contests
 
         public bool IsVisible { get; set; }
 
+        //Deprecated
         public bool AutoChangeTestsFeedbackVisibility { get; set; }
 
         public int? CategoryId { get; set; }

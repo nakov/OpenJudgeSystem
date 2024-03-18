@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Data;
 using OJS.Data.Models.Checkers;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 public class CheckersDataService : DataService<Checker>, ICheckersDataService
 {
-    public CheckersDataService(OjsDbContext db)
+    public CheckersDataService(DbContext db)
         : base(db)
     {
     }

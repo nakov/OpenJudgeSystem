@@ -67,7 +67,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
 
     [HttpPost]
     [ProtectedEntityAction("model", AdministrationOperations.Create)]
-    public virtual async Task<IActionResult> Create(TUpdateModel model)
+    public virtual async Task<IActionResult> Create([FromBody] TUpdateModel model)
     {
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
 
@@ -82,7 +82,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
 
     [HttpPatch]
     [ProtectedEntityAction("model", AdministrationOperations.Update)]
-    public virtual async Task<IActionResult> Edit(TUpdateModel model)
+    public virtual async Task<IActionResult> Edit([FromBody] TUpdateModel model)
     {
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
 

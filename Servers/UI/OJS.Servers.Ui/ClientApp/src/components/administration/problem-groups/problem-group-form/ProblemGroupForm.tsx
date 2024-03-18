@@ -1,4 +1,3 @@
-/* eslint-disable css-modules/no-unused-class */
 import React, { useEffect, useState } from 'react';
 import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
@@ -9,12 +8,13 @@ import { IContestAutocomplete } from '../../../../common/types';
 import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateProblemGroupMutation, useGetProblemGroupByIdQuery, useUpdateProblemGroupMutation } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
-import { renderAlert } from '../../../../utils/render-utils';
-import { AlertSeverity } from '../../../guidelines/alert/Alert';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { IProblemGroupAdministrationModel } from '../types';
 
+// The classes are used in multiple files. But not all of them are used in single file
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IProblemFormProps {
@@ -44,14 +44,33 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
         error: getProblemGroupError,
         isLoading: isGettingProblemGroupData,
     } = useGetProblemGroupByIdQuery(id!, { skip: !isEditMode || !id });
-    const [ updateProblemGroup, { data: updateData, error: updateError, isLoading: isUpdating } ] = useUpdateProblemGroupMutation();
-    const [ createProblemGroup, { data: createData, isLoading: isCreating, error: createError } ] = useCreateProblemGroupMutation();
+    const [
+        updateProblemGroup,
+        {
+            data: updateData,
+            error: updateError,
+            isLoading: isUpdating,
+            isSuccess: isSuccessfullyUpdated,
+        } ] = useUpdateProblemGroupMutation();
+
+    const [
+        createProblemGroup,
+        {
+            data: createData,
+            isLoading: isCreating,
+            error: createError,
+            isSuccess: isSuccessfullyCreated,
+        } ] = useCreateProblemGroupMutation();
 
     useEffect(() => {
         if (contestsAutocompleteData) {
+            if (problemGroupData) {
+                const actualContestData = [ problemGroupData?.contest ] as Array<IContestAutocomplete>;
+                setContestsData(contestsAutocompleteData.concat(actualContestData));
+            }
             setContestsData(contestsAutocompleteData);
         }
-    }, [ contestsAutocompleteData ]);
+    }, [ contestsAutocompleteData, problemGroupData ]);
 
     useEffect(() => {
         if (problemGroupData) {
@@ -60,12 +79,21 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
     }, [ problemGroupData ]);
 
     useEffect(() => {
-        const successMessage = getAndSetSuccesfullMessages([ updateData, createData ]);
+        const successMessage = getAndSetSuccesfullMessages([
+            {
+                message: updateData,
+                shouldGet: isSuccessfullyUpdated,
+            },
+            {
+                message: createData,
+                shouldGet: isSuccessfullyCreated,
+            },
+        ]);
 
         if (successMessage) {
             setSuccessMessages(successMessage);
         }
-    }, [ updateData, createData ]);
+    }, [ updateData, createData, isSuccessfullyUpdated, isSuccessfullyCreated ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ getContestDataError, createError, updateError, getProblemGroupError ], setErrorMessages);
@@ -127,13 +155,13 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
 
     return (
         <>
-            {errorMessages.map((x, i) => renderAlert(x, AlertSeverity.Error, i))}
-            {successMessages && renderAlert(successMessages, AlertSeverity.Success, 0)}
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessages)}
             <form className={formStyles.form}>
                 <Typography variant="h4" className="centralize">
                     Problem Group Administration Form
                 </Typography>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={ID}
@@ -143,7 +171,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                       disabled
                     />
                 </FormControl>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <TextField
                       variant="standard"
                       label={ORDER_BY}
@@ -154,7 +182,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormGroup className={formStyles.inputRow}>
                     <InputLabel id="problemGroupType">{TYPE}</InputLabel>
                     <Select
                       onChange={(e) => onChange(e)}
@@ -170,13 +198,15 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                         ))}
                     </Select>
                 </FormGroup>
-                <FormControl sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+                <FormControl className={formStyles.inputRow}>
                     <Autocomplete
                       options={contestsData!}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       onChange={(event, newValue) => onSelect(newValue!)}
                       onInputChange={(event) => onAutocompleteChange(event)}
-                      value={currentProblemGroup.contest || null}
+                      value={currentProblemGroup.contest.id
+                          ? currentProblemGroup.contest
+                          : null}
                       isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}
                       getOptionLabel={(option) => option?.name}
                       renderOption={(properties, option) => (

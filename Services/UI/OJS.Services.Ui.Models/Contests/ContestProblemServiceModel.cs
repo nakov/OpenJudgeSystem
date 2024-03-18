@@ -94,6 +94,9 @@
                     d => d.OrderBy,
                     opt => opt.MapFrom(s => (int)s.OrderBy))
                 .ForMember(
+                    d => d.Resources,
+                    opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
+                .ForMember(
                     d => d.TimeLimit,
                     opt => opt.MapFrom(s => (double)s.TimeLimit));
     }

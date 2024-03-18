@@ -7,14 +7,15 @@
 /* eslint-disable func-style */
 import React, { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Slide } from '@mui/material';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import { Box, IconButton, Slide, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
-import { DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
 import AdministrationFilters, { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps } from './administration-filters/AdministrationFilters';
@@ -30,20 +31,19 @@ interface IAdministrationGridViewProps<T> {
 
     showFiltersAndSorters?: boolean;
 
-    renderActionButtons: () => ReactNode;
+    renderActionButtons?: () => ReactNode;
 
    modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
 
    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
-
-   queryParams: IGetAllAdminParams;
-   setQueryParams: (params: IGetAllAdminParams) => void;
+   queryParams?: IGetAllAdminParams;
+   setQueryParams?: (params: IGetAllAdminParams) => void;
 
    selectedFilters: Array<IAdministrationFilter>;
    selectedSorters: Array<IAdministrationSorter>;
-   setFilterStateAction: ActionCreatorWithPayload<unknown, string>;
+   setFilterStateAction?: ActionCreatorWithPayload<any, string>;
 
-   setSorterStateAction: ActionCreatorWithPayload<unknown, string>;
+   setSorterStateAction?: ActionCreatorWithPayload<any, string>;
 
    location: string;
    withSearchParams?: boolean;
@@ -74,37 +74,56 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return styles.redGridRow;
-        } if (!isVisible) {
+        } if (isVisible === false) {
             return styles.grayGridRow;
         }
         return '';
     };
+
+    const renderActions = () => (
+        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
+            {renderActionButtons
+                ? renderActionButtons()
+                : (
+                    <Tooltip title="Action not allowed">
+                        <Box>
+                            <IconButton disabled>
+                                {' '}
+                                <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="disabled" />
+                            </IconButton>
+                        </Box>
+                    </Tooltip>
+                )}
+        </div>
+    );
     const renderGridSettings = () => {
         const sortingColumns = mapGridColumnsToAdministrationSortingProps(filterableGridColumnDef);
         const filtersColumns = mapGridColumnsToAdministrationFilterProps(filterableGridColumnDef);
 
         return (
             <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-                { renderActionButtons() }
+                { renderActions() }
                 {showFiltersAndSorters && (
                 <div style={{ ...flexCenterObjectStyles, width: '100%', gap: '20px' }}>
                     <AdministrationFilters searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
                     <AdministrationSorting searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
                 </div>
                 )}
-                {legendProps &&
-                <LegendBox renders={legendProps} />}
+                {legendProps
+                    ? <LegendBox renders={legendProps} />
+                    : <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }} />}
             </div>
         );
     };
 
     const handlePaginationModelChange = (model: GridPaginationModel) => {
-        setQueryParams({ ...queryParams, page: model.page + 1, itemsPerPage: model.pageSize });
+        if (setQueryParams) {
+            setQueryParams({ ...queryParams, page: model.page + 1, itemsPerPage: model.pageSize });
+        }
     };
-
     return (
         <Slide direction="left" in mountOnEnter unmountOnExit timeout={400}>
-            <div style={{ height: '745px' }}>
+            <div>
                 {modals.map((m, i) => m.showModal && m.modal(i))}
                 { renderGridSettings() }
                 { error
@@ -115,14 +134,22 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           rows={data?.items ?? []}
                           rowCount={data?.totalItemsCount ?? 0}
                           paginationMode="server"
+                          autoHeight
                           onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
+                          disableRowSelectionOnClick
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {
                                   columnVisibilityModel: {
                                       isDeleted: false,
                                       isVisible: false,
+                                  },
+                              },
+                              pagination: {
+                                  paginationModel: {
+                                      page: 0,
+                                      pageSize: DEFAULT_ITEMS_PER_PAGE,
                                   },
                               },
                           }}

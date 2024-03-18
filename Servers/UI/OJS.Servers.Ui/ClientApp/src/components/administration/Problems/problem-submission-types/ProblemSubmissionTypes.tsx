@@ -22,6 +22,8 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
               alignItems: 'center',
               justifyContent: 'space-around',
               margin: '1rem',
+              alignSelf: 'flex-start',
+              width: '85%',
           }}
           key={strategy.id}
         >
@@ -46,6 +48,7 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
                 <TextareaAutosize
                   placeholder={SOLUTION_SKELETON_PLACEHOLDER}
                   minRows={10}
+                  maxRows={20}
                   value={strategy.solutionSkeleton ?? ''}
                   name="description"
                   onChange={(e) => onSkeletonChange(e.target.value, strategy.id)}

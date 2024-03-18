@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls';
-import { defaultDateTimeFormatPreciseTime, getDateWithFormat } from '../../../utils/dates';
-
-const dateGridColumnFormatter = (params : any) => getDateWithFormat(params.value, defaultDateTimeFormatPreciseTime);
+import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
+import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -69,7 +67,7 @@ const dataColumns: GridColDef[] = [
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Link
-              to={`${PROBLEMS_PATH}/${Number(params.row?.problem?.id)}`}
+              to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${Number(params.row?.problem?.id)}`}
             >
                 {params.row?.problem?.name}
             </Link>
@@ -124,6 +122,26 @@ const dataColumns: GridColDef[] = [
         sortable: false,
     },
     {
+        field: 'createdOn',
+        headerName: 'Created On',
+        align: 'center',
+        type: 'dateTime',
+        width: 200,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.createdOn),
+    },
+    {
+        field: 'modifiedOn',
+        headerName: 'Modified On',
+        align: 'center',
+        type: 'dateTime',
+        width: 200,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.modifiedOn),
+    },
+    {
         field: 'startedExecutionOn',
         headerName: 'Started Execution On',
         align: 'center',
@@ -132,7 +150,7 @@ const dataColumns: GridColDef[] = [
         flex: 2,
         filterable: false,
         sortable: false,
-        valueFormatter: dateGridColumnFormatter,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.startedExecutionOn),
     },
     {
         field: 'completedExecutionOn',
@@ -143,7 +161,7 @@ const dataColumns: GridColDef[] = [
         flex: 2,
         filterable: false,
         sortable: false,
-        valueFormatter: dateGridColumnFormatter,
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.completedExecutionOn),
     },
 ];
 

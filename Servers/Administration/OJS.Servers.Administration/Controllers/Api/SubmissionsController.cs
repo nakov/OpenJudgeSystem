@@ -8,8 +8,8 @@ using OJS.Servers.Administration.Attributes;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Submissions;
+using OJS.Services.Administration.Business.Submissions.GridData;
 using OJS.Services.Administration.Business.Submissions.Validation;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
@@ -24,15 +24,15 @@ public class SubmissionsController : BaseAdminApiController<
     SubmissionAdministrationServiceModel>
 {
     private readonly ISubmissionsBusinessService submissionsBusinessService;
-    private readonly IGridDataService<Submission> submissionsGridDataService;
+    private readonly ISubmissionsGridDataService submissionsGridDataService;
     private readonly ILecturerContestPrivilegesBusinessService lecturerPrivilegesBusinessService;
 
     public SubmissionsController(
-        IGridDataService<Submission> submissionsGridDataService,
-        ISubmissionsBusinessService submissionsBusinessService,
-        SubmissionsAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator,
-        ILecturerContestPrivilegesBusinessService lecturerPrivilegesBusinessService)
+            ISubmissionsGridDataService submissionsGridDataService,
+            ISubmissionsBusinessService submissionsBusinessService,
+            SubmissionsAdministrationModelValidator validator,
+            IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator,
+            ILecturerContestPrivilegesBusinessService lecturerPrivilegesBusinessService)
         : base(
             submissionsGridDataService,
             submissionsBusinessService,

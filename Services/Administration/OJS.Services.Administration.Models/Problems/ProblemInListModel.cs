@@ -12,6 +12,8 @@ public class ProblemInListModel : IMapExplicitly
 
     public string? ProblemGroup { get; set; }
 
+    public double ProblemGroupOrderBy { get; set; }
+
     public int ProblemGroupId { get; set; }
     public string? Contest { get; set; }
 

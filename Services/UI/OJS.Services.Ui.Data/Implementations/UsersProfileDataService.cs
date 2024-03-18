@@ -3,15 +3,13 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
 
     public class UsersProfileDataService : DataService<UserProfile>, IUsersProfileDataService
     {
-        public UsersProfileDataService(OjsDbContext db)
+        public UsersProfileDataService(DbContext db)
             : base(db)
         {
         }

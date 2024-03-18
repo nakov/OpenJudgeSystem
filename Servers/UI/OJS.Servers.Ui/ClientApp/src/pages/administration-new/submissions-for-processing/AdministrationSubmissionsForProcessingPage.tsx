@@ -1,13 +1,11 @@
-/* eslint-disable react/jsx-indent */
-/* eslint-disable import/prefer-default-export */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
 import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
@@ -81,7 +79,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
-                  renderActionButtons={() => null}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   selectedFilters={selectedFilters || []}

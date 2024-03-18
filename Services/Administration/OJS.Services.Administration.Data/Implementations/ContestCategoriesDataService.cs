@@ -1,12 +1,15 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
@@ -71,5 +74,9 @@ namespace OJS.Services.Administration.Data.Implementations
                 this.LoadChildrenRecursively(child);
             }
         }
+
+        protected override Expression<Func<ContestCategory, bool>> GetUserFilter(UserInfoModel user)
+            => category => user.IsAdmin ||
+                           category.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id);
     }
 }

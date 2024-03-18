@@ -1,7 +1,6 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
-    using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Data.Implementations;
@@ -10,7 +9,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ExamGroupsDataService : DataService<ExamGroup>, IExamGroupsDataService
     {
-        public ExamGroupsDataService(OjsDbContext db)
+        public ExamGroupsDataService(DbContext db)
             : base(db)
         {
         }

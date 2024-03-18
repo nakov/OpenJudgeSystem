@@ -1,12 +1,10 @@
-/* eslint-disable react/jsx-indent */
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { VIEW } from '../../../common/labels';
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
@@ -21,6 +19,7 @@ import { useDeleteSubmissionMutation,
     useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
+import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -40,10 +39,10 @@ const AdministrationSubmissionsPage = () => {
         });
 
     const selectedFilters =
-        useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedFilters);
+        useAppSelector((state) => state.adminSubmissions['all-submissions']?.selectedFilters);
 
     const selectedSorters =
-        useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedSorters);
+        useAppSelector((state) => state.adminSubmissions['all-submissions']?.selectedSorters);
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
@@ -166,7 +165,6 @@ const AdministrationSubmissionsPage = () => {
                   error={error}
                   filterableGridColumnDef={dataColumns}
                   notFilterableGridColumnDef={nonFilterableColumns}
-                  renderActionButtons={() => null}
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
                   selectedFilters={selectedFilters || []}

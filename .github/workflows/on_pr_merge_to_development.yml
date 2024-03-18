@@ -1,0 +1,21 @@
+name: PR merged to development
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - v2-development
+
+jobs:
+  build-and-deploy-to-dev-all:
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/deploy-dev-all.yml
+    with:
+      branch_name: v2-development
+    secrets: inherit
+  move-issues-to-in-testing-on-pr-merge:
+    needs: build-and-deploy-to-dev-all
+    uses: ./.github/workflows/update-linked-issues-status.yml
+    with:
+      status_name: 5. In testing
+    secrets: inherit

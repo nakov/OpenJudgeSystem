@@ -4,6 +4,7 @@ import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const categoriesFilterableColumns: GridColDef[] = [
     {
@@ -66,6 +67,16 @@ const categoriesFilterableColumns: GridColDef[] = [
         sortable: false,
     },
     {
+        field: 'parentId',
+        headerName: 'Parent Id',
+        headerAlign: 'center',
+        width: 150,
+        flex: 2,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+    },
+    {
         field: 'createdOn',
         headerName: 'Created On',
         headerAlign: 'center',
@@ -75,6 +86,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         type: 'date',
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'deletedOn',
@@ -86,6 +98,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         type: 'date',
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
@@ -97,6 +110,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         type: 'date',
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

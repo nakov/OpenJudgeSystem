@@ -1,13 +1,14 @@
-/* eslint-disable max-len */
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box, Slide, Tab, Tabs } from '@mui/material';
+
+import { ContestVariation } from '../../../common/contest-types';
+import { useGetContestByIdQuery } from '../../../redux/services/admin/contestsAdminService';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+import TabsInView from '../common/tabs/TabsInView';
 
 import ContestEdit from './contest-edit/ContestEdit';
 import ParticipantsInContestView from './participants-in-contest-view/ParticipantsInContestView';
 import ProblemsInContestView from './problems-in-contest-view/ProblemsInContestView';
-
-import styles from './AdministrationContestPage.module.scss';
 
 enum CONTEST_LISTED_DATA {
     PROBLEMS = 'problems',
@@ -23,34 +24,37 @@ const AdministrationContestPage = () => {
         setTabName(newValue);
     };
 
+    const { refetch: retake, data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
+
+    const renderContestEdit = () => (
+        <ContestEdit contestId={Number(contestId)} currentContest={data} onSuccess={retake} />
+    );
+    const renderProblemsInContestView = (key:string) => (
+        <ProblemsInContestView
+          key={key}
+          contestId={Number(contestId)}
+          contestType={ContestVariation[data?.type as keyof typeof ContestVariation]}
+        />
+    );
+
+    const renderParticipantsInContestView = (key: string) => (
+        <ParticipantsInContestView key={key} contestId={Number(contestId)} />
+    );
+
+    if (isFetching || isLoading) {
+        return (<SpinningLoader />);
+    }
+
     return (
-        <Slide direction="left" in mountOnEnter unmountOnExit timeout={300}>
-            <div>
-                <Box>
-                    <ContestEdit contestId={Number(contestId)} />
-                    <Box className={styles.paged}>
-                        <Tabs
-                          sx={{ minWidth: '100%', display: 'flex', justifyContent: 'space-around' }}
-                          value={tabName}
-                          onChange={onTabChange}
-                          aria-label="wrapped label tabs example"
-                        >
-                            <Tab
-                              sx={{ minWidth: '45%', display: 'flex', justifyContent: 'space-evenly' }}
-                              value="problems"
-                              label="Problems"
-                              wrapped
-                            />
-                            <Tab sx={{ minWidth: '45%', display: 'flex', justifyContent: 'space-evenly' }} value="participants" label="Participants" />
-                        </Tabs>
-                        {tabName === 'problems' &&
-                        <ProblemsInContestView contestId={Number(contestId)} />}
-                        {tabName === 'participants' &&
-                        <ParticipantsInContestView contestId={Number(contestId)} />}
-                    </Box>
-                </Box>
-            </div>
-        </Slide>
+        <TabsInView
+          form={renderContestEdit}
+          onTabChange={onTabChange}
+          tabName={tabName}
+          tabs={[
+              { value: CONTEST_LISTED_DATA.PROBLEMS, label: 'Problems', node: renderProblemsInContestView },
+              { value: CONTEST_LISTED_DATA.PARTICIPANTS, label: 'Participants', node: renderParticipantsInContestView },
+          ]}
+        />
     );
 };
 export default AdministrationContestPage;
