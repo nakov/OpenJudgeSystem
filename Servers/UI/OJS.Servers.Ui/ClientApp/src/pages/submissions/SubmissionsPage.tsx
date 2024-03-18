@@ -1,31 +1,23 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import SubmissionsGrid from '../../components/submissions/submissions-grid/SubmissionsGrid';
-import { usePublicSubmissions } from '../../hooks/submissions/use-public-submissions';
+import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
+import RecentSubmissions from '../../components/submissions/recent-submissions/RecentSubmissions';
 import { setLayout } from '../shared/set-layout';
 
-const SubmissionsPage = () => {
-    const {
-        state: { totalSubmissionsCount },
-        actions: { loadTotalSubmissionsCount },
-    } = usePublicSubmissions();
+const SubmissionsPage = () => (
+    <>
+        <PageBreadcrumbs
+          keyPrefix="submissions"
+          items={[
+              {
+                  text: 'Submissions',
+                  to: '/submissions',
+              } as IPageBreadcrumbsItem,
+          ]}
+        />
+        <RecentSubmissions />
+    </>
 
-    useEffect(
-        () => {
-            if (totalSubmissionsCount !== 0) {
-                return;
-            }
-
-            (async () => {
-                await loadTotalSubmissionsCount();
-            })();
-        },
-        [ loadTotalSubmissionsCount, totalSubmissionsCount ],
-    );
-
-    return (
-        <SubmissionsGrid />
-    );
-};
+);
 
 export default setLayout(SubmissionsPage);

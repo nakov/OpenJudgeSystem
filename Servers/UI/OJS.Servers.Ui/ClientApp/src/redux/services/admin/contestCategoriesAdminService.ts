@@ -28,7 +28,7 @@ export const contestCategoriesAdminService = createApi({
         }),
         getContestCategoryById: builder.query<IContestCategoryAdministration, IContestCategoriesUrlParams>({
             query: ({ id }) => ({ url: `Get/${id}` }),
-            keepUnusedDataFor: 10,
+            keepUnusedDataFor: 0,
         }),
         getCategories: builder.query<Array<IContestCategories>, null>({ query: () => ({ url: '/GetForContestDropdown' }) }),
         createContestCategory: builder.mutation<string, IContestCategoriesUrlParams & IContestCategoryAdministration>({
