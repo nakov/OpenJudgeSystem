@@ -33,7 +33,8 @@ module.exports = {
     settings: { 'import/resolver': { typescript: {} } },
     ignorePatterns: [
         '*.cjs',
-        'vite.config.js'
+        'vite.config.js',
+        'dist/*'
     ],
     rules: {
         "jsx-a11y/click-events-have-key-events": "off",
