@@ -1,0 +1,65 @@
+@use 'src/styles/colors';
+
+.adminHeaderWrapper {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.adminHeaderLink {
+  color: colors.$white-color;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.adminNavLink {
+  color: #3e4c5d;
+  text-decoration: none;
+  width: 100%;
+}
+
+.activeAdminNavLink {
+  color: #42abf8 !important;
+}
+
+.locationTitle {
+  font-family: montserrat, sans-serif;
+  font-size: 20px;
+}
+
+.arrowCommon {
+  background-color: colors.$white-color !important;
+  box-shadow: 6px 0 7px -4px rgb(22 0 0 / 75%);
+  height: 35px;
+  margin: 0;
+  padding: 0 !important;
+  position: absolute;
+  top: 430px;
+  transition: 225ms ease-in-out, transform 225ms ease-in-out !important;
+  width: 35px;
+  z-index: 3;
+}
+
+.arrow {
+  left: 220px;
+}
+
+.arrowRight {
+  left: 45px;
+}
+
+.selectedSection {
+  background-color: #2196F3 !important;
+  color: white !important;
+}
+
+.appBar {
+  background-color: #2196F3 !important;
+}
+
+.listItemIcon {
+  color: inherit !important;
+}

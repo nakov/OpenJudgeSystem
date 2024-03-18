@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/self-closing-comp */
-import React from 'react';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT, PROBLEM_GROUP } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { PROBLEM_GROUPS_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
@@ -84,7 +83,10 @@ export const returnNonFilterableColumns = (onEditClick: Function) => [
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton path={`${PROBLEM_GROUPS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
+                <RedirectButton
+                  path={`/${NEW_ADMINISTRATION_PATH}/${PROBLEM_GROUPS_PATH}/${Number(params.row.id)}`}
+                  location={`${EDIT} page`}
+                />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={`${PROBLEM_GROUP}`}

@@ -1,6 +1,7 @@
 @use 'src/styles/components.scss';
 @use 'src/styles/colors.scss';
 @use 'src/styles/fonts.scss';
+@use 'src/styles/font-weights.scss';
 
 .btn,
 %btn {
@@ -10,7 +11,7 @@
   border-radius: 8px;
   color: colors.$white-color;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: font-weights.$font-weight-semi-bold;
   margin: 0;
   outline: none;
   padding: 10px 16px;
@@ -57,8 +58,8 @@
   }
 
   &.disabled {
-    background-color: colors.$background-color-btn-secondary;
-    border-color: colors.$color-btn-disabled;
+    background-color: transparent !important;
+    border-color: colors.$color-btn-disabled !important;
     box-shadow: none;
     color: colors.$color-btn-disabled;
     pointer-events: none;
@@ -103,6 +104,15 @@
 
   &.wide {
     width: 100%;
+  }
+
+  &.competeClassName {
+    background-color: colors.$secondary-green;
+    border-color: colors.$secondary-green;
+
+    &:hover {
+      box-shadow: 6px 8px 15px 1px rgb(45 189 39 / 20%);
+    }
   }
 
   &.image {

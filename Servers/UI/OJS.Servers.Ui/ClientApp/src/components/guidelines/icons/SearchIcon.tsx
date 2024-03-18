@@ -1,4 +1,3 @@
-import React from 'react';
 import { BsSearch } from 'react-icons/bs';
 
 import concatClassNames from '../../../utils/class-names';

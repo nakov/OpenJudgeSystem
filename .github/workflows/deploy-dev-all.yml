@@ -8,6 +8,11 @@ on:
         required: true
         default: "v2-development"
         type: string
+  workflow_call:
+    inputs:
+      branch_name:
+        required: true
+        type: string
 jobs:
   build-and-deploy-admin:
     uses: ./.github/workflows/admin-dev-deploy.yml

@@ -1,6 +1,7 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/font-weights';
 
 .bodyText {
   @extend %font-family-lato;
@@ -19,7 +20,7 @@
 }
 
 .boldedText {
-  font-weight: bold;
+  font-weight: font-weights.$font-weight-bold;
 }
 
 .buttons {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaBell } from 'react-icons/fa';
 
 import concatClassNames from '../../../utils/class-names';

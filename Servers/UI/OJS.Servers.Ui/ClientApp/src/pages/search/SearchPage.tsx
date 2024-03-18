@@ -4,8 +4,9 @@ import isNil from 'lodash/isNil';
 
 import { NotSelectedSearchCategoryMessage } from '../../common/constants';
 import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchCategory } from '../../common/search-types';
+import { IIndexContestsType } from '../../common/types';
+import ContestCard from '../../components/contests/contest-card/ContestCard';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import ContestCard from '../../components/home-contests/contest-card/ContestCard';
 import SearchProblem from '../../components/search/search-problems/SearchProblem';
 import SearchUser from '../../components/search/search-users/SearchUser';
 import SearchSection from '../../components/search/SearchSection';
@@ -28,7 +29,6 @@ const SearchPage = () => {
         actions: {
             initiateSearchResultsUrlQuery,
             setSearchingError,
-            toggleVisibility,
         },
     } = useSearch();
     const { actions: { setPageTitle } } = usePageTitles();
@@ -56,6 +56,7 @@ const SearchPage = () => {
                   className={styles.searchHeading}
                 >
                     {message}
+                    {' '}
                 </Heading>
             </div>
         ),
@@ -74,12 +75,8 @@ const SearchPage = () => {
         [ renderErrorHeading, searchError ],
     );
 
-    useEffect(() => () => {
-        toggleVisibility();
-    }, [ toggleVisibility ]);
-
     const renderContest = useCallback(
-        (contest: IContestSearchType) => <ContestCard contest={contest} />,
+        (contest: IContestSearchType) => <ContestCard contest={(contest as IIndexContestsType)} />,
         [],
     );
 

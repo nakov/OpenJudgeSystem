@@ -1,13 +1,14 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
+@use 'src/styles/font-weights';
 
 .privilegedButtonClassName {
-  background-color: colors.$white-color;
+  background: none;
   border: 0;
   color: colors.$light-blue-color;
   cursor: pointer;
   font-size: variables.$f-size-24;
-  font-weight: 400;
+  font-weight: font-weights.$font-weight-light;
   line-height: 30px;
   padding: 10px;
 
@@ -17,6 +18,6 @@
 }
 
 .active {
-  font-weight: bold;
+  font-weight: font-weights.$font-weight-bold;
   text-decoration: underline;
 }

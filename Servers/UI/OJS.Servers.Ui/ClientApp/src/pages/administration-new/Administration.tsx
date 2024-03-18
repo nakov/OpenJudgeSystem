@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { setLayout } from '../shared/set-layout';
 
 const Administration = () => (

@@ -32,7 +32,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
         useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
-        ItemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: mapFilterParamsToQueryString(selectedFilters),
         sorting: mapSorterParamsToQueryString(selectedSorters),
     });
