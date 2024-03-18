@@ -53,11 +53,11 @@ form {
 }
 
 a:link {
-  color: inherit;
+  color: colors.$primary-blue;
   text-decoration: none;
 
   &:visited {
-    color: inherit;
+    color: colors.$primary-blue;
     text-decoration: none;
   }
 }
