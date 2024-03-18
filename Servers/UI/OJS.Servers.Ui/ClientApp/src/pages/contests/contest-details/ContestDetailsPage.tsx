@@ -30,6 +30,7 @@ const ContestDetailsPage = () => {
     const { data, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
 
     const textColorClassName = getColorClassName(themeColors.textColor);
+
     const {
         id,
         name,
@@ -85,16 +86,17 @@ const ContestDetailsPage = () => {
     );
 
     const renderContestActionButton = (isCompete: boolean) => {
-        const isDisabled = isCompete
-            ? !canBeCompeted
-            : !canBePracticed;
+        const isDisabled = !user.isAdmin
+            ? isCompete
+                ? !canBeCompeted
+                : !canBePracticed
+            : false;
+
         return (
             <div className={styles.actionBtnWrapper}>
                 <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id!} />
                 <Link
-                  className={`${isDisabled
-                      ? styles.disabledLink
-                      : ''} ${isCompete
+                  className={`${isCompete
                       ? styles.greenColor
                       : ''}`}
                   to={getContestsResultsUrl(id!, isCompete
@@ -141,10 +143,14 @@ const ContestDetailsPage = () => {
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
             <div className={styles.descriptionBoxWrapper}>
                 <div>
-                    <div className={styles.title}>Contest Details</div>
-                    <div dangerouslySetInnerHTML={{ __html: description || 'There is no description for the selected contest.' }} />
-                    <div>
-                        Allowed languages:
+                    <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>
+                    <div dangerouslySetInnerHTML={{
+                        __html: description ||
+                          'There is no description for the selected contest.',
+                    }}
+                    />
+                    <div className={styles.languagesWrapper}>
+                        <span className={styles.allowedLanguages}>Allowed languages:</span>
                         {' '}
                         {' '}
                         {renderAllowedLanguages()}
@@ -158,7 +164,7 @@ const ContestDetailsPage = () => {
             <div>
                 {user.canAccessAdministration && renderAdministrationButtons()}
             </div>
-            <div className={styles.actionButtonsWrapper}>
+            <div>
                 {renderContestActionButton(true)}
                 {renderContestActionButton(false)}
             </div>
