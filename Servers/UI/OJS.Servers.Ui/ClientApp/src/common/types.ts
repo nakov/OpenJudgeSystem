@@ -532,6 +532,7 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminCheckers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -549,6 +550,24 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+}
+
+interface ICheckerInListModel {
+    id: number;
+    name: string;
+    dllFile: string;
+    className: string;
+    parameter: string;
+    isDeleted: boolean;
+}
+
+interface ICheckerAdministrationModel {
+    id: number;
+    name: string;
+    dllFile: string | null;
+    className: string | null;
+    parameter: string | null;
+    description: string | null;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -605,4 +624,6 @@ export type {
     ISorterReducerActionType,
     IFilterReducerActionType,
     IProblemGroupDropdownModel,
+    ICheckerInListModel,
+    ICheckerAdministrationModel,
 };

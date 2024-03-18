@@ -14,4 +14,6 @@ public class CheckerInListModel : IMapFrom<Checker>
     public string? ClassName { get; set; }
 
     public string? Parameter { get; set; }
+
+    public bool IsDeleted { get; set; }
 }

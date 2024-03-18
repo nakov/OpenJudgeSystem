@@ -15,7 +15,6 @@ public class CheckerAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public string? ClassName { get; set; }
 
     public string? Parameter { get; set; }
-
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<Checker, CheckerAdministrationModel>();
