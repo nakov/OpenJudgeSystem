@@ -24,13 +24,13 @@ public class ContestCategoryUpdateModelPermissionsService
             return await this.CheckUserIsLectorInCategoryRecursively(model.Id, user.Id, user.IsAdmin);
         }
 
-        if (operation == Create && model.ParentId is > 0)
+        if (operation == Create)
         {
-            return await this.CheckUserIsLectorInCategoryRecursively(model.ParentId.Value, user.Id, user.IsAdmin);
-        }
+            if (model.ParentId is > 0)
+            {
+                return await this.CheckUserIsLectorInCategoryRecursively(model.ParentId.Value, user.Id, user.IsAdmin);
+            }
 
-        if (operation == Create && model.ParentId is <= 0)
-        {
             return user.IsAdmin;
         }
 
@@ -39,7 +39,7 @@ public class ContestCategoryUpdateModelPermissionsService
 
     private async Task<bool> CheckUserIsLectorInCategoryRecursively(int? categoryId, string userId, bool isAdmin)
     {
-        // Validate if the recursion somehow calls itself with invalid categoryId it will throw exception
+        // Validate that if the recursion somehow calls itself with invalid categoryId, it will throw exception
         var currentCategory = await this.contestCategoriesDataService.GetById(categoryId);
         if (currentCategory == null)
         {
