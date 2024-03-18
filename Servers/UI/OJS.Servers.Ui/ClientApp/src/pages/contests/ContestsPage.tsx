@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable prefer-destructuring */
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
-import ContestCategories from '../../components/contests/contest-categories/ContestCetegories';
+import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
@@ -115,7 +114,7 @@ const ContestsPage = () => {
             {areContestsLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
             <ContestBreadcrumbs />
             <div className={styles.contestsContainer}>
-                <ContestCategories />
+                <ContestCetegories />
                 <div style={{ width: '100%' }}>
                     <div className={`${styles.headingWrapper} ${textColorClassName}`}>
                         <div>

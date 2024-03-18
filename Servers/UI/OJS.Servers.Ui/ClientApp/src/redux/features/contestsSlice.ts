@@ -11,6 +11,7 @@ interface IContestState {
     selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
     contestDetails: IContestDetailsResponseType | null;
+    contestCategories: Array<IContestCategory>;
 }
 
 const initialState: IContestState = {
@@ -18,6 +19,7 @@ const initialState: IContestState = {
     selectedStrategy: null,
     breadcrumbItems: [],
     contestDetails: null,
+    contestCategories: [],
 };
 
 // eslint-disable-next-line import/group-exports
@@ -45,6 +47,10 @@ export const contestSlice = createSlice({
             const { contest } = action.payload;
             state.contestDetails = contest;
         },
+        setContestCategories: (state, action: PayloadAction<{ contestCategories: Array<IContestCategory> }>) => {
+            const { contestCategories } = action.payload;
+            state.contestCategories = contestCategories;
+        },
     },
 });
 
@@ -55,6 +61,7 @@ export const {
     setContestStrategy,
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
+    setContestCategories,
 } = contestSlice.actions;
 
 export default contestSlice.reducer;
