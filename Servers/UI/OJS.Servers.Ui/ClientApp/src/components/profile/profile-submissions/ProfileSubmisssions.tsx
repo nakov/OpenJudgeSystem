@@ -16,6 +16,7 @@ import PaginationControls from "../../guidelines/pagination/PaginationControls";
 import Button, {ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
 import {usePages} from "../../../hooks/use-pages";
 import {useUserProfileSubmissions} from "../../../hooks/submissions/use-profile-submissions";
+import {ISubmissionsGridOptions} from "../../submissions/submissions-grid/SubmissionsGrid";
 
 const defaultState = {
     state: {
@@ -134,8 +135,15 @@ const ProfileSubmissions = () => {
         (submission: IPublicSubmission) => (
             <SubmissionGridRow
                 submission={submission}
-                shouldDisplayUsername={false}
-                showIsCompeteMarker
+                options={
+                    {
+                        showTaskDetails: false,
+                        showDetailedResults: true,
+                        showCompeteMarker: false,
+                        showSubmissionTypeInfo: false,
+                        showParticipantUsername: false,
+                    } as ISubmissionsGridOptions
+                }
             />
         ),
         [],

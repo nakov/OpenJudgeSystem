@@ -113,8 +113,6 @@ const SubmissionsList = ({
                     </div>
                     <ExecutionResult
                       testRuns={submission.testRuns}
-                      maxMemoryUsed={submission.maxMemoryUsed}
-                      maxTimeUsed={submission.maxTimeUsed}
                       isCompiledSuccessfully={submission.isCompiledSuccessfully}
                       isProcessed={isProcessed}
                     />
