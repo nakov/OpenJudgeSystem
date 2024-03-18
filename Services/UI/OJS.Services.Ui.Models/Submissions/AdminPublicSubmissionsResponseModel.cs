@@ -1,11 +1,12 @@
 namespace OJS.Services.Ui.Models.Submissions;
 
-using System;
+using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SubmissionForPublicSubmissionsResponseModel : IMapFrom<SubmissionForPublicSubmissionsServiceModel>
+public class AdminPublicSubmissionsResponseModel : IMapFrom<AdminPublicSubmissionsServiceModel>
 {
     public int Id { get; set; }
 
@@ -25,11 +26,11 @@ public class SubmissionForPublicSubmissionsResponseModel : IMapFrom<SubmissionFo
 
     public bool IsCompiledSuccessfully { get; set; }
 
+    public bool Processed { get; set; }
+
     public long? MaxMemoryUsed { get; set; }
 
     public int? MaxTimeUsed { get; set; }
-
-    public bool Processed { get; set; }
 
     public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 }

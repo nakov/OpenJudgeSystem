@@ -11,7 +11,7 @@ import {
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
 
 export const submissionsAdminService = createApi({
-    reducerPath: 'submissions',
+    reducerPath: 'adminSubmissionsService',
     baseQuery: fetchBaseQuery({
         credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/submissions`,

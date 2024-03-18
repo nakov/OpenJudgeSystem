@@ -11,7 +11,6 @@ interface IPageContext {
         currentPage: number;
         pagesInfo: IPagesInfo;
     };
-
       changePage: (pageNumber: number) => void;
       clearPageValue: () => void;
       populatePageInformation: (info: IPagesInfo) => void;

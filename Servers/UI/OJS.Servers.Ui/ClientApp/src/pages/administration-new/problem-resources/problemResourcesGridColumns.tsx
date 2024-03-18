@@ -78,6 +78,16 @@ const problemResourceFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
     },
     {
+        field: 'problemId',
+        headerName: 'Problem Id',
+        flex: 0,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
         field: 'problemName',
         headerName: 'Problem Name',
         flex: 0.5,
