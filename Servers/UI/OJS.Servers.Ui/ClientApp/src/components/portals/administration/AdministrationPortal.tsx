@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { useEffect, useState } from 'react';
+import { FaCheckDouble } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -22,9 +23,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls';
+import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
-import Administration from '../../../pages/administration-new/Administration';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
 import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
@@ -35,12 +35,14 @@ import AdministrationSubmissionsPage from '../../../pages/administration-new/sub
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
+import AdministrationCheckersPage from '../../../pages/checkers/AdministrationCheckersPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
-import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
+import AdministrationTest from '../../administration/tests/AdministrationTest';
 
 import styles from './AdministrationPortal.module.scss';
 
@@ -95,6 +97,11 @@ const administrationItems = [
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: `${SUBMISSION_TYPES_PATH}`,
+    },
+    {
+        name: 'Checkers',
+        icon: <FaCheckDouble />,
+        path: `${CHECKERS_PATH}`,
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -240,7 +247,11 @@ const AdministrationPortal = () => {
         },
         {
             path: `${TESTS_PATH}`,
-            Element: Administration,
+            Element: AdministrationTestsPage,
+        },
+        {
+            path: `${TESTS_PATH}/:id`,
+            Element: AdministrationTest,
         },
         {
             path: `${PROBLEMS_PATH}`,
@@ -271,6 +282,10 @@ const AdministrationPortal = () => {
             Element: AdministrationSubmissionTypesPage,
         },
         {
+            path: `${CHECKERS_PATH}`,
+            Element: AdministrationCheckersPage,
+        },
+        {
             path: '/administration',
             Element: AdministrationPage,
             title: 'Administration',
@@ -287,9 +302,6 @@ const AdministrationPortal = () => {
         }
         return icon;
     };
-
-    const { internalUser: user } =
-    useAppSelector((state) => state.authorization);
 
     return (
         <Box sx={{ zIndex: 0 }}>
@@ -358,8 +370,7 @@ const AdministrationPortal = () => {
                 <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
                         <Routes>
-                            {user.canAccessAdministration &&
-                            adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
+                            {adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
                             <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
                             <Route path="*" element={<NotFoundPage />} />
                         </Routes>

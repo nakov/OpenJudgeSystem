@@ -222,13 +222,17 @@ namespace OJS.Services.Administration.Business.Problems
 
             problem.MapFrom(model);
 
-            problem.ProblemGroup = this.problemGroupsDataService.GetByProblem(problem.Id)!;
-            problem.ProblemGroupId = problem.ProblemGroup.Id;
+            problem.ProblemGroupId = model.ProblemGroupId;
+            problem.ProblemGroup = await this.problemGroupsDataService
+                .GetByIdQuery(model.ProblemGroupId)
+                .Include(pg => pg.Contest)
+                .FirstAsync();
+
             problem.ProblemGroup.Type = (ProblemGroupType)Enum.Parse(typeof(ProblemGroupType), model.ProblemGroupType!);
 
             if (!problem.ProblemGroup.Contest.IsOnlineExam)
             {
-                problem.ProblemGroup.OrderBy = model.ProblemGroupOrderBy;
+                problem.ProblemGroup.OrderBy = model.OrderBy;
             }
 
             AddSubmissionTypes(problem, model);

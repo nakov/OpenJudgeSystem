@@ -1,173 +1,57 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
-import { IDictionary } from '../../../common/common-types';
-import { ISubmissionResponseModel } from '../../../common/types';
-import { usePublicSubmissions } from '../../../hooks/submissions/use-public-submissions';
-import { usePages } from '../../../hooks/use-pages';
-import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import { format } from '../../../utils/number-utils';
+import { IPagedResultType, IPublicSubmission } from '../../../common/types';
+import useTheme from '../../../hooks/use-theme';
+import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-import List from '../../guidelines/lists/List';
+import { IHaveOptionalClassName } from '../../common/Props';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionGridRow from '../submission-grid-row/SubmissionGridRow';
 
-import SubmissionStateLink from './SubmissionStateLink';
-
 import styles from './SubmissionsGrid.module.scss';
 
-const selectedSubmissionsStateMapping = {
-    1: 'All',
-    2: 'In Queue',
-    3: 'Pending',
-} as IDictionary<string>;
+interface ISubmissionsGridProps extends IHaveOptionalClassName {
+    isDataLoaded: boolean;
+    submissions: IPagedResultType<IPublicSubmission>;
+    handlePageChange: (page: number) => void;
+    options: ISubmissionsGridOptions;
+}
 
-const defaultState = { state: { selectedActive: 1 } };
+interface ISubmissionsGridOptions {
+    showTaskDetails: boolean;
+    showDetailedResults: boolean;
+    showCompeteMarker: boolean;
+    showSubmissionTypeInfo: boolean;
+    showParticipantUsername: boolean;
+}
 
-const SubmissionsGrid = () => {
-    const [ selectedActive, setSelectedActive ] = useState<number>(defaultState.state.selectedActive);
-    const {
-        state: {
-            publicSubmissions,
-            totalSubmissionsCount,
-            totalUnprocessedSubmissionsCount,
-            areSubmissionsLoading,
-        },
-        actions: {
-            loadTotalUnprocessedSubmissionsCount,
-            initiatePublicSubmissionsQuery,
-            initiateUnprocessedSubmissionsQuery,
-            initiatePendingSubmissionsQuery,
-            clearPageValues,
-            clearPageInformation,
-        },
-    } = usePublicSubmissions();
+const SubmissionsGrid = ({
+    className,
+    isDataLoaded,
+    submissions,
+    handlePageChange,
+    options,
+}: ISubmissionsGridProps) => {
+    const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
-    const { internalUser: user } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-    const {
-        state: { currentPage, pagesInfo },
-        changePage,
-    } = usePages();
+    const onPageChange = (page: number) => {
+        handlePageChange(page);
+    };
 
-    const selectedSubmissionStateToRequestMapping = useMemo(
-        () => ({
-            1: initiatePublicSubmissionsQuery,
-            2: initiateUnprocessedSubmissionsQuery,
-            3: initiatePendingSubmissionsQuery,
-        } as IDictionary<() => void>),
-        [ initiatePublicSubmissionsQuery, initiateUnprocessedSubmissionsQuery, initiatePendingSubmissionsQuery ],
+    const headerClassName = concatClassNames(
+        styles.submissionsGridHeader,
+        isDarkMode
+            ? styles.darkSubmissionsGridHeader
+            : styles.lightSubmissionsGridHeader,
+        getColorClassName(themeColors.textColor),
     );
 
-    useEffect(
+    const renderSubmissionsGrid = useCallback(
         () => {
-            if (!user.isAdmin) {
-                return;
-            }
-
-            (async () => {
-                await loadTotalUnprocessedSubmissionsCount();
-            })();
-        },
-        [ loadTotalUnprocessedSubmissionsCount, user.isAdmin ],
-    );
-
-    const handlePageChange = useCallback(
-        (page: number) => changePage(page),
-        [ changePage ],
-    );
-
-    const handleSelectSubmissionType = useCallback(
-        (typeKey: number) => {
-            if (selectedActive) {
-                clearPageValues();
-
-                setSelectedActive(typeKey);
-            }
-        },
-        [ clearPageValues, selectedActive ],
-    );
-
-    useEffect(
-        () => {
-            selectedSubmissionStateToRequestMapping[selectedActive]();
-        },
-        [
-            initiatePendingSubmissionsQuery,
-            initiatePublicSubmissionsQuery,
-            initiateUnprocessedSubmissionsQuery,
-            selectedActive,
-            selectedSubmissionStateToRequestMapping,
-            totalSubmissionsCount,
-        ],
-    );
-
-    useEffect(
-        () => () => {
-            clearPageInformation();
-        },
-        [ clearPageInformation ],
-    );
-
-    const { pagesCount } = pagesInfo;
-
-    const renderPrivilegedComponent = useCallback(
-        () => {
-            const { isAdmin } = user;
-
-            return (
-                isAdmin && (
-                    <Heading
-                      type={HeadingType.secondary}
-                    >
-                        Submissions awaiting execution:
-                        {' '}
-                        {totalUnprocessedSubmissionsCount}
-                        {' '}
-                        (
-                        <SubmissionStateLink
-                          stateIndex={1}
-                          isSelected={selectedActive === 1}
-                          text={selectedSubmissionsStateMapping[1]}
-                          handleOnSelect={handleSelectSubmissionType}
-                        />
-                        /
-                        <SubmissionStateLink
-                          stateIndex={2}
-                          isSelected={selectedActive === 2}
-                          text={selectedSubmissionsStateMapping[2]}
-                          handleOnSelect={handleSelectSubmissionType}
-                        />
-                        /
-                        <SubmissionStateLink
-                          stateIndex={3}
-                          isSelected={selectedActive === 3}
-                          text={selectedSubmissionsStateMapping[3]}
-                          handleOnSelect={handleSelectSubmissionType}
-                        />
-                        )
-                    </Heading>
-                )
-            );
-        },
-        [ user, totalUnprocessedSubmissionsCount, selectedActive, handleSelectSubmissionType ],
-    );
-
-    const renderSubmissionRow = useCallback(
-        (submission: ISubmissionResponseModel, index: number) => (
-            <SubmissionGridRow
-              isFirst={index === 0}
-              submission={submission}
-            />
-        ),
-        [],
-    );
-
-    const renderSubmissionsList = useCallback(
-        () => {
-            if (areSubmissionsLoading) {
+            if (!isDataLoaded) {
                 return (
                     <div style={{ ...flexCenterObjectStyles, marginTop: '10px' }}>
                         <SpinningLoader />
@@ -175,53 +59,77 @@ const SubmissionsGrid = () => {
                 );
             }
 
-            if (publicSubmissions.length === 0) {
+            if (isEmpty(submissions.items)) {
                 return (
-                    <div className={styles.noSubmissionsFound}>
+                    <div className={concatClassNames(
+                        styles.noSubmissionsFound,
+                        getColorClassName(themeColors.textColor),
+                    )}
+                    >
                         No submissions found.
                     </div>
                 );
             }
 
             return (
-                <List
-                  values={publicSubmissions}
-                  itemFunc={renderSubmissionRow}
-                  fullWidth
-                />
+                <table className={concatClassNames(className, styles.submissionsGrid)}>
+                    <thead>
+                        <tr className={headerClassName}>
+                            <td>ID</td>
+                            <td>Task</td>
+                            <td>From</td>
+                            {
+                                options.showCompeteMarker
+                                    ? <td />
+                                    : null
+                            }
+                            {
+                                options.showDetailedResults
+                                    ? <td>Time and Memory Used</td>
+                                    : null
+                            }
+                            <td className={styles.tdRight}>Result</td>
+                            {
+                                options.showSubmissionTypeInfo
+                                    ? <td className={styles.tdRight}>Strategy</td>
+                                    : null
+                            }
+                            <td />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            !isNil(submissions.items) && !isEmpty(submissions.items)
+                                ? submissions.items.map((s) => (
+                                    <SubmissionGridRow
+                                      submission={s}
+                                      options={options}
+                                      key={s.id}
+                                    />
+                                ))
+                                : null
+                        }
+                    </tbody>
+                </table>
             );
         },
-        [
-            publicSubmissions,
-            renderSubmissionRow,
-            areSubmissionsLoading,
-        ],
+        [ isDataLoaded, submissions, className, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
 
     return (
         <>
-            <Heading type={HeadingType.primary}>
-                Latest
-                {' '}
-                {publicSubmissions.length}
-                {' '}
-                submissions out of
-                {' '}
-                {format(totalSubmissionsCount)}
-                {' '}
-                total
-            </Heading>
-            {renderPrivilegedComponent()}
-            {renderSubmissionsList()}
-            { publicSubmissions?.length > 0 && (
+            {renderSubmissionsGrid()}
+            {!isEmpty(submissions) && submissions.pagesCount !== 0 && (
                 <PaginationControls
-                  count={pagesCount}
-                  page={currentPage}
-                  onChange={handlePageChange}
+                  count={submissions.pagesCount}
+                  page={submissions.pageNumber}
+                  onChange={onPageChange}
                 />
             )}
         </>
     );
 };
+
+export type { ISubmissionsGridOptions };
 
 export default SubmissionsGrid;

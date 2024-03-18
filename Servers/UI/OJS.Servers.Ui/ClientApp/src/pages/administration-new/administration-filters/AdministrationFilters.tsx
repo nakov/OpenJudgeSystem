@@ -82,7 +82,6 @@ const DROPDOWN_OPERATORS = {
 const BOOL_DROPDOWN_VALUES = [
     { name: 'True', value: 'true' },
     { name: 'False', value: 'false' },
-    { name: 'Null', value: '' },
 ];
 
 const mapStringToFilterColumnTypeEnum = (type: string) => {
@@ -396,7 +395,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             {renderInputField(idx)}
         </div>
     );
-
     return (
         <div>
             <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>

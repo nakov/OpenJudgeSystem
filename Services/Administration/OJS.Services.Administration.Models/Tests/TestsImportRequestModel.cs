@@ -1,4 +1,4 @@
-namespace OJS.Servers.Administration.Models.Tests;
+namespace OJS.Services.Administration.Models.Tests;
 
 using Microsoft.AspNetCore.Http;
 

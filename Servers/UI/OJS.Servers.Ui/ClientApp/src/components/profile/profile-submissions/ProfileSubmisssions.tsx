@@ -10,12 +10,13 @@ import {flexCenterObjectStyles} from "../../../utils/object-utils";
 import SpinningLoader from "../../guidelines/spinning-loader/SpinningLoader";
 import List from "../../guidelines/lists/List";
 import isEmpty from "lodash/isEmpty";
-import {ISubmissionResponseModel} from "../../../common/types";
+import {IPublicSubmission} from "../../../common/types";
 import SubmissionGridRow from "../../submissions/submission-grid-row/SubmissionGridRow";
 import PaginationControls from "../../guidelines/pagination/PaginationControls";
 import Button, {ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
 import {usePages} from "../../../hooks/use-pages";
 import {useUserProfileSubmissions} from "../../../hooks/submissions/use-profile-submissions";
+import {ISubmissionsGridOptions} from "../../submissions/submissions-grid/SubmissionsGrid";
 
 const defaultState = {
     state: {
@@ -131,10 +132,18 @@ const ProfileSubmissions = () => {
     );
 
     const renderSubmissionRow = useCallback(
-        (submission: ISubmissionResponseModel) => (
+        (submission: IPublicSubmission) => (
             <SubmissionGridRow
                 submission={submission}
-                shouldDisplayUsername={false}
+                options={
+                    {
+                        showTaskDetails: false,
+                        showDetailedResults: true,
+                        showCompeteMarker: false,
+                        showSubmissionTypeInfo: false,
+                        showParticipantUsername: false,
+                    } as ISubmissionsGridOptions
+                }
             />
         ),
         [],
