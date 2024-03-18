@@ -54,7 +54,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         var contestCategory = await this.categoriesDataService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
         contestCategory.MapFrom(model);
 
-        if (model.ParentId == 0)
+        if (model.ParentId == null || model.ParentId == 0)
         {
             contestCategory!.ParentId = null;
             contestCategory!.Parent = null;
