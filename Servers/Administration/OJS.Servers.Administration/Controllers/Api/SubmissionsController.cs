@@ -44,26 +44,6 @@ public class SubmissionsController : BaseAdminApiController<
         this.lecturerPrivilegesBusinessService = lecturerPrivilegesBusinessService;
     }
 
-    [HttpGet]
-    [ProtectedEntityAction(false)]
-    public override async Task<IActionResult> GetAll([FromQuery]PaginationRequestModel model)
-    {
-        var user = this.User.Map<UserInfoModel>();
-
-        if (!await this.submissionsGridDataService.UserHasAccessToGrid(user))
-        {
-            return this.Unauthorized();
-        }
-
-        return this.Ok(await this.submissionsGridDataService.GetAll<SubmissionAdministrationServiceModel>(
-            model,
-            orderBy: submission => submission.Id,
-            filter: this.lecturerPrivilegesBusinessService.GetSubmissionsUserPrivilegesExpression(
-                user.Id,
-                user.IsAdmin),
-            descendingOrder: true));
-    }
-
     [HttpPost("{id:int}")]
     [ProtectedEntityAction]
     public async Task<IActionResult> Retest(int id)
