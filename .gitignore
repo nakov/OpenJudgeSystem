@@ -8,6 +8,9 @@ TestResults/
 # DB Encryption Keys
 Keys/
 
+# FE build files
+Servers/UI/OJS.Servers.Ui/ClientApp/dist/
+
 # RabbitMQ persistent data storage
 rabbitmq/data/
 
