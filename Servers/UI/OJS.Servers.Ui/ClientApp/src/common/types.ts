@@ -1,13 +1,12 @@
 import React from 'react';
 
 import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
-import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
 import { ContestVariation } from './contest-types';
-import { FilterColumnTypeEnum } from './enums';
+import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -42,6 +41,11 @@ interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     retestIsSuccess: false;
 }
 
+interface IRecentSubmissionsReduxState {
+    latestSubmissions: IPagedResultType<IPublicSubmission>;
+    currentPage: number;
+}
+
 interface IPublicSubmissionProblem {
     id: number;
     name: string;
@@ -54,17 +58,7 @@ interface IPublicSubmissionResult {
     maxPoints: number;
 }
 
-interface ITestRunInListModel {
-    id: number;
-    timeUsed: number;
-    memoryUsed: number;
-    submissionId: number;
-    executionComment: string;
-    checkerComment: string;
-    resultType: string;
-}
-
-interface ISubmissionResponseModel {
+interface IPublicSubmission {
     id: number;
     createdOn: Date;
     strategyName: string;
@@ -78,6 +72,16 @@ interface ISubmissionResponseModel {
     maxTimeUsed: number;
     testRuns: ITestRunType[];
     processed: boolean;
+}
+
+interface ITestRunInListModel {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
 }
 
 interface IGetAllAdminParams {
@@ -519,8 +523,8 @@ interface IFilterColumn {
 
 interface IAdminSlice {
     [key: string]: null | {
-        selectedFilters: IAdministrationFilter[];
-        selectedSorters: IAdministrationSorter[];
+        selectedFilters: IAdministrationFilter[] | null;
+        selectedSorters: IAdministrationSorter[] | null;
     };
 }
 
@@ -532,6 +536,7 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminCheckers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -551,6 +556,24 @@ interface IProblemSubmissionType{
     solutionSkeleton: string | null;
 }
 
+interface ICheckerInListModel {
+    id: number;
+    name: string;
+    dllFile: string;
+    className: string;
+    parameter: string;
+    isDeleted: boolean;
+}
+
+interface ICheckerAdministrationModel {
+    id: number;
+    name: string;
+    dllFile: string | null;
+    className: string | null;
+    parameter: string | null;
+    description: string | null;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -561,7 +584,8 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
-    ISubmissionResponseModel,
+    IRecentSubmissionsReduxState,
+    IPublicSubmission,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
@@ -605,4 +629,6 @@ export type {
     ISorterReducerActionType,
     IFilterReducerActionType,
     IProblemGroupDropdownModel,
+    ICheckerInListModel,
+    ICheckerAdministrationModel,
 };

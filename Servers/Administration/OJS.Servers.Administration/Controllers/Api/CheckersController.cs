@@ -9,7 +9,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Checkers;
 using OJS.Services.Administration.Models.Validation;
 
-public class CheckersController : BaseAdminApiController<Checker, int, Checker, CheckerAdministrationModel>
+public class CheckersController : BaseAdminApiController<Checker, int, CheckerInListModel, CheckerAdministrationModel>
 {
     private readonly ICheckersDataService checkersDataService;
 

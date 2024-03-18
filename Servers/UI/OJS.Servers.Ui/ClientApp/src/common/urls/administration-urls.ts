@@ -20,3 +20,4 @@ export const PROBLEM_GROUPS_PATH = 'problem-groups';
 export const PROBLEM_RESOURCES_PATH = 'problem-resources';
 export const SUBMISSION_TYPES_PATH = 'submission-types';
 export const PARTICIPANTS_PATH = 'participants';
+export const CHECKERS_PATH = 'checkers';

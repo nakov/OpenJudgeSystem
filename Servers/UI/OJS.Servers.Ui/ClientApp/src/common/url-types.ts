@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
-
 import { IFilter, ISort } from './contest-types';
+import { SubmissionStatus } from './enums';
 import { IGetAllAdminParams } from './types';
 
 interface IUserInfoUrlParams {
