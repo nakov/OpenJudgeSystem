@@ -2,71 +2,14 @@ namespace OJS.Services.Ui.Models.Submissions;
 
 using AutoMapper;
 using FluentExtensions.Extensions;
-using OJS.Data.Models.Contests;
-using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
-using OJS.Data.Models.Users;
+using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
-public enum StateResultForPublicSubmissionsServiceModel
-{
-    Ready = 1,
-    Processing = 2,
-    Queued = 3,
-}
-
-public class UserForPublicSubmissionsServiceModel
-    : IMapExplicitly
-{
-    public string Id { get; set; } = null!;
-
-    public object Username { get; set; } = null!;
-
-    public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<UserProfile, UserForPublicSubmissionsServiceModel>()
-            .ForMember(
-                x => x.Username,
-                opt => opt.MapFrom(y => y.UserName));
-}
-
-public class ProblemForPublicSubmissionsServiceModel
-    : IMapExplicitly
-{
-    public int Id { get; set; }
-
-    public string Name { get; set; } = null!;
-
-    public ContestForPublicSubmissionsServiceModel Contest { get; set; } = null!;
-
-    public double OrderBy { get; set; }
-
-    public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<Problem, ProblemForPublicSubmissionsServiceModel>()
-            .ForMember(
-                x => x.Contest,
-                opt => opt.MapFrom(
-                    y => y.ProblemGroup.Contest));
-}
-
-public class ContestForPublicSubmissionsServiceModel
-    : IMapFrom<Contest>
-{
-    public int Id { get; set; }
-
-    public string Name { get; set; } = null!;
-}
-
-public class ResultForPublicSubmissionsServiceModel
-{
-    public int Points { get; set; }
-
-    public int MaxPoints { get; set; }
-}
-
-public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
+public class AdminPublicSubmissionsServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -84,20 +27,20 @@ public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
 
     public StateResultForPublicSubmissionsServiceModel State { get; set; }
 
-    public int PageNumber { get; set; }
-
     public bool IsCompiledSuccessfully { get; set; }
+
+    public bool Processed { get; set; }
 
     public long? MaxMemoryUsed { get; set; }
 
     public int? MaxTimeUsed { get; set; }
 
-    public bool Processed { get; set; }
-
     public IEnumerable<TestRunServiceModel> TestRuns { get; set; } = Enumerable.Empty<TestRunServiceModel>();
 
+    public int PageNumber { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<Submission, SubmissionForPublicSubmissionsServiceModel>()
+        => configuration.CreateMap<Submission, AdminPublicSubmissionsServiceModel>()
             .ForMember(
                 x => x.StrategyName,
                 opt => opt.MapFrom(
@@ -106,10 +49,6 @@ public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
                 x => x.User,
                 opt => opt.MapFrom(
                     y => y.Participant!.User))
-            .ForMember(
-                x => x.Problem,
-                opt => opt.MapFrom(
-                    y => y.Problem))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
@@ -136,13 +75,13 @@ public class SubmissionForPublicSubmissionsServiceModel : IMapExplicitly
                 opt => opt.MapFrom(
                     y => y.Participant!.IsOfficial))
             .ForMember(
-                x => x.PageNumber,
-                opt => opt.Ignore())
-            .ForMember(
                 d => d.MaxMemoryUsed,
                 opt => opt.MapFrom(s => s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.MemoryUsed) : (long?)null))
             .ForMember(
                 d => d.MaxTimeUsed,
                 opt => opt.MapFrom(s =>
-                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null));
+                    s.TestRuns.Any() ? s.TestRuns.Max(testRun => testRun.TimeUsed) : (int?)null))
+            .ForMember(
+                x => x.PageNumber,
+                opt => opt.Ignore());
 }

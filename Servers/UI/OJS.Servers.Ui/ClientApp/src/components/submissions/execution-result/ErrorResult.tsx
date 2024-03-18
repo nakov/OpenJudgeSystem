@@ -5,7 +5,7 @@ import ErrorIcon from '../../guidelines/icons/ErrorIcon';
 import styles from './ErrorResult.module.scss';
 
 const ErrorResult = () => (
-    <div className={styles.errorContainer}>
+    <div>
         <ErrorIcon />
         <span className={styles.compileAndUnknownError}>
             {' '}

@@ -28,8 +28,8 @@ interface IContestCategoryEditProps {
 const initialState : IContestCategoryAdministration = {
     id: 0,
     name: '',
-    parent: '',
-    parentId: 0,
+    parent: null,
+    parentId: null,
     isDeleted: false,
     isVisible: false,
     orderBy: 0,
@@ -98,6 +98,9 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
     }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
+    useEffect(() => () => {
+        setContestCategory(initialState);
+    }, []);
     const validateForm = () => {
         const isValid = contestCategoryValidations.isNameValid &&
             contestCategoryValidations.isOrderByValid;
@@ -142,6 +145,9 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                 const { id, name: parentName } = category;
                 parentId = id;
                 parent = parentName;
+            } else {
+                parentId = null;
+                parent = null;
             }
             break;
         }
