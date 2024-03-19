@@ -21,11 +21,9 @@ public class SubmissionTypeAdministrationModelValidator : BaseValidator<Submissi
             .WithMessage("Name field is required");
 
         this.RuleFor(model => model.CompilerType)
-            .MustBeValidEnum<SubmissionTypeAdministrationModel, CompilerType>()
-            .WithMessage("Compiler type is invalid");
+            .MustBeValidEnum<SubmissionTypeAdministrationModel, CompilerType>();
 
         this.RuleFor(model => model.ExecutionStrategyType)
-            .MustBeValidEnum<SubmissionTypeAdministrationModel, ExecutionStrategyType>()
-            .WithMessage("Execution strategy type is invalid type");
+            .MustBeValidEnum<SubmissionTypeAdministrationModel, ExecutionStrategyType>();
     }
 }
