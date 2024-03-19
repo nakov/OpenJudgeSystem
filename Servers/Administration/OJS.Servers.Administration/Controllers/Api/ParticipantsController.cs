@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Validation;
 
-public class ParticipantsController : BaseAdminApiController<Participant, int, ContestViewParticipantsModel, ParticipantAdministrationModel>
+public class ParticipantsController : BaseAdminApiController<Participant, int, ParticipantInListViewModel, ParticipantAdministrationModel>
 {
     private readonly IGridDataService<Participant> participantsGridDataService;
 
@@ -41,6 +41,6 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
 
         return this.Ok(
             await this.participantsGridDataService
-                .GetAll<ContestViewParticipantsModel>(model, participant => participant.ContestId == contestId));
+                .GetAll<ParticipantInListViewModel>(model, participant => participant.ContestId == contestId));
     }
 }

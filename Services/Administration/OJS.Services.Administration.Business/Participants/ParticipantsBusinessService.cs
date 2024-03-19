@@ -20,6 +20,8 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
         this.scoresDataService = scoresDataService;
     }
 
+    public override Task<ParticipantAdministrationModel> Create(ParticipantAdministrationModel model) => base.Create(model);
+
     public async Task UpdateTotalScoreSnapshotOfParticipants()
         => await this.participantsData.UpdateTotalScoreSnapshot();
 

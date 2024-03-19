@@ -3,7 +3,7 @@
 using AutoMapper;
 using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Models;
-public class ContestViewParticipantsModel : IMapExplicitly
+public class ParticipantInListViewModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -14,7 +14,7 @@ public class ContestViewParticipantsModel : IMapExplicitly
     public bool IsOfficial { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<Participant, ContestViewParticipantsModel>()
+        => configuration.CreateMap<Participant, ParticipantInListViewModel>()
             .ForMember(cvp => cvp.Id, opt
                 => opt.MapFrom(x => x.Id))
             .ForMember(cvp => cvp.UserName, opt
