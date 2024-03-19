@@ -61,7 +61,7 @@ const testsFilterableColums: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
         renderCell: (params) => (
-            <Link to={`${PROBLEMS_PATH}/${params.row.problemId}`}>
+            <Link to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${params.row.problemId}`}>
                 {params.row.problemName}
             </Link>
         ),
@@ -76,6 +76,7 @@ const testsFilterableColums: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
         hideable: true,
+        valueFormatter: (params) => params.value.toString(),
     },
 ];
 
