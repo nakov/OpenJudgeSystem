@@ -17,18 +17,12 @@ public class ParticipantAdministrationModelValidator : BaseValidator<Participant
             .WithMessage("Contest id cannot be less or equal to 0");
 
         this.RuleFor(model => model.ContestName)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("Contest is required.");
+            .NotEmpty();
 
         this.RuleFor(model => model.UserId)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("User id is required.");
+            .NotNull();
 
         this.RuleFor(model => model.UserName)
-            .NotNull()
-            .NotEmpty()
-            .WithMessage("UserName is required.");
+            .NotNull();
     }
 }
