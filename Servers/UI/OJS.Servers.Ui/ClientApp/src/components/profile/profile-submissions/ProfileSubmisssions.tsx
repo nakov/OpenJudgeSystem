@@ -16,7 +16,7 @@ import PaginationControls from "../../guidelines/pagination/PaginationControls";
 import Button, {ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
 import {usePages} from "../../../hooks/use-pages";
 import {useUserProfileSubmissions} from "../../../hooks/submissions/use-profile-submissions";
-import {ISubmissionsGridOptions} from "../../submissions/submissions-grid/SubmissionsGrid";
+import SubmissionsGrid, {ISubmissionsGridOptions} from "../../submissions/submissions-grid/SubmissionsGrid";
 
 const defaultState = {
     state: {
@@ -163,6 +163,8 @@ const ProfileSubmissions = () => {
         initiateUserSubmissionsForProfileQuery(getDecodedUsernameFromProfile(), defaultState.state.initialPage);
     };
 
+    const pageChange = (page: number) => {console.log(page)}
+
     const renderSubmissionsList = useCallback(
         () => {
             if (userSubmissionsLoading || userSubmissionsByContestLoading) {
@@ -183,16 +185,22 @@ const ProfileSubmissions = () => {
 
             return (
                 <>
-                    <PaginationControls
-                        count={pagesInfo.pagesCount}
-                        page={submissionsPage}
-                        onChange={handlePageChange}
+                    <SubmissionsGrid 
+                        isDataLoaded={} 
+                        submissions={currentSubmissions} 
+                        handlePageChange={pageChange} 
+                        options={}
                     />
-                    <List
-                        values={currentSubmissions}
-                        itemFunc={renderSubmissionRow}
-                        itemClassName={styles.submissionRow}
-                    />
+                    {/*<PaginationControls*/}
+                    {/*    count={pagesInfo.pagesCount}*/}
+                    {/*    page={submissionsPage}*/}
+                    {/*    onChange={handlePageChange}*/}
+                    {/*/>*/}
+                    {/*<List*/}
+                    {/*    values={currentSubmissions}*/}
+                    {/*    itemFunc={renderSubmissionRow}*/}
+                    {/*    itemClassName={styles.submissionRow}*/}
+                    {/*/>*/}
                 </>
             );
         },
