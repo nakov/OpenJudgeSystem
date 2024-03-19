@@ -9,8 +9,9 @@ public class ParticipantInListViewModel : IMapExplicitly
 
     public string? UserName { get; set; }
 
-    public string? Contest { get; set; }
+    public string? ContestName { get; set; }
 
+    public string? ContestId { get; set; }
     public bool IsOfficial { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -19,7 +20,7 @@ public class ParticipantInListViewModel : IMapExplicitly
                 => opt.MapFrom(x => x.Id))
             .ForMember(cvp => cvp.UserName, opt
                 => opt.MapFrom(x => x.User.UserName))
-            .ForMember(cvp => cvp.Contest, opt
+            .ForMember(cvp => cvp.ContestName, opt
                 => opt.MapFrom(x => x.Contest.Name))
             .ForMember(cvp => cvp.IsOfficial, opt
                 => opt.MapFrom(x => x.IsOfficial));

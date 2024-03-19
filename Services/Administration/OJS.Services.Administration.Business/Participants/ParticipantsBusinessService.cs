@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Participants;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +21,21 @@ public class ParticipantsBusinessService : AdministrationOperationService<Partic
         this.scoresDataService = scoresDataService;
     }
 
-    public override Task<ParticipantAdministrationModel> Create(ParticipantAdministrationModel model) => base.Create(model);
+    public override async Task<ParticipantAdministrationModel> Create(ParticipantAdministrationModel model)
+    {
+        var participant = model.Map<Participant>();
+
+        await this.participantsData.Add(participant);
+        await this.participantsData.SaveChanges();
+
+        return model;
+    }
+
+    public override async Task Delete(int id)
+    {
+        await this.participantsData.DeleteById(id);
+        await this.participantsData.SaveChanges();
+    }
 
     public async Task UpdateTotalScoreSnapshotOfParticipants()
         => await this.participantsData.UpdateTotalScoreSnapshot();

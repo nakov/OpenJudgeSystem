@@ -72,3 +72,7 @@ export const HIDE_INPUT = 'Hide Input';
 // Checkers
 export const DLL_FILE = 'Dll File';
 export const PARAMETER = 'Parameter';
+
+// Participants
+
+export const IS_OFFICIAL = 'Is Official';

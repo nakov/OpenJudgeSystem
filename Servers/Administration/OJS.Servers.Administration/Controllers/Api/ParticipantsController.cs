@@ -6,22 +6,22 @@ using OJS.Data.Models.Participants;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Participants;
+using OJS.Services.Administration.Business.Participants.GridData;
 using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
 using OJS.Services.Administration.Models.Participants;
+using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Validation;
 
 public class ParticipantsController : BaseAdminApiController<Participant, int, ParticipantInListViewModel, ParticipantAdministrationModel>
 {
-    private readonly IGridDataService<Participant> participantsGridDataService;
+    private readonly IParticipantsGridDataService participantsGridDataService;
 
     public ParticipantsController(
-        IGridDataService<Participant> participantsGridDataService,
+        IParticipantsGridDataService participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
-        ParticipantsAdministrationModelValidator validator,
+        ParticipantAdministrationModelValidator validator,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator)
         : base(
             participantsGridDataService,
