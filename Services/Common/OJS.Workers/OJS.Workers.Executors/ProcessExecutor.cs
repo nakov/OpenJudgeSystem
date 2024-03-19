@@ -6,6 +6,7 @@ namespace OJS.Workers.Executors
     using System.IO;
 
     using OJS.Workers.Common;
+    using System.ComponentModel;
 
     public abstract class ProcessExecutor : IExecutor
     {
@@ -84,7 +85,7 @@ namespace OJS.Workers.Executors
             double timeoutMultiplier);
 
         protected TaskInfo StartMemorySamplingThread(
-            IDisposable process,
+            System.Diagnostics.Process process,
             ProcessExecutionResult result)
         {
             var peakWorkingSetSize = default(long);
@@ -93,18 +94,19 @@ namespace OJS.Workers.Executors
                 MemoryIntervalBetweenTwoMemoryConsumptionRequests,
                 () =>
                 {
-                    switch (process)
+                    if (process.HasExited)
                     {
-                        case System.Diagnostics.Process systemProcess:
-                        {
-                            if (systemProcess.HasExited)
-                            {
-                                return;
-                            }
+                        return;
+                    }
 
-                            peakWorkingSetSize = systemProcess.PeakWorkingSet64;
-                            break;
-                        }
+                    try
+                    {
+                        peakWorkingSetSize = process.PeakWorkingSet64;
+                    }
+                    catch (Exception e) when (e is InvalidOperationException or Win32Exception)
+                    {
+                        // Process has exited or is not running anymore
+                        // Do nothing, as result will be calculated from the process exit time
                     }
 
                     result.MemoryUsed = Math.Max(result.MemoryUsed, peakWorkingSetSize);
@@ -125,8 +127,16 @@ namespace OJS.Workers.Executors
                         return;
                     }
 
-                    result.PrivilegedProcessorTime = process.PrivilegedProcessorTime;
-                    result.UserProcessorTime = process.UserProcessorTime;
+                    try
+                    {
+                        result.PrivilegedProcessorTime = process.PrivilegedProcessorTime;
+                        result.UserProcessorTime = process.UserProcessorTime;
+                    }
+                    catch (Exception e) when (e is InvalidOperationException or Win32Exception)
+                    {
+                        // Process has exited or is not running anymore
+                        // Do nothing, as result will be calculated from the process exit time
+                    }
                 });
 
         private void BeforeExecute()
