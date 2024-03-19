@@ -86,6 +86,7 @@ const problemResourceFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        valueFormatter: (params) => params.value.toString(),
     },
     {
         field: 'problemName',

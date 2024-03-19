@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -8,7 +9,7 @@ import { ContestVariation } from '../../../../common/contest-types';
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
-import { CONTESTS_PATH } from '../../../../common/urls/administration-urls';
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
@@ -28,13 +29,13 @@ interface IContestEditProps {
     contestId: number | null;
     isEditMode?: boolean;
     currentContest?: IContestAdministration;
-    // eslint-disable-next-line @typescript-eslint/ban-types
     onSuccess?: Function;
+    onDeleteSuccess? : Function;
 }
 
 const NAME_PROP = 'name';
 const ContestEdit = (props:IContestEditProps) => {
-    const { contestId, isEditMode = true, currentContest, onSuccess } = props;
+    const { contestId, isEditMode = true, currentContest, onSuccess, onDeleteSuccess } = props;
 
     const navigate = useNavigate();
 
@@ -60,7 +61,7 @@ const ContestEdit = (props:IContestEditProps) => {
         practicePassword: null,
         practiceStartTime: null,
         startTime: null,
-        type: 'Exercise',
+        type: getEnumMemberName(ContestVariation, ContestVariation.Exercise).toString(),
         numberOfProblemGroups: 0,
         duration: undefined,
     });
@@ -114,6 +115,16 @@ const ContestEdit = (props:IContestEditProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [ ],
     );
+
+    useEffect(() => {
+        if (contestCategories) {
+            setContest((prevState) => ({
+                ...prevState,
+                categoryId: contestCategories[0].id,
+                categoryName: contestCategories[0].name,
+            }));
+        }
+    }, [ contestCategories ]);
 
     useEffect(() => {
         if (data) {
@@ -190,6 +201,10 @@ const ContestEdit = (props:IContestEditProps) => {
             currentContestValidations.isTypeTouched = true;
             const isValid = !!Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).some((x) => x === value);
             currentContestValidations.isTypeValid = isValid;
+
+            if (value === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam).toString()) {
+                numberOfProblemGroups = 2;
+            }
             break;
         }
         case 'limitBetweenSubmissions': {
@@ -351,6 +366,13 @@ const ContestEdit = (props:IContestEditProps) => {
         }
     };
 
+    const onDelete = () => {
+        if (onDeleteSuccess) {
+            onDeleteSuccess();
+        }
+        navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`);
+    };
+
     const renderFormSubmitButtons = () => (
         isEditMode
             ? (
@@ -443,6 +465,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           helperText={(contestValidations.isOrderByTouched && !contestValidations.isOrderByValid) &&
                             CONTEST_ORDER_BY_VALIDATION}
                         />
+                        { contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
                         <TextField
                           className={formStyles.inputRow}
                           type="number"
@@ -452,14 +475,14 @@ const ContestEdit = (props:IContestEditProps) => {
                           onChange={(e) => onChange(e)}
                           InputLabelProps={{ shrink: true }}
                           name="numberOfProblemGroups"
-                          disabled={isEditMode ||
-                            contest.type !== getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam)}
+                          disabled={isEditMode}
                           error={(contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid)}
                           helperText={(
                               contestValidations.isNumberOfProblemGroupsTouched && !contestValidations.isNUmberOfProblemGroupsValid
                           ) &&
                           CONTEST_NUMBER_OF_PROBLEM_GROUPS}
                         />
+                        )}
                     </Box>
                     <Box>
                         <TextField
@@ -638,7 +661,7 @@ const ContestEdit = (props:IContestEditProps) => {
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}
-                  onSuccess={() => navigate(`${CONTESTS_PATH}`)}
+                  onSuccess={onDelete}
                   mutation={useDeleteContestMutation}
                   text={DELETE_CONFIRMATION_MESSAGE}
                 />
