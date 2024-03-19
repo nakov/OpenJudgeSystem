@@ -64,10 +64,6 @@ const RecentSubmissions = () => {
     );
 
     useEffect(() => {
-        if (isEmpty(user.id)) {
-            return;
-        }
-
         if (user.isAdmin) {
             setShouldLoadAdminUserSubmissions(true);
             setShouldLoadUnprocessedCount(true);
@@ -115,14 +111,14 @@ const RecentSubmissions = () => {
                 appDispatch(setCurrentPage(1));
 
                 setQueryParams({
-                    status: queryParams.status,
-                    page: typeKey,
+                    status: typeKey,
+                    page: 1,
                 });
 
                 setSelectedActive(typeKey);
             }
         },
-        [ appDispatch, queryParams, selectedActive ],
+        [ appDispatch, selectedActive ],
     );
 
     const renderSubmissionsStateAdminToggle = useCallback(

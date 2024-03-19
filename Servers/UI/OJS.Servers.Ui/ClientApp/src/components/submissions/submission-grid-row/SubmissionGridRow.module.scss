@@ -53,12 +53,18 @@
   justify-content: start;
 }
 
-.competeIcon {
-  margin: 0 spacings.$sp-12;
+.fromContainer {
+  display: flex;
+  flex-direction: column;
+  
+  .username {
+    margin-top: spacings.$sp-4;
+    max-width: 12vw;
+  }
 }
 
-.competeIconWrapper {
-  position: relative;
+.competeIcon {
+  margin: 0 spacings.$sp-12;
 }
 
 .executionResultContainer {
