@@ -53,11 +53,9 @@ form {
 }
 
 a:link {
-  color: colors.$primary-blue;
   text-decoration: none;
 
   &:visited {
-    color: colors.$primary-blue;
     text-decoration: none;
   }
 }
