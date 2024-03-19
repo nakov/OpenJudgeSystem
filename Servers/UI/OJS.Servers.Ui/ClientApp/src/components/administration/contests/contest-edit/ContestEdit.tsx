@@ -62,7 +62,7 @@ const ContestEdit = (props:IContestEditProps) => {
         practiceStartTime: null,
         startTime: null,
         type: getEnumMemberName(ContestVariation, ContestVariation.Exercise).toString(),
-        numberOfProblemGroups: 1,
+        numberOfProblemGroups: 0,
         duration: undefined,
     });
 
