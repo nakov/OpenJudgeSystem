@@ -21,6 +21,8 @@ export const PROBLEM_RESOURCE = 'Problem Resource';
 
 export const CREATE_NEW_RECORD = 'Create new record';
 
+export const CLASS_NAME = 'Class Name';
+
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
 export const CONTEST_ID = 'Contest Id';
@@ -66,4 +68,9 @@ export const SUBMISSION_TYPES = 'Submission Types';
 // Tests
 export const TESTS = 'Tests';
 export const HIDE_INPUT = 'Hide Input';
+
 // Problem Resources
+
+// Checkers
+export const DLL_FILE = 'Dll File';
+export const PARAMETER = 'Parameter';

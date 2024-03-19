@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
+import { checkersAdminSlice } from './features/admin/checkersAdminSLice';
 // features
 import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
@@ -52,6 +53,7 @@ const rootReducer = combineReducers({
     [testsAdminSlice.name]: testsAdminSlice.reducer,
     [themeSlice.name]: themeSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
+    [checkersAdminSlice.name]: checkersAdminSlice.reducer,
 
     // services
     [submissionsService.reducerPath]: submissionsService.reducer,
@@ -88,6 +90,7 @@ const reducersToPersist = [
     problemResourcesAdminSlice.name,
     contestCategoriesAdminSlice.name,
     testsAdminSlice.name,
+    checkersAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

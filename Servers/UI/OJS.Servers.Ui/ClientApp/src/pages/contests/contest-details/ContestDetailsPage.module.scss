@@ -45,6 +45,15 @@
     margin-bottom: spacings.$sp-18;
   }
 
+  .languagesWrapper {
+    margin: spacings.$sp-24 0;
+  }
+
+  .allowedLanguages {
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-bold;
+  }
+
   > div {
     width: 50%;
 
@@ -52,14 +61,16 @@
       margin-bottom: spacings.$sp-4;
     }
 
+    // contest details
+    &:nth-child(1) {
+      margin-right: spacings.$sp-64;
+    }
+
+    // contest problems
     &:nth-child(2) {
-      margin-left: spacings.$sp-24;
+      margin-left: spacings.$sp-64;
     }
   }
-}
-
-.actionButtonsWrapper {
-  margin: spacings.$sp-24 0;
 }
 
 .actionBtnWrapper {
@@ -68,13 +79,8 @@
   display: flex;
   margin: spacings.$sp-16 0;
 
-  >button {
+  > button {
     margin-right: spacings.$sp-12;
-  }
-
-  .disabledLink {
-    color: colors.$color-btn-disabled !important;
-    pointer-events: none !important;
   }
 
   > a {

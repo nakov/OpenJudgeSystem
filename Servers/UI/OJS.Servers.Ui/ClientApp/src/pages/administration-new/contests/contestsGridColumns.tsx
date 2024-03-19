@@ -119,6 +119,7 @@ const contestFilterableColumns: GridColDef[] = [
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
     deleteMutation: any,
+    onSuccessDelete: () => void,
 ) => [
     {
         field: 'actions',
@@ -137,6 +138,7 @@ export const returnContestsNonFilterableColumns = (
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
+                  onSuccess={onSuccessDelete}
                 />
             </div>
         ),

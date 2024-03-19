@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { useEffect, useState } from 'react';
+import { FaCheckDouble } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -22,7 +23,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
+import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import Administration from '../../../pages/administration-new/Administration';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
@@ -35,6 +36,7 @@ import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
+import AdministrationCheckersPage from '../../../pages/checkers/AdministrationCheckersPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
@@ -95,6 +97,11 @@ const administrationItems = [
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: `${SUBMISSION_TYPES_PATH}`,
+    },
+    {
+        name: 'Checkers',
+        icon: <FaCheckDouble />,
+        path: `${CHECKERS_PATH}`,
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -273,6 +280,10 @@ const AdministrationPortal = () => {
         {
             path: `${SUBMISSION_TYPES_PATH}`,
             Element: Administration,
+        },
+        {
+            path: `${CHECKERS_PATH}`,
+            Element: AdministrationCheckersPage,
         },
         {
             path: '/administration',
