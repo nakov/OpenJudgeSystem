@@ -75,6 +75,8 @@ const AdministrationContestsPage = () => {
                   ? Number(contestId)
                   : null}
               isEditMode={isEditMode}
+              onSuccess={() => onClose(isEditMode)}
+              onDeleteSuccess={() => onClose(isEditMode)}
             />
         </AdministrationModal>
     );

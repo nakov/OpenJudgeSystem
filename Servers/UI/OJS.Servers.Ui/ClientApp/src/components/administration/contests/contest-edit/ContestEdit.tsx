@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
@@ -28,13 +29,13 @@ interface IContestEditProps {
     contestId: number | null;
     isEditMode?: boolean;
     currentContest?: IContestAdministration;
-    // eslint-disable-next-line @typescript-eslint/ban-types
     onSuccess?: Function;
+    onDeleteSuccess? : Function;
 }
 
 const NAME_PROP = 'name';
 const ContestEdit = (props:IContestEditProps) => {
-    const { contestId, isEditMode = true, currentContest, onSuccess } = props;
+    const { contestId, isEditMode = true, currentContest, onSuccess, onDeleteSuccess } = props;
 
     const navigate = useNavigate();
 
@@ -61,7 +62,7 @@ const ContestEdit = (props:IContestEditProps) => {
         practiceStartTime: null,
         startTime: null,
         type: getEnumMemberName(ContestVariation, ContestVariation.Exercise).toString(),
-        numberOfProblemGroups: 2,
+        numberOfProblemGroups: 1,
         duration: undefined,
     });
 
@@ -114,6 +115,16 @@ const ContestEdit = (props:IContestEditProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [ ],
     );
+
+    useEffect(() => {
+        if (contestCategories) {
+            setContest((prevState) => ({
+                ...prevState,
+                categoryId: contestCategories[0].id,
+                categoryName: contestCategories[0].name,
+            }));
+        }
+    }, [ contestCategories ]);
 
     useEffect(() => {
         if (data) {
@@ -190,6 +201,10 @@ const ContestEdit = (props:IContestEditProps) => {
             currentContestValidations.isTypeTouched = true;
             const isValid = !!Object.keys(ContestVariation).filter((key) => isNaN(Number(key))).some((x) => x === value);
             currentContestValidations.isTypeValid = isValid;
+
+            if (value === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam).toString()) {
+                numberOfProblemGroups = 2;
+            }
             break;
         }
         case 'limitBetweenSubmissions': {
@@ -349,6 +364,13 @@ const ContestEdit = (props:IContestEditProps) => {
         if (isValidForm) {
             createContest(contest);
         }
+    };
+
+    const onDelete = () => {
+        if (onDeleteSuccess) {
+            onDeleteSuccess();
+        }
+        navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`);
     };
 
     const renderFormSubmitButtons = () => (
@@ -639,7 +661,7 @@ const ContestEdit = (props:IContestEditProps) => {
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}
-                  onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`)}
+                  onSuccess={onDelete}
                   mutation={useDeleteContestMutation}
                   text={DELETE_CONFIRMATION_MESSAGE}
                 />
