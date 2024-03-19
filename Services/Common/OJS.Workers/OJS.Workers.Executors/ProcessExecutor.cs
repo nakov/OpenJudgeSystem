@@ -14,8 +14,7 @@ namespace OJS.Workers.Executors
         protected readonly ITasksService TasksService;
 #pragma warning restore SA1401
 
-        private const int MemoryIntervalBetweenTwoMemoryConsumptionRequests = 45;
-        private const int TimeIntervalBetweenTwoTimeConsumptionRequests = 10;
+        private const int TimeIntervalBetweenTwoResourceConsumptionRequests = 10;
         private const int MinimumMemoryLimitInBytes = 5 * 1024 * 1024;
 
         private readonly int baseTimeUsed;
@@ -84,53 +83,23 @@ namespace OJS.Workers.Executors
             bool useSystemEncoding,
             double timeoutMultiplier);
 
-        protected TaskInfo StartMemorySamplingThread(
-            System.Diagnostics.Process process,
-            ProcessExecutionResult result)
-        {
-            var peakWorkingSetSize = default(long);
-
-            var memorySamplingRunInBackgroundInfo = this.TasksService.RunWithInterval(
-                MemoryIntervalBetweenTwoMemoryConsumptionRequests,
-                () =>
-                {
-                    if (process.HasExited)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        peakWorkingSetSize = process.PeakWorkingSet64;
-                    }
-                    catch (Exception e) when (e is InvalidOperationException or Win32Exception)
-                    {
-                        // Process has exited or is not running anymore
-                        // Do nothing, as result will be calculated from the process exit time
-                    }
-
-                    result.MemoryUsed = Math.Max(result.MemoryUsed, peakWorkingSetSize);
-                });
-
-            return memorySamplingRunInBackgroundInfo;
-        }
-
-        protected TaskInfo StartProcessorTimeSamplingThread(
+        protected TaskInfo StartProcessorResourceConsumptionSamplingThread(
             System.Diagnostics.Process process,
             ProcessExecutionResult result)
             => this.TasksService.RunWithInterval(
-                TimeIntervalBetweenTwoTimeConsumptionRequests,
+                TimeIntervalBetweenTwoResourceConsumptionRequests,
                 () =>
                 {
-                    if (process.HasExited)
-                    {
-                        return;
-                    }
-
                     try
                     {
+                        if (process.HasExited)
+                        {
+                            return;
+                        }
+
                         result.PrivilegedProcessorTime = process.PrivilegedProcessorTime;
                         result.UserProcessorTime = process.UserProcessorTime;
+                        result.MemoryUsed = Math.Max(result.MemoryUsed, process.PeakWorkingSet64);
                     }
                     catch (Exception e) when (e is InvalidOperationException or Win32Exception)
                     {

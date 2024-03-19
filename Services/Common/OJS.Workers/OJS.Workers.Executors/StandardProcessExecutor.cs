@@ -62,7 +62,7 @@ namespace OJS.Workers.Executors
                 process.PriorityClass = ProcessPriorityClass.High;
             }
 
-            var (memorySamplingThreadInfo, timeSamplingThreadInfo) = this.StartMemoryAndTimeSamplingThreads(process, result);
+            var timeAndMemorySamplingThreadInfo = this.StartProcessorResourceConsumptionSamplingThread(process, result);
 
             // Start reading standard output and error before writing to standard input to avoid deadlocks
             // and ensure fast reading of the output in case of a fast execution
@@ -80,6 +80,7 @@ namespace OJS.Workers.Executors
                 if (!process.HasExited)
                 {
                     process.Kill();
+                    result.ProcessWasKilled = true;
 
                     // Approach: https://msdn.microsoft.com/en-us/library/system.diagnostics.process.kill(v=vs.110).aspx#Anchor_2
                     process.WaitForExit(Constants.DefaultProcessExitTimeOutMilliseconds);
@@ -88,9 +89,14 @@ namespace OJS.Workers.Executors
                 result.Type = ProcessExecutionResultType.TimeLimit;
             }
 
-            // Close the memory and sampling check threads
-            this.CloseSamplingThread(memorySamplingThreadInfo);
-            this.CloseSamplingThread(timeSamplingThreadInfo);
+            try
+            {
+                this.TasksService.Stop(timeAndMemorySamplingThreadInfo);
+            }
+            catch (AggregateException ex)
+            {
+                _logger.Warn("AggregateException caught.", ex.InnerException);
+            }
 
             // Read the standard output and error and set the result
             result.ErrorOutput = await GetReceivedOutput(errorOutputTask);
@@ -101,12 +107,6 @@ namespace OJS.Workers.Executors
             // Report exit code and total process working time
             result.ExitCode = process.ExitCode;
             result.TimeWorked = process.ExitTime - processStartTime;
-
-            if (OsPlatformHelpers.IsWindows())
-            {
-                result.PrivilegedProcessorTime = process.PrivilegedProcessorTime;
-                result.UserProcessorTime = process.UserProcessorTime;
-            }
 
             return result;
         }
@@ -159,46 +159,6 @@ namespace OJS.Workers.Executors
             {
                 _logger.Warn("Exception caught while reading the process error output.", ex);
                 return $"Error while reading the process error output: {ex.Message}";
-            }
-        }
-
-        private (TaskInfo memorySamplingThreadInfo, TaskInfo timeSamplingThreadInfo) StartMemoryAndTimeSamplingThreads(
-            Process process, ProcessExecutionResult result)
-        {
-            if (process.HasExited)
-            {
-                return (null, null);
-            }
-
-            TaskInfo timeSamplingThreadInfo = null;
-
-            // Read memory consumption every few milliseconds to determine the peak memory usage of the process
-            var memorySamplingThreadInfo = this.StartMemorySamplingThread(process, result);
-
-            // If not on Windows, read time consumption every few milliseconds to determine the time usage of the process
-
-            if (!OsPlatformHelpers.IsWindows())
-            {
-                timeSamplingThreadInfo = this.StartProcessorTimeSamplingThread(process, result);
-            }
-
-            return (memorySamplingThreadInfo, timeSamplingThreadInfo);
-        }
-
-        private void CloseSamplingThread(TaskInfo samplingThreadInfo)
-        {
-            if (samplingThreadInfo == null)
-            {
-                return;
-            }
-
-            try
-            {
-                this.TasksService.Stop(samplingThreadInfo);
-            }
-            catch (AggregateException ex)
-            {
-                _logger.Warn("AggregateException caught.", ex.InnerException);
             }
         }
     }
