@@ -1,26 +1,21 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useSearchParams } from 'react-router-dom';
-import { MenuItem, Select } from '@mui/material';
 
-import { IContestStrategyFilter } from '../../../common/contest-types';
-import useTheme from '../../../hooks/use-theme';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import Dropdown from '../../dropdown/Dropdown';
 
 import styles from './ContestStrategies.module.scss';
 
 const ContestStrategies = () => {
     const dispatch = useAppDispatch();
     const [ searchParams ] = useSearchParams();
-    const { themeColors, getColorClassName } = useTheme();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
     const [ selectValue, setSelectValue ] = useState('');
 
     const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
-
-    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const {
         data: contestStrategies,
@@ -42,33 +37,25 @@ const ContestStrategies = () => {
         }
     }, [ selectedId ]);
 
+    const dropdownItems = useMemo(
+        () => {
+            const filteredItems = !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
+                ? (contestStrategies || []).map((el) => ({ id: el.id.toString(), name: el.name }))
+                : selectedCategory?.allowedStrategyTypes.map((el) => ({ id: el.id.toString(), name: el.name }));
+
+            return filteredItems;
+        },
+        [ contestStrategies, selectedCategory ],
+    );
+
     const removeSelectedStrategy = () => {
         dispatch(setContestStrategy(null));
     };
 
-    const menuItems: ReactNode[] = useMemo(() => {
-        if (!contestStrategies) { return []; }
-
-        const displayStrategies = !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
-            ? contestStrategies
-            : selectedCategory?.allowedStrategyTypes;
-
-        const handleStrategySelect = (s: any) => {
-            dispatch(setContestStrategy(s));
-            setSelectValue(s.id);
-        };
-
-        return (displayStrategies || []).map((item: IContestStrategyFilter) => (
-            <MenuItem
-              key={`contest-strategy-item-${item.id}`}
-              value={item.id}
-              onClick={() => handleStrategySelect(item)}
-            >
-                {item.name}
-            </MenuItem>
-        ));
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [ contestStrategies, selectedCategory?.allowedStrategyTypes ]);
+    const handleStrategySelect = (s: any) => {
+        dispatch(setContestStrategy(s));
+        setSelectValue(s.id);
+    };
 
     if (strategiesError) { return <div>Error loading strategies...</div>; }
 
@@ -77,15 +64,7 @@ const ContestStrategies = () => {
     return (
         <div className={styles.selectWrapper}>
             { selectedStrategy && <IoMdClose onClick={removeSelectedStrategy} />}
-            <Select
-              className={`${styles.contestStrategiesSelect} ${textColorClassName}`}
-              value={selectValue}
-              autoWidth
-              displayEmpty
-            >
-                <MenuItem key="strategy-default-item" value="" selected disabled>Select strategy</MenuItem>
-                {[ ...menuItems ]}
-            </Select>
+            <Dropdown dropdownItems={dropdownItems || []} value={selectValue} handleDropdownItemClick={handleStrategySelect} />
         </div>
     );
 };

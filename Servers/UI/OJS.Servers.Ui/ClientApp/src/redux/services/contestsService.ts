@@ -40,6 +40,20 @@ export const contestsService = createApi({
         }),
         getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
         getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+        getContestRegisteredUser: builder.query<any, any>({ query: ({ id, isOfficial }) => ({
+                url: `/Contests/Register/${id}`,
+                params: {
+                    isOfficial
+                },
+            }),
+        }),
+        getContestUserParticipation: builder.query<any, any>({ query: ({ id, isOfficial }) => ({
+                url: `/Compete/Index/${id}`,
+                params: {
+                    isOfficial
+                },
+            }),
+        }),
     }),
 });
 
@@ -49,4 +63,7 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
+    // useGetContestRegisteredUserQuery,
+    useLazyGetContestRegisteredUserQuery,
+    useGetContestUserParticipationQuery,
 } = contestsService;

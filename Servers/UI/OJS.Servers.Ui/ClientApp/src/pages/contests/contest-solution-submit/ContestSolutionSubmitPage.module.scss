@@ -24,16 +24,17 @@
 .contestSolutionSubmitWrapper {
   @extend %font-family-roboto;
 
-  padding: spacings.$sp-64;
+  padding: spacings.$sp-16 spacings.$sp-64;
 
   .title {
     font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold;
-    margin: spacings.$sp-24 0;
+    margin-top: spacings.$sp-32;
   }
 
   .problemsAndEditorWrapper {
     display: flex;
+    margin-top: spacings.$sp-64;
   }
 
   .submissionsWrapper {
@@ -48,7 +49,7 @@
 }
 
 .selectedProblemWrapper {
-  margin-left: spacings.$sp-16;
+  margin-left: spacings.$sp-24;
   width: 90%;
 
   .problemName {
@@ -71,7 +72,7 @@
       display: flex;
       margin: spacings.$sp-24 0;
 
-      > div {
+      > a {
         align-items: center;
         color: colors.$secondary-green;
         cursor: pointer;

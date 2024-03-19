@@ -43,27 +43,6 @@
     color: colors.$primary-blue !important;
     font-weight: font-weights.$font-weight-bold;
   }
-
-  &.closedProblems {
-    overflow-y: hidden !important;
-    padding-left: spacings.$sp-4 !important;
-    padding-right: spacings.$sp-4 !important;
-    width: 0 !important;
-
-    .problemsHeader {
-      border-bottom: transparent !important;
-    }
-
-    .problem {
-      border-bottom: transparent !important;
-    }
-  }
-}
-
-.shrinkIcon {
-  cursor: pointer !important;
-  margin-left: spacings.$sp-8;
-  margin-top: spacings.$sp-8;
 }
 
 .resultsSection {

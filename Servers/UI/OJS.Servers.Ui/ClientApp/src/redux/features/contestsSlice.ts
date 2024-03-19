@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable prefer-destructuring */
+/* eslint-disable import/group-exports */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import {IContestCategory, IContestDetailsResponseType, IProblemType} from '../../common/types';
+import { IContestCategory, IContestDetailsResponseType, IProblemType } from '../../common/types';
 
 interface IContestState {
     selectedCategory: IContestCategory | null;
@@ -60,14 +61,13 @@ export const contestSlice = createSlice({
     },
 });
 
-// eslint-disable-next-line import/group-exports,prefer-destructuring
 export const {
     setContestDetails,
     setContestCategory,
     setContestStrategy,
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
-    setSelectedContestDetailsProblem
+    setSelectedContestDetailsProblem,
     setContestCategories,
 } = contestSlice.actions;
 

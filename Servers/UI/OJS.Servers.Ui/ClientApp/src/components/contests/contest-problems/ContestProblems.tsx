@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from 'react-icons/md';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IProblemType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import IconSize from '../../guidelines/icons/common/icon-sizes';
-import Icon from '../../guidelines/icons/Icon';
 
 import styles from './ContestProblems.module.scss';
 
@@ -22,8 +19,6 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
-
-    const [ isOpened, setIsOpened ] = useState<boolean>(true);
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
     const darkBackgroundClassName = getColorClassName(themeColors.baseColor500);
@@ -41,10 +36,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
     return (
         <div>
             <div className={styles.wrapper}>
-                <div className={`${styles.problemsWrapper} ${isOpened
-                    ? ''
-                    : styles.closedProblems} ${backgroundColorClassName}`}
-                >
+                <div className={`${styles.problemsWrapper} ${backgroundColorClassName}`}>
                     <div className={styles.problemsHeader} style={{ borderBottom: `1px solid ${themeColors.textColor}` }}>
                         <div>Tasks</div>
                         <div>Points</div>
@@ -61,7 +53,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                             >
                                 <div>{problem.name}</div>
                                 <div>
-                                    {problem.points}
+                                    {problem.points || 0}
                                     /
                                     {problem.maximumPoints}
                                 </div>
@@ -69,15 +61,6 @@ const ContestProblems = (props: IContestProblemsProps) => {
                         );
                     })}
                 </div>
-                <Icon
-                  color={themeColors.textColor}
-                  size={IconSize.Large}
-                  className={styles.shrinkIcon}
-                  onClick={() => setIsOpened(!isOpened)}
-                  Component={isOpened
-                      ? MdKeyboardDoubleArrowLeft
-                      : MdKeyboardDoubleArrowRight}
-                />
             </div>
             <div className={`${styles.resultsSection} ${darkBackgroundClassName}`} onClick={() => navigate('/')}>Show all results</div>
         </div>
