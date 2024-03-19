@@ -62,43 +62,14 @@ namespace OJS.Workers.Executors
                 process.PriorityClass = ProcessPriorityClass.High;
             }
 
-            try
-            {
-                // Write to standard input using another thread
-                await process.StandardInput.WriteLineAsync(inputData);
-                await process.StandardInput.FlushAsync();
-            }
-            catch (Exception ex)
-            {
-                result.ErrorOutput = $"Exception in writing to standard input. {ex.Message}";
-                _logger.Error($"Exception in writing to standard input with input data: {inputData}", ex);
-            }
-            finally
-            {
-                process.StandardInput.Close();
-            }
+            var (memorySamplingThreadInfo, timeSamplingThreadInfo) = this.StartMemoryAndTimeSamplingThreads(process, result);
 
-            // Read standard output using another thread to prevent process locking (waiting us to empty the output buffer)
-            var processOutputTask = process
-                .StandardOutput
-                .ReadToEndAsync()
-                .ContinueWith(x => result.ReceivedOutput = x.Result);
+            // Start reading standard output and error before writing to standard input to avoid deadlocks
+            // and ensure fast reading of the output in case of a fast execution
+            var processOutputTask = process.StandardOutput.ReadToEndAsync();
+            var errorOutputTask = process.StandardError.ReadToEndAsync();
 
-            // Read standard error using another thread
-            var errorOutputTask = process
-                .StandardError
-                .ReadToEndAsync()
-                .ContinueWith(x => result.ErrorOutput = x.Result);
-
-            // Read memory consumption every few milliseconds to determine the peak memory usage of the process
-            var memorySamplingThreadInfo = this.StartMemorySamplingThread(process, result);
-
-            // If not on Windows, read time consumption every few milliseconds to determine the time usage of the process
-            TaskInfo timeSamplingThreadInfo = null;
-            if (!OsPlatformHelpers.IsWindows())
-            {
-                timeSamplingThreadInfo = this.StartProcessorTimeSamplingThread(process, result);
-            }
+            await WriteInputToProcess(process, inputData);
 
             // Wait the process to complete. Kill it after (timeLimit * 1.5) milliseconds if not completed.
             // We are waiting the process for more than defined time and after this we compare the process time with the real time limit.
@@ -117,56 +88,13 @@ namespace OJS.Workers.Executors
                 result.Type = ProcessExecutionResultType.TimeLimit;
             }
 
-            // Close the memory check thread
-            try
-            {
-                this.TasksService.Stop(memorySamplingThreadInfo);
-            }
-            catch (AggregateException ex)
-            {
-                _logger.Warn("AggregateException caught.", ex.InnerException);
-            }
+            // Close the memory and sampling check threads
+            this.CloseSamplingThread(memorySamplingThreadInfo);
+            this.CloseSamplingThread(timeSamplingThreadInfo);
 
-            // Close the time sampling thread if open
-            if (timeSamplingThreadInfo != null)
-            {
-                try
-                {
-                    this.TasksService.Stop(timeSamplingThreadInfo);
-                }
-                catch (AggregateException ex)
-                {
-                    _logger.Warn("AggregateException caught.", ex.InnerException);
-                }
-            }
-
-            // Close the task that gets the process error output
-            try
-            {
-                errorOutputTask.Wait(TimeBeforeClosingOutputStreams);
-            }
-            catch (AggregateException ex)
-            {
-                _logger.Warn("AggregateException caught.", ex.InnerException);
-            }
-            catch (Exception ex)
-            {
-                result.ErrorOutput = $"Error while reading the process streams. {ex.Message}";
-            }
-
-            // Close the task that gets the process output
-            try
-            {
-                processOutputTask.Wait(TimeBeforeClosingOutputStreams);
-            }
-            catch (AggregateException ex)
-            {
-                _logger.Warn("AggregateException caught.", ex.InnerException);
-            }
-            catch (Exception ex)
-            {
-                result.ErrorOutput = $"Error while reading the process streams. {ex.Message}";
-            }
+            // Read the standard output and error and set the result
+            result.ErrorOutput = await GetReceivedOutput(errorOutputTask);
+            result.ReceivedOutput = await GetReceivedOutput(processOutputTask);
 
             Debug.Assert(process.HasExited, "Standard process didn't exit!");
 
@@ -181,6 +109,97 @@ namespace OJS.Workers.Executors
             }
 
             return result;
+        }
+
+        private static async Task WriteInputToProcess(Process process, string inputData)
+        {
+            try
+            {
+                await process.StandardInput.WriteLineAsync(inputData);
+                await process.StandardInput.FlushAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Exception in writing to standard input with input data: {inputData}", ex);
+            }
+            finally
+            {
+                // Close the standard input stream to signal the process that we have finished writing to it
+                try
+                {
+                    // Check if the process has exited before closing the standard input, preventing broken pipe exceptions
+                    if (!process.HasExited)
+                    {
+                        process.StandardInput.Close();
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Warn("Exception caught while closing the standard input.", e);
+                }
+            }
+        }
+
+        private static async Task<string> GetReceivedOutput(Task<string> outputTask)
+        {
+            try
+            {
+                // Read the output with a timeout, ensuring that will not wait indefinitely
+                var timeoutTask = Task.Delay(TimeBeforeClosingOutputStreams);
+                var completedTask = await Task.WhenAny(outputTask, timeoutTask);
+                if (completedTask == outputTask)
+                {
+                    // Only awaits if the task completed before the timeout
+                    return await outputTask;
+                }
+
+                return "Error output was too large and was not read.";
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn("Exception caught while reading the process error output.", ex);
+                return $"Error while reading the process error output: {ex.Message}";
+            }
+        }
+
+        private (TaskInfo memorySamplingThreadInfo, TaskInfo timeSamplingThreadInfo) StartMemoryAndTimeSamplingThreads(
+            Process process, ProcessExecutionResult result)
+        {
+            if (process.HasExited)
+            {
+                return (null, null);
+            }
+
+            TaskInfo timeSamplingThreadInfo = null;
+
+            // Read memory consumption every few milliseconds to determine the peak memory usage of the process
+            var memorySamplingThreadInfo = this.StartMemorySamplingThread(process, result);
+
+            // If not on Windows, read time consumption every few milliseconds to determine the time usage of the process
+
+            if (!OsPlatformHelpers.IsWindows())
+            {
+                timeSamplingThreadInfo = this.StartProcessorTimeSamplingThread(process, result);
+            }
+
+            return (memorySamplingThreadInfo, timeSamplingThreadInfo);
+        }
+
+        private void CloseSamplingThread(TaskInfo samplingThreadInfo)
+        {
+            if (samplingThreadInfo == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.TasksService.Stop(samplingThreadInfo);
+            }
+            catch (AggregateException ex)
+            {
+                _logger.Warn("AggregateException caught.", ex.InnerException);
+            }
         }
     }
 }
