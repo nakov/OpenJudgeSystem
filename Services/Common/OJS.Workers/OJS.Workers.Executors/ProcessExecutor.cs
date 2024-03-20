@@ -108,6 +108,11 @@ namespace OJS.Workers.Executors
                     }
                 });
 
+        private static bool IsExitCodeCritical(int exitCode)
+            =>
+                exitCode is <= -1 // Negative exit code - process was killed
+                or 139; // SIGSEGV signal from Unix OS - invalid memory reference (segmentation fault)
+
         private void BeforeExecute()
         {
             this.timeLimit += this.baseTimeUsed;
@@ -136,9 +141,14 @@ namespace OJS.Workers.Executors
             }
 
             if (!string.IsNullOrEmpty(result.ErrorOutput) ||
-                (dependOnExitCodeForRunTimeError && result.ExitCode < -1))
+                (dependOnExitCodeForRunTimeError && IsExitCodeCritical(result.ExitCode)))
             {
                 result.Type = ProcessExecutionResultType.RunTimeError;
+
+                if (string.IsNullOrEmpty(result.ErrorOutput))
+                {
+                    result.ErrorOutput = $"Critical runtime error has occured. Error code: {result.ExitCode}";
+                }
             }
 
             result.ApplyTimeAndMemoryOffset(this.baseTimeUsed, this.baseMemoryUsed);
