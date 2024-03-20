@@ -14,7 +14,7 @@ import concatClassNames from '../../../utils/class-names';
 import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import {
-    encodeUsernameAsUrlParam,
+    encodeAsUrlParam,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
     getUserProfileInfoUrlByUsername,
@@ -137,7 +137,7 @@ const SubmissionGridRow = ({
             <LinkButton
               type={LinkButtonType.plain}
               size={ButtonSize.none}
-              to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(usernameFromSubmission))}
+              to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(usernameFromSubmission))}
               text={usernameFromSubmission}
               internalClassName={styles.redirectButton}
             />

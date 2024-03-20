@@ -356,7 +356,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     //     return Task.CompletedTask;
     // }
 
-    public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page)
+    public async Task<PagedResult<TServiceModel>> GetByUser<TServiceModel>(
+        string? username,
+        int page,
+        int itemsInPage = DefaultSubmissionsPerPage)
     {
         var user = await this.usersBusiness.GetUserProfileByUsername(username);
 
@@ -366,9 +369,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .ToEnumerableAsync();
 
         return await this.submissionsData
-            .GetLatestSubmissionsByUserParticipations<SubmissionForProfileServiceModel>(
+            .GetLatestSubmissionsByUserParticipations<TServiceModel>(
                 userParticipantsIds.MapCollection<int?>(),
-                DefaultSubmissionsPerPage,
+                itemsInPage,
                 page);
     }
 

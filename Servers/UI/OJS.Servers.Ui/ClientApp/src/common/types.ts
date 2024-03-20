@@ -25,6 +25,20 @@ interface IPublicSubmissionContest {
     name: string;
 }
 
+interface IUserProfileType {
+    id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    city?: string;
+    age?: number;
+}
+
+interface IUsersState {
+    profile: IUserProfileType | null;
+}
+
 interface IPublicSubmissionUser {
     id: string;
     username: string;
@@ -43,6 +57,7 @@ interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
 
 interface IRecentSubmissionsReduxState {
     latestSubmissions: IPagedResultType<IPublicSubmission>;
+    profileSubmissions: IPagedResultType<IPublicSubmission>;
     currentPage: number;
 }
 
@@ -590,6 +605,8 @@ export type {
     IPagedResultType,
     IUserType,
     IPage,
+    IUserProfileType,
+    IUsersState,
     IUserResponseType,
     IUserPermissionsType,
     IContestModalInfoType,

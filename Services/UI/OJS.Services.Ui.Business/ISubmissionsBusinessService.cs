@@ -24,7 +24,10 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page);
+        Task<PagedResult<TServiceModel>> GetByUser<TServiceModel>(
+            string? username,
+            int page,
+            int itemsInPage = DefaultSubmissionsPerPage);
 
         Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId);
 

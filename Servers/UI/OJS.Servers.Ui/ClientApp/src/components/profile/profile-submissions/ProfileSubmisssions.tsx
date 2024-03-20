@@ -8,15 +8,16 @@ import isNil from "lodash/isNil";
 import Heading, {HeadingType} from "../../guidelines/headings/Heading";
 import {flexCenterObjectStyles} from "../../../utils/object-utils";
 import SpinningLoader from "../../guidelines/spinning-loader/SpinningLoader";
-import List from "../../guidelines/lists/List";
 import isEmpty from "lodash/isEmpty";
-import {IPublicSubmission} from "../../../common/types";
+import { IPublicSubmission } from "../../../common/types";
 import SubmissionGridRow from "../../submissions/submission-grid-row/SubmissionGridRow";
-import PaginationControls from "../../guidelines/pagination/PaginationControls";
-import Button, {ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
-import {usePages} from "../../../hooks/use-pages";
-import {useUserProfileSubmissions} from "../../../hooks/submissions/use-profile-submissions";
+import Button, { ButtonSize, ButtonType} from "../../guidelines/buttons/Button";
+import { usePages } from "../../../hooks/use-pages";
+import { useUserProfileSubmissions } from "../../../hooks/submissions/use-profile-submissions";
 import SubmissionsGrid, {ISubmissionsGridOptions} from "../../submissions/submissions-grid/SubmissionsGrid";
+import { useGetUserSubmissionsQuery } from "../../../redux/services/submissionsService";
+import {useAppDispatch, useAppSelector} from "../../../redux/store";
+import {setProfileSubmissions} from "../../../redux/features/submissionsSlice";
 
 const defaultState = {
     state: {
@@ -28,15 +29,38 @@ const defaultState = {
 const ProfileSubmissions = () => {
     const {
         state: { usernameForProfile,
-            userSubmissions,
             userByContestSubmissions,
-            userSubmissionsLoading,
             userSubmissionsByContestLoading,
             menuItems},
         actions: { initiateUserSubmissionsForProfileQuery,
             initiateSubmissionsByContestForProfileQuery,
         getDecodedUsernameFromProfile},
     } = useUserProfileSubmissions();
+    
+    const dispatch = useAppDispatch();
+
+    const { profile } = useAppSelector((state) => state.users);
+    
+    const {
+        profileSubmissions,
+        currentPage,
+    } = useAppSelector((state) => state.submissions);
+    
+    const {
+        data: userSubmissions, 
+        isLoading: userSubmissionsLoading
+    } = useGetUserSubmissionsQuery({
+        username: profile?.userName!,
+        page: 1
+    }, {
+        skip: isNil(profile)
+    });
+    
+    useEffect(() => {
+        if (!isNil(userSubmissions)) {
+            dispatch(setProfileSubmissions(userSubmissions));
+        }
+    }, [ userSubmissions ])
 
     const {
         state: { pagesInfo },
@@ -175,7 +199,7 @@ const ProfileSubmissions = () => {
                 );
             }
 
-            if (currentSubmissions.length === 0) {
+            if (profileSubmissions.totalItemsCount === 0) {
                 return (
                     <div className={styles.noSubmissionsFound}>
                         No submissions found.
@@ -186,27 +210,23 @@ const ProfileSubmissions = () => {
             return (
                 <>
                     <SubmissionsGrid 
-                        isDataLoaded={} 
-                        submissions={currentSubmissions} 
+                        isDataLoaded={!userSubmissionsLoading} 
+                        submissions={profileSubmissions} 
                         handlePageChange={pageChange} 
-                        options={}
+                        options={{
+                            showTaskDetails: true,
+                            showDetailedResults: true,
+                            showCompeteMarker: false,
+                            showSubmissionTypeInfo: false,
+                            showParticipantUsername: false,
+                        }}
                     />
-                    {/*<PaginationControls*/}
-                    {/*    count={pagesInfo.pagesCount}*/}
-                    {/*    page={submissionsPage}*/}
-                    {/*    onChange={handlePageChange}*/}
-                    {/*/>*/}
-                    {/*<List*/}
-                    {/*    values={currentSubmissions}*/}
-                    {/*    itemFunc={renderSubmissionRow}*/}
-                    {/*    itemClassName={styles.submissionRow}*/}
-                    {/*/>*/}
                 </>
             );
         },
         [
             currentSubmissions,
-            userSubmissions,
+            profileSubmissions,
             userByContestSubmissions,
             userSubmissionsLoading,
             renderSubmissionRow,

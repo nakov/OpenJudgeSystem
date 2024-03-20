@@ -1,128 +1,82 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import Heading from '../../components/guidelines/headings/Heading';
+import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
-import ProfileContestParticipations
-    from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
 import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
-import { useUserProfileSubmissions } from '../../hooks/submissions/use-profile-submissions';
 import { usePageTitles } from '../../hooks/use-page-titles';
-import { useUsers } from '../../hooks/use-users';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
-import isNilOrEmpty from '../../utils/check-utils';
-import { flexCenterObjectStyles } from '../../utils/object-utils';
-import { decodeUsernameFromUrlParam } from '../../utils/urls';
-import NotFoundPage from '../not-found/NotFoundPage';
+import { setProfile } from '../../redux/features/usersSlice';
+import { useGetProfileQuery } from '../../redux/services/usersService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import { decodeFromUrlParam } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
-// import Tabs from '../../components/guidelines/tabs/Tabs';
-
 const ProfilePage = () => {
-    const {
-        state: {
-            myProfile,
-            isProfileInfoLoaded,
-            isProfileInfoLoading,
-            isGetProfileQueryInitiated,
-        },
-        actions: {
-            getProfile,
-            clearUserProfileInformation,
-        },
-    } = useUsers();
-    const { internalUser } =
-        useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
-    const { state: { usernameForProfile }, actions: { setUsernameForProfile } } = useUserProfileSubmissions();
+    const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
+    const { profile } = useAppSelector((reduxState) => reduxState.users);
+
+    const [
+        currentUserIsProfileOwner,
+        setCurrentUserIsProfileOwner,
+    ] = useState<boolean>(false);
+
     const { actions: { setPageTitle } } = usePageTitles();
-    const { username } = useParams();
-    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
+    const { usernameFromUrl } = useParams();
+    const dispatch = useAppDispatch();
+
+    const {
+        data: profileInfo,
+        isLoading: isProfileInfoLoading,
+    } = useGetProfileQuery({
+        username: !isNil(usernameFromUrl)
+            ? decodeFromUrlParam(usernameFromUrl)
+            : internalUser.userName,
+    });
 
     useEffect(
         () => {
-            if (!isEmpty(myProfile.userName) || isGetProfileQueryInitiated || isProfileInfoLoading) {
+            if (isNil(profileInfo)) {
                 return;
             }
 
-            const usernameParam = !isNil(username)
-                ? username
-                : internalUser.userName;
-
-            setUsernameForProfile(usernameParam);
-            getProfile(decodeUsernameFromUrlParam(usernameParam));
+            dispatch(setProfile(profileInfo));
+            setPageTitle(`${profileInfo.userName}'s profile`);
         },
-        [ getProfile, myProfile.userName, internalUser.userName, setUsernameForProfile,
-            username, isGetProfileQueryInitiated, isProfileInfoLoading ],
+        [ dispatch, profileInfo, setPageTitle ],
     );
 
-    useEffect(
-        () => {
-            if (!isProfileInfoLoaded || isEmpty(myProfile.userName)) {
-                return;
-            }
+    useEffect(() => {
+        if (!isLoggedIn || isNil(profile)) {
+            return;
+        }
 
-            setPageTitle(`${usernameForProfile}'s profile`);
-        },
-        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
-    );
+        setCurrentUserIsProfileOwner(profile.userName === internalUser.userName);
+    }, [ internalUser, profile, isLoggedIn ]);
 
-    useEffect(
-        () => {
-            if (isEmpty(myProfile.userName)) {
-                return;
-            }
-
-            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameForProfile) === internalUser.userName);
-        },
-        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile, internalUser.userName ],
-    );
-
-    useEffect(
-        () => () => {
-            clearUserProfileInformation();
-        },
-        [ clearUserProfileInformation ],
-    );
-
-    const renderUsernameHeading = useCallback(
-        () => {
-            const usernameForHeading = isEmpty(myProfile.userName)
-                ? username
-                : myProfile.userName;
-
-            return isNilOrEmpty(username)
-                ? (
-                    <Heading>Profile</Heading>
-                )
-                : (
-                    <Heading>
-                        {usernameForHeading}
-                        &apos;s
-                        profile
-                    </Heading>
-                );
-        },
-        [ myProfile.userName, username ],
-    );
-
-    const renderPage = useCallback(
-        () => (isEmpty(myProfile.userName)
-            ? <NotFoundPage />
+    return (
+        isProfileInfoLoading || isNil(profile)
+            ? <SpinningLoader />
             : (
                 <>
-                    {renderUsernameHeading()}
+                    <PageBreadcrumbs
+                      keyPrefix="profile"
+                      items={[
+                            {
+                                text: 'My Profile',
+                                to: '/profile',
+                            } as IPageBreadcrumbsItem,
+                      ]}
+                    />
                     <ProfileAboutInfo
-                      userProfile={myProfile}
+                      userProfile={profile}
                       isUserAdmin={internalUser.isAdmin}
                       isUserProfileOwner={currentUserIsProfileOwner}
                     />
                     {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
-                    <ProfileContestParticipations />
+                    {/* <ProfileContestParticipations /> */}
                     {/* Tabs will be hidden for alpha version,
                          as it is not production ready yet */}
                     {/* <Tabs */}
@@ -132,17 +86,7 @@ const ProfilePage = () => {
                     {/* /> */}
                 </>
             )
-        ),
-        [ myProfile, renderUsernameHeading, internalUser.isAdmin, internalUser.canAccessAdministration, currentUserIsProfileOwner ],
     );
-
-    return isProfileInfoLoaded && !isProfileInfoLoading
-        ? renderPage()
-        : (
-            <div style={{ ...flexCenterObjectStyles }}>
-                <SpinningLoader />
-            </div>
-        );
 };
 
 export default makePrivate(setLayout(ProfilePage));

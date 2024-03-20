@@ -45,13 +45,17 @@ public class SubmissionsController : BaseApiController
     /// </summary>
     /// <param name="username">Username of the profile's owner.</param>
     /// <param name="page">The current page number.</param>
+    /// <param name="itemsPerPage">Items count per page in paged result.</param>
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionForProfileResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetForProfile([FromQuery] string username, [FromQuery]int page)
+    [ProducesResponseType(typeof(IEnumerable<AdminPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissions(
+        [FromQuery] string username,
+        [FromQuery] int page,
+        [FromQuery] int itemsPerPage = 5)
         => await this.submissionsBusiness
-            .GetForProfileByUser(username, page)
-            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
+            .GetByUser<AdminPublicSubmissionsServiceModel>(username, page, itemsPerPage)
+            .Map<PagedResultResponse<AdminPublicSubmissionsResponseModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -63,11 +67,11 @@ public class SubmissionsController : BaseApiController
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForProfileResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<AdminPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissionsForProfileByContest([FromQuery] string username, [FromQuery] int page, [FromQuery] int contestId)
         => await this.submissionsBusiness
             .GetForProfileByUserAndContest(username, page, contestId)
-            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
+            .Map<PagedResultResponse<AdminPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
     /// <summary>

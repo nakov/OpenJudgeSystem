@@ -73,7 +73,7 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
-interface IGetUserSubmissionsForProfileUrlParams {
+interface IGetUserSubmissionsUrlParams {
     username: string;
     page: number;
 }
@@ -152,7 +152,7 @@ export type {
     IRetestSubmissionUrlParams,
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
-    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,

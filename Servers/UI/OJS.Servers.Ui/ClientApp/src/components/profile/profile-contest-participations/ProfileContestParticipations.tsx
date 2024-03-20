@@ -8,11 +8,10 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
-import { useUsers } from '../../../hooks/use-users';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { DEFAULT_ROWS_PER_PAGE } from '../../../utils/constants';
 import { formatDate } from '../../../utils/dates';
-import { decodeUsernameFromUrlParam } from '../../../utils/urls';
+import { decodeFromUrlParam } from '../../../utils/urls';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 
 const columns: GridColDef[] = [
@@ -60,7 +59,9 @@ const ProfileContestParticipations = () => {
         state: { userParticipations },
         actions: { getUserParticipations },
     } = useParticipations();
-    const { state: { isProfileInfoLoaded, myProfile } } = useUsers();
+    // TODO: WIP
+    const isProfileInfoLoaded = true;
+    const myProfile = {};
     const { username } = useParams();
 
     useEffect(
@@ -77,7 +78,7 @@ const ProfileContestParticipations = () => {
                 ? username
                 : myProfile.userName;
 
-            getUserParticipations(decodeUsernameFromUrlParam(usernameParam));
+            getUserParticipations(decodeFromUrlParam(usernameParam));
         },
         [ isProfileInfoLoaded, getUserParticipations, user.userName, myProfile.userName, username, userParticipations ],
     );
