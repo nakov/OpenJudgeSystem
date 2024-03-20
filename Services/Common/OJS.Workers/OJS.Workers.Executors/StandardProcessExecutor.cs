@@ -62,7 +62,7 @@ namespace OJS.Workers.Executors
                 process.PriorityClass = ProcessPriorityClass.High;
             }
 
-            var timeAndMemorySamplingThreadInfo = this.StartProcessorResourceConsumptionSamplingThread(process, result);
+            var resourceConsumptionSamplingThread = this.StartResourceConsumptionSamplingThread(process, result);
 
             // Start reading standard output and error before writing to standard input to avoid deadlocks
             // and ensure fast reading of the output in case of a fast execution
@@ -91,7 +91,7 @@ namespace OJS.Workers.Executors
 
             try
             {
-                this.TasksService.Stop(timeAndMemorySamplingThreadInfo);
+                this.TasksService.Stop(resourceConsumptionSamplingThread);
             }
             catch (AggregateException ex)
             {

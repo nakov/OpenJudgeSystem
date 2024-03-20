@@ -83,7 +83,7 @@ namespace OJS.Workers.Executors
             bool useSystemEncoding,
             double timeoutMultiplier);
 
-        protected TaskInfo StartProcessorResourceConsumptionSamplingThread(
+        protected TaskInfo StartResourceConsumptionSamplingThread(
             System.Diagnostics.Process process,
             ProcessExecutionResult result)
             => this.TasksService.RunWithInterval(
