@@ -22,7 +22,7 @@ using static OJS.Services.Administration.Models.AdministrationConstants;
 [Authorize(Roles = GlobalConstants.Roles.AdministratorOrLecturer)]
 [TypeFilter(typeof(EntityPermissionsFilter))]
 public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateModel> : BaseApiController
-    where TEntity : class
+    where TEntity : class, IEntity<TId>
     where TUpdateModel : BaseAdministrationModel<TId>
 {
     private readonly IGridDataService<TEntity> gridDataService;

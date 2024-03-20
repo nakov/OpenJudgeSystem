@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 public abstract class AdministrationOperationService<TEntity, TId, TUpdateModel>
     : IAdministrationOperationService<TEntity, TId, TUpdateModel>
-    where TEntity : class
+    where TEntity : class, IEntity<TId>
 {
     public virtual Task<TUpdateModel> Get(TId id) => throw new System.NotImplementedException();
 
