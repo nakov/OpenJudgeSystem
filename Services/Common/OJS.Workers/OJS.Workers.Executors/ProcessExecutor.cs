@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace OJS.Workers.Executors
+﻿namespace OJS.Workers.Executors
 {
     using System;
     using System.Collections.Generic;
@@ -43,8 +42,8 @@ namespace OJS.Workers.Executors
             string inputData,
             int processTimeLimit,
             int processMemoryLimit,
-            IEnumerable<string> executionArguments = null,
-            string workingDirectory = null,
+            IEnumerable<string>? executionArguments = null,
+            string? workingDirectory = null,
             bool useProcessTime = false,
             bool useSystemEncoding = false,
             bool dependOnExitCodeForRunTimeError = false,
@@ -78,8 +77,8 @@ namespace OJS.Workers.Executors
             string fileName,
             string inputData,
             int timeLimit,
-            IEnumerable<string> executionArguments,
-            string workingDirectory,
+            IEnumerable<string>? executionArguments,
+            string? workingDirectory,
             bool useSystemEncoding,
             double timeoutMultiplier);
 
