@@ -15,20 +15,19 @@
     {
         private const int TimeBeforeClosingOutputStreams = 100;
 
-#pragma warning disable SA1309
-        private static ILog _logger;
-#pragma warning restore SA1309
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(StandardProcessExecutor));
 
         public StandardProcessExecutor(int baseTimeUsed, int baseMemoryUsed, ITasksService tasksService)
             : base(baseTimeUsed, baseMemoryUsed, tasksService)
-            => _logger = LogManager.GetLogger(typeof(StandardProcessExecutor));
+        {
+        }
 
         protected override async Task<ProcessExecutionResult> InternalExecute(
             string fileName,
             string inputData,
             int timeLimit,
             IEnumerable<string>? executionArguments,
-            string workingDirectory,
+            string? workingDirectory,
             bool useSystemEncoding,
             double timeoutMultiplier)
         {
@@ -94,7 +93,7 @@
             }
             catch (AggregateException ex)
             {
-                _logger.Warn("AggregateException caught.", ex.InnerException);
+                Logger.Warn("AggregateException caught.", ex.InnerException);
             }
 
             // Read the standard output and error and set the result
@@ -119,7 +118,7 @@
             }
             catch (Exception ex)
             {
-                _logger.Error($"Exception in writing to standard input with input data: {inputData}", ex);
+                Logger.Error($"Exception in writing to standard input with input data: {inputData}", ex);
             }
             finally
             {
@@ -134,7 +133,7 @@
                 }
                 catch (Exception e)
                 {
-                    _logger.Warn("Exception caught while closing the standard input.", e);
+                    Logger.Warn("Exception caught while closing the standard input.", e);
                 }
             }
         }
@@ -156,7 +155,7 @@
             }
             catch (Exception ex)
             {
-                _logger.Warn("Exception caught while reading the process error output.", ex);
+                Logger.Warn("Exception caught while reading the process error output.", ex);
                 return $"Error while reading the {outputName} of the underlying process: {ex.Message}";
             }
         }
