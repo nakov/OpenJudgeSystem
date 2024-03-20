@@ -5,7 +5,7 @@ using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 
 public interface IAdministrationOperationService<TEntity, in TId, TUpdateModel> : IService
-    where TEntity : class, IEntity<TId>
+    where TEntity : class
 {
     Task<TUpdateModel> Get(TId id);
 

@@ -242,13 +242,6 @@ interface IIndexContestsType {
     maxPoints: number;
 }
 
-interface IParticiapntsInContestView {
-    id:number;
-    userName:string;
-    contest:string;
-    isOfficial:boolean;
-}
-
 interface IContestModalInfoType {
     id: number;
     name: string;
@@ -537,6 +530,7 @@ interface IRootStore {
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
     adminCheckers: IAdminSlice;
+    adminParticipants: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -574,6 +568,28 @@ interface ICheckerAdministrationModel {
     description: string | null;
 }
 
+interface IParticipantInListModel {
+    id: number;
+    userName: string;
+    contestName: string;
+    contestId: number;
+    isOfficial: boolean;
+}
+
+interface IParticipantAdministrationModel {
+    id: number;
+    userName: string;
+    contestId: number;
+    contestName: string;
+    userId: string;
+    isOfficial: boolean;
+}
+
+interface IUserAutocompleteData {
+id: string;
+userName: string;
+
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -604,7 +620,6 @@ export type {
     IAdminContestResponseType,
     IContestAdministration,
     IFilterColumn,
-    IParticiapntsInContestView,
     ISubmissionsAdminGridViewType,
     ISubmissionForProcessingAdminGridViewType,
     IAdminSlice,
@@ -631,4 +646,7 @@ export type {
     IProblemGroupDropdownModel,
     ICheckerInListModel,
     ICheckerAdministrationModel,
+    IParticipantAdministrationModel,
+    IParticipantInListModel,
+    IUserAutocompleteData,
 };
