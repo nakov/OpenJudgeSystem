@@ -1,5 +1,4 @@
-﻿#nullable disable
-namespace OJS.Workers.Executors
+﻿namespace OJS.Workers.Executors
 {
     using System;
     using System.Collections.Generic;
@@ -28,7 +27,7 @@ namespace OJS.Workers.Executors
             string fileName,
             string inputData,
             int timeLimit,
-            IEnumerable<string> executionArguments,
+            IEnumerable<string>? executionArguments,
             string workingDirectory,
             bool useSystemEncoding,
             double timeoutMultiplier)
@@ -99,8 +98,8 @@ namespace OJS.Workers.Executors
             }
 
             // Read the standard output and error and set the result
-            result.ErrorOutput = await GetReceivedOutput(errorOutputTask);
-            result.ReceivedOutput = await GetReceivedOutput(processOutputTask);
+            result.ErrorOutput = await GetReceivedOutput(errorOutputTask, "error output");
+            result.ReceivedOutput = await GetReceivedOutput(processOutputTask, "standard output");
 
             Debug.Assert(process.HasExited, "Standard process didn't exit!");
 
@@ -140,7 +139,7 @@ namespace OJS.Workers.Executors
             }
         }
 
-        private static async Task<string> GetReceivedOutput(Task<string> outputTask)
+        private static async Task<string> GetReceivedOutput(Task<string> outputTask, string outputName)
         {
             try
             {
@@ -153,12 +152,12 @@ namespace OJS.Workers.Executors
                     return await outputTask;
                 }
 
-                return "Error output was too large and was not read.";
+                return $"{outputName} was too large and was not read.";
             }
             catch (Exception ex)
             {
                 _logger.Warn("Exception caught while reading the process error output.", ex);
-                return $"Error while reading the process error output: {ex.Message}";
+                return $"Error while reading the {outputName} of the underlying process: {ex.Message}";
             }
         }
     }
