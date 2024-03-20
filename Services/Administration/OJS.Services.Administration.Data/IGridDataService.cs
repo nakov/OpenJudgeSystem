@@ -10,7 +10,7 @@ using SoftUni.Data.Infrastructure.Models;
 using System.Threading.Tasks;
 
 public interface IGridDataService<TEntity> : IService
-    where TEntity : class
+    where TEntity : class, IEntity
 {
     Task<bool> UserHasAccessToGrid(UserInfoModel user);
 
