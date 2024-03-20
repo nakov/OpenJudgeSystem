@@ -139,6 +139,16 @@ const ContestSolutionSubmitPage = () => {
         setAnchorEl(null);
     };
 
+    const onSolutionSubmit = () => {
+        submitSolution({
+            content: submissionCode,
+            official: participationType === 'compete',
+            problemId: selectedContestDetailsProblem?.id,
+            submissionTypeId: selectedSubmissionType?.id,
+        });
+        setSubmissionCode('');
+    };
+
     const renderProblemDescriptions = useCallback(() => {
         if (!selectedContestDetailsProblem) {
             return;
@@ -223,21 +233,28 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const renderSubmissionsInput = () => {
-        const { allowBinaryFilesUpload, allowedFileExtensions } = allowedSubmissionTypes || {};
+        const { allowBinaryFilesUpload, allowedFileExtensions } = allowedSubmissionTypes[0] || {};
+
         if (allowBinaryFilesUpload) {
             return (
                 <>
-                    <FileUploader
-                      file={null}
-                      problemId={id}
-                      allowedFileExtensions={allowedFileExtensions}
-                      onInvalidFileExtension={() => console.log('error on submit!')}
+                    <div className={styles.fileUpload}>
+                        <div>
+                            <span>Allowed extensions:</span>
+                            {' '}
+                            {allowedFileExtensions.join(', ')}
+                        </div>
+                        <FileUploader
+                          file={null}
+                          problemId={id}
+                          allowedFileExtensions={allowedFileExtensions}
+                          onInvalidFileExtension={() => console.log('error on submit!')}
+                        />
+                    </div>
+                    <Button
+                      onClick={onSolutionSubmit}
+                      text="Submit"
                     />
-                    <p>
-                        Allowed file extensions:
-                        {' '}
-                        {allowedFileExtensions.join(', ')}
-                    </p>
                 </>
             );
         }
@@ -266,12 +283,7 @@ const ContestSolutionSubmitPage = () => {
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <Button
-                      onClick={() => submitSolution({
-                          content: submissionCode,
-                          official: participationType === 'compete',
-                          problemId: selectedContestDetailsProblem?.id,
-                          submissionTypeId: selectedSubmissionType?.id,
-                      })}
+                      onClick={onSolutionSubmit}
                       text="Submit"
                     />
                 </div>

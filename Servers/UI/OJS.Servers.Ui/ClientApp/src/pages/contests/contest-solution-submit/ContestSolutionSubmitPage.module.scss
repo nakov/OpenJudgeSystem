@@ -103,6 +103,15 @@
   }
 }
 
+.fileUpload {
+  div {
+    margin: spacings.$sp-12 0;
+    span {
+      font-weight: font-weights.$font-weight-semi-bold;
+    }
+  }
+}
+
 .popoverContent {
   @extend %font-family-roboto;
 

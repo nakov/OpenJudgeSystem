@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { MdAttachFile } from 'react-icons/md';
 import isNil from 'lodash/isNil';
 
 import { FileValidationError } from '../../common/constants';
@@ -77,13 +78,18 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
                   type={ButtonType.submit}
                   size={ButtonSize.medium}
                 >
-                    Click to select
+                    Upload
                 </Button>
-                <div className={styles.fileName}>
-                    {isNil(internalFile)
-                        ? ''
-                        : internalFile.name}
-                </div>
+            </div>
+            <div className={styles.fileName}>
+                {isNil(internalFile)
+                    ? ''
+                    : (
+                        <div className={styles.uploadedFileWrapper}>
+                            <MdAttachFile />
+                            {internalFile.name}
+                        </div>
+                    )}
             </div>
             <input
               type="file"
