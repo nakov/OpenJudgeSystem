@@ -134,21 +134,23 @@
                 result.Type = ProcessExecutionResultType.MemoryLimit;
             }
 
-            // If there is any standard output produced, we assume that the process has run successfully
+            // If there is any error output produced, we consider the process run as failed.
+            // If there is any standard output, but no error output, we consider the process run as successful,
             // and we ignore the exit code, as the output might be valid.
-            // In either case this output will be returned to the user and be visible in the results.
-            var isRuntimeErrorByExitCode =
-                dependOnExitCodeForRunTimeError &&
-                result.ExitCode != 0 &&
-                string.IsNullOrEmpty(result.ReceivedOutput);
+            // Either way this output will be handled by the caller as normal output and evaluated properly,
+            // so we don't want to produce runtime error in this case.
+            var isRuntimeError =
+                !string.IsNullOrEmpty(result.ErrorOutput) ||
+                (dependOnExitCodeForRunTimeError &&
+                    result.ExitCode != 0 &&
+                    string.IsNullOrEmpty(result.ReceivedOutput));
 
-            if (!string.IsNullOrEmpty(result.ErrorOutput) || isRuntimeErrorByExitCode)
+            if (isRuntimeError)
             {
                 result.Type = ProcessExecutionResultType.RunTimeError;
 
                 if (string.IsNullOrEmpty(result.ErrorOutput))
                 {
-                    // No output captured (nor error), but the process has exited with a non-zero exit code
                     result.ErrorOutput = $"Runtime error has occured. Error code: {result.ExitCode}";
                 }
             }
