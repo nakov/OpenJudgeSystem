@@ -54,6 +54,13 @@ export const contestsService = createApi({
                 },
             }),
         }),
+        submitContestSolution: builder.mutation<any, any >({
+            query: ({ content, official, problemId, submissionTypeId }) => ({
+                url: `/Compete/Submit`,
+                method: 'POST',
+                body: { content, official, problemId, submissionTypeId },
+            }),
+        }),
     }),
 });
 
@@ -63,7 +70,8 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
-    // useGetContestRegisteredUserQuery,
+    useLazyGetContestByIdQuery,
     useLazyGetContestRegisteredUserQuery,
     useGetContestUserParticipationQuery,
+    useSubmitContestSolutionMutation,
 } = contestsService;

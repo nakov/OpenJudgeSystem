@@ -102,3 +102,19 @@
     width: 200px;
   }
 }
+
+.popoverContent {
+  @extend %font-family-roboto;
+
+  font-size: variables.$f-size-18;
+  overflow: hidden;
+  padding: 0 spacings.$sp-8;
+
+  div {
+    margin: spacings.$sp-8 0;
+  }
+
+  .title {
+    font-weight: font-weights.$font-weight-semi-bold;
+  }
+}

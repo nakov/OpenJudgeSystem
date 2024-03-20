@@ -39,6 +39,14 @@ const submissionsService = createApi({
                 query: ({ status, page }) => (
                     { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
+        getSubmissionResultsByProblem: builder.query<any, any>({ query: ({ id, page, isOfficial }) => ({
+                url: `${defaultPathIdentifier}/Submissions/GetSubmissionResultsByProblem/${id}`,
+                params: {
+                    isOfficial,
+                    page,
+                },
+            }),
+        }),
     }),
 });
 
@@ -46,11 +54,14 @@ const {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetSubmissionResultsByProblemQuery,
 } = submissionsService;
 
 export {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetSubmissionResultsByProblemQuery,
 };
+
 export default submissionsService;
