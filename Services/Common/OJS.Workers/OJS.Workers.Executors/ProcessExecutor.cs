@@ -108,7 +108,7 @@
                 });
 
         private static bool IsExitCodeCritical(int exitCode)
-            =>
+            => // Add more error codes here, as they are discovered to cause runtime errors without any output
                 exitCode is <= -1 // Negative exit code - process was killed
                 or 139; // SIGSEGV signal from Unix OS - invalid memory reference (segmentation fault)
 
