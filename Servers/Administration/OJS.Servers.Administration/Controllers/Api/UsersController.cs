@@ -27,7 +27,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
        IUsersGridDataService usersGridData,
        IUsersBusinessService usersBusinessService,
        UserAdministrationModelValidator validator,
-       IValidator<BaseDeleteValidationModel<string>> deleteValidator,
+       UserDeleteValidator deleteValidator,
        IUsersDataService usersDataService)
         : base(
             usersGridData,
