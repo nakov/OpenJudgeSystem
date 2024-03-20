@@ -107,11 +107,6 @@
                     }
                 });
 
-        private static bool IsExitCodeCritical(int exitCode)
-            => // Add more error codes here, as they are discovered to cause runtime errors without any output
-                exitCode is <= -1 // Negative exit code - process was killed
-                or 139; // SIGSEGV signal from Unix OS - invalid memory reference (segmentation fault)
-
         private void BeforeExecute()
         {
             this.timeLimit += this.baseTimeUsed;
@@ -139,14 +134,22 @@
                 result.Type = ProcessExecutionResultType.MemoryLimit;
             }
 
-            if (!string.IsNullOrEmpty(result.ErrorOutput) ||
-                (dependOnExitCodeForRunTimeError && IsExitCodeCritical(result.ExitCode)))
+            // If there is any standard output produced, we assume that the process has run successfully
+            // and we ignore the exit code, as the output might be valid.
+            // In either case this output will be returned to the user and be visible in the results.
+            var isRuntimeErrorByExitCode =
+                dependOnExitCodeForRunTimeError &&
+                result.ExitCode != 0 &&
+                string.IsNullOrEmpty(result.ReceivedOutput);
+
+            if (!string.IsNullOrEmpty(result.ErrorOutput) || isRuntimeErrorByExitCode)
             {
                 result.Type = ProcessExecutionResultType.RunTimeError;
 
                 if (string.IsNullOrEmpty(result.ErrorOutput))
                 {
-                    result.ErrorOutput = $"Critical runtime error has occured. Error code: {result.ExitCode}";
+                    // No output captured (nor error), but the process has exited with a non-zero exit code
+                    result.ErrorOutput = $"Runtime error has occured. Error code: {result.ExitCode}";
                 }
             }
 
