@@ -136,9 +136,7 @@
 
             // If there is any error output produced, we consider the process run as failed.
             // If there is any standard output, but no error output, we consider the process run as successful,
-            // and we ignore the exit code, as the output might be valid.
-            // Either way this output will be handled by the caller as normal output and evaluated properly,
-            // so we don't want to produce runtime error in this case.
+            // and we ignore the exit code, as the output might be valid, but either way it will be evaluated properly.
             var isRuntimeError =
                 !string.IsNullOrEmpty(result.ErrorOutput) ||
                 (dependOnExitCodeForRunTimeError &&
