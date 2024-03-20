@@ -10,7 +10,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 interface IDeleteButtonProps {
     onSuccess?: () => void;
-    id: number;
+    id: number | string;
     name: string;
     style?: object;
     text: string;

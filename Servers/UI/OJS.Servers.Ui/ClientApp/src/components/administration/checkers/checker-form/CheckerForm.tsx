@@ -128,7 +128,7 @@ const CheckerForm = (props: ICheckerFormProps) => {
         <>
             {renderSuccessfullAlert(successfullMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
-            <Typography className={formStyles.centralize} variant="h4">Test administration form</Typography>
+            <Typography className={formStyles.centralize} variant="h4">Checker administration form</Typography>
             <form className={formStyles.form}>
                 <Box className={formStyles.inputRow}>
                     <FormGroup className={formStyles.inputRow}>
