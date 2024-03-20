@@ -40,6 +40,7 @@
   .submissionsWrapper {
     display: flex;
     flex-direction: column;
+    margin-top: spacings.$sp-64;
 
     > div {
       font-size: variables.$f-size-30;
@@ -106,10 +107,16 @@
 .fileUpload {
   div {
     margin: spacings.$sp-12 0;
+
     span {
       font-weight: font-weights.$font-weight-semi-bold;
     }
   }
+}
+
+.fileSubmitButton {
+  bottom: -80px;
+  position: absolute;
 }
 
 .popoverContent {

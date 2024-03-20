@@ -139,7 +139,7 @@ const ContestSolutionSubmitPage = () => {
         setAnchorEl(null);
     };
 
-    const onSolutionSubmit = () => {
+    const onSolutionSubmitCode = () => {
         submitSolution({
             content: submissionCode,
             official: participationType === 'compete',
@@ -147,6 +147,16 @@ const ContestSolutionSubmitPage = () => {
             submissionTypeId: selectedSubmissionType?.id,
         });
         setSubmissionCode('');
+    };
+
+    const onSolutionSubmitFile = () => {
+        // should get the file here somehow and submit it instead
+        submitSolution({
+            content: submissionCode,
+            official: participationType === 'compete',
+            problemId: selectedContestDetailsProblem?.id,
+            submissionTypeId: selectedSubmissionType?.id,
+        });
     };
 
     const renderProblemDescriptions = useCallback(() => {
@@ -248,11 +258,12 @@ const ContestSolutionSubmitPage = () => {
                           file={null}
                           problemId={id}
                           allowedFileExtensions={allowedFileExtensions}
-                          onInvalidFileExtension={() => console.log('error on submit!')}
+                          onInvalidFileExtension={() => console.log('error on submit file!')}
                         />
                     </div>
                     <Button
-                      onClick={onSolutionSubmit}
+                      className={styles.fileSubmitButton}
+                      onClick={onSolutionSubmitFile}
                       text="Submit"
                     />
                 </>
@@ -283,7 +294,7 @@ const ContestSolutionSubmitPage = () => {
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <Button
-                      onClick={onSolutionSubmit}
+                      onClick={onSolutionSubmitCode}
                       text="Submit"
                     />
                 </div>
