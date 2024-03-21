@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Roles;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
@@ -7,14 +8,25 @@ using OJS.Services.Administration.Models.Roles;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class RolesBusinessService : AdministrationOperationService<Role, string, RoleAdministrationModel>, IRolesBusinessService
 {
     private readonly IRoleDataService roleDataService;
+    private readonly UserManager<UserProfile> userManager;
+    private readonly IUsersDataService usersDataService;
 
-    public RolesBusinessService(IRoleDataService roleDataService)
-        => this.roleDataService = roleDataService;
+    public RolesBusinessService(
+        IRoleDataService roleDataService,
+        UserManager<UserProfile> userManager,
+        IUsersDataService usersDataService)
+    {
+        this.roleDataService = roleDataService;
+        this.userManager = userManager;
+        this.usersDataService = usersDataService;
+    }
 
     public override async Task<RoleAdministrationModel> Get(string id)
         => await this.roleDataService.GetByIdQuery(id).MapCollection<RoleAdministrationModel>().FirstAsync();
@@ -49,6 +61,23 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     public override async Task Delete(string id)
     {
         await this.roleDataService.DeleteById(id);
+        await this.roleDataService.SaveChanges();
+    }
+
+    public async Task AddUserToRole(UserToRoleModel model)
+    {
+        var roleName = await this.roleDataService
+            .GetByIdQuery(model.RoleId!)
+            .AsNoTracking()
+            .Select(x => x.Name)
+            .FirstAsync();
+
+        var user = await this.usersDataService
+            .GetByIdQuery(model.UserId!)
+            .AsNoTracking()
+            .FirstAsync();
+
+        await this.userManager.AddToRoleAsync(user, roleName);
         await this.roleDataService.SaveChanges();
     }
 }

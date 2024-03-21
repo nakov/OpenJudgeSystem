@@ -76,3 +76,16 @@ export const PARAMETER = 'Parameter';
 // Participants
 
 export const IS_OFFICIAL = 'Is Official';
+
+// Users
+export const JOB_TITLE = 'Job title';
+export const LASTNAME = 'LastName';
+export const FIRSTNAME = 'FirstName';
+export const FACULTY_NUMBER = 'Faculty number';
+export const EDUCATIONAL_INSTITUTE = 'Educational institute';
+export const DATE_OF_BIRTH = 'Date of birth';
+export const COMPANY = 'Company';
+export const CITY = 'City';
+export const AGE = 'Age';
+export const EMAIL = 'Email';
+export const USERNAME = 'UserName';

@@ -15,6 +15,7 @@ import { rolesAdminSlice } from './features/admin/rolesAdminSlice';
 import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
 import { testsAdminSlice } from './features/admin/testsSlice';
+import { usersAdminSlice } from './features/admin/usersAdminSlice';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
 import { submissionDetailsSlice } from './features/submissionDetailsSlice';
@@ -60,6 +61,7 @@ const rootReducer = combineReducers({
     [checkersAdminSlice.name]: checkersAdminSlice.reducer,
     [participantsAdminSlice.name]: participantsAdminSlice.reducer,
     [rolesAdminSlice.name]: rolesAdminSlice.reducer,
+    [usersAdminSlice.name]: usersAdminSlice.reducer,
 
     // services
     [submissionsService.reducerPath]: submissionsService.reducer,
@@ -101,6 +103,7 @@ const reducersToPersist = [
     checkersAdminSlice.name,
     participantsAdminSlice.name,
     rolesAdminSlice.name,
+    usersAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

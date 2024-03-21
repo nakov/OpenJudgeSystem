@@ -532,6 +532,7 @@ interface IRootStore {
     adminCheckers: IAdminSlice;
     adminParticipants: IAdminSlice;
     adminRoles: IAdminSlice;
+    adminUsers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -613,6 +614,25 @@ interface IUserInListModel {
     age: number;
 }
 
+interface IUserSettingsAdministrationModel {
+    firstName: string | null;
+    lastName: string | null;
+    city: string | null;
+    dateOfBirth: Date | null;
+    age: number;
+    company: string | null;
+    jobTitle: string | null;
+    facultyNumber: number | null;
+    educationalInstitution: string | null;
+}
+
+interface IUserAdministrationModel {
+    id: string;
+    userName: string;
+    email: string;
+    userSettings: IUserSettingsAdministrationModel;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -675,4 +695,5 @@ export type {
     IRoleInListModel,
     IRoleAdministrationModel,
     IUserInListModel,
+    IUserAdministrationModel,
 };
