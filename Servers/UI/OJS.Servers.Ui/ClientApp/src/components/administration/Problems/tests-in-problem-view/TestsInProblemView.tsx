@@ -29,10 +29,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface ITestsInProblemsViewProps {
     problemId: number;
+    problemName: string;
 }
 
 const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
-    const { problemId } = props;
+    const { problemId, problemName } = props;
     const defaultStateForUploadTests = {
         deleteOldTests: true,
         retestProblem: false,
@@ -213,6 +214,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
 
     const renderModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
+          key={index}
           index={index}
           onClose={() => onClose(isEditMode)}
           open={isEditMode
@@ -224,6 +226,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
                   ? testId!
                   : 0}
               isEditMode={isEditMode}
+              problemName={problemName}
             />
         </AdministrationModal>
     );

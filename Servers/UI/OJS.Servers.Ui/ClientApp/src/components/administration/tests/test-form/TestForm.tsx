@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Autocomplete, Box, Checkbox, debounce, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
-import { CREATE, EDIT, HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, RECORD, SELECT_PROBLEM, TYPE } from '../../../../common/labels';
+import { CREATE, EDIT, HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, RECORD, TYPE } from '../../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
-import { ITestsDropdownData } from '../../../../common/types';
 import { NEW_ADMINISTRATION_PATH, TESTS_PATH } from '../../../../common/urls/administration-urls';
-import { useGetAllByNameQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { useCreateTestMutation, useDeleteTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -21,16 +19,15 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface ITestFormProps {
     id?:number;
+    problemName?: string;
     isEditMode?: boolean;
 }
 const TestForm = (props: ITestFormProps) => {
-    const { id = 0, isEditMode = true } = props;
+    const { id = 0, isEditMode = true, problemName = '' } = props;
 
     const navigate = useNavigate();
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
-    const [ searchString, setSearchString ] = useState<string>('');
-    const [ dropdownData, setDropdownData ] = useState<Array<ITestsDropdownData>>([]);
     const [ test, setTest ] = useState<ITestAdministration>({
         id,
         input: '',
@@ -40,11 +37,10 @@ const TestForm = (props: ITestFormProps) => {
         type: Object.keys(TestTypes).filter((key) => isNaN(Number(key)))[0],
         hideInput: false,
         problemId: id,
-        problemName: '',
+        problemName,
     });
 
     const { data: testData, error: getTestError, isLoading: isGettingData } = useGetTestByIdQuery(id, { skip: !isEditMode });
-    const { data: dropdownDataResponse, error: dropdownError } = useGetAllByNameQuery(searchString);
     const [
         editTest,
         { data: editData, error: editError, isLoading: isEditing, isSuccess: isSuccessfullyEdited },
@@ -61,8 +57,8 @@ const TestForm = (props: ITestFormProps) => {
     }, [ testData ]);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ getTestError, dropdownError, editError, createError ], setExceptionMessages);
-    }, [ getTestError, dropdownError, editError, createError ]);
+        getAndSetExceptionMessage([ getTestError, editError, createError ], setExceptionMessages);
+    }, [ getTestError, editError, createError ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
@@ -71,12 +67,6 @@ const TestForm = (props: ITestFormProps) => {
         ]);
         setSuccessfullMessage(message);
     }, [ editData, createData, isSuccessfullyEdited, isSuccessfullyCreated ]);
-
-    useEffect(() => {
-        if (dropdownDataResponse) {
-            setDropdownData(dropdownDataResponse);
-        }
-    }, [ dropdownDataResponse ]);
 
     const onChange = (e: any) => {
         const { target } = e;
@@ -92,20 +82,6 @@ const TestForm = (props: ITestFormProps) => {
                     : value,
         }));
     };
-
-    const handleAutocompleteChange = (problem: ITestsDropdownData | null) => {
-        if (problem) {
-            setTest((prevState) => ({
-                ...prevState,
-                problemId: problem.id,
-                problemName: problem.name,
-            }));
-        }
-    };
-
-    const onSearchStringChange = debounce((value:string) => {
-        setSearchString(value);
-    }, 500);
 
     const renderFormSubmitButtons = () => (
         isEditMode
@@ -161,20 +137,13 @@ const TestForm = (props: ITestFormProps) => {
                             />
                         </FormControl>
                         <FormControl className={formStyles.spacing}>
-                            <Autocomplete
-                              sx={{ width: '100%' }}
-                              className={formStyles.inputRow}
-                              onChange={(event, problem) => handleAutocompleteChange(problem)}
-                              onInputChange={(event, value) => onSearchStringChange(value)}
-                              value={dropdownData?.find((dropdDown) => dropdDown.id === test.problemId) ?? null}
-                              options={dropdownData!}
-                              renderInput={(params) => <TextField {...params} label={SELECT_PROBLEM} key={params.id} />}
-                              getOptionLabel={(option) => option?.name}
-                              renderOption={(properties, option) => (
-                                  <MenuItem {...properties} key={option.id} value={option.id}>
-                                      {option.name}
-                                  </MenuItem>
-                              )}
+                            <TextField
+                              variant="standard"
+                              label="Problem Name"
+                              value={test?.problemName}
+                              InputLabelProps={{ shrink: true }}
+                              type="text"
+                              disabled
                             />
                         </FormControl>
                         <FormControl className={formStyles.spacing}>

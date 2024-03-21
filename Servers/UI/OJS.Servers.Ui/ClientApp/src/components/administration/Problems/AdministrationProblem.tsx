@@ -15,13 +15,14 @@ const AdministrationProblem = () => {
     const { pathname } = useLocation();
     const [ , , , problemId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(PROBLEM_LISTED_DATA.RESOURCES);
+    const [ problemName, setProblemName ] = useState<string>('');
 
     const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_LISTED_DATA) => {
         setTabName(newValue);
     };
 
     const returnProblemForm = () => (
-        <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} />
+        <ProblemForm problemId={Number(problemId)} isEditMode contestId={null} getName={(name: string) => setProblemName(name)} />
     );
 
     const returnResourceInProblemView = (key:string) => (
@@ -29,7 +30,7 @@ const AdministrationProblem = () => {
     );
 
     const returnTests = (key: string) => (
-        <TestsInProblemView key={key} problemId={Number(problemId)} />
+        <TestsInProblemView key={key} problemId={Number(problemId)} problemName={problemName} />
     );
     return (
         <TabsInView
