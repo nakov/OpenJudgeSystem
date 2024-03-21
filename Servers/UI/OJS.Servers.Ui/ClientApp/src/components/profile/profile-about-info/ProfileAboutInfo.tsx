@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import MyProfileSvg from '../../../assets/my-profile.svg';
 import { IUserProfileType } from '../../../common/types';
@@ -77,8 +78,11 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IPr
                         )
                 }
             </div>
-            <div>
+            <div className={styles.imageAndLogoutButtonContainer}>
                 <img height={180} width={180} src={MyProfileSvg} alt="my-profile" />
+                <Link to="/logout" className={concatClassNames(styles.logoutButton, getColorClassName(themeColors.textColor))}>
+                    LOG OUT
+                </Link>
             </div>
         </div>
     );

@@ -35,3 +35,17 @@
     text-align: left;
   }
 }
+
+.imageAndLogoutButtonContainer {
+  @extend %font-family-roboto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logoutButton {
+  text-decoration: none;
+  font-size: variables.$f-size-18;
+  font-weight: font-weights.$font-weight-regular;
+  
+}
