@@ -36,6 +36,7 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
     [HttpPost]
     public async Task<IActionResult> AddUserToRole(UserToRoleModel model)
     {
+        model.OperationType = "Add";
         var validationResult = await this.userToRoleModelValidator.ValidateAsync(model).ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
@@ -43,7 +44,24 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
             return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        await this.rolesBusinessService.AddUserToRole(model);
+        await this.rolesBusinessService.ManageUserInRole(model);
+        return this.Ok("User was successfully removed from role.");
+    }
+
+    [ProtectedEntityAction("roleId", typeof(RoleIdPermissionService))]
+    [HttpDelete]
+    public async Task<IActionResult> RemoveFromRole([FromQuery] string userId, [FromQuery] string roleId)
+    {
+        var model = new UserToRoleModel { RoleId = roleId, UserId = userId, OperationType = "Delete" };
+
+        var validationResult = await this.userToRoleModelValidator.ValidateAsync(model).ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
+        }
+
+        await this.rolesBusinessService.ManageUserInRole(model);
         return this.Ok("User was successfully added to new role.");
     }
 }

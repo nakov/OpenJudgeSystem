@@ -40,7 +40,10 @@ public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.NotBeInRole(model.UserId!, model.RoleId!))
-            .WithMessage("User is already in the role.");
+            .WithMessage("User is already in the role.")
+            .When(x => x.OperationType == "Add")
+            .MustAsync(async (model, _) => await this.BeInRole(model.UserId!, model.RoleId!))
+            .When(x => x.OperationType == "Delete");
     }
 
     private async Task<bool> HaveUserWithId(string userId)
@@ -49,7 +52,7 @@ public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
     private async Task<bool> HaveRoleWithId(string roleId)
         => await this.roleDataService.ExistsById(roleId);
 
-    private async Task<bool> NotBeInRole(string userId, string roleId)
+    private async Task<bool> UserIsInRole(string userId, string roleId)
     {
         var user = await this.usersDataService
             .GetByIdQuery(userId)
@@ -62,6 +65,12 @@ public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
             .AsNoTracking()
             .FirstAsync();
 
-        return !await this.userManager.IsInRoleAsync(user, role!);
+        return !await this.userManager.IsInRoleAsync(user, role);
     }
+
+    private async Task<bool> NotBeInRole(string user, string roleName)
+        => !await this.UserIsInRole(user, roleName);
+
+    private async Task<bool> BeInRole(string user, string roleName)
+        => await this.UserIsInRole(user, roleName);
 }

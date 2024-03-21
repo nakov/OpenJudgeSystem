@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { IconButton, Tooltip } from '@mui/material';
+import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT } from '../../../common/labels';
 import { NEW_ADMINISTRATION_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
@@ -91,7 +92,10 @@ const usersFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnUsersNonFilterableColumns = (onEditClick: Function) => [
+export const returnUsersNonFilterableColumns = (
+    onEditClick: Function,
+    removeFromRoleFunc?: Function,
+) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -104,6 +108,13 @@ export const returnUsersNonFilterableColumns = (onEditClick: Function) => [
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(params.row.id)} />
                 <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${USERS_PATH}/${params.row.id}`} location={`${EDIT} page`} />
+                {removeFromRoleFunc && (
+                <Tooltip title="Remove from Role">
+                    <IconButton onClick={() => removeFromRoleFunc(params.row.id)}>
+                        <GridDeleteIcon color="error" />
+                    </IconButton>
+                </Tooltip>
+                )}
             </div>
         ),
     },

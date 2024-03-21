@@ -64,7 +64,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
         await this.roleDataService.SaveChanges();
     }
 
-    public async Task AddUserToRole(UserToRoleModel model)
+    public async Task ManageUserInRole(UserToRoleModel model)
     {
         var roleName = await this.roleDataService
             .GetByIdQuery(model.RoleId!)
@@ -77,7 +77,15 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
             .AsNoTracking()
             .FirstAsync();
 
-        await this.userManager.AddToRoleAsync(user, roleName);
+        if (model.OperationType == "Add")
+        {
+            await this.userManager.AddToRoleAsync(user, roleName);
+        }
+        else
+        {
+            await this.userManager.RemoveFromRoleAsync(user, roleName);
+        }
+
         await this.roleDataService.SaveChanges();
     }
 }

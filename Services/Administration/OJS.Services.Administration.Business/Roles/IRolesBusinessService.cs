@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface IRolesBusinessService : IAdministrationOperationService<Role, string, RoleAdministrationModel>
 {
-    Task AddUserToRole(UserToRoleModel model);
+    Task ManageUserInRole(UserToRoleModel model);
 }

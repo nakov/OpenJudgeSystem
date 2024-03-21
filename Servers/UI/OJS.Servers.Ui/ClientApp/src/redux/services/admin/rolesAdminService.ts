@@ -50,7 +50,7 @@ export const rolesAdminService = createApi({
 
         removeUserFromRole: builder.mutation<string, {userId: string; roleId: string} >({
             query: ({ userId, roleId }) => ({
-                url: `/RemoveFromRole?userId=${userId}&roleId:${roleId}`,
+                url: `/RemoveFromRole?userId=${userId}&roleId=${roleId}`,
                 method: 'DELETE',
             }),
         }),

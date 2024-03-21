@@ -7,12 +7,13 @@ import { mapSorterParamsToQueryString } from '../../../../pages/administration-n
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import usersFilterableColumns, { returnUsersNonFilterableColumns } from '../../../../pages/administration-new/users/usersGridColumns';
 import { setAdminRolesFilters, setAdminRolesSorters } from '../../../../redux/features/admin/rolesAdminSlice';
-import { useAddUserToRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
+import { useAddUserToRoleMutation, useRemoveUserFromRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
 import { useGetUsersAutocompleteQuery, useGetUsersByRoleQuery } from '../../../../redux/services/admin/usersAdminService';
 import { useAppSelector } from '../../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
+import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
@@ -41,6 +42,8 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
 
     const [ showUserEditModal, setShowUserEditModal ] = useState<boolean>(false);
     const [ userId, setUserId ] = useState<string | null>(null);
+
+    const [ showConfirmDialog, setShowConfirmDialog ] = useState<boolean>(false);
 
     const [ usersAutocomplete, setUsersAutocomplete ] = useState<Array<IUserAutocompleteData>>([
         {
@@ -81,6 +84,16 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         },
     ] = useAddUserToRoleMutation();
 
+    const [
+        removeFromRole,
+        {
+            data: removeData,
+            error: removeError,
+            isSuccess: isSuccessfullyRemoved,
+            isLoading: isRemovingFromRole,
+        },
+    ] = useRemoveUserFromRoleMutation();
+
     const {
         data: usersAutocompleteData,
         error: getUsersDataError,
@@ -93,19 +106,23 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
     }, [ usersAutocompleteData ]);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ getUsersDataError, addError ], setErrorMessages);
+        getAndSetExceptionMessage([ getUsersDataError, addError, removeError ], setErrorMessages);
         setSuccessMessage(null);
-    }, [ addError, getUsersDataError ]);
+    }, [ addError, getUsersDataError, removeError ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
             {
                 message: addData,
                 shouldGet: isSuccessfullyAddedToRole,
+            },
+            {
+                message: removeData,
+                shouldGet: isSuccessfullyRemoved,
             } ]);
 
         setSuccessMessage(message);
-    }, [ addData, isSuccessfullyAddedToRole ]);
+    }, [ addData, isSuccessfullyAddedToRole, isSuccessfullyRemoved, removeData ]);
 
     useEffect(() => {
         setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
@@ -133,6 +150,11 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         setUserIdToAdd(uId);
     };
 
+    const onRemoveFromRowClicked = (uId: string) => {
+        setUserId(uId);
+        setShowConfirmDialog(true);
+    };
+
     const renderGridSettings = () => (
         <CreateButton
           showModal={showCreateModal}
@@ -142,6 +164,20 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         />
     );
 
+    const renderConfirmDialog = (index: number) => (
+        <ConfirmDialog
+          key={index}
+          text="Are you sure you want to remove user from role."
+          title="Remove from role"
+          declineButtonText="Close"
+          confirmButtonText="Remove"
+          declineFunction={() => setShowConfirmDialog(false)}
+          confirmFunction={() => {
+              removeFromRole({ userId: userId!, roleId });
+              setShowConfirmDialog(false);
+          }}
+        />
+    );
     const renderUserEditModal = (i: number) => (
         <AdministrationModal
           key={i}
@@ -196,7 +232,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         </AdministrationModal>
     );
 
-    if (isGetting || isAddingToRole) {
+    if (isGetting || isAddingToRole || isRemovingFromRole) {
         return (
             <SpinningLoader />
         );
@@ -209,7 +245,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
             <div style={{ marginTop: '2rem' }}>
                 <AdministrationGridView
                   filterableGridColumnDef={usersFilterableColumns}
-                  notFilterableGridColumnDef={returnUsersNonFilterableColumns(onEditClick)}
+                  notFilterableGridColumnDef={returnUsersNonFilterableColumns(onEditClick, onRemoveFromRowClicked)}
                   data={usersData}
                   error={getError}
                   queryParams={queryParams}
@@ -224,6 +260,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
                   modals={[
                       { showModal: showCreateModal, modal: (i) => renderCreateModal(i) },
                       { showModal: showUserEditModal, modal: (i) => renderUserEditModal(i) },
+                      { showModal: showConfirmDialog, modal: (i) => renderConfirmDialog(i) },
                   ]}
                 />
             </div>
