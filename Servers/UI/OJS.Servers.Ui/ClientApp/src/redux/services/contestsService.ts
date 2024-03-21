@@ -9,7 +9,7 @@ import {
     IIndexContestsType,
     IPagedResultType,
 } from '../../common/types';
-import { IContestDetailsUrlParams } from '../../common/url-types';
+import { IContestDetailsUrlParams, IUserInfoUrlParams } from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
@@ -38,8 +38,20 @@ export const contestsService = createApi({
             query: ({ id }) => ({ url: `/Contests/Details/${id}` }),
             keepUnusedDataFor: 10,
         }),
-        getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
-        getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+        getContestCategories: builder.query<Array<IContestCategory>, void>({
+            query: () => ({ url: '/ContestCategories/GetCategoriesTree' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        getContestStrategies: builder.query<IContestStrategyFilter[], void>({
+            query: () => ({ url: '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        getContestsParticipationsForUser: builder.query<IContestDetailsResponseType, IUserInfoUrlParams>({
+            query: ({ username }) => ({
+                url: `/Participations/GetAllForUser?username=${username}` }),
+            // TODO: Disable this rule
+            /* eslint-disable object-curly-newline */
+        }),
     }),
 });
 
@@ -49,4 +61,5 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
+    useGetContestsParticipationsForUserQuery,
 } = contestsService;

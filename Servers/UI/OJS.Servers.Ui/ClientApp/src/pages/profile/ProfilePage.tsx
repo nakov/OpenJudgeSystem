@@ -2,26 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import { IIndexContestsType } from '../../common/types';
+import ContestCard from '../../components/contests/contest-card/ContestCard';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
+import List, { Orientation } from '../../components/guidelines/lists/List';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { setUserContestParticipations } from '../../redux/features/contestsSlice';
 import { setProfile } from '../../redux/features/usersSlice';
+import { useGetContestsParticipationsForUserQuery } from '../../redux/services/contestsService';
 import { useGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
+import isNilOrEmpty from '../../utils/check-utils';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 const ProfilePage = () => {
+    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
+    // If {username} is present in url, then the the profile should be loaded for this username,
+    // otherwise the profile is loaded for the logged in user
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [ profileUsername, setProfileUsername ] = useState<boolean>(false);
+
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
-
-    const [
-        currentUserIsProfileOwner,
-        setCurrentUserIsProfileOwner,
-    ] = useState<boolean>(false);
+    const { userContestParticipations } = useAppSelector((reduxState) => reduxState.contests);
 
     const { actions: { setPageTitle } } = usePageTitles();
     const { usernameFromUrl } = useParams();
@@ -35,6 +43,29 @@ const ProfilePage = () => {
             ? decodeFromUrlParam(usernameFromUrl)
             : internalUser.userName,
     });
+
+    const {
+        data: contestsParticipations,
+        isLoading: areContestParticipationsLoading,
+    } = useGetContestsParticipationsForUserQuery(
+        {
+            username: !isNil(usernameFromUrl)
+                ? decodeFromUrlParam(usernameFromUrl)
+                : internalUser.userName,
+        },
+        { skip: isProfileInfoLoading },
+    );
+
+    useEffect(
+        () => {
+            if (areContestParticipationsLoading || isNil(contestsParticipations)) {
+                return;
+            }
+
+            dispatch(setUserContestParticipations(contestsParticipations));
+        },
+        [ areContestParticipationsLoading, contestsParticipations, dispatch, profileInfo, setPageTitle ],
+    );
 
     useEffect(
         () => {
@@ -56,6 +87,8 @@ const ProfilePage = () => {
         setCurrentUserIsProfileOwner(profile.userName === internalUser.userName);
     }, [ internalUser, profile, isLoggedIn ]);
 
+    const renderContestCard = (contest: IIndexContestsType) => (<ContestCard contest={contest} />);
+
     return (
         isProfileInfoLoading || isNil(profile)
             ? <SpinningLoader />
@@ -76,14 +109,20 @@ const ProfilePage = () => {
                       isUserProfileOwner={currentUserIsProfileOwner}
                     />
                     {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
-                    {/* <ProfileContestParticipations /> */}
-                    {/* Tabs will be hidden for alpha version,
-                         as it is not production ready yet */}
-                    {/* <Tabs */}
-                    {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
-                    {/*  contents={[ <ProfileSubmissions />, */}
-                    {/*  <ProfileContestParticipations /> ]} */}
-                    {/* /> */}
+                    {
+                        areContestParticipationsLoading
+                            ? (<SpinningLoader />)
+                            : !isNilOrEmpty(userContestParticipations)
+                                ? (
+                                    <List
+                                      values={userContestParticipations}
+                                      itemFunc={renderContestCard}
+                                      orientation={Orientation.vertical}
+                                      fullWidth
+                                    />
+                                )
+                                : 'User has not participated in contests'
+                    }
                 </>
             )
     );
