@@ -84,6 +84,7 @@ const AdministrationUsersPage = () => {
           setFilterStateAction={setAdminUsersFilters}
           setSorterStateAction={setAdminUsersSorters}
           location={location}
+          legendProps={[ { color: '#FFA1A1', message: 'User is deleted.' } ]}
           modals={
             [
                 { showModal: showEditModal, modal: (i) => renderUserModal(i) },

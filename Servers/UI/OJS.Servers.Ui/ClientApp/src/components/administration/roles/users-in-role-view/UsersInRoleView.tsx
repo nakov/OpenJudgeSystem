@@ -257,6 +257,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
                   setSorterStateAction={setAdminRolesSorters}
                   withSearchParams={false}
                   renderActionButtons={renderGridSettings}
+                  legendProps={[ { color: '#FFA1A1', message: 'User is deleted.' } ]}
                   modals={[
                       { showModal: showCreateModal, modal: (i) => renderCreateModal(i) },
                       { showModal: showUserEditModal, modal: (i) => renderUserEditModal(i) },
