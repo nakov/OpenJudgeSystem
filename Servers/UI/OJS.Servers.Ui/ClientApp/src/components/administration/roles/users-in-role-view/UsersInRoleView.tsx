@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Autocomplete, debounce, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, IUserAutocompleteData } from '../../../../common/types';
 import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
@@ -19,6 +19,7 @@ import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import UserForm from '../../users/form/UserForm';
+import { onAutocompleteInputChange } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -143,10 +144,6 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         setShowUserEditModal(true);
     };
 
-    const onUserInputChange = debounce((e: any) => {
-        setUsersSearchString(e.target.value);
-    }, 300);
-
     const onSelectUser = (user: IUserAutocompleteData) => {
         let uId = '';
         if (user) {
@@ -215,7 +212,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
                       options={usersAutocomplete}
                       renderInput={(params) => <TextField {...params} label="Select User" key={params.id} />}
                       onChange={(event, newValue) => onSelectUser(newValue!)}
-                      onInputChange={(event) => onUserInputChange(event)}
+                      onInputChange={(e: any) => onAutocompleteInputChange(e, setUsersSearchString)}
                       isOptionEqualToValue={(option, value) => option.id === value.id}
                       getOptionLabel={(option) => option?.userName}
                       renderOption={(properties, option) => (

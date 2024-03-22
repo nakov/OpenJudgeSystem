@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { debounce } from '@mui/material';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../../common/messages';
 import { IContestAutocomplete, IGetAllAdminParams } from '../../../../common/types';
@@ -19,6 +18,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import LecturerForm from '../../common/lecturer/lecturer-form/LecturerForm';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
+import { onAutocompleteInputChange } from '../../utils/mui-utils';
 
 interface ILeturerInContestsProps {
     userId: string;
@@ -139,10 +139,6 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
         setContestToAdd(currContestId);
     };
 
-    const onUserInputChange = debounce((e: any) => {
-        setContestSearchString(e.target.value);
-    }, 300);
-
     const onRemoveFromRowClicked = (uId: number) => {
         setContestId(uId);
         setShowConfirmDialog(true);
@@ -187,7 +183,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
               label="Select Contest"
               name="Add lecturer to contest"
               onChange={onSelect}
-              onInputChange={onUserInputChange}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) => onAutocompleteInputChange(e, setContestSearchString)}
               onClick={() => addLecturerToContest({ lecturerId: userId, contestId: contestToAdd })}
             />
         </AdministrationModal>
