@@ -71,7 +71,34 @@ export const usersAdminService = createApi({
 
         removeLecturerFromContest: builder.mutation<string, {lecturerId: string; contestId: number} >({
             query: ({ lecturerId, contestId }) => ({
-                url: `/removeLecturerFromContest?lecturerId=${lecturerId}&contestId=${contestId}`,
+                url: `/RemoveLecturerFromContest?lecturerId=${lecturerId}&contestId=${contestId}`,
+                method: 'DELETE',
+            }),
+        }),
+
+        getLecturerCategories: builder.query<IPagedResultType<IUserInListModel>, IGetByUserId>({
+            query: ({ userId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetLecturerCategories/${userId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+
+        addLecturerToCategory: builder.mutation<string, {lecturerId: string; categoryId: number} >({
+            query: ({ lecturerId, categoryId }) => ({
+                url: '/AddLecturerToCategory',
+                method: 'POST',
+                body: { lecturerId, categoryId },
+            }),
+        }),
+
+        removeLecturerFromCategory: builder.mutation<string, {lecturerId: string; categoryId: number} >({
+            query: ({ lecturerId, categoryId }) => ({
+                url: `/RemoveLecturerFromCategory?lecturerId=${lecturerId}&categoryId=${categoryId}`,
                 method: 'DELETE',
             }),
         }),
@@ -87,5 +114,8 @@ export const {
     useGetLecturerContestsQuery,
     useAddLecturerToContestMutation,
     useRemoveLecturerFromContestMutation,
+    useGetLecturerCategoriesQuery,
+    useAddLecturerToCategoryMutation,
+    useRemoveLecturerFromCategoryMutation,
 } = usersAdminService;
 export default usersAdminService;

@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.LecturersInCategories;
+using OJS.Services.Administration.Business.LecturersInCategories.GridData;
+using OJS.Services.Administration.Business.LecturersInCategories.Permissions;
 using OJS.Services.Administration.Business.LecturersInContests;
 using OJS.Services.Administration.Business.LecturersInContests.GridData;
 using OJS.Services.Administration.Business.LecturersInContests.Permissions;
@@ -14,6 +17,7 @@ using OJS.Services.Administration.Business.Users.GridData;
 using OJS.Services.Administration.Business.Users.Permissions;
 using OJS.Services.Administration.Business.Users.Validators;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.LecturerInCategories;
 using OJS.Services.Administration.Models.LecturerInContests;
 using OJS.Services.Administration.Models.Users;
 using OJS.Services.Common.Models.Pagination;
@@ -28,6 +32,8 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
     private readonly IUsersDataService usersDataService;
     private readonly ILecturersInContestsGridDataService lecturersInContestsGridDataService;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+    private readonly ILecturersInCategoriesGridDataService lecturersInCategoriesGridDataService;
+    private readonly ILecturersInCategoriesBusinessService lecturersInCategoriesBusinessService;
 
     public UsersController(
        IUsersGridDataService usersGridData,
@@ -36,7 +42,9 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
        UserDeleteValidator deleteValidator,
        IUsersDataService usersDataService,
        ILecturersInContestsGridDataService lecturersInContestsGridDataService,
-       ILecturersInContestsBusinessService lecturersInContestsBusinessService)
+       ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+       ILecturersInCategoriesGridDataService lecturersInCategoriesGridDataService,
+       ILecturersInCategoriesBusinessService lecturersInCategoriesBusinessService)
         : base(
             usersGridData,
             usersBusinessService,
@@ -47,6 +55,8 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
         this.usersDataService = usersDataService;
         this.lecturersInContestsGridDataService = lecturersInContestsGridDataService;
         this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+        this.lecturersInCategoriesGridDataService = lecturersInCategoriesGridDataService;
+        this.lecturersInCategoriesBusinessService = lecturersInCategoriesBusinessService;
     }
 
     [HttpGet]
@@ -101,5 +111,35 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 OperationType = CrudOperationTypes.Delete,
             });
         return this.Ok("Lecturer successfully removed from contest");
+    }
+
+    [HttpGet("{userId}")]
+    [ProtectedEntityAction("userId", typeof(UserIdPermissionService))]
+    public async Task<IActionResult> GetLecturerCategories([FromQuery] PaginationRequestModel model, [FromRoute] string userId)
+        => this.Ok(
+            await this.lecturersInCategoriesGridDataService.GetAll<LecturerInCategoryInListModel>(
+                model,
+                linc => linc.LecturerId == userId));
+
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(LecturerToCategoryPermissionService))]
+    public async Task<IActionResult> AddLecturerToCategory(LecturerToCategoryModel model)
+    {
+        await this.lecturersInCategoriesBusinessService.AddLecturerToCategory(model);
+        return this.Ok("Lecturer successfully added to category");
+    }
+
+    [HttpDelete]
+    [ProtectedEntityAction("lecturerId", typeof(UserIdPermissionService))]
+    public async Task<IActionResult> RemoveLecturerFromCategory([FromQuery] string lecturerId, [FromQuery] int categoryId)
+    {
+        await this.lecturersInCategoriesBusinessService.RemoveLecturerFromCategory(
+            new LecturerToCategoryModel
+            {
+                LecturerId = lecturerId,
+                CategoryId = categoryId,
+                OperationType = CrudOperationTypes.Delete,
+            });
+        return this.Ok("Lecturer successfully removed from category");
     }
 }

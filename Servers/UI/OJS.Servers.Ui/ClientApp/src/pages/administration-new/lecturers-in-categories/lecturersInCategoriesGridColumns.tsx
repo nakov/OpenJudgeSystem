@@ -2,10 +2,10 @@
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
 
-const lecturerInContestFilterableColumns: GridColDef[] = [
+const lecturerInCategoriesFilterableColumns: GridColDef[] = [
     {
-        field: 'contestId',
-        headerName: 'Contest Id',
+        field: 'contestCategoryId',
+        headerName: 'Contest Category Id',
         width: 120,
         align: 'center',
         headerAlign: 'center',
@@ -16,8 +16,8 @@ const lecturerInContestFilterableColumns: GridColDef[] = [
         valueFormatter: (params) => params.value.toString(),
     },
     {
-        field: 'contestName',
-        headerName: 'Contest Name',
+        field: 'contestCategoryName',
+        headerName: 'Contest Category Name',
         width: 120,
         align: 'center',
         headerAlign: 'center',
@@ -28,7 +28,7 @@ const lecturerInContestFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnLecturerInContestNonFilterableColumns = (removeFromRoleFunc?: Function) => [
+export const returnLecturerInCategoriesNonFilterableColumns = (removeFromRoleFunc?: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -41,8 +41,8 @@ export const returnLecturerInContestNonFilterableColumns = (removeFromRoleFunc?:
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 {removeFromRoleFunc && (
-                <Tooltip title="Remove from Contest">
-                    <IconButton onClick={() => removeFromRoleFunc(Number(params.row.contestId))}>
+                <Tooltip title="Remove from Category">
+                    <IconButton onClick={() => removeFromRoleFunc(Number(params.row.contestCategoryId))}>
                         <GridDeleteIcon color="error" />
                     </IconButton>
                 </Tooltip>
@@ -52,4 +52,4 @@ export const returnLecturerInContestNonFilterableColumns = (removeFromRoleFunc?:
     },
 ] as GridColDef[];
 
-export default lecturerInContestFilterableColumns;
+export default lecturerInCategoriesFilterableColumns;

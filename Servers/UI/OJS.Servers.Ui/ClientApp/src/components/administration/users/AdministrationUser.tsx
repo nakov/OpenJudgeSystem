@@ -45,7 +45,7 @@ const AdministrationUser = () => {
 
     const renderParticipantsInContestView = (key: string) => (
         userData?.roles.find((x) => x.name === LECTURER)
-            ? <LecturerInCategories key={key} />
+            ? <LecturerInCategories key={key} userId={userData!.id} />
             : (
                 <>
                 </>

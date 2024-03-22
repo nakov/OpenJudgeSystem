@@ -191,7 +191,7 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
                 <FormControl className={formStyles.inputRow}>
                     <Autocomplete
                       options={contestAutocomplete}
-                      renderInput={(params) => <TextField {...params} label="Select User" key={params.id} />}
+                      renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       onChange={(event, newValue) => onSelect(newValue!)}
                       onInputChange={(event) => onUserInputChange(event)}
                       isOptionEqualToValue={(option, value) => option.id === value.id}
