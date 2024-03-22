@@ -15,7 +15,7 @@ public class LecturerInCategoriesBusinessService : ILecturersInCategoriesBusines
 
     public async Task<LecturerToCategoryModel> AddLecturerToCategory(LecturerToCategoryModel model)
     {
-        await this.db.LecturersInContestCategories.AddAsync(new LecturerInContestCategory()
+        await this.db.LecturersInContestCategories.AddAsync(new LecturerInContestCategory
         {
             ContestCategoryId = model.CategoryId!, LecturerId = model.LecturerId!,
         });
