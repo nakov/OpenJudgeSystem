@@ -132,6 +132,12 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
         setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
     }, [ sortersQueryParams ]);
 
+    useEffect(() => {
+        if (isSuccessfullyRemoved || isSuccessfullyAddedToRole) {
+            refetch();
+        }
+    }, [ isSuccessfullyAddedToRole, isSuccessfullyRemoved, refetch ]);
+
     const onEditClick = (id: string) => {
         setUserId(id);
         setShowUserEditModal(true);
@@ -185,7 +191,6 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
           open={showUserEditModal}
           onClose={() => {
               setShowUserEditModal(false);
-              refetch();
           }}
         >
             <UserForm id={userId!} />
@@ -199,7 +204,6 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
           open={showCreateModal}
           onClose={() => {
               setShowCreateModal(false);
-              refetch();
           }}
         >
             <form className={formStyles.form}>

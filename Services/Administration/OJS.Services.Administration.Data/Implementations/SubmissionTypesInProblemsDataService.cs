@@ -1,13 +1,13 @@
 namespace OJS.Services.Administration.Data.Implementations;
 
-using Microsoft.EntityFrameworkCore;
+using OJS.Data;
 using OJS.Data.Models;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;
 
 public class SubmissionTypesInProblemsDataService : DataService<SubmissionTypeInProblem>, ISubmissionTypesInProblemsDataService
 {
-    public SubmissionTypesInProblemsDataService(DbContext submissionTypesInProblems)
+    public SubmissionTypesInProblemsDataService(OjsDbContext submissionTypesInProblems)
         : base(submissionTypesInProblems)
     {
     }

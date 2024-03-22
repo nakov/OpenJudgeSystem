@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OJS.Data;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
@@ -9,7 +10,6 @@ using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 public class RolesBusinessService : AdministrationOperationService<Role, string, RoleAdministrationModel>, IRolesBusinessService
@@ -68,13 +68,11 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     {
         var roleName = await this.roleDataService
             .GetByIdQuery(model.RoleId!)
-            .AsNoTracking()
             .Select(x => x.Name)
             .FirstAsync();
 
         var user = await this.usersDataService
             .GetByIdQuery(model.UserId!)
-            .AsNoTracking()
             .FirstAsync();
 
         if (model.OperationType == "Add")
@@ -85,7 +83,5 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
         {
             await this.userManager.RemoveFromRoleAsync(user, roleName);
         }
-
-        await this.roleDataService.SaveChanges();
     }
 }

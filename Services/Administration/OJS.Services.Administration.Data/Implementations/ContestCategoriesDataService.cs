@@ -1,6 +1,7 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
@@ -13,9 +14,9 @@ namespace OJS.Services.Administration.Data.Implementations
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
-        private readonly DbContext dbContext;
+        private readonly OjsDbContext dbContext;
 
-        public ContestCategoriesDataService(DbContext db)
+        public ContestCategoriesDataService(OjsDbContext db)
             : base(db) =>
             this.dbContext = db;
 

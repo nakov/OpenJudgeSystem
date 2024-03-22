@@ -45,7 +45,7 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
         }
 
         await this.rolesBusinessService.ManageUserInRole(model);
-        return this.Ok("User was successfully removed from role.");
+        return this.Ok("User was successfully added to role.");
     }
 
     [ProtectedEntityAction("roleId", typeof(RoleIdPermissionService))]
@@ -62,6 +62,6 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
         }
 
         await this.rolesBusinessService.ManageUserInRole(model);
-        return this.Ok("User was successfully added to new role.");
+        return this.Ok("User was successfully removed from role.");
     }
 }
