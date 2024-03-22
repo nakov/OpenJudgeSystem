@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { SELECT_CATEGORY } from '../../../../common/labels';
 import { IContestCategories, IGetAllAdminParams } from '../../../../common/types';
@@ -17,11 +16,8 @@ import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../ut
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
+import LecturerForm from '../../common/lecturer/lecturer-form/LecturerForm';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
-import FormActionButton from '../../form-action-button/FormActionButton';
-
-// eslint-disable-next-line css-modules/no-unused-class
-import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface ILecturerInCategoriesProps {
     userId: string;
@@ -136,33 +132,14 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
               setShowCreateModal(false);
           }}
         >
-            <form className={formStyles.form}>
-                <Typography variant="h4" className="centralize">
-                    Add lecturer to contest
-                </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <Autocomplete
-                      sx={{ width: '100%' }}
-                      className={formStyles.inputRow}
-                      onChange={(event, newValue) => onChange(newValue!)}
-                      options={contestCategories!}
-                      renderInput={(params) => <TextField {...params} label={SELECT_CATEGORY} key={params.id} />}
-                      getOptionLabel={(option) => option?.name}
-                      renderOption={(properties, option) => (
-                          <MenuItem {...properties} key={option.id} value={option.id}>
-                              {option.name}
-                          </MenuItem>
-                      )}
-                    />
-                </FormControl>
-                <FormActionButton
-                  disabled={categoryToAdd === 0}
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => addLecturerToCategory({ lecturerId: userId, categoryId: categoryToAdd })}
-                  name="Add"
-                />
-            </form>
+            <LecturerForm
+              data={contestCategories!}
+              disabled={categoryToAdd === 0}
+              name="Add lecturer to contest"
+              label={SELECT_CATEGORY}
+              onChange={onChange}
+              onClick={() => addLecturerToCategory({ lecturerId: userId, categoryId: categoryToAdd })}
+            />
         </AdministrationModal>
     );
 

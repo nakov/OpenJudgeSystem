@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Autocomplete, debounce, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import { debounce } from '@mui/material';
 
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../../common/messages';
 import { IContestAutocomplete, IGetAllAdminParams } from '../../../../common/types';
@@ -17,11 +17,8 @@ import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../ut
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
+import LecturerForm from '../../common/lecturer/lecturer-form/LecturerForm';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
-import FormActionButton from '../../form-action-button/FormActionButton';
-
-// eslint-disable-next-line css-modules/no-unused-class
-import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface ILeturerInContestsProps {
     userId: string;
@@ -184,33 +181,15 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
               setShowCreateModal(false);
           }}
         >
-            <form className={formStyles.form}>
-                <Typography variant="h4" className="centralize">
-                    Add lecturer to contest
-                </Typography>
-                <FormControl className={formStyles.inputRow}>
-                    <Autocomplete
-                      options={contestAutocomplete}
-                      renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
-                      onChange={(event, newValue) => onSelect(newValue!)}
-                      onInputChange={(event) => onUserInputChange(event)}
-                      isOptionEqualToValue={(option, value) => option.id === value.id}
-                      getOptionLabel={(option) => option?.name}
-                      renderOption={(properties, option) => (
-                          <MenuItem {...properties} key={option.id} value={option.id}>
-                              {option.name}
-                          </MenuItem>
-                      )}
-                    />
-                </FormControl>
-                <FormActionButton
-                  disabled={contestToAdd === 0}
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => addLecturerToContest({ lecturerId: userId, contestId: contestToAdd })}
-                  name="Add"
-                />
-            </form>
+            <LecturerForm
+              data={contestAutocomplete}
+              disabled={contestToAdd === 0}
+              label="Select Contest"
+              name="Add lecturer to contest"
+              onChange={onSelect}
+              onInputChange={onUserInputChange}
+              onClick={() => addLecturerToContest({ lecturerId: userId, contestId: contestToAdd })}
+            />
         </AdministrationModal>
     );
 
