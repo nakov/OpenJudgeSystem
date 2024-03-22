@@ -2,7 +2,10 @@
 
 using AutoMapper;
 using OJS.Data.Models.Users;
+using OJS.Services.Administration.Models.Roles;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 public class UserAdministrationModel : BaseAdministrationModel<string>, IMapExplicitly
 {
@@ -12,9 +15,14 @@ public class UserAdministrationModel : BaseAdministrationModel<string>, IMapExpl
 
     public UserSettingsAdministrationModel? UserSettings { get; set; }
 
+    public List<RoleResponseModel> Roles { get; set; } = new();
+
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<UserProfile, UserAdministrationModel>();
+        configuration.CreateMap<UserProfile, UserAdministrationModel>()
+            .ForMember(uam => uam.Roles, opt
+                => opt.MapFrom(ur => ur.UsersInRoles.Select(uir => uir.Role)));
+
         configuration.CreateMap<UserAdministrationModel, UserProfile>()
             .ForMember(up => up.IsDeleted, opt
                 => opt.Ignore())

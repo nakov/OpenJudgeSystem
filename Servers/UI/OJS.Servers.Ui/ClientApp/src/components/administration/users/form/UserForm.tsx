@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Box, FormControl, FormGroup, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
@@ -17,10 +18,12 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IUserFormProps {
     id: string;
+
+    providedUser?: IUserAdministrationModel;
 }
 
 const UserForm = (props: IUserFormProps) => {
-    const { id } = props;
+    const { id, providedUser } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
 
@@ -39,13 +42,14 @@ const UserForm = (props: IUserFormProps) => {
             jobTitle: null,
             lastName: null,
         },
+        roles: [],
     });
 
     const {
         data: getData,
         error: getError,
         isLoading: isGetting,
-    } = useGetUserByIdQuery(id);
+    } = useGetUserByIdQuery(id, { skip: !!providedUser });
 
     const [
         update, {
@@ -56,6 +60,12 @@ const UserForm = (props: IUserFormProps) => {
         },
     ] = useUpdateUserMutation();
 
+    useEffect(() => {
+        if (providedUser) {
+            setUser(providedUser);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     useEffect(() => {
         if (getData) {
             setUser(getData);

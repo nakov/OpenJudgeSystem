@@ -631,6 +631,12 @@ interface IUserAdministrationModel {
     userName: string;
     email: string;
     userSettings: IUserSettingsAdministrationModel;
+    roles: Array<IUserRoleType>;
+}
+
+interface ILecturerInContestInListModel {
+    contestId: string;
+    contestName: string;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -696,4 +702,5 @@ export type {
     IRoleAdministrationModel,
     IUserInListModel,
     IUserAdministrationModel,
+    ILecturerInContestInListModel,
 };

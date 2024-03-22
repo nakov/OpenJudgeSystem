@@ -1,6 +1,7 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using OJS.Common.Enumerations;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Attributes;
@@ -36,7 +37,7 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
     [HttpPost]
     public async Task<IActionResult> AddUserToRole(UserToRoleModel model)
     {
-        model.OperationType = "Add";
+        model.OperationType = CrudOperationTypes.Create;
         var validationResult = await this.userToRoleModelValidator.ValidateAsync(model).ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
@@ -52,7 +53,7 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
     [HttpDelete]
     public async Task<IActionResult> RemoveFromRole([FromQuery] string userId, [FromQuery] string roleId)
     {
-        var model = new UserToRoleModel { RoleId = roleId, UserId = userId, OperationType = "Delete" };
+        var model = new UserToRoleModel { RoleId = roleId, UserId = userId, OperationType = CrudOperationTypes.Delete };
 
         var validationResult = await this.userToRoleModelValidator.ValidateAsync(model).ToExceptionResponseAsync();
 

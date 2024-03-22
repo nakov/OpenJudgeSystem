@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
@@ -75,7 +76,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
             .GetByIdQuery(model.UserId!)
             .FirstAsync();
 
-        if (model.OperationType == "Add")
+        if (model.OperationType == CrudOperationTypes.Create)
         {
             await this.userManager.AddToRoleAsync(user, roleName);
         }

@@ -3,6 +3,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
@@ -41,9 +42,9 @@ public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
         this.RuleFor(model => model)
             .MustAsync(async (model, _) => await this.NotBeInRole(model.UserId!, model.RoleId!))
             .WithMessage("User is already in the role.")
-            .When(x => x.OperationType == "Add")
+            .When(x => x.OperationType == CrudOperationTypes.Create)
             .MustAsync(async (model, _) => await this.BeInRole(model.UserId!, model.RoleId!))
-            .When(x => x.OperationType == "Delete")
+            .When(x => x.OperationType == CrudOperationTypes.Delete)
             .WithMessage("User is not in this role.");
     }
 

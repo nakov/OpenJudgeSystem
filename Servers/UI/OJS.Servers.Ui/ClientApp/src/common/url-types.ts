@@ -19,6 +19,10 @@ interface IGetByRoleId extends IGetAllAdminParams {
     roleId: string;
 }
 
+interface IGetByUserId extends IGetAllAdminParams {
+    userId: string;
+}
+
 interface IGetByProblemId extends IGetAllAdminParams {
     problemId: number;
 }
@@ -166,4 +170,5 @@ export type {
     IGetByProblemGroupId,
     IGetByTestId,
     IGetByRoleId,
+    IGetByUserId,
 };

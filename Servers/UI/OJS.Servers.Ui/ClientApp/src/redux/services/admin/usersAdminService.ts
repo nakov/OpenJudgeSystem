@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
-import { IGetByRoleId } from '../../../common/url-types';
+import { IGetByRoleId, IGetByUserId } from '../../../common/url-types';
 import { GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
@@ -48,6 +48,33 @@ export const usersAdminService = createApi({
                 body: user,
             }),
         }),
+
+        getLecturerContests: builder.query<IPagedResultType<IUserInListModel>, IGetByUserId>({
+            query: ({ userId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetLecturerContests/${userId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+
+        addLecturerToContest: builder.mutation<string, {lecturerId: string; contestId: number} >({
+            query: ({ lecturerId, contestId }) => ({
+                url: '/AddLecturerToContest',
+                method: 'POST',
+                body: { lecturerId, contestId },
+            }),
+        }),
+
+        removeLecturerFromContest: builder.mutation<string, {lecturerId: string; contestId: number} >({
+            query: ({ lecturerId, contestId }) => ({
+                url: `/removeLecturerFromContest?lecturerId=${lecturerId}&contestId=${contestId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
@@ -57,5 +84,8 @@ export const {
     useGetUserByIdQuery,
     useGetAllUsersQuery,
     useUpdateUserMutation,
+    useGetLecturerContestsQuery,
+    useAddLecturerToContestMutation,
+    useRemoveLecturerFromContestMutation,
 } = usersAdminService;
 export default usersAdminService;
