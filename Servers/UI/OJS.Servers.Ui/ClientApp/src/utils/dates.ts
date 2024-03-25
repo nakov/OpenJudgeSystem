@@ -1,9 +1,10 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import moment, { Duration } from 'moment';
 
-const defaultDateTimeFormat = 'HH:MM, DD/MMM/yyyy';
-const defaultDateTimeFormatReverse = 'DD/MMM/yyyy, HH:MM';
-const defaultPreciseDateTimeFormat = 'DD/MMM/yyyy, HH:mm:ss';
+const defaultDateTimeFormat = 'HH:MM, DD/MMM/YYYY';
+const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
+const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
+const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate));
 
@@ -126,6 +127,8 @@ export default {
 };
 
 export {
+    defaultDateTimeFormat,
+    defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
     formatDate,
     preciseFormatDate,

@@ -383,10 +383,20 @@ interface IProblemAdministration {
     problemGroupId : number;
 }
 
+interface ISubmissionTypesInListModel{
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    allowBinaryFilesUpload: boolean;
+    allowedFileExtensions: string;
+}
+
 interface IProblemGroupDropdownModel {
     id: number;
     orderBy: number;
 }
+
 interface IUserRoleType {
     id: string;
     name: string;
@@ -536,6 +546,7 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminSubmissionTypes: IAdminSlice;
     adminCheckers: IAdminSlice;
 }
 type ExceptionData = {
@@ -554,6 +565,18 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+}
+
+interface ISubmissionTypeAdministrationModel {
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    additionalCompilerArguments: string;
+    description: string;
+    allowedFileExtensions: string;
+    isSelectedByDefault: boolean;
+    allowBinaryFilesUpload: boolean;
 }
 
 interface ICheckerInListModel {
@@ -625,6 +648,8 @@ export type {
     ITestsUploadModel,
     IFileModel,
     IEnumType,
+    ISubmissionTypesInListModel,
+    ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
     ISorterReducerActionType,
     IFilterReducerActionType,
