@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
+    private readonly IContestsBusinessService contestsBusinessService;
     private readonly IContestsDataService contestsData;
 
     public ContestsController(
@@ -32,7 +33,10 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         contestsBusinessService,
         validator,
         deleteValidator)
-        => this.contestsData = contestsData;
+    {
+        this.contestsBusinessService = contestsBusinessService;
+        this.contestsData = contestsData;
+    }
 
     [HttpGet]
     [ProtectedEntityAction(false)]
@@ -47,5 +51,13 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
                 .Take(20)
                 .ToListAsync();
         return this.Ok(contests);
+    }
+
+    [HttpPost]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> Export(ContestResultsExportRequestModel model)
+    {
+        var file = await this.contestsBusinessService.ExportResults(model);
+        return this.File(file.Content!, file.MimeType!, file.FileName);
     }
 }

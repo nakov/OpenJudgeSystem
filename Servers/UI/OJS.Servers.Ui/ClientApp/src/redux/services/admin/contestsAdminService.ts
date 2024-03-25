@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
+import { ContestParticipationType } from '../../../common/constants';
 import { IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
@@ -51,6 +52,14 @@ export const contestService = createApi({
             query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
         }),
+
+        downloadResults: builder.mutation<{ blob: Blob; filename: string }, {id:number; type:number} >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/Export',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
     }),
 });
 
@@ -61,5 +70,6 @@ export const {
     useUpdateContestMutation,
     useCreateContestMutation,
     useGetCopyAllQuery,
+    useDownloadResultsMutation,
 } = contestService;
 export default contestService;

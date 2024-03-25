@@ -1,5 +1,6 @@
 namespace OJS.Servers.Administration.Models.Contests
 {
+    using OJS.Common.Enumerations;
     using System.ComponentModel.DataAnnotations;
 
     public class DownloadSubmissionsModel

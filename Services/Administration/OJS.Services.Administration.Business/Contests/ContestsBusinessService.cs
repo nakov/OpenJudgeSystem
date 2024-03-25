@@ -1,19 +1,24 @@
 namespace OJS.Services.Administration.Business.Contests;
 
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
+using OJS.Services.Administration.Business.Excel;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
+using OJS.Services.Common.Models.Contests.Results;
+using OJS.Services.Common.Models.Files;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Resource = OJS.Common.Resources.ContestsGeneral;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
 {
@@ -23,19 +28,28 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IParticipantsDataService participantsData;
+    private readonly IUserProviderService userProviderService;
+    private readonly IContestResultsAggregatorCommonService contestResultsAggregatorCommonService;
+    private readonly IExcelService excelService;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
         Business.IUserProviderService userProvider,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
-        IParticipantsDataService participantsData)
+        IParticipantsDataService participantsData,
+        IUserProviderService userProviderService,
+        IContestResultsAggregatorCommonService contestResultsAggregatorCommonService,
+        IExcelService excelService)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.participantsData = participantsData;
+        this.userProviderService = userProviderService;
+        this.contestResultsAggregatorCommonService = contestResultsAggregatorCommonService;
+        this.excelService = excelService;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -62,6 +76,40 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
                 .Take(NumberOfContestsToGet)
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
+    }
+
+    public async Task<FileResponseModel> ExportResults(ContestResultsExportRequestModel model)
+    {
+        var contest = await this.contestsData.GetByIdWithProblems(model.Id);
+
+        if (contest == null)
+        {
+            throw new BusinessServiceException("Contest not found.");
+        }
+
+        var official = model.Type == ContestExportResultType.Compete;
+
+        var user = this.userProviderService.GetCurrentUser();
+
+        var contestResultsModel = new ContestResultsModel
+        {
+            Contest = contest,
+            Official = official,
+            IsUserAdminOrLecturer = user.IsAdminOrLecturer,
+            IsFullResults = false,
+            TotalResultsCount = null,
+            IsExportResults = false,
+        };
+
+        var contestResults = this.contestResultsAggregatorCommonService.GetContestResults(contestResultsModel);
+
+        // Suggested file name in the "Save as" dialog which will be displayed to the end user
+        var fileName = string.Format(
+            Resource.ReportExcelFormat,
+            official ? Resource.Contest : Resource.Practice,
+            contest.Name);
+
+        return await this.excelService.ExportContestResultsToExcel(contestResults, fileName);
     }
 
     public override async Task<ContestAdministrationModel> Get(int id)

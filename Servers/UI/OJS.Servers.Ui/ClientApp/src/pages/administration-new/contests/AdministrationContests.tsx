@@ -8,10 +8,13 @@ import AdministrationModal from '../../../components/administration/common/modal
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
-import { useDeleteContestMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
+import { useDeleteContestMutation, useDownloadResultsMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
 import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import downloadFile from '../../../utils/file-download-utils';
+import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { renderErrorMessagesAlert } from '../../../utils/render-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import contestFilterableColumns, { returnContestsNonFilterableColumns } from './contestsGridColumns';
@@ -27,7 +30,7 @@ const AdministrationContestsPage = () => {
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
-
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const selectedFilters = useAppSelector((state) => state.adminContests['all-contests']?.selectedFilters);
     const selectedSorters = useAppSelector((state) => state.adminContests['all-contests']?.selectedSorters);
     const {
@@ -36,6 +39,16 @@ const AdministrationContestsPage = () => {
         error,
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
+
+    const [
+        exportResutls,
+        {
+            data: file,
+            isSuccess: isSuccessfullyDownloaded,
+            error: downloadError,
+            reset: resetExport,
+        },
+    ] = useDownloadResultsMutation();
 
     const onEditClick = (id: number) => {
         setOpenEditContestModal(true);
@@ -53,6 +66,21 @@ const AdministrationContestsPage = () => {
         setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
+    useEffect(() => {
+        if (isSuccessfullyDownloaded) {
+            if (file) {
+                downloadFile(file.blob, file.filename);
+            } else {
+                setErrorMessages([ 'The required file is empty.' ]);
+            }
+            resetExport();
+        }
+    }, [ file, isSuccessfullyDownloaded, resetExport ]);
+
+    useEffect(() => {
+        getAndSetExceptionMessage([ downloadError ], setErrorMessages);
+    }, [ downloadError ]);
+
     const onClose = (isEditMode: boolean) => {
         if (isEditMode) {
             setOpenEditContestModal(false);
@@ -61,6 +89,11 @@ const AdministrationContestsPage = () => {
         }
         retakeContests();
     };
+
+    const onClickExcel = (type: number, contestIdToDownload: number) => {
+        exportResutls({ id: contestIdToDownload, type });
+    };
+
     const renderContestModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           key={index}
@@ -94,25 +127,33 @@ const AdministrationContestsPage = () => {
     }
 
     return (
-        <AdministrationGridView
-          data={data}
-          error={error}
-          filterableGridColumnDef={contestFilterableColumns}
-          notFilterableGridColumnDef={returnContestsNonFilterableColumns(onEditClick, useDeleteContestMutation, retakeContests)}
-          renderActionButtons={renderGridActions}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setAdminContestsSorters}
-          setFilterStateAction={setAdminContestsFilters}
-          location="all-contests"
-          modals={[
-              { showModal: openShowCreateContestModal, modal: (i) => renderContestModal(i, false) },
-              { showModal: openEditContestModal, modal: (i) => renderContestModal(i, true) },
-          ]}
-          legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
-        />
+        <>
+            {renderErrorMessagesAlert(errorMessages)}
+            <AdministrationGridView
+              data={data}
+              error={error}
+              filterableGridColumnDef={contestFilterableColumns}
+              notFilterableGridColumnDef={returnContestsNonFilterableColumns(
+                  onEditClick,
+                  useDeleteContestMutation,
+                  retakeContests,
+                  onClickExcel,
+              )}
+              renderActionButtons={renderGridActions}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
+              selectedFilters={selectedFilters || []}
+              selectedSorters={selectedSorters || []}
+              setSorterStateAction={setAdminContestsSorters}
+              setFilterStateAction={setAdminContestsFilters}
+              location="all-contests"
+              modals={[
+                  { showModal: openShowCreateContestModal, modal: (i) => renderContestModal(i, false) },
+                  { showModal: openEditContestModal, modal: (i) => renderContestModal(i, true) },
+              ]}
+              legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
+            />
+        </>
     );
 };
 

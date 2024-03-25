@@ -1,7 +1,8 @@
 @using OJS.Servers.Administration.Models.Contests
 @using SharedResource = OJS.Common.Resources.Partials
+@using OJS.Common.Enumerations
 
-@model ContestResultsExportRequestModel
+@model OJS.Services.Administration.Models.Contests.ContestResultsExportRequestModel
 
 <form method="post" asp-controller="Results" asp-action="Export">
     <input hidden asp-for="Id" value="@Model?.Id">
