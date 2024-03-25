@@ -186,7 +186,7 @@ const LoginForm = () => {
                         <FormControl
                           id="auth-password-checkbox"
                           name="RememberMe"
-                          labelText="Remember Me"
+                          labelText="Remember me"
                           type={FormControlType.checkbox}
                           checked={rememberMe}
                           onChange={() => setRememberMe(!rememberMe)}

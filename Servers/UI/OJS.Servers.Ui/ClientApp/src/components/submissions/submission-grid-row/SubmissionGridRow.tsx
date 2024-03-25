@@ -134,18 +134,13 @@ const SubmissionGridRow = ({
 
     const renderUsername = useCallback(
         () => (
-            <>
-                {' '}
-                by
-                {' '}
-                <LinkButton
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(usernameFromSubmission))}
-                  text={usernameFromSubmission}
-                  internalClassName={styles.redirectButton}
-                />
-            </>
+            <LinkButton
+              type={LinkButtonType.plain}
+              size={ButtonSize.none}
+              to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(usernameFromSubmission))}
+              text={usernameFromSubmission}
+              internalClassName={styles.redirectButton}
+            />
         ),
         [ usernameFromSubmission ],
     );
@@ -231,20 +226,26 @@ const SubmissionGridRow = ({
                         : null
                 }
             </td>
-            <td>
+            <td className={styles.fromContainer}>
                 <span>
                     {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                    {options.showParticipantUsername && renderUsername()}
                 </span>
+                {
+                    options.showParticipantUsername
+                        ? (
+                            <span className={styles.username}>
+                                {renderUsername()}
+                            </span>
+                        )
+                        : null
+                }
             </td>
             {
                 options.showCompeteMarker
                     ? isOfficial
                         ? (
                             <td>
-                                <div className={styles.competeIconWrapper}>
-                                    <FaFlagCheckered className={styles.competeIcon} />
-                                </div>
+                                <FaFlagCheckered className={styles.competeIcon} />
                             </td>
                         )
                         : <td />
