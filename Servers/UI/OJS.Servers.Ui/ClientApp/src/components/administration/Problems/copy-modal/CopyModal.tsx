@@ -4,7 +4,7 @@ import { FaLongArrowAltRight } from 'react-icons/fa';
 import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typography } from '@mui/material';
 
 import { IContestAutocomplete } from '../../../../common/types';
-import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { modalStyles } from '../../../../utils/object-utils';
@@ -35,7 +35,7 @@ const CopyModal = (props: ICopyModalProps) => {
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([]);
 
-    const { data, isLoading } = useGetCopyAllQuery(contestSearchString);
+    const { data, isLoading } = useGetContestAutocompleteQuery(contestSearchString);
 
     const onSelect = (contest: IContestAutocomplete) => {
         setContestToCopy(contest);

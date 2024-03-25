@@ -1,7 +1,7 @@
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 import { defaultPathIdentifier } from '../../common/constants';
-import { SOMETHING_WENT_WRONG_MESSAGE, UNEXPECTED_ERROR_MESSAGE } from '../../common/messages';
+import { SOMETHING_WENT_WRONG_MESSAGE, UNAUTHORIZED_MESSAGE, UNEXPECTED_ERROR_MESSAGE } from '../../common/messages';
 import { ExceptionData } from '../../common/types';
 
 type ExtraOptionsType = object
@@ -54,11 +54,11 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
                 }
             });
         } catch {
-            let message = SOMETHING_WENT_WRONG_MESSAGE;
-            if (response.status === 401 || response.status === 403) {
-                message = 'You do not have a permission to perform this operation.';
+            if (Number(response.status) === 401 || Number(response.status) === 403) {
+                data = [ { message: UNAUTHORIZED_MESSAGE, name: '' } ] as Array<ExceptionData>;
+            } else {
+                data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
             }
-            data = [ { message, name: '' } ] as Array<ExceptionData>;
         }
         return { error: data };
     }

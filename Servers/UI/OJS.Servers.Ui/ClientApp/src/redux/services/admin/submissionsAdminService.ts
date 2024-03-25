@@ -53,7 +53,7 @@ export const submissionsAdminService = createApi({
                     sorting,
                 } }) }),
         deleteSubmission: builder.mutation({
-            query: ({ id }) => ({
+            query: (id) => ({
                 url: `/delete/${id}`,
                 method: 'DELETE',
             }) }),

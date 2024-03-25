@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
@@ -23,6 +24,7 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IProblemFormProps {
     isEditMode?: boolean;
+    getName?: Function;
 }
 
 interface IProblemFormCreateProps extends IProblemFormProps{
@@ -43,7 +45,7 @@ const defaultTimeLimit = 100;
 const defaultSourceCodeSizeLimit = 16384;
 
 const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => {
-    const { problemId, isEditMode = true, contestId, contestType } = props;
+    const { problemId, isEditMode = true, contestId, contestType, getName } = props;
     const navigate = useNavigate();
 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
@@ -99,8 +101,11 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     useEffect(() => {
         if (problemData) {
             setCurrentProblem(problemData);
+            if (getName) {
+                getName(problemData.name);
+            }
         }
-    }, [ problemData ]);
+    }, [ getName, problemData ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ gettingDataError, createError, updateError ], setErrorMessages);
