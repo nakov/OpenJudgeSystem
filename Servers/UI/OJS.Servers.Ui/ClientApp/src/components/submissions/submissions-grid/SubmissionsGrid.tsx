@@ -15,7 +15,7 @@ import styles from './SubmissionsGrid.module.scss';
 
 interface ISubmissionsGridProps extends IHaveOptionalClassName {
     isDataLoaded: boolean;
-    submissions: IPagedResultType<IPublicSubmission>;
+    submissions?: IPagedResultType<IPublicSubmission>;
     handlePageChange: (page: number) => void;
     options: ISubmissionsGridOptions;
 }
@@ -59,7 +59,7 @@ const SubmissionsGrid = ({
                 );
             }
 
-            if (isEmpty(submissions.items)) {
+            if (isEmpty(submissions?.items)) {
                 return (
                     <div className={concatClassNames(
                         styles.noSubmissionsFound,
@@ -99,7 +99,7 @@ const SubmissionsGrid = ({
                     </thead>
                     <tbody>
                         {
-                            !isNil(submissions.items) && !isEmpty(submissions.items)
+                            !isNil(submissions?.items) && !isEmpty(submissions?.items)
                                 ? submissions.items.map((s) => (
                                     <SubmissionGridRow
                                       submission={s}
@@ -119,7 +119,7 @@ const SubmissionsGrid = ({
     return (
         <>
             {renderSubmissionsGrid()}
-            {!isEmpty(submissions) && submissions.pagesCount !== 0 && (
+            {!isEmpty(submissions) && submissions?.pagesCount !== 0 && (
                 <PaginationControls
                   count={submissions.pagesCount}
                   page={submissions.pageNumber}

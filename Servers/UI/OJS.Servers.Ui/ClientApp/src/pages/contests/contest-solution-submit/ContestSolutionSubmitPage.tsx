@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { IoDocumentText } from 'react-icons/io5';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
 
 import { ISubmissionTypeType } from '../../../common/types';
@@ -16,7 +16,9 @@ import SubmissionsGrid from '../../../components/submissions/submissions-grid/Su
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import {
-    useGetContestUserParticipationQuery, useLazyGetContestByIdQuery,
+    useGetContestRegisteredUserQuery,
+    useLazyGetContestByIdQuery,
+    useLazyGetContestUserParticipationQuery,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
 import {
@@ -29,10 +31,12 @@ import styles from './ContestSolutionSubmitPage.module.scss';
 
 const ContestSolutionSubmitPage = () => {
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType } = useParams();
 
+    const [ userParticipationData, setUserParticipationData ] = useState<any>({});
+    const [ userParticipationDataLoading, setUserParticipationDataLoading ] = useState<boolean>(false);
+    const [ userParticipationError, setUserParticipationError ] = useState<string>();
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -40,23 +44,28 @@ const ContestSolutionSubmitPage = () => {
     const [ submissionsData, setSubmissionsData ] = useState(null);
     const [ submissionsError, setSubmissionsError ] = useState('');
     const [ submissionsDataLoading, setSubmissionsDataLoading ] = useState<boolean>(false);
+    // should be false by default here and set it on modal show
+    const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(true);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
 
     const [ submitSolution ] = useSubmitContestSolutionMutation();
     const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ getSubmissionsData ] = useLazyGetSubmissionResultsByProblemQuery();
+    const [ getContestUserParticipation ] = useLazyGetContestUserParticipationQuery();
 
     const {
         data,
         isLoading,
         error,
-    } = useGetContestUserParticipationQuery({ id: Number(contestId), isOfficial: participationType === 'compete' });
+    } = useGetContestRegisteredUserQuery({ id: Number(contestId), isOfficial: participationType === 'compete' });
 
     const isModalOpen = Boolean(anchorEl);
 
-    const { contest, shouldEnterPassword, participantsCount } = data || {};
-    const { id, name, problems, allowedSubmissionTypes } = contest || {};
+    const { requirePassword, isOnlineExam, name, numberOfProblems, duration, id } = data || {};
+    const { contest, shouldEnterPassword, participantsCount } = userParticipationData || {};
+    const { problems = [], allowedSubmissionTypes = [] } = contest || {};
+
     const { memoryLimit, timeLimit, fileSizeLimit, checkerName } = selectedContestDetailsProblem || {};
 
     const strategyDropdownItems = useMemo(
@@ -79,11 +88,33 @@ const ContestSolutionSubmitPage = () => {
         setSubmissionCode('');
     }, [ selectedContestDetailsProblem ]);
 
+    // fetch contest data, when user has accepted online exam modal,
+    // entered password correctly and has accessed contest data
     useEffect(() => {
-        if (shouldEnterPassword) {
-            navigate('/enter-exam-password');
+        if ((isOnlineExam
+            ? hasAcceptedOnlineExamModal
+            : true) && !requirePassword) {
+            setUserParticipationDataLoading(true);
+            const fetchUserParticipationDetails = async () => {
+                try {
+                    const { data: queryData } = await getContestUserParticipation({
+                        id: Number(contestId),
+                        isOfficial: participationType === 'compete',
+                    });
+                    console.log('test => ', queryData);
+                    setUserParticipationError('');
+                    setUserParticipationData(queryData);
+                    setUserParticipationDataLoading(false);
+                } catch {
+                    setUserParticipationError('Error loading user participation data!');
+                    setUserParticipationData({});
+                    setUserParticipationDataLoading(false);
+                }
+            };
+
+            fetchUserParticipationDetails();
         }
-    }, [ shouldEnterPassword, navigate ]);
+    }, [ isOnlineExam, hasAcceptedOnlineExamModal, requirePassword, contestId, getContestUserParticipation, participationType ]);
 
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
@@ -119,10 +150,12 @@ const ContestSolutionSubmitPage = () => {
                         isOfficial: participationType === 'compete',
                     });
 
+                    setSubmissionsError('');
                     setSubmissionsData(currentSubmissionsData);
                     setSubmissionsDataLoading(false);
                 } catch {
                     setSubmissionsError('Error loading submissions!');
+                    setSubmissionsData(null);
                     setSubmissionsDataLoading(false);
                 }
             };
@@ -302,11 +335,22 @@ const ContestSolutionSubmitPage = () => {
         );
     };
 
-    if (isLoading) {
+    if (isLoading || userParticipationDataLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
-    if (error) {
-        return <div>Error loading submission for contest! Please try again later!</div>;
+    if (error || userParticipationError) {
+        return (
+            <div className={styles.contestSolutionSubmitWrapper}>
+                <div className={textColorClassName}>Error fetching user data!</div>
+            </div>
+        );
+    }
+
+    if (requirePassword && shouldEnterPassword) {
+        return <div>require password logic</div>;
+    }
+    if (isOnlineExam && !hasAcceptedOnlineExamModal) {
+        return <div>online exam modal here</div>;
     }
     return (
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
@@ -327,7 +371,7 @@ const ContestSolutionSubmitPage = () => {
                     : (
                         <SubmissionsGrid
                           isDataLoaded={!submissionsDataLoading}
-                          submissions={submissionsData?.items || []}
+                          submissions={undefined} // submissionsData comes here
                           handlePageChange={() => {}}
                           options={{
                               showDetailedResults: true,
