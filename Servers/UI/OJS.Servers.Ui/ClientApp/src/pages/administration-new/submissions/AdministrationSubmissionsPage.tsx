@@ -1,12 +1,12 @@
-/* eslint-disable react/jsx-indent */
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { VIEW } from '../../../common/labels';
+import { IGetAllAdminParams } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
@@ -19,6 +19,7 @@ import { useDeleteSubmissionMutation,
     useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
+import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -28,6 +29,7 @@ const AdministrationSubmissionsPage = () => {
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
     const [ searchParams ] = useSearchParams();
+
     const [ queryParams, setQueryParams ] =
         useState<IGetAllAdminParams>({
             page: 1,
@@ -36,8 +38,22 @@ const AdministrationSubmissionsPage = () => {
             sorting: searchParams.get('sorting') ?? '',
         });
 
-    const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions']?.selectedSorters);
+    const selectedFilters =
+        useAppSelector((state) => state.adminSubmissions['all-submissions']?.selectedFilters);
+
+    const selectedSorters =
+        useAppSelector((state) => state.adminSubmissions['all-submissions']?.selectedSorters);
+
+    const filterParams = searchParams.get('filter');
+    const sortingParams = searchParams.get('sorting');
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
+    }, [ filterParams ]);
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
+    }, [ sortingParams ]);
 
     const {
         data,
@@ -83,14 +99,14 @@ const AdministrationSubmissionsPage = () => {
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 140,
+            flex: 1,
             headerAlign: 'center',
             align: 'center',
             filterable: false,
             sortable: false,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between' }}>
                     <Tooltip title="Retest">
                         <IconButton
                           onClick={() => retest(Number(params.row.id))}
@@ -98,20 +114,43 @@ const AdministrationSubmissionsPage = () => {
                             <RefreshIcon size={IconSize.Large} />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Download">
-                        <IconButton
-                          disabled={!params.row.isBinaryFile}
-                          onClick={() => startDownload(Number(params.row.id))}
-                        >
-                            <DownloadIcon size={IconSize.Large} />
-                        </IconButton>
-                    </Tooltip>
+                    <ViewRedirectButton
+                      path={`/submissions/${Number(params.row.id)}/details`}
+                      location={VIEW}
+                    />
                     <DeleteButton
                       id={Number(params.row.id)}
                       name="Submission"
                       text={`Are you sure that you want to delete submission #${params.row.id}?`}
                       mutation={useDeleteSubmissionMutation}
                     />
+                </div>
+            ),
+        },
+        {
+            field: 'download',
+            headerName: 'Download',
+            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            filterable: false,
+            sortable: false,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            renderCell: (params: GridRenderCellParams) => (
+                <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between' }}>
+                    {
+                        params.row.isBinaryFile
+                            ? (
+                                <Tooltip title="Download">
+                                    <IconButton
+                                      onClick={() => startDownload(Number(params.row.id))}
+                                    >
+                                        <DownloadIcon size={IconSize.Large} />
+                                    </IconButton>
+                                </Tooltip>
+                            )
+                            : null
+                    }
                 </div>
             ),
         },
