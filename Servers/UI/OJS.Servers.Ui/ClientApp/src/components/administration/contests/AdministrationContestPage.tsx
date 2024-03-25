@@ -38,7 +38,7 @@ const AdministrationContestPage = () => {
     );
 
     const renderParticipantsInContestView = (key: string) => (
-        <ParticipantsInContestView key={key} contestId={Number(contestId)} />
+        <ParticipantsInContestView key={key} contestId={Number(contestId)} contestName={data!.name} />
     );
 
     if (isFetching || isLoading) {
