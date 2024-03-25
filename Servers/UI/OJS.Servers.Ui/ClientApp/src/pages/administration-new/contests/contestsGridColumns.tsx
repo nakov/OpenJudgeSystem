@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { SiMicrosoftexcel } from 'react-icons/si';
+import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
@@ -124,7 +126,7 @@ export const returnContestsNonFilterableColumns = (
     {
         field: 'actions',
         headerName: 'Actions',
-        flex: 1,
+        flex: 1.5,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
@@ -140,6 +142,9 @@ export const returnContestsNonFilterableColumns = (
                   mutation={deleteMutation}
                   onSuccess={onSuccessDelete}
                 />
+                <IconButton>
+                    <SiMicrosoftexcel />
+                </IconButton>
             </div>
         ),
     },
