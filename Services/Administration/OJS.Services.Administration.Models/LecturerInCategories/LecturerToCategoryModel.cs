@@ -8,5 +8,5 @@ public class LecturerToCategoryModel
 
     public int CategoryId { get; set; }
 
-    public CrudOperationTypes OperationType { get; set; }
+    public CrudOperationType OperationType { get; set; }
 }

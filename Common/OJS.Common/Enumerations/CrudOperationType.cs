@@ -1,6 +1,6 @@
 ﻿namespace OJS.Common.Enumerations;
 
-public enum CrudOperationTypes
+public enum CrudOperationType
 {
     Create = 0,
     Read = 1,

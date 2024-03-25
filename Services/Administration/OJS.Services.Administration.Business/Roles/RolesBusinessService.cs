@@ -18,15 +18,18 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     private readonly IRoleDataService roleDataService;
     private readonly UserManager<UserProfile> userManager;
     private readonly IUsersDataService usersDataService;
+    private readonly RoleManager<Role> roleManager;
 
     public RolesBusinessService(
         IRoleDataService roleDataService,
         UserManager<UserProfile> userManager,
-        IUsersDataService usersDataService)
+        IUsersDataService usersDataService,
+        RoleManager<Role> roleManager)
     {
         this.roleDataService = roleDataService;
         this.userManager = userManager;
         this.usersDataService = usersDataService;
+        this.roleManager = roleManager;
     }
 
     public override async Task<RoleAdministrationModel> Get(string id)
@@ -37,8 +40,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
         var role = model.Map<Role>();
 
         role.Id = Guid.NewGuid().ToString();
-        await this.roleDataService.Add(role);
-        await this.roleDataService.SaveChanges();
+        await this.roleManager.CreateAsync(role);
 
         return model;
     }
@@ -53,8 +55,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
 
         role.MapFrom(model);
 
-        this.roleDataService.Update(role);
-        await this.roleDataService.SaveChanges();
+        await this.roleManager.UpdateAsync(role);
 
         return model;
     }
@@ -65,24 +66,29 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
         await this.roleDataService.SaveChanges();
     }
 
-    public async Task ManageUserInRole(UserToRoleModel model)
+    public async Task AddToRole(UserToRoleModel model)
     {
-        var roleName = await this.roleDataService
+       var (roleName, user) = await this.GetUserAndRoleName(model);
+       await this.userManager.AddToRoleAsync(user, roleName);
+    }
+
+    public async Task RemoveFromRole(UserToRoleModel model)
+    {
+        var (roleName, user) = await this.GetUserAndRoleName(model);
+        await this.userManager.RemoveFromRoleAsync(user, roleName);
+    }
+
+    private async Task<(string, UserProfile)> GetUserAndRoleName(UserToRoleModel model)
+    {
+         var roleName = await this.roleDataService!
             .GetByIdQuery(model.RoleId!)
             .Select(x => x.Name)
             .FirstAsync();
 
-        var user = await this.usersDataService
+         var user = await this.usersDataService
             .GetByIdQuery(model.UserId!)
             .FirstAsync();
 
-        if (model.OperationType == CrudOperationTypes.Create)
-        {
-            await this.userManager.AddToRoleAsync(user, roleName);
-        }
-        else
-        {
-            await this.userManager.RemoveFromRoleAsync(user, roleName);
-        }
+         return (roleName, user);
     }
 }

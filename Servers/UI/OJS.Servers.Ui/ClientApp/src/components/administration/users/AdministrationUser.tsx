@@ -61,18 +61,16 @@ const AdministrationUser = () => {
           form={renderForm}
           onTabChange={onTabChange}
           tabName={tabName}
-          tabs={[
+          tabs={userData?.roles.find((x) => x.name === LECTURER) && [
               {
                   value: USER_LISTED_DATA.LECTURER_IN_CONTEST,
                   label: 'Lecturer in Contests',
                   node: renderProblemsInContestView,
-                  disabled: !userData?.roles.find((x) => x.name === LECTURER),
               },
               {
                   value: USER_LISTED_DATA.LECTURER_IN_CATEGORIES,
                   label: 'Lecturer in Categories',
                   node: renderParticipantsInContestView,
-                  disabled: !userData?.roles.find((x) => x.name === LECTURER),
               },
           ]}
         />

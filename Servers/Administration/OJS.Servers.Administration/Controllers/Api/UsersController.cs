@@ -108,7 +108,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
             {
                 LecturerId = lecturerId,
                 ContestId = contestId,
-                OperationType = CrudOperationTypes.Delete,
+                OperationType = CrudOperationType.Delete,
             });
         return this.Ok("Lecturer successfully removed from contest");
     }
@@ -138,7 +138,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
             {
                 LecturerId = lecturerId,
                 CategoryId = categoryId,
-                OperationType = CrudOperationTypes.Delete,
+                OperationType = CrudOperationType.Delete,
             });
         return this.Ok("Lecturer successfully removed from category");
     }

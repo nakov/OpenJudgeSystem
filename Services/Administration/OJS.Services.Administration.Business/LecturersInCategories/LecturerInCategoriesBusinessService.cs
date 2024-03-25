@@ -1,26 +1,26 @@
 ﻿namespace OJS.Services.Administration.Business.LecturersInCategories;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Data;
 using OJS.Data.Models;
 using OJS.Services.Administration.Models.LecturerInCategories;
+using OJS.Services.Common.Data;
 using System.Threading.Tasks;
 
 public class LecturerInCategoriesBusinessService : ILecturersInCategoriesBusinessService
 {
-    private readonly OjsDbContext db;
+    private readonly IDataService<LecturerInContestCategory> lecturerInContestCategoryService;
 
-    public LecturerInCategoriesBusinessService(OjsDbContext db)
-        => this.db = db;
+    public LecturerInCategoriesBusinessService(IDataService<LecturerInContestCategory> lecturerInContestCategoryService)
+        => this.lecturerInContestCategoryService = lecturerInContestCategoryService;
 
     public async Task<LecturerToCategoryModel> AddLecturerToCategory(LecturerToCategoryModel model)
     {
-        await this.db.LecturersInContestCategories.AddAsync(new LecturerInContestCategory
+        await this.lecturerInContestCategoryService.Add(new LecturerInContestCategory
         {
             ContestCategoryId = model.CategoryId!, LecturerId = model.LecturerId!,
         });
 
-        await this.db.SaveChangesAsync();
+        await this.lecturerInContestCategoryService.SaveChanges();
 
         return model;
     }
@@ -28,15 +28,16 @@ public class LecturerInCategoriesBusinessService : ILecturersInCategoriesBusines
     public async Task RemoveLecturerFromCategory(LecturerToCategoryModel model)
     {
         var lecturerInContestCategory =
-            await this.db.LecturersInContestCategories.FirstOrDefaultAsync(x =>
-                x.LecturerId == model.LecturerId && x.ContestCategoryId == model.CategoryId);
+            await this.lecturerInContestCategoryService.GetQuery(x =>
+                x.LecturerId == model.LecturerId && x.ContestCategoryId == model.CategoryId)
+                .FirstOrDefaultAsync();
         if (lecturerInContestCategory == null)
         {
             return;
         }
 
-        this.db.LecturersInContestCategories.Remove(lecturerInContestCategory);
+        this.lecturerInContestCategoryService.Delete(lecturerInContestCategory);
 
-        await this.db.SaveChangesAsync();
+        await this.lecturerInContestCategoryService.SaveChanges();
     }
 }

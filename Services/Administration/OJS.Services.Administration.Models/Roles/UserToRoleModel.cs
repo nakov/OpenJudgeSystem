@@ -8,5 +8,5 @@ public class UserToRoleModel
 
     public string? UserId { get; set; }
 
-    public CrudOperationTypes OperationType { get; set; }
+    public CrudOperationType OperationType { get; set; }
 }

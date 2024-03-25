@@ -8,5 +8,5 @@ public class LecturerToContestModel
 
     public int ContestId { get; set; }
 
-    public CrudOperationTypes OperationType { get; set; }
+    public CrudOperationType OperationType { get; set; }
 }
