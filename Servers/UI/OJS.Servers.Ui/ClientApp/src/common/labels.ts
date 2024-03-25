@@ -64,12 +64,21 @@ export const SELECT_PROBLEM = 'Select Problem';
 
 // Submission types
 export const SUBMISSION_TYPES = 'Submission Types';
+export const EXECUTION_STRATEGY = 'Execution Strategy';
+export const ALLOWED_FILE_EXTENSIONS = 'Allowed File Extensions';
+export const IS_SELECTED = 'Is Selected';
+export const ALLOW_BINARY_FILES_UPLOAD = 'Allow Binary files upload';
 
 // Tests
 export const TESTS = 'Tests';
 export const HIDE_INPUT = 'Hide Input';
 
 // Problem Resources
+export const FILE_EXTENSION = 'File Extension';
+
+// COMPILERS
+export const COMPILER = 'Compiler';
+export const ADDITIONAL_COMPILER_ARGUMENTS = 'Additional Compiler Arguments';
 
 // Checkers
 export const DLL_FILE = 'Dll File';
