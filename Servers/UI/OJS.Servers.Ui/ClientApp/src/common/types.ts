@@ -239,7 +239,7 @@ interface IContestType {
     numberOfProblems: number;
 }
 
-interface UserParticipationResult {
+interface IUserParticipationResult {
     practicePoints: number;
     competePoints: number;
 }
@@ -262,7 +262,7 @@ interface IIndexContestsType {
     competeResults: number;
     competeMaximumPoints: number;
     practiceMaximumPoints: number;
-    userParticipationResult?: UserParticipationResult;
+    userParticipationResult?: IUserParticipationResult;
 }
 
 interface IContestModalInfoType {
