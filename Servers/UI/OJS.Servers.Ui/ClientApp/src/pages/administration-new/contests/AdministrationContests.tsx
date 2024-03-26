@@ -30,6 +30,7 @@ const AdministrationContestsPage = () => {
 
     const selectedFilters = useAppSelector((state) => state.adminContests['all-contests']?.selectedFilters);
     const selectedSorters = useAppSelector((state) => state.adminContests['all-contests']?.selectedSorters);
+
     const {
         refetch: retakeContests,
         data,
@@ -61,6 +62,7 @@ const AdministrationContestsPage = () => {
         }
         retakeContests();
     };
+
     const renderContestModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           key={index}

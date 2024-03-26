@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 public class GridDataService<TEntity>
     : IGridDataService<TEntity>
@@ -95,7 +96,7 @@ public class GridDataService<TEntity>
     {
         var filterAsCollection = MapFilterStringToCollection<TModel>(paginationRequestModel).ToList();
 
-        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query, filterAsCollection);
+        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query.AsNoTracking(), filterAsCollection);
         return await this.sortingService
             .ApplySorting(mappedQuery, paginationRequestModel.Sorting)
             .ToPagedResult(paginationRequestModel.Page, paginationRequestModel.ItemsPerPage);

@@ -1,55 +1,36 @@
-/* eslint-disable import/exports-last */
-import { createSlice } from '@reduxjs/toolkit';
+/* eslint-disable import/prefer-default-export */
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { IAdministrationFilter } from '../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../../../pages/administration-new/administration-sorting/AdministrationSorting';
-
-export interface IAdminSlice {
-    [key: string]: null | {
-        selectedFilters: null | IAdministrationFilter[];
-        selectedSorters: null | IAdministrationSorter[];
-    };
-}
+import { IAdminSlice, IFilterReducerActionType, ISorterReducerActionType } from '../../../common/types';
 
 const initialState: IAdminSlice = {};
-
-// eslint-disable-next-line import/group-exports
 export const usersAdminSlice = createSlice({
     name: 'adminUsers',
     initialState,
     reducers: {
-        setAdminUsersFilters: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
+        setAdminUsersFilters: (state, action: PayloadAction<IFilterReducerActionType>) => {
             const { key, filters } = action.payload;
 
             if (state[key]) {
-                // eslint-disable-next-line no-param-reassign,@typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                // eslint-disable-next-line no-param-reassign
                 state[key].selectedFilters = filters;
             } else {
-                // eslint-disable-next-line no-param-reassign
                 state[key] = { selectedFilters: filters, selectedSorters: null };
             }
         },
-        setAdminUsersSorters: (state, action) => {
-            // eslint-disable-next-line prefer-destructuring
+        setAdminUsersSorters: (state, action: PayloadAction<ISorterReducerActionType>) => {
             const { key, sorters } = action.payload;
 
             if (state[key]) {
-                // eslint-disable-next-line no-param-reassign,@typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                // eslint-disable-next-line no-param-reassign
                 state[key].selectedSorters = sorters;
             } else {
-                // eslint-disable-next-line no-param-reassign
                 state[key] = { selectedFilters: null, selectedSorters: sorters };
             }
         },
     },
 });
 
-// eslint-disable-next-line prefer-destructuring,import/group-exports
 export const {
     setAdminUsersFilters,
     setAdminUsersSorters,

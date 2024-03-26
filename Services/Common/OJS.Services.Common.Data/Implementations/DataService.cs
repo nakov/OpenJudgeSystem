@@ -3,6 +3,7 @@ namespace OJS.Services.Common.Data.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Extensions;
     using OJS.Common.Utils;
+    using OJS.Data;
     using OJS.Services.Common.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.Data.Infrastructure.Models;
@@ -15,9 +16,9 @@ namespace OJS.Services.Common.Data.Implementations
     public class DataService<TEntity> : IDataService<TEntity>
         where TEntity : class, IEntity
     {
-        private readonly DbContext db;
+        private readonly OjsDbContext db;
 
-        public DataService(DbContext db)
+        public DataService(OjsDbContext db)
             => this.db = db;
 
         protected DbSet<TEntity> DbSet

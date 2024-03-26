@@ -1,17 +1,17 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations;
 
 using FluentExtensions.Extensions;
+using OJS.Common;
+using OJS.Data;
+using OJS.Data.Models.Tests;
+using OJS.Services.Common.Data.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using OJS.Common;
-using OJS.Data.Models.Tests;
-using OJS.Services.Common.Data.Implementations;
 
 public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
 {
-    public TestRunsDataService(DbContext testRuns)
+    public TestRunsDataService(OjsDbContext testRuns)
         : base(testRuns)
     {
     }

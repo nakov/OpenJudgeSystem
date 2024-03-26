@@ -19,7 +19,6 @@ internal static class ServiceCollectionExtensions
         => services
             .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
-            .AddScoped<DbContext, OjsDbContext>()
             .AddSingleton<ICompilerFactory, CompilerFactory>()
             .AddSingleton<IExecutionStrategySettingsProvider, ExecutionStrategySettingsProvider>()
             .AddMemoryCache()

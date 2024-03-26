@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import React from 'react';
+import { debounce } from '@mui/material';
+
 const handleDateTimePickerChange = (name: string, newValue:any, onChange: Function) => {
     const event = {
         target: {
@@ -29,7 +32,12 @@ const handleAutocompleteChange = <T extends { [key: string]: any }>(
     }
 };
 
+const onAutocompleteInputChange = debounce((e: React.ChangeEvent<HTMLInputElement>, setStateFunc: React.SetStateAction<any>) => {
+    setStateFunc(e.target.value);
+}, 300);
+
 export {
     handleDateTimePickerChange,
     handleAutocompleteChange,
+    onAutocompleteInputChange,
 };

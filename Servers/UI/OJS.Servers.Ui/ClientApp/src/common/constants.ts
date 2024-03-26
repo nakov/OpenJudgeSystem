@@ -19,6 +19,7 @@ const { All: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
 const { Sort: DEFAULT_SORT_FILTER_TYPE } = FilterType;
 const { OrderBy: DEFAULT_SORT_TYPE } = SortType;
 
+const LECTURER = 'Lecturer';
 const defaultPathIdentifier = 'api';
 enum SubmissionResultType {
     CorrectAnswer = 'correctanswer',
@@ -64,4 +65,5 @@ export {
     UsernameFormatErrorMessage,
     EmptyPasswordErrorMessage,
     PasswordLengthErrorMessage,
+    LECTURER,
 };

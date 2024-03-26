@@ -1,22 +1,23 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Ui.Models.Participations;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class ParticipantScoresDataService : DataService<ParticipantScore>, IParticipantScoresDataService
     {
         private readonly IParticipantsDataService participantsData;
 
         public ParticipantScoresDataService(
-            DbContext db,
+            OjsDbContext db,
             IParticipantsDataService participantsData)
             : base(db)
             => this.participantsData = participantsData;

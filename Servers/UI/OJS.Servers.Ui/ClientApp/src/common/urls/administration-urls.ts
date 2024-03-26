@@ -21,3 +21,5 @@ export const PROBLEM_RESOURCES_PATH = 'problem-resources';
 export const SUBMISSION_TYPES_PATH = 'submission-types';
 export const PARTICIPANTS_PATH = 'participants';
 export const CHECKERS_PATH = 'checkers';
+export const ROLES_PATH = 'roles';
+export const USERS_PATH = 'users';

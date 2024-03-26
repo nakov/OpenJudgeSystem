@@ -490,6 +490,7 @@ interface ITestsUploadModel {
     retestProblem: boolean;
     deleteOldTests: boolean;
 }
+
 interface ITestsDropdownData {
     id: number;
     name: string;
@@ -544,6 +545,8 @@ interface IRootStore {
     adminSubmissionTypes: IAdminSlice;
     adminCheckers: IAdminSlice;
     adminParticipants: IAdminSlice;
+    adminRoles: IAdminSlice;
+    adminUsers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -650,6 +653,53 @@ id: string;
 userName: string;
 
 }
+
+interface IRoleInListModel {
+    id: string;
+    name: string;
+}
+
+interface IRoleAdministrationModel {
+    id: string | null;
+    name: string;
+}
+
+interface IUserInListModel {
+    id: string;
+    userName: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    city: string;
+    dateOfBirth: Date;
+    age: number;
+}
+
+interface IUserSettingsAdministrationModel {
+    firstName: string | null;
+    lastName: string | null;
+    city: string | null;
+    dateOfBirth: Date | null;
+    age: number;
+    company: string | null;
+    jobTitle: string | null;
+    facultyNumber: number | null;
+    educationalInstitution: string | null;
+}
+
+interface IUserAdministrationModel {
+    id: string;
+    userName: string;
+    email: string;
+    userSettings: IUserSettingsAdministrationModel;
+    roles: Array<IUserRoleType>;
+}
+
+interface ILecturerInContestInListModel {
+    contestId: string;
+    contestName: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -716,4 +766,9 @@ export type {
     IParticipantAdministrationModel,
     IParticipantInListModel,
     IUserAutocompleteData,
+    IRoleInListModel,
+    IRoleAdministrationModel,
+    IUserInListModel,
+    IUserAdministrationModel,
+    ILecturerInContestInListModel,
 };

@@ -2,6 +2,7 @@ namespace OJS.Services.Administration.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Enumerations;
+    using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
@@ -17,7 +18,7 @@ namespace OJS.Services.Administration.Data.Implementations
         private readonly IParticipantsCommonDataService participantsCommonData;
 
         public ParticipantsDataService(
-            DbContext db,
+            OjsDbContext db,
             IParticipantsCommonDataService participantsCommonData)
             : base(db)
             => this.participantsCommonData = participantsCommonData;
