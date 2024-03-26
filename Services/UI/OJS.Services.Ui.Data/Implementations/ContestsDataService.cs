@@ -74,6 +74,25 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             : this.GetAllVisibleQuery()
                 .Include(c => c.Category);
 
+        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
+    }
+
+    public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSortingAndParticipants<TServiceModel>(
+        ContestFiltersServiceModel model,
+        string username)
+    {
+        var contests = model.CategoryIds.Any()
+            ? this.GetAllVisibleByCategories(model.CategoryIds)
+            : this.GetAllVisibleQuery()
+                .Include(c => c.Category);
+
+        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
+    }
+
+    public async Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
+        IQueryable<Contest> contests,
+        ContestFiltersServiceModel model)
+    {
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
         contests = Sort(contests, model.SortType, model.CategoryIds.Count());
 

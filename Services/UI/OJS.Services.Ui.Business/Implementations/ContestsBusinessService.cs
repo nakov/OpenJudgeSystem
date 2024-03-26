@@ -321,6 +321,46 @@ namespace OJS.Services.Ui.Business.Implementations
                     c.Id == contestId &&
                     (!c.IpsInContests.Any() || c.IpsInContests.Any(ai => ai.Ip.Value == ip)));
 
+        public async Task<PagedResult<ContestForListingServiceModel>> GetForUserByFiltersAndSorting(
+            string username,
+            ContestFiltersServiceModel? model)
+        {
+            model ??= new ContestFiltersServiceModel();
+            model.PageNumber ??= 1;
+            model.ItemsPerPage ??= DefaultContestsPerPage;
+
+            if (model.CategoryIds.Count() == 1)
+            {
+                var subcategories = await this.contestCategoriesCache
+                    .GetContestSubCategoriesList(model.CategoryIds.First(), CacheConstants.OneHourInSeconds);
+
+                model.CategoryIds = model.CategoryIds
+                    .Concat(subcategories.Select(cc => cc.Id).ToList());
+            }
+
+            var pagedContests = await this.contestsData
+                .ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
+                this.participantsData
+                    .GetAllWithContestAndProblemsByUsername(username)
+                    .Select(p => p.Contest),
+                model);
+
+            var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
+
+            var participantsCount = await this.contestParticipantsCacheService
+                .GetParticipantsCountForContestsPage(contestIds, model.PageNumber);
+
+            //set CanBeCompeted and CanBePracticed properties in each contest for the page
+            pagedContests.Items.ForEach(c =>
+            {
+                this.activityService.SetCanBeCompetedAndPracticed(c);
+                c.CompeteResults = participantsCount[c.Id].Official;
+                c.PracticeResults = participantsCount[c.Id].Practice;
+            });
+
+            return pagedContests;
+        }
+
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(
             ContestFiltersServiceModel? model)
         {

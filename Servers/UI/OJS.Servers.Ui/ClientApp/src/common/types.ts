@@ -46,7 +46,7 @@ interface IPublicSubmissionUser {
 
 interface ISubmissionDetailsState {
     currentSubmission: ISubmissionDetailsType | null;
-    currentSubmissionResults:IPagedResultType<ISubmissionResults>;
+    currentSubmissionResults: IPagedResultType<ISubmissionResults>;
     validationErrors: IErrorDataType[];
     downloadErrorMessage: string | null;
 }
@@ -111,6 +111,11 @@ interface IGetAllContestsOptions {
     sortType: string;
     page: number;
     category?: number | null;
+}
+
+// TODO: Unify these types, some are called params, others options
+interface IGetContestParticipationsForUserQueryParams extends IGetAllContestsOptions {
+    username: string;
 }
 
 interface IAllowedStrategyType {
@@ -615,6 +620,7 @@ export type {
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
     IGetAllContestsOptions,
+    IGetContestParticipationsForUserQueryParams,
     IContestCategory,
     IGetAllAdminParams,
     IAdminPagedResultType,

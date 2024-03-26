@@ -5,11 +5,11 @@ import { IContestStrategyFilter } from '../../common/contest-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
-    IGetAllContestsOptions,
+    IGetAllContestsOptions, IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
     IPagedResultType,
 } from '../../common/types';
-import { IContestDetailsUrlParams, IUserInfoUrlParams } from '../../common/url-types';
+import { IContestDetailsUrlParams } from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
@@ -46,12 +46,19 @@ export const contestsService = createApi({
             query: () => ({ url: '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
             /* eslint-disable object-curly-newline */
         }),
-        getContestsParticipationsForUser: builder.query<IContestDetailsResponseType, IUserInfoUrlParams>({
-            query: ({ username }) => ({
-                url: `/Participations/GetAllForUser?username=${username}` }),
-            // TODO: Disable this rule
-            /* eslint-disable object-curly-newline */
-        }),
+        getContestsParticipationsForUser: builder.query<
+            IPagedResultType<IIndexContestsType>,
+            IGetContestParticipationsForUserQueryParams>({
+                query: ({ username, sortType, page, category, strategy }) => ({
+                    url: `/Contests/GetParticipatedByUser?username=${username}`,
+                    params: {
+                        sortType,
+                        page,
+                        category,
+                        strategy,
+                    },
+                }),
+            }),
     }),
 });
 

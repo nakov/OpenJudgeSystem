@@ -96,4 +96,20 @@ public class ContestsController : BaseApiController
             .GetAllByFiltersAndSorting(model?.Map<ContestFiltersServiceModel>())
             .Map<PagedResultResponse<ContestForListingResponseModel>>()
             .ToOkResult();
+
+    /// <summary>
+    /// Gets all user contest participations.
+    /// </summary>
+    /// <param name="username">The username of the user.</param>
+    /// <param name="model">The filters by which the contests should be filtered and page options.</param>
+    /// <returns>A collection of contest participations.</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResultResponse<ContestForListingResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetParticipatedByUser(
+        [FromQuery] string username,
+        [FromQuery] ContestFiltersRequestModel? model)
+        => await this.contestsBusinessService
+            .GetForUserByFiltersAndSorting(username, model?.Map<ContestFiltersServiceModel>())
+            .Map<PagedResultResponse<ContestForListingResponseModel>>()
+            .ToOkResult();
 }

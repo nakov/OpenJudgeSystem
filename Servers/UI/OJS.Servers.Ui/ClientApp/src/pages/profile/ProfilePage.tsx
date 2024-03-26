@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
-import { IIndexContestsType } from '../../common/types';
+import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import List, { Orientation } from '../../components/guidelines/lists/List';
@@ -52,7 +52,8 @@ const ProfilePage = () => {
             username: !isNil(usernameFromUrl)
                 ? decodeFromUrlParam(usernameFromUrl)
                 : internalUser.userName,
-        },
+            sortType: 'OrderBy',
+        } as IGetContestParticipationsForUserQueryParams,
         { skip: isProfileInfoLoading },
     );
 
@@ -112,10 +113,10 @@ const ProfilePage = () => {
                     {
                         areContestParticipationsLoading
                             ? (<SpinningLoader />)
-                            : !isNilOrEmpty(userContestParticipations)
+                            : !isNilOrEmpty(userContestParticipations.items)
                                 ? (
                                     <List
-                                      values={userContestParticipations}
+                                      values={userContestParticipations.items!}
                                       itemFunc={renderContestCard}
                                       orientation={Orientation.vertical}
                                       fullWidth
