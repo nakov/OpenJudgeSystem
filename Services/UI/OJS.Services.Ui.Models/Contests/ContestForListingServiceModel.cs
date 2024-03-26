@@ -39,13 +39,11 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
 
     public int PracticeResults { get; set; }
 
-    public int ContestCompeteMaximumPoints { get; set; }
+    public int CompeteMaximumPoints { get; set; }
 
-    public int ContestPracticeMaximumPoints { get; set; }
+    public int PracticeMaximumPoints { get; set; }
 
-    public int CompeteResult { get; set; }
-
-    public int PracticeResult { get; set; }
+    public ParticipantResultServiceModel? UserParticipationResult { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()
@@ -61,6 +59,21 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
                     src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue) ? (src.EndTime - src.StartTime) : null)))
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
             .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
+            .ForMember(
+                d => d.PracticeMaximumPoints,
+                opt => opt.MapFrom(src => src.ProblemGroups
+                        .SelectMany(pg => pg.Problems)
+                        .Where(x => !x.IsDeleted)
+                        .Sum(pr => pr.MaximumPoints)))
+            .ForMember(
+                d => d.CompeteMaximumPoints,
+                opt => opt.MapFrom(src => src.ProblemGroups
+                    .SelectMany(pg => pg.Problems
+                        .Where(p => !p.IsDeleted)
+                        .Take(1))
+                    .Sum(p => p.MaximumPoints)))
+            // Mapped from cache
+            .ForMember(d => d.UserParticipationResult, opt => opt.Ignore())
             .ForMember(d => d.CompeteResults, opt => opt.Ignore())
             .ForMember(d => d.PracticeResults, opt => opt.Ignore());
 }

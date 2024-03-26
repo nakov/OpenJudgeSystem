@@ -30,11 +30,9 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
 
     public int PracticeResults { get; set; }
 
-    public int ContestCompeteMaximumPoints { get; set; }
+    public int CompeteMaximumPoints { get; set; }
 
-    public int ContestPracticeMaximumPoints { get; set; }
+    public int PracticeMaximumPoints { get; set; }
 
-    public int CompeteResult { get; set; }
-
-    public int PracticeResult { get; set; }
+    public ParticipantResultResponseModel? UserParticipationResult { get; set; }
 }

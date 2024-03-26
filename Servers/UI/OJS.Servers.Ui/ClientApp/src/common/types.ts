@@ -239,6 +239,11 @@ interface IContestType {
     numberOfProblems: number;
 }
 
+interface UserParticipationResult {
+    practicePoints: number;
+    competePoints: number;
+}
+
 interface IIndexContestsType {
     id: number;
     name: string;
@@ -255,11 +260,9 @@ interface IIndexContestsType {
     numberOfProblems: number;
     practiceResults: number;
     competeResults: number;
-    hasCompeted: boolean;
-    hasPracticed: boolean;
-    competeContestPoints: number;
-    practiceContestPoints: number;
-    maxPoints: number;
+    competeMaximumPoints: number;
+    practiceMaximumPoints: number;
+    userParticipationResult?: UserParticipationResult;
 }
 
 interface IContestModalInfoType {

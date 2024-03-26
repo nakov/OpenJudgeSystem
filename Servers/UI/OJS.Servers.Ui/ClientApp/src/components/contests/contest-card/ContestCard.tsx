@@ -46,11 +46,9 @@ const ContestCard = (props: IContestCardProps) => {
         numberOfProblems,
         competeResults,
         practiceResults,
-        hasCompeted,
-        hasPracticed,
-        competeContestPoints = 0,
-        practiceContestPoints = 0,
-        maxPoints = 0,
+        competeMaximumPoints,
+        practiceMaximumPoints,
+        userParticipationResult,
     } = contest;
 
     const contestStartTime = canBeCompeted
@@ -113,20 +111,28 @@ const ContestCard = (props: IContestCardProps) => {
         );
     };
 
-    const renderContestButton = (isCompete: boolean, hasParticipated: boolean, participationPoints: number) => {
+    const renderContestButton = (isCompete: boolean) => {
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
 
         return (
             <div className={styles.contestBtn}>
-                {hasParticipated && (
+                {userParticipationResult !== null && (
                 <div>
-                    {participationPoints}
+                    {
+                        isCompete
+                            ? userParticipationResult?.competePoints
+                            : userParticipationResult?.practicePoints
+                    }
                     {' '}
                     /
                     {' '}
-                    {maxPoints}
+                    {
+                        isCompete
+                            ? competeMaximumPoints
+                            : practiceMaximumPoints
+                    }
                 </div>
                 )}
                 <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
@@ -173,8 +179,8 @@ const ContestCard = (props: IContestCardProps) => {
             </div>
             <div className={styles.contestBtnsWrapper}>
                 <div className={styles.contestBtn}>
-                    {renderContestButton(true, hasCompeted, competeContestPoints)}
-                    {renderContestButton(false, hasPracticed, practiceContestPoints)}
+                    {renderContestButton(true)}
+                    {renderContestButton(false)}
                 </div>
             </div>
         </div>

@@ -338,8 +338,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
-            var userParticipants = this.participantsData
-                .GetAllWithContestAndProblemsAndParticipantScoresByUsername(username);
+            var userParticipants = this.participantsData.GetAllByUsername(username);
 
             var pagedContests = await this.contestsData
                 .ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
@@ -347,6 +346,11 @@ namespace OJS.Services.Ui.Business.Implementations
                     model);
 
             var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
+
+            var participantResultsByContest = await userParticipants
+                .Where(p => contestIds.Contains(p.ContestId))
+                .MapCollection<ParticipantResultServiceModel>()
+                .ToDictionaryAsync(p => p.ContestId, p => p);
 
             var participantsCount =
                 await this.contestParticipantsCacheService.GetParticipantsCount(contestIds, model.PageNumber);
@@ -357,6 +361,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 this.activityService.SetCanBeCompetedAndPracticed(c);
                 c.CompeteResults = participantsCount[c.Id].Official;
                 c.PracticeResults = participantsCount[c.Id].Practice;
+                c.UserParticipationResult = participantResultsByContest[c.Id];
             });
 
             return pagedContests;

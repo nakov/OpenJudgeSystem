@@ -18,7 +18,7 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Participant> GetAllByUser(string? userId);
 
-        IQueryable<Participant> GetAllWithContestAndProblemsAndParticipantScoresByUsername(string username);
+        IQueryable<Participant> GetAllByUsername(string username);
 
         IQueryable<Participant> GetAllByContest(int contestId);
 
