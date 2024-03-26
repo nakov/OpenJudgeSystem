@@ -48,6 +48,7 @@ const ContestSolutionSubmitPage = () => {
     const [ submissionsError, setSubmissionsError ] = useState('');
     const [ submissionsDataLoading, setSubmissionsDataLoading ] = useState<boolean>(false);
     const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(false);
+    const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
 
@@ -80,6 +81,8 @@ const ContestSolutionSubmitPage = () => {
     } = selectedContestDetailsProblem || {};
 
     const fetchUserParticipationDetails = async () => {
+        setUserParticipationDataLoading(true);
+
         try {
             const { data: queryData } = await getContestUserParticipation({
                 id: Number(contestId),
@@ -118,8 +121,6 @@ const ContestSolutionSubmitPage = () => {
         if ((isOnlineExam
             ? hasAcceptedOnlineExamModal
             : true) && !requirePassword) {
-            setUserParticipationDataLoading(true);
-
             fetchUserParticipationDetails();
         }
     }, [ isOnlineExam, hasAcceptedOnlineExamModal, requirePassword, contestId, getContestUserParticipation, participationType ]);
@@ -154,7 +155,7 @@ const ContestSolutionSubmitPage = () => {
                     setSubmissionsDataLoading(true);
                     const { data: currentSubmissionsData } = await getSubmissionsData({
                         id: Number(selectedContestDetailsProblem.id),
-                        page: 1,
+                        page: selectedSubmissionsPage,
                         isOfficial: isCompete,
                     });
 
@@ -170,7 +171,7 @@ const ContestSolutionSubmitPage = () => {
 
             fetchSubmissionsData();
         }
-    }, [ selectedContestDetailsProblem, participationType, getSubmissionsData ]);
+    }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -288,26 +289,24 @@ const ContestSolutionSubmitPage = () => {
 
         if (allowBinaryFilesUpload) {
             return (
-                <>
-                    <div className={styles.fileUpload}>
-                        <div>
-                            <span>Allowed extensions:</span>
-                            {' '}
-                            {allowedFileExtensions.join(', ')}
-                        </div>
-                        <FileUploader
-                          file={null}
-                          problemId={id}
-                          allowedFileExtensions={allowedFileExtensions}
-                          onInvalidFileExtension={() => console.log('error on submit file!')}
-                        />
+                <div className={styles.fileUpload}>
+                    <div>
+                        <span>Allowed extensions:</span>
+                        {' '}
+                        {allowedFileExtensions.join(', ')}
                     </div>
+                    <FileUploader
+                      file={null}
+                      problemId={id}
+                      allowedFileExtensions={allowedFileExtensions}
+                      onInvalidFileExtension={() => console.log('error on submit file!')}
+                    />
                     <Button
                       className={styles.fileSubmitButton}
                       onClick={onSolutionSubmitFile}
                       text="Submit"
                     />
-                </>
+                </div>
             );
         }
 
@@ -383,7 +382,7 @@ const ContestSolutionSubmitPage = () => {
             <ContestBreadcrumbs />
             <div className={styles.title}>{name}</div>
             <div className={styles.problemsAndEditorWrapper}>
-                <ContestProblems problems={problems || []} />
+                <ContestProblems problems={problems || []} onContestProblemChange={() => setSelectedSubmissionsPage(1)} />
                 <div className={styles.selectedProblemWrapper}>
                     <div className={styles.problemName}>{selectedContestDetailsProblem?.name}</div>
                     {renderProblemDescriptions()}
@@ -398,7 +397,7 @@ const ContestSolutionSubmitPage = () => {
                         <SubmissionsGrid
                           isDataLoaded={!submissionsDataLoading}
                           submissions={submissionsData ?? undefined}
-                          handlePageChange={() => {}}
+                          handlePageChange={(page: number) => setSelectedSubmissionsPage(page)}
                           options={{
                               showDetailedResults: true,
                               showTaskDetails: true,

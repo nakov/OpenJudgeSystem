@@ -115,11 +115,6 @@
   }
 }
 
-.fileSubmitButton {
-  bottom: -80px;
-  position: absolute;
-}
-
 .popoverContent {
   @extend %font-family-roboto;
 
@@ -134,4 +129,9 @@
   .title {
     font-weight: font-weights.$font-weight-semi-bold;
   }
+}
+
+.fileSubmitButton {
+  position: absolute;
+  bottom: 35px;
 }
