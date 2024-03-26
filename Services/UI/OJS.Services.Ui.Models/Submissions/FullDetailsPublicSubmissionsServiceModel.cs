@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class AdminPublicSubmissionsServiceModel : IMapExplicitly
+public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -40,7 +40,7 @@ public class AdminPublicSubmissionsServiceModel : IMapExplicitly
     public int PageNumber { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<Submission, AdminPublicSubmissionsServiceModel>()
+        => configuration.CreateMap<Submission, FullDetailsPublicSubmissionsServiceModel>()
             .ForMember(
                 x => x.StrategyName,
                 opt => opt.MapFrom(

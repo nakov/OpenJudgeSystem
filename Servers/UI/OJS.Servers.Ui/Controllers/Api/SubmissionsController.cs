@@ -48,14 +48,14 @@ public class SubmissionsController : BaseApiController
     /// <param name="itemsPerPage">Items count per page in paged result.</param>
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<AdminPublicSubmissionsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissions(
         [FromQuery] string username,
         [FromQuery] int page,
         [FromQuery] int itemsPerPage = 5)
         => await this.submissionsBusiness
-            .GetByUser<AdminPublicSubmissionsServiceModel>(username, page, itemsPerPage)
-            .Map<PagedResultResponse<AdminPublicSubmissionsResponseModel>>()
+            .GetByUsername<FullDetailsPublicSubmissionsServiceModel>(username, page, itemsPerPage)
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -67,11 +67,11 @@ public class SubmissionsController : BaseApiController
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<AdminPublicSubmissionsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissionsForProfileByContest([FromQuery] string username, [FromQuery] int page, [FromQuery] int contestId)
         => await this.submissionsBusiness
             .GetForProfileByUserAndContest(username, page, contestId)
-            .Map<PagedResultResponse<AdminPublicSubmissionsServiceModel>>()
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -184,15 +184,15 @@ public class SubmissionsController : BaseApiController
              .ToOkResult();
 
     [Authorize(Roles = AdministratorOrLecturer)]
-    [ProducesResponseType(typeof(PagedResultResponse<AdminPublicSubmissionsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionsForUserInRole(
         [FromQuery] SubmissionStatus status,
         [FromQuery] int page,
         int itemsPerPage = DefaultAdminSubmissionsPerPage)
-        => await this.submissionsBusiness.GetSubmissions<AdminPublicSubmissionsServiceModel>(
+        => await this.submissionsBusiness.GetSubmissions<FullDetailsPublicSubmissionsServiceModel>(
                 status,
                 page,
                 itemsPerPage)
-            .Map<PagedResultResponse<AdminPublicSubmissionsResponseModel>>()
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
 }

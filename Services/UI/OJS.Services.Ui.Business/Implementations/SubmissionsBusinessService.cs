@@ -356,7 +356,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     //     return Task.CompletedTask;
     // }
 
-    public async Task<PagedResult<TServiceModel>> GetByUser<TServiceModel>(
+    public async Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
         string? username,
         int page,
         int itemsInPage = DefaultSubmissionsPerPage)

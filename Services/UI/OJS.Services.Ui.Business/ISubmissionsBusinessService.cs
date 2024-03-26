@@ -24,7 +24,7 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<PagedResult<TServiceModel>> GetByUser<TServiceModel>(
+        Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
             string? username,
             int page,
             int itemsInPage = DefaultSubmissionsPerPage);
