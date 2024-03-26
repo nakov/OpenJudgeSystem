@@ -8,6 +8,7 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import ContestExcel from '../../../components/administration/contests/contest-download-excel/ContestExcel';
+import ContestSubmissionsDownload from '../../../components/administration/contests/contest-download-submissions/ContestSubmissionsDownload';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const contestFilterableColumns: GridColDef[] = [
@@ -133,6 +134,10 @@ export const returnContestsNonFilterableColumns = (
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <ContestSubmissionsDownload
+                  onClick={onClickExcel}
+                  contestId={Number(params.row.id)}
+                />
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
                 <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton

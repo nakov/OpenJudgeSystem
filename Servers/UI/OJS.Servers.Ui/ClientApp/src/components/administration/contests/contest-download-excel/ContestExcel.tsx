@@ -3,6 +3,9 @@ import { useRef, useState } from 'react';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 
+import { ContestParticipationType } from '../../../../common/constants';
+import { getEnumMemberName } from '../../../../utils/string-utils';
+
 interface IContestExcelProps {
     onClick: Function;
     contestId: number;
@@ -30,10 +33,10 @@ const ContestExcel = (props: IContestExcelProps) => {
               onClose={() => setShowExcelMenu(false)}
             >
                 <MenuItem onClick={() => handleClick(0)}>
-                    Compete
+                    {getEnumMemberName(ContestParticipationType, ContestParticipationType.Compete)}
                 </MenuItem>
                 <MenuItem onClick={() => handleClick(1)}>
-                    Practice
+                    {getEnumMemberName(ContestParticipationType, ContestParticipationType.Practice)}
                 </MenuItem>
             </Menu>
         </>

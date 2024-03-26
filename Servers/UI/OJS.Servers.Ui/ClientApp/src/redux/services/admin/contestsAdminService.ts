@@ -1,6 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { ContestParticipationType } from '../../../common/constants';
 import { IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
