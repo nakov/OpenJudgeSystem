@@ -6,6 +6,7 @@ import {
     IPagedResultType,
     IUserAdministration,
     IUserAutocomplete,
+    IUserAutocompleteData,
     IUserInExamGroupModel,
 } from '../../../common/types';
 import { IGetByExamGroupId, IUserUrlParams } from '../../../common/url-types';
@@ -16,6 +17,11 @@ export const usersService = createApi({
     reducerPath: 'users',
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({
+
+        getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, string>({
+            query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
+            keepUnusedDataFor: 10,
+        }),
 
         getAllAdminUsers: builder.query<IPagedResultType<IUserAdministration>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
@@ -54,12 +60,10 @@ export const usersService = createApi({
 // eslint-disable-next-line import/group-exports
 export const {
     useGetAllAdminUsersQuery,
-    // useGetUserByIdQuery,
     useDeleteUserMutation,
-    // useUpdateUserMutation,
-    // useCreateUserMutation,
     useGetByExamGroupIdQuery,
     useGetUsersForDropdownQuery,
+    useGetUsersAutocompleteQuery,
 } = usersService;
 
 export default usersService;
