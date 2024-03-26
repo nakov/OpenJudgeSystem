@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { EDIT } from '../../../common/labels';
+import { PROBLEM_GROUP } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
-import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteSubmissionTypeMutation } from '../../../redux/services/admin/submissionTypesAdminService';
 
-const testsFilterableColums: GridColDef[] = [
+const submissionTypesFilterableColumns: GridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
@@ -22,73 +20,62 @@ const testsFilterableColums: GridColDef[] = [
         valueFormatter: (params) => params.value.toString(),
     },
     {
-        field: 'isTrialTest',
-        headerName: 'Is Trial Test',
-        flex: 1,
-        type: 'boolean',
-        filterable: false,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-    },
-    {
-        field: 'isOpenTest',
-        headerName: 'Is Open Test',
-        flex: 1,
-        type: 'boolean',
-        filterable: false,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-    },
-    {
-        field: 'orderBy',
-        headerName: 'Order by',
-        flex: 1,
-        type: 'number',
-        filterable: false,
-        sortable: false,
-        align: 'center',
-        headerAlign: 'center',
-    },
-    {
-        field: 'problemName',
-        headerName: 'Problem Name',
-        flex: 1,
+        field: 'name',
+        headerName: 'Name',
+        flex: 2,
         type: 'string',
         filterable: false,
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        renderCell: (params) => (
-            <Link to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${params.row.problemId}`}>
-                {params.row.problemName}
-            </Link>
-        ),
     },
     {
-        field: 'problemId',
-        headerName: 'Problem Id',
-        flex: 1,
-        type: 'number',
+        field: 'executionStrategyType',
+        headerName: 'Execution Strategy Type',
+        flex: 2,
+        type: 'string',
         filterable: false,
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        hideable: true,
-        valueFormatter: (params) => params.value.toString(),
+    },
+    {
+        field: 'compilerType',
+        headerName: 'Compiler Type',
+        flex: 2,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'allowedFileExtensions',
+        headerName: 'Allowed File Extensions',
+        flex: 2,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'allowBinaryFilesUpload',
+        headerName: 'Allow Binary Files Upload',
+        flex: 2,
+        type: 'boolean',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
     },
 ];
 
-export const returnTestsNonFilterableColumns = (
-    onEditClick: Function,
-    deleteMutation: any,
-    onSuccessFullDelete: () => void,
-) => [
+export const returnNonFilterableColumns = (onEditClick: Function, onSuccessFullDelete: () => void) => [
     {
         field: 'actions',
         headerName: 'Actions',
-        flex: 1,
+        width: 140,
         headerAlign: 'center',
         align: 'center',
         filterable: false,
@@ -96,17 +83,15 @@ export const returnTestsNonFilterableColumns = (
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
-                <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={Number(params.row.id)}
-                  name={params.row.name}
+                  name={`${PROBLEM_GROUP}`}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteSubmissionTypeMutation}
                   onSuccess={onSuccessFullDelete}
                 />
             </div>
         ),
-    },
-] as GridColDef[];
+    } ] as GridColDef[];
 
-export default testsFilterableColums;
+export default submissionTypesFilterableColumns;

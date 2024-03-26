@@ -1,7 +1,5 @@
 ﻿namespace OJS.Services.Administration.Business.Users;
 
-using FluentExtensions.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;

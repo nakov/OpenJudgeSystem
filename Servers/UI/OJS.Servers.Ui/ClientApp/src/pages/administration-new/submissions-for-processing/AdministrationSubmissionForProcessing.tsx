@@ -27,9 +27,7 @@ const AdministrationSubmissionForProcessing = () => {
     useEffect(
         () => {
             if (data) {
-                console.log(data);
                 setSubmission(data);
-                console.log(JSON.stringify(data.serializedExecutionDetails, null, 2));
             }
         },
         [ data ],

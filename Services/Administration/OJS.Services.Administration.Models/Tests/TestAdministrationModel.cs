@@ -35,7 +35,7 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
                 opt => opt.MapFrom(d => d.InputDataAsString))
             .ForMember(
                 tam => tam.Output,
-                opt => opt.MapFrom(d => d.InputDataAsString))
+                opt => opt.MapFrom(d => d.OutputDataAsString))
             .ForMember(
                 tam => tam.Type,
                 opt => opt.MapFrom(t
