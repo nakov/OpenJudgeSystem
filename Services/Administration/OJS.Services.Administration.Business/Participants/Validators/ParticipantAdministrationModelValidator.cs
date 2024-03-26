@@ -20,9 +20,9 @@ public class ParticipantAdministrationModelValidator : BaseValidator<Participant
             .NotEmpty();
 
         this.RuleFor(model => model.UserId)
-            .NotNull();
+            .NotEmpty();
 
         this.RuleFor(model => model.UserName)
-            .NotNull();
+            .NotEmpty();
     }
 }

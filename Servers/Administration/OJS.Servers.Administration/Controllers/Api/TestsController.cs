@@ -27,7 +27,7 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
         IGridDataService<Test> testGridDataService,
         ITestsBusinessService testsBusinessService,
         TestAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
+        TestDeleteValidator deleteValidator,
         IGridDataService<TestRun> testRunsGridDataService)
         : base(
             testGridDataService,

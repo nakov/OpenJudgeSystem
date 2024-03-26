@@ -14,6 +14,7 @@ import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import { rolesAdminSlice } from './features/admin/rolesAdminSlice';
 import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
+import { submissionTypesAdminSlice } from './features/admin/submissionTypesAdminSlice';
 import { testsAdminSlice } from './features/admin/testsSlice';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
@@ -57,6 +58,7 @@ const rootReducer = combineReducers({
     [testsAdminSlice.name]: testsAdminSlice.reducer,
     [themeSlice.name]: themeSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
+    [submissionTypesAdminSlice.name]: submissionTypesAdminSlice.reducer,
     [checkersAdminSlice.name]: checkersAdminSlice.reducer,
     [participantsAdminSlice.name]: participantsAdminSlice.reducer,
     [rolesAdminSlice.name]: rolesAdminSlice.reducer,

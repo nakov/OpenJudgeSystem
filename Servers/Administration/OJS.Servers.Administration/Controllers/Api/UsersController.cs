@@ -5,14 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Attributes;
+
 using OJS.Services.Administration.Business.Roles.Permissions;
+
 using OJS.Services.Administration.Business.Users;
 using OJS.Services.Administration.Business.Users.GridData;
 using OJS.Services.Administration.Business.Users.Validators;
 using OJS.Services.Administration.Data;
+
 using OJS.Services.Administration.Models.Users;
 using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
+
 using OJS.Services.Common.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
@@ -21,6 +25,7 @@ using System.Threading.Tasks;
 public class UsersController : BaseAdminApiController<UserProfile, string, UserInListModel, UserAdministrationModel>
 {
     private readonly IUsersGridDataService usersGridData;
+
     private readonly IUsersDataService usersDataService;
 
     public UsersController(

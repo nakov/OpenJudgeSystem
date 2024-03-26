@@ -1,11 +1,11 @@
-﻿#nullable disable
-namespace OJS.Workers.Executors
+﻿namespace OJS.Workers.Executors
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
 
     using OJS.Workers.Common;
+    using System.ComponentModel;
 
     public abstract class ProcessExecutor : IExecutor
     {
@@ -13,8 +13,7 @@ namespace OJS.Workers.Executors
         protected readonly ITasksService TasksService;
 #pragma warning restore SA1401
 
-        private const int MemoryIntervalBetweenTwoMemoryConsumptionRequests = 45;
-        private const int TimeIntervalBetweenTwoTimeConsumptionRequests = 10;
+        private const int TimeIntervalBetweenTwoResourceConsumptionRequests = 10;
         private const int MinimumMemoryLimitInBytes = 5 * 1024 * 1024;
 
         private readonly int baseTimeUsed;
@@ -43,8 +42,8 @@ namespace OJS.Workers.Executors
             string inputData,
             int processTimeLimit,
             int processMemoryLimit,
-            IEnumerable<string> executionArguments = null,
-            string workingDirectory = null,
+            IEnumerable<string>? executionArguments = null,
+            string? workingDirectory = null,
             bool useProcessTime = false,
             bool useSystemEncoding = false,
             bool dependOnExitCodeForRunTimeError = false,
@@ -78,55 +77,34 @@ namespace OJS.Workers.Executors
             string fileName,
             string inputData,
             int timeLimit,
-            IEnumerable<string> executionArguments,
-            string workingDirectory,
+            IEnumerable<string>? executionArguments,
+            string? workingDirectory,
             bool useSystemEncoding,
             double timeoutMultiplier);
 
-        protected TaskInfo StartMemorySamplingThread(
-            IDisposable process,
-            ProcessExecutionResult result)
-        {
-            var peakWorkingSetSize = default(long);
-
-            var memorySamplingRunInBackgroundInfo = this.TasksService.RunWithInterval(
-                MemoryIntervalBetweenTwoMemoryConsumptionRequests,
-                () =>
-                {
-                    switch (process)
-                    {
-                        case System.Diagnostics.Process systemProcess:
-                        {
-                            if (systemProcess.HasExited)
-                            {
-                                return;
-                            }
-
-                            peakWorkingSetSize = systemProcess.PeakWorkingSet64;
-                            break;
-                        }
-                    }
-
-                    result.MemoryUsed = Math.Max(result.MemoryUsed, peakWorkingSetSize);
-                });
-
-            return memorySamplingRunInBackgroundInfo;
-        }
-
-        protected TaskInfo StartProcessorTimeSamplingThread(
+        protected TaskInfo StartResourceConsumptionSamplingThread(
             System.Diagnostics.Process process,
             ProcessExecutionResult result)
             => this.TasksService.RunWithInterval(
-                TimeIntervalBetweenTwoTimeConsumptionRequests,
+                TimeIntervalBetweenTwoResourceConsumptionRequests,
                 () =>
                 {
-                    if (process.HasExited)
+                    try
                     {
-                        return;
-                    }
+                        if (process.HasExited)
+                        {
+                            return;
+                        }
 
-                    result.PrivilegedProcessorTime = process.PrivilegedProcessorTime;
-                    result.UserProcessorTime = process.UserProcessorTime;
+                        result.PrivilegedProcessorTime = process.PrivilegedProcessorTime;
+                        result.UserProcessorTime = process.UserProcessorTime;
+                        result.MemoryUsed = Math.Max(result.MemoryUsed, process.PeakWorkingSet64);
+                    }
+                    catch (Exception e) when (e is InvalidOperationException or Win32Exception)
+                    {
+                        // Process has exited or is not running anymore
+                        // Do nothing, as result will be calculated from the process exit time
+                    }
                 });
 
         private void BeforeExecute()
@@ -156,10 +134,23 @@ namespace OJS.Workers.Executors
                 result.Type = ProcessExecutionResultType.MemoryLimit;
             }
 
-            if (!string.IsNullOrEmpty(result.ErrorOutput) ||
-                (dependOnExitCodeForRunTimeError && result.ExitCode < -1))
+            // If there is any error output produced, we consider the process run as failed.
+            // If there is any standard output, but no error output, we consider the process run as successful,
+            // and we ignore the exit code, as the output might be valid, but either way it will be evaluated properly.
+            var isRuntimeError =
+                !string.IsNullOrEmpty(result.ErrorOutput) ||
+                (dependOnExitCodeForRunTimeError &&
+                    result.ExitCode != 0 &&
+                    string.IsNullOrEmpty(result.ReceivedOutput));
+
+            if (isRuntimeError)
             {
                 result.Type = ProcessExecutionResultType.RunTimeError;
+
+                if (string.IsNullOrEmpty(result.ErrorOutput))
+                {
+                    result.ErrorOutput = $"Runtime error has occured. Error code: {result.ExitCode}";
+                }
             }
 
             result.ApplyTimeAndMemoryOffset(this.baseTimeUsed, this.baseMemoryUsed);
