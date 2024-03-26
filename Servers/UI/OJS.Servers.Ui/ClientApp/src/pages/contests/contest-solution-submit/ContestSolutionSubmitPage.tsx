@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { IoDocumentText } from 'react-icons/io5';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
 
 import { ISubmissionTypeType } from '../../../common/types';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
+import ContestCompeteModal from '../../../components/contests/contest-compete-modal/ContestCompeteModal';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import Dropdown from '../../../components/dropdown/Dropdown';
 import FileUploader from '../../../components/file-uploader/FileUploader';
@@ -30,6 +31,7 @@ import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import styles from './ContestSolutionSubmitPage.module.scss';
 
 const ContestSolutionSubmitPage = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType } = useParams();
@@ -45,7 +47,7 @@ const ContestSolutionSubmitPage = () => {
     const [ submissionsError, setSubmissionsError ] = useState('');
     const [ submissionsDataLoading, setSubmissionsDataLoading ] = useState<boolean>(false);
     // should be false by default here and set it on modal show
-    const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(true);
+    const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
 
@@ -101,7 +103,7 @@ const ContestSolutionSubmitPage = () => {
                         id: Number(contestId),
                         isOfficial: participationType === 'compete',
                     });
-                    console.log('test => ', queryData);
+
                     setUserParticipationError('');
                     setUserParticipationData(queryData);
                     setUserParticipationDataLoading(false);
@@ -341,7 +343,7 @@ const ContestSolutionSubmitPage = () => {
     if (error || userParticipationError) {
         return (
             <div className={styles.contestSolutionSubmitWrapper}>
-                <div className={textColorClassName}>Error fetching user data!</div>
+                <div className={textColorClassName}>Error fetching user participation data!</div>
             </div>
         );
     }
@@ -350,7 +352,15 @@ const ContestSolutionSubmitPage = () => {
         return <div>require password logic</div>;
     }
     if (isOnlineExam && !hasAcceptedOnlineExamModal) {
-        return <div>online exam modal here</div>;
+        return (
+            <ContestCompeteModal
+              examName={name}
+              time={duration}
+              problemsCount={numberOfProblems}
+              onAccept={() => setHasAcceptedOnlineExamModal(true)}
+              onDecline={() => navigate('/contests')}
+            />
+        );
     }
     return (
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
