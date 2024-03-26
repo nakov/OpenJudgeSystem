@@ -12,7 +12,7 @@ import ContestPasswordForm from '../../../components/contests/contest-password-f
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import Dropdown from '../../../components/dropdown/Dropdown';
 import FileUploader from '../../../components/file-uploader/FileUploader';
-import Button from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
@@ -23,9 +23,7 @@ import {
     useLazyGetContestUserParticipationQuery,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
-import {
-    useLazyGetSubmissionResultsByProblemQuery,
-} from '../../../redux/services/submissionsService';
+import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
@@ -49,6 +47,8 @@ const ContestSolutionSubmitPage = () => {
     const [ submissionsDataLoading, setSubmissionsDataLoading ] = useState<boolean>(false);
     const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(false);
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
+    const [ uploadedFile, setUploadedFile ] = useState(null);
+    const [ fileUploadError, setFileUploadError ] = useState<string>('');
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
 
@@ -171,7 +171,7 @@ const ContestSolutionSubmitPage = () => {
 
             fetchSubmissionsData();
         }
-    }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage ]);
+    }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage, isCompete ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -192,13 +192,13 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitFile = () => {
-        // should get the file here somehow and submit it instead
         submitSolution({
-            content: submissionCode,
+            content: uploadedFile,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id,
             submissionTypeId: selectedSubmissionType?.id,
         });
+        setUploadedFile(null);
     };
 
     const renderProblemDescriptions = useCallback(() => {
@@ -295,16 +295,24 @@ const ContestSolutionSubmitPage = () => {
                         {' '}
                         {allowedFileExtensions.join(', ')}
                     </div>
+                    {fileUploadError && <div className={styles.fileUploadError}>{fileUploadError}</div>}
                     <FileUploader
-                      file={null}
+                      file={uploadedFile}
                       problemId={id}
                       allowedFileExtensions={allowedFileExtensions}
-                      onInvalidFileExtension={() => console.log('error on submit file!')}
+                      onInvalidFileExtension={(e) => setFileUploadError(e.detail)}
+                      onFileUpload={(file) => {
+                          setFileUploadError('');
+                          setUploadedFile(file);
+                      }}
                     />
                     <Button
                       className={styles.fileSubmitButton}
                       onClick={onSolutionSubmitFile}
                       text="Submit"
+                      state={!uploadedFile || fileUploadError
+                          ? ButtonState.disabled
+                          : ButtonState.enabled}
                     />
                 </div>
             );

@@ -115,6 +115,10 @@
   }
 }
 
+.fileUploadError {
+  color: colors.$primary-red;
+}
+
 .popoverContent {
   @extend %font-family-roboto;
 
