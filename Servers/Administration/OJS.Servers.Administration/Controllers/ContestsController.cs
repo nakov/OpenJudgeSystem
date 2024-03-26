@@ -9,8 +9,6 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
-    using OJS.Servers.Administration.Extensions;
-    using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
     using OJS.Services.Administration.Business.Validation.Factories;
@@ -18,6 +16,7 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
     using OJS.Services.Administration.Models.Contests;
+    using OJS.Services.Administration.Models.Submissions;
     using OJS.Services.Common.Validation.Helpers;
     using OJS.Services.Infrastructure.Extensions;
     using System;

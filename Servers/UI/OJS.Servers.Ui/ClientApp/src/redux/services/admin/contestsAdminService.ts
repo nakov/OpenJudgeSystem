@@ -59,6 +59,18 @@ export const contestService = createApi({
                 body: contestAdministrationModel,
             }),
         }),
+        downloadSubmissions: builder.mutation<{ blob: Blob; filename: string },
+        {
+            contestId: number;
+            contestExportResultType:number;
+            submissionExportType:number;
+        }>({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/DownloadSubmissions',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
     }),
 });
 
@@ -70,5 +82,6 @@ export const {
     useCreateContestMutation,
     useGetCopyAllQuery,
     useDownloadResultsMutation,
+    useDownloadSubmissionsMutation,
 } = contestService;
 export default contestService;

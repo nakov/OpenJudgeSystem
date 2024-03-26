@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
+import { DOWNLOAD } from '../../../common/labels';
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
 import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
+import ContestCompetePracticeButtons from '../../../components/administration/contests/contest-compete-practce-buttons/ContestCompetePracticeButtons';
+import ContestDownloadSubmissions from '../../../components/administration/contests/contest-download-submissions/ContestDownloadSubmissions';
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
+import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminContestsFilters, setAdminContestsSorters } from '../../../redux/features/admin/contestsAdminSlice';
 import { useDeleteContestMutation, useDownloadResultsMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
@@ -19,11 +24,19 @@ import AdministrationGridView from '../AdministrationGridView';
 
 import contestFilterableColumns, { returnContestsNonFilterableColumns } from './contestsGridColumns';
 
+// eslint-disable-next-line css-modules/no-unused-class
+import formStyles from '../../../components/administration/common/styles/FormStyles.module.scss';
+
 const AdministrationContestsPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ openEditContestModal, setOpenEditContestModal ] = useState(false);
     const [ openShowCreateContestModal, setOpenShowCreateContestModal ] = useState<boolean>(false);
     const [ contestId, setContestId ] = useState<number>();
+    const [ showDownloadSubsModal, setShowDownloadSubsModal ] = useState<boolean>(false);
+    const [ showExportExcelModal, setShowExportExcelModal ] = useState<boolean>(false);
+
+    const [ excelExportType, setExcelExportType ] = useState<number>(0);
+
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
@@ -90,9 +103,48 @@ const AdministrationContestsPage = () => {
         retakeContests();
     };
 
-    const onClickExcel = (type: number, contestIdToDownload: number) => {
-        exportResutls({ id: contestIdToDownload, type });
+    const onClickExcel = (exelExportContestId: number) => {
+        setShowExportExcelModal(true);
+        setContestId(exelExportContestId);
     };
+
+    const onDownloadSubmissionClick = (contestToDownloadSubs: number) => {
+        setShowDownloadSubsModal(true);
+        setContestId(contestToDownloadSubs);
+    };
+
+    const renderDownloadSubsModal = (index: number) => (
+        <AdministrationModal
+          key={index}
+          index={index}
+          open={showDownloadSubsModal}
+          onClose={() => setShowDownloadSubsModal(false)}
+        >
+            <ContestDownloadSubmissions contestid={contestId!} />
+        </AdministrationModal>
+    );
+
+    const renderExcelExportModal = (index: number) => (
+        <AdministrationModal
+          key={index}
+          index={index}
+          open={showExportExcelModal}
+          onClose={() => setShowExportExcelModal(false)}
+        >
+            <>
+                <Typography className={formStyles.centralize} variant="h4">Export contest results</Typography>
+                <form className={formStyles.form}>
+                    <ContestCompetePracticeButtons value={excelExportType} setStateFunc={setExcelExportType} />
+                    <FormActionButton
+                      className={formStyles.buttonsWrapper}
+                      buttonClassName={formStyles.button}
+                      onClick={() => exportResutls({ id: contestId!, type: excelExportType })}
+                      name={DOWNLOAD}
+                    />
+                </form>
+            </>
+        </AdministrationModal>
+    );
 
     const renderContestModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
@@ -138,6 +190,7 @@ const AdministrationContestsPage = () => {
                   useDeleteContestMutation,
                   retakeContests,
                   onClickExcel,
+                  onDownloadSubmissionClick,
               )}
               renderActionButtons={renderGridActions}
               queryParams={queryParams}
@@ -150,6 +203,8 @@ const AdministrationContestsPage = () => {
               modals={[
                   { showModal: openShowCreateContestModal, modal: (i) => renderContestModal(i, false) },
                   { showModal: openEditContestModal, modal: (i) => renderContestModal(i, true) },
+                  { showModal: showDownloadSubsModal, modal: (i) => renderDownloadSubsModal(i) },
+                  { showModal: showExportExcelModal, modal: (i) => renderExcelExportModal(i) },
               ]}
               legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
             />

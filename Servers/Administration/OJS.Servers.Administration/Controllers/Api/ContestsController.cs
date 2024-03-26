@@ -11,6 +11,7 @@ using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Contests.Problems;
+using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -51,6 +52,15 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
                 .Take(20)
                 .ToListAsync();
         return this.Ok(contests);
+    }
+
+    [HttpPost]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> DownloadSubmissions(DownloadSubmissionsModel model)
+    {
+        var file = await this.contestsBusinessService.DownloadSubmissions(model);
+
+        return this.File(file.Content!, file.MimeType!, file.FileName);
     }
 
     [HttpPost]

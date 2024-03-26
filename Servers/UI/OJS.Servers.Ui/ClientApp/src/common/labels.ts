@@ -9,6 +9,8 @@ export const CATEGORY = 'Category';
 export const IS_DELETED = 'Is Deleted';
 export const CHECKER = 'Checker';
 
+export const DOWNLOAD = 'Download';
+
 export const VIEW = 'View';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';

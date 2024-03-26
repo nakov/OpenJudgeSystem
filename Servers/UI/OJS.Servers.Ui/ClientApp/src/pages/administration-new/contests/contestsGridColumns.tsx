@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { FaCloudDownloadAlt } from 'react-icons/fa';
+import { SiMicrosoftexcel } from 'react-icons/si';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
+import AdministrationGridDropdown from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import ContestExcel from '../../../components/administration/contests/contest-download-excel/ContestExcel';
-import ContestSubmissionsDownload from '../../../components/administration/contests/contest-download-submissions/ContestSubmissionsDownload';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const contestFilterableColumns: GridColDef[] = [
@@ -122,7 +123,8 @@ export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
     deleteMutation: any,
     onSuccessDelete: () => void,
-    onClickExcel: Function,
+    onMoreClick: Function,
+    onDownloadSubmissionClick: Function,
 ) => [
     {
         field: 'actions',
@@ -134,10 +136,6 @@ export const returnContestsNonFilterableColumns = (
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <ContestSubmissionsDownload
-                  onClick={onClickExcel}
-                  contestId={Number(params.row.id)}
-                />
                 <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
                 <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${Number(params.row.id)}`} location={`${EDIT} page`} />
                 <DeleteButton
@@ -147,9 +145,22 @@ export const returnContestsNonFilterableColumns = (
                   mutation={deleteMutation}
                   onSuccess={onSuccessDelete}
                 />
-                <ContestExcel
-                  onClick={onClickExcel}
-                  contestId={Number(params.row.id)}
+                <AdministrationGridDropdown
+                  sections={
+                    [
+                        {
+                            icon: <SiMicrosoftexcel />,
+                            label: 'Export results',
+                            handleClick: onMoreClick,
+                        },
+                        {
+                            icon: <FaCloudDownloadAlt />,
+                            label: 'Download submissions',
+                            handleClick: onDownloadSubmissionClick,
+                        },
+                    ]
+                }
+                  id={Number(params.row.id)}
                 />
             </div>
         ),

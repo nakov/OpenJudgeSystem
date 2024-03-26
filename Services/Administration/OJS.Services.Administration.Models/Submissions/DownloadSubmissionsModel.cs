@@ -1,4 +1,4 @@
-namespace OJS.Servers.Administration.Models.Contests
+namespace OJS.Services.Administration.Models.Submissions
 {
     using OJS.Common.Enumerations;
     using System.ComponentModel.DataAnnotations;
@@ -9,7 +9,6 @@ namespace OJS.Servers.Administration.Models.Contests
 
         public ContestExportResultType ContestExportResultType { get; set; }
 
-        [Range(2, int.MaxValue)]
         public SubmissionExportType SubmissionExportType { get; set; }
     }
 }
