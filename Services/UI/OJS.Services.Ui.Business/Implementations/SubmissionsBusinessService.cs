@@ -20,7 +20,9 @@ using OJS.Services.Ui.Business.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
+using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
+using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;
@@ -384,7 +386,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
-    public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(
+    public async Task<PagedResult<PublicSubmissionsServiceModel>> GetUserSubmissionsByProblem(
         int problemId,
         bool isOfficial,
         int page)
@@ -392,12 +394,12 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var problem =
             await this.problemsDataService.GetWithProblemGroupById(problemId)
                 .Map<ProblemForSubmissionDetailsServiceModel>();
+
         var user = this.userProviderService.GetCurrentUser();
 
-        var participant =
-            await this.participantsDataService.GetByContestByUserAndByIsOfficial(
-                    problem.ProblemGroup.ContestId, user.Id!, isOfficial)
-                .Map<ParticipantSubmissionResultsServiceModel>();
+        var participant = await this.participantsDataService
+                .GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial)
+                .Map<ParticipantServiceModel>();
 
         var validationResult =
             this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
@@ -407,7 +409,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problem.Id, participant.Id, page);
+        return await this.GetUserSubmissions<PublicSubmissionsServiceModel>(problem.Id, participant.Id, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -703,7 +705,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task<PagedResult<T>> GetUserSubmissions<T>(
+    private async Task<PagedResult<TServiceModel>> GetUserSubmissions<TServiceModel>(
         int problemId,
         int participantId,
         int page)
@@ -712,7 +714,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .GetAllByProblemAndParticipant(problemId, participantId);
 
         return await userSubmissions
-            .MapCollection<T>()
+            .MapCollection<TServiceModel>()
             .ToPagedResultAsync(DefaultSubmissionResultsPerPage, page);
     }
 }
