@@ -338,17 +338,18 @@ namespace OJS.Services.Ui.Business.Implementations
                     .Concat(subcategories.Select(cc => cc.Id).ToList());
             }
 
+            var userParticipants = this.participantsData
+                .GetAllWithContestAndProblemsAndParticipantScoresByUsername(username);
+
             var pagedContests = await this.contestsData
                 .ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
-                this.participantsData
-                    .GetAllWithContestAndProblemsByUsername(username)
-                    .Select(p => p.Contest),
-                model);
+                    userParticipants.Select(p => p.Contest),
+                    model);
 
             var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
 
-            var participantsCount = await this.contestParticipantsCacheService
-                .GetParticipantsCountForContestsPage(contestIds, model.PageNumber);
+            var participantsCount =
+                await this.contestParticipantsCacheService.GetParticipantsCount(contestIds, model.PageNumber);
 
             //set CanBeCompeted and CanBePracticed properties in each contest for the page
             pagedContests.Items.ForEach(c =>
@@ -382,7 +383,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
 
             var participantsCount = await this.contestParticipantsCacheService
-                .GetParticipantsCountForContestsPage(contestIds, model.PageNumber);
+                .GetParticipantsCount(contestIds, model.PageNumber);
 
             //set CanBeCompeted and CanBePracticed properties in each contest for the page
             pagedContests.Items.ForEach(c =>
