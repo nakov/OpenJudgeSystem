@@ -30,7 +30,7 @@
 
         protected string WorkingDirectory { get; set; } = string.Empty;
 
-        public Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
+        public async Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
             where TResult : ISingleCodeRunResult, new()
         {
             this.WorkingDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
@@ -38,14 +38,14 @@
             try
             {
                 executionContext.Code = this.PreprocessCode(executionContext);
-                return this.InternalExecute(executionContext, new ExecutionResult<TResult>());
+                return await this.InternalExecute(executionContext, new ExecutionResult<TResult>());
                 // Catch logic is handled by the caller
             }
             finally
             {
                 // Use another thread for deletion of the working directory,
                 // because we don't want the execution flow to wait for the clean up
-                Task.Run(() =>
+                await Task.Run(() =>
                 {
                     try
                     {

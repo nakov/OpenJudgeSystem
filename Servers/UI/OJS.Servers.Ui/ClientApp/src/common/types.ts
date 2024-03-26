@@ -262,13 +262,6 @@ interface IIndexContestsType {
     maxPoints: number;
 }
 
-interface IParticiapntsInContestView {
-    id:number;
-    userName:string;
-    contest:string;
-    isOfficial:boolean;
-}
-
 interface IContestModalInfoType {
     id: number;
     name: string;
@@ -403,10 +396,20 @@ interface IProblemAdministration {
     problemGroupId : number;
 }
 
+interface ISubmissionTypesInListModel{
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    allowBinaryFilesUpload: boolean;
+    allowedFileExtensions: string;
+}
+
 interface IProblemGroupDropdownModel {
     id: number;
     orderBy: number;
 }
+
 interface IUserRoleType {
     id: string;
     name: string;
@@ -556,7 +559,9 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminSubmissionTypes: IAdminSlice;
     adminCheckers: IAdminSlice;
+    adminParticipants: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -574,6 +579,18 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+}
+
+interface ISubmissionTypeAdministrationModel {
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    additionalCompilerArguments: string;
+    description: string;
+    allowedFileExtensions: string;
+    isSelectedByDefault: boolean;
+    allowBinaryFilesUpload: boolean;
 }
 
 interface ICheckerInListModel {
@@ -594,6 +611,28 @@ interface ICheckerAdministrationModel {
     description: string | null;
 }
 
+interface IParticipantInListModel {
+    id: number;
+    userName: string;
+    contestName: string;
+    contestId: number;
+    isOfficial: boolean;
+}
+
+interface IParticipantAdministrationModel {
+    id: number;
+    userName: string;
+    contestId: number;
+    contestName: string;
+    userId: string;
+    isOfficial: boolean;
+}
+
+interface IUserAutocompleteData {
+id: string;
+userName: string;
+
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -627,7 +666,6 @@ export type {
     IAdminContestResponseType,
     IContestAdministration,
     IFilterColumn,
-    IParticiapntsInContestView,
     ISubmissionsAdminGridViewType,
     ISubmissionForProcessingAdminGridViewType,
     IAdminSlice,
@@ -648,10 +686,15 @@ export type {
     ITestsUploadModel,
     IFileModel,
     IEnumType,
+    ISubmissionTypesInListModel,
+    ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
     ISorterReducerActionType,
     IFilterReducerActionType,
     IProblemGroupDropdownModel,
     ICheckerInListModel,
     ICheckerAdministrationModel,
+    IParticipantAdministrationModel,
+    IParticipantInListModel,
+    IUserAutocompleteData,
 };

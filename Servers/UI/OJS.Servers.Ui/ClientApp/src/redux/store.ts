@@ -7,11 +7,13 @@ import { checkersAdminSlice } from './features/admin/checkersAdminSLice';
 // features
 import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
 import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
+import { participantsAdminSlice } from './features/admin/participantsAdminSlice';
 import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
 import { problemResourcesAdminSlice } from './features/admin/problemResourcesAdminSlice';
 import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
 import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
 import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
+import { submissionTypesAdminSlice } from './features/admin/submissionTypesAdminSlice';
 import { testsAdminSlice } from './features/admin/testsSlice';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
@@ -32,6 +34,7 @@ import submissionsAdminService from './services/admin/submissionsAdminService';
 import submissionsForProcessingAdminService from './services/admin/submissionsForProcessingAdminService';
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
 import testsAdminService from './services/admin/testsAdminService';
+import usersAdminService from './services/admin/usersAdminService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
@@ -56,7 +59,9 @@ const rootReducer = combineReducers({
     [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
     [testsAdminSlice.name]: testsAdminSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
+    [submissionTypesAdminSlice.name]: submissionTypesAdminSlice.reducer,
     [checkersAdminSlice.name]: checkersAdminSlice.reducer,
+    [participantsAdminSlice.name]: participantsAdminSlice.reducer,
 
     // services
     [authorizationService.reducerPath]: authorizationService.reducer,
@@ -76,6 +81,7 @@ const rootReducer = combineReducers({
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
     [testsAdminService.reducerPath]: testsAdminService.reducer,
     [problemResourcesAdminService.reducerPath]: problemResourcesAdminService.reducer,
+    [usersAdminService.reducerPath]: usersAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -95,6 +101,7 @@ const reducersToPersist = [
     contestCategoriesAdminSlice.name,
     testsAdminSlice.name,
     checkersAdminSlice.name,
+    participantsAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -119,6 +126,7 @@ const store = configureStore({
         checkerAdminService.middleware,
         testsAdminService.middleware,
         problemResourcesAdminService.middleware,
+        usersAdminService.middleware,
     ]),
 });
 
