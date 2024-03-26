@@ -3,7 +3,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls';
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
@@ -119,6 +119,7 @@ const contestFilterableColumns: GridColDef[] = [
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
     deleteMutation: any,
+    onSuccessDelete: () => void,
 ) => [
     {
         field: 'actions',
@@ -137,6 +138,7 @@ export const returnContestsNonFilterableColumns = (
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={deleteMutation}
+                  onSuccess={onSuccessDelete}
                 />
             </div>
         ),

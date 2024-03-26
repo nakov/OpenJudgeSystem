@@ -1,8 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel } from '../../../common/types';
+import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel, ITestsDropdownData } from '../../../common/types';
 import { IGetByContestId, IGetByProblemGroupId, IProblemUrlById } from '../../../common/url-types';
-import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
+import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const problemsAdminService = createApi({
@@ -90,6 +90,10 @@ export const problemsAdminService = createApi({
             query: (problemId) => ({ url: `GetResources/${problemId}` }),
             keepUnusedDataFor: 5,
         }),
+        getAllByName: builder.query<Array<ITestsDropdownData>, string>({
+            query: (queryString) => ({ url: `/GetAllByName?searchString=${encodeURIComponent(queryString)}` }),
+            keepUnusedDataFor: 10,
+        }),
     }),
 });
 
@@ -106,6 +110,7 @@ export const {
     useCopyMutation,
     useGetResourcesQuery,
     useGetByProblemGroupIdQuery,
+    useGetAllByNameQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

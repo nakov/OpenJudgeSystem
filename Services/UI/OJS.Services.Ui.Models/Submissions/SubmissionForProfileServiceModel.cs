@@ -1,12 +1,13 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
     using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class SubmissionForProfileServiceModel : IMapExplicitly
     {

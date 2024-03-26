@@ -1,13 +1,12 @@
-/* eslint-disable react/jsx-indent */
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useSearchParams } from 'react-router-dom';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { Tooltip } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
-import { SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls';
+import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
+import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
@@ -28,6 +27,17 @@ const AdministrationSubmissionsForProcessingPage = () => {
             filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         });
+
+    const filterParams = searchParams.get('filter');
+    const sortingParams = searchParams.get('sorting');
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
+    }, [ filterParams ]);
+
+    useEffect(() => {
+        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
+    }, [ sortingParams ]);
 
     const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions-for-processing']?.selectedFilters);
     const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions-for-processing']?.selectedSorters);
@@ -51,11 +61,10 @@ const AdministrationSubmissionsForProcessingPage = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Tooltip title="View">
-                        <Link to={`${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}>
-                            <RemoveRedEyeIcon color="primary" />
-                        </Link>
-                    </Tooltip>
+                    <ViewRedirectButton
+                      path={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}
+                      location={VIEW}
+                    />
                 </div>
             ),
         },

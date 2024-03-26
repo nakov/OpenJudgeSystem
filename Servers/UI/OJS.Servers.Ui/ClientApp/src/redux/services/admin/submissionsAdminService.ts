@@ -11,7 +11,7 @@ import {
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
 
 export const submissionsAdminService = createApi({
-    reducerPath: 'submissions',
+    reducerPath: 'adminSubmissionsService',
     baseQuery: fetchBaseQuery({
         credentials: 'include',
         baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/submissions`,
@@ -53,7 +53,7 @@ export const submissionsAdminService = createApi({
                     sorting,
                 } }) }),
         deleteSubmission: builder.mutation({
-            query: ({ id }) => ({
+            query: (id) => ({
                 url: `/delete/${id}`,
                 method: 'DELETE',
             }) }),

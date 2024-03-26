@@ -1,13 +1,12 @@
 import React from 'react';
 
 import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
-import { PublicSubmissionState } from '../hooks/submissions/use-public-submissions';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
 import { ContestVariation } from './contest-types';
-import { FilterColumnTypeEnum } from './enums';
+import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -42,6 +41,11 @@ interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
     retestIsSuccess: false;
 }
 
+interface IRecentSubmissionsReduxState {
+    latestSubmissions: IPagedResultType<IPublicSubmission>;
+    currentPage: number;
+}
+
 interface IPublicSubmissionProblem {
     id: number;
     name: string;
@@ -54,7 +58,7 @@ interface IPublicSubmissionResult {
     maxPoints: number;
 }
 
-interface ISubmissionResponseModel {
+interface IPublicSubmission {
     id: number;
     createdOn: Date;
     strategyName: string;
@@ -68,6 +72,16 @@ interface ISubmissionResponseModel {
     maxTimeUsed: number;
     testRuns: ITestRunType[];
     processed: boolean;
+}
+
+interface ITestRunInListModel {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
 }
 
 interface IGetAllAdminParams {
@@ -112,7 +126,6 @@ interface IProblemResourceAdministrationModel {
     link: string;
     type: string;
     orderBy: number;
-    fileExtension: string;
     file: File | null;
     hasFile: boolean;
     problemId: number;
@@ -229,13 +242,6 @@ interface IIndexContestsType {
     maxPoints: number;
 }
 
-interface IParticiapntsInContestView {
-    id:number;
-    userName:string;
-    contest:string;
-    isOfficial:boolean;
-}
-
 interface IContestModalInfoType {
     id: number;
     name: string;
@@ -275,8 +281,8 @@ interface IIndexContestCategoriesType {
 interface IContestCategoryAdministration {
     id: number;
     name: string;
-    parent: string;
-    parentId: number;
+    parent: string | null;
+    parentId: number | null;
     isDeleted: boolean;
     isVisible: boolean;
     orderBy: number;
@@ -367,6 +373,21 @@ interface IProblemAdministration {
     contestType: ContestVariation;
     tests: File | null;
     problemGroupOrderBy: number;
+    problemGroupId : number;
+}
+
+interface ISubmissionTypesInListModel{
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    allowBinaryFilesUpload: boolean;
+    allowedFileExtensions: string;
+}
+
+interface IProblemGroupDropdownModel {
+    id: number;
+    orderBy: number;
 }
 
 interface IUserRoleType {
@@ -463,6 +484,21 @@ interface IContestAutocomplete {
     name: string;
 }
 
+interface ITestsUploadModel {
+    problemId: number;
+    tests: File | null;
+    retestProblem: boolean;
+    deleteOldTests: boolean;
+}
+interface ITestsDropdownData {
+    id: number;
+    name: string;
+}
+
+interface IFileModel {
+    blob: Blob;
+    filename: string;
+}
 interface IContestCategories {
     id: number;
     name: string;
@@ -470,6 +506,16 @@ interface IContestCategories {
 
 interface IEnumType {
     enumValues?: Array<string>;
+}
+
+interface IFilterReducerActionType {
+    key: string;
+    filters: Array<IAdministrationFilter> | null;
+}
+
+interface ISorterReducerActionType {
+    key: string;
+    sorters: Array<IAdministrationSorter> | null;
 }
 
 interface IFilterColumn {
@@ -480,8 +526,8 @@ interface IFilterColumn {
 
 interface IAdminSlice {
     [key: string]: null | {
-        selectedFilters: IAdministrationFilter[];
-        selectedSorters: IAdministrationSorter[];
+        selectedFilters: IAdministrationFilter[] | null;
+        selectedSorters: IAdministrationSorter[] | null;
     };
 }
 
@@ -489,11 +535,15 @@ interface IRootStore {
     adminContests: IAdminSlice;
     adminSubmissions: IAdminSlice;
     adminProblems: IAdminSlice;
+    adminTests: IAdminSlice;
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
     adminExamGroups: IAdminSlice;
     adminUsers: IAdminSlice;
+    adminSubmissionTypes: IAdminSlice;
+    adminCheckers: IAdminSlice;
+    adminParticipants: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -548,6 +598,58 @@ interface IUserAutocomplete {
     userName: string;
 }
 
+interface ISubmissionTypeAdministrationModel {
+    id: number;
+    name: string;
+    executionStrategyType: string;
+    compilerType: string;
+    additionalCompilerArguments: string;
+    description: string;
+    allowedFileExtensions: string;
+    isSelectedByDefault: boolean;
+    allowBinaryFilesUpload: boolean;
+}
+
+interface ICheckerInListModel {
+    id: number;
+    name: string;
+    dllFile: string;
+    className: string;
+    parameter: string;
+    isDeleted: boolean;
+}
+
+interface ICheckerAdministrationModel {
+    id: number;
+    name: string;
+    dllFile: string | null;
+    className: string | null;
+    parameter: string | null;
+    description: string | null;
+}
+
+interface IParticipantInListModel {
+    id: number;
+    userName: string;
+    contestName: string;
+    contestId: number;
+    isOfficial: boolean;
+}
+
+interface IParticipantAdministrationModel {
+    id: number;
+    userName: string;
+    contestId: number;
+    contestName: string;
+    userId: string;
+    isOfficial: boolean;
+}
+
+interface IUserAutocompleteData {
+id: string;
+userName: string;
+
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -558,7 +660,8 @@ export type {
     IContestType,
     IProblemType,
     IProblemResourceType,
-    ISubmissionResponseModel,
+    IRecentSubmissionsReduxState,
+    IPublicSubmission,
     ISubmissionTypeType,
     IPagedResultType,
     IUserType,
@@ -577,7 +680,6 @@ export type {
     IAdminContestResponseType,
     IContestAdministration,
     IFilterColumn,
-    IParticiapntsInContestView,
     ISubmissionsAdminGridViewType,
     ISubmissionForProcessingAdminGridViewType,
     IAdminSlice,
@@ -592,12 +694,26 @@ export type {
     IProblemGroupsData,
     IIndexContestCategoriesType,
     IContestCategoryAdministration,
+    ITestsDropdownData,
     IProblemResouceInLinstModel,
     IProblemResourceAdministrationModel,
+    ITestsUploadModel,
+    IFileModel,
     IEnumType,
     IIndexExamGroupsType,
     IExamGroupAdministration,
     IUserAdministration,
     IUserInExamGroupModel,
     IUserAutocomplete,
+    ISubmissionTypesInListModel,
+    ISubmissionTypeAdministrationModel,
+    ITestRunInListModel,
+    ISorterReducerActionType,
+    IFilterReducerActionType,
+    IProblemGroupDropdownModel,
+    ICheckerInListModel,
+    ICheckerAdministrationModel,
+    IParticipantAdministrationModel,
+    IParticipantInListModel,
+    IUserAutocompleteData,
 };

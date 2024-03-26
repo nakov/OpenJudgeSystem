@@ -6,7 +6,7 @@ import {
     IContestCategories,
     IContestCategoryAdministration,
 } from '../../../../common/types';
-import { CONTEST_CATEGORIES_PATH } from '../../../../common/urls';
+import { CONTEST_CATEGORIES_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import {
     useCreateContestCategoryMutation,
     useDeleteContestCategoryMutation,
@@ -28,8 +28,8 @@ interface IContestCategoryEditProps {
 const initialState : IContestCategoryAdministration = {
     id: 0,
     name: '',
-    parent: '',
-    parentId: 0,
+    parent: null,
+    parentId: null,
     isDeleted: false,
     isVisible: false,
     orderBy: 0,
@@ -98,6 +98,9 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         getAndSetExceptionMessage([ createError, updateError ], setErrorMessages);
     }, [ createError, isSuccesfullyCreated, isSuccesfullyUpdated, updateError ]);
 
+    useEffect(() => () => {
+        setContestCategory(initialState);
+    }, []);
     const validateForm = () => {
         const isValid = contestCategoryValidations.isNameValid &&
             contestCategoryValidations.isOrderByValid;
@@ -142,6 +145,9 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                 const { id, name: parentName } = category;
                 parentId = id;
                 parent = parentName;
+            } else {
+                parentId = null;
+                parent = null;
             }
             break;
         }
@@ -180,6 +186,45 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         }
     };
 
+    const renderFormActionButtons = () => (
+        isEditMode
+            ? (
+                <>
+                    <div className={styles.buttonsWrapper}>
+                        <Button
+                          variant="contained"
+                          onClick={() => edit()}
+                          className={styles.button}
+                          disabled={!isValidForm}
+                        >
+                            Edit
+                        </Button>
+                    </div>
+                    <Box sx={{ alignSelf: 'flex-end' }}>
+                        <DeleteButton
+                          id={Number(contestCategoryId!)}
+                          name={contestCategory.name}
+                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`)}
+                          mutation={useDeleteContestCategoryMutation}
+                          text="Are you sure that you want to delete the contest category?"
+                        />
+                    </Box>
+                </>
+            )
+            : (
+                <div className={styles.buttonsWrapper}>
+                    <Button
+                      variant="contained"
+                      onClick={() => create()}
+                      className={styles.button}
+                      disabled={!isValidForm}
+                    >
+                        Create
+                    </Button>
+                </div>
+            )
+
+    );
     return (
         isFetching || isLoading || isGettingCategories || isCreating || isUpdating
             ? <SpinningLoader />
@@ -249,40 +294,7 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                             </FormControl>
                         </Box>
                     </form>
-                    {isEditMode
-                        ? (
-                            <div className={styles.buttonsWrapper}>
-                                <Button
-                                  variant="contained"
-                                  onClick={() => edit()}
-                                  className={styles.button}
-                                  disabled={!isValidForm}
-                                >
-                                    Edit
-                                </Button>
-                            </div>
-                        )
-                        : (
-                            <div className={styles.buttonsWrapper}>
-                                <Button
-                                  variant="contained"
-                                  onClick={() => create()}
-                                  className={styles.button}
-                                  disabled={!isValidForm}
-                                >
-                                    Create
-                                </Button>
-                            </div>
-                        )}
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(contestCategoryId!)}
-                          name={contestCategory.name}
-                          onSuccess={() => navigate(`${CONTEST_CATEGORIES_PATH}`)}
-                          mutation={useDeleteContestCategoryMutation}
-                          text="Are you sure that you want to delete the contest category?"
-                        />
-                    </Box>
+                    {renderFormActionButtons()}
                 </div>
             )
     );

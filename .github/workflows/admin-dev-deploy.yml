@@ -23,4 +23,6 @@ jobs:
     secrets:
       webhook_url: ${{ secrets.ADMIN_WEBHOOK_URL }}
       webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+      docker_username: ${{ secrets.SOFTUNIBUILD_USER }}
+      docker_password: ${{ secrets.SOFTUNIBUILD_PAT }}
         

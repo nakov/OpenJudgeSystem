@@ -1,12 +1,11 @@
-/* eslint-disable css-modules/no-unused-class */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { CREATE, EDIT, ID, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IContestAutocomplete } from '../../../../common/types';
-import { useGetCopyAllQuery } from '../../../../redux/services/admin/contestsAdminService';
+import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateProblemGroupMutation, useGetProblemGroupByIdQuery, useUpdateProblemGroupMutation } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -14,6 +13,8 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import { IProblemGroupAdministrationModel } from '../types';
 
+// The classes are used in multiple files. But not all of them are used in single file
+// eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IProblemFormProps {
@@ -37,7 +38,7 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessages, setSuccessMessages ] = useState<string>('');
 
-    const { data: contestsAutocompleteData, error: getContestDataError } = useGetCopyAllQuery(contestSearchString);
+    const { data: contestsAutocompleteData, error: getContestDataError } = useGetContestAutocompleteQuery(contestSearchString);
     const {
         data: problemGroupData,
         error: getProblemGroupError,

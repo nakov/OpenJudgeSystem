@@ -4,10 +4,12 @@ import { defaultPathIdentifier } from '../../common/constants';
 import { IContestStrategyFilter } from '../../common/contest-types';
 import {
     IContestCategory,
+    IContestDetailsResponseType,
     IGetAllContestsOptions,
-    IGetContestsForIndexResponseType, IIndexContestsType,
+    IIndexContestsType,
     IPagedResultType,
 } from '../../common/types';
+import { IContestDetailsUrlParams } from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
@@ -32,11 +34,12 @@ export const contestsService = createApi({
                 },
             }),
         }),
-        getIndexContests: builder.query<IGetContestsForIndexResponseType, void>({ query: () => '/Contests/GetForHomeIndex' }),
+        getContestById: builder.query<IContestDetailsResponseType, IContestDetailsUrlParams>({
+            query: ({ id }) => ({ url: `/Contests/Details/${id}` }),
+            keepUnusedDataFor: 10,
+        }),
         getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
         getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
-        getContestById: builder.query<any, void>({ query: (contestId) => `contests/${contestId}` }),
-        getContestByProblemId: builder.query<any, void>({ query: (problemId) => `/contest/${problemId}` }),
     }),
 });
 
@@ -46,5 +49,4 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
-    useGetContestByProblemIdQuery,
 } = contestsService;

@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
-
 import { IFilter, ISort } from './contest-types';
+import { SubmissionStatus } from './enums';
 import { IGetAllAdminParams } from './types';
 
 interface IUserInfoUrlParams {
@@ -24,8 +23,16 @@ interface IGetByContestId extends IGetAllAdminParams {
     contestId: number;
 }
 
+interface IGetByProblemId extends IGetAllAdminParams {
+    problemId: number;
+}
 interface IGetByProblemGroupId extends IGetAllAdminParams {
     problemGroupId: number;
+
+}
+
+interface IGetByTestId extends IGetAllAdminParams {
+    testId: number;
 }
 
 interface IGetByExamGroupId extends IGetAllAdminParams {
@@ -164,7 +171,9 @@ export type {
     IContestEditUrlParams,
     IGetByContestId,
     IProblemUrlById,
+    IGetByProblemId,
     IGetByProblemGroupId,
     IExamGroupUrlParams,
     IUserUrlParams,
+    IGetByTestId,
 };

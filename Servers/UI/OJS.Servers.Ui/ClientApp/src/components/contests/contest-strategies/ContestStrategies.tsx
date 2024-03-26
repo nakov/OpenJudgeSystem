@@ -1,5 +1,6 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
+import { useSearchParams } from 'react-router-dom';
 import { MenuItem, Select } from '@mui/material';
 
 import { IContestStrategyFilter } from '../../../common/contest-types';
@@ -12,9 +13,12 @@ import styles from './ContestStrategies.module.scss';
 
 const ContestStrategies = () => {
     const dispatch = useAppDispatch();
+    const [ searchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
     const [ selectValue, setSelectValue ] = useState('');
+
+    const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -29,6 +33,14 @@ const ContestStrategies = () => {
             setSelectValue('');
         }
     }, [ selectedStrategy ]);
+
+    useEffect(() => {
+        if (selectedId) {
+            setSelectValue(selectedId);
+        } else {
+            setSelectValue('');
+        }
+    }, [ selectedId ]);
 
     const removeSelectedStrategy = () => {
         dispatch(setContestStrategy(null));

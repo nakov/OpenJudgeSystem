@@ -67,6 +67,16 @@ const categoriesFilterableColumns: GridColDef[] = [
         sortable: false,
     },
     {
+        field: 'parentId',
+        headerName: 'Parent Id',
+        headerAlign: 'center',
+        width: 150,
+        flex: 2,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+    },
+    {
         field: 'createdOn',
         headerName: 'Created On',
         headerAlign: 'center',

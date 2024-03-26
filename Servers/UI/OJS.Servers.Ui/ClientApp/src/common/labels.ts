@@ -8,14 +8,20 @@ export const DESCRIPTION = 'Description';
 export const CATEGORY = 'Category';
 export const IS_DELETED = 'Is Deleted';
 export const CHECKER = 'Checker';
+
+export const VIEW = 'View';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
 export const CREATE = 'Create';
 export const CANCEL = 'Cancel';
 export const PROBLEM_GROUP = 'Problem Group';
+export const INPUT = 'Input';
+export const OUTPUT = 'Output';
 export const PROBLEM_RESOURCE = 'Problem Resource';
 
 export const CREATE_NEW_RECORD = 'Create new record';
+
+export const CLASS_NAME = 'Class Name';
 
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
@@ -35,6 +41,7 @@ export const IS_VISIBLE = 'Is Visible';
 export const ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS = 'Allow parallel submissions in tasks';
 export const AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY = 'Auto change tests feedback visibility';
 export const CREATE_NEW_ENTITY = 'Create new contest';
+export const RECORD = 'Record';
 export const PROBLEM = 'Problem';
 export const LINK = 'Link';
 
@@ -53,15 +60,31 @@ export const SHOW_RESULTS = 'Show Results';
 export const CREATE_NEW_PROBLEM = 'Create new Problem';
 export const SOLUTION_SKELETON = 'Solution Skeleton';
 
+export const SELECT_PROBLEM = 'Select Problem';
+
 // Submission types
 export const SUBMISSION_TYPES = 'Submission Types';
-// Tests
+export const EXECUTION_STRATEGY = 'Execution Strategy';
+export const ALLOWED_FILE_EXTENSIONS = 'Allowed File Extensions';
+export const IS_SELECTED = 'Is Selected';
+export const ALLOW_BINARY_FILES_UPLOAD = 'Allow Binary files upload';
 
+// Tests
 export const TESTS = 'Tests';
+export const HIDE_INPUT = 'Hide Input';
 
 // Problem Resources
-
 export const FILE_EXTENSION = 'File Extension';
 
 // Exam groups
 export const CREATE_NEW_EXAM_GROUP = 'Create new exam group';
+// COMPILERS
+export const COMPILER = 'Compiler';
+export const ADDITIONAL_COMPILER_ARGUMENTS = 'Additional Compiler Arguments';
+
+// Checkers
+export const DLL_FILE = 'Dll File';
+export const PARAMETER = 'Parameter';
+
+// Participants
+export const IS_OFFICIAL = 'Is Official';

@@ -7,6 +7,7 @@ import { IContestAutocomplete } from '../../../common/types';
     type: string;
     contest: IContestAutocomplete;
 }
+
 export type {
     IProblemGroupAdministrationModel,
 };

@@ -18,13 +18,11 @@ import styles from './ExecutionResult.module.scss';
 
 interface IExecutionResultDetailsProps {
     testRuns: ITestRunType[];
-    maxMemoryUsed: number;
-    maxTimeUsed: number;
     isCompiledSuccessfully: boolean;
     isProcessed: boolean;
 }
 
-const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
+const ExecutionResult = ({ testRuns, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
     const { getColorClassName, themeColors } = useTheme();
     const renderTestRunIcon = useCallback(
         (testRun: ITestRunType) => {
@@ -63,24 +61,8 @@ const ExecutionResult = ({ testRuns, maxMemoryUsed, maxTimeUsed, isCompiledSucce
             { isProcessed && isCompiledSuccessfully
                 ? (
                     <div className={styles.executionResultInfo}>
-                        <div>
+                        <div className={styles.testRunsContainer}>
                             {renderTestRunIcons(testRuns)}
-                        </div>
-                        <div className={styles.timeAndMemoryContainer}>
-                            <div className={styles.maxMemoryUsed}>
-                                <MemoryIcon />
-                                {' '}
-                                {(maxMemoryUsed / 1000000).toFixed(2)}
-                                {' '}
-                                MB
-                            </div>
-                            <div className={styles.maxTimeUsed}>
-                                <TimeLimitIcon />
-                                {' '}
-                                {maxTimeUsed / 1000}
-                                {' '}
-                                s.
-                            </div>
                         </div>
                     </div>
                 )
