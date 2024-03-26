@@ -546,7 +546,6 @@ interface IRootStore {
     adminCheckers: IAdminSlice;
     adminParticipants: IAdminSlice;
     adminRoles: IAdminSlice;
-    adminUsers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -577,7 +576,7 @@ interface IIndexExamGroupsType {
 interface IExamGroupAdministration {
     id: number;
     name: string;
-    contest: string;
+    contestName: string;
     contestId: number;
     externalAppId: string;
     externalExamGroupId: number;

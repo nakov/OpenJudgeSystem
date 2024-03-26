@@ -14,7 +14,7 @@ import {
     useDeleteExamGroupMutation,
     useGetExamGroupByIdQuery,
 } from '../../../../redux/services/admin/examGroupsAdminService';
-import { useGetUsersForDropdownQuery } from '../../../../redux/services/admin/usersAdminService';
+import { useGetUsersAutocompleteQuery } from '../../../../redux/services/admin/usersAdminService';
 import isNilOrEmpty from '../../../../utils/check-utils';
 import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -47,14 +47,14 @@ const AddUserInGroupModal = (props:IAddUserInExamGroupProps) => {
     const [ examGroup, setExamGroup ] = useState<IExamGroupAdministration>({
         id: 0,
         name: '',
-        contest: '',
+        contestName: '',
         contestId: 0,
         externalAppId: '',
         externalExamGroupId: 0,
     });
 
     const { data, isFetching, isLoading } = useGetExamGroupByIdQuery({ id: Number(examGroupId) });
-    const { data: usersForDropdown } = useGetUsersForDropdownQuery(userSearchString);
+    const { data: usersForDropdown } = useGetUsersAutocompleteQuery(userSearchString);
 
     const [
         addUserToExamGroup, {

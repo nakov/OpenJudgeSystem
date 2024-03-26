@@ -1,14 +1,13 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable max-len */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { IconButton, Modal, Tooltip } from '@mui/material';
-import Box from '@mui/material/Box';
+import { IconButton, Tooltip } from '@mui/material';
 
 import { CREATE_NEW_EXAM_GROUP } from '../../../common/labels';
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
+import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ExamGroupEdit from '../../../components/administration/exam-groups/exam-group-edit/ExamGroupEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminExamGroupsFilters, setAdminExamGroupsSorters } from '../../../redux/features/admin/examGroupsAdminSlice';
@@ -16,8 +15,9 @@ import {
     useDeleteExamGroupMutation,
     useGetAllAdminExamGroupsQuery,
 } from '../../../redux/services/admin/examGroupsAdminService';
+import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { flexCenterObjectStyles, modalStyles } from '../../../utils/object-utils';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import AdministrationGridView from '../AdministrationGridView';
 
 import examGroupsFilterableColumns, { returnExamGroupsNonFilterableColumns } from './examGroupsGridColumns';
@@ -28,8 +28,8 @@ const AdministrationExamGroupsPage = () => {
     const [ openEditExamGroupModal, setOpenEditExamGroupModal ] = useState(false);
     const [ openShowCreateExamGroupModal, setOpenShowCreateExamGroupModal ] = useState<boolean>(false);
     const [ examGroupId, setExamGroupId ] = useState<number>();
-    const selectedFilters = useSelector((state: IRootStore) => state.adminExamGroups['all-exam-groups']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminExamGroups['all-exam-groups']?.selectedSorters);
+    const selectedFilters = useAppSelector((state) => state.adminExamGroups['all-exam-groups']?.selectedFilters);
+    const selectedSorters = useAppSelector((state) => state.adminExamGroups['all-exam-groups']?.selectedSorters);
     const {
         data,
         error,
@@ -53,23 +53,20 @@ const AdministrationExamGroupsPage = () => {
     }, [ sortingParams ]);
 
     const renderEditExamGroupModal = (index: number) => (
-        <Modal
+        <AdministrationModal
           key={index}
+          index={index}
           open={openEditExamGroupModal}
           onClose={() => setOpenEditExamGroupModal(false)}
         >
-            <Box sx={modalStyles}>
-                <ExamGroupEdit examGroupId={Number(examGroupId)} />
-            </Box>
-        </Modal>
+            <ExamGroupEdit examGroupId={Number(examGroupId)} />
+        </AdministrationModal>
     );
 
     const renderCreateExamGroupModal = (index: number) => (
-        <Modal key={index} open={openShowCreateExamGroupModal} onClose={() => setOpenShowCreateExamGroupModal(!openShowCreateExamGroupModal)}>
-            <Box sx={modalStyles}>
-                <ExamGroupEdit examGroupId={null} isEditMode={false} />
-            </Box>
-        </Modal>
+        <AdministrationModal index={index} key={index} open={openShowCreateExamGroupModal} onClose={() => setOpenShowCreateExamGroupModal(!openShowCreateExamGroupModal)}>
+            <ExamGroupEdit examGroupId={null} isEditMode={false} />
+        </AdministrationModal>
     );
 
     const renderGridActions = () => (

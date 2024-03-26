@@ -136,5 +136,6 @@ export const {
     useGetLecturerCategoriesQuery,
     useAddLecturerToCategoryMutation,
     useRemoveLecturerFromCategoryMutation,
+    useGetByExamGroupIdQuery,
 } = usersAdminService;
 export default usersAdminService;

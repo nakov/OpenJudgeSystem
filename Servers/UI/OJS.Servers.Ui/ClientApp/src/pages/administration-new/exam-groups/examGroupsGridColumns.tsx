@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import React from 'react';
-import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { EDIT } from '../../../common/labels';
+import { EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 
 const examGroupsFilterableColumns: GridColDef[] = [
     {
@@ -33,8 +32,8 @@ const examGroupsFilterableColumns: GridColDef[] = [
         flex: 2,
     },
     {
-        field: 'contest',
-        headerName: 'Contest',
+        field: 'contestName',
+        headerName: 'Contest Name',
         headerAlign: 'center',
         align: 'center',
         type: 'string',
@@ -78,12 +77,11 @@ export const returnExamGroupsNonFilterableColumns = (
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <IconButton onClick={() => onEditClick(params.row.id)}>
-                    <EditIcon color="warning" />
-                </IconButton>
-                <Link to={`/administration-new/exam-groups/${Number(params.row.id)}`}>
-                    <ShortcutIcon color="primary" />
-                </Link>
+                <QuickEditButton onEdit={() => onEditClick(Number(params.row.id))} />
+                <RedirectButton
+                  path={`/${NEW_ADMINISTRATION_PATH}/${EXAM_GROUPS_PATH}/${Number(params.row.id)}`}
+                  location={`${EDIT} page`}
+                />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name={params.row.name}

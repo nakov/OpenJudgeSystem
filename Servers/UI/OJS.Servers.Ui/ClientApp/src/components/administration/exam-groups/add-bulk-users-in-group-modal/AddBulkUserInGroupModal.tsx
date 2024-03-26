@@ -38,7 +38,7 @@ const AddBulkUsersInGroupModal = (props:IAddUsersInExamGroupProps) => {
     const [ examGroup, setExamGroup ] = useState<IExamGroupAdministration>({
         id: 0,
         name: '',
-        contest: '',
+        contestName: '',
         contestId: 0,
         externalAppId: '',
         externalExamGroupId: 0,
