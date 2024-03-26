@@ -40,7 +40,7 @@ const submissionsService = createApi({
                     { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
         getSubmissionResultsByProblem: builder.query<any, any>({ query: ({ id, page, isOfficial }) => ({
-                url: `${defaultPathIdentifier}/Submissions/GetSubmissionResultsByProblem/${id}`,
+                url: `${defaultPathIdentifier}/Submissions/GetUserSubmissionsByProblem/${id}`,
                 params: {
                     isOfficial,
                     page,

@@ -40,11 +40,12 @@
   .submissionsWrapper {
     display: flex;
     flex-direction: column;
-    margin-top: spacings.$sp-64;
+    margin-top: spacings.$sp-24;
 
     > div {
       font-size: variables.$f-size-30;
       font-weight: font-weights.$font-weight-semi-bold;
+      margin-bottom: spacings.$sp-16;
     }
   }
 }
@@ -96,7 +97,7 @@
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  margin: spacings.$sp-24 0;
+  margin-top: spacings.$sp-24;
 
   button {
     margin-left: spacings.$sp-24;
