@@ -16,7 +16,7 @@ import Button, { ButtonState } from '../../../components/guidelines/buttons/Butt
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
+import { setContestDetails, setUserContestParticipationData } from '../../../redux/features/contestsSlice';
 import {
     useGetContestRegisteredUserQuery,
     useLazyGetContestByIdQuery,
@@ -35,7 +35,6 @@ const ContestSolutionSubmitPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType } = useParams();
 
-    const [ userParticipationData, setUserParticipationData ] = useState<any>({});
     const [ userParticipationDataLoading, setUserParticipationDataLoading ] = useState<boolean>(false);
     const [ userParticipationError, setUserParticipationError ] = useState<string>();
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
@@ -50,7 +49,7 @@ const ContestSolutionSubmitPage = () => {
     const [ uploadedFile, setUploadedFile ] = useState(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
 
-    const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
+    const { selectedContestDetailsProblem, contestDetails, userContestParticipationData } = useAppSelector((state) => state.contests);
 
     const [ submitSolution ] = useSubmitContestSolutionMutation();
     const [ getContestById ] = useLazyGetContestByIdQuery();
@@ -71,8 +70,8 @@ const ContestSolutionSubmitPage = () => {
     } = useGetContestRegisteredUserQuery({ id: Number(contestId), isOfficial: isCompete });
 
     const { requirePassword, isOnlineExam, name, numberOfProblems, duration, id } = data || {};
-    const { contest, shouldEnterPassword, participantsCount } = userParticipationData || {};
-    const { problems = [], allowedSubmissionTypes = [] } = contest || {};
+    const { contest, shouldEnterPassword, participantsCount } = userContestParticipationData || {};
+    const { problems, allowedSubmissionTypes = [] } = contest || {};
     const {
         memoryLimit,
         timeLimit,
@@ -90,11 +89,11 @@ const ContestSolutionSubmitPage = () => {
             });
 
             setUserParticipationError('');
-            setUserParticipationData(queryData);
+            dispatch(setUserContestParticipationData({ participationData: queryData }));
             setUserParticipationDataLoading(false);
         } catch {
             setUserParticipationError('Error loading user participation data!');
-            setUserParticipationData({});
+            dispatch(setUserContestParticipationData({ participationData: null }));
             setUserParticipationDataLoading(false);
         }
     };
@@ -118,9 +117,11 @@ const ContestSolutionSubmitPage = () => {
     // fetch contest data, when user has accepted online exam modal,
     // entered password correctly and has accessed contest data
     useEffect(() => {
-        if ((isOnlineExam
-            ? hasAcceptedOnlineExamModal
-            : true) && !requirePassword) {
+        if (isCompete) {
+            if (isOnlineExam && hasAcceptedOnlineExamModal && !shouldEnterPassword && !userContestParticipationData) {
+                fetchUserParticipationDetails();
+            }
+        } else if (!shouldEnterPassword && !userContestParticipationData && !userContestParticipationData) {
             fetchUserParticipationDetails();
         }
     }, [ isOnlineExam, hasAcceptedOnlineExamModal, requirePassword, contestId, getContestUserParticipation, participationType ]);
