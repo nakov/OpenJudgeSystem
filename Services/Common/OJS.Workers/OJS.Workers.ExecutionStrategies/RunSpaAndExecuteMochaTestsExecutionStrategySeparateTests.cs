@@ -444,7 +444,7 @@ finally:
                 .ToList();
         }
 
-        private TestResult ParseTestResult(string testResult, Dictionary<string, int> titlesToTestsMapping, int index, List<string> testTitles)
+        private TestResult ParseTestResult(string? testResult, Dictionary<string, int> titlesToTestsMapping, int index, List<string> testTitles)
         {
             var isTimeout = false;
             if (testResult != null)
@@ -480,17 +480,6 @@ finally:
 
         private void SaveNginxFile()
             => FileHelpers.SaveStringToFile(NginxFileContent, this.NginxConfFileFullPath);
-
-        private void SaveTestsAndSkeleton(string skeleton, IEnumerable<TestContext> tests)
-        {
-            var testsConcatenated = string.Join("\n\n\t", tests.Select(t => t.Input));
-
-            var skeletonWithTests = skeleton.Replace(MochaTestsPlaceholder, testsConcatenated);
-
-            var playwrightFilePath = FileHelpers.SaveStringToFile(
-                this.PreprocessTestInput(skeletonWithTests),
-                FileHelpers.BuildPath(this.TestsPath, "tests.js"));
-        }
 
         private string ReplaceNodeModulesRequireStatementsInTests(string testInputContent)
         {
