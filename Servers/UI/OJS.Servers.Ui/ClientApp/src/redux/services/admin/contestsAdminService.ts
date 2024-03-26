@@ -47,7 +47,7 @@ export const contestService = createApi({
             }),
         }),
 
-        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({
+        getContestAutocomplete: builder.query<Array<IContestAutocomplete>, string>({
             query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
         }),
@@ -80,8 +80,8 @@ export const {
     useDeleteContestMutation,
     useUpdateContestMutation,
     useCreateContestMutation,
-    useGetCopyAllQuery,
     useDownloadResultsMutation,
     useDownloadSubmissionsMutation,
+    useGetContestAutocompleteQuery,
 } = contestService;
 export default contestService;

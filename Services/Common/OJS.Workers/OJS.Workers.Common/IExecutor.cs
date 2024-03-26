@@ -19,7 +19,7 @@
         /// <param name="useSystemEncoding">A boolean value indicating whether the redirected Input and Output streams
         /// should use the default System Encoding or use UTF-8.</param>
         /// <param name="dependOnExitCodeForRunTimeError">A boolean value indicating whether the executor should consider an exit code
-        /// lower that -1 as a RunTime error if the ErrorOutput is empty.</param>
+        /// different from 0 as a RunTime error if the ErrorOutput and ReceivedOutput are empty.</param>
         /// <param name="timeoutMultiplier">A multiplier for the timeLimit, the total execution limit for the process is equal
         /// to the <param name="timeLimit">timeLimit</param> * .<param name="timeoutMultiplier">timeoutMultiplier</param></param>
         Task<ProcessExecutionResult> Execute(

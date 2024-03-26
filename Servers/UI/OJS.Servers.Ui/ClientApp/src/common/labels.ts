@@ -85,3 +85,7 @@ export const ADDITIONAL_COMPILER_ARGUMENTS = 'Additional Compiler Arguments';
 // Checkers
 export const DLL_FILE = 'Dll File';
 export const PARAMETER = 'Parameter';
+
+// Participants
+
+export const IS_OFFICIAL = 'Is Official';
