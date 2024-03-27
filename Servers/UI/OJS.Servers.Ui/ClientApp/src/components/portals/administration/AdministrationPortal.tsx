@@ -116,7 +116,6 @@ const administrationItems = [
         icon: <MdOutlineRememberMe />,
         path: `${PARTICIPANTS_PATH}`,
     },
-
     {
         name: 'Roles',
         icon: <MdOutlineAirlineStops />,
@@ -132,7 +131,6 @@ const administrationItems = [
         icon: <FaLayerGroup />,
         path: `${EXAM_GROUPS_PATH}`,
     },
-
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,

@@ -31,6 +31,4 @@ public class UsersBusinessService : AdministrationOperationService<UserProfile, 
         await this.usersDataService.SaveChanges();
         return model;
     }
-
-    public Task<UserToExamGroupModel> RemoveUserFromExamGroup(UserToExamGroupModel model) => throw new System.NotImplementedException();
 }

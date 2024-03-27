@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocomplete, IUserAutocompleteData, IUserInExamGroupModel, IUserInListModel } from '../../../common/types';
+import { IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInExamGroupModel, IUserInListModel } from '../../../common/types';
 import { IGetByExamGroupId, IGetByRoleId, IGetByUserId } from '../../../common/url-types';
 import { GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
@@ -15,12 +15,6 @@ export const usersAdminService = createApi({
             query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
         }),
-
-        getUsersForDropdown: builder.query<Array<IUserAutocomplete>, string>({
-            query: (queryString) => ({ url: `/GetForDropdown?searchString=${encodeURIComponent(queryString)}` }),
-            keepUnusedDataFor: 10,
-        }),
-
         getByExamGroupId: builder.query<IPagedResultType<IUserInExamGroupModel>, IGetByExamGroupId>({
             query: ({ examGroupId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByExamGroupId/${examGroupId}`,
@@ -32,7 +26,6 @@ export const usersAdminService = createApi({
                 },
             }),
         }),
-
         getAllUsers: builder.query<IPagedResultType<IUserInListModel>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: '/GetAll',

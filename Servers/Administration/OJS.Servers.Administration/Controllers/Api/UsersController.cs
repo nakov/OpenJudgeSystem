@@ -18,7 +18,6 @@ using OJS.Services.Administration.Business.Users.GridData;
 using OJS.Services.Administration.Business.Users.Permissions;
 using OJS.Services.Administration.Business.Users.Validators;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Administration.Models.LecturerInCategories;
 using OJS.Services.Administration.Models.LecturerInContests;
 using OJS.Services.Administration.Models.Users;
