@@ -1,10 +1,13 @@
-﻿namespace OJS.Servers.Administration.Controllers.Api;
+﻿using OJS.Services.Administration.Models.ExamGroups;
+
+namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.ExamGroups.Permissions;
 using OJS.Services.Administration.Business.LecturersInCategories;
 using OJS.Services.Administration.Business.LecturersInCategories.GridData;
 using OJS.Services.Administration.Business.LecturersInCategories.Permissions;
@@ -141,5 +144,21 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
                 OperationType = CrudOperationType.Delete,
             });
         return this.Ok("Lecturer successfully removed from category");
+    }
+
+    [HttpGet("{examGroupId}")]
+    [ProtectedEntityAction("examGroupId", typeof(ExamGroupIdPermissionsService))]
+    public async Task<IActionResult> GetByExamGroupId([FromQuery] PaginationRequestModel model, [FromRoute] int examGroupId)
+        => this.Ok(
+            await this.usersGridData.GetAll<UserInListModel>(
+                model,
+                user => user.UsersInExamGroups!.Any(ur => ur.ExamGroupId == examGroupId)));
+
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(LecturerToContestPermissionService))]
+    public async Task<IActionResult> AddToExamGroup(UserInExamGroupCreateDeleteValidationServiceModel model)
+    {
+        await this.exam.AddLecturerToContest(model);
+        return this.Ok("Lecturer successfully added to contest");
     }
 }

@@ -23,7 +23,7 @@ export const usersAdminService = createApi({
 
         getByExamGroupId: builder.query<IPagedResultType<IUserInExamGroupModel>, IGetByExamGroupId>({
             query: ({ examGroupId, filter, page, itemsPerPage, sorting }) => ({
-                url: `/GetForExamGroupDetails/${examGroupId}`,
+                url: `/GetByExamGroupId/${examGroupId}`,
                 params: {
                     filter,
                     page,
