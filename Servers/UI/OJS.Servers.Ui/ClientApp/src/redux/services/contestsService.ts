@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
@@ -63,7 +64,7 @@ export const contestsService = createApi({
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
             query: ({ content, official, problemId, submissionTypeId }) => ({
-                url: `/Compete/Submit`,
+                url: '/Compete/Submit',
                 method: 'POST',
                 body: { content, official, problemId, submissionTypeId },
             }),
@@ -73,10 +74,10 @@ export const contestsService = createApi({
                 url: `/Contests/SubmitContestPassword/${contestId}`,
                 method: 'POST',
                 params: {
-                    isOfficial
+                    isOfficial,
                 },
                 body: {
-                    password
+                    password,
                 },
             }),
         }),
