@@ -1,0 +1,15 @@
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+
+.submissionsAndParticipationsToggle {
+    display: flex;
+    flex-direction: row;
+    gap: spacings.$sp-24;
+    margin-bottom: spacings.$sp-24;
+    
+    .toggleBtn {
+        width: 300px;
+        border-radius: 4px;
+        font-size: variables.$f-size-18;
+    }
+}

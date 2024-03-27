@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+using static OJS.Services.Ui.Business.PaginationConstants.Submissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {

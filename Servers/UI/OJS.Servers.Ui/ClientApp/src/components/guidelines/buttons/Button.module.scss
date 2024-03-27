@@ -2,16 +2,17 @@
 @use 'src/styles/colors.scss';
 @use 'src/styles/fonts.scss';
 @use 'src/styles/font-weights.scss';
+@use 'src/styles/border-radiuses.scss';
 
 .btn,
 %btn {
-  @extend %font-family-lato;
+  @extend %font-family-roboto;
 
   border: 2px solid transparent;
   border-radius: 8px;
   color: colors.$white-color;
   cursor: pointer;
-  font-weight: font-weights.$font-weight-semi-bold;
+  font-weight: font-weights.$font-weight-regular;
   margin: 0;
   outline: none;
   padding: 10px 16px;
@@ -35,16 +36,28 @@
 
   &.secondary,
   %secondary {
-    background-color: colors.$background-color-btn-secondary;
-    border-color: colors.$light-blue-color;
+    @extend %font-family-roboto;
+
+    border: 2px solid colors.$primary-blue;
+    border-radius: border-radiuses.$br-6;
+    color: colors.$primary-blue;
+    background: none;
     box-shadow: none;
-    color: colors.$color-btn-secondary;
 
     &:hover {
-      background-color: colors.$background-color-btn-secondary-hover;
-      box-shadow: none;
+      cursor: pointer;
+    }
+
+    .lightSecondary {
+      // TODO: Fix this color
+      background-color: colors.$horizontal-line-gray;
+    }
+
+    .darkSecondary {
+      background-color: colors.$primary-dark-grey-color;
     }
   }
+  
 
   &.plain {
     background: none;

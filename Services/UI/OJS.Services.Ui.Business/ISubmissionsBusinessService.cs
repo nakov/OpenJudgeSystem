@@ -8,7 +8,7 @@
     using SoftUni.Services.Infrastructure;
     using System.Linq;
     using System.Threading.Tasks;
-    using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+    using static OJS.Services.Ui.Business.PaginationConstants.Submissions;
 
     public interface ISubmissionsBusinessService : IService
     {

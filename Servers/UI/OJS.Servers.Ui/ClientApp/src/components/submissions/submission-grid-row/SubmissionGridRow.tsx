@@ -184,20 +184,15 @@ const SubmissionGridRow = ({
                 return (
                     <Button
                       text="Details"
-                      internalClassName={
-                            concatClassNames(styles.detailsButton, isDarkMode
-                                ? styles.darkDetailsButton
-                                : styles.lightDetailsButton)
-                        }
                       onClick={handleDetailsButtonSubmit}
-                      type={ButtonType.plain}
+                      type={ButtonType.secondary}
                     />
                 );
             }
 
             return null;
         },
-        [ handleDetailsButtonSubmit, internalUser, isDarkMode, usernameFromSubmission ],
+        [ handleDetailsButtonSubmit, internalUser, usernameFromSubmission ],
     );
 
     return (

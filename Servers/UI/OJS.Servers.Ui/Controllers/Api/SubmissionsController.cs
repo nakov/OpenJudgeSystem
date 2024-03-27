@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
-using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+using static OJS.Services.Ui.Business.PaginationConstants.Submissions;
 
 public class SubmissionsController : BaseApiController
 {
@@ -52,7 +52,7 @@ public class SubmissionsController : BaseApiController
     public async Task<IActionResult> GetUserSubmissions(
         [FromQuery] string username,
         [FromQuery] int page,
-        [FromQuery] int itemsPerPage = 5)
+        [FromQuery] int itemsPerPage = DefaultSubmissionResultsPerPage)
         => await this.submissionsBusiness
             .GetByUsername<FullDetailsPublicSubmissionsServiceModel>(username, page, itemsPerPage)
             .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
@@ -188,7 +188,7 @@ public class SubmissionsController : BaseApiController
     public async Task<IActionResult> GetSubmissionsForUserInRole(
         [FromQuery] SubmissionStatus status,
         [FromQuery] int page,
-        int itemsPerPage = DefaultAdminSubmissionsPerPage)
+        int itemsPerPage = DefaultSubmissionResultsPerPage)
         => await this.submissionsBusiness.GetSubmissions<FullDetailsPublicSubmissionsServiceModel>(
                 status,
                 page,

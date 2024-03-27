@@ -23,11 +23,10 @@ namespace OJS.Services.Ui.Business.Implementations
     using SoftUni.Common.Models;
     using X.PagedList;
 
+    using static OJS.Services.Ui.Business.PaginationConstants.Contests;
+
     public class ContestsBusinessService : IContestsBusinessService
     {
-        private const int DefaultContestsToTake = 4;
-        private const int DefaultContestsPerPage = 10;
-
         private readonly IContestsDataService contestsData;
         private readonly ISubmissionsDataService submissionsData;
         private readonly IContestsActivityService activityService;
@@ -327,7 +326,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             model ??= new ContestFiltersServiceModel();
             model.PageNumber ??= 1;
-            model.ItemsPerPage ??= DefaultContestsPerPage;
+            model.ItemsPerPage ??= DefaultContestsToTake;
 
             if (model.CategoryIds.Count() == 1)
             {

@@ -98,33 +98,3 @@
   justify-content: center;
   text-align: center;
 }
-
-.detailsButton {
-  @extend %font-family-lato;
-
-  border: 2px solid colors.$primary-blue;
-  border-radius: border-radiuses.$br-6;
-  color: colors.$primary-blue;
-  cursor: pointer;
-  font-weight: font-weights.$font-weight-semi-bold;
-  margin: 0;
-  outline: none;
-  padding: spacings.$sp-8 spacings.$sp-16;
-  text-align: center;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: all 0.28s ease-in-out;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.lightDetailsButton {
-  // TODO: Fix this color
-  background-color: colors.$horizontal-line-gray;
-}
-
-.darkDetailsButton {
-  background-color: colors.$primary-dark-grey-color;
-}

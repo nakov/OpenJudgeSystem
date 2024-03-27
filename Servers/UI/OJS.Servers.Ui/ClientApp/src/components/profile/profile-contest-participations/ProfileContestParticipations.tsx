@@ -1,107 +1,61 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import isEmpty from 'lodash/isEmpty';
+import React, { useEffect } from 'react';
 import isNil from 'lodash/isNil';
 
-import { IParticipationType, useParticipations } from '../../../hooks/use-participations';
-import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import { DEFAULT_ROWS_PER_PAGE } from '../../../utils/constants';
-import { formatDate } from '../../../utils/dates';
-import { decodeFromUrlParam } from '../../../utils/urls';
-import Heading, { HeadingType } from '../../guidelines/headings/Heading';
-
-const columns: GridColDef[] = [
-    {
-        field: 'contestName',
-        headerName: 'Contest',
-        minWidth: 160,
-        flex: 1,
-        sortable: true,
-    },
-    {
-        field: 'registrationTime',
-        headerName: 'Time',
-        minWidth: 80,
-        flex: 1,
-        sortable: true,
-        valueGetter: (params: GridValueGetterParams) => `${formatDate(new Date(params.row.registrationTime))}`,
-    },
-    {
-        field: 'competeResult',
-        headerName: 'Compete Result',
-        type: 'string',
-        minWidth: 70,
-        flex: 1,
-        sortable: false,
-        valueGetter: (params: GridValueGetterParams) => `${params.row.competeResult}/${params.row.contestCompeteMaximumPoints}`,
-    },
-    {
-        field: 'practiceResult',
-        headerName: 'Practice Result',
-        type: 'string',
-        minWidth: 70,
-        flex: 1,
-        sortable: false,
-        valueGetter: (params: GridValueGetterParams) => `${params.row.practiceResult}/${params.row.contestPracticeMaximumPoints}`,
-    },
-];
+import { SortType } from '../../../common/contest-types';
+import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
+import { setUserContestParticipations } from '../../../redux/features/contestsSlice';
+import { useGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import isNilOrEmpty from '../../../utils/check-utils';
+import ContestCard from '../../contests/contest-card/ContestCard';
+import List, { Orientation } from '../../guidelines/lists/List';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 const ProfileContestParticipations = () => {
-    const [ numberedRows, setNumberedRows ] =
-        useState<Array<IParticipationType>>([]);
-    const { internalUser: user } =
-        useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const { profile } = useAppSelector((reduxState) => reduxState.users);
+    const { userContestParticipations } = useAppSelector((reduxState) => reduxState.contests);
+
+    const dispatch = useAppDispatch();
+
     const {
-        state: { userParticipations },
-        actions: { getUserParticipations },
-    } = useParticipations();
-    // TODO: WIP
-    const isProfileInfoLoaded = true;
-    const myProfile = {};
-    const { username } = useParams();
+        data: contestsParticipations,
+        isLoading: areContestParticipationsLoading,
+    } = useGetContestsParticipationsForUserQuery(
+        {
+            username: profile?.userName,
+            sortType: SortType.OrderBy,
+            page: 1,
+        } as IGetContestParticipationsForUserQueryParams,
+        { skip: isNil(profile) },
+    );
 
     useEffect(
         () => {
-            if (!isProfileInfoLoaded) {
+            if (areContestParticipationsLoading || isNil(contestsParticipations)) {
                 return;
             }
 
-            if (!isEmpty(userParticipations)) {
-                return;
-            }
-
-            const usernameParam = !isNil(username)
-                ? username
-                : myProfile.userName;
-
-            getUserParticipations(decodeFromUrlParam(usernameParam));
+            dispatch(setUserContestParticipations(contestsParticipations));
         },
-        [ isProfileInfoLoaded, getUserParticipations, user.userName, myProfile.userName, username, userParticipations ],
+        [ areContestParticipationsLoading, contestsParticipations, dispatch ],
     );
 
-    useEffect(
-        () => setNumberedRows(userParticipations.map((row, index) => ({ ...row, rowNumber: index + 1 })) || []),
+    const renderContestCard = (contest: IIndexContestsType) => (<ContestCard contest={contest} />);
 
-        [ userParticipations ],
-    );
-
-    return (
-        <>
-            <Heading type={HeadingType.primary}>Participations:</Heading>
-            <div style={{ height: 400, width: '100%' }}>
-                <DataGrid
-                  getRowId={(row) => row.id}
-                  rows={numberedRows}
-                  columns={columns}
-                  pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
+    return areContestParticipationsLoading
+        ? (<SpinningLoader />)
+        : !isNilOrEmpty(userContestParticipations.items)
+            ? (
+                <List
+                  values={userContestParticipations.items!}
+                  itemFunc={renderContestCard}
+                  orientation={Orientation.vertical}
+                  fullWidth
                 />
-            </div>
-        </>
-    );
+            )
+            : <span>No participations in contests yet</span>;
 };
 
 export default ProfileContestParticipations;
