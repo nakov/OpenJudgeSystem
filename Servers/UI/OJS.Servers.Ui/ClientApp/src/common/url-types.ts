@@ -84,6 +84,12 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
+interface IGetSubmissionsByUserParams {
+    id: number;
+    page: number;
+    isOfficial: boolean;
+}
+
 interface IGetUserSubmissionsForProfileUrlParams {
     username: string;
     page: number;
@@ -182,4 +188,5 @@ export type {
     IStartParticipationParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
+    IGetSubmissionsByUserParams,
 };
