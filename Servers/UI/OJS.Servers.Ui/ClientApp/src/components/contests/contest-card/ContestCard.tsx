@@ -117,7 +117,7 @@ const ContestCard = (props: IContestCardProps) => {
                 isCompete
                     ? userParticipationResult?.competePoints
                     : userParticipationResult?.practicePoints
-            }
+        }
         {' '}
         /
         {' '}
@@ -125,7 +125,7 @@ const ContestCard = (props: IContestCardProps) => {
                 isCompete
                     ? competeMaximumPoints
                     : practiceMaximumPoints
-            }
+        }
     </span>
     );
 
@@ -144,6 +144,9 @@ const ContestCard = (props: IContestCardProps) => {
             <div>
                 <Link className={styles.contestCardTitle} to={`/contests/${id}`}>
                     {name}
+                    {' '}
+                    -
+                    {id}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
                 <div className={styles.contestDetailsFragmentsWrapper}>

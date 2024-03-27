@@ -13,6 +13,7 @@ interface IContestState {
     contestDetails: IContestDetailsResponseType | null;
     contestCategories: Array<IContestCategory>;
     userContestParticipations: IPagedResultType<IIndexContestsType>;
+    profileUserContestParticipationsPage: number;
 }
 
 const initialState: IContestState = {
@@ -28,6 +29,7 @@ const initialState: IContestState = {
         pagesCount: 0,
         pageNumber: 0,
     },
+    profileUserContestParticipationsPage: 1,
 };
 
 // eslint-disable-next-line import/group-exports
@@ -43,6 +45,9 @@ export const contestSlice = createSlice({
         },
         setUserContestParticipations: (state, action: PayloadAction<IPagedResultType<IIndexContestsType>>) => {
             state.userContestParticipations = action.payload;
+        },
+        setProfileUserContestParticipationsPage: (state, action: PayloadAction<number>) => {
+            state.profileUserContestParticipationsPage = action.payload;
         },
         updateContestCategoryBreadcrumbItem: (state, action: PayloadAction<{ elements: Array<ContestBreadcrumb> | undefined}>) => {
             const { elements } = action.payload;
@@ -71,6 +76,7 @@ export const {
     setContestCategory,
     setContestStrategy,
     setUserContestParticipations,
+    setProfileUserContestParticipationsPage,
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
     setContestCategories,

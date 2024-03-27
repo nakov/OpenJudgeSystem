@@ -344,12 +344,22 @@ namespace OJS.Services.Ui.Business.Implementations
                     userParticipants.Select(p => p.Contest),
                     model);
 
-            var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
+            var contestIds = pagedContests.Items
+                .Select(c => c.Id)
+                .Distinct()
+                .ToList();
 
-            var participantResultsByContest = await userParticipants
+            var participantsInPage = await userParticipants
                 .Where(p => contestIds.Contains(p.ContestId))
                 .MapCollection<ParticipantResultServiceModel>()
-                .ToDictionaryAsync(p => p.ContestId, p => p);
+                .ToListAsync();
+
+            var participantResultsByContest = participantsInPage
+                .GroupBy(p => p.ContestId) // Group by ContestId to handle duplicates
+                .Select(g => g.FirstOrDefault())
+                .Where(p => p != null)
+                .ToDictionary(
+                    p => p!.ContestId, p => p);
 
             var participantsCount =
                 await this.contestParticipantsCacheService.GetParticipantsCount(contestIds, model.PageNumber);
