@@ -13,11 +13,11 @@ interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName 
     submitButtonClassName?: string;
     disableButton?: boolean;
     hideFormButton?: boolean;
-    isLoading: boolean;
+    isLoading?: boolean;
 }
 
 const Form = ({
-    isLoading,
+    isLoading = false,
     onSubmit,
     children,
     submitText = 'Submit',
