@@ -40,11 +40,12 @@
   .submissionsWrapper {
     display: flex;
     flex-direction: column;
-    margin-top: spacings.$sp-64;
+    margin-top: spacings.$sp-24;
 
     > div {
       font-size: variables.$f-size-30;
       font-weight: font-weights.$font-weight-semi-bold;
+      margin-bottom: spacings.$sp-16;
     }
   }
 }
@@ -96,7 +97,7 @@
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  margin: spacings.$sp-24 0;
+  margin-top: spacings.$sp-24;
 
   button {
     margin-left: spacings.$sp-24;
@@ -114,9 +115,8 @@
   }
 }
 
-.fileSubmitButton {
-  bottom: -80px;
-  position: absolute;
+.fileUploadError {
+  color: colors.$primary-red;
 }
 
 .popoverContent {
@@ -133,4 +133,9 @@
   .title {
     font-weight: font-weights.$font-weight-semi-bold;
   }
+}
+
+.fileSubmitButton {
+  position: absolute;
+  bottom: 35px;
 }

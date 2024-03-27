@@ -14,9 +14,10 @@ interface IFileUploaderProps {
     problemId?: number;
     allowedFileExtensions: string[];
     onInvalidFileExtension: (error: IErrorDataType) => void;
+    onFileUpload: (file: any) => void;
 }
 
-const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension }: IFileUploaderProps) => {
+const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension, onFileUpload }: IFileUploaderProps) => {
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
     const { actions: { updateSubmissionCode } } = useSubmissions();
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
@@ -49,6 +50,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             }
 
             const uploadedFile = eventTarget[0];
+            onFileUpload(uploadedFile);
             const extension = uploadedFile.name.split('.').pop();
 
             if (allowedFileExtensions && !allowedFileExtensions.includes(extension)) {
@@ -75,7 +77,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             <div className={styles.fileUploadContainer}>
                 <Button
                   onClick={handleClick}
-                  type={ButtonType.submit}
+                  type={ButtonType.neutral}
                   size={ButtonSize.medium}
                 >
                     Upload
