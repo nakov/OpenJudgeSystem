@@ -80,12 +80,6 @@
     color: colors.$light-blue-color;
   }
 
-  &.neutral {
-    background-color: transparent;
-    color: colors.$white-color;
-    border: 1px solid colors.$white-color;
-  }
-
   &.small {
     @extend %small;
   }

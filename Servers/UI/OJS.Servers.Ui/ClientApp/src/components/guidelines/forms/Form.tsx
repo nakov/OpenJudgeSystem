@@ -4,7 +4,6 @@ import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
 import { Button, ButtonState, ButtonType } from '../buttons/Button';
-import SpinningLoader from '../spinning-loader/SpinningLoader';
 
 interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName {
     onSubmit: () => void;
@@ -13,11 +12,9 @@ interface IFormProps extends IHaveOptionalChildrenProps, IHaveOptionalClassName 
     submitButtonClassName?: string;
     disableButton?: boolean;
     hideFormButton?: boolean;
-    isLoading: boolean;
 }
 
 const Form = ({
-    isLoading,
     onSubmit,
     children,
     submitText = 'Submit',
@@ -47,28 +44,26 @@ const Form = ({
 
     const renderButton = useCallback(
         () => (
-            isLoading
-                ? <SpinningLoader />
-                : !disableButton
-                    ? (
-                        <Button
-                          id={btnId}
-                          onClick={(ev) => handleSubmit(ev)}
-                          text={submitText}
-                          type={ButtonType.submit}
-                          className={internalSubmitButtonClassName}
-                        />
-                    )
-                    : (
-                        <Button
-                          id={btnId}
-                          onClick={(ev) => handleSubmit(ev)}
-                          text={submitText}
-                          type={ButtonType.submit}
-                          className={internalSubmitButtonClassName}
-                          state={ButtonState.disabled}
-                        />
-                    )
+            disableButton === false
+                ? (
+                    <Button
+                      id={btnId}
+                      onClick={(ev) => handleSubmit(ev)}
+                      text={submitText}
+                      type={ButtonType.submit}
+                      className={internalSubmitButtonClassName}
+                    />
+                )
+                : (
+                    <Button
+                      id={btnId}
+                      onClick={(ev) => handleSubmit(ev)}
+                      text={submitText}
+                      type={ButtonType.submit}
+                      className={internalSubmitButtonClassName}
+                      state={ButtonState.disabled}
+                    />
+                )
         ),
         [ btnId, handleSubmit, disableButton, internalSubmitButtonClassName, submitText ],
     );

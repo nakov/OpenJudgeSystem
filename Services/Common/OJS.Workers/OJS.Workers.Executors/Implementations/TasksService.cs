@@ -10,17 +10,20 @@ namespace OJS.Workers.Executors.Implementations
         {
             var cancellationToken = new CancellationTokenSource();
             var task = Task.Run(
-                async () =>
+                () =>
                 {
-                    while (!cancellationToken.IsCancellationRequested)
+                    while (true)
                     {
                         action();
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return;
+                        }
 
-                        await Task.Delay(interval, cancellationToken.Token).ConfigureAwait(false);
+                        Thread.Sleep(interval);
                     }
                 },
                 cancellationToken.Token);
-
             return new TaskInfo(task, cancellationToken, interval);
         }
 
