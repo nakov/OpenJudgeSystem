@@ -155,6 +155,7 @@ const LoginForm = () => {
                 <Form
                   onSubmit={() => handleLoginClick()}
                   submitText="Login"
+                  isLoading={isLoading}
                   hideFormButton={isLoading || isLoggedIn}
                   disableButton={disableLoginButton}
                 >

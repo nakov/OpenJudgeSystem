@@ -46,6 +46,17 @@ interface IRegisterForContestUrlParams {
     isOfficial: boolean;
 }
 
+interface IStartParticipationParams {
+    id: string;
+    isOfficial: boolean;
+}
+
+interface ISubmitContestPasswordParams {
+    contestId: string;
+    isOfficial: boolean;
+    password: string;
+}
+
 interface IStartContestParticipationUrlParams {
     id: number;
     isOfficial: boolean;
@@ -133,6 +144,13 @@ interface IGetSearchResultsParams {
     searchCategory: string;
 }
 
+interface ISubmitContestSolutionParams {
+    content: string | File;
+    official: boolean;
+    problemId: number;
+    submissionTypeId: number;
+}
+
 export type {
     IUserInfoUrlParams,
     IRegisterForContestUrlParams,
@@ -161,4 +179,7 @@ export type {
     IGetByProblemId,
     IGetByProblemGroupId,
     IGetByTestId,
+    IStartParticipationParams,
+    ISubmitContestPasswordParams,
+    ISubmitContestSolutionParams,
 };

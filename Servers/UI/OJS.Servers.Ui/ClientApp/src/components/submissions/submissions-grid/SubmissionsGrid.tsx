@@ -76,7 +76,11 @@ const SubmissionsGrid = ({
                     <thead>
                         <tr className={headerClassName}>
                             <td>ID</td>
-                            <td>Task</td>
+                            <td>
+                                { options.showTaskDetails
+                                    ? 'Task'
+                                    : ''}
+                            </td>
                             <td>From</td>
                             {
                                 options.showCompeteMarker

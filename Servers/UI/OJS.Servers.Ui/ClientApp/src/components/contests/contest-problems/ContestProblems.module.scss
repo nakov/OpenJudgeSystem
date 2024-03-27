@@ -45,12 +45,20 @@
   }
 }
 
-.resultsSection {
+.problemsInfoSection {
   box-shadow: shadows.$dp-shadow-4;
-  color: colors.$secondary-green;
-  cursor: pointer;
   font-weight: font-weights.$font-weight-semi-bold;
   padding: spacings.$sp-12 spacings.$sp-24;
-  text-decoration: underline;
   width: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .participantsInfo {
+    color: colors.$primary-blue;
+  }
+
+  .pointsInfo {
+    color: colors.$primary-green;
+  }
 }

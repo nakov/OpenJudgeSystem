@@ -7,9 +7,14 @@ import {
     IContestDetailsResponseType,
     IGetAllContestsOptions,
     IIndexContestsType,
-    IPagedResultType,
+    IPagedResultType, IRegisterForContestResponseType, IStartParticipationResponseType,
 } from '../../common/types';
-import { IContestDetailsUrlParams } from '../../common/url-types';
+import {
+    IContestDetailsUrlParams,
+    IStartParticipationParams,
+    ISubmitContestPasswordParams,
+    ISubmitContestSolutionParams,
+} from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
@@ -40,28 +45,28 @@ export const contestsService = createApi({
         }),
         getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
         getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
-        getContestRegisteredUser: builder.query<any, any>({ query: ({ id, isOfficial }) => ({
+        getContestRegisteredUser: builder.query<IRegisterForContestResponseType, IStartParticipationParams>({ query: ({ id, isOfficial }) => ({
                 url: `/Contests/Register/${id}`,
                 params: {
                     isOfficial
                 },
             }),
         }),
-        getContestUserParticipation: builder.query<any, any>({ query: ({ id, isOfficial }) => ({
+        getContestUserParticipation: builder.query<IStartParticipationResponseType, IStartParticipationParams>({ query: ({ id, isOfficial }) => ({
                 url: `/Compete/Index/${id}`,
                 params: {
                     isOfficial
                 },
             }),
         }),
-        submitContestSolution: builder.mutation<any, any >({
+        submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
             query: ({ content, official, problemId, submissionTypeId }) => ({
                 url: `/Compete/Submit`,
                 method: 'POST',
                 body: { content, official, problemId, submissionTypeId },
             }),
         }),
-        submitContestPassword: builder.mutation<any, any>({
+        submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({
             query: ({ contestId, isOfficial, password }) => ({
                 url: `/Contests/SubmitContestPassword/${contestId}`,
                 method: 'POST',

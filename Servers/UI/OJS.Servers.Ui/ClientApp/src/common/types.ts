@@ -242,13 +242,6 @@ interface IIndexContestsType {
     maxPoints: number;
 }
 
-interface IContestModalInfoType {
-    id: number;
-    name: string;
-    duration: number;
-    numberOfProblems: number;
-}
-
 interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[];
     pastContests: IIndexContestsType[];
@@ -308,6 +301,7 @@ interface IStartParticipationResponseType {
     lastSubmissionTime: Date;
     endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
+    shouldEnterPassword: boolean;
     participantsCount: number;
 }
 
@@ -631,7 +625,6 @@ export type {
     IPage,
     IUserResponseType,
     IUserPermissionsType,
-    IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
     ISubmissionDetailsState,

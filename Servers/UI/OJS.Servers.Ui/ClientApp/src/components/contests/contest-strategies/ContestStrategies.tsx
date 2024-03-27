@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import { useSearchParams } from 'react-router-dom';
 
+import { IContestStrategyFilter } from '../../../common/contest-types';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
@@ -13,7 +14,7 @@ const ContestStrategies = () => {
     const dispatch = useAppDispatch();
     const [ searchParams ] = useSearchParams();
     const { selectedStrategy, selectedCategory } = useAppSelector((state) => state.contests);
-    const [ selectValue, setSelectValue ] = useState('');
+    const [ selectValue, setSelectValue ] = useState<string>('');
 
     const selectedId = useMemo(() => searchParams.get('strategy'), [ searchParams ]);
 
@@ -52,9 +53,9 @@ const ContestStrategies = () => {
         dispatch(setContestStrategy(null));
     };
 
-    const handleStrategySelect = (s: any) => {
+    const handleStrategySelect = (s: IContestStrategyFilter) => {
         dispatch(setContestStrategy(s));
-        setSelectValue(s.id);
+        setSelectValue(s.id.toString());
     };
 
     if (strategiesError) { return <div>Error loading strategies...</div>; }

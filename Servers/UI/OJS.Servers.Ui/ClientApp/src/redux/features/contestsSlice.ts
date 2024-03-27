@@ -5,7 +5,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import { IContestCategory, IContestDetailsResponseType, IProblemType } from '../../common/types';
+import { IContestCategory, IContestDetailsResponseType, IProblemType, IStartParticipationResponseType } from '../../common/types';
 
 interface IContestState {
     selectedCategory: IContestCategory | null;
@@ -14,7 +14,7 @@ interface IContestState {
     contestDetails: IContestDetailsResponseType | null;
     contestCategories: Array<IContestCategory>;
     selectedContestDetailsProblem: IProblemType | null;
-    userContestParticipationData: any | null;
+    userContestParticipationData: IStartParticipationResponseType | null;
 }
 
 const initialState: IContestState = {
@@ -60,7 +60,7 @@ export const contestSlice = createSlice({
             const { contestCategories } = action.payload;
             state.contestCategories = contestCategories;
         },
-        setUserContestParticipationData: (state, action: PayloadAction<{ participationData: any | null }>) => {
+        setUserContestParticipationData: (state, action: PayloadAction<{ participationData: IStartParticipationResponseType | null }>) => {
             const { participationData } = action.payload;
             state.userContestParticipationData = participationData;
         }

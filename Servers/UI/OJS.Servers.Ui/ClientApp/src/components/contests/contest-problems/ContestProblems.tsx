@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { IProblemType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
@@ -11,12 +10,14 @@ import styles from './ContestProblems.module.scss';
 interface IContestProblemsProps {
     problems: Array<IProblemType>;
     onContestProblemChange: () => void;
+    totalParticipantsCount?: number;
+    sumMyPoints?: number;
+    sumTotalPoints: number;
 }
 
 const ContestProblems = (props: IContestProblemsProps) => {
-    const { problems, onContestProblemChange } = props;
+    const { problems, onContestProblemChange, totalParticipantsCount, sumMyPoints = 0, sumTotalPoints } = props;
 
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
@@ -64,7 +65,17 @@ const ContestProblems = (props: IContestProblemsProps) => {
                     })}
                 </div>
             </div>
-            <div className={`${styles.resultsSection} ${darkBackgroundClassName}`} onClick={() => navigate('/')}>Show all results</div>
+            <div className={`${styles.problemsInfoSection} ${darkBackgroundClassName}`}>
+                <div className={styles.participantsInfo}>
+                    Total participants:
+                    {totalParticipantsCount}
+                </div>
+                <div className={styles.pointsInfo}>
+                    {sumMyPoints}
+                    /
+                    {sumTotalPoints}
+                </div>
+            </div>
         </div>
     );
 };

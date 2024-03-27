@@ -29,7 +29,19 @@
   .title {
     font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold;
+  }
+
+  .nameWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-top: spacings.$sp-32;
+
+    .allResultsLink {
+      color: colors.$secondary-green;
+      cursor: pointer;
+      text-decoration: underline;
+    }
   }
 
   .problemsAndEditorWrapper {

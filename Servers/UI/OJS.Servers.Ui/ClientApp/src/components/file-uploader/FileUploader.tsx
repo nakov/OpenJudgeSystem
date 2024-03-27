@@ -14,7 +14,7 @@ interface IFileUploaderProps {
     problemId?: number;
     allowedFileExtensions: string[];
     onInvalidFileExtension: (error: IErrorDataType) => void;
-    onFileUpload: (file: any) => void;
+    onFileUpload: (file: File) => void;
 }
 
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension, onFileUpload }: IFileUploaderProps) => {

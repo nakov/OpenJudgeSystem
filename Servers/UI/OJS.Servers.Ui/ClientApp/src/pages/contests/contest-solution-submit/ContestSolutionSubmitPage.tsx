@@ -46,7 +46,7 @@ const ContestSolutionSubmitPage = () => {
     const [ submissionsDataLoading, setSubmissionsDataLoading ] = useState<boolean>(false);
     const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(false);
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
-    const [ uploadedFile, setUploadedFile ] = useState(null);
+    const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
 
     const { selectedContestDetailsProblem, contestDetails, userContestParticipationData } = useAppSelector((state) => state.contests);
@@ -60,14 +60,13 @@ const ContestSolutionSubmitPage = () => {
     const isModalOpen = Boolean(anchorEl);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const darkBackgroundClassName = getColorClassName(themeColors.baseColor500);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
 
     const {
         data,
         isLoading,
         error,
-    } = useGetContestRegisteredUserQuery({ id: Number(contestId), isOfficial: isCompete });
+    } = useGetContestRegisteredUserQuery({ id: contestId!.toString(), isOfficial: isCompete });
 
     const { requirePassword, isOnlineExam, name, numberOfProblems, duration, id } = data || {};
     const { contest, shouldEnterPassword, participantsCount } = userContestParticipationData || {};
@@ -84,12 +83,12 @@ const ContestSolutionSubmitPage = () => {
 
         try {
             const { data: queryData } = await getContestUserParticipation({
-                id: Number(contestId),
+                id: contestId!,
                 isOfficial: isCompete,
             });
 
             setUserParticipationError('');
-            dispatch(setUserContestParticipationData({ participationData: queryData }));
+            dispatch(setUserContestParticipationData({ participationData: queryData! }));
             setUserParticipationDataLoading(false);
         } catch {
             setUserParticipationError('Error loading user participation data!');
@@ -184,28 +183,37 @@ const ContestSolutionSubmitPage = () => {
 
     const onSolutionSubmitCode = () => {
         submitSolution({
-            content: submissionCode,
+            content: submissionCode!,
             official: isCompete,
-            problemId: selectedContestDetailsProblem?.id,
-            submissionTypeId: selectedSubmissionType?.id,
+            problemId: selectedContestDetailsProblem?.id!,
+            submissionTypeId: selectedSubmissionType?.id!,
         });
         setSubmissionCode('');
     };
 
     const onSolutionSubmitFile = () => {
         submitSolution({
-            content: uploadedFile,
+            content: uploadedFile!,
             official: isCompete,
-            problemId: selectedContestDetailsProblem?.id,
-            submissionTypeId: selectedSubmissionType?.id,
+            problemId: selectedContestDetailsProblem?.id!,
+            submissionTypeId: selectedSubmissionType?.id!,
         });
         setUploadedFile(null);
     };
+
+    const sumMyPoints = useMemo(() => contest
+        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.points, 0)
+        : 0, [ contest, contest?.problems ]);
+
+    const sumAllContestPoints = useMemo(() => contest
+        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
+        : 0, [ contest, contest?.problems ]);
 
     const renderProblemDescriptions = useCallback(() => {
         if (!selectedContestDetailsProblem) {
             return;
         }
+
         const { resources } = selectedContestDetailsProblem;
         // eslint-disable-next-line consistent-return
         return (
@@ -326,16 +334,6 @@ const ContestSolutionSubmitPage = () => {
                   code={submissionCode}
                   onCodeChange={(inputCode) => setSubmissionCode(inputCode)}
                 />
-                <div
-                  style={{ borderTop: `1px solid ${themeColors.textColor}` }}
-                  className={`${styles.participantsWrapper} ${darkBackgroundClassName}`}
-                >
-                    <span>
-                        Total Participants:
-                        {' '}
-                        {participantsCount}
-                    </span>
-                </div>
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems}
@@ -368,7 +366,7 @@ const ContestSolutionSubmitPage = () => {
             <ContestPasswordForm
               id={Number(contestId)}
               isOfficial={isCompete}
-              contestName={name}
+              contestName={name!}
               onSuccess={fetchUserParticipationDetails}
             />
         );
@@ -377,9 +375,9 @@ const ContestSolutionSubmitPage = () => {
     if (isCompete && isOnlineExam && !hasAcceptedOnlineExamModal) {
         return (
             <ContestCompeteModal
-              examName={name}
-              time={duration}
-              problemsCount={numberOfProblems}
+              examName={name!}
+              time={duration!.toString()}
+              problemsCount={numberOfProblems!}
               onAccept={() => setHasAcceptedOnlineExamModal(true)}
               onDecline={() => navigate('/contests')}
             />
@@ -389,9 +387,18 @@ const ContestSolutionSubmitPage = () => {
     return (
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
-            <div className={styles.title}>{name}</div>
+            <div className={styles.nameWrapper}>
+                <div className={styles.title}>{name}</div>
+                <div className={styles.allResultsLink} onClick={() => navigate(`/contests/${id}/${participationType}/results/simple`)}>Show all results</div>
+            </div>
             <div className={styles.problemsAndEditorWrapper}>
-                <ContestProblems problems={problems || []} onContestProblemChange={() => setSelectedSubmissionsPage(1)} />
+                <ContestProblems
+                  problems={problems || []}
+                  onContestProblemChange={() => setSelectedSubmissionsPage(1)}
+                  totalParticipantsCount={participantsCount}
+                  sumMyPoints={sumMyPoints}
+                  sumTotalPoints={sumAllContestPoints}
+                />
                 <div className={styles.selectedProblemWrapper}>
                     <div className={styles.problemName}>{selectedContestDetailsProblem?.name}</div>
                     {renderProblemDescriptions()}
@@ -409,10 +416,10 @@ const ContestSolutionSubmitPage = () => {
                           handlePageChange={(page: number) => setSelectedSubmissionsPage(page)}
                           options={{
                               showDetailedResults: true,
-                              showTaskDetails: true,
+                              showTaskDetails: false,
                               showCompeteMarker: true,
                               showSubmissionTypeInfo: true,
-                              showParticipantUsername: true,
+                              showParticipantUsername: false,
                           }}
                         />
                     )}
