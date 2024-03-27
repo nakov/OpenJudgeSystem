@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import { SortType } from '../../common/contest-types';
 import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../common/types';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
@@ -22,11 +23,6 @@ import { setLayout } from '../shared/set-layout';
 
 const ProfilePage = () => {
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
-    // If {username} is present in url, then the the profile should be loaded for this username,
-    // otherwise the profile is loaded for the logged in user
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [ profileUsername, setProfileUsername ] = useState<boolean>(false);
-
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const { userContestParticipations } = useAppSelector((reduxState) => reduxState.contests);
@@ -35,24 +31,27 @@ const ProfilePage = () => {
     const { usernameFromUrl } = useParams();
     const dispatch = useAppDispatch();
 
+    // If {username} is present in url, then the the profile should be loaded for this username,
+    // otherwise the profile is loaded for the logged in user
+    const profileUsername = useMemo(
+        () => !isNil(usernameFromUrl)
+            ? decodeFromUrlParam(usernameFromUrl)
+            : internalUser.userName,
+        [ internalUser, usernameFromUrl ],
+    );
+
     const {
         data: profileInfo,
         isLoading: isProfileInfoLoading,
-    } = useGetProfileQuery({
-        username: !isNil(usernameFromUrl)
-            ? decodeFromUrlParam(usernameFromUrl)
-            : internalUser.userName,
-    });
+    } = useGetProfileQuery({ username: profileUsername });
 
     const {
         data: contestsParticipations,
         isLoading: areContestParticipationsLoading,
     } = useGetContestsParticipationsForUserQuery(
         {
-            username: !isNil(usernameFromUrl)
-                ? decodeFromUrlParam(usernameFromUrl)
-                : internalUser.userName,
-            sortType: 'OrderBy',
+            username: profileUsername,
+            sortType: SortType.OrderBy,
         } as IGetContestParticipationsForUserQueryParams,
         { skip: isProfileInfoLoading },
     );

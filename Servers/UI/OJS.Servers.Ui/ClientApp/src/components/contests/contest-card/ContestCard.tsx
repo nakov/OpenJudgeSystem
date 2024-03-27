@@ -111,32 +111,31 @@ const ContestCard = (props: IContestCardProps) => {
         );
     };
 
+    const renderPointsText = (isCompete: boolean) => userParticipationResult !== null && (
+    <span className={styles.points}>
+        {
+                isCompete
+                    ? userParticipationResult?.competePoints
+                    : userParticipationResult?.practicePoints
+            }
+        {' '}
+        /
+        {' '}
+        {
+                isCompete
+                    ? competeMaximumPoints
+                    : practiceMaximumPoints
+            }
+    </span>
+    );
+
     const renderContestButton = (isCompete: boolean) => {
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
 
         return (
-            <div className={styles.contestBtn}>
-                {userParticipationResult !== null && (
-                <div>
-                    {
-                        isCompete
-                            ? userParticipationResult?.competePoints
-                            : userParticipationResult?.practicePoints
-                    }
-                    {' '}
-                    /
-                    {' '}
-                    {
-                        isCompete
-                            ? competeMaximumPoints
-                            : practiceMaximumPoints
-                    }
-                </div>
-                )}
-                <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
-            </div>
+            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
         );
     };
 
@@ -178,9 +177,13 @@ const ContestCard = (props: IContestCardProps) => {
                 </div>
             </div>
             <div className={styles.contestBtnsWrapper}>
-                <div className={styles.contestBtn}>
-                    {renderContestButton(true)}
+                <div className={styles.buttonAndPointsLabelWrapper}>
+                    {renderPointsText(false)}
                     {renderContestButton(false)}
+                </div>
+                <div className={styles.buttonAndPointsLabelWrapper}>
+                    {renderPointsText(true)}
+                    {renderContestButton(true)}
                 </div>
             </div>
         </div>
