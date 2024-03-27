@@ -45,17 +45,19 @@ export const contestsService = createApi({
         }),
         getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
         getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
-        getContestRegisteredUser: builder.query<IRegisterForContestResponseType, IStartParticipationParams>({ query: ({ id, isOfficial }) => ({
+        getContestRegisteredUser: builder.query<IRegisterForContestResponseType, IStartParticipationParams>({
+            query: ({ id, isOfficial }) => ({
                 url: `/Contests/Register/${id}`,
                 params: {
-                    isOfficial
+                    isOfficial,
                 },
             }),
         }),
-        getContestUserParticipation: builder.query<IStartParticipationResponseType, IStartParticipationParams>({ query: ({ id, isOfficial }) => ({
+        getContestUserParticipation: builder.query<IStartParticipationResponseType, IStartParticipationParams>({
+            query: ({ id, isOfficial }) => ({
                 url: `/Compete/Index/${id}`,
                 params: {
-                    isOfficial
+                    isOfficial,
                 },
             }),
         }),
@@ -75,9 +77,9 @@ export const contestsService = createApi({
                 },
                 body: {
                     password
-                }
-            })
-        })
+                },
+            }),
+        }),
     }),
 });
 

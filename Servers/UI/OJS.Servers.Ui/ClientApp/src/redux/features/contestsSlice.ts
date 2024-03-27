@@ -63,7 +63,7 @@ export const contestSlice = createSlice({
         setUserContestParticipationData: (state, action: PayloadAction<{ participationData: IStartParticipationResponseType | null }>) => {
             const { participationData } = action.payload;
             state.userContestParticipationData = participationData;
-        }
+        },
     },
 });
 

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import useTheme from '../../../hooks/use-theme';
 import { useSubmitContestPasswordMutation } from '../../../redux/services/contestsService';
@@ -19,10 +18,9 @@ interface IContestPasswordFormProps {
 const ContestPasswordForm = (props: IContestPasswordFormProps) => {
     const { id, isOfficial, contestName, onSuccess } = props;
 
-    const navigate = useNavigate();
     const { themeColors, getColorClassName } = useTheme();
 
-    const [ password, setPassword ] = useState<string | undefined>('');
+    const [ password, setPassword ] = useState<string>('');
     const [ errorMessage, setErrorMessage ] = useState<string>('');
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
 
@@ -32,7 +30,7 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
 
     const onPasswordSubmit = async () => {
         setIsLoading(true);
-        const response = await submitPassword({ contestId: id, isOfficial, password });
+        const response = await submitPassword({ contestId: id.toString(), isOfficial, password });
         setPassword('');
         if ((response as any).error) {
             const { data } = (response as any).error;
@@ -60,7 +58,7 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
             <FormControl
               name="contest-password"
               type={FormControlType.password}
-              onChange={(e) => setPassword(e?.toString())}
+              onChange={(e) => setPassword(e?.toString() || '')}
               value={password}
             />
         </Form>

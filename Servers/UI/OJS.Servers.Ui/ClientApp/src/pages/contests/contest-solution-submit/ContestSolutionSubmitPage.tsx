@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { IoDocumentText } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
 
-import { ISubmissionTypeType } from '../../../common/types';
+import { IPagedResultType, IPublicSubmission, ISubmissionTypeType } from '../../../common/types';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestCompeteModal from '../../../components/contests/contest-compete-modal/ContestCompeteModal';
@@ -41,7 +42,7 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
-    const [ submissionsData, setSubmissionsData ] = useState(null);
+    const [ submissionsData, setSubmissionsData ] = useState<IPagedResultType<IPublicSubmission> | null>(null);
     const [ submissionsError, setSubmissionsError ] = useState('');
     const [ submissionsDataLoading, setSubmissionsDataLoading ] = useState<boolean>(false);
     const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(false);
@@ -123,7 +124,18 @@ const ContestSolutionSubmitPage = () => {
         } else if (!shouldEnterPassword && !userContestParticipationData && !userContestParticipationData) {
             fetchUserParticipationDetails();
         }
-    }, [ isOnlineExam, hasAcceptedOnlineExamModal, requirePassword, contestId, getContestUserParticipation, participationType ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        isCompete,
+        isOnlineExam,
+        userContestParticipationData,
+        hasAcceptedOnlineExamModal,
+        requirePassword,
+        contestId,
+        getContestUserParticipation,
+        participationType,
+        shouldEnterPassword,
+    ]);
 
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
@@ -160,7 +172,7 @@ const ContestSolutionSubmitPage = () => {
                     });
 
                     setSubmissionsError('');
-                    setSubmissionsData(currentSubmissionsData);
+                    setSubmissionsData(currentSubmissionsData!);
                     setSubmissionsDataLoading(false);
                 } catch {
                     setSubmissionsError('Error loading submissions!');
@@ -203,11 +215,11 @@ const ContestSolutionSubmitPage = () => {
 
     const sumMyPoints = useMemo(() => contest
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.points, 0)
-        : 0, [ contest, contest?.problems ]);
+        : 0, [ contest ]);
 
     const sumAllContestPoints = useMemo(() => contest
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
-        : 0, [ contest, contest?.problems ]);
+        : 0, [ contest ]);
 
     const renderProblemDescriptions = useCallback(() => {
         if (!selectedContestDetailsProblem) {
@@ -389,7 +401,12 @@ const ContestSolutionSubmitPage = () => {
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
                 <div className={styles.title}>{name}</div>
-                <div className={styles.allResultsLink} onClick={() => navigate(`/contests/${id}/${participationType}/results/simple`)}>Show all results</div>
+                <div
+                  className={styles.allResultsLink}
+                  onClick={() => navigate(`/contests/${id}/${participationType}/results/simple`)}
+                >
+                    Show all results
+                </div>
             </div>
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems

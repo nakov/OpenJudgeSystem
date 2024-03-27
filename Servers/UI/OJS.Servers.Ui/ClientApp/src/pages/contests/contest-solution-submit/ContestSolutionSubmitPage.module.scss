@@ -5,22 +5,6 @@
 @use 'src/styles/shadows';
 @use 'src/styles/font-weights';
 
-.participantsWrapper {
-  box-shadow: shadows.$dp-shadow-4;
-  display: flex;
-  justify-content: flex-end;
-  padding: spacings.$sp-12 spacings.$sp-24;
-
-  span {
-    display: flex;
-
-    > div {
-      font-weight: font-weights.$font-weight-semi-bold;
-      margin-left: spacings.$sp-4;
-    }
-  }
-}
-
 .contestSolutionSubmitWrapper {
   @extend %font-family-roboto;
 

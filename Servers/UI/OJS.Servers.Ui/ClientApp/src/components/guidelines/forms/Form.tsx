@@ -70,7 +70,7 @@ const Form = ({
                         />
                     )
         ),
-        [ btnId, handleSubmit, disableButton, internalSubmitButtonClassName, submitText ],
+        [ btnId, handleSubmit, disableButton, internalSubmitButtonClassName, submitText, isLoading ],
     );
 
     return (

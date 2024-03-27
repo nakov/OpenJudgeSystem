@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { defaultPathIdentifier } from '../../common/constants';
 import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
-import { IGetSubmissionsUrlParams } from '../../common/url-types';
+import { IGetSubmissionsByUserParams, IGetSubmissionsUrlParams } from '../../common/url-types';
 
 const submissionsService = createApi({
     reducerPath: submissionsServiceName,
@@ -39,7 +39,8 @@ const submissionsService = createApi({
                 query: ({ status, page }) => (
                     { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
-        getSubmissionResultsByProblem: builder.query<any, any>({ query: ({ id, page, isOfficial }) => ({
+        getSubmissionResultsByProblem: builder.query<IPagedResultType<IPublicSubmission>, IGetSubmissionsByUserParams>({
+            query: ({ id, page, isOfficial }) => ({
                 url: `${defaultPathIdentifier}/Submissions/GetUserSubmissionsByProblem/${id}`,
                 params: {
                     isOfficial,

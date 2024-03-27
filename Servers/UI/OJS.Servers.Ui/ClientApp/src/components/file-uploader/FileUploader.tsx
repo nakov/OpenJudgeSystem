@@ -69,7 +69,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             // eslint-disable-next-line no-param-reassign
             event.target.value = null;
         },
-        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension, closeErrorMessage ],
+        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension, closeErrorMessage, onFileUpload ],
     );
 
     return (

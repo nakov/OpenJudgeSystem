@@ -12,7 +12,7 @@ interface IIconProps extends IHaveOptionalClassName {
     size?: IconSize;
     helperText?: string;
     color?: string;
-    onClick?: Function;
+    onClick?: () => void;
 }
 
 interface IIconInternalProps extends IIconProps {
