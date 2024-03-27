@@ -10,10 +10,11 @@ import styles from './ContestProblems.module.scss';
 
 interface IContestProblemsProps {
     problems: Array<IProblemType>;
+    onContestProblemChange: () => void;
 }
 
 const ContestProblems = (props: IContestProblemsProps) => {
-    const { problems } = props;
+    const { problems, onContestProblemChange } = props;
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -30,6 +31,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
     }, [ problems, problems.length, dispatch ]);
 
     const onProblemClick = (problem: IProblemType) => {
+        onContestProblemChange();
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: problem }));
     };
 
