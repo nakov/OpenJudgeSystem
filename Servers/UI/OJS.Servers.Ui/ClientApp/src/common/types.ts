@@ -437,19 +437,15 @@ interface IContestAdministration {
 
 interface ISubmissionsAdminGridViewType {
     id: number;
-    isCompiledSuccessfully: boolean;
     processed: boolean;
-    isDeleted: boolean;
-    isBinaryFile: boolean;
-    processingComment: boolean;
     points: number;
-    participant: IParticipantType;
-    problem: IProblemSimpleType;
-    submissionType: ISubmissionTypeSimpleType;
-    createdOn: Date;
-    modifiedOn: Date;
-    startedExecutionOn: Date;
-    completedExecutionOn: Date;
+    participantId: number;
+    participantName: string;
+    problemId: number;
+    problemName: string;
+    submissionTypeId: number;
+    submissionTypeName: string;
+    isDeleted: boolean;
 }
 
 interface ISubmissionForProcessingAdminGridViewType {
@@ -462,21 +458,6 @@ interface ISubmissionForProcessingAdminGridViewType {
     submissionId: number;
     createdOn: Date;
     modifiedOn: Date;
-}
-
-interface IParticipantType {
-    id: number;
-    username: string;
-}
-
-interface IProblemSimpleType {
-    id: number;
-    name: string;
-}
-
-interface ISubmissionTypeSimpleType {
-    id: number;
-    name: string;
 }
 
 interface IContestAutocomplete {

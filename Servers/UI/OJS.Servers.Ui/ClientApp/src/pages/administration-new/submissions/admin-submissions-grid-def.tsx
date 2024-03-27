@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Link } from 'react-router-dom';
+import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
-import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
+import { VIEW } from '../../../common/labels';
+import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
+import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
+import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
+import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
+import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
 
 const dataColumns: GridColDef[] = [
     {
@@ -11,54 +18,24 @@ const dataColumns: GridColDef[] = [
         type: 'number',
         align: 'center',
         headerAlign: 'center',
-        flex: 0.5,
+        flex: 1,
         filterable: false,
         sortable: false,
         valueFormatter: (params) => params.value.toString(),
     },
     {
-        field: 'isCompiledSuccessfully',
-        headerName: 'Is Compiled Successfully',
+        field: 'participantName',
+        headerName: 'Participant Name',
         align: 'center',
         headerAlign: 'center',
-        type: 'boolean',
-        flex: 1,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'processed',
-        headerName: 'Processed',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'boolean',
-        flex: 1,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'isDeleted',
-        headerName: 'Is Deleted',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'boolean',
-        flex: 1,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'processingComment',
-        headerName: 'Processing Comment',
-        align: 'center',
-        headerAlign: 'center',
-        flex: 2,
         type: 'string',
+        flex: 1.5,
         filterable: false,
         sortable: false,
     },
     {
-        field: 'problem',
-        headerName: 'Problem',
+        field: 'problemName',
+        headerName: 'Problem Name',
         align: 'center',
         headerAlign: 'center',
         type: 'string',
@@ -67,11 +44,50 @@ const dataColumns: GridColDef[] = [
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Link
-              to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${Number(params.row?.problem?.id)}`}
+              to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${Number(params.row?.problemId)}`}
             >
-                {params.row?.problem?.name}
+                {params.row?.problemName}
             </Link>
         ),
+    },
+    {
+        field: 'contestName',
+        headerName: 'Contest Name',
+        headerAlign: 'center',
+        type: 'string',
+        flex: 2,
+        filterable: false,
+        sortable: false,
+        renderCell: (params: GridRenderCellParams) => (
+            <Link
+              to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${Number(params.row?.contestId)}`}
+            >
+                {params.row?.contestName}
+            </Link>
+        ),
+    },
+    {
+        field: 'submissionTypeName',
+        headerName: 'Submission Type Name',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        flex: 2,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'processed',
+        headerName: 'Processed',
+        align: 'center',
+        headerAlign: 'center',
+        type: 'string',
+        flex: 2,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => params.value
+            ? 'Processed'
+            : 'Pending',
     },
     {
         field: 'points',
@@ -84,85 +100,66 @@ const dataColumns: GridColDef[] = [
         sortable: false,
     },
     {
-        field: 'participant',
-        headerName: 'Participant',
+        field: 'isDeleted',
+        headerName: 'Is Deleted',
+        type: 'boolean',
+        flex: 0.5,
+        filterable: false,
+        sortable: false,
         align: 'center',
         headerAlign: 'center',
-        type: 'string',
-        flex: 1,
+    },
+];
+
+export const returnSubmissionsNonFilterableColumns = (
+    deleteMutation: any,
+    retest: Function,
+    downloadClicked: Function,
+    onSuccessFullyDelete:() => void,
+) => [
+    {
+        field: 'actions',
+        headerName: 'Actions',
+        flex: 2,
+        headerAlign: 'center',
+        align: 'center',
         filterable: false,
         sortable: false,
         renderCell: (params: GridRenderCellParams) => (
-            <Link
-              to={`${PARTICIPANTS_PATH}/${Number(params.row?.participant?.id)}`}
-            >
-                {params.row?.participant?.userName}
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between' }}>
+                <Tooltip title="Retest">
+                    <IconButton
+                      onClick={() => retest(Number(params.row.id))}
+                    >
+                        <RefreshIcon size={IconSize.Large} />
+                    </IconButton>
+                </Tooltip>
+                <ViewRedirectButton
+                  path={`/submissions/${Number(params.row.id)}/details`}
+                  location={VIEW}
+                />
+                <DeleteButton
+                  id={Number(params.row.id)}
+                  name="Submission"
+                  text={`Are you sure that you want to delete submission #${params.row.id}?`}
+                  mutation={deleteMutation}
+                  onSuccess={onSuccessFullyDelete}
+                />
+
+                <Tooltip title="Download">
+                    <span>
+                        <IconButton
+                          disabled={!params.row.isBinaryFile}
+                          onClick={() => downloadClicked(Number(params.row.id))}
+                        >
+                            <DownloadIcon size={IconSize.Large} />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+
+            </div>
         ),
     },
-    {
-        field: 'submissionType',
-        headerName: 'Submission Type',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'string',
-        flex: 2,
-        filterable: false,
-        sortable: false,
-        valueGetter: (params) => params.row?.submissionType?.name,
-    },
-    {
-        field: 'isBinaryFile',
-        headerName: 'Is File Content',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'boolean',
-        flex: 1,
-        filterable: false,
-        sortable: false,
-    },
-    {
-        field: 'createdOn',
-        headerName: 'Created On',
-        align: 'center',
-        type: 'dateTime',
-        width: 200,
-        filterable: false,
-        sortable: false,
-        valueFormatter: (params) => adminPreciseFormatDate(params.value?.createdOn),
-    },
-    {
-        field: 'modifiedOn',
-        headerName: 'Modified On',
-        align: 'center',
-        type: 'dateTime',
-        width: 200,
-        filterable: false,
-        sortable: false,
-        valueFormatter: (params) => adminPreciseFormatDate(params.value?.modifiedOn),
-    },
-    {
-        field: 'startedExecutionOn',
-        headerName: 'Started Execution On',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'dateTime',
-        flex: 2,
-        filterable: false,
-        sortable: false,
-        valueFormatter: (params) => adminPreciseFormatDate(params.value?.startedExecutionOn),
-    },
-    {
-        field: 'completedExecutionOn',
-        headerName: 'Completed Execution On',
-        align: 'center',
-        headerAlign: 'center',
-        type: 'dateTime',
-        flex: 2,
-        filterable: false,
-        sortable: false,
-        valueFormatter: (params) => adminPreciseFormatDate(params.value?.completedExecutionOn),
-    },
-];
+] as GridColDef[];
 
 export default dataColumns;

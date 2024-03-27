@@ -17,6 +17,7 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 
 const AdministrationSubmissionsForProcessingPage = () => {
     const [ searchParams ] = useSearchParams();
@@ -46,7 +47,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
         data,
         error,
         isLoading,
-        isFetching,
     } = useGetAllSubmissionsQuery(queryParams);
 
     const nonFilterableColumns: GridColDef[] = [
@@ -61,7 +61,7 @@ const AdministrationSubmissionsForProcessingPage = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <ViewRedirectButton
+                    <RedirectButton
                       path={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}
                       location={VIEW}
                     />
@@ -70,24 +70,23 @@ const AdministrationSubmissionsForProcessingPage = () => {
         },
     ];
 
+    if (isLoading) {
+        return <SpinningLoader />;
+    }
     return (
-        isLoading || isFetching
-            ? <SpinningLoader />
-            : (
-                <AdministrationGridView
-                  data={data}
-                  error={error}
-                  filterableGridColumnDef={dataColumns}
-                  notFilterableGridColumnDef={nonFilterableColumns}
-                  queryParams={queryParams}
-                  setQueryParams={setQueryParams}
-                  selectedFilters={selectedFilters || []}
-                  selectedSorters={selectedSorters || []}
-                  setSorterStateAction={setAdminSubmissionsSorters}
-                  setFilterStateAction={setAdminSubmissionsFilters}
-                  location="all-submissions-for-processing"
-                />
-            )
+        <AdministrationGridView
+          data={data}
+          error={error}
+          filterableGridColumnDef={dataColumns}
+          notFilterableGridColumnDef={nonFilterableColumns}
+          queryParams={queryParams}
+          setQueryParams={setQueryParams}
+          selectedFilters={selectedFilters || []}
+          selectedSorters={selectedSorters || []}
+          setSorterStateAction={setAdminSubmissionsSorters}
+          setFilterStateAction={setAdminSubmissionsFilters}
+          location="all-submissions-for-processing"
+        />
     );
 };
 
