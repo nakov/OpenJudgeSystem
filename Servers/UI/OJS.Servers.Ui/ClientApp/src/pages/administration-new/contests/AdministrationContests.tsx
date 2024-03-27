@@ -62,6 +62,7 @@ const AdministrationContestsPage = () => {
         }
         retakeContests();
     };
+
     const renderContestModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           key={index}

@@ -1,20 +1,36 @@
 ﻿namespace OJS.Services.Administration.Business.Roles;
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
+using OJS.Data;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 public class RolesBusinessService : AdministrationOperationService<Role, string, RoleAdministrationModel>, IRolesBusinessService
 {
     private readonly IRoleDataService roleDataService;
+    private readonly UserManager<UserProfile> userManager;
+    private readonly IUsersDataService usersDataService;
+    private readonly RoleManager<Role> roleManager;
 
-    public RolesBusinessService(IRoleDataService roleDataService)
-        => this.roleDataService = roleDataService;
+    public RolesBusinessService(
+        IRoleDataService roleDataService,
+        UserManager<UserProfile> userManager,
+        IUsersDataService usersDataService,
+        RoleManager<Role> roleManager)
+    {
+        this.roleDataService = roleDataService;
+        this.userManager = userManager;
+        this.usersDataService = usersDataService;
+        this.roleManager = roleManager;
+    }
 
     public override async Task<RoleAdministrationModel> Get(string id)
         => await this.roleDataService.GetByIdQuery(id).MapCollection<RoleAdministrationModel>().FirstAsync();
@@ -24,8 +40,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
         var role = model.Map<Role>();
 
         role.Id = Guid.NewGuid().ToString();
-        await this.roleDataService.Add(role);
-        await this.roleDataService.SaveChanges();
+        await this.roleManager.CreateAsync(role);
 
         return model;
     }
@@ -40,8 +55,7 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
 
         role.MapFrom(model);
 
-        this.roleDataService.Update(role);
-        await this.roleDataService.SaveChanges();
+        await this.roleManager.UpdateAsync(role);
 
         return model;
     }
@@ -50,5 +64,31 @@ public class RolesBusinessService : AdministrationOperationService<Role, string,
     {
         await this.roleDataService.DeleteById(id);
         await this.roleDataService.SaveChanges();
+    }
+
+    public async Task AddToRole(UserToRoleModel model)
+    {
+       var (roleName, user) = await this.GetUserAndRoleName(model);
+       await this.userManager.AddToRoleAsync(user, roleName);
+    }
+
+    public async Task RemoveFromRole(UserToRoleModel model)
+    {
+        var (roleName, user) = await this.GetUserAndRoleName(model);
+        await this.userManager.RemoveFromRoleAsync(user, roleName);
+    }
+
+    private async Task<(string, UserProfile)> GetUserAndRoleName(UserToRoleModel model)
+    {
+         var roleName = await this.roleDataService!
+            .GetByIdQuery(model.RoleId!)
+            .Select(x => x.Name)
+            .FirstAsync();
+
+         var user = await this.usersDataService
+            .GetByIdQuery(model.UserId!)
+            .FirstAsync();
+
+         return (roleName, user);
     }
 }

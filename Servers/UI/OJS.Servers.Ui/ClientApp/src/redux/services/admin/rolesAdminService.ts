@@ -40,6 +40,21 @@ export const rolesAdminService = createApi({
             }),
         }),
 
+        addUserToRole: builder.mutation<string, {userId: string; roleId: string} >({
+            query: ({ userId, roleId }) => ({
+                url: '/AddUserToRole',
+                method: 'POST',
+                body: { userId, roleId },
+            }),
+        }),
+
+        removeUserFromRole: builder.mutation<string, {userId: string; roleId: string} >({
+            query: ({ userId, roleId }) => ({
+                url: `/RemoveFromRole?userId=${userId}&roleId=${roleId}`,
+                method: 'DELETE',
+            }),
+        }),
+
         deleteRoles: builder.mutation<string, string >({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
     }),
 });
@@ -50,6 +65,8 @@ export const {
     useUpdateRoleMutation,
     useGetRoleByIdQuery,
     useDeleteRolesMutation,
+    useAddUserToRoleMutation,
+    useRemoveUserFromRoleMutation,
 } = rolesAdminService;
 
 export default rolesAdminService;

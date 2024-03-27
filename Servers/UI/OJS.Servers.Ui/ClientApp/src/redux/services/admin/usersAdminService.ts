@@ -1,17 +1,33 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IPagedResultType, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
-import { IGetByRoleId } from '../../../common/url-types';
+import { IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
+import { IGetByRoleId, IGetByUserId } from '../../../common/url-types';
+import { GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const usersAdminService = createApi({
-    reducerPath: 'adminUsers',
+    reducerPath: 'users',
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({
         getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, string>({
             query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
         }),
+
+        getAllUsers: builder.query<IPagedResultType<IUserInListModel>, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: '/GetAll',
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+
+        getUserById:
+        builder.query<IUserAdministrationModel, string>({ query: (id) => ({ url: `/${GET_ENDPOINT}/${id}` }) }),
 
         getUsersByRole: builder.query<IPagedResultType<IUserInListModel>, IGetByRoleId>({
             query: ({ roleId, filter, page, itemsPerPage, sorting }) => ({
@@ -25,13 +41,81 @@ export const usersAdminService = createApi({
             }),
         }),
 
-        deleteUser: builder.mutation<string, string>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+        updateUser: builder.mutation<string, IUserAdministrationModel >({
+            query: (user) => ({
+                url: `/${UPDATE_ENDPOINT}`,
+                method: 'PATCH',
+                body: user,
+            }),
+        }),
+
+        getLecturerContests: builder.query<IPagedResultType<IUserInListModel>, IGetByUserId>({
+            query: ({ userId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetLecturerContests/${userId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+
+        addLecturerToContest: builder.mutation<string, {lecturerId: string; contestId: number} >({
+            query: ({ lecturerId, contestId }) => ({
+                url: '/AddLecturerToContest',
+                method: 'POST',
+                body: { lecturerId, contestId },
+            }),
+        }),
+
+        removeLecturerFromContest: builder.mutation<string, {lecturerId: string; contestId: number} >({
+            query: ({ lecturerId, contestId }) => ({
+                url: `/RemoveLecturerFromContest?lecturerId=${lecturerId}&contestId=${contestId}`,
+                method: 'DELETE',
+            }),
+        }),
+
+        getLecturerCategories: builder.query<IPagedResultType<IUserInListModel>, IGetByUserId>({
+            query: ({ userId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetLecturerCategories/${userId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
+
+        addLecturerToCategory: builder.mutation<string, {lecturerId: string; categoryId: number} >({
+            query: ({ lecturerId, categoryId }) => ({
+                url: '/AddLecturerToCategory',
+                method: 'POST',
+                body: { lecturerId, categoryId },
+            }),
+        }),
+
+        removeLecturerFromCategory: builder.mutation<string, {lecturerId: string; categoryId: number} >({
+            query: ({ lecturerId, categoryId }) => ({
+                url: `/RemoveLecturerFromCategory?lecturerId=${lecturerId}&categoryId=${categoryId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
 export const {
     useGetUsersAutocompleteQuery,
     useGetUsersByRoleQuery,
-    useDeleteUserMutation,
+    useGetUserByIdQuery,
+    useGetAllUsersQuery,
+    useUpdateUserMutation,
+    useGetLecturerContestsQuery,
+    useAddLecturerToContestMutation,
+    useRemoveLecturerFromContestMutation,
+    useGetLecturerCategoriesQuery,
+    useAddLecturerToCategoryMutation,
+    useRemoveLecturerFromCategoryMutation,
 } = usersAdminService;
 export default usersAdminService;

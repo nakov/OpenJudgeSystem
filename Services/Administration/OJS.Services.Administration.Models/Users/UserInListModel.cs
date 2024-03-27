@@ -21,6 +21,8 @@ public class UserInListModel : IMapExplicitly
 
     public DateTime? DateOfBirth { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public int Age { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)

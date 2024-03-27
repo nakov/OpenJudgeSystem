@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { IconButton, Tooltip } from '@mui/material';
+import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { EDIT } from '../../../common/labels';
-import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { NEW_ADMINISTRATION_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
-import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
@@ -95,8 +94,7 @@ const usersFilterableColumns: GridColDef[] = [
 
 export const returnUsersNonFilterableColumns = (
     onEditClick: Function,
-    deleteMutation: any,
-    onSuccessFullDelete: () => void,
+    removeFromRoleFunc?: Function,
 ) => [
     {
         field: 'actions',
@@ -110,13 +108,13 @@ export const returnUsersNonFilterableColumns = (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(params.row.id)} />
                 <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${USERS_PATH}/${params.row.id}`} location={`${EDIT} page`} />
-                <DeleteButton
-                  id={params.row.id}
-                  name={params.row.name}
-                  text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
-                  onSuccess={onSuccessFullDelete}
-                />
+                {removeFromRoleFunc && (
+                <Tooltip title="Remove from Role">
+                    <IconButton onClick={() => removeFromRoleFunc(params.row.id)}>
+                        <GridDeleteIcon color="error" />
+                    </IconButton>
+                </Tooltip>
+                )}
             </div>
         ),
     },
