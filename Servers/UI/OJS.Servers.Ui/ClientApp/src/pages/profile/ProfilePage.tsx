@@ -84,32 +84,30 @@ const ProfilePage = () => {
                       isUserAdmin={internalUser.isAdmin}
                       isUserProfileOwner={currentUserIsProfileOwner}
                     />
-                    <div>
-                        <div className={styles.submissionsAndParticipationsToggle}>
-                            <Button
-                              type={toggleValue === 1
-                                  ? ButtonType.primary
-                                  : ButtonType.secondary}
-                              className={styles.toggleBtn}
-                              text={currentUserIsProfileOwner
-                                  ? 'My Submissions'
-                                  : 'User Submissions'}
-                              onClick={() => setToggleValue(1)}
-                            />
-                            <Button
-                              type={toggleValue === 2
-                                  ? ButtonType.primary
-                                  : ButtonType.secondary}
-                              className={styles.toggleBtn}
-                              text={currentUserIsProfileOwner
-                                  ? 'My Contests'
-                                  : 'User Contests'}
-                              onClick={() => setToggleValue(2)}
-                            />
-                        </div>
-                        { toggleValue === 1 && <ProfileSubmissions />}
-                        { toggleValue === 2 && <ProfileContestParticipations />}
+                    <div className={styles.submissionsAndParticipationsToggle}>
+                        <Button
+                          type={toggleValue === 1
+                              ? ButtonType.primary
+                              : ButtonType.secondary}
+                          className={styles.toggleBtn}
+                          text={currentUserIsProfileOwner
+                              ? 'My Submissions'
+                              : 'User Submissions'}
+                          onClick={() => setToggleValue(1)}
+                        />
+                        <Button
+                          type={toggleValue === 2
+                              ? ButtonType.primary
+                              : ButtonType.secondary}
+                          className={styles.toggleBtn}
+                          text={currentUserIsProfileOwner
+                              ? 'My Contests'
+                              : 'User Contests'}
+                          onClick={() => setToggleValue(2)}
+                        />
                     </div>
+                    { toggleValue === 1 && <ProfileSubmissions />}
+                    { toggleValue === 2 && <ProfileContestParticipations />}
                 </div>
             )
     );
