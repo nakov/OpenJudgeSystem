@@ -30,21 +30,21 @@ export const examGroupsService = createApi({
         }),
         deleteUserFromExamGroup: builder.mutation({
             query: (userInExamGroupDeleteModel) => ({
-                url: '/DeleteUserFromExamGroup',
-                method: 'DELETE',
+                url: '/RemoveUserFromExamGroup',
+                method: 'POST',
                 body: userInExamGroupDeleteModel,
             }),
         }),
         addUserInExamGroupById: builder.mutation({
             query: (userInExamGroupCreateModel) => ({
-                url: '/AddUserInExamGroup',
+                url: '/AddToExamGroup',
                 method: 'POST',
                 body: userInExamGroupCreateModel,
             }),
         }),
         addBulkUsersInExamGroupById: builder.mutation({
             query: (bulkAddUsersToExamGroupModel) => ({
-                url: '/BulkAddUsersToExamGroup',
+                url: '/AddMultipleUsersToExamGroup',
                 method: 'POST',
                 body: bulkAddUsersToExamGroupModel,
             }),

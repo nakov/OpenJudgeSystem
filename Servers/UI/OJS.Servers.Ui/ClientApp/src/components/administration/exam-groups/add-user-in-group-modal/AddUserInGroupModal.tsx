@@ -1,47 +1,46 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, Button, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 import debounce from 'lodash/debounce';
 
 import {
-    ExceptionData,
     IExamGroupAdministration,
     IUserAutocomplete,
 } from '../../../../common/types';
 import {
     useAddUserInExamGroupByIdMutation,
-    useDeleteExamGroupMutation,
     useGetExamGroupByIdQuery,
 } from '../../../../redux/services/admin/examGroupsAdminService';
 import { useGetUsersAutocompleteQuery } from '../../../../redux/services/admin/usersAdminService';
 import isNilOrEmpty from '../../../../utils/check-utils';
-import { Alert, AlertHorizontalOrientation, AlertSeverity, AlertVariant, AlertVerticalOrientation } from '../../../guidelines/alert/Alert';
+import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
+import FormActionButton from '../../form-action-button/FormActionButton';
 
-import styles from './AddUserInGroupModal.module.scss';
+// eslint-disable-next-line css-modules/no-unused-class
+import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IAddUserInExamGroupProps {
     examGroupId: number;
 }
 
 interface IAddUserInExamGroupUrlParams {
-    groupId: number;
+    examGroupId: number;
     userId: string;
 }
 
 const AddUserInGroupModal = (props:IAddUserInExamGroupProps) => {
     const { examGroupId } = props;
 
-    const navigate = useNavigate();
-    const [ errorMessages, setErrorMessages ] = useState<Array<ExceptionData>>([]);
+    const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(false);
     const [ userId, setUserId ] = useState<string>('');
     const [ userSearchString, setUserSearchString ] = useState<string>('');
     const [ addUserInGroupUrlParams, setAddUserInGroupUrlParams ] = useState<IAddUserInExamGroupUrlParams>({
-        groupId: examGroupId,
+        examGroupId,
         userId,
     });
     const [ examGroup, setExamGroup ] = useState<IExamGroupAdministration>({
@@ -74,21 +73,15 @@ const AddUserInGroupModal = (props:IAddUserInExamGroupProps) => {
     );
 
     useEffect(() => {
-        setErrorMessages([]);
-        if (isSuccessfullyAdded) {
-            setSuccessMessage(createData as string);
-            setErrorMessages([]);
-        }
-    }, [ createData, isSuccessfullyAdded ]);
+        getAndSetExceptionMessage([ createError ], setErrorMessages);
+    }, [ createError ]);
 
     useEffect(() => {
-        if (createError && !isSuccessfullyAdded) {
-            setSuccessMessage(null);
-            setErrorMessages(createError as Array<ExceptionData>);
-        } else {
-            setErrorMessages([]);
-        }
-    }, [ createError, isSuccessfullyAdded ]);
+        const message = getAndSetSuccesfullMessages([
+            { message: createData, shouldGet: isSuccessfullyAdded },
+        ]);
+        setSuccessMessage(message);
+    }, [ createData, isSuccessfullyAdded ]);
 
     const handleAutocompleteChange = (user: IUserAutocomplete) => {
         const selectedUser = usersForDropdown?.find((u) => u.id === user.id);
@@ -110,83 +103,52 @@ const AddUserInGroupModal = (props:IAddUserInExamGroupProps) => {
         }
     };
 
+    if (isFetching || isLoading || isCreating) {
+        return <SpinningLoader />;
+    }
+
     return (
-        !data || isFetching || isLoading || isCreating
-            ? <SpinningLoader />
-            : (
-                <div className={`${styles.flex}`}>
-                    {errorMessages.map((x, i) => (
-                        <Alert
-                          key={x.name}
-                          variant={AlertVariant.Filled}
-                          vertical={AlertVerticalOrientation.Top}
-                          horizontal={AlertHorizontalOrientation.Right}
-                          severity={AlertSeverity.Error}
-                          message={x.message}
-                          styles={{ marginTop: `${i * 4}rem` }}
-                        />
-                    ))}
-                    {successMessage && (
-                        <Alert
-                          variant={AlertVariant.Filled}
-                          autoHideDuration={3000}
-                          vertical={AlertVerticalOrientation.Top}
-                          horizontal={AlertHorizontalOrientation.Right}
-                          severity={AlertSeverity.Success}
-                          message={successMessage}
-                        />
-                    )}
-                    <Typography className={styles.centralize} variant="h4">
-                        Add new user in exam group
-                    </Typography>
-                    <form className={`${styles.form}`}>
-                        <TextField
-                          className={styles.inputRow}
-                          label="Exam group"
-                          variant="standard"
-                          name="examgroup"
-                          value={examGroup.name}
-                        />
-                        <FormControl className={styles.textArea} sx={{ margin: '20px 0' }}>
-                            <Autocomplete
-                              sx={{ width: '100%' }}
-                              className={styles.inputRow}
-                              options={usersForDropdown!}
-                              renderInput={(params) => <TextField {...params} label="User" key={params.id} />}
-                              onChange={(event, newValue) => handleAutocompleteChange(newValue!)}
-                              onInputChange={(event) => handleOnInputChange(event)}
-                              value={null}
-                              isOptionEqualToValue={(option, value) => option.id === value.id}
-                              getOptionLabel={(option) => option?.userName}
-                              renderOption={(properties, option) => (
-                                  <MenuItem {...properties} key={option.id} value={option.id}>
-                                      {option.userName}
-                                  </MenuItem>
-                              )}
-                            />
-                        </FormControl>
-                    </form>
-                    <div className={styles.buttonsWrapper}>
-                        <Button
-                          variant="contained"
-                          onClick={() => create()}
-                          className={styles.button}
-                          disabled={isNilOrEmpty(addUserInGroupUrlParams.userId)}
-                        >
-                            Add
-                        </Button>
-                    </div>
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(userId!)}
-                          name={userId}
-                          onSuccess={() => navigate(`/administration-new/examGroups/${examGroupId}`)}
-                          mutation={useDeleteExamGroupMutation}
-                          text="Are you sure that you want to delete the user from exam group?"
-                        />
-                    </Box>
-                </div>
-            )
+        <>
+            {renderErrorMessagesAlert(errorMessages)}
+            {renderSuccessfullAlert(successMessage)}
+            <Typography className={formStyles.centralize} variant="h4">
+                Add new user in exam group
+            </Typography>
+            <form className={`${formStyles.form}`}>
+                <TextField
+                  className={formStyles.inputRow}
+                  label="Exam group"
+                  variant="standard"
+                  name="examgroup"
+                  value={examGroup.name}
+                />
+                <FormControl className={formStyles.inputRow} sx={{ margin: '20px 0' }}>
+                    <Autocomplete
+                      sx={{ width: '100%' }}
+                      className={formStyles.inputRow}
+                      options={usersForDropdown!}
+                      renderInput={(params) => <TextField {...params} label="User" key={params.id} />}
+                      onChange={(event, newValue) => handleAutocompleteChange(newValue!)}
+                      onInputChange={(event) => handleOnInputChange(event)}
+                      value={null}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      getOptionLabel={(option) => option?.userName}
+                      renderOption={(properties, option) => (
+                          <MenuItem {...properties} key={option.id} value={option.id}>
+                              {option.userName}
+                          </MenuItem>
+                      )}
+                    />
+                </FormControl>
+                <FormActionButton
+                  className={formStyles.buttonsWrapper}
+                  buttonClassName={formStyles.button}
+                  onClick={() => create()}
+                  disabled={isNilOrEmpty(addUserInGroupUrlParams.userId)}
+                  name="Add"
+                />
+            </form>
+        </>
     );
 };
 

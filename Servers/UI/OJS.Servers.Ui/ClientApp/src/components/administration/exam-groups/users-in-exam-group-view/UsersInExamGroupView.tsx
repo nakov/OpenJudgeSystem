@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import QueueIcon from '@mui/icons-material/Queue';
-import { IconButton, Modal, Tooltip, Typography } from '@mui/material';
-import Box from '@mui/material/Box';
+import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
@@ -19,12 +17,12 @@ import { setAdminUsersFilters, setAdminUsersSorters } from '../../../../redux/fe
 import { useDeleteUserFromExamGroupMutation } from '../../../../redux/services/admin/examGroupsAdminService';
 import { useGetByExamGroupIdQuery } from '../../../../redux/services/admin/usersAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
-import { flexCenterObjectStyles, modalStyles } from '../../../../utils/object-utils';
+import { flexCenterObjectStyles } from '../../../../utils/object-utils';
+import CreateButton from '../../common/create/CreateButton';
+import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import AddBulkUsersInGroupModal from '../add-bulk-users-in-group-modal/AddBulkUserInGroupModal';
 import AddUserInExamGroupModal from '../add-user-in-group-modal/AddUserInGroupModal';
 import DeleteUserFromGroupButton from '../delete-user-from-group-button/DeleteUserFromGroupButton';
-
-import styles from './UsersInExamGroupView.module.scss';
 
 interface IUsersInExamGroupViewProps {
     examGroupId: number;
@@ -45,7 +43,7 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
         sorting: mapSorterParamsToQueryString(selectedSorters),
     });
 
-    const { data, error } = useGetByExamGroupIdQuery({ examGroupId: Number(examGroupId), ...queryParams });
+    const { refetch, data, error } = useGetByExamGroupIdQuery({ examGroupId: Number(examGroupId), ...queryParams });
     const [ openShowAddUserModal, setOpenShowAddUserModal ] = useState<boolean>(false);
     const [ openShowAddBulkUsersModal, setOpenShowAddBulkUsersModal ] = useState<boolean>(false);
     const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
@@ -100,6 +98,7 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
                       name={params.row.userName}
                       text="Are you sure that you want to delete the user?"
                       mutation={useDeleteUserFromExamGroupMutation}
+                      onSuccess={() => refetch()}
                     />
                 </div>
             ),
@@ -107,29 +106,39 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
     ];
 
     const renderAddUserModal = (index: number) => (
-        <Modal key={index} open={openShowAddUserModal} onClose={() => setOpenShowAddUserModal(!openShowAddUserModal)}>
-            <Box sx={modalStyles}>
-                <AddUserInExamGroupModal examGroupId={examGroupId} />
-            </Box>
-        </Modal>
+        <AdministrationModal
+          index={index}
+          key={index}
+          open={openShowAddUserModal}
+          onClose={() => {
+              refetch();
+              setOpenShowAddUserModal(!openShowAddUserModal);
+          }}
+        >
+            <AddUserInExamGroupModal examGroupId={examGroupId} />
+        </AdministrationModal>
     );
 
     const renderAddBulkUsersModal = (index: number) => (
-        <Modal key={index} open={openShowAddBulkUsersModal} onClose={() => setOpenShowAddBulkUsersModal(!openShowAddBulkUsersModal)}>
-            <Box sx={modalStyles}>
-                <AddBulkUsersInGroupModal examGroupId={examGroupId} />
-            </Box>
-        </Modal>
+        <AdministrationModal
+          index={index}
+          key={index}
+          open={openShowAddBulkUsersModal}
+          onClose={() => {
+              refetch();
+              setOpenShowAddBulkUsersModal(!openShowAddBulkUsersModal);
+          }}
+        >
+            <AddBulkUsersInGroupModal examGroupId={examGroupId} />
+        </AdministrationModal>
     );
     const renderActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title="Add user">
-                <IconButton
-                  onClick={() => setOpenShowAddUserModal(!openShowAddUserModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
+            <CreateButton
+              showModal={openShowAddUserModal}
+              showModalFunc={setOpenShowAddUserModal}
+              styles={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }}
+            />
             <Tooltip title="Add multiple users">
                 <IconButton
                   onClick={() => setOpenShowAddBulkUsersModal(!openShowAddBulkUsersModal)}
@@ -141,32 +150,25 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
     );
 
     return (
-        <>
-            <Typography className={styles.centralize} variant="h4">
-                Users
-            </Typography>
-            <div style={{ marginTop: '2rem' }}>
-                <AdministrationGridView
-                  data={data}
-                  error={error}
-                  filterableGridColumnDef={dataColumns}
-                  notFilterableGridColumnDef={notFilterableGridColumns}
-                  location={filtersAndSortersLocation}
-                  queryParams={queryParams}
-                  renderActionButtons={renderActions}
-                  selectedFilters={selectedFilters}
-                  selectedSorters={selectedSorters}
-                  setFilterStateAction={setAdminUsersFilters}
-                  setSorterStateAction={setAdminUsersSorters}
-                  modals={[
-                      { showModal: openShowAddUserModal, modal: (i) => renderAddUserModal(i) },
-                      { showModal: openShowAddBulkUsersModal, modal: (i) => renderAddBulkUsersModal(i) },
-                  ]}
-                  setQueryParams={setQueryParams}
-                  withSearchParams={false}
-                />
-            </div>
-        </>
+        <AdministrationGridView
+          data={data}
+          error={error}
+          filterableGridColumnDef={dataColumns}
+          notFilterableGridColumnDef={notFilterableGridColumns}
+          location={filtersAndSortersLocation}
+          queryParams={queryParams}
+          renderActionButtons={renderActions}
+          selectedFilters={selectedFilters}
+          selectedSorters={selectedSorters}
+          setFilterStateAction={setAdminUsersFilters}
+          setSorterStateAction={setAdminUsersSorters}
+          modals={[
+              { showModal: openShowAddUserModal, modal: (i) => renderAddUserModal(i) },
+              { showModal: openShowAddBulkUsersModal, modal: (i) => renderAddBulkUsersModal(i) },
+          ]}
+          setQueryParams={setQueryParams}
+          withSearchParams={false}
+        />
     );
 };
 
