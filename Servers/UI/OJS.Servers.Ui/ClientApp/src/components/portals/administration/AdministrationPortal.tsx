@@ -114,7 +114,6 @@ const administrationItems = [
         icon: <MdOutlineRememberMe />,
         path: `${PARTICIPANTS_PATH}`,
     },
-
     {
         name: 'Roles',
         icon: <MdOutlineAirlineStops />,
