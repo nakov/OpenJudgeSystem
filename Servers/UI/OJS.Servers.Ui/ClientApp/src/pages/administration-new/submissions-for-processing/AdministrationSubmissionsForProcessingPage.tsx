@@ -7,7 +7,6 @@ import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
