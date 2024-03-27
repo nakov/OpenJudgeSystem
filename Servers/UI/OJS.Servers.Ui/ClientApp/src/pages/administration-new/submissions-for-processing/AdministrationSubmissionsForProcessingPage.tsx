@@ -6,6 +6,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
@@ -17,7 +18,6 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
-import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 
 const AdministrationSubmissionsForProcessingPage = () => {
     const [ searchParams ] = useSearchParams();
