@@ -109,7 +109,7 @@ public class ContestsController : BaseApiController
         [FromQuery] string username,
         [FromQuery] ContestFiltersRequestModel? model)
         => await this.contestsBusinessService
-            .GetForUserByFiltersAndSorting(username, model?.Map<ContestFiltersServiceModel>())
+            .GetParticipatedByUserByFiltersAndSorting(username, model?.Map<ContestFiltersServiceModel>())
             .Map<PagedResultResponse<ContestForListingResponseModel>>()
             .ToOkResult();
 }

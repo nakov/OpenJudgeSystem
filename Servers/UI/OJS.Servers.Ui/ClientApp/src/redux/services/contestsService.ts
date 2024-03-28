@@ -5,7 +5,8 @@ import { IContestStrategyFilter } from '../../common/contest-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
-    IGetAllContestsOptions, IGetContestParticipationsForUserQueryParams,
+    IContestsSortAndFilterOptions,
+    IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
     IPagedResultType,
 } from '../../common/types';
@@ -23,7 +24,7 @@ export const contestsService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsOptions>({
+        getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IContestsSortAndFilterOptions>({
             query: ({ sortType, page, category, strategy }) => ({
                 url: '/Contests/GetAll',
                 params: {
@@ -49,10 +50,11 @@ export const contestsService = createApi({
         getContestsParticipationsForUser: builder.query<
             IPagedResultType<IIndexContestsType>,
             IGetContestParticipationsForUserQueryParams>({
-                query: ({ username, sortType, page, category, strategy }) => ({
+                query: ({ username, sortType, sortTypeDirection, page, category, strategy }) => ({
                     url: `/Contests/GetParticipatedByUser?username=${username}`,
                     params: {
                         sortType,
+                        sortTypeDirection,
                         page,
                         category,
                         strategy,

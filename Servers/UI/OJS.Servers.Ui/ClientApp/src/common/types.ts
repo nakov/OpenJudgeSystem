@@ -5,7 +5,7 @@ import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
-import { ContestVariation } from './contest-types';
+import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
 import { SearchCategory } from './search-types';
 
@@ -106,15 +106,16 @@ interface IGetAllAdminParams {
     sorting?: string;
 }
 
-interface IGetAllContestsOptions {
+interface IContestsSortAndFilterOptions {
     strategy?: number;
-    sortType: string;
+    sortType: SortType;
+    sortTypeDirection?: SortTypeDirection;
     page: number;
     category?: number | null;
 }
 
 // TODO: Unify these types, some are called params, others options
-interface IGetContestParticipationsForUserQueryParams extends IGetAllContestsOptions {
+interface IGetContestParticipationsForUserQueryParams extends IContestsSortAndFilterOptions {
     username: string;
 }
 
@@ -661,7 +662,7 @@ export type {
     IContestDetailsProblemType,
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
-    IGetAllContestsOptions,
+    IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IContestCategory,
     IGetAllAdminParams,

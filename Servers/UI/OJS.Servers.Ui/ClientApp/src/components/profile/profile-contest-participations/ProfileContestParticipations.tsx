@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { SortType } from '../../../common/contest-types';
+import { SortType, SortTypeDirection } from '../../../common/contest-types';
 import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
 import {
     setProfileUserContestParticipationsPage,
@@ -33,7 +33,8 @@ const ProfileContestParticipations = () => {
     } = useGetContestsParticipationsForUserQuery(
         {
             username: profile?.userName,
-            sortType: SortType.OrderBy,
+            sortType: SortType.ParticipantRegistrationTime,
+            sortTypeDirection: SortTypeDirection.Descending,
             page: profileUserContestParticipationsPage,
         } as IGetContestParticipationsForUserQueryParams,
         { skip: isNil(profile) },
