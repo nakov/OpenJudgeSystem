@@ -7,20 +7,20 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Validation;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
 {
     private readonly IUsersDataService usersDataService;
-    private readonly IRoleDataService roleDataService;
+    private readonly IDataService<Role> roleDataService;
     private readonly UserManager<UserProfile> userManager;
 
     public UserToRoleModelValidator(
         IUsersDataService usersDataService,
-        IRoleDataService roleDataService,
+        IDataService<Role> roleDataService,
         UserManager<UserProfile> userManager)
     {
         this.usersDataService = usersDataService;
