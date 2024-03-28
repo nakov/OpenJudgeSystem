@@ -50,7 +50,7 @@ export const contestsService = createApi({
             query: ({ id, isOfficial }) => ({
                 url: `/Contests/Register/${id}`,
                 params: {
-                    isOfficial,
+                    official: isOfficial,
                 },
             }),
         }),
@@ -58,7 +58,7 @@ export const contestsService = createApi({
             query: ({ id, isOfficial }) => ({
                 url: `/Compete/Index/${id}`,
                 params: {
-                    isOfficial,
+                    official: isOfficial,
                 },
             }),
         }),

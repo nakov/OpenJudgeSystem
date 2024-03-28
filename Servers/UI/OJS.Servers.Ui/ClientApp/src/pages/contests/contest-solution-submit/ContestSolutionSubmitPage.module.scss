@@ -16,8 +16,8 @@
   }
 
   .nameWrapper {
-    display: flex;
     align-items: center;
+    display: flex;
     justify-content: space-between;
     margin-top: spacings.$sp-32;
 
@@ -50,10 +50,21 @@
   margin-left: spacings.$sp-24;
   width: 90%;
 
-  .problemName {
+  .problemNameAndTimeWrapper {
+    align-items: center;
     color: colors.$primary-blue;
-    font-size: variables.$f-size-30;
-    font-weight: font-weights.$font-weight-bold;
+    display: flex;
+    justify-content: space-between;
+
+    b {
+      font-weight: font-weights.$font-weight-bold;
+      margin-left: spacings.$sp-8;
+    }
+
+    .problemName {
+      font-size: variables.$f-size-30;
+      font-weight: font-weights.$font-weight-bold;
+    }
   }
 
   .problemDescriptionsWrapper {
@@ -132,6 +143,6 @@
 }
 
 .fileSubmitButton {
-  position: absolute;
   bottom: 35px;
+  position: absolute;
 }

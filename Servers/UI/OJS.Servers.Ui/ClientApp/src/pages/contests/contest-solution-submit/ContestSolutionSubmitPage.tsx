@@ -26,6 +26,7 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { calculatedTimeFormatted, calculateTimeUntil } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
@@ -70,7 +71,14 @@ const ContestSolutionSubmitPage = () => {
     } = useGetContestRegisteredUserQuery({ id: contestId!.toString(), isOfficial: isCompete });
 
     const { requirePassword, isOnlineExam, name, numberOfProblems, duration, id } = data || {};
-    const { contest, shouldEnterPassword, participantsCount } = userContestParticipationData || {};
+    const {
+        contest,
+        shouldEnterPassword,
+        participantsCount,
+        lastSubmissionTime,
+        userSubmissionsTimeLimit,
+        endDateTimeForParticipantOrContest,
+    } = userContestParticipationData || {};
     const { problems, allowedSubmissionTypes = [] } = contest || {};
     const {
         memoryLimit,
@@ -117,25 +125,11 @@ const ContestSolutionSubmitPage = () => {
     // fetch contest data, when user has accepted online exam modal,
     // entered password correctly and has accessed contest data
     useEffect(() => {
-        if (isCompete) {
-            if (isOnlineExam && hasAcceptedOnlineExamModal && !shouldEnterPassword && !userContestParticipationData) {
-                fetchUserParticipationDetails();
-            }
-        } else if (!shouldEnterPassword && !userContestParticipationData && !userContestParticipationData) {
+        if (!userContestParticipationData || userContestParticipationData.contest.id !== Number(contestId)) {
             fetchUserParticipationDetails();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        isCompete,
-        isOnlineExam,
-        userContestParticipationData,
-        hasAcceptedOnlineExamModal,
-        requirePassword,
-        contestId,
-        getContestUserParticipation,
-        participationType,
-        shouldEnterPassword,
-    ]);
+    }, [ userContestParticipationData, contestId ]);
 
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
@@ -184,6 +178,22 @@ const ContestSolutionSubmitPage = () => {
             fetchSubmissionsData();
         }
     }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage, isCompete ]);
+
+    const remainingTimeForParticipationOrContest = useMemo(() => {
+        if (endDateTimeForParticipantOrContest) {
+            const remainingTime = calculateTimeUntil(new Date(endDateTimeForParticipantOrContest));
+            return calculatedTimeFormatted(remainingTime);
+        }
+        return 0;
+    }, [ endDateTimeForParticipantOrContest ]);
+
+    const submitButtonIsAvailable = useMemo(() => {
+        if (lastSubmissionTime && userSubmissionsTimeLimit) {
+            const secondsSinceLastSubmission = calculateTimeUntil(lastSubmissionTime, 'seconds');
+            return userSubmissionsTimeLimit < secondsSinceLastSubmission.seconds();
+        }
+        return true;
+    }, [ lastSubmissionTime, userSubmissionsTimeLimit ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -331,7 +341,7 @@ const ContestSolutionSubmitPage = () => {
                       className={styles.fileSubmitButton}
                       onClick={onSolutionSubmitFile}
                       text="Submit"
-                      state={!uploadedFile || fileUploadError
+                      state={!uploadedFile || fileUploadError || !submitButtonIsAvailable
                           ? ButtonState.disabled
                           : ButtonState.enabled}
                     />
@@ -353,6 +363,9 @@ const ContestSolutionSubmitPage = () => {
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <Button
+                      state={!submitButtonIsAvailable
+                          ? ButtonState.disabled
+                          : ButtonState.enabled}
                       onClick={onSolutionSubmitCode}
                       text="Submit"
                     />
@@ -417,7 +430,20 @@ const ContestSolutionSubmitPage = () => {
                   sumTotalPoints={sumAllContestPoints}
                 />
                 <div className={styles.selectedProblemWrapper}>
-                    <div className={styles.problemName}>{selectedContestDetailsProblem?.name}</div>
+                    <div className={styles.problemNameAndTimeWrapper}>
+                        <div className={styles.problemName}>
+                            {selectedContestDetailsProblem?.name}
+                        </div>
+                        {
+                            endDateTimeForParticipantOrContest && (
+                                <div>
+                                    Remaining time:
+                                    <b>{remainingTimeForParticipationOrContest}</b>
+                                </div>
+                            )
+                        }
+                    </div>
+
                     {renderProblemDescriptions()}
                     {renderSubmissionsInput()}
                 </div>
