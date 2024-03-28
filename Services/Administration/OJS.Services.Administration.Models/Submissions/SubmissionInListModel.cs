@@ -17,7 +17,9 @@ public class SubmissionInListModel : IMapExplicitly
     public int ProblemId { get; set; }
 
     public string? SubmissionTypeName { get; set; }
+
     public string? ContestName { get; set; }
+
     public string? ContestId { get; set; }
 
     public bool Processed { get; set; }
@@ -26,7 +28,8 @@ public class SubmissionInListModel : IMapExplicitly
 
     public bool IsDeleted { get; set; }
 
-    public void RegisterMappings(IProfileExpression configuration) => configuration.CreateMap<Submission, SubmissionInListModel>()
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration.CreateMap<Submission, SubmissionInListModel>()
         .ForMember(x => x.ContestId, opt
             => opt.MapFrom(x => x.Problem.ProblemGroup.ContestId))
         .ForMember(x => x.ContestName, opt
