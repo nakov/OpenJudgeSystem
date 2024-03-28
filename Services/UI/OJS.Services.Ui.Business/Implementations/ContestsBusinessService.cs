@@ -328,29 +328,34 @@ namespace OJS.Services.Ui.Business.Implementations
             model.PageNumber ??= 1;
             model.ItemsPerPage ??= DefaultContestsToTake;
 
+            // TODO: This is repeated in GetAllByFiltersAndSorting
             if (model.CategoryIds.Count() == 1)
             {
                 var subcategories = await this.contestCategoriesCache
                     .GetContestSubCategoriesList(model.CategoryIds.First(), CacheConstants.OneHourInSeconds);
 
                 model.CategoryIds = model.CategoryIds
-                    .Concat(subcategories.Select(cc => cc.Id).ToList());
+                    .Concat(subcategories
+                        .Select(cc => cc.Id)
+                        .ToList());
             }
 
             var userParticipants = this.participantsData.GetAllByUsername(username);
 
-            var pagedContests = await this.contestsData
+            // User can have 2 participants (compete/practice) for same contest,
+            // thus why we Distinct() when we retrieve contests
+            var participatedContestsInPage = await this.contestsData
                 .ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
-                    userParticipants.Select(p => p.Contest),
+                    userParticipants.Select(p => p.Contest).Distinct(),
                     model);
 
-            var contestIds = pagedContests.Items
+            var participatedContestIds = participatedContestsInPage.Items
                 .Select(c => c.Id)
-                .Distinct()
                 .ToList();
 
             var participantsInPage = await userParticipants
-                .Where(p => contestIds.Contains(p.ContestId))
+                .Where(p => participatedContestIds.Contains(p.ContestId))
+                .OrderBy(p => p.CreatedOn)
                 .MapCollection<ParticipantResultServiceModel>()
                 .ToListAsync();
 
@@ -361,19 +366,23 @@ namespace OJS.Services.Ui.Business.Implementations
                 .ToDictionary(
                     p => p!.ContestId, p => p);
 
-            var participantsCount =
-                await this.contestParticipantsCacheService.GetParticipantsCount(contestIds, model.PageNumber);
+            var participantsCount = await this.contestParticipantsCacheService
+                .GetParticipantsCount(participatedContestIds, model.PageNumber);
 
-            //set CanBeCompeted and CanBePracticed properties in each contest for the page
-            pagedContests.Items.ForEach(c =>
+            participatedContestsInPage.Items.ForEach(c =>
             {
+                // Set CanBeCompeted and CanBePracticed properties in each contest for the page
                 this.activityService.SetCanBeCompetedAndPracticed(c);
                 c.CompeteResults = participantsCount[c.Id].Official;
                 c.PracticeResults = participantsCount[c.Id].Practice;
+                // Map participant results to contests in page
                 c.UserParticipationResult = participantResultsByContest[c.Id];
             });
 
-            return pagedContests;
+            participatedContestsInPage.Items = participatedContestsInPage.Items
+                .OrderBy(c => c.UserParticipationResult?.CreatedOn ?? c.EndTime);
+
+            return participatedContestsInPage;
         }
 
         public async Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(

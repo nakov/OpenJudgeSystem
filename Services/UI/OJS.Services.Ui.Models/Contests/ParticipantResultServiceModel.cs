@@ -3,6 +3,7 @@ namespace OJS.Services.Ui.Models.Contests;
 using AutoMapper;
 using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 using System.Linq;
 
 public class ParticipantResultServiceModel : IMapExplicitly
@@ -12,6 +13,8 @@ public class ParticipantResultServiceModel : IMapExplicitly
     public int CompetePoints { get; set; }
 
     public int PracticePoints { get; set; }
+
+    public DateTime CreatedOn { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ParticipantResultServiceModel>()
@@ -26,5 +29,9 @@ public class ParticipantResultServiceModel : IMapExplicitly
                 opt =>
                     opt.MapFrom(src => src.Scores
                         .Where(s => s.IsOfficial)
-                        .Sum(s => s.Points)));
+                        .Sum(s => s.Points)))
+            .ForMember(
+                d => d.CreatedOn,
+                opt =>
+                    opt.MapFrom(src => src.CreatedOn));
 }
