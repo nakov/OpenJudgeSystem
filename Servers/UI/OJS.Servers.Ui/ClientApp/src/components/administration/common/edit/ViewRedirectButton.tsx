@@ -8,9 +8,10 @@ interface IRedirectButtonProps{
 }
 const ViewRedirectButton = (props: IRedirectButtonProps) => {
     const { path, location } = props;
+
     return (
         <Tooltip title={`Go to ${location}`}>
-            <Link to={path}>
+            <Link to={path} target="_blank">
                 <IconButton>
                     <FaEye color="blue" />
                 </IconButton>

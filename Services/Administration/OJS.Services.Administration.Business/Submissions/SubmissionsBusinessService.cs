@@ -50,7 +50,6 @@ namespace OJS.Services.Administration.Business.Submissions
             ITestRunsDataService testRunsDataService)
         {
             this.submissionsData = submissionsData;
-            // this.archivedSubmissionsData = archivedSubmissionsData;
             this.participantScoresData = participantScoresData;
             this.transactions = transactions;
             this.submissionsForProcessingDataService = submissionsForProcessingDataService;

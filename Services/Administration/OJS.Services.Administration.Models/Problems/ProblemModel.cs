@@ -1,9 +1,8 @@
-namespace OJS.Servers.Administration.Models.Problems
+namespace OJS.Services.Administration.Models.Problems
 {
+    using OJS.Data.Models.Problems;
     using System;
     using System.Linq.Expressions;
-
-    using OJS.Data.Models.Problems;
 
     public class ProblemModel
     {
