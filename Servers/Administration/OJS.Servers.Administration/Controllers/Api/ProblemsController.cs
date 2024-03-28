@@ -63,14 +63,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
                 model,
                 problem => problem.ProblemGroup.ContestId == contestId));
 
-    [HttpGet("{problemGroupId:int}")]
-    [ProtectedEntityAction("problemGroupId", typeof(ProblemGroupIdPermissionService))]
-    public async Task<IActionResult> GetByProblemGroupId([FromQuery] PaginationRequestModel model, [FromRoute] int problemGroupId)
-        => this.Ok(
-            await this.problemGridDataService.GetAll<ProblemInListModel>(
-                model,
-                problem => problem.ProblemGroup.Id == problemGroupId));
-
     public override async Task<IActionResult> Create([FromForm] ProblemAdministrationModel model)
     {
         var response = await base.Create(model);

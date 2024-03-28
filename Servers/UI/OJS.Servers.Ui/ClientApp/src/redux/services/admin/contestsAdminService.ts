@@ -1,10 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
+import { IContestAdministration, IContestAutocomplete, IFileModel, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const contestService = createApi({
@@ -59,6 +59,7 @@ export const contestService = createApi({
                 body: contestAdministrationModel,
             }),
         }),
+
         downloadSubmissions: builder.mutation<{ blob: Blob; filename: string },
         {
             contestId: number;
@@ -70,6 +71,31 @@ export const contestService = createApi({
                 method: 'POST',
                 body: contestAdministrationModel,
             }),
+        }),
+
+        getContestsExcelFile: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 10,
+        }),
+        exportTestsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 5,
         }),
     }),
 });
@@ -83,5 +109,7 @@ export const {
     useDownloadResultsMutation,
     useDownloadSubmissionsMutation,
     useGetContestAutocompleteQuery,
+    useGetContestsExcelFileQuery,
+    useExportTestsToExcelQuery,
 } = contestService;
 export default contestService;

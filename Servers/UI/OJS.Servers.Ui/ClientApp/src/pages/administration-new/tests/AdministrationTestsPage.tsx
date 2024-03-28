@@ -7,6 +7,7 @@ import AdministrationModal from '../../../components/administration/common/modal
 import TestForm from '../../../components/administration/tests/test-form/TestForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminTestsFilters, setAdminTestsSorters } from '../../../redux/features/admin/testsSlice';
+import { useExportTestsToExcelQuery } from '../../../redux/services/admin/contestsAdminService';
 import { useDeleteTestMutation, useGetAllAdminTestsQuery } from '../../../redux/services/admin/testsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
@@ -84,6 +85,7 @@ const AdministrationTestsPage = () => {
           modals={[
               { showModal: openEditTestModal, modal: (i) => renderTestEditModal(i) },
           ]}
+          excelMutation={useExportTestsToExcelQuery}
         />
     );
 };

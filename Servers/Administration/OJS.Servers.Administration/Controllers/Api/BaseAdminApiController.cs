@@ -56,6 +56,21 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
         return this.Ok(await this.gridDataService.GetAllForUser<TGridModel>(model, user));
     }
 
+    [HttpGet]
+    [ProtectedEntityAction(false)]
+    public virtual async Task<IActionResult> GetExcelResults([FromQuery]PaginationRequestModel model)
+    {
+        var user = this.User.Map<UserInfoModel>();
+
+        if (!await this.gridDataService.UserHasAccessToGrid(user))
+        {
+            return this.Unauthorized();
+        }
+
+        var file = await this.gridDataService.GetExcelResultsForUser<TGridModel>(model, user);
+        return this.File(file.Content!, file.MimeType!, $"{typeof(TEntity).Name}.xls");
+    }
+
     // TODO: use nameof(id) for the argument name in the attribute when upgraded to .NET 7 or above.
     [HttpGet("{id}")]
     [ProtectedEntityAction("id", AdministrationOperations.Read)]

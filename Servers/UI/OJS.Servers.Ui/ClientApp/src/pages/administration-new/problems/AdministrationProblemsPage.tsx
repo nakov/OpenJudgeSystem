@@ -9,7 +9,7 @@ import ProblemForm from '../../../components/administration/Problems/problemForm
 import ProblemRetest from '../../../components/administration/Problems/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
-import { useDeleteProblemMutation, useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
+import { useDeleteProblemMutation, useExportProblemsToExcelQuery, useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
@@ -143,6 +143,7 @@ const AdministrationProblemsPage = () => {
                   { showModal: showCopyModal, modal: (i) => renderCopyModal(i) },
               ]}
               legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
+              excelMutation={useExportProblemsToExcelQuery}
             />
         </>
     );

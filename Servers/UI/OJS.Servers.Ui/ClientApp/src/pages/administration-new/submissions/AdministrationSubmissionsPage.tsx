@@ -17,6 +17,7 @@ import {
 } from '../../../redux/features/admin/submissionsAdminSlice';
 import { useDeleteSubmissionMutation,
     useDownloadFileSubmissionQuery,
+    useExportSubmissionsToExcelQuery,
     useGetAllSubmissionsQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { useAppSelector } from '../../../redux/store';
@@ -172,6 +173,7 @@ const AdministrationSubmissionsPage = () => {
                   setSorterStateAction={setAdminSubmissionsSorters}
                   setFilterStateAction={setAdminSubmissionsFilters}
                   location="all-submissions"
+                  excelMutation={useExportSubmissionsToExcelQuery}
                 />
             )
     );

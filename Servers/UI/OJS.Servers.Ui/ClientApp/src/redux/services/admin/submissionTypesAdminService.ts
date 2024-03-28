@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, ISubmissionTypeAdministrationModel, ISubmissionTypeInProblem, ISubmissionTypesInListModel } from '../../../common/types';
-import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, ISubmissionTypeAdministrationModel, ISubmissionTypeInProblem, ISubmissionTypesInListModel } from '../../../common/types';
+import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const submissionTypesAdminService = createApi({
@@ -42,6 +42,18 @@ export const submissionTypesAdminService = createApi({
                 body: problemGroup,
             }),
         }),
+        exportSubmissionTypesToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 3,
+        }),
     }),
 });
 
@@ -54,6 +66,7 @@ export const {
     useGetByIdQuery,
     useUpdateSubmissionTypeMutation,
     useCreateSubmissionTypeMutation,
+    useExportSubmissionTypesToExcelQuery,
 
 } = submissionTypesAdminService;
 export default submissionTypesAdminService;

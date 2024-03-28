@@ -611,8 +611,8 @@ interface IParticipantAdministrationModel {
 interface IUserAutocompleteData {
 id: string;
 userName: string;
-
 }
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,

@@ -1,16 +1,19 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations;
 
+using Microsoft.EntityFrameworkCore;
+using OJS.Services.Administration.Data.Excel;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Data.Pagination;
-using System.Linq;
-using SoftUni.Data.Infrastructure.Models;
-using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Data.Pagination.Enums;
+using OJS.Services.Common.Models.Files;
+using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Common.Models;
+using SoftUni.Data.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -21,15 +24,18 @@ public class GridDataService<TEntity>
     private readonly IDataService<TEntity> dataService;
     private readonly ISortingService sortingService;
     private readonly IFilteringService filteringService;
+    private readonly IExcelService excelService;
 
     public GridDataService(
         IDataService<TEntity> dataService,
         ISortingService sortingService,
-        IFilteringService filteringService)
+        IFilteringService filteringService,
+        IExcelService excelService)
     {
         this.dataService = dataService;
         this.sortingService = sortingService;
         this.filteringService = filteringService;
+        this.excelService = excelService;
     }
 
     // TODO: Mark entities with attributes that are not allowed for lecturers
@@ -53,6 +59,39 @@ public class GridDataService<TEntity>
         UserInfoModel user,
         Expression<Func<TEntity, bool>>? filter = null)
         => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQueryForUser(user, filter));
+
+    public async Task<FileResponseModel> GetExcelResults<TModel>(
+        PaginationRequestModel paginationRequestModel,
+        Expression<Func<TEntity, bool>>? filter = null)
+    {
+        var results =
+            await this.GetNonPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter));
+
+        return this.excelService.ExportResults(results);
+    }
+
+    public async Task<FileResponseModel> GetExcelResults<TModel>(
+        PaginationRequestModel paginationRequestModel,
+        Expression<Func<TEntity, object>> orderBy,
+        Expression<Func<TEntity, bool>>? filter = null,
+        bool descendingOrder = false)
+    {
+        var results =
+            await this.GetNonPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter, orderBy, descendingOrder));
+
+        return this.excelService.ExportResults(results);
+    }
+
+    public async Task<FileResponseModel> GetExcelResultsForUser<TModel>(
+        PaginationRequestModel paginationRequestModel,
+        UserInfoModel user,
+        Expression<Func<TEntity, bool>>? filter = null)
+    {
+        var results =
+            await this.GetNonPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQueryForUser(user, filter));
+
+        return this.excelService.ExportResults(results);
+    }
 
     private static IEnumerable<FilteringModel> MapFilterStringToCollection<T>(PaginationRequestModel paginationRequestModel)
     {
@@ -92,12 +131,21 @@ public class GridDataService<TEntity>
     }
 
     private async Task<PagedResult<TModel>> GetPagedResultFromQuery<TModel>(PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query)
+        => await this.ApplyFiltersAndSorters<TModel>(paginationRequestModel, query)
+            .ToPagedResult(paginationRequestModel.Page, paginationRequestModel.ItemsPerPage);
+
+    private async Task<ICollection<TModel>> GetNonPagedResultFromQuery<TModel>(
+        PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query) =>
+        await this.ApplyFiltersAndSorters<TModel>(paginationRequestModel, query)
+            .ToListAsync();
+
+    private IQueryable<TModel> ApplyFiltersAndSorters<TModel>(PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query)
     {
         var filterAsCollection = MapFilterStringToCollection<TModel>(paginationRequestModel).ToList();
 
         var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query, filterAsCollection);
-        return await this.sortingService
-            .ApplySorting(mappedQuery, paginationRequestModel.Sorting)
-            .ToPagedResult(paginationRequestModel.Page, paginationRequestModel.ItemsPerPage);
+
+        return this.sortingService
+            .ApplySorting(mappedQuery, paginationRequestModel.Sorting);
     }
 }

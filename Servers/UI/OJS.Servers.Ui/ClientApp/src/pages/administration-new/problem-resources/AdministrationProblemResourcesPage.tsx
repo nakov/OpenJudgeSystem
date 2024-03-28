@@ -6,7 +6,7 @@ import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemResourceForm from '../../../components/administration/problem-resources/problem-resource-form/ProblemResourceForm';
 import { setAdminProblemResourceFilters, setAdminProblemResourceSorters } from '../../../redux/features/admin/problemResourcesAdminSlice';
-import { useGetAllAdminProblemResourcesQuery } from '../../../redux/services/admin/problemResourcesAdminService';
+import { useExportProblemResourcesToExcelQuery, useGetAllAdminProblemResourcesQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -72,6 +72,7 @@ const AdministrationProblemResourcesPage = () => {
           modals={[
               { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i) },
           ]}
+          excelMutation={useExportProblemResourcesToExcelQuery}
         />
     );
 };

@@ -3,10 +3,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import {
+    IFileModel,
     IGetAllAdminParams,
     IPagedResultType,
     ISubmissionForProcessingAdminGridViewType,
 } from '../../../common/types';
+import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const submissionsForProcessingAdminService = createApi({
@@ -29,12 +31,24 @@ export const submissionsForProcessingAdminService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
+
+        exportSubmissionsForProcessingToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({
+                filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                } }) }),
     }),
 });
 
 export const {
     useGetAllSubmissionsQuery,
     useGetByIdQuery,
+    useExportSubmissionsForProcessingToExcelQuery,
 } = submissionsForProcessingAdminService;
 
 export default submissionsForProcessingAdminService;

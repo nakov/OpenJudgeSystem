@@ -14,6 +14,7 @@ import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
+import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -48,6 +49,8 @@ interface IAdministrationGridViewProps<T> {
    location: string;
    withSearchParams?: boolean;
    legendProps?: Array<{color: string; message:string}>;
+
+   excelMutation?: IExcelProps;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -68,6 +71,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         location,
         withSearchParams = true,
         legendProps,
+        excelMutation,
     } = props;
 
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -94,6 +98,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                         </Box>
                     </Tooltip>
                 )}
+            <ExportExcel mutation={excelMutation} disabled={!excelMutation} queryParams={queryParams} />
         </div>
     );
     const renderGridSettings = () => {

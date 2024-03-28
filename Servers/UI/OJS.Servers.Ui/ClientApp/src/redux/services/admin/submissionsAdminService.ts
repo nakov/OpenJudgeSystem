@@ -4,11 +4,13 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../../common/constants';
 import {
+    IFileModel,
     IGetAllAdminParams,
     IPagedResultType,
     ISubmissionsAdminGridViewType,
 } from '../../../common/types';
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
+import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 
 export const submissionsAdminService = createApi({
     reducerPath: 'adminSubmissionsService',
@@ -66,6 +68,16 @@ export const submissionsAdminService = createApi({
             query: ({ id }) => ({
                 url: `/download/${id}`,
             }) }),
+        exportSubmissionsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({
+                filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                } }) }),
     }),
 });
 
@@ -74,6 +86,7 @@ export const {
     useDownloadFileSubmissionQuery,
     useDeleteSubmissionMutation,
     useRetestMutation,
+    useExportSubmissionsToExcelQuery,
 } = submissionsAdminService;
 
 export default submissionsAdminService;

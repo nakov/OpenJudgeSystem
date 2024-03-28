@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, IParticipantAdministrationModel, IParticipantInListModel } from '../../../common/types';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, IParticipantAdministrationModel, IParticipantInListModel } from '../../../common/types';
 import { IGetByContestId } from '../../../common/url-types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const participantsAdminService = createApi({
@@ -41,6 +41,18 @@ export const participantsAdminService = createApi({
                 body: participant,
             }),
         }),
+        exportParticipantsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 
@@ -49,6 +61,7 @@ export const {
     useCreateParticipantMutation,
     useDeleteParticipantMutation,
     useGetAllParticipantsQuery,
+    useExportParticipantsToExcelQuery,
 
 } = participantsAdminService;
 
