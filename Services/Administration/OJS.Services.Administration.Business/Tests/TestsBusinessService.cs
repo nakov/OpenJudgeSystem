@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Tests;
 
+using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
@@ -9,6 +10,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
+using OJS.Services.Common.Models.Files;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
@@ -17,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using FluentExtensions.Extensions;
 
 public class TestsBusinessService : AdministrationOperationService<Test, int, TestAdministrationModel>, ITestsBusinessService
 {
@@ -196,7 +197,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         return string.Format(Resources.TestsControllers.TestsAddedToProblem, addedTestsCount);
     }
 
-    public async Task<TestsZipExportModel> ExportZip(int problemId)
+    public async Task<FileResponseModel> ExportZip(int problemId)
     {
         var problem = this.problemsDataService.GetWithTestsAndProblemGroupById(problemId);
 
@@ -237,7 +238,7 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         var zipFile = await this.zipArchivesService.GetZipArchive(files);
         var zipFileName = $"{problem.Name}_Tests_{DateTime.Now}{GlobalConstants.FileExtensions.Zip}";
 
-        return new TestsZipExportModel
+        return new FileResponseModel
         {
             Content = zipFile, FileName = zipFileName, MimeType = GlobalConstants.MimeTypes.ApplicationZip,
         };

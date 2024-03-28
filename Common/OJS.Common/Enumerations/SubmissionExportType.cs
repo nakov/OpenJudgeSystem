@@ -1,4 +1,4 @@
-namespace OJS.Servers.Administration.Models.Contests
+namespace OJS.Common.Enumerations
 {
     using System.ComponentModel.DataAnnotations;
 

@@ -51,6 +51,26 @@ export const contestService = createApi({
             query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
         }),
+
+        downloadResults: builder.mutation<{ blob: Blob; filename: string }, {id:number; type:number} >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/Export',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
+        downloadSubmissions: builder.mutation<{ blob: Blob; filename: string },
+        {
+            contestId: number;
+            contestExportResultType:number;
+            submissionExportType:number;
+        }>({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/DownloadSubmissions',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
     }),
 });
 
@@ -60,6 +80,8 @@ export const {
     useDeleteContestMutation,
     useUpdateContestMutation,
     useCreateContestMutation,
+    useDownloadResultsMutation,
+    useDownloadSubmissionsMutation,
     useGetContestAutocompleteQuery,
 } = contestService;
 export default contestService;
