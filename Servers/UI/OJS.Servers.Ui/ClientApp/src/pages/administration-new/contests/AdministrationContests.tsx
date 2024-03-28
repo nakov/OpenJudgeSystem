@@ -46,6 +46,7 @@ const AdministrationContestsPage = () => {
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const selectedFilters = useAppSelector((state) => state.adminContests['all-contests']?.selectedFilters);
     const selectedSorters = useAppSelector((state) => state.adminContests['all-contests']?.selectedSorters);
+
     const {
         refetch: retakeContests,
         data,
@@ -102,7 +103,6 @@ const AdministrationContestsPage = () => {
         }
         retakeContests();
     };
-
     const onClickExcel = (exelExportContestId: number) => {
         setShowExportExcelModal(true);
         setContestId(exelExportContestId);

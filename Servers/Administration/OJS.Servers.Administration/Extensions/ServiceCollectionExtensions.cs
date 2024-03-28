@@ -45,7 +45,6 @@ internal static class ServiceCollectionExtensions
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<ApplicationUrlsConfig>()
             .AddOptionsWithValidation<EmailServiceConfig>()
-            .UseAutoCrudAdmin()
             .AddControllers()
             .ConfigureApiBehaviorOptions(options =>
             {

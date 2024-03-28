@@ -16,7 +16,13 @@ public class ParticipantAdministrationModelValidator : BaseValidator<Participant
             .GreaterThan(0)
             .WithMessage("Contest id cannot be less or equal to 0");
 
+        this.RuleFor(model => model.ContestName)
+            .NotEmpty();
+
         this.RuleFor(model => model.UserId)
+            .NotEmpty();
+
+        this.RuleFor(model => model.UserName)
             .NotEmpty();
     }
 }

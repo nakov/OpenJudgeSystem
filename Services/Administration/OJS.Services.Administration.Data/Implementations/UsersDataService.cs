@@ -1,15 +1,16 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
+    using OJS.Data.Models.Users;
+    using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Data.Models.Users;
-    using OJS.Services.Common.Data.Implementations;
 
     public class UsersDataService : DataService<UserProfile>, IUsersDataService
     {
-        public UsersDataService(DbContext users)
+        public UsersDataService(OjsDbContext users)
             : base(users)
         {
         }
