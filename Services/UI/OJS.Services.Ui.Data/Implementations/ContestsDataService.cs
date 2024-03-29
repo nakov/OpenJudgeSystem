@@ -213,14 +213,14 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 c.Id == id &&
                 c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
-    // After removing the sorting menu for the user, we are using OrderBy as default sorting value
-    // Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
     private static IQueryable<Contest> Sort(
         IQueryable<Contest> contests,
         ContestSortType? sorting,
         ContestSortTypeDirection modelSortTypeDirection,
         int categoriesCount)
     {
+        // After removing the sorting menu for the user, we are using OrderBy as default sorting value
+        // Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
         // if (sorting == ContestSortType.StartDate)
         // {
         //     return contests
@@ -257,30 +257,15 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             {
                 // No category chosen - contests are ordered by most recent activity
                 case 0:
-                    // Contests that are ongoing or upcoming (priority 1).
-                    // Contests with no end time specified (priority 2).
-                    // Contests that have ended (priority 3).
-                    return contests
-                        .OrderBy(c =>
-                            c.EndTime.HasValue
-                                // Contests that have ended get priority 3, ongoing or upcoming get priority 1
-                                ? (c.EndTime.Value < DateTime.UtcNow ? 3 : 1)
-                                : 2) // Contests with no end time specified get priority 2
-                        .ThenBy(c => c.EndTime);
+                    return contests.OrderByActivity();
 
                 // Inner most category
                 case 1:
-                    return contests
-                        .OrderBy(c => c.OrderBy)
-                        .ThenByDescending(c => c.EndTime)
-                        .ThenByDescending(c => c.PracticeEndTime);
+                    return contests.OrderByOrderBy();
 
                 // Has child categories
                 default:
-                    return contests
-                        .OrderBy(c => c.Category == null ? int.MaxValue : c.Category.OrderBy)
-                        .ThenBy(c => c.OrderBy)
-                        .ThenByDescending(c => c.EndTime);
+                    return contests.OrderByCategoryAndContestOrderBy(;
             }
         }
 
