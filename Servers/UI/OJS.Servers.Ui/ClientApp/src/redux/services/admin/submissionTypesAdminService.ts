@@ -66,7 +66,7 @@ export const {
     useGetByIdQuery,
     useUpdateSubmissionTypeMutation,
     useCreateSubmissionTypeMutation,
-    useExportSubmissionTypesToExcelQuery,
+    useLazyExportSubmissionTypesToExcelQuery,
 
 } = submissionTypesAdminService;
 export default submissionTypesAdminService;

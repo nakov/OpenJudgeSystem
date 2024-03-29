@@ -12,7 +12,7 @@ import {
     setAdminSubmissionsFilters,
     setAdminSubmissionsSorters,
 } from '../../../redux/features/admin/submissionsAdminSlice';
-import { useExportSubmissionsForProcessingToExcelQuery, useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
+import { useGetAllSubmissionsQuery, useLazyExportSubmissionsForProcessingToExcelQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -85,7 +85,7 @@ const AdministrationSubmissionsForProcessingPage = () => {
           setSorterStateAction={setAdminSubmissionsSorters}
           setFilterStateAction={setAdminSubmissionsFilters}
           location="all-submissions-for-processing"
-          excelMutation={useExportSubmissionsForProcessingToExcelQuery}
+          excelMutation={useLazyExportSubmissionsForProcessingToExcelQuery}
         />
     );
 };

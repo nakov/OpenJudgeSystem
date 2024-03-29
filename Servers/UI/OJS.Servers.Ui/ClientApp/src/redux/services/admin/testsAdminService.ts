@@ -2,7 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { IFileModel, IGetAllAdminParams, IPagedResultType, ITestRunInListModel } from '../../../common/types';
 import { IGetByProblemId, IGetByTestId } from '../../../common/url-types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import { ITestAdministration, ITestInListData } from '../../../components/administration/tests/types';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
@@ -74,6 +74,18 @@ export const testsAdminService = createApi({
                 },
             }),
         }),
+        exportTestsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 
@@ -88,6 +100,7 @@ export const {
     useImportTestsMutation,
     useExportZipQuery,
     useGetTestRunsByTestIdQuery,
+    useLazyExportTestsToExcelQuery,
 
 } = testsAdminService;
 export default testsAdminService;

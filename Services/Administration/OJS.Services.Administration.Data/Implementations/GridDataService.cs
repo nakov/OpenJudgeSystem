@@ -143,7 +143,7 @@ public class GridDataService<TEntity>
     {
         var filterAsCollection = MapFilterStringToCollection<TModel>(paginationRequestModel).ToList();
 
-        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query, filterAsCollection);
+        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query.AsNoTracking(), filterAsCollection);
 
         return this.sortingService
             .ApplySorting(mappedQuery, paginationRequestModel.Sorting);

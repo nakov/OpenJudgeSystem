@@ -123,7 +123,7 @@ export const {
     useCopyMutation,
     useGetResourcesQuery,
     useGetAllByNameQuery,
-    useExportProblemsToExcelQuery,
+    useLazyExportProblemsToExcelQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

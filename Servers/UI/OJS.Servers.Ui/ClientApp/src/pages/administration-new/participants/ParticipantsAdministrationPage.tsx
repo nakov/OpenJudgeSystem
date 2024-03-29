@@ -7,7 +7,7 @@ import AdministrationModal from '../../../components/administration/common/modal
 import ParticipantForm from '../../../components/administration/participants/form/ParticipantForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminParticipantsFilters, setAdminParticipantsSorters } from '../../../redux/features/admin/participantsAdminSlice';
-import { useDeleteParticipantMutation, useExportParticipantsToExcelQuery, useGetAllParticipantsQuery } from '../../../redux/services/admin/participantsAdminService';
+import { useDeleteParticipantMutation, useGetAllParticipantsQuery, useLazyExportParticipantsToExcelQuery } from '../../../redux/services/admin/participantsAdminService';
 import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
@@ -94,7 +94,7 @@ const ParticipantsAdministrationPage = () => {
           modals={[
               { showModal: openCreateModal, modal: (i) => renderParticipantModal(i) },
           ]}
-          excelMutation={useExportParticipantsToExcelQuery}
+          excelMutation={useLazyExportParticipantsToExcelQuery}
         />
     );
 };

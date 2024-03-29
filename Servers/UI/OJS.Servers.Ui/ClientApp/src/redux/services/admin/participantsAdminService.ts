@@ -61,7 +61,7 @@ export const {
     useCreateParticipantMutation,
     useDeleteParticipantMutation,
     useGetAllParticipantsQuery,
-    useExportParticipantsToExcelQuery,
+    useLazyExportParticipantsToExcelQuery,
 
 } = participantsAdminService;
 

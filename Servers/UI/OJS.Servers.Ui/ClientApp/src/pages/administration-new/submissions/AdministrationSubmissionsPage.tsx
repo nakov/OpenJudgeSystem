@@ -9,8 +9,8 @@ import {
 } from '../../../redux/features/admin/submissionsAdminSlice';
 import { useDeleteSubmissionMutation,
     useDownloadFileSubmissionQuery,
-    useExportSubmissionsToExcelQuery,
     useGetAllSubmissionsQuery,
+    useLazyExportSubmissionsToExcelQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
@@ -118,7 +118,7 @@ const AdministrationSubmissionsPage = () => {
               setSorterStateAction={setAdminSubmissionsSorters}
               location="all-submissions"
               legendProps={[ { color: '#FFA1A1', message: 'Submission is deleted.' } ]}
-              excelMutation={useExportSubmissionsToExcelQuery}
+              excelMutation={useLazyExportSubmissionsToExcelQuery}
 
             />
         </>

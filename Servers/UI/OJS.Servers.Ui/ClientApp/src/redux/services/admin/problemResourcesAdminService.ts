@@ -75,7 +75,7 @@ export const {
     useCreateProblemResourceMutation,
     useUpdateProblemResourceMutation,
     useDownloadResourceQuery,
-    useExportProblemResourcesToExcelQuery,
+    useLazyExportProblemResourcesToExcelQuery,
 } = problemResourcesAdminService;
 
 export default problemResourcesAdminService;

@@ -62,6 +62,6 @@ export const {
     useGetCheckerByIdQuery,
     useCreateCheckerMutation,
     useUpdateCheckerMutation,
-    useExportCheckersToExcelQuery,
+    useLazyExportCheckersToExcelQuery,
 } = checkerAdminService;
 export default checkerAdminService;

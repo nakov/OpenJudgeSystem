@@ -85,18 +85,6 @@ export const contestService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        exportTestsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
-            query: ({ filter, page, itemsPerPage, sorting }) => ({
-                url: `/${EXCEL_RESULTS_ENDPOINT}`,
-                params: {
-                    filter,
-                    page,
-                    itemsPerPage,
-                    sorting,
-                },
-            }),
-            keepUnusedDataFor: 5,
-        }),
     }),
 });
 
@@ -109,7 +97,6 @@ export const {
     useDownloadResultsMutation,
     useDownloadSubmissionsMutation,
     useGetContestAutocompleteQuery,
-    useGetContestsExcelFileQuery,
-    useExportTestsToExcelQuery,
+    useLazyGetContestsExcelFileQuery,
 } = contestService;
 export default contestService;

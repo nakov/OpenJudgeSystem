@@ -80,7 +80,7 @@ export const {
     useGetContestCategoryByIdQuery,
     useUpdateContestCategoryByIdMutation,
     useDeleteContestCategoryMutation,
-    useExportContestCategoriesToExcelQuery,
+    useLazyExportContestCategoriesToExcelQuery,
 } = contestCategoriesAdminService;
 
 export default contestCategoriesAdminService;

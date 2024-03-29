@@ -16,25 +16,25 @@ interface IExportExcelProps{
    queryParams: IGetAllAdminParams;
 }
 const ExportExcel = (props:IExportExcelProps) => {
-    const { mutation, disabled = false, queryParams } = props;
-
-    const [ skip, setSkip ] = useState<boolean>(true);
+    const { mutation: lazyQuery, disabled = false, queryParams } = props;
 
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
 
-    const { refetch, data, error, isSuccess, isLoading, isFetching } = mutation
-        ? mutation(queryParams, { skip })
-        : { data: null, error: null, isSuccess: false, refetch: null, isLoading: false, isFetching: false };
+    /* Use lazy queries because in other case everytime te queryParams changes,
+    there will be call to download */
+    const [ trigger, { data, error, isSuccess, isLoading, isFetching } ] = lazyQuery
+        ? lazyQuery()
+        : [ {}, { data: null, error: null, isSuccess: false, isLoading: false, isFetching: false } ];
 
     useEffect(() => {
-        if (isSuccess && !skip) {
+        if (isSuccess) {
             if (data) {
                 downloadFile(data.blob, data.filename);
             } else {
                 setExceptionMessages([ 'The required file is empty.' ]);
             }
         }
-    }, [ data, isSuccess, skip ]);
+    }, [ data, isSuccess ]);
 
     useEffect(() => {
         if (error) {
@@ -42,32 +42,18 @@ const ExportExcel = (props:IExportExcelProps) => {
         }
     }, [ error ]);
 
-    useEffect(() => {
-        if (!skip) {
-            refetch();
-        }
-    }, [ refetch, skip ]);
-
-    const onClick = () => {
-        if (skip) {
-            setSkip(false);
-        } else {
-            refetch();
-        }
-    };
-
     return (
         <>
             {(isLoading || isFetching) && renderInfoMessage('The request is currently in process.')}
             {renderErrorMessagesAlert(exceptionMessages)}
-            <Tooltip title={disabled
+            <Tooltip title={disabled || isLoading || isFetching
                 ? 'Action not allowed'
                 : 'Export to excel'}
             >
                 <span>
-                    <IconButton disabled={disabled} onClick={onClick}>
+                    <IconButton disabled={disabled || isLoading || isFetching} onClick={() => { trigger(queryParams); }}>
                         <RiFileExcel2Fill
-                          className={disabled
+                          className={disabled || isLoading || isFetching
                               ? concatClassNames(styles.size, styles.disabledColor)
                               : concatClassNames(styles.size, styles.activeColor)}
                         />

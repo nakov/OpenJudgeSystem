@@ -58,7 +58,7 @@ export const {
     useDownloadFileSubmissionQuery,
     useDeleteSubmissionMutation,
     useRetestMutation,
-    useExportSubmissionsToExcelQuery,
+    useLazyExportSubmissionsToExcelQuery,
 } = submissionsAdminService;
 
 export default submissionsAdminService;

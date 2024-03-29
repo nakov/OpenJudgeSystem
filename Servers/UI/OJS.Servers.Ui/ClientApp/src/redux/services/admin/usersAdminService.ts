@@ -1,8 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
 import { IGetByRoleId, IGetByUserId } from '../../../common/url-types';
-import { GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const usersAdminService = createApi({
@@ -102,6 +102,19 @@ export const usersAdminService = createApi({
                 method: 'DELETE',
             }),
         }),
+
+        exportUsersToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 
@@ -117,5 +130,6 @@ export const {
     useGetLecturerCategoriesQuery,
     useAddLecturerToCategoryMutation,
     useRemoveLecturerFromCategoryMutation,
+    useLazyExportUsersToExcelQuery,
 } = usersAdminService;
 export default usersAdminService;

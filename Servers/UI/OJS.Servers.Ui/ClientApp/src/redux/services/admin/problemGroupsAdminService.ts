@@ -66,6 +66,6 @@ export const {
     useUpdateProblemGroupMutation,
     useCreateProblemGroupMutation,
     useGetIdsByContestIdQuery,
-    useExportProblemGroupsToExcelQuery,
+    useLazyExportProblemGroupsToExcelQuery,
 } = problemGroupsAdminService;
 export default problemGroupsAdminService;

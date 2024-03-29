@@ -48,7 +48,7 @@ export const submissionsForProcessingAdminService = createApi({
 export const {
     useGetAllSubmissionsQuery,
     useGetByIdQuery,
-    useExportSubmissionsForProcessingToExcelQuery,
+    useLazyExportSubmissionsForProcessingToExcelQuery,
 } = submissionsForProcessingAdminService;
 
 export default submissionsForProcessingAdminService;
