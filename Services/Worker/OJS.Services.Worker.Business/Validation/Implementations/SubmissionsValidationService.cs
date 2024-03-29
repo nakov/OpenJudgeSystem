@@ -4,6 +4,7 @@ using OJS.Common.Constants;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Common.Models.Submissions.ExecutionDetails;
+using OJS.Workers.Common.Extensions;
 using OJS.Workers.Common.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
     }
 
     private static void ValidateTestsExecution(
-        TestsExecutionDetailsServiceModel testsExecutionDetails,
+        TestsExecutionDetailsServiceModel? testsExecutionDetails,
         ICollection<ValidationResult> validationResults)
     {
         if (testsExecutionDetails == null)
@@ -61,7 +62,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
     private static ValidationResult IsCheckerTypeValid(string checkerType)
         => ServiceConstants.CheckerTypes
             .All
-            .Contains(checkerType)
+            .Contains(checkerType.ToLowerInvariant().TrimFromEnd("checker"))
             ? ValidationResult.Valid()
             : ValidationResult.Invalid(string.Format(CheckerTypeNotValidTemplate, checkerType));
 }
