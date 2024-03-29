@@ -30,7 +30,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
     }
 
     private static void ValidateTestsExecution(
-        TestsExecutionDetailsServiceModel testsExecutionDetails,
+        TestsExecutionDetailsServiceModel? testsExecutionDetails,
         ICollection<ValidationResult> validationResults)
     {
         if (testsExecutionDetails == null)
@@ -62,7 +62,7 @@ public class SubmissionsValidationService : ISubmissionsValidationService
     private static ValidationResult IsCheckerTypeValid(string checkerType)
         => ServiceConstants.CheckerTypes
             .All
-            .Contains(checkerType.ToLower().TrimFromEnd("checker"))
+            .Contains(checkerType.ToLowerInvariant().TrimFromEnd("checker"))
             ? ValidationResult.Valid()
             : ValidationResult.Invalid(string.Format(CheckerTypeNotValidTemplate, checkerType));
 }
