@@ -12,6 +12,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Business.Cache;
     using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
+    using OJS.Services.Ui.Data.Implementations;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Submissions;
@@ -23,7 +24,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using X.PagedList;
-    using static OJS.Services.Ui.Business.PaginationConstants.Contests;
+    using static OJS.Common.PaginationConstants.Contests;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -345,38 +346,17 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 userParticipants = userParticipants.OrderByDescending(p => p.CreatedOn);
             }
-            
-            // var participantsToListed = userParticipants
-            //     .Include(p => p.Contest)
-            //     .ToList();
-            //
-            // var contestsFromParticipants = participantsToListed
-            //     .Select(p => p.Contest)
-            //     .Distinct();
 
-            var participatedContestsInPage = await this.contestsData
-               .ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
-                   userParticipants
-                       .Select(p => p.Contest)
-                       .Distinct(),
-                   sortAndFilterModel);
+            var participatedContestsInPage =
+                await GetPaginatedContestsByParticipants<ContestForListingServiceModel>(
+                    userParticipants,
+                    sortAndFilterModel.ItemsPerPage,
+                    sortAndFilterModel.PageNumber);
 
-            var participatedContestIds = participatedContestsInPage.Items
-                .Select(c => c.Id);
+            var participantResultsByContest =
+                await MapParticipationResultsToContestsInPage(participatedContestsInPage, userParticipants);
 
-            var participantsInPage = await userParticipants
-                .Where(p => participatedContestIds.Contains(p.ContestId))
-                .MapCollection<ParticipantResultServiceModel>()
-                .ToListAsync();
-
-            var participantResultsByContest = participantsInPage
-                .GroupBy(p => p.ContestId) // Group by ContestId to handle duplicates
-                .Select(g => g.FirstOrDefault())
-                .Where(p => p != null)
-                .ToDictionary(
-                    p => p!.ContestId, p => p);
-
-            return await this.PrepareActivityAndResults(participatedContestsInPage, participantResultsByContest);
+            return await this.PrepareActivityAndResults(participatedContestsInPage, participantResultsByContest!);
         }
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
@@ -414,6 +394,41 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.contestsData.SaveChanges();
         }
 
+        private static async Task<Dictionary<int, ParticipantResultServiceModel?>> MapParticipationResultsToContestsInPage(
+            PagedResult<ContestForListingServiceModel> participatedContestsInPage,
+            IQueryable<Participant> participants)
+        {
+            var participatedContestIds = participatedContestsInPage
+                .Items
+                .Select(c => c.Id)
+                .Distinct();
+
+            // Get participants and their results only for contests that are contained in current page
+            var participantsInPage = await participants
+                .Where(p => participatedContestIds.Contains(p.ContestId))
+                .MapCollection<ParticipantResultServiceModel>()
+                .ToListAsync();
+
+            // Map participant results to contests in page
+            var participantResultsByContest = participantsInPage
+                .GroupBy(p => p.ContestId) // Group by ContestId to handle duplicates
+                .Select(g => g.FirstOrDefault())
+                .Where(p => p != null)
+                .ToDictionary(
+                    p => p!.ContestId, p => p);
+
+            return participantResultsByContest;
+        }
+
+        private static async Task<PagedResult<TServiceModel>> GetPaginatedContestsByParticipants<TServiceModel>(
+            IQueryable<Participant> participants,
+            int? itemsPerPage,
+            int? pageNumber)
+            => await participants
+                .Include(p => p.Contest)
+                .Select(p => p.Contest)
+                .Paginate<TServiceModel>(itemsPerPage, pageNumber);
+
         private static bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
         {
             if (participant != null && !participant.IsInvalidated)
@@ -432,6 +447,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 .GetParticipantsCount(
                     pagedContests.Items
                         .Select(c => c.Id)
+                        .Distinct()
                         .ToImmutableArray(),
                     pagedContests.PageNumber);
 

@@ -95,7 +95,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     {
         // TODO: Remove filter by status (not used anumorE)
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
-        contests = Sort(contests, model.SortType, model.SortTypeDirection, model.CategoryIds.Count());
+        contests = Sort(contests, model.SortType, model.CategoryIds.Count());
 
         if (model.SubmissionTypeIds.Any())
         {
@@ -103,9 +103,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .Where(ContainsSubmissionTypeIds(model.SubmissionTypeIds));
         }
 
-        return await contests
-            .MapCollection<TServiceModel>()
-            .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
+        return await contests.Paginate<TServiceModel>(model.ItemsPerPage, model.PageNumber);
     }
 
     public Task<Contest?> GetByIdWithProblems(int id)
@@ -216,7 +214,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     private static IQueryable<Contest> Sort(
         IQueryable<Contest> contests,
         ContestSortType? sorting,
-        ContestSortTypeDirection modelSortTypeDirection,
         int categoriesCount)
     {
         // After removing the sorting menu for the user, we are using OrderBy as default sorting value
@@ -265,7 +262,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
                 // Has child categories
                 default:
-                    return contests.OrderByCategoryAndContestOrderBy(;
+                    return contests.OrderByCategoryAndContestOrderBy();
             }
         }
 
