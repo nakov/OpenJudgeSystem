@@ -19,7 +19,10 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
         prepareHeaders: (headers) => headers,
         responseHandler: async (response: Response) => {
             const contentType = response.headers.get('Content-Type');
-            if (contentType?.includes('application/octet-stream')) {
+
+            if (contentType?.includes('application/octet-stream') ||
+            contentType?.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+            contentType?.includes('application/zip')) {
                 const contentDisposition = response.headers.get('Content-Disposition');
                 let filename = 'file.zip';
                 if (contentDisposition) {
@@ -29,6 +32,7 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
                     }
                 }
                 const blob = await response.blob();
+
                 return { blob, filename };
             }
 

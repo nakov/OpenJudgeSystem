@@ -1,4 +1,4 @@
-namespace OJS.Servers.Administration.Models.Participants
+namespace OJS.Services.Administration.Models.Participants
 {
     using OJS.Data.Models.Participants;
     using System;

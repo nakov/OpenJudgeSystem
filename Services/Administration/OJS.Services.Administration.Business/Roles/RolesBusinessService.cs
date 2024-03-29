@@ -2,11 +2,10 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
-using OJS.Data;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
+using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Exceptions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
@@ -15,13 +14,13 @@ using System.Threading.Tasks;
 
 public class RolesBusinessService : AdministrationOperationService<Role, string, RoleAdministrationModel>, IRolesBusinessService
 {
-    private readonly IRoleDataService roleDataService;
+    private readonly IDataService<Role> roleDataService;
     private readonly UserManager<UserProfile> userManager;
     private readonly IUsersDataService usersDataService;
     private readonly RoleManager<Role> roleManager;
 
     public RolesBusinessService(
-        IRoleDataService roleDataService,
+        IDataService<Role> roleDataService,
         UserManager<UserProfile> userManager,
         IUsersDataService usersDataService,
         RoleManager<Role> roleManager)

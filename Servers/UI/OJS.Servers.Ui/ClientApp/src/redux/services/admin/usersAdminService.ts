@@ -15,6 +15,7 @@ export const usersAdminService = createApi({
             query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
         }),
+
         getByExamGroupId: builder.query<IPagedResultType<IUserInExamGroupModel>, IGetByExamGroupId>({
             query: ({ examGroupId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByExamGroupId/${examGroupId}`,
@@ -26,6 +27,7 @@ export const usersAdminService = createApi({
                 },
             }),
         }),
+
         getAllUsers: builder.query<IPagedResultType<IUserInListModel>, IGetAllAdminParams>({
             query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: '/GetAll',
