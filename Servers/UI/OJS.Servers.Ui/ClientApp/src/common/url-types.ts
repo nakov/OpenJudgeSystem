@@ -15,6 +15,14 @@ interface IGetByContestId extends IGetAllAdminParams {
     contestId: number;
 }
 
+interface IGetByRoleId extends IGetAllAdminParams {
+    roleId: string;
+}
+
+interface IGetByUserId extends IGetAllAdminParams {
+    userId: string;
+}
+
 interface IGetByProblemId extends IGetAllAdminParams {
     problemId: number;
 }
@@ -185,6 +193,8 @@ export type {
     IGetByProblemId,
     IGetByProblemGroupId,
     IGetByTestId,
+    IGetByRoleId,
+    IGetByUserId,
     IStartParticipationParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,

@@ -38,11 +38,11 @@ const AdministrationProblemsPage = () => {
     const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
+        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
     }, [ filterParams ]);
 
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
+        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
 
     const onEditClick = (id: number) => {

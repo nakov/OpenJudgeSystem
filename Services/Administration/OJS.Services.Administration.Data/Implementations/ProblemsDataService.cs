@@ -2,6 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
+    using OJS.Data;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
@@ -12,7 +13,7 @@
 
     public class ProblemsDataService : DataService<Problem>, IProblemsDataService
     {
-        public ProblemsDataService(DbContext problems)
+        public ProblemsDataService(OjsDbContext problems)
             : base(problems)
         {
         }

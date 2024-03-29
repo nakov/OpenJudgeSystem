@@ -1,6 +1,7 @@
 namespace OJS.Services.Common.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using OJS.Data;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Data.Implementations;
@@ -8,7 +9,7 @@ using System.Linq;
 
 public class ParticipantsCommonDataService : DataService<Participant>, IParticipantsCommonDataService
 {
-    public ParticipantsCommonDataService(DbContext db)
+    public ParticipantsCommonDataService(OjsDbContext db)
         : base(db)
     {
     }

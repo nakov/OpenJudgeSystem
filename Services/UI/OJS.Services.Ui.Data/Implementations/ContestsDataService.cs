@@ -2,6 +2,7 @@ namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
+using OJS.Data;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common;
@@ -23,7 +24,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     private readonly IContestsActivityService activityService;
 
     public ContestsDataService(
-        DbContext db,
+        OjsDbContext db,
         IDatesService dates,
         IContestsActivityService activityService)
         : base(db)
