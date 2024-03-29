@@ -12,20 +12,15 @@ using OJS.Services.Administration.Business.Submissions.GridData;
 using OJS.Services.Administration.Business.Submissions.Validation;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Administration.Models.Validation;
-using OJS.Services.Common.Models.Pagination;
-using OJS.Services.Common.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
 public class SubmissionsController : BaseAdminApiController<
     Submission,
     int,
-    SubmissionAdministrationServiceModel,
+    SubmissionInListModel,
     SubmissionAdministrationServiceModel>
 {
     private readonly ISubmissionsBusinessService submissionsBusinessService;
-    private readonly ISubmissionsGridDataService submissionsGridDataService;
-    private readonly ILecturerContestPrivilegesBusinessService lecturerPrivilegesBusinessService;
 
     public SubmissionsController(
             ISubmissionsGridDataService submissionsGridDataService,
@@ -37,19 +32,16 @@ public class SubmissionsController : BaseAdminApiController<
             submissionsGridDataService,
             submissionsBusinessService,
             validator,
-            submissionsDeleteValidator)
-    {
+            submissionsDeleteValidator) =>
         this.submissionsBusinessService = submissionsBusinessService;
-        this.submissionsGridDataService = submissionsGridDataService;
-        this.lecturerPrivilegesBusinessService = lecturerPrivilegesBusinessService;
-    }
 
     [HttpPost("{id:int}")]
     [ProtectedEntityAction]
     public async Task<IActionResult> Retest(int id)
-        => await this.submissionsBusinessService
-            .Retest(id)
-            .ToOkResult();
+    {
+        await this.submissionsBusinessService.Retest(id);
+        return this.Ok("Submission was successfully retested.");
+    }
 
     [HttpGet("{id:int}")]
     [ProtectedEntityAction]

@@ -23,7 +23,7 @@ internal static class WebApplicationExtensions
         app.UseHealthMonitoring();
 
         return app
-            .UseAutoCrudAdmin()
+            // .UseAutoCrudAdmin()
             .MapDefaultRoutes()
             .UseAndMapHangfireDashboard();
     }

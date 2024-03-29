@@ -1,13 +1,13 @@
 ﻿namespace OJS.Services.Common.Data.Implementations;
 
-using Microsoft.EntityFrameworkCore;
+using OJS.Data;
 using OJS.Data.Models.Participants;
 using System.Collections.Generic;
 using System.Linq;
 
 public class ParticipantScoresCommonDataService : DataService<ParticipantScore>, IParticipantScoresCommonDataService
 {
-    public ParticipantScoresCommonDataService(DbContext db)
+    public ParticipantScoresCommonDataService(OjsDbContext db)
         : base(db)
     {
     }

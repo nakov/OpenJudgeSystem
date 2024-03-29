@@ -29,15 +29,14 @@ interface IAdministrationGridViewProps<T> {
     filterableGridColumnDef: Array<GridColDef>;
     notFilterableGridColumnDef: Array<GridColDef>;
     data: IPagedResultType<T> | undefined;
-
     showFiltersAndSorters?: boolean;
-
     renderActionButtons?: () => ReactNode;
 
    modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
 
    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
    queryParams?: IGetAllAdminParams;
+
    setQueryParams?: (params: IGetAllAdminParams) => void;
 
    selectedFilters: Array<IAdministrationFilter>;
@@ -51,6 +50,8 @@ interface IAdministrationGridViewProps<T> {
    legendProps?: Array<{color: string; message:string}>;
 
    excelMutation?: IExcelProps;
+
+   specificRowIdName?: string | null;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -72,6 +73,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         withSearchParams = true,
         legendProps,
         excelMutation,
+        specificRowIdName: specifyColumnIdName,
     } = props;
 
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -143,6 +145,9 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                           onPaginationModelChange={handlePaginationModelChange}
                           pageSizeOptions={[ ...DEFAULT_ROWS_PER_PAGE ]}
                           disableRowSelectionOnClick
+                          getRowId={(row) => specifyColumnIdName
+                              ? row[specifyColumnIdName]
+                              : row.id}
                           getRowClassName={(params) => getRowClassName(params.row.isDeleted, params.row.isVisible)}
                           initialState={{
                               columns: {

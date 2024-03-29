@@ -6,7 +6,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { VIEW } from '../../../common/labels';
 import { IGetAllAdminParams, IRootStore } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
-import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
+import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
     setAdminSubmissionsFilters,
@@ -46,7 +46,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
         data,
         error,
         isLoading,
-        isFetching,
     } = useGetAllSubmissionsQuery(queryParams);
 
     const nonFilterableColumns: GridColDef[] = [
@@ -61,7 +60,7 @@ const AdministrationSubmissionsForProcessingPage = () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             renderCell: (params: GridRenderCellParams) => (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <ViewRedirectButton
+                    <RedirectButton
                       path={`/${NEW_ADMINISTRATION_PATH}/${SUBMISSIONS_FOR_PROCESSING_PATH}/${Number(params.row.id)}`}
                       location={VIEW}
                     />
@@ -70,25 +69,24 @@ const AdministrationSubmissionsForProcessingPage = () => {
         },
     ];
 
+    if (isLoading) {
+        return <SpinningLoader />;
+    }
     return (
-        isLoading || isFetching
-            ? <SpinningLoader />
-            : (
-                <AdministrationGridView
-                  data={data}
-                  error={error}
-                  filterableGridColumnDef={dataColumns}
-                  notFilterableGridColumnDef={nonFilterableColumns}
-                  queryParams={queryParams}
-                  setQueryParams={setQueryParams}
-                  selectedFilters={selectedFilters || []}
-                  selectedSorters={selectedSorters || []}
-                  setSorterStateAction={setAdminSubmissionsSorters}
-                  setFilterStateAction={setAdminSubmissionsFilters}
-                  location="all-submissions-for-processing"
-                  excelMutation={useExportSubmissionsForProcessingToExcelQuery}
-                />
-            )
+        <AdministrationGridView
+          data={data}
+          error={error}
+          filterableGridColumnDef={dataColumns}
+          notFilterableGridColumnDef={nonFilterableColumns}
+          queryParams={queryParams}
+          setQueryParams={setQueryParams}
+          selectedFilters={selectedFilters || []}
+          selectedSorters={selectedSorters || []}
+          setSorterStateAction={setAdminSubmissionsSorters}
+          setFilterStateAction={setAdminSubmissionsFilters}
+          location="all-submissions-for-processing"
+          excelMutation={useExportSubmissionsForProcessingToExcelQuery}
+        />
     );
 };
 
