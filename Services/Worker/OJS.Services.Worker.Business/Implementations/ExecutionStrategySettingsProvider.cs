@@ -145,15 +145,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
                     this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.BootstrapModulePath,
-                    this.settings.BootstrapCssPath)
+                    this.GetNodeModulePath(executionStrategyType, this.settings.UnderscoreModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.MochaModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.ChaiModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.SinonModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.SinonChaiModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.JsDomModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.JQueryModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.BootstrapModulePath),
+                    this.GetNodeModulePath(executionStrategyType, this.settings.BootstrapCssPath))
 
                 as TSettings,
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
@@ -415,4 +415,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => IsJava21(strategyType)
             ? this.settings.Java21LibsPath
             : this.settings.JavaLibsPath;
+
+    private string GetNodeModulePath(ExecutionStrategyType strategyType, string modulePathTemplate)
+    {
+        var nodeModulesPath = strategyType.ToString().Contains("20")
+            ? this.settings.Node20ModulesPath
+            : this.settings.NodeModulesPath;
+
+        return modulePathTemplate.Replace(this.settings.NodeModulesPathPlaceholder, nodeModulesPath);
+    }
 }

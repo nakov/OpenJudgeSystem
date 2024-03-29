@@ -21,15 +21,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
-#Setup for installing Node.js 20 (LTS)
-RUN mkdir -p /etc/apt/keyrings; \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list;
-
 # Setup for installing .NET Core SDK
 RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb
+
+# Install node.js 12 and 20 via nvm
+RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
+    export NVM_DIR="$HOME/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+    nvm install 12 && \
+    nvm install 20 && \
+    nvm alias default 20 && \
+    nvm use default
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
@@ -38,7 +42,6 @@ RUN apt-get update && apt-get install -y \
       dotnet-sdk-5.0 \
       openjdk-11-jdk \
       openjdk-21-jdk \
-      nodejs \
       python3.8 \
       python3-pip \
       golang-go \
@@ -75,9 +78,9 @@ RUN ./gradlew getDeps11
 RUN ./gradlew getDeps21
 
 # JS and JS SPA
-COPY ./js /judge-resources/js
-WORKDIR /judge-resources/js
-RUN npm install
+COPY /js /js
+WORKDIR /js
+RUN chmod +x ./setup_node.sh && ./setup_node.sh
 
 COPY ./js-run-spa-in-docker-and-execute-mocha-tests /judge-resources/js-run-spa-in-docker-and-execute-mocha-tests
 WORKDIR /judge-resources/js-run-spa-in-docker-and-execute-mocha-tests

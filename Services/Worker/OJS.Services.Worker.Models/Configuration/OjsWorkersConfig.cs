@@ -71,6 +71,15 @@ public class OjsWorkersConfig : BaseConfig
     public string NodeJsExecutablePath { get; set; } = string.Empty;
 
     [Required]
+    public string NodeModulesPathPlaceholder { get; set; } = string.Empty;
+
+    [Required]
+    public string NodeModulesPath { get; set; } = string.Empty;
+
+    [Required]
+    public string Node20ModulesPath { get; set; } = string.Empty;
+
+    [Required]
     public string JsProjNodeModules { get; set; } = string.Empty;
 
     [Required]
