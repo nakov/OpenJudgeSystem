@@ -30,9 +30,9 @@ RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ub
 RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
-    nvm install 12 && \
-    nvm install 20 && \
-    nvm alias default 20 && \
+    nvm install 12.22.12 && \
+    nvm install 20.12.0 && \
+    nvm alias default 20.12.0 && \
     nvm use default
 
 # Install supported languages and frameworks
@@ -78,19 +78,11 @@ RUN ./gradlew getDeps11
 RUN ./gradlew getDeps21
 
 # JS and JS SPA
-COPY /js /js
-WORKDIR /js
-RUN chmod +x ./setup_node.sh && ./setup_node.sh
-
-COPY ./js-run-spa-in-docker-and-execute-mocha-tests /judge-resources/js-run-spa-in-docker-and-execute-mocha-tests
-WORKDIR /judge-resources/js-run-spa-in-docker-and-execute-mocha-tests
-RUN npm install && \
-    bash /judge-resources/js/chromium-scripts/update-and-run.sh
-
-ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
-ENV JAVA21_LIBS_DIR=/judge-resources/java21Libs/
-
-ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
+WORKDIR /judge-resources/js
+COPY ./js .
+RUN chmod +x ./setup_node.sh ./chromium-scripts/update-and-run.sh && \
+    ./setup_node.sh && \
+    ./chromium-scripts/update-and-run.sh
 
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -126,8 +118,8 @@ RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
-COPY ./java-spring-and-hibernate /judge-resources/java/java-spring-and-hibernate
 WORKDIR /judge-resources/java/java-spring-and-hibernate
+COPY ./java-spring-and-hibernate .
 RUN mvn dependency:go-offline
 # Needed 2 versions of this package, one in the strategy pom.xml, other one is istalled here
 # Otherwise maven resolves only 1 dependency
