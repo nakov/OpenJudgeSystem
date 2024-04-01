@@ -17,8 +17,6 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
 
     public bool ShouldConfirmParticipation { get; set; }
 
-    public bool HasAcceptedOnlineExamModal { get; set; }
-
     public TimeSpan? Duration { get; set; }
 
     public int NumberOfProblems { get; set; }
@@ -48,8 +46,5 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
                 opt => opt.Ignore())
             .ForMember(
                 opt => opt.ParticipantId,
-                src => src.Ignore())
-            .ForMember(
-                opt => opt.HasAcceptedOnlineExamModal,
                 src => src.Ignore());
 }
