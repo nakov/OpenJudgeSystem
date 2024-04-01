@@ -1,0 +1,20 @@
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+
+.submissionsTestRunsWrapper {
+  padding: spacings.$sp-8 spacings.$sp-24;
+  margin-right: spacings.$sp-24;
+  font-size: variables.$f-size-18;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .submissionTestRun {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: spacings.$sp-16 0;
+    cursor: pointer;
+  }
+}

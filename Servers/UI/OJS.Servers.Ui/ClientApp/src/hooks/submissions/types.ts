@@ -117,6 +117,23 @@ interface IUserAuthData {
     userName: string;
 }
 
+interface ITestRun {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
+    expectedOutputFragment: string;
+    userOutputFragment: string;
+    isTrialTest: boolean;
+    input: string;
+    orderBy: number;
+    showInput: boolean;
+    testId: number;
+}
+
 export type {
     IProblemType,
     ITestRunType,
@@ -129,4 +146,5 @@ export type {
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
+    ITestRun,
 };

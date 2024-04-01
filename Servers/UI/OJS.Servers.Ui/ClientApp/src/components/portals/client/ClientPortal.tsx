@@ -22,7 +22,7 @@ import ProfilePage from '../../../pages/profile/ProfilePage';
 import RegisterPage from '../../../pages/register/RegisterPage';
 import SearchPage from '../../../pages/search/SearchPage';
 import { asPage } from '../../../pages/shared/set-page-params';
-import SubmissionDetailsPage from '../../../pages/submission-details/SubmissionDetailsPage';
+import SubmissionDetailsPageNew from '../../../pages/submission-details/SubmissionDetailsPageNew';
 import SubmissionsPage from '../../../pages/submissions/SubmissionsPage';
 
 import styles from '../../../layout/content/PageContent.module.scss';
@@ -61,7 +61,7 @@ const ClientPortal = () => {
         },
         {
             path: '/submissions/:submissionId/details',
-            Element: SubmissionDetailsPage,
+            Element: SubmissionDetailsPageNew,
         },
         {
             title: 'Contests',

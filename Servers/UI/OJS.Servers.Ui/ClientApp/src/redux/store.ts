@@ -59,7 +59,6 @@ const rootReducer = combineReducers({
     [problemResourcesAdminService.reducerPath]: problemResourcesAdminService.reducer,
     [usersAdminService.reducerPath]: usersAdminService.reducer,
     [rolesAdminService.reducerPath]: rolesAdminService.reducer,
-    [examGroupsService.reducerPath]: examGroupsService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -72,6 +71,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 const reducersToPersist = [
     themeSlice.name,
     authorizationSlice.name,
+    contestSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
