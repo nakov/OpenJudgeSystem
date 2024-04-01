@@ -22,7 +22,7 @@ public class ExamGroupIdPermissionsService : IEntityPermissionsService<ExamGroup
     public async Task<bool> HasPermission(UserInfoModel user, int value, string operation)
     {
         var examGroup = await this.examGroupsDataService.GetByIdQuery(value).FirstOrDefaultAsync();
-        if (examGroup == null && examGroup!.ContestId == null)
+        if (examGroup == null)
         {
             throw new BusinessServiceException("Exam group not found.");
         }

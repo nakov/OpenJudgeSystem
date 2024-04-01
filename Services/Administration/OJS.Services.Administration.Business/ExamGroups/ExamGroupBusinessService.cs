@@ -7,6 +7,7 @@ using OJS.Data.Models.Users;
 using OJS.Data.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ExamGroups;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.BackgroundJobs;
@@ -28,19 +29,22 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
     private readonly IUsersDataService usersDataService;
     private readonly IHangfireBackgroundJobsService backgroundJobsService;
     private readonly ISulsPlatformHttpClientService httpClientService;
+    private readonly IDataService<UserInExamGroup> userInExamGroupService;
 
     public ExamGroupBusinessService(
         IExamGroupsDataService examGroupsDataService,
         IContestsDataService contestsDataService,
         IUsersDataService usersDataService,
         IHangfireBackgroundJobsService backgroundJobsService,
-        ISulsPlatformHttpClientService httpClientService)
+        ISulsPlatformHttpClientService httpClientService,
+        IDataService<UserInExamGroup> userInExamGroupService)
     {
         this.examGroupsDataService = examGroupsDataService;
         this.contestsDataService = contestsDataService;
         this.usersDataService = usersDataService;
         this.backgroundJobsService = backgroundJobsService;
         this.httpClientService = httpClientService;
+        this.userInExamGroupService = userInExamGroupService;
     }
 
     public override Task<ExamGroupAdministrationModel> Get(int id) =>
@@ -76,7 +80,8 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
 
     public async Task<UserToExamGroupModel> AddUserToExamGroup(UserToExamGroupModel model)
     {
-        var examGroup = await this.examGroupsDataService.GetByIdQuery(model.ExamGroupId).FirstAsync();
+        var examGroup = await this.examGroupsDataService.GetByIdWithUsersQuery(model.ExamGroupId)
+            .FirstAsync();
 
         if (examGroup.UsersInExamGroups.Any(x => x.UserId == model.UserId))
         {
@@ -101,7 +106,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
             .Split(new[] { ",", " ", Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
             .Where(username => Regex.IsMatch(username, ConstraintConstants.User.UsernameRegEx));
 
-        var examGroup = await this.examGroupsDataService.GetByIdQuery(model.ExamGroupId).FirstAsync();
+        var examGroup = await this.examGroupsDataService.GetByIdWithUsersQuery(model.ExamGroupId).FirstAsync();
 
         var users = this.usersDataService.GetQuery(u => usernames.Contains(u.UserName));
 
@@ -123,7 +128,6 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
     public async Task<UserToExamGroupModel> RemoveUserFromExamGroup(UserToExamGroupModel model)
     {
         var examGroup = await this.examGroupsDataService.GetByIdQuery(model.ExamGroupId)
-            .Include(ueg => ueg.UsersInExamGroups)
             .FirstAsync();
 
         var userExamGroup = examGroup.UsersInExamGroups.FirstOrDefault(x => x.UserId == model.UserId);
@@ -132,7 +136,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
             throw new BusinessServiceException($"User does not present in the exam group {examGroup.Name}.");
         }
 
-        examGroup.UsersInExamGroups.Remove(userExamGroup);
+        this.userInExamGroupService.Delete(userExamGroup);
         this.examGroupsDataService.Update(examGroup);
         await this.examGroupsDataService.SaveChanges();
 
@@ -141,14 +145,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
 
     public override async Task Delete(int id)
     {
-        var examGroup = await this.examGroupsDataService.GetByIdQuery(id).FirstAsync();
-
-        if (examGroup.ContestId != null && await this.contestsDataService.IsActiveById((int)examGroup.ContestId))
-        {
-            throw new BusinessServiceException("Cannot delete exam group from active contest.");
-        }
-
-        this.examGroupsDataService.Delete(examGroup);
+        await this.examGroupsDataService.DeleteById(id);
         await this.examGroupsDataService.SaveChanges();
     }
 

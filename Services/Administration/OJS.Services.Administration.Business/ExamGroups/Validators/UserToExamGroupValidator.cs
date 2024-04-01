@@ -24,14 +24,7 @@ public class UserToExamGroupValidator : BaseValidator<UserToExamGroupModel>
             .WithMessage("The problem group does not exists or does not have a contest connected to it.");
     }
 
-    private async Task<bool> BeValidAndWithContest(int examGroupId)
-    {
-        var examGroup = await this.examGroupsDataService.GetByIdQuery(examGroupId).FirstOrDefaultAsync();
-        if (examGroup == null || examGroup.ContestId == null)
-        {
-            return false;
-        }
-
-        return true;
-    }
+    private async Task<bool> BeValidAndWithContest(int examGroupId) =>
+        await this.examGroupsDataService
+            .Exists(eg => eg.Id == examGroupId && eg.ContestId != null);
 }
