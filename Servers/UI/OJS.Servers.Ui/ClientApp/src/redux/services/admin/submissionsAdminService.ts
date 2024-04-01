@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 import {
+    IFileModel,
     IGetAllAdminParams,
     IPagedResultType,
     ISubmissionsAdminGridViewType,
@@ -36,7 +37,7 @@ export const submissionsAdminService = createApi({
             }),
         }),
         // eslint-disable-next-line max-len
-        downloadFileSubmission: builder.query<{blob: Blob; filename: string }, IRetestSubmissionUrlParams>({ query: ({ id }) => ({ url: `/Download/${id}` }) }),
+        downloadFileSubmission: builder.query<IFileModel, IRetestSubmissionUrlParams>({ query: ({ id }) => ({ url: `/Download/${id}` }) }),
     }),
 });
 
