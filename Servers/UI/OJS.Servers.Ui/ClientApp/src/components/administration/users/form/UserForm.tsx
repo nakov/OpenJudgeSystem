@@ -2,11 +2,12 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Box, FormControl, FormGroup, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
+import isNaN from 'lodash/isNaN';
 
 import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, ID, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
 import { IUserAdministrationModel } from '../../../../common/types';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../../redux/services/admin/usersAdminService';
-import { getDateAsLocal } from '../../../../utils/administration/administration-dates';
+import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -97,6 +98,9 @@ const UserForm = (props: IUserFormProps) => {
                 let currVal = val;
                 if (currVal === '') {
                     currVal = null;
+                }
+                if (!isNaN(new Date(currVal).getDate())) {
+                    currVal = convertToUtc(currVal);
                 }
                 return { ...obj, [key]: updateState(path.slice(1), currVal, obj[key] ?? {}) };
             };
