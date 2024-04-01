@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { IoIosInformationCircleOutline } from 'react-icons/io';
+import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { IoDocumentText } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
@@ -70,7 +70,14 @@ const ContestSolutionSubmitPage = () => {
         error,
     } = useGetContestRegisteredUserQuery({ id: contestId!.toString(), isOfficial: isCompete });
 
-    const { requirePassword, isOnlineExam, name, numberOfProblems, duration, id } = data || {};
+    const {
+        requirePassword,
+        name,
+        numberOfProblems,
+        duration,
+        id,
+        shouldConfirmParticipation,
+    } = data || {};
     const {
         contest,
         shouldEnterPassword,
@@ -106,6 +113,25 @@ const ContestSolutionSubmitPage = () => {
         }
     };
 
+    const fetchSubmissionsData = async () => {
+        try {
+            setSubmissionsDataLoading(true);
+            const { data: currentSubmissionsData } = await getSubmissionsData({
+                id: Number(selectedContestDetailsProblem!.id),
+                page: selectedSubmissionsPage,
+                isOfficial: isCompete,
+            });
+
+            setSubmissionsError('');
+            setSubmissionsData(currentSubmissionsData!);
+            setSubmissionsDataLoading(false);
+        } catch {
+            setSubmissionsError('Error loading submissions!');
+            setSubmissionsData(null);
+            setSubmissionsDataLoading(false);
+        }
+    };
+
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
         const submissionType = allowedSubmissionTypes.find((type: ISubmissionTypeType) => type.id === s.id);
 
@@ -128,6 +154,7 @@ const ContestSolutionSubmitPage = () => {
         if (!userContestParticipationData || userContestParticipationData.contest.id !== Number(contestId)) {
             fetchUserParticipationDetails();
         }
+        // rule is disabled because it requires adding fetchUserParticipationDetails to the dependencies which makes it to call itself endlessly, which makes recursive updates and crashes the application
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ userContestParticipationData, contestId ]);
 
@@ -156,25 +183,6 @@ const ContestSolutionSubmitPage = () => {
     // otherwise the id is NaN and the query is invalid
     useEffect(() => {
         if (selectedContestDetailsProblem) {
-            const fetchSubmissionsData = async () => {
-                try {
-                    setSubmissionsDataLoading(true);
-                    const { data: currentSubmissionsData } = await getSubmissionsData({
-                        id: Number(selectedContestDetailsProblem.id),
-                        page: selectedSubmissionsPage,
-                        isOfficial: isCompete,
-                    });
-
-                    setSubmissionsError('');
-                    setSubmissionsData(currentSubmissionsData!);
-                    setSubmissionsDataLoading(false);
-                } catch {
-                    setSubmissionsError('Error loading submissions!');
-                    setSubmissionsData(null);
-                    setSubmissionsDataLoading(false);
-                }
-            };
-
             fetchSubmissionsData();
         }
     }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage, isCompete ]);
@@ -397,7 +405,7 @@ const ContestSolutionSubmitPage = () => {
         );
     }
 
-    if (isCompete && isOnlineExam && !hasAcceptedOnlineExamModal) {
+    if (shouldConfirmParticipation && hasAcceptedOnlineExamModal) {
         return (
             <ContestCompeteModal
               examName={name!}
@@ -449,7 +457,10 @@ const ContestSolutionSubmitPage = () => {
                 </div>
             </div>
             <div className={styles.submissionsWrapper}>
-                <div>Submissions</div>
+                <div className={styles.submissionsTitleWrapper}>
+                    <span>Submissions</span>
+                    <IoMdRefresh onClick={fetchSubmissionsData} />
+                </div>
                 { submissionsError
                     ? <>Error loading submissions</>
                     : (

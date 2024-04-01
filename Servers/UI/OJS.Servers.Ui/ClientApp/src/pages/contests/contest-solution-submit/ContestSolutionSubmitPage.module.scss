@@ -38,6 +38,17 @@
     flex-direction: column;
     margin-top: spacings.$sp-24;
 
+    .submissionsTitleWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+
+      svg {
+        cursor: pointer;
+        margin-left: spacings.$sp-12;
+      }
+    }
+
     > div {
       font-size: variables.$f-size-30;
       font-weight: font-weights.$font-weight-semi-bold;

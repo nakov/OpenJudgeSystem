@@ -30,6 +30,7 @@ const ContestButton = (props: IContestButtonProps) => {
             onClick();
             return;
         }
+
         if (!isLoggedIn) {
             navigate(`/${LOGIN_PATH}`);
             return;

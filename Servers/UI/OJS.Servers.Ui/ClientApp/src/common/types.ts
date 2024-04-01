@@ -292,6 +292,7 @@ interface IRegisterForContestResponseType {
     duration: number;
     numberOfProblems: number;
     categoryId: number;
+    shouldConfirmParticipation: boolean;
 }
 
 interface IStartParticipationResponseType {
