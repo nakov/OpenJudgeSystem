@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Contests;
 
 using AutoMapper;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
@@ -13,6 +14,10 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
     public string Name { get; set; } = string.Empty;
 
     public bool RequirePassword { get; set; }
+
+    public bool ShouldShowConfirmationModal { get; set; }
+
+    public bool HasAcceptedOnlineExamModal { get; set; }
 
     public TimeSpan? Duration { get; set; }
 
@@ -39,6 +44,17 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
                         ? (src.EndTime - src.StartTime)
                         : null)))
             .ForMember(
+                opt => opt.ShouldShowConfirmationModal,
+                opt => opt.MapFrom(src =>
+                    src.Type == ContestType.OnlinePracticalExam))
+            .ForMember(
+                opt => opt.ShouldShowConfirmationModal,
+                opt => opt.MapFrom(src =>
+                    src.Type == ContestType.OnlinePracticalExam))
+            .ForMember(
                 opt => opt.ParticipantId,
+                src => src.Ignore())
+            .ForMember(
+                opt => opt.HasAcceptedOnlineExamModal,
                 src => src.Ignore());
 }
