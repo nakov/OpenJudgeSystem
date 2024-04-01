@@ -44,11 +44,13 @@ before(function(done)
             }).forEach(function(prop) {
                 global[prop] = window[prop];
             });
+
             Object.keys(console)
                 .forEach(function (prop) {
                     bgCoderConsole[prop] = console[prop];
                     console[prop] = new Function('');
                 });
+
             done();
         }
     });
