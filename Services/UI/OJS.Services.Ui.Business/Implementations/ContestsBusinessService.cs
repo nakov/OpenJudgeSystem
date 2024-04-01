@@ -172,7 +172,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, official);
             registerModel.ParticipantId = participant?.Id;
-            registerModel.HasAcceptedOnlineExamModal = participant != null;
+            registerModel.ShouldConfirmParticipation = contest!.IsOnlineExam && official && participant == null;
 
             return registerModel;
         }
