@@ -40,12 +40,14 @@ namespace OJS.Workers.Common
             public const string Java21SpringAndHibernateProjectExecutionStrategy = "run-java-21-spring-data-junit-tests";
 
             // JavaScript
-            public const string JavaScriptCode = "javascript-codeV20";
-            public const string JavaScriptJsDomUnitTests = "javascript-js-dom-unit-testsV20";
-            public const string JavaScriptUnitTestsWithMocha = "javascript-unit-tests-with-mochaV20";
-
-            public const string JavaScriptCodeAgainstUnitTestsWithMocha =
-                "javascript-code-against-unit-tests-with-mochaV20";
+            public const string JavaScriptCode = "javascript-code";
+            public const string JavaScriptCodeV20 = "javascript-codeV20";
+            public const string JavaScriptJsDomUnitTests = "javascript-js-dom-unit-tests";
+            public const string JavaScriptJsDomUnitTestsV20 = "javascript-js-dom-unit-testsV20";
+            public const string JavaScriptUnitTestsWithMocha = "javascript-unit-tests-with-mocha";
+            public const string JavaScriptUnitTestsWithMochaV20 = "javascript-unit-tests-with-mochaV20";
+            public const string JavaScriptCodeAgainstUnitTestsWithMocha = "javascript-code-against-unit-tests-with-mocha";
+            public const string JavaScriptCodeAgainstUnitTestsWithMochaV20 = "javascript-code-against-unit-tests-with-mochaV20";
 
             // Python
             public const string PythonCode = "python-code";
@@ -62,7 +64,8 @@ namespace OJS.Workers.Common
             // Go
             public const string GoCode = "go-code";
             // HTML and CSS
-            public const string HtmlAndCssZipFile = "html-and-css-zip-fileV20";
+            public const string HtmlAndCssZipFile = "html-and-css-zip-file";
+            public const string HtmlAndCssZipFileV20 = "html-and-css-zip-fileV20";
 
             // C++
             public const string CppCode = "cpp-code";
@@ -125,6 +128,7 @@ namespace OJS.Workers.Common
 
                     // HTML
                     { ExecutionStrategyNames.HtmlAndCssZipFile, ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy },
+                    { ExecutionStrategyNames.HtmlAndCssZipFileV20, ExecutionStrategyType.NodeJsV20ZipExecuteHtmlAndCssStrategy },
 
                     // C++
                     { ExecutionStrategyNames.CppCode, ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy },
@@ -132,9 +136,13 @@ namespace OJS.Workers.Common
 
                     // JavaScript
                     { ExecutionStrategyNames.JavaScriptCode, ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck },
+                    { ExecutionStrategyNames.JavaScriptCodeV20, ExecutionStrategyType.NodeJsV20PreprocessExecuteAndCheck },
                     { ExecutionStrategyNames.JavaScriptUnitTestsWithMocha, ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha },
+                    { ExecutionStrategyNames.JavaScriptUnitTestsWithMochaV20, ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunUnitTestsWithMocha },
                     { ExecutionStrategyNames.JavaScriptJsDomUnitTests, ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests },
+                    { ExecutionStrategyNames.JavaScriptJsDomUnitTestsV20, ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunJsDomUnitTests },
                     { ExecutionStrategyNames.JavaScriptCodeAgainstUnitTestsWithMocha, ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy },
+                    { ExecutionStrategyNames.JavaScriptCodeAgainstUnitTestsWithMochaV20, ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy },
 
                     // Java
                     { ExecutionStrategyNames.JavaCode, ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck },

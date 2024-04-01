@@ -62,5 +62,10 @@
         Java21SpringAndHibernateProjectExecution = 65,
         Java21PreprocessCompileExecuteAndCheck = 66,
         RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests = 67,
+        NodeJsV20PreprocessExecuteAndCheck = 68,
+        NodeJsV20PreprocessExecuteAndRunUnitTestsWithMocha = 69,
+        NodeJsV20PreprocessExecuteAndRunJsDomUnitTests = 70,
+        NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy = 71,
+        NodeJsV20ZipExecuteHtmlAndCssStrategy = 72,
     }
 }

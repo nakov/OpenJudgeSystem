@@ -16,6 +16,7 @@ namespace OJS.Services.Worker.Business.Implementations
     using OJS.Workers.ExecutionStrategies.Sql.PostgreSql;
     using OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase;
     using OJS.Workers.Executors.Implementations;
+    using OJS.Workers.ExecutionStrategies.NodeJs.V20;
 
     public class ExecutionStrategyFactory : IExecutionStrategyFactory
     {
@@ -163,6 +164,12 @@ namespace OJS.Services.Worker.Business.Implementations
                     break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
                     executionStrategy = new NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings>(
+                        type,
+                        processExecutorFactory,
+                        this.executionStrategySettingsProvider);
+                    break;
+                case ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
+                    executionStrategy = new NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy(
                         type,
                         processExecutorFactory,
                         this.executionStrategySettingsProvider);
