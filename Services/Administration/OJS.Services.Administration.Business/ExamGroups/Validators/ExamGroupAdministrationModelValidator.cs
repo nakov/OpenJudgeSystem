@@ -25,12 +25,13 @@ public class ExamGroupAdministrationModelValidator : BaseValidator<ExamGroupAdmi
 
         this.RuleFor(x => x.ContestId)
             .GreaterThanOrEqualTo(0)
+            .When(x => x.ContestId.HasValue)
             .MustAsync(async (id, _)
                 => await this.BeValidContest(id))
             .WithMessage("Contest with this id does not exists.")
-            .When(model => model.ContestId > 0);
+            .When(model => model.ContestId.HasValue);
     }
 
-    private async Task<bool> BeValidContest(int id)
-        => await this.contestsDataService.ExistsById(id);
+    private async Task<bool> BeValidContest(int? id)
+        => await this.contestsDataService.ExistsById(id!.Value);
 }

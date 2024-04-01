@@ -22,13 +22,5 @@ public class MultipleUsersToExamGroupModelValidator : BaseValidator<MultipleUser
     }
 
     private async Task<bool> BeValidAndWithContest(int examGroupId)
-    {
-        var examGroup = await this.examGroupsDataService.GetByIdQuery(examGroupId).FirstOrDefaultAsync();
-        if (examGroup == null || examGroup.ContestId == null)
-        {
-            return false;
-        }
-
-        return true;
-    }
+        => await this.examGroupsDataService.Exists(eg => eg.Id == examGroupId && eg.ContestId != null);
 }

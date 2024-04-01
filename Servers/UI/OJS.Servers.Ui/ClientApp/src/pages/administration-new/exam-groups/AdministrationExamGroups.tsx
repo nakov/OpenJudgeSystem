@@ -1,12 +1,9 @@
 /* eslint-disable no-restricted-globals */
-/* eslint-disable max-len */
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import { IconButton, Tooltip } from '@mui/material';
 
-import { CREATE_NEW_EXAM_GROUP } from '../../../common/labels';
 import { IGetAllAdminParams } from '../../../common/types';
+import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ExamGroupEdit from '../../../components/administration/exam-groups/exam-group-edit/ExamGroupEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -24,7 +21,13 @@ import examGroupsFilterableColumns, { returnExamGroupsNonFilterableColumns } fro
 
 const AdministrationExamGroupsPage = () => {
     const [ searchParams ] = useSearchParams();
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({ page: 1, itemsPerPage: DEFAULT_ITEMS_PER_PAGE, filter: searchParams.get('filter') ?? '', sorting: searchParams.get('sorting') ?? '' });
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
+        page: 1,
+        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+        filter: searchParams.get('filter') ??
+        '',
+        sorting: searchParams.get('sorting') ?? '',
+    });
     const [ openEditExamGroupModal, setOpenEditExamGroupModal ] = useState(false);
     const [ openShowCreateExamGroupModal, setOpenShowCreateExamGroupModal ] = useState<boolean>(false);
     const [ examGroupId, setExamGroupId ] = useState<number>();
@@ -64,21 +67,22 @@ const AdministrationExamGroupsPage = () => {
     );
 
     const renderCreateExamGroupModal = (index: number) => (
-        <AdministrationModal index={index} key={index} open={openShowCreateExamGroupModal} onClose={() => setOpenShowCreateExamGroupModal(!openShowCreateExamGroupModal)}>
+        <AdministrationModal
+          index={index}
+          key={index}
+          open={openShowCreateExamGroupModal}
+          onClose={() => setOpenShowCreateExamGroupModal(!openShowCreateExamGroupModal)}
+        >
             <ExamGroupEdit examGroupId={null} isEditMode={false} />
         </AdministrationModal>
     );
 
     const renderGridActions = () => (
-        <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
-            <Tooltip title={CREATE_NEW_EXAM_GROUP}>
-                <IconButton
-                  onClick={() => setOpenShowCreateExamGroupModal(!openShowCreateExamGroupModal)}
-                >
-                    <AddBoxIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
-            </Tooltip>
-        </div>
+        <CreateButton
+          showModal={openShowCreateExamGroupModal}
+          showModalFunc={setOpenShowCreateExamGroupModal}
+          styles={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }}
+        />
     );
 
     if (isLoading) {

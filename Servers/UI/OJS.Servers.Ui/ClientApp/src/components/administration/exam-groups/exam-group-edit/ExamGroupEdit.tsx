@@ -43,7 +43,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         id: 0,
         name: '',
         contestName: '',
-        contestId: 0,
+        contestId: null,
         externalAppId: '',
         externalExamGroupId: 0,
     });

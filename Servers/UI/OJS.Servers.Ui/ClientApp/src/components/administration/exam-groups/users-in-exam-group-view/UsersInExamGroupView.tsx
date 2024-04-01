@@ -79,6 +79,36 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
             flex: 2,
             sortable: false,
         },
+        {
+            field: 'firstName',
+            headerName: 'First Name',
+            headerAlign: 'center',
+            align: 'center',
+            type: 'string',
+            filterable: false,
+            flex: 2,
+            sortable: false,
+        },
+        {
+            field: 'lastName',
+            headerName: 'Last Name',
+            headerAlign: 'center',
+            align: 'center',
+            type: 'string',
+            filterable: false,
+            flex: 2,
+            sortable: false,
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            headerAlign: 'center',
+            align: 'center',
+            type: 'string',
+            filterable: false,
+            flex: 2,
+            sortable: false,
+        },
     ];
 
     const notFilterableGridColumns: GridColDef[] = [

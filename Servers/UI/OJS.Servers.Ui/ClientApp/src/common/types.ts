@@ -558,7 +558,7 @@ interface IExamGroupAdministration {
     id: number;
     name: string;
     contestName: string;
-    contestId: number;
+    contestId: number | null;
     externalAppId: string;
     externalExamGroupId: number;
 }

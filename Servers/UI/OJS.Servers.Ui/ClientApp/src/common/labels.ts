@@ -11,6 +11,8 @@ export const CHECKER = 'Checker';
 
 export const DOWNLOAD = 'Download';
 
+export const USERS = 'Users';
+
 export const VIEW = 'View';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
@@ -77,9 +79,6 @@ export const HIDE_INPUT = 'Hide Input';
 
 // Problem Resources
 export const FILE_EXTENSION = 'File Extension';
-
-// Exam groups
-export const CREATE_NEW_EXAM_GROUP = 'Create new exam group';
 // COMPILERS
 export const COMPILER = 'Compiler';
 export const ADDITIONAL_COMPILER_ARGUMENTS = 'Additional Compiler Arguments';

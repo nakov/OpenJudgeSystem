@@ -72,6 +72,7 @@ public class ExamGroupsController : BaseAdminApiController<ExamGroup, int, ExamG
         var validationResult = await this.userToExamGroupValidator
             .ValidateAsync(model)
             .ToExceptionResponseAsync();
+
         if (!validationResult.IsValid)
         {
             return this.UnprocessableEntity(validationResult.Errors);

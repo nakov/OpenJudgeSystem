@@ -150,5 +150,5 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
         => this.Ok(
             await this.usersGridData.GetAll<UserInListModel>(
                 model,
-                user => user.UsersInExamGroups!.Any(ur => ur.ExamGroupId == examGroupId)));
+                user => user.UsersInExamGroups.Any(ur => ur.ExamGroupId == examGroupId)));
 }

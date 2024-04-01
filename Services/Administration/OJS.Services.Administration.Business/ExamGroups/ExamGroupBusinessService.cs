@@ -8,13 +8,11 @@ using OJS.Data.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Models;
-using OJS.Services.Common.Models.Configurations;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.BackgroundJobs;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.HttpClients;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,11 +50,6 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
     public override async Task<ExamGroupAdministrationModel> Create(ExamGroupAdministrationModel model)
     {
         var examGroup = model.Map<ExamGroup>();
-
-        if (model.ContestId == 0)
-        {
-            examGroup.ContestId = null;
-        }
 
         await this.examGroupsDataService.Add(examGroup);
         await this.examGroupsDataService.SaveChanges();

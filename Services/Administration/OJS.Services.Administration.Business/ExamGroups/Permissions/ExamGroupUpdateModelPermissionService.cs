@@ -13,6 +13,13 @@ public class ExamGroupUpdateModelPermissionService : IEntityPermissionsService<E
     public ExamGroupUpdateModelPermissionService(IContestsBusinessService contestsBusinessService)
         => this.contestsBusinessService = contestsBusinessService;
 
-    public Task<bool> HasPermission(UserInfoModel user, ExamGroupAdministrationModel value, string operation)
-        => this.contestsBusinessService.UserHasContestPermissions(value.ContestId, user.Id, user.IsAdmin);
+    public async Task<bool> HasPermission(UserInfoModel user, ExamGroupAdministrationModel value, string operation)
+    {
+        if (value.ContestId != null)
+        {
+            return await this.contestsBusinessService.UserHasContestPermissions(value.ContestId.Value, user.Id, user.IsAdmin);
+        }
+
+        return false;
+    }
 }

@@ -8,13 +8,14 @@ public class ExamGroupAdministrationModel : BaseAdministrationModel<int>, IMapEx
 {
     public string? Name { get; set; }
 
-    public int ContestId { get; set; }
+    public int? ContestId { get; set; }
 
     public string? ContestName { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<ExamGroup, ExamGroupAdministrationModel>();
+
         configuration.CreateMap<ExamGroupAdministrationModel, ExamGroup>()
             .ForMember(eg => eg.ExternalAppId, opt => opt.Ignore())
             .ForMember(eg => eg.ExternalExamGroupId, opt => opt.Ignore())

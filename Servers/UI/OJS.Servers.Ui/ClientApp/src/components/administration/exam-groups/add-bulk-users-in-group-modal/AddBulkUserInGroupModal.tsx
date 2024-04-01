@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TextField, Typography } from '@mui/material';
 
 import {
@@ -111,6 +112,7 @@ const AddBulkUsersInGroupModal = (props:IAddUsersInExamGroupProps) => {
                   variant="standard"
                   name="examgroup"
                   value={examGroup.name}
+                  disabled
                 />
                 <TextField
                   className={formStyles.inputRow}
@@ -120,6 +122,7 @@ const AddBulkUsersInGroupModal = (props:IAddUsersInExamGroupProps) => {
                   onChange={(e) => onChange(e)}
                   multiline
                   rows={15}
+                  placeholder="Enter the usernames of the users you want to add, separated by comma, space or new line"
                 />
                 <FormActionButton
                   onClick={() => add()}
@@ -128,6 +131,11 @@ const AddBulkUsersInGroupModal = (props:IAddUsersInExamGroupProps) => {
                   buttonClassName={formStyles.button}
                   name="Add"
                 />
+                <Typography>
+                    Users which are registered only in the
+                    <Link to="https://dev.platform.softuni.bg/"> Softuni Platform</Link>
+                    , will be added with delay.
+                </Typography>
             </form>
 
         </>
