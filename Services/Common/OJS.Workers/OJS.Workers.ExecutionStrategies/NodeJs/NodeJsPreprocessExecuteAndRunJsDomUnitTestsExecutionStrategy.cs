@@ -55,35 +55,32 @@ chai.use(sinonChai);
 describe('TestDOMScope', function() {
     let bgCoderConsole = {};
     before(function(done) {
-    const dom = new jsdom.JSDOM(``);
-    const { window } = dom;
-
-    // define innerText manually to work as textContent
-    Object.defineProperty(window.Element.prototype, 'innerText', {
-        get() { return this.textContent; },
-        set(value) { this.textContent = value; }
+    jsdom.env({
+        html: '',
+        done: function(errors, window) {
+            // define innerText manually to work as textContent, as it is not supported in jsdom but used in judge
+            Object.defineProperty(window.Element.prototype, 'innerText', {
+                get() { return this.textContent },
+                set(value) { this.textContent = value }
+            });
+            global.window = window;
+            global.document = window.document;
+            global.$ = jq(window);
+            global.handlebars = handlebars;
+            Object.getOwnPropertyNames(window)
+                .filter(function (prop) {
+                    return prop.toLowerCase().indexOf('html') >= 0;
+                }).forEach(function (prop) {
+                    global[prop] = window[prop];
+                });
+            Object.keys(console)
+                .forEach(function (prop) {
+                    bgCoderConsole[prop] = console[prop];
+                    console[prop] = new Function('');
+                });
+            done();
+        }
     });
-
-    global.window = window;
-    global.document = window.document;
-    global.$ = jq(window);
-    global.handlebars = handlebars;
-
-    Object.getOwnPropertyNames(window)
-        .filter(function(prop) {
-            return prop.toLowerCase().indexOf('html') >= 0;
-        }).forEach(function(prop) {
-            global[prop] = window[prop];
-        });
-
-    Object.keys(console)
-        .forEach(function(prop) {
-            bgCoderConsole[prop] = console[prop];
-            console[prop] = function() {}; // replacing new Function('') with an empty function
-        });
-
-    done();
-});
     after(function() {
         Object.keys(bgCoderConsole)
             .forEach(function (prop) {
