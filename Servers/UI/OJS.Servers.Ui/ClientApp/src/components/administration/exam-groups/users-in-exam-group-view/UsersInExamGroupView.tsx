@@ -26,10 +26,11 @@ import DeleteUserFromGroupButton from '../delete-user-from-group-button/DeleteUs
 
 interface IUsersInExamGroupViewProps {
     examGroupId: number;
+    isAllowedToAddUsers: boolean;
 }
 
 const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
-    const { examGroupId } = props;
+    const { examGroupId, isAllowedToAddUsers } = props;
     const filtersAndSortersLocation = `examGroup-details-users-${examGroupId}`;
 
     const selectedFilters =
@@ -167,14 +168,29 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
             <CreateButton
               showModal={openShowAddUserModal}
               showModalFunc={setOpenShowAddUserModal}
-              styles={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }}
+              styles={{
+                  width: '40px',
+                  height: '40px',
+                  color: !isAllowedToAddUsers
+                      ? 'grey'
+                      : 'rgb(25,118,210)',
+              }}
+              disabled={!isAllowedToAddUsers}
             />
             <Tooltip title="Add multiple users">
-                <IconButton
-                  onClick={() => setOpenShowAddBulkUsersModal(!openShowAddBulkUsersModal)}
-                >
-                    <QueueIcon sx={{ width: '40px', height: '40px' }} color="primary" />
-                </IconButton>
+                <span>
+                    <IconButton
+                      disabled={!isAllowedToAddUsers}
+                      onClick={() => setOpenShowAddBulkUsersModal(!openShowAddBulkUsersModal)}
+                    >
+                        <QueueIcon
+                          sx={{ width: '40px', height: '40px' }}
+                          color={!isAllowedToAddUsers
+                              ? 'disabled'
+                              : 'primary'}
+                        />
+                    </IconButton>
+                </span>
             </Tooltip>
         </div>
     );

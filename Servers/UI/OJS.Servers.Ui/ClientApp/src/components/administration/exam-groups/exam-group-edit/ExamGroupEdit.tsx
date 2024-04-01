@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-undefined */
 import { useEffect, useState } from 'react';
@@ -29,10 +30,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IExamGroupEditProps {
     examGroupId: number | null;
     isEditMode?: boolean;
+    getContestId: Function;
 }
 
 const ExamGroupEdit = (props:IExamGroupEditProps) => {
-    const { examGroupId, isEditMode = true } = props;
+    const { examGroupId, isEditMode = true, getContestId } = props;
 
     const navigate = useNavigate();
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -76,9 +78,10 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         () => {
             if (data) {
                 setExamGroup(data);
+                getContestId(data.contestId);
             }
         },
-        [ data ],
+        [ data, getContestId ],
     );
 
     useEffect(() => {

@@ -11,19 +11,27 @@ interface ICreateButtonProps {
     styles: object;
     Icon? : IconType;
     tooltipLabel?: string;
+    disabled? :boolean;
 }
 const CreateButton = (props: ICreateButtonProps) => {
-    const { showModal, showModalFunc, styles, Icon, tooltipLabel = CREATE_NEW_RECORD } = props;
+    const { showModal, showModalFunc, styles, Icon, tooltipLabel = CREATE_NEW_RECORD, disabled = false } = props;
     return (
         <Tooltip title={tooltipLabel}>
-            <IconButton
-              onClick={() => showModalFunc(!showModal)}
-            >
+            <span>
+                <IconButton
+                  disabled={disabled}
+                  onClick={() => showModalFunc(!showModal)}
+                >
 
-                {Icon
-                    ? <Icon style={styles} />
-                    : <RiAddBoxFill style={styles} />}
-            </IconButton>
+                    {Icon
+                        ? <Icon style={styles} />
+                        : (
+                            <RiAddBoxFill
+                              style={styles}
+                            />
+                        )}
+                </IconButton>
+            </span>
         </Tooltip>
     );
 };

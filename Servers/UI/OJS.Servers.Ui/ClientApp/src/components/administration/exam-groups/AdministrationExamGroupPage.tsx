@@ -15,8 +15,14 @@ const AdministrationExamGroupPage = () => {
     const [ , , , examGroupId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(EXAM_GROUPS_LISTED_DATA.USERS_TAB);
 
+    const [ contestId, setContestId ] = useState<number | null>(null);
+
+    const getExamGroupContestId = (contestIdToSave: number | null) => {
+        setContestId(contestIdToSave);
+    };
+
     const returnExamGroupForm = () => (
-        <ExamGroupEdit examGroupId={Number(examGroupId)} />
+        <ExamGroupEdit examGroupId={Number(examGroupId)} getContestId={getExamGroupContestId} />
     );
 
     const onTabChange = (event: React.SyntheticEvent, newValue: EXAM_GROUPS_LISTED_DATA) => {
@@ -24,7 +30,7 @@ const AdministrationExamGroupPage = () => {
     };
 
     const returnUsers = (key: string) => (
-        <UsersInExamGroupView key={key} examGroupId={Number(examGroupId)} />
+        <UsersInExamGroupView key={key} examGroupId={Number(examGroupId)} isAllowedToAddUsers={contestId !== null} />
     );
 
     return (
