@@ -52,14 +52,23 @@
 }
 
 .selectedSection {
-  background-color: #2196F3 !important;
-  color: white !important;
+  background-color: #2196f3 !important;
+  color: colors.$white-color !important;
 }
 
 .appBar {
-  background-color: #2196F3 !important;
+  background-color: #2196f3 !important;
 }
 
 .listItemIcon {
   color: inherit !important;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  margin-top: 3.5rem;
+  max-width: 100%;
+  min-height: 100vh;
+  padding: 1rem;
 }

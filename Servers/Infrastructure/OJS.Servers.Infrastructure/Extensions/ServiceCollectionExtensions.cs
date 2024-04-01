@@ -104,7 +104,6 @@ namespace OJS.Servers.Infrastructure.Extensions
                     var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
                     options.UseSqlServer(connectionString);
                 })
-                .AddScoped<DbContext, TDbContext>()
                 .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
                 .AddTransactionsProvider<TDbContext>();
 

@@ -12,6 +12,7 @@ import { useSearchParams } from 'react-router-dom';
 import { IContestCategory } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import {
+    setContestCategories,
     setContestCategory,
     setContestStrategy,
     updateContestCategoryBreadcrumbItem,
@@ -47,6 +48,10 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
 
     useEffect(() => {
+        dispatch(setContestCategories({ contestCategories: contestCategories || [] }));
+    }, [ contestCategories, dispatch ]);
+
+    useEffect(() => {
         const selectedCategory = findContestCategoryByIdRecursive(contestCategories, selectedId);
         const breadcrumbItems = findParentNames(contestCategories, selectedId);
 
@@ -54,80 +59,6 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ selectedId, contestCategories ]);
-
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const findParentNames = (collection: Array<IContestCategory> | undefined, selectedId: number) => {
-        if (!collection || !selectedId) {
-            return;
-        }
-        const findParentsRecursive = (
-            element: IContestCategory,
-            targetId: number,
-            parents: Array<{ name: string; id: number }> = [],
-        ): Array<{name: string; id: number}> | null => {
-            if (element.id === targetId) {
-                return [ ...parents, { name: element.name, id: element.id } ];
-            }
-
-            for (const child of element.children || []) {
-                const result = findParentsRecursive(child, targetId, [ ...parents, { name: element.name, id: element.id } ]);
-
-                if (result) {
-                    return result;
-                }
-            }
-
-            return null;
-        };
-
-        for (const node of collection) {
-            const parents = findParentsRecursive(node, selectedId);
-            if (parents) {
-                return parents;
-            }
-        }
-
-        return [];
-    };
-
-    const findContestCategoryByIdRecursive =
-        (elements: Array<IContestCategory> | undefined, id: number, rootIndex = 0): IContestCategory | null => {
-            if (!elements) {
-                return null;
-            }
-            // eslint-disable-next-line no-restricted-syntax
-            for (const contestCategory of elements) {
-                if (contestCategory.id === id) {
-                    return contestCategory;
-                }
-                if (contestCategory.children.length) {
-                    const foundCategory = findContestCategoryByIdRecursive(contestCategory.children, id, rootIndex + 1);
-                    if (foundCategory !== null) {
-                        return foundCategory;
-                    }
-                }
-            }
-            return null;
-        };
-
-    const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number) => {
-        if (!elements) {
-            return null;
-        }
-        // eslint-disable-next-line no-restricted-syntax
-        for (const element of elements) {
-            if (element.id === id) {
-                return true;
-            }
-            if (element.children) {
-                const found = findActiveChildrenByIdRecursive(element.children, id);
-                if (found) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
 
     const onContestCategoryClick = (id: number) => {
         if (isRenderedOnHomePage) {
@@ -137,6 +68,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
         searchParams.set('page', '1');
         searchParams.set('category', id.toString());
+        searchParams.delete('strategy');
 
         setSearchParams(searchParams);
         dispatch(setContestCategory(selectedContestCategory));
@@ -206,4 +138,78 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     );
 };
 
-export default ContestCetegories;
+// eslint-disable-next-line @typescript-eslint/no-shadow
+const findParentNames = (collection: Array<IContestCategory> | undefined, selectedId: number) => {
+    if (!collection || !selectedId) {
+        return;
+    }
+    const findParentsRecursive = (
+        element: IContestCategory,
+        targetId: number,
+        parents: Array<{ name: string; id: number }> = [],
+    ): Array<{name: string; id: number}> | null => {
+        if (element.id === targetId) {
+            return [ ...parents, { name: element.name, id: element.id } ];
+        }
+
+        for (const child of element.children || []) {
+            const result = findParentsRecursive(child, targetId, [ ...parents, { name: element.name, id: element.id } ]);
+
+            if (result) {
+                return result;
+            }
+        }
+
+        return null;
+    };
+
+    for (const node of collection) {
+        const parents = findParentsRecursive(node, selectedId);
+        if (parents) {
+            return parents;
+        }
+    }
+
+    return [];
+};
+
+const findContestCategoryByIdRecursive =
+    (elements: Array<IContestCategory> | undefined, id: number, rootIndex = 0): IContestCategory | null => {
+        if (!elements) {
+            return null;
+        }
+        // eslint-disable-next-line no-restricted-syntax
+        for (const contestCategory of elements) {
+            if (contestCategory.id === id) {
+                return contestCategory;
+            }
+            if (contestCategory.children.length) {
+                const foundCategory = findContestCategoryByIdRecursive(contestCategory.children, id, rootIndex + 1);
+                if (foundCategory !== null) {
+                    return foundCategory;
+                }
+            }
+        }
+        return null;
+    };
+
+const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number) => {
+    if (!elements) {
+        return null;
+    }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const element of elements) {
+        if (element.id === id) {
+            return true;
+        }
+        if (element.children) {
+            const found = findActiveChildrenByIdRecursive(element.children, id);
+            if (found) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+export { ContestCetegories, findContestCategoryByIdRecursive, findParentNames };

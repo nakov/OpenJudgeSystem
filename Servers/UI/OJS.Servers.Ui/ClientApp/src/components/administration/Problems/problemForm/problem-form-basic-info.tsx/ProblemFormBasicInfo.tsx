@@ -2,117 +2,47 @@
 import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
+import { ContestVariation } from '../../../../../common/contest-types';
 import { ProblemGroupTypes } from '../../../../../common/enums';
 import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../../common/labels';
-import { IProblemAdministration } from '../../../../../common/types';
+import { IProblemAdministration, IProblemGroupDropdownModel } from '../../../../../common/types';
 import { useGetCheckersForProblemQuery } from '../../../../../redux/services/admin/checkersAdminService';
+
+// eslint-disable-next-line css-modules/no-unused-class
+import formStyles from '../../../common/styles/FormStyles.module.scss';
 
 interface IProblemFormBasicInfoProps {
     onChange: Function;
     currentProblem: IProblemAdministration;
+    problemGroups : Array<IProblemGroupDropdownModel>;
 }
 const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
-    const { onChange, currentProblem } = props;
+    const { onChange, currentProblem, problemGroups } = props;
     const { data: checkers } = useGetCheckersForProblemQuery(null);
-    return (
-        <>
-            <Typography sx={{ marginTop: '1rem' }} variant="h4">Basic info</Typography>
-            <Divider />
-            <Box style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                <FormGroup sx={{ width: '45%' }}>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={ID}
-                          value={currentProblem?.id}
-                          InputLabelProps={{ shrink: true }}
-                          type="text"
-                          disabled
-                        />
-                    </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={NAME}
-                          value={currentProblem?.name}
-                          InputLabelProps={{ shrink: true }}
-                          type="text"
-                          name="name"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={MAXIMUM_POINTS}
-                          value={currentProblem?.maximumPoints}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="maximumPoints"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={SOURCE_CODE_SIZE_LIMIT}
-                          value={currentProblem?.sourceCodeSizeLimit}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="sourceCodeSizeLimit"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
+
+    const renderProblemGroups = () => {
+        if (currentProblem.contestType === ContestVariation.OnlinePracticalExam) {
+            return (
+                <FormGroup className={formStyles.selectFormGroup}>
+                    <InputLabel id="problemGroupOrderBy">Problem Group Order By</InputLabel>
+                    <Select
+                      onChange={(e) => onChange(e)}
+                      onBlur={(e) => onChange(e)}
+                      labelId="problemGroupId"
+                      value={currentProblem.problemGroupId}
+                      name="problemGroupId"
+                    >
+                        {problemGroups.map((pg) => (
+                            <MenuItem key={pg.id} value={pg.id}>
+                                {pg.orderBy}
+                            </MenuItem>
+                        ))}
+                    </Select>
                 </FormGroup>
-                <FormGroup sx={{ width: '45%' }}>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={ORDER_BY}
-                          value={currentProblem?.orderBy}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="orderBy"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={CONTEST_ID}
-                          value={currentProblem?.contestId}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="contestId"
-                          onChange={(e) => onChange(e)}
-                          disabled
-                        />
-                    </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={MEMORY_LIMIT}
-                          value={currentProblem?.memoryLimit}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="memoryLimit"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                    <FormControl sx={{ margin: '1rem' }}>
-                        <TextField
-                          variant="standard"
-                          label={TIME_LIMIT}
-                          value={currentProblem?.timeLimit}
-                          InputLabelProps={{ shrink: true }}
-                          type="number"
-                          name="timeLimit"
-                          onChange={(e) => onChange(e)}
-                        />
-                    </FormControl>
-                </FormGroup>
-            </Box>
-            <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+            );
+        }
+        return (
+            <FormGroup className={formStyles.selectFormGroup}>
                 <InputLabel id="problemGroupType">{PROBLEM_GROUP_TYPE}</InputLabel>
                 <Select
                   onChange={(e) => onChange(e)}
@@ -128,7 +58,109 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                     ))}
                 </Select>
             </FormGroup>
-            <FormGroup sx={{ margin: '0.5rem 0', width: '92%', alignSelf: 'center' }}>
+        );
+    };
+
+    return (
+        <Box className={formStyles.inputRow}>
+            <Typography className={formStyles.dividerLabel} variant="h4">Basic info</Typography>
+            <Divider className={formStyles.inputRow} />
+            <Box className={formStyles.row}>
+                <FormGroup className={formStyles.inlineElement}>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={ID}
+                          value={currentProblem?.id}
+                          InputLabelProps={{ shrink: true }}
+                          type="text"
+                          disabled
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={NAME}
+                          value={currentProblem?.name}
+                          InputLabelProps={{ shrink: true }}
+                          type="text"
+                          name="name"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={MAXIMUM_POINTS}
+                          value={currentProblem?.maximumPoints}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="maximumPoints"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={SOURCE_CODE_SIZE_LIMIT}
+                          value={currentProblem?.sourceCodeSizeLimit}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="sourceCodeSizeLimit"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                </FormGroup>
+                <FormGroup className={formStyles.inlineElement}>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={ORDER_BY}
+                          value={currentProblem?.orderBy}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="orderBy"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={CONTEST_ID}
+                          value={currentProblem?.contestId}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="contestId"
+                          onChange={(e) => onChange(e)}
+                          disabled
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={MEMORY_LIMIT}
+                          value={currentProblem?.memoryLimit}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="memoryLimit"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                    <FormControl className={formStyles.spacing}>
+                        <TextField
+                          variant="standard"
+                          label={TIME_LIMIT}
+                          value={currentProblem?.timeLimit}
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          name="timeLimit"
+                          onChange={(e) => onChange(e)}
+                        />
+                    </FormControl>
+                </FormGroup>
+            </Box>
+            {renderProblemGroups()}
+            <FormGroup className={formStyles.selectFormGroup}>
                 <InputLabel id="problemGroupType">{CHECKER}</InputLabel>
                 <Select
                   onChange={(e) => onChange(e)}
@@ -144,7 +176,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                     ))}
                 </Select>
             </FormGroup>
-            <FormGroup sx={{ marginLeft: '4rem' }}>
+            <FormGroup>
                 <FormControlLabel
                   control={<Checkbox checked={currentProblem.showDetailedFeedback} />}
                   label={SHOW_DETAILED_FEEDBACK}
@@ -162,7 +194,7 @@ const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
                   label={SHOW_RESULTS}
                 />
             </FormGroup>
-        </>
+        </Box>
     );
 };
 export default ProblemFormBasicInfo;

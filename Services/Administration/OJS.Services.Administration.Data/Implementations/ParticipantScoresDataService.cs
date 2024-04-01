@@ -1,11 +1,11 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
-    using System;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Data.Implementations;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;

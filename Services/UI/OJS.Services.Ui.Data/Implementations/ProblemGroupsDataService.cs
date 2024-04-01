@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data.Implementations;
     using System.Linq;
@@ -8,7 +9,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ProblemGroupsDataService : DataService<ProblemGroup>, IProblemGroupsDataService
     {
-        public ProblemGroupsDataService(DbContext db)
+        public ProblemGroupsDataService(OjsDbContext db)
             : base(db)
         {
         }

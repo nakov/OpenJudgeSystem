@@ -2,41 +2,82 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
+import { getAllContestsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
-import { useAppSelector } from '../../../redux/store';
+import {
+    setContestCategories,
+    updateContestCategoryBreadcrumbItem,
+} from '../../../redux/features/contestsSlice';
+import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { findContestCategoryByIdRecursive, findParentNames } from '../contest-categories/ContestCetegories';
 
 import styles from './ContestBreadcrumbs.module.scss';
 
 const ContestBreadcrumbs = () => {
+    const dispatch = useAppDispatch();
+    const { contestId } = useParams();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
-    const { breadcrumbItems } = useAppSelector((state) => state.contests);
+    const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
+    const { data, isLoading, refetch } = useGetContestCategoriesQuery();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
+    // fetch contests data, if it's not present beforehand
+    useEffect(() => {
+        if (contestCategories?.length === 0) {
+            refetch();
+        }
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [ ]);
+
+    useEffect(() => {
+        dispatch(setContestCategories({ contestCategories: data || [] }));
+    }, [ data, dispatch ]);
+
+    // set selected category when loading from specific url and no data is present beforehand
+    useEffect(() => {
+        if (contestId && breadcrumbItems.length === 0 && contestDetails) {
+            const selectedCategory = findContestCategoryByIdRecursive(contestCategories, contestDetails?.categoryId);
+            if (selectedCategory) {
+                const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);
+
+                dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
+            }
+        }
+    }, [ contestCategories, breadcrumbItems.length, contestDetails, contestId, dispatch ]);
+
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean, idx: number) => (
-        <div
-          key={`contest-breadcrumb-item-${idx}`}
-          onClick={() => {
-              searchParams.set('category', breadcrumbItem.id.toString());
-              setSearchParams(searchParams);
-          }}
-          className={`${styles.item} ${isLast
-              ? textColorClassName
-              : ''}`}
-        >
-            <div>
-                {breadcrumbItem.name}
-                {' '}
-                {!isLast && '/'}
+        <Link to={getAllContestsUrl(breadcrumbItem.id)}>
+            <div
+              key={`contest-breadcrumb-item-${idx}`}
+              onClick={() => {
+                  searchParams.set('category', breadcrumbItem.id.toString());
+                  setSearchParams(searchParams);
+              }}
+              className={`${styles.item} ${isLast
+                  ? textColorClassName
+                  : ''}`}
+            >
+                <div>
+                    {breadcrumbItem.name}
+                    {' '}
+                    {!isLast && '/'}
+                </div>
             </div>
-        </div>
+        </Link>
     );
+
+    if (isLoading) {
+        return <div>Loading breadcrumbs...</div>;
+    }
 
     if (breadcrumbItems.length === 0) {
         return null;

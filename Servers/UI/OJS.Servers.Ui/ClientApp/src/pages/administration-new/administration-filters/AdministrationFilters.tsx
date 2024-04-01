@@ -3,9 +3,7 @@ import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import CloseIcon from '@mui/icons-material/Close';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
@@ -13,7 +11,7 @@ import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
-import { IFilterColumn } from '../../../common/types';
+import { IEnumType, IFilterColumn } from '../../../common/types';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -28,7 +26,7 @@ interface IAdministrationFilterProps {
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
 }
 
@@ -57,6 +55,9 @@ const DROPDOWN_OPERATORS = {
         { name: 'Starts with', value: 'startswith' },
         { name: 'Ends with', value: 'endswith' },
     ],
+    [FilterColumnTypeEnum.ENUM]: [
+        { name: 'Equals', value: 'equals' },
+    ],
     [FilterColumnTypeEnum.BOOL]: [
         { name: 'Equals', value: 'equals' },
     ],
@@ -81,7 +82,6 @@ const DROPDOWN_OPERATORS = {
 const BOOL_DROPDOWN_VALUES = [
     { name: 'True', value: 'true' },
     { name: 'False', value: 'false' },
-    { name: 'Null', value: '' },
 ];
 
 const mapStringToFilterColumnTypeEnum = (type: string) => {
@@ -92,8 +92,12 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
     } if (type === 'date') {
         return FilterColumnTypeEnum.DATE;
     }
+    if (type === 'enum') {
+        return FilterColumnTypeEnum.ENUM;
+    }
     return FilterColumnTypeEnum.STRING;
 };
+const filterSeparator = '&&;';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
@@ -108,7 +112,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }), [ columns ]);
 
     useEffect(() => {
-        if (selectedFilters.length <= 0) {
+        if (selectedFilters.length <= 0 && setStateAction) {
             dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
         }
     }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
@@ -124,7 +128,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         const urlSelectedFilters: IAdministrationFilter[] = [];
 
         const filterParams = searchParams.get('filter') ?? '';
-        const urlParams = filterParams.split('&').filter((param) => param);
+        const urlParams = filterParams.split(filterSeparator).filter((param) => param);
         urlParams.forEach((param: string) => {
             const paramChunks = param.split('~').filter((chunk) => chunk);
 
@@ -157,7 +161,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     useEffect(() => {
         const urlSelectedFilters = mapUrlToFilters();
-        if (urlSelectedFilters.length) {
+        if (urlSelectedFilters.length && setStateAction) {
             dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,7 +192,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
 
         const delayedSetOfSearch = debounce(() => {
-            searchParams.set('filter', filtersFormattedArray.join('&'));
+            searchParams.set('filter', filtersFormattedArray.join(filterSeparator));
             if (withSearchParams) {
                 setSearchParams(searchParams);
             }
@@ -215,7 +219,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             ...filter,
             availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
         })) ];
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const removeAllFilters = () => {
@@ -223,10 +230,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             searchParams.delete('filter');
             setSearchParams(searchParams);
         }
-        dispatch(setStateAction({
-            key: location,
-            filters: [ defaultFilter ],
-        }));
+        if (setStateAction) {
+            dispatch(setStateAction({
+                key: location,
+                filters: [ defaultFilter ],
+            }));
+        }
     };
 
     const removeSingleFilter = (idx: number) => {
@@ -236,7 +245,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             availableColumns: [ ...filter.availableColumns, { columnName: deletedFilter.column, columnType: deletedFilter.inputType } ],
         })) ];
         newFiltersArray.splice(idx, 1);
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
+
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
             searchParams.delete('filter');
             if (withSearchParams) {
@@ -271,12 +284,14 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        if (setStateAction) {
+            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+        }
     };
 
     const renderInputField = (idx: number) => {
-        const { inputType } = selectedFilters[idx];
-        if (inputType === FilterColumnTypeEnum.BOOL) {
+        const selectedFilter = selectedFilters[idx];
+        if (selectedFilter.inputType === FilterColumnTypeEnum.BOOL) {
             return (
                 <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
                     <InputLabel id="value-select-label" shrink>Value</InputLabel>
@@ -287,6 +302,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                       onChange={(e) => updateFilterColumnData(idx, e, 'value')}
                       disabled={!selectedFilters[idx].operator || idx > 0}
                     >
+
                         { BOOL_DROPDOWN_VALUES.map((column) => (
                             <MenuItem
                               key={`s-c-${column.value}`}
@@ -299,13 +315,38 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                 </FormControl>
             );
         }
+        if (selectedFilter.inputType === FilterColumnTypeEnum.ENUM) {
+            const column = columns.filter((c) => c.columnType === selectedFilter.inputType && selectedFilter.column === c.columnName)[0];
+            return (
+                <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
+                    <InputLabel id="value-select-label" shrink>Value</InputLabel>
+                    <Select
+                      labelId="value-select-label"
+                      value={selectedFilters[idx]?.value}
+                      label="Value"
+                      onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+                      disabled={!selectedFilters[idx].operator || idx > 0}
+                    >
+
+                        { column.enumValues?.map((value) => (
+                            <MenuItem
+                              key={`s-c-${value}`}
+                              value={value}
+                            >
+                                {value}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            );
+        }
         return (
             <TextField
-              label={inputType === FilterColumnTypeEnum.DATE
+              label={selectedFilter.inputType === FilterColumnTypeEnum.DATE
                   ? ' '
                   : 'Value'}
               variant="standard"
-              type={inputType}
+              type={selectedFilter.inputType}
               value={selectedFilters[idx]?.value}
               onChange={(e) => updateFilterColumnData(idx, e, 'value')}
               disabled={!selectedFilters[idx].operator || idx > 0}
@@ -354,7 +395,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             {renderInputField(idx)}
         </div>
     );
-
     return (
         <div>
             <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>
@@ -399,12 +439,19 @@ const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) 
         }
         queryString.push(`${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`);
     });
-    return queryString.filter((el) => el).join('&') ?? '';
+    return queryString.filter((el) => el).join(filterSeparator) ?? '';
 };
 
-const mapGridColumnsToAdministrationFilterProps = (dataColumns: GridColDef[]): IFilterColumn[] => dataColumns.map((column) => {
+const mapGridColumnsToAdministrationFilterProps =
+(dataColumns: Array<GridColDef& IEnumType>): IFilterColumn[] => dataColumns.map((column) => {
     const mappedEnumType = mapStringToFilterColumnTypeEnum(column.type || '');
-    return { columnName: column.headerName?.replace(/\s/g, '') ?? '', columnType: mappedEnumType };
+    return {
+        columnName: column.headerName?.replace(/\s/g, '') ?? '',
+        columnType: mappedEnumType,
+        enumValues: mappedEnumType === FilterColumnTypeEnum.ENUM
+            ? column.enumValues
+            : null,
+    };
 });
 
 export {

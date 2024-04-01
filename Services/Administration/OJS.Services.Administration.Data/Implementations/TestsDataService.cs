@@ -1,14 +1,15 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data.Implementations;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class TestsDataService : DataService<Test>, ITestsDataService
     {
-        public TestsDataService(DbContext tests)
+        public TestsDataService(OjsDbContext tests)
             : base(tests)
         {
         }

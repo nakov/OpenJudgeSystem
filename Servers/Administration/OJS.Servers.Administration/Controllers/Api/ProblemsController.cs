@@ -1,19 +1,27 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Problems;
-using OJS.Services.Administration.Business.ProblemGroups;
-using OJS.Services.Administration.Business.Problems;
-using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Problems;
-using OJS.Services.Common;
-using OJS.Services.Common.Models.Pagination;
-using System.Threading.Tasks;
-using OJS.Services.Administration.Business.Problems.Validators;
-using OJS.Common.Exceptions;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
-using System.Collections.Generic;
+using OJS.Services.Administration.Business.ProblemGroups;
+using OJS.Services.Administration.Business.ProblemGroups.Permissions;
+using OJS.Services.Administration.Business.Problems;
+using OJS.Services.Administration.Business.Problems.GridData;
+using OJS.Services.Administration.Business.Problems.Permissions;
+using OJS.Services.Administration.Business.Problems.Validators;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.ProblemResources;
+using OJS.Services.Administration.Models.Problems;
+using OJS.Services.Administration.Models.Tests;
+using OJS.Services.Common;
+using OJS.Services.Common.Models.Pagination;
+using OJS.Services.Common.Models.Users;
+using OJS.Services.Infrastructure.Exceptions;
+using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class ProblemsController : BaseAdminApiController<Problem, int, ProblemInListModel, ProblemAdministrationModel>
 {
@@ -22,15 +30,17 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     private readonly IContestsActivityService contestsActivityService;
     private readonly IProblemGroupsBusinessService problemGroupsBusinessService;
     private readonly IGridDataService<Problem> problemGridDataService;
+    private readonly IGridDataService<ProblemResource> problemResourceGridDataService;
 
     public ProblemsController(
         IProblemsBusinessService problemsBusinessService,
         IProblemsDataService problemsDataService,
         IContestsActivityService contestsActivityService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        IGridDataService<Problem> problemGridDataService,
+        IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
-        ProblemsDeleteValidator deleteValidator)
+        ProblemsDeleteValidator deleteValidator,
+        IGridDataService<ProblemResource> problemResourceGridDataService)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
@@ -42,6 +52,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         this.contestsActivityService = contestsActivityService;
         this.problemGroupsBusinessService = problemGroupsBusinessService;
         this.problemGridDataService = problemGridDataService;
+        this.problemResourceGridDataService = problemResourceGridDataService;
     }
 
     [HttpGet("{contestId:int}")]
@@ -52,9 +63,23 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
                 model,
                 problem => problem.ProblemGroup.ContestId == contestId));
 
+    [HttpGet("{problemGroupId:int}")]
+    [ProtectedEntityAction("problemGroupId", typeof(ProblemGroupIdPermissionService))]
+    public async Task<IActionResult> GetByProblemGroupId([FromQuery] PaginationRequestModel model, [FromRoute] int problemGroupId)
+        => this.Ok(
+            await this.problemGridDataService.GetAll<ProblemInListModel>(
+                model,
+                problem => problem.ProblemGroup.Id == problemGroupId));
+
     public override async Task<IActionResult> Create([FromForm] ProblemAdministrationModel model)
     {
         var response = await base.Create(model);
+        return response;
+    }
+
+    public override async Task<IActionResult> Edit([FromForm] ProblemAdministrationModel model)
+    {
+        var response = await base.Edit(model);
         return response;
     }
 
@@ -87,27 +112,6 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         return this.Ok($"Problems for {contest.Name} were successfully deleted.");
     }
 
-    [HttpGet("{id:int}")]
-    [ProtectedEntityAction]
-    public async Task<IActionResult> DownloadAdditionalFiles([FromRoute] int id)
-    {
-        if (id <= 0)
-        {
-            return this.UnprocessableEntity(new ExceptionResponse
-            {
-                Errors = new List<ExceptionResponseModel> { new() { Name = "Id", Message = "Invalid id", }, },
-            });
-        }
-
-        var file = await this.problemsBusinessService.GetAdditionalFiles(id);
-        if (file == null)
-        {
-            return this.BadRequest();
-        }
-
-        return this.File(file.Content!, file.MimeType!, file.FileName);
-    }
-
     [HttpPost]
     [ProtectedEntityAction]
     public async Task<IActionResult> CopyAll(CopyAllToContestViewModel model)
@@ -122,4 +126,48 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
 
         return this.Ok("Problems successfully copied.");
     }
+
+    [HttpGet]
+    [ProtectedEntityAction(false)]
+    public async Task<IActionResult> GetAllByName(string? searchString)
+    {
+        var contests =
+            await this.problemsDataService
+                .GetQueryForUser(
+                    this.User.Map<UserInfoModel>(),
+                    contest => contest.Name!.Contains(searchString ?? string.Empty))
+                .MapCollection<ProblemDropdownModel>()
+                .Take(20)
+                .ToListAsync();
+
+        return this.Ok(contests);
+    }
+
+    [HttpPost]
+    [ProtectedEntityAction]
+    public async Task<IActionResult> Copy(CopyProblemRequestModel model)
+    {
+        if (!await this.problemsDataService.ExistsById(model.ProblemId))
+        {
+            throw new BusinessServiceException($"Problem with id {model.ProblemId} does not exists.");
+        }
+
+        var result = await this.problemsBusinessService.CopyToContestByIdByContestAndProblemGroup(
+            model.ProblemId,
+            model.DestinationContestId,
+            model.ProblemGroupId);
+
+        if (result.IsError)
+        {
+            return this.BadRequest(result.Error);
+        }
+
+        return this.Ok("Successfully copied problem");
+    }
+
+    [HttpGet("{id:int}")]
+    [ProtectedEntityAction("id", typeof(ProblemIdPermissionsService))]
+    public async Task<IActionResult> GetResources(int id)
+        => this.Ok(await this.problemResourceGridDataService
+            .GetAll<ProblemResourceInListModel>(new PaginationRequestModel(), x => x.ProblemId == id));
 }

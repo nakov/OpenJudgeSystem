@@ -1,0 +1,23 @@
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+@use 'src/styles/font-weights';
+
+.privilegedButtonClassName {
+  background: none;
+  border: 0;
+  color: colors.$light-blue-color;
+  cursor: pointer;
+  font-size: variables.$f-size-24;
+  font-weight: font-weights.$font-weight-light;
+  line-height: 30px;
+  padding: 10px;
+
+  &:hover {
+    text-decoration-line: underline;
+  }
+}
+
+.active {
+  font-weight: font-weights.$font-weight-medium;
+  text-decoration: underline;
+}

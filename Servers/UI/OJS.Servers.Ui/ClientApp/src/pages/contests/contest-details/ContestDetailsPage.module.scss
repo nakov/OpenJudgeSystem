@@ -1,0 +1,110 @@
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/font-weights';
+@use 'src/styles/colors';
+
+.contestDetailsWrapper {
+  @extend %font-family-roboto;
+
+  padding: spacings.$sp-64;
+
+  .heading {
+    @extend %font-family-roboto;
+
+    border-bottom-width: 0;
+    font-weight: font-weights.$font-weight-semi-bold;
+    padding: spacings.$sp-64 0;
+  }
+
+  .allowedLanguageLink {
+    color: colors.$primary-blue;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .problemNameItem {
+    margin: spacings.$sp-4 0;
+  }
+
+  .adminBtn {
+    margin-left: spacings.$sp-16;
+  }
+}
+
+.descriptionBoxWrapper {
+  display: flex;
+  font-size: variables.$f-size-18;
+  justify-content: space-between;
+
+  .title {
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-bold;
+    margin-bottom: spacings.$sp-18;
+  }
+
+  .languagesWrapper {
+    margin: spacings.$sp-24 0;
+  }
+
+  .allowedLanguages {
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-bold;
+  }
+
+  > div {
+    width: 50%;
+
+    > div {
+      margin-bottom: spacings.$sp-4;
+    }
+
+    // contest details
+    &:nth-child(1) {
+      margin-right: spacings.$sp-64;
+    }
+
+    // contest problems
+    &:nth-child(2) {
+      margin-left: spacings.$sp-64;
+    }
+  }
+}
+
+.actionBtnWrapper {
+  align-items: center;
+  color: colors.$primary-blue;
+  display: flex;
+  margin: spacings.$sp-16 0;
+
+  > button {
+    margin-right: spacings.$sp-12;
+  }
+
+  > a {
+    align-items: center;
+    display: flex;
+
+    > i {
+      margin: 0 spacings.$sp-8;
+    }
+
+    .underlinedBtnText {
+      text-decoration: underline;
+    }
+
+    &:visited {
+      color: inherit;
+    }
+  }
+
+  .greenColor {
+    color: colors.$secondary-green;
+
+    &:visited {
+      color: colors.$secondary-green;
+    }
+  }
+}

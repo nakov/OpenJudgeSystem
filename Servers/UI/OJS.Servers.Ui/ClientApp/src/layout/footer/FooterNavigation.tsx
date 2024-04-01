@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 
+import logo from '../../assets/softuni-logo-horizontal-white.svg';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import GithubIcon from '../../components/guidelines/icons/GitHubIcon';
 import YouTubeIcon from '../../components/guidelines/icons/YouTubeIcon';
 
 import FooterListSection from './FooterListSection';
-import logo from './softuni-logo-horizontal-white.svg';
 
 import styles from './FooterNavigation.module.scss';
 
