@@ -89,7 +89,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.GetNodeResourcePath(executionStrategyType, this.settings.SinonChaiModulePath))
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests => new
+            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests or
+            ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunJsDomUnitTests => new
                 NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,

@@ -162,6 +162,12 @@ namespace OJS.Services.Worker.Business.Implementations
                         processExecutorFactory,
                         this.executionStrategySettingsProvider);
                     break;
+                case ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunJsDomUnitTests:
+                    executionStrategy = new NodeJsV20PreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
+                        type,
+                        processExecutorFactory,
+                        this.executionStrategySettingsProvider);
+                    break;
                 case ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy:
                     executionStrategy = new NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings>(
                         type,
