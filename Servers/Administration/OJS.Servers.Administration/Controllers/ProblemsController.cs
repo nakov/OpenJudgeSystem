@@ -541,7 +541,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
 
-        await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
     }
 
@@ -654,18 +653,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
-
-    private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
-    {
-        var additionalFiles = actionContext.GetFormFile(AdditionalFormFields.AdditionalFiles);
-
-        if (additionalFiles == null)
-        {
-            return;
-        }
-
-        problem.AdditionalFiles = await additionalFiles.ToByteArray();
-    }
 
     private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
     {

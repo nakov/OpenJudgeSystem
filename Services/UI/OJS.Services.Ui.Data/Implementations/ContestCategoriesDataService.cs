@@ -9,6 +9,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
         public ContestCategoriesDataService(OjsDbContext db)

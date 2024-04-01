@@ -15,5 +15,11 @@ public class BaseDeleteValidator<TModel, TId> : BaseValidator<TModel>
                 .GreaterThan(0)
                 .WithMessage("Cannot delete entity with invalid id.");
         }
+
+        if (typeof(TId) == typeof(string))
+        {
+            this.RuleFor(model => model.Id as string)
+                .NotEmpty();
+        }
     }
 }

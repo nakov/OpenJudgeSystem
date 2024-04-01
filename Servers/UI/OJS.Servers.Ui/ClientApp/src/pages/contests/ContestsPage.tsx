@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable prefer-destructuring */
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
-import ContestCategories from '../../components/contests/contest-categories/ContestCetegories';
+import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
@@ -39,6 +38,10 @@ const ContestsPage = () => {
     useEffect(() => {
         if (!searchParams.get('page')) {
             searchParams.set('page', '1');
+            setSearchParams(searchParams);
+        }
+        if (!searchParams.get('category') || searchParams.get('category') === 'undefined') {
+            searchParams.delete('category');
             setSearchParams(searchParams);
         }
     }, []);
@@ -104,14 +107,14 @@ const ContestsPage = () => {
         );
     }, [ allContests ]);
 
-    if (allContestsError) { return <>Error loading contests</>; }
+    if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
     return (
         <div style={{ padding: '20px 40px' }}>
             {areContestsLoading && <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>}
             <ContestBreadcrumbs />
             <div className={styles.contestsContainer}>
-                <ContestCategories />
+                <ContestCetegories />
                 <div style={{ width: '100%' }}>
                     <div className={`${styles.headingWrapper} ${textColorClassName}`}>
                         <div>

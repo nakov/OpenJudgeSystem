@@ -20,7 +20,6 @@ using OJS.Services.Ui.Business.Extensions;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
-using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -213,7 +212,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId)
     {
         var submissionDetailsServiceModel = this.submissionsData
-            .GetSubmissionById<SubmissionDetailsServiceModel>(submissionId);
+            .GetSubmissionById<SubmissionFileDetailsServiceModel>(submissionId);
 
         var currentUser = this.userProviderService.GetCurrentUser();
 
@@ -581,10 +580,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     public Task<int> GetTotalCount()
         => this.submissionsData.GetTotalSubmissionsCount();
 
-    public async Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(
+    public async Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
         SubmissionStatus status,
-        int page)
+        int page,
+        int itemsPerPage = DefaultSubmissionsPerPage)
     {
+        if (itemsPerPage <= 0)
+        {
+            throw new BusinessServiceException("Invalid submissions per page count");
+        }
+
         IQueryable<Submission> query;
 
         if (status == SubmissionStatus.Processing)
@@ -601,14 +606,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             if (user.IsAdminOrLecturer)
             {
                 return await this.submissionsData
-                    .GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                        DefaultSubmissionsPerPage, page);
+                    .GetLatestSubmissions<TServiceModel>(
+                        itemsPerPage, page);
             }
 
-            var modelResult = new PagedResult<SubmissionForPublicSubmissionsServiceModel>
+            var modelResult = new PagedResult<TServiceModel>
             {
-                Items = await this.submissionsData.GetLatestSubmissions<SubmissionForPublicSubmissionsServiceModel>(
-                    DefaultSubmissionsPerPage),
+                Items = await this.submissionsData.GetLatestSubmissions<TServiceModel>(
+                    itemsPerPage),
             };
 
             return modelResult;
@@ -616,8 +621,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         return await query
             .OrderByDescending(s => s.Id)
-            .MapCollection<SubmissionForPublicSubmissionsServiceModel>()
-            .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
+            .MapCollection<TServiceModel>()
+            .ToPagedResultAsync(itemsPerPage, page);
     }
 
     private static void ProcessTestsExecutionResult(

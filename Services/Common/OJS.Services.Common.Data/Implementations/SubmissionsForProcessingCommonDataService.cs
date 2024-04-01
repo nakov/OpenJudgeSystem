@@ -1,19 +1,20 @@
 namespace OJS.Services.Common.Data.Implementations;
 
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Submissions;
 using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data;
+using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models.Submissions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Transactions;
 
 public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
 {
-    public SubmissionsForProcessingCommonDataService(DbContext submissionsForProcessing)
+    public SubmissionsForProcessingCommonDataService(OjsDbContext submissionsForProcessing)
         : base(submissionsForProcessing)
     {
     }

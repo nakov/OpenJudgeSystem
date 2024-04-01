@@ -1,8 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
-import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
-import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
+import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel, ITestsDropdownData } from '../../../common/types';
+import { IGetByContestId, IGetByProblemGroupId, IProblemUrlById } from '../../../common/url-types';
+import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const problemsAdminService = createApi({
@@ -24,7 +24,7 @@ export const problemsAdminService = createApi({
         getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
         deleteProblem: builder.mutation<string, number>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateProblem: builder.mutation({
-            query: (problem) => ({
+            query: (problem: FormData) => ({
                 url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
                 body: problem,
@@ -48,6 +48,17 @@ export const problemsAdminService = createApi({
                 },
             }),
         }),
+        getByProblemGroupId: builder.query<IPagedResultType<IIndexProblemsType>, IGetByProblemGroupId>({
+            query: ({ problemGroupId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetByProblemGroupId/${problemGroupId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+        }),
         retestById: builder.mutation({
             query: (problem) => ({
                 url: '/Retest',
@@ -57,20 +68,31 @@ export const problemsAdminService = createApi({
         }),
         deleteByContest: builder.mutation({
             query: (contestId) => ({
-                url: `/Delete/${contestId}`,
+                url: `/DeleteAll/${contestId}`,
                 method: 'DELETE',
             }),
         }),
         copyAll: builder.mutation<string, { sourceContestId: number; destinationContestId: number }>({
             query: ({ sourceContestId, destinationContestId }) => ({
-                url: 'copyAll',
+                url: 'CopyAll',
                 method: 'POST',
                 body: { sourceContestId, destinationContestId },
             }),
         }),
-        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({
-            query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }),
+        copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | undefined} >({
+            query: ({ destinationContestId, problemId, problemGroupId }) => ({
+                url: 'Copy',
+                method: 'POST',
+                body: { destinationContestId, problemId, problemGroupId },
+            }),
+        }),
+        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, number>({
+            query: (problemId) => ({ url: `GetResources/${problemId}` }),
             keepUnusedDataFor: 5,
+        }),
+        getAllByName: builder.query<Array<ITestsDropdownData>, string>({
+            query: (queryString) => ({ url: `/GetAllByName?searchString=${encodeURIComponent(queryString)}` }),
+            keepUnusedDataFor: 10,
         }),
     }),
 });
@@ -85,7 +107,10 @@ export const {
     useDeleteByContestMutation,
     useCopyAllMutation,
     useCreateProblemMutation,
-    useDownloadAdditionalFilesQuery,
+    useCopyMutation,
+    useGetResourcesQuery,
+    useGetByProblemGroupIdQuery,
+    useGetAllByNameQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

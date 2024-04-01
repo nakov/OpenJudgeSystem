@@ -1,70 +1,49 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { preciseFormatDate } from '../../../utils/dates';
+import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
         field: 'id',
         headerName: 'Id',
         type: 'number',
-        width: 10,
-        filterable: true,
-        sortable: true,
+        align: 'center',
+        headerAlign: 'center',
+        flex: 1,
+        filterable: false,
+        sortable: false,
         valueFormatter: (params) => params.value.toString(),
     },
     {
         field: 'processed',
         headerName: 'Processed',
         align: 'center',
+        headerAlign: 'center',
         type: 'boolean',
-        width: 200,
-        filterable: true,
+        flex: 1,
+        filterable: false,
         sortable: false,
     },
     {
         field: 'processing',
         headerName: 'Processing',
         align: 'center',
+        headerAlign: 'center',
         type: 'boolean',
-        width: 200,
-        filterable: true,
-        sortable: false,
-    },
-    {
-        field: 'serializedException',
-        headerName: 'Serialized Exception',
-        align: 'center',
-        width: 200,
-        type: 'string',
-        filterable: true,
-        sortable: false,
-    },
-    {
-        field: 'serializedExecutionDetails',
-        headerName: 'Serialized Execution Details',
-        align: 'center',
-        width: 200,
-        type: 'string',
-        filterable: true,
-        sortable: false,
-    },
-    {
-        field: 'serializedExecutionResult',
-        headerName: 'Serialized Execution Result',
-        align: 'center',
-        width: 200,
-        type: 'string',
-        filterable: true,
+        flex: 1,
+        filterable: false,
         sortable: false,
     },
     {
         field: 'submissionId',
         headerName: 'Submission ID',
+        align: 'center',
+        headerAlign: 'center',
         type: 'number',
-        width: 200,
-        filterable: true,
-        sortable: true,
+        flex: 1,
+        filterable: false,
+        sortable: false,
         renderCell: (params: GridRenderCellParams) => (
             <Link
               to={`/submissions/${Number(params.row?.submissionId)}/details`}
@@ -77,21 +56,23 @@ const dataColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: 'Created On',
         align: 'center',
+        headerAlign: 'center',
         type: 'dateTime',
         width: 200,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => preciseFormatDate(params.value?.createdOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.createdOn),
     },
     {
         field: 'modifiedOn',
         headerName: 'Modified On',
         align: 'center',
+        headerAlign: 'center',
         type: 'dateTime',
         width: 200,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => preciseFormatDate(params.value?.modifiedOn),
+        valueFormatter: (params) => adminPreciseFormatDate(params.value?.modifiedOn),
     },
 ];
 

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 public class GridDataService<TEntity>
     : IGridDataService<TEntity>
@@ -41,6 +42,13 @@ public class GridDataService<TEntity>
         Expression<Func<TEntity, bool>>? filter = null)
         => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter));
 
+    public virtual Task<PagedResult<TModel>> GetAll<TModel>(
+        PaginationRequestModel paginationRequestModel,
+        Expression<Func<TEntity, object>> orderBy,
+        Expression<Func<TEntity, bool>>? filter = null,
+        bool descending = false)
+        => this.GetPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter, orderBy, descending));
+
     public virtual Task<PagedResult<TModel>> GetAllForUser<TModel>(
         PaginationRequestModel paginationRequestModel,
         UserInfoModel user,
@@ -55,7 +63,7 @@ public class GridDataService<TEntity>
             return filteringCollection;
         }
 
-        var conditions = paginationRequestModel.Filter!.Split('&', StringSplitOptions.RemoveEmptyEntries);
+        var conditions = paginationRequestModel.Filter!.Split("&;", StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var condition in conditions)
         {
@@ -88,7 +96,7 @@ public class GridDataService<TEntity>
     {
         var filterAsCollection = MapFilterStringToCollection<TModel>(paginationRequestModel).ToList();
 
-        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query, filterAsCollection);
+        var mappedQuery = this.filteringService.ApplyFiltering<TEntity, TModel>(query.AsNoTracking(), filterAsCollection);
         return await this.sortingService
             .ApplySorting(mappedQuery, paginationRequestModel.Sorting)
             .ToPagedResult(paginationRequestModel.Page, paginationRequestModel.ItemsPerPage);

@@ -1,27 +1,29 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Common.Extensions;
+using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
+using OJS.Services.Infrastructure.Extensions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.Common.Extensions;
+using SoftUni.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SoftUni.Common.Extensions;
-using SoftUni.Common.Models;
 
 public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
-    public SubmissionsDataService(DbContext db)
+    public SubmissionsDataService(OjsDbContext db)
         : base(db)
     {
     }
 
     public TServiceModel? GetSubmissionById<TServiceModel>(int id)
         => this.GetByIdQuery(id)
+            .AsNoTracking()
             .MapCollection<TServiceModel>()
             .FirstOrDefault();
 

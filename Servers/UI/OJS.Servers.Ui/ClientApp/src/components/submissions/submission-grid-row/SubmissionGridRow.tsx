@@ -1,36 +1,42 @@
 import React, { useCallback } from 'react';
+import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { ISubmissionResponseModel } from '../../../common/types';
+import { PublicSubmissionState } from '../../../common/enums';
+import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
-import { PublicSubmissionState } from '../../../hooks/submissions/use-public-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import concatClassNames from '../../../utils/class-names';
 import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
-import { encodeUsernameAsUrlParam,
+import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
+import {
+    encodeUsernameAsUrlParam,
     getParticipateInContestUrl,
     getSubmissionDetailsRedirectionUrl,
-    getUserProfileInfoUrlByUsername } from '../../../utils/urls';
+    getUserProfileInfoUrlByUsername,
+} from '../../../utils/urls';
 import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
+import IconSize from '../../guidelines/icons/common/icon-sizes';
+import MemoryIcon from '../../guidelines/icons/MemoryIcon';
+import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
+import { ISubmissionsGridOptions } from '../submissions-grid/SubmissionsGrid';
 
 import styles from './SubmissionGridRow.module.scss';
 
 interface ISubmissionGridRowProps {
-    submission: ISubmissionResponseModel;
-    isFirst?: boolean;
-    shouldDisplayUsername?: boolean;
+    submission: IPublicSubmission;
+    options: ISubmissionsGridOptions;
 }
 
 const SubmissionGridRow = ({
     submission,
-    isFirst,
-    shouldDisplayUsername = true,
+    options,
 }: ISubmissionGridRowProps) => {
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
     const {
@@ -61,7 +67,7 @@ const SubmissionGridRow = ({
         useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
 
-    const userameFromSubmission = isNil(user)
+    const usernameFromSubmission = isNil(user)
         ? getDecodedUsernameFromProfile()
         : user?.username;
 
@@ -83,62 +89,44 @@ const SubmissionGridRow = ({
                 participationType,
             });
 
-            // getContestDetailsAppUrl(contestId)
-
             initiateRedirectionToProblem(problemId, participateInContestUrl);
         },
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
 
-    const renderDetailsBtn = useCallback(
-        () => {
-            if (userameFromSubmission === internalUser.userName || internalUser.isAdmin) {
-                return (
-                    <Button
-                      text="Details"
-                      onClick={handleDetailsButtonSubmit}
-                    />
-                );
-            }
-            return null;
-        },
-        [ handleDetailsButtonSubmit, internalUser.isAdmin, internalUser.userName, userameFromSubmission ],
-    );
+    const hasTestRuns = (s: IPublicSubmission) => (s.testRuns && s.testRuns.length > 0) ?? false;
 
-    // const renderStrategyIcon = useCallback(
-    //     () => {
-    //         const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
-    //
-    //         if (isNil(Icon)) {
-    //             return null;
-    //         }
-    //
-    //         return (<Icon size={IconSize.Large} helperText={strategyName} />);
-    //     },
-    //     [ strategyName ],
-    // );
+    const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
+
+    const rowClassName = concatClassNames(
+        styles.row,
+        isDarkMode
+            ? styles.darkRow
+            : styles.lightRow,
+        getColorClassName(themeColors.textColor),
+    );
 
     const renderPoints = useCallback(
         () => {
-            if (state === PublicSubmissionState.Ready) {
-                if (!isCompiledSuccessfully) {
-                    return <ErrorResult />;
-                }
-
+            if (state === PublicSubmissionState.Processing) {
                 return (
-                    <span className={styles.textAlignRight}>
-                        {points}
-                        {' '}
-                        /
-                        {maxPoints}
-                    </span>
+                    <>
+                        Processing
+                    </>
                 );
             }
 
+            if (!isCompiledSuccessfully) {
+                return <ErrorResult />;
+            }
+
             return (
-                <>
-                    Processing
-                </>
+                <span>
+                    {points}
+                    {' '}
+                    /
+                    {maxPoints}
+                </span>
             );
         },
         [ state, isCompiledSuccessfully, points, maxPoints ],
@@ -146,20 +134,15 @@ const SubmissionGridRow = ({
 
     const renderUsername = useCallback(
         () => (
-            <>
-                {' '}
-                by
-                {' '}
-                <LinkButton
-                  type={LinkButtonType.plain}
-                  size={ButtonSize.none}
-                  to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(userameFromSubmission))}
-                  text={userameFromSubmission}
-                  internalClassName={styles.redirectButton}
-                />
-            </>
+            <LinkButton
+              type={LinkButtonType.plain}
+              size={ButtonSize.none}
+              to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(usernameFromSubmission))}
+              text={usernameFromSubmission}
+              internalClassName={styles.redirectButton}
+            />
         ),
-        [ userameFromSubmission ],
+        [ usernameFromSubmission ],
     );
 
     const renderProblemInformation = useCallback(
@@ -177,103 +160,167 @@ const SubmissionGridRow = ({
         [ problemId, problemName ],
     );
 
-    const headerClassName = concatClassNames(
-        styles.submissionsGridHeader,
-        isDarkMode
-            ? styles.darkSubmissionsGridHeader
-            : styles.lightSubmissionsGridHeader,
-        getColorClassName(themeColors.textColor),
+    const renderStrategyIcon = useCallback(
+        () => {
+            const Icon = strategyTypeToIcon(fullStrategyNameToStrategyType(strategyName));
+
+            if (isNil(Icon)) {
+                return null;
+            }
+
+            return (
+                <Icon
+                  size={IconSize.Large}
+                  className={getColorClassName(themeColors.textColor)}
+                />
+            );
+        },
+        [ getColorClassName, strategyName, themeColors.textColor ],
     );
 
-    const rowClassName = concatClassNames(
-        styles.container,
-        isDarkMode
-            ? styles.darkRow
-            : styles.lightRow,
-        getColorClassName(themeColors.textColor),
+    const renderDetailsBtn = useCallback(
+        () => {
+            if (usernameFromSubmission === internalUser.userName || internalUser.isAdmin) {
+                return (
+                    <Button
+                      text="Details"
+                      internalClassName={
+                            concatClassNames(styles.detailsButton, isDarkMode
+                                ? styles.darkDetailsButton
+                                : styles.lightDetailsButton)
+                        }
+                      onClick={handleDetailsButtonSubmit}
+                      type={ButtonType.plain}
+                    />
+                );
+            }
+
+            return null;
+        },
+        [ handleDetailsButtonSubmit, internalUser, isDarkMode, usernameFromSubmission ],
     );
 
     return (
-        <>
-            {
-                isFirst
-                    ? (
-                        <div className={headerClassName}>
-                            <div className={styles.smallColumn}>N</div>
-                            <div className={styles.wideColumn}>Task</div>
-                            <div className={styles.wideColumn}>From</div>
-                            <div className={styles.mediumColumn}>
-                                Result
-                            </div>
-                            {
-                                internalUser.isAdmin
-                                    ? ( // Rendering full execution result if is admin
-                                        <div className={styles.wideColumn}>
-                                            Execution Result
-                                        </div>
-                                    )
-                                    : null
-                            }
-                            <div className={styles.mediumColumn}>Submission Type</div>
-                            <div className={styles.mediumColumn} />
-                        </div>
-                    )
-                    : null
-            }
-            <div className={rowClassName}>
-                <div
-                  className={styles.smallColumn}
-                >
-                    #
-                    {submissionId}
-                </div>
-                <div className={styles.wideColumn}>
-                    {renderProblemInformation()}
-                    <Button
-                      type={ButtonType.secondary}
-                      size={ButtonSize.small}
-                      className={styles.link}
-                      internalClassName={styles.redirectButton}
-                      onClick={handleParticipateInContestSubmit}
-                      text={contestName}
-                    />
-                </div>
-                <div className={styles.wideColumn}>
-                    <span>
-                        {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                        {shouldDisplayUsername && renderUsername()}
-                    </span>
-                </div>
-                <div
-                  className={concatClassNames(styles.mediumColumn, styles.textAlignRight)}
-                >
-                    {renderPoints()}
-                </div>
+        <tr key={submission.id} className={rowClassName}>
+            <td>
+                #
+                {submissionId}
+            </td>
+            <td>
                 {
-                    internalUser.isAdmin
+                    options.showTaskDetails
                         ? (
-                            <div
-                              className={concatClassNames(styles.wideColumn)}
-                            >
-                                <ExecutionResult
-                                  testRuns={testRuns}
-                                  maxMemoryUsed={maxMemoryUsed}
-                                  maxTimeUsed={maxTimeUsed}
-                                  isCompiledSuccessfully={isCompiledSuccessfully}
-                                  isProcessed={processed}
+                            <>
+                                {renderProblemInformation()}
+                                {/* TODO: Fix this to use Link */}
+                                <Button
+                                  type={ButtonType.secondary}
+                                  size={ButtonSize.small}
+                                  className={styles.link}
+                                  internalClassName={styles.redirectButton}
+                                  onClick={handleParticipateInContestSubmit}
+                                  text={contestName}
                                 />
-                            </div>
+                            </>
                         )
                         : null
                 }
-                <div className={concatClassNames(styles.mediumColumn)}>
-                    <div>{strategyName}</div>
+            </td>
+            <td className={styles.fromContainer}>
+                <span>
+                    {formatDate(createdOn, defaultDateTimeFormatReverse)}
+                </span>
+                {
+                    options.showParticipantUsername
+                        ? (
+                            <span className={styles.username}>
+                                {renderUsername()}
+                            </span>
+                        )
+                        : null
+                }
+            </td>
+            {
+                options.showCompeteMarker
+                    ? isOfficial
+                        ? (
+                            <td>
+                                <FaFlagCheckered className={styles.competeIcon} />
+                            </td>
+                        )
+                        : <td />
+                    : null
+            }
+            {
+                options.showDetailedResults
+                    ? (
+                        <td>
+                            { hasTimeAndMemoryUsed(submission)
+                                ? (
+                                    <div className={styles.timeAndMemoryContainer}>
+                                        <div className={styles.maxMemoryUsed}>
+                                            <MemoryIcon
+                                              size={IconSize.Large}
+                                              className={styles.memoryIcon}
+                                            />
+                                            <span className={styles.timeAndMemoryText}>
+                                                {(maxMemoryUsed / 1000000).toFixed(2)}
+                                                {' '}
+                                                MB
+                                            </span>
+                                        </div>
+                                        <div className={styles.maxTimeUsed}>
+                                            <TimeLimitIcon
+                                              size={IconSize.Large}
+                                              className={styles.timeIcon}
+                                            />
+                                            <span className={styles.timeAndMemoryText}>
+                                                {maxTimeUsed / 1000}
+                                                {' '}
+                                                s.
+                                            </span>
+                                        </div>
+                                    </div>
+                                )
+                                : null}
+                        </td>
+                    )
+                    : null
+            }
+            <td>
+                <div className={styles.executionResultContainer}>
+                    {
+                        options.showDetailedResults && hasTestRuns(submission)
+                            ? (
+                                <ExecutionResult
+                                  testRuns={testRuns}
+                                  isCompiledSuccessfully={isCompiledSuccessfully}
+                                  isProcessed={processed}
+                                />
+                            )
+                            : null
+                }
+                    {renderPoints()}
                 </div>
-                <div className={styles.mediumColumn}>
-                    {renderDetailsBtn()}
-                </div>
-            </div>
-        </>
+            </td>
+            {
+                options.showSubmissionTypeInfo
+                    ? (
+                        <td className={styles.strategy}>
+                            {
+                                internalUser.isAdmin
+                                    ? renderStrategyIcon()
+                                    : null
+                            }
+                            <div>{strategyName}</div>
+                        </td>
+                    )
+                    : null
+            }
+            <td>
+                {renderDetailsBtn()}
+            </td>
+        </tr>
     );
 };
 

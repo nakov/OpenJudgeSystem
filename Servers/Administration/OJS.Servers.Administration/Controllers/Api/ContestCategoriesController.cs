@@ -4,8 +4,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.ContestCategories;
+using OJS.Services.Administration.Business.ContestCategories.GridData;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
-using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Administration.Models.Validation;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
@@ -18,7 +18,7 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
     public ContestCategoriesController(
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
-        IGridDataService<ContestCategory> contestCategoryGridDataService,
+        IContestCategoriesGridDataService contestCategoryGridDataService,
         IValidator<BaseDeleteValidationModel<int>> deleteValidator)
     : base(
         contestCategoryGridDataService,
@@ -32,6 +32,7 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         => this.Ok(
              this.contestCategoriesBusinessService
             .GetAllVisible()
+            .Where(x => !x.IsDeleted)
             .ToHashSet()
             .MapCollection<ContestCategoriesInContestView>());
 }
