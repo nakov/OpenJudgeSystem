@@ -20,6 +20,6 @@ public class ExamGroupUpdateModelPermissionService : IEntityPermissionsService<E
             return await this.contestsBusinessService.UserHasContestPermissions(value.ContestId.Value, user.Id, user.IsAdmin);
         }
 
-        return false;
+        return true;
     }
 }
