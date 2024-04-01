@@ -1,0 +1,30 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+@use 'src/styles/font-weights';
+@use 'src/styles/border-radiuses';
+
+.submissionsDetailsWrapper {
+  @extend %font-family-roboto;
+  padding: spacings.$sp-16 spacings.$sp-32;
+
+  .submissionTitle {
+    padding: spacings.$sp-24 0;
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-bold;
+  }
+
+  .bodyWrapper {
+    display: flex;
+
+    .problemName {
+      color: colors.$primary-blue;
+      cursor: pointer;
+    }
+    .solutionTitle {
+      font-weight: font-weights.$font-weight-bold;
+      font-size: variables.$f-size-24;
+    }
+  }
+}
