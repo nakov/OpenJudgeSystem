@@ -7,7 +7,6 @@ import { IHaveChildrenProps } from '../components/common/Props';
 import { getProfileInfoUrl } from '../utils/urls';
 
 import { useHttp } from './use-http';
-import { useNotifications } from './use-notifications';
 
 interface IUserProfileType {
     id: string;
@@ -46,7 +45,6 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
     const [ myProfile, setMyProfile ] = useState(defaultState.state.myProfile);
     const [ profileInfoUrlUrlParam, setProfileInfoUrlParam ] =
         useState<IUserInfoUrlParams | null>();
-    const { showError } = useNotifications();
 
     const {
         get: getProfileInfo,
@@ -101,7 +99,7 @@ const UsersProvider = ({ children }: IUsersProviderProps) => {
 
             setProfileInfoUrlParam(null);
         },
-        [ profileData, showError ],
+        [ profileData ],
     );
 
     useEffect(

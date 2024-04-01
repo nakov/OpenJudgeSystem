@@ -154,7 +154,8 @@ const ContestSolutionSubmitPage = () => {
         if (!userContestParticipationData || userContestParticipationData.contest.id !== Number(contestId)) {
             fetchUserParticipationDetails();
         }
-        // rule is disabled because it requires adding fetchUserParticipationDetails to the dependencies which makes it to call itself endlessly, which makes recursive updates and crashes the application
+        // rule is disabled because it requires adding fetchUserParticipationDetails to the dependencies which makes
+        // it to call itself endlessly, which makes recursive updates and crashes the application
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ userContestParticipationData, contestId ]);
 
@@ -185,6 +186,9 @@ const ContestSolutionSubmitPage = () => {
         if (selectedContestDetailsProblem) {
             fetchSubmissionsData();
         }
+        // rule is disabled because it requires adding fetchUserParticipationDetails to the dependencies which makes
+        // it to call itself endlessly, which makes recursive updates and crashes the application
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage, isCompete ]);
 
     const remainingTimeForParticipationOrContest = useMemo(() => {

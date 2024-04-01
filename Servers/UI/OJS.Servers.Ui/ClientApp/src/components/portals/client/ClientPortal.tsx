@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import MuiUiThemeProvider from '../../../hooks/use-muiUiTheme';
+import MuiUiThemeProvider from '../../../hooks/use-mui-ui-theme';
 import useTheme from '../../../hooks/use-theme';
 import PageFooter from '../../../layout/footer/PageFooter';
 import PageHeader from '../../../layout/header/PageHeader';
