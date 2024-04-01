@@ -1,13 +1,14 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Problems;
-    using System.Linq;
     using OJS.Services.Common.Data.Implementations;
+    using System.Linq;
 
     public class ProblemResourcesDataService : DataService<ProblemResource>, IProblemResourcesDataService
     {
-        public ProblemResourcesDataService(DbContext problemResources)
+        public ProblemResourcesDataService(OjsDbContext problemResources)
             : base(problemResources)
         {
         }

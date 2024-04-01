@@ -52,7 +52,7 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
 
         this.RuleFor(model => model)
             .Must(ValidateOnlineContestProblemGroups)
-            .When(model => model.Id > 0)
+            .When(model => model.Id <= 0 && model.Type == ContestType.OnlinePracticalExam.ToString())
             .WithName("Number of problem groups")
             .NotNull()
             .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");

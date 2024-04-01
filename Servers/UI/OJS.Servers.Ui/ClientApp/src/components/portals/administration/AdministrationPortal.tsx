@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { useEffect, useState } from 'react';
-import { FaCheckDouble } from 'react-icons/fa';
+import { FaCheckDouble, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
-import { MdOutlineRememberMe } from 'react-icons/md';
+import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -24,7 +24,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
+import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
@@ -32,19 +32,23 @@ import ParticipantsAdministrationPage from '../../../pages/administration-new/pa
 import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
+import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
 import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
+import AdministrationUsersPage from '../../../pages/administration-new/users/AdministrationUsersPage';
 import AdministrationCheckersPage from '../../../pages/checkers/AdministrationCheckersPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
+import AdministrationRole from '../../administration/roles/AdministrationRole';
 import AdministrationTest from '../../administration/tests/AdministrationTest';
+import AdministrationUser from '../../administration/users/AdministrationUser';
 
 import styles from './AdministrationPortal.module.scss';
 
@@ -110,6 +114,17 @@ const administrationItems = [
         icon: <MdOutlineRememberMe />,
         path: `${PARTICIPANTS_PATH}`,
     },
+    {
+        name: 'Roles',
+        icon: <MdOutlineAirlineStops />,
+        path: `${ROLES_PATH}`,
+    },
+    {
+        name: 'Users',
+        icon: <FaUsers />,
+        path: `${USERS_PATH}`,
+    },
+
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -297,6 +312,23 @@ const AdministrationPortal = () => {
             Element: ParticipantsAdministrationPage,
         },
         {
+            path: `${ROLES_PATH}`,
+            Element: AdministrationRolesPage,
+        },
+        {
+            path: `${ROLES_PATH}/:id`,
+            Element: AdministrationRole,
+        },
+        {
+            path: `${USERS_PATH}`,
+            Element: AdministrationUsersPage,
+        },
+        {
+            path: `${USERS_PATH}/:id`,
+            Element: AdministrationUser,
+        },
+        {
+
             path: '/administration',
             Element: AdministrationPage,
             title: 'Administration',

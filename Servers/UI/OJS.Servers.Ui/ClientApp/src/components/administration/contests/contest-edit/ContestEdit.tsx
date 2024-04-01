@@ -48,7 +48,7 @@ const ContestEdit = (props:IContestEditProps) => {
         allowParallelSubmissionsInTasks: false,
         categoryId: 0,
         categoryName: '',
-        contestPassword: '',
+        contestPassword: null,
         description: null,
         endTime: null,
         name: '',
@@ -146,7 +146,13 @@ const ContestEdit = (props:IContestEditProps) => {
 
     useEffect(() => {
         if (isSuccessfullyUpdating && onSuccess) {
-            onSuccess();
+            /* The function is called in timeout,
+            because we want to show success message before calling onSuccess,
+            since it can cause re-rendering of the component and the message will not be visible
+            */
+            setTimeout(() => {
+                onSuccess();
+            }, 500);
         }
     }, [ isSuccessfullyUpdating, onSuccess ]);
 
@@ -309,7 +315,7 @@ const ContestEdit = (props:IContestEditProps) => {
         case 'numberOfProblemGroups':
             currentContestValidations.isNumberOfProblemGroupsTouched = true;
             if (value) {
-                currentContestValidations.isNUmberOfProblemGroupsValid = value >= 0;
+                currentContestValidations.isNUmberOfProblemGroupsValid = value > 0;
                 numberOfProblemGroups = Number(value);
             }
             break;
@@ -531,6 +537,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           InputLabelProps={{ shrink: true }}
                           name="allowedIps"
                         />
+                        {contest.type === getEnumMemberName(ContestVariation, ContestVariation.OnlinePracticalExam) && (
                         <TextField
                           className={formStyles.inputRow}
                           type="string"
@@ -547,6 +554,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           helperText={(contestValidations.isDurationTouched && !contestValidations.isDurationValid) &&
                             CONTEST_DURATION_VALIDATION}
                         />
+                        )}
                     </Box>
                 </Box>
                 <FormControl

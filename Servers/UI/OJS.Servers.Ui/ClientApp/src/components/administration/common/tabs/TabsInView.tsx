@@ -5,6 +5,8 @@ interface IAdministrationTabModel {
     value: string;
     label:string;
     node:(value: string) => ReactNode;
+
+    disabled?: boolean;
 }
 
 interface ITabsInViewProps {
@@ -34,6 +36,7 @@ const TabsInView = (props: ITabsInViewProps) => {
                               sx={{ minWidth: '45%', display: 'flex', justifyContent: 'space-evenly' }}
                               value={x.value}
                               label={x.label}
+                              disabled={!!x.disabled}
                               wrapped
                             />
                         ))}

@@ -1,15 +1,16 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Data.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class UsersProfileDataService : DataService<UserProfile>, IUsersProfileDataService
     {
-        public UsersProfileDataService(DbContext db)
+        public UsersProfileDataService(OjsDbContext db)
             : base(db)
         {
         }
