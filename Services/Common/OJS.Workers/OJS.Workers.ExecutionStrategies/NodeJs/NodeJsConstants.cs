@@ -11,5 +11,10 @@
 
         // other
         public const string JsonReportName = "json";
+
+        public const string UserInputPlaceholder = "#userInput#";
+        public const string AdapterFunctionPlaceholder = "#adapterFunctionCode#";
+        public const string UserBaseDirectoryPlaceholder = "#userBaseDirectoryPlaceholder#";
+        public const string NodeDisablePlaceholder = "#nodeDisableCode";
     }
 }

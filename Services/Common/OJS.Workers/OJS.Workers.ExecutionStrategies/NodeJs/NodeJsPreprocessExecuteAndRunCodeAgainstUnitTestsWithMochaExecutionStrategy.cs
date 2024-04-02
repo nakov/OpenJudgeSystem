@@ -10,10 +10,12 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
+    using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
     public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<TSettings> :
         NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
@@ -25,43 +27,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
             IExecutionStrategySettingsProvider settingsProvider)
             : base(type, processExecutorFactory, settingsProvider)
             => this.Random = new Random();
-
-        protected override string JsCodePreevaulationCode => @"
-chai.use(sinonChai);
-let bgCoderConsole = {};
-before(function(done) {
-        const dom = new jsdom.JSDOM('', {
-            runScripts: 'dangerously',
-            resources: 'usable'
-        });
-
-        global.window = dom.window;
-        global.document = dom.window.document;
-        global.$ = jq(dom.window);
-        global.handlebars = handlebars; // Include this line only if you're using Handlebars
-
-        Object.getOwnPropertyNames(dom.window)
-            .filter(function(prop) {
-                return prop.toLowerCase().indexOf('html') >= 0;
-            }).forEach(function(prop) {
-                global[prop] = dom.window[prop];
-            });
-
-        Object.keys(console)
-            .forEach(function(prop) {
-                bgCoderConsole[prop] = console[prop];
-                console[prop] = new Function('');
-            });
-
-        done();
-    });
-
-after(function() {
-    Object.keys(bgCoderConsole)
-        .forEach(function (prop) {
-            console[prop] = bgCoderConsole[prop];
-        });
-});";
 
         protected override string JsCodeEvaluation => @"
         " + TestsPlaceholder;
@@ -233,7 +198,7 @@ describe('Test {i} ', function(){{
 
             var processedCode =
                 template.Replace(RequiredModules, this.JsCodeRequiredModules)
-                    .Replace(PreevaluationPlaceholder, this.JsCodePreevaulationCode)
+                    .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                     .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                     .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)
                     .Replace(NodeDisablePlaceholder, this.JsNodeDisableCode)

@@ -8,8 +8,11 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
 
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
+
+    using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
     public class NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
         : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<TSettings>
@@ -49,47 +52,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     sinon = require('" + this.Settings.SinonModulePath + @"'),
     sinonChai = require('" + this.Settings.SinonChaiModulePath + @"'),
     handlebars = require('" + this.Settings.HandlebarsModulePath + @"')";
-
-        protected override string JsCodePreevaulationCode => @"
-chai.use(sinonChai);
-describe('TestDOMScope', function() {
-    let bgCoderConsole = {};
-    before(function(done) {
-    const dom = new jsdom.JSDOM(``);
-    const { window } = dom;
-
-    // define innerText manually to work as textContent
-    Object.defineProperty(window.Element.prototype, 'innerText', {
-        get() { return this.textContent; },
-        set(value) { this.textContent = value; }
-    });
-
-    global.window = window;
-    global.document = window.document;
-    global.$ = jq(window);
-    global.handlebars = handlebars;
-
-    Object.getOwnPropertyNames(window)
-        .filter(function(prop) {
-            return prop.toLowerCase().indexOf('html') >= 0;
-        }).forEach(function(prop) {
-            global[prop] = window[prop];
-        });
-
-    Object.keys(console)
-        .forEach(function(prop) {
-            bgCoderConsole[prop] = console[prop];
-            console[prop] = function() {}; // replacing new Function('') with an empty function
-        });
-
-    done();
-});
-    after(function() {
-        Object.keys(bgCoderConsole)
-            .forEach(function (prop) {
-                console[prop] = bgCoderConsole[prop];
-            });
-    });";
 
         protected override string JsCodeEvaluation => TestsPlaceholder;
 
@@ -170,7 +132,7 @@ it('Test{testsCount++}', function(done) {{
             var code = context.Code.Trim(';');
             var processedCode = template
                 .Replace(RequiredModules, this.JsCodeRequiredModules)
-                .Replace(PreevaluationPlaceholder, this.JsCodePreevaulationCode)
+                .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                 .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                 .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)
                 .Replace(NodeDisablePlaceholder, this.JsNodeDisableCode)

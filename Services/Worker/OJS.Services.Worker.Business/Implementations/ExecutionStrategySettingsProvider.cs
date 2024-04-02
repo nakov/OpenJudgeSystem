@@ -42,8 +42,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds * 2,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath)
+                    this.GetNodeJsExecutablePath(executionStrategyType),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath))
 
                 as TSettings,
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
@@ -81,27 +81,28 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath)
+                    this.GetNodeJsExecutablePath(executionStrategyType),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonChaiModulePath))
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests => new
+            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests or
+            ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunJsDomUnitTests => new
                 NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.HandlebarsModulePath)
+                    this.GetNodeJsExecutablePath(executionStrategyType),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JsDomModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JQueryModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.HandlebarsModulePath))
 
                 as TSettings,
             ExecutionStrategyType.MySqlPrepareDatabaseAndRunQueries => new
@@ -125,35 +126,36 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.MySqlRestrictedUserPassword)
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy => new
+            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy or
+            ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy => new
                 NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.HandlebarsModulePath)
+                    this.GetNodeJsExecutablePath(executionStrategyType),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JsDomModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JQueryModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.HandlebarsModulePath))
 
                 as TSettings,
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
                 NodeJsZipExecuteHtmlAndCssStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
-                    this.settings.NodeJsExecutablePath,
-                    this.settings.UnderscoreModulePath,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.SinonModulePath,
-                    this.settings.SinonChaiModulePath,
-                    this.settings.JsDomModulePath,
-                    this.settings.JQueryModulePath,
-                    this.settings.BootstrapModulePath,
-                    this.settings.BootstrapCssPath)
+                    this.GetNodeJsExecutablePath(executionStrategyType),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.SinonChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JsDomModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JQueryModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.BootstrapModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.BootstrapCssPath))
 
                 as TSettings,
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
@@ -289,10 +291,10 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
                     this.settings.PythonExecutablePath,
-                    this.settings.JsProjNodeModules,
-                    this.settings.MochaModulePath,
-                    this.settings.ChaiModulePath,
-                    this.settings.PlaywrightChromiumModulePath)
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.JsProjNodeModules),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.ChaiModulePath),
+                    this.GetNodeResourcePath(executionStrategyType, this.settings.PlaywrightChromiumModulePath))
 
                 as TSettings,
             ExecutionStrategyType.GolangCompileExecuteAndCheck => new
@@ -406,6 +408,9 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
     private static bool IsJava21(ExecutionStrategyType type)
         => type.ToString().Contains("21");
 
+    private static bool IsNode20(ExecutionStrategyType type)
+        => type.ToString().Contains("20");
+
     private string GetJavaExecutablePath(ExecutionStrategyType strategyType)
         => IsJava21(strategyType)
             ? this.settings.Java21ExecutablePath
@@ -415,4 +420,18 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         => IsJava21(strategyType)
             ? this.settings.Java21LibsPath
             : this.settings.JavaLibsPath;
+
+    private string GetNodeJsExecutablePath(ExecutionStrategyType strategyType)
+        => IsNode20(strategyType)
+            ? this.settings.NodeJs20ExecutablePath
+            : this.settings.NodeJsExecutablePath;
+
+    private string GetNodeResourcePath(ExecutionStrategyType strategyType, string template)
+    {
+        var resourcesPath = IsNode20(strategyType)
+            ? this.settings.Node20ResourcesPath
+            : this.settings.NodeResourcesPath;
+
+        return template.Replace(this.settings.NodeResourcesPathPlaceholder, resourcesPath);
+    }
 }

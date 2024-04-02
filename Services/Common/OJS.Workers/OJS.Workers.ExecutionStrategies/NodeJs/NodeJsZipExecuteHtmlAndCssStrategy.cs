@@ -10,14 +10,16 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
+
+    using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
     public class NodeJsZipExecuteHtmlAndCssStrategy<TSettings> : NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy<TSettings>
         where TSettings : NodeJsZipExecuteHtmlAndCssStrategySettings
     {
         protected const string EntryFileName = "*.html";
-        protected const string UserBaseDirectoryPlaceholder = "#userBaseDirectoryPlaceholder#";
 
         public NodeJsZipExecuteHtmlAndCssStrategy(
             ExecutionStrategyType type,
@@ -72,64 +74,6 @@ fs = undefined;";
             PreevaluationPlaceholder +
             EvaluationPlaceholder +
             PostevaluationPlaceholder;
-
-        protected override string JsCodePreevaulationCode => $@"
-describe('TestDOMScope', function() {{
-    let bgCoderConsole = {{}};
-before(function(done) {{
-    const dom = new jsdom.JSDOM(userCode, {{
-        runScripts: ""dangerously"",
-        resources: ""usable""
-    }});
-
-    const {{ window }} = dom;
-
-    global.window = window;
-    global.document = window.document;
-    global.$ = global.jQuery = jq(window);
-
-    Object.getOwnPropertyNames(window)
-        .filter((prop) => prop.toLowerCase().indexOf('html') >= 0)
-        .forEach((prop) => {{
-            global[prop] = window[prop];
-        }});
-
-    let head = $(document.head);
-    let style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = bootstrapCss;
-    head.append(style);
-
-    let links = head.find('link');
-                links.each((index, el)=>{{
-                    let style = document.createElement('style');
-                    style.type = 'text/css';
-                    let path = '{UserBaseDirectoryPlaceholder}/' + el.href;
-                    let css = fs.readFileSync(path, 'utf-8');
-                    style.innerHTML = css;
-                    head.append(style);
-                }});
-
-                links.remove();
-
-
-   Object.keys(console)
-                    .forEach(function (prop) {{
-                        bgCoderConsole[prop] = console[prop];
-                        console[prop] = new Function('');
-                    }});
-
-    {NodeDisablePlaceholder}
-
-    done();
-}});
-
-    after(function() {{
-        Object.keys(bgCoderConsole)
-            .forEach(function (prop) {{
-                console[prop] = bgCoderConsole[prop];
-            }});
-    }});";
 
         protected override string JsCodeEvaluation => TestsPlaceholder;
 
@@ -237,7 +181,7 @@ before(function(done) {{
 
             var processedCode =
                 template.Replace(RequiredModules, this.JsCodeRequiredModules)
-                    .Replace(PreevaluationPlaceholder, this.JsCodePreevaulationCode)
+                    .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                     .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                     .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)
                     .Replace(NodeDisablePlaceholder, this.JsNodeDisableCode)
