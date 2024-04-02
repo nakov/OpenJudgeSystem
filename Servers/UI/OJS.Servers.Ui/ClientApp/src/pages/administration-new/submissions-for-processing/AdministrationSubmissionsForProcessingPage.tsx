@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { VIEW } from '../../../common/labels';
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import {
-    setAdminSubmissionsFilters,
-    setAdminSubmissionsSorters,
-} from '../../../redux/features/admin/submissionsAdminSlice';
 import { useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
@@ -28,6 +25,9 @@ const AdministrationSubmissionsForProcessingPage = () => {
             sorting: searchParams.get('sorting') ?? '',
         });
 
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
 
@@ -38,9 +38,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
     }, [ sortingParams ]);
-
-    const selectedFilters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions-for-processing']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminSubmissions['all-submissions-for-processing']?.selectedSorters);
 
     const {
         data,
@@ -82,9 +79,8 @@ const AdministrationSubmissionsForProcessingPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setSorterStateAction={setAdminSubmissionsSorters}
-          setFilterStateAction={setAdminSubmissionsFilters}
-          location="all-submissions-for-processing"
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
         />
     );
 };

@@ -1,16 +1,16 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import CategoryEdit from '../../../components/administration/ContestCategories/CategoryEdit/CategoryEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminContestCategoriesFilters, setAdminContestCategoriesSorters } from '../../../redux/features/admin/contestCategoriesAdminSlice';
 import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import categoriesFilterableColumns, { returnCategoriesNonFilterableColumns } from './contestCategoriesGridColumns';
@@ -28,8 +28,9 @@ const AdministrationContestCategoriesPage = () => {
     const [ openEditContestCategoryModal, setOpenEditContestCategoryModal ] = useState(false);
     const [ openShowCreateContestCategoryModal, setOpenShowCreateContestCategoryModal ] = useState<boolean>(false);
     const [ contestCategoryId, setContestCategoryId ] = useState<number>();
-    const selectedFilters = useSelector((state: IRootStore) => state.adminContestsCategories['all-contests-categories']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminContestsCategories['all-contests-categories']?.selectedSorters);
+
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter> | null>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter> | null>([]);
 
     const {
         refetch: retakeData,
@@ -103,9 +104,8 @@ const AdministrationContestCategoriesPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setSorterStateAction={setAdminContestCategoriesSorters}
-          setFilterStateAction={setAdminContestCategoriesFilters}
-          location="all-contests-categories"
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: openShowCreateContestCategoryModal, modal: (i) => renderCategoryModal(i, false) },
               { showModal: openEditContestCategoryModal, modal: (i) => renderCategoryModal(i, true) },

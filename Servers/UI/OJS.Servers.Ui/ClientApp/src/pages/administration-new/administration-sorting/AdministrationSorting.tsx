@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import CloseIcon from '@mui/icons-material/Close';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
@@ -18,7 +15,6 @@ import styles from './AdministrationSorting.module.scss';
 
 interface IAdministrationSortProps {
     columns: string[];
-    location: string;
     selectedSorters: Array<IAdministrationSorter>;
     setStateAction?: ActionCreatorWithPayload<unknown, string>;
     withSearchParams?: boolean;
@@ -38,19 +34,18 @@ const orderByOptions = [
 ];
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns, location, selectedSorters, setStateAction, searchParams, setSearchParams, withSearchParams = true } = props;
+    const { columns, selectedSorters, setStateAction, searchParams, setSearchParams, withSearchParams = true } = props;
     const defaultSorter = {
         columnName: '',
         orderBy: SortingEnum.ASC,
         availableColumns: columns,
     };
-    const dispatch = useDispatch();
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     useEffect(() => {
         if (selectedSorters.length <= 0 && setStateAction) {
-            dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
+            setStateAction([ defaultSorter ]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -93,7 +88,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     useEffect(() => {
         const urlSelectedSorters = mapUrlToSorters();
         if (urlSelectedSorters.length && setStateAction) {
-            dispatch(setStateAction({ key: location, sorters: urlSelectedSorters }));
+            setStateAction(urlSelectedSorters);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -147,7 +142,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         })) ];
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+            setStateAction(newSortersArray);
         }
     };
 
@@ -158,7 +153,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         }
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, sorters: [ defaultSorter ] }));
+            setStateAction([ defaultSorter ]);
         }
     };
 
@@ -171,7 +166,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         newSortersArray.splice(idx, 1);
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+            setStateAction(newSortersArray);
         }
 
         if (newSortersArray.length === 1) {
@@ -193,7 +188,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         });
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, sorters: newSortersArray }));
+            setStateAction(newSortersArray);
         }
     };
 

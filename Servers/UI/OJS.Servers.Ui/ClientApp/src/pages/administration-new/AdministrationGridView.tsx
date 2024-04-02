@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
-import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
+import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
@@ -31,8 +31,7 @@ interface IAdministrationGridViewProps<T> {
     selectedFilters: Array<IAdministrationFilter>;
     selectedSorters: Array<IAdministrationSorter>;
     setFilterStateAction?: any;
-    setSorterStateAction?: ActionCreatorWithPayload<any, string>;
-    location: string;
+    setSorterStateAction?: any;
     withSearchParams?: boolean;
     legendProps?: Array<{color: string; message:string}>;
     specificRowIdName?: string | null;
@@ -53,7 +52,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         selectedSorters,
         setFilterStateAction,
         setSorterStateAction,
-        location,
         withSearchParams = true,
         legendProps,
         specificRowIdName: specifyColumnIdName,
@@ -101,7 +99,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setFilterStateAction}
                       selectedFilters={selectedFilters}
                       columns={filtersColumns}
-                      location={location}
                     />
 
                     <AdministrationSorting
@@ -111,7 +108,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setSorterStateAction}
                       selectedSorters={selectedSorters}
                       columns={sortingColumns}
-                      location={location}
                     />
                 </div>
                 )}

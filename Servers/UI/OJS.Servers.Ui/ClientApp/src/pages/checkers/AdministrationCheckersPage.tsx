@@ -6,15 +6,14 @@ import CheckerForm from '../../components/administration/checkers/checker-form/C
 import CreateButton from '../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminCheckersFilters, setAdminCheckersSorters } from '../../redux/features/admin/checkersAdminSLice';
 import { useDeleteCheckerMutation, useGetAllCheckersQuery } from '../../redux/services/admin/checkersAdminService';
-import { useAppSelector } from '../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
+import { IAdministrationFilter } from '../administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../administration-new/AdministrationGridView';
 
 import checkersFilterableColumns, { returnCheckersNonFilterableColumns } from './checkersGridColumns';
 
-const location = 'all-checkers';
 const AdministrationCheckersPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
@@ -24,10 +23,10 @@ const AdministrationCheckersPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
     const [ openEditModal, setOpenEditModal ] = useState(false);
     const [ checkerId, setCheckerId ] = useState<number | null>(null);
-    const selectedFilters = useAppSelector((state) => state.adminCheckers[location]?.selectedFilters);
-    const selectedSorters = useAppSelector((state) => state.adminCheckers[location]?.selectedSorters);
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
 
     const {
@@ -88,9 +87,8 @@ const AdministrationCheckersPage = () => {
 
     return (
         <AdministrationGridView
-          setFilterStateAction={setAdminCheckersFilters}
-          setSorterStateAction={setAdminCheckersSorters}
-          location={location}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           data={checkersData}
           error={checkersError}
           selectedFilters={selectedFilters || []}

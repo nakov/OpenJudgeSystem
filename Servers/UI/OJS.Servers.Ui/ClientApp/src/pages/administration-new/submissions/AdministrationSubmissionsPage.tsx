@@ -3,19 +3,16 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import {
-    setAdminSubmissionsFilters,
-    setAdminSubmissionsSorters,
-} from '../../../redux/features/admin/submissionsAdminSlice';
 import { useDeleteSubmissionMutation,
     useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns, { returnSubmissionsNonFilterableColumns } from './admin-submissions-grid-def';
@@ -28,18 +25,15 @@ const AdministrationSubmissionsPage = () => {
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
 
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         filter: searchParams.get('filter') ?? '',
         sorting: searchParams.get('sorting') ?? '',
     });
-
-    const selectedFilters =
-        useAppSelector((state) => state.adminSubmissions['all-submissions']?.selectedFilters);
-
-    const selectedSorters =
-        useAppSelector((state) => state.adminSubmissions['all-submissions']?.selectedSorters);
 
     const {
         refetch: retakeSubmissions,
@@ -113,9 +107,8 @@ const AdministrationSubmissionsPage = () => {
               setQueryParams={setQueryParams}
               selectedFilters={selectedFilters || []}
               selectedSorters={selectedSorters || []}
-              setFilterStateAction={setAdminSubmissionsFilters}
-              setSorterStateAction={setAdminSubmissionsSorters}
-              location="all-submissions"
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               legendProps={[ { color: '#FFA1A1', message: 'Submission is deleted.' } ]}
             />
         </>

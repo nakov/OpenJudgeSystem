@@ -6,15 +6,14 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SubmissionTypesForm from '../../../components/administration/submission-types/form/SubmissionTypeForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminSUbmissionTypesFilters, setAdminSUbmissionTypesSorters } from '../../../redux/features/admin/submissionTypesAdminSlice';
 import { useGetAllSubmissionTypesQuery } from '../../../redux/services/admin/submissionTypesAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import submissionTypesFilterableColumns, { returnNonFilterableColumns } from './submissionTypesGridColumns';
 
-const location = 'all-submission-types';
 const AdministrationSubmissionTypesPage = () => {
     const [ searchParams ] = useSearchParams();
 
@@ -28,9 +27,9 @@ const AdministrationSubmissionTypesPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
     const { refetch, data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
-    const selectedFilters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedFilters);
-    const selectedSorters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedSorters);
 
     const filterParams = searchParams.get('filter');
     const sortingParams = searchParams.get('sorting');
@@ -94,9 +93,8 @@ const AdministrationSubmissionTypesPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setFilterStateAction={setAdminSUbmissionTypesFilters}
-          setSorterStateAction={setAdminSUbmissionTypesSorters}
-          location={location}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: showEditModal, modal: (i) => renderFormModal(i, true) },
               { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },

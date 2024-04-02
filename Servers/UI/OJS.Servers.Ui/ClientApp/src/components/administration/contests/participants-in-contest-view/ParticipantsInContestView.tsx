@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 
-import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { IGetAllAdminParams } from '../../../../common/types';
 import {
+    IAdministrationFilter,
     mapFilterParamsToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import {
+    IAdministrationSorter,
     mapSorterParamsToQueryString,
 } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import participantsFilteringColumns, { returnparticipantsNonFilterableColumns } from '../../../../pages/administration-new/participants/participantsGridColumns';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
 import { useDeleteParticipantMutation, useGetByContestIdQuery } from '../../../../redux/services/admin/participantsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import CreateButton from '../../common/create/CreateButton';
@@ -24,14 +24,12 @@ interface IParticipantsInContestView {
 
 const ParticipantsInContestView = (props: IParticipantsInContestView) => {
     const { contestId, contestName } = props;
-    const filtersAndSortersLocation = `contest-details-participants-${contestId}`;
 
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
 
-    const selectedFilters =
-        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
@@ -83,13 +81,12 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
               error={error}
               filterableGridColumnDef={participantsFilteringColumns}
               notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(useDeleteParticipantMutation, refetch)}
-              location={filtersAndSortersLocation}
               queryParams={queryParams}
               renderActionButtons={renderActions}
               selectedFilters={selectedFilters}
               selectedSorters={selectedSorters}
-              setFilterStateAction={setAdminContestsFilters}
-              setSorterStateAction={setAdminContestsSorters}
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               modals={[
                   { showModal: openCreateModal, modal: (i) => renderParticipantModal(i) },
               ]}

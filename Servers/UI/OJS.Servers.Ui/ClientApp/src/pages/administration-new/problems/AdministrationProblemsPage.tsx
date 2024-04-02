@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import CopyModal, { AllowedOperations } from '../../../components/administration/Problems/copy-modal/CopyModal';
 import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
 import ProblemRetest from '../../../components/administration/Problems/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../redux/features/admin/problemsAdminSlice';
 import { useDeleteProblemMutation, useGetAllAdminProblemsQuery } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnProblemsNonFilterableColumns } from './problemGridColumns';
@@ -30,8 +30,8 @@ const AdministrationProblemsPage = () => {
     const [ showRetestModal, setShowRetestModal ] = useState<boolean>(false);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
     const [ showCopyModal, setShowCopyModal ] = useState<boolean>(false);
-    const selectedFilters = useSelector((state: IRootStore) => state.adminProblems['all-problems']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminProblems['all-problems']?.selectedSorters);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
     const { refetch: retakeProblems, data: problemsData, isLoading: isLoadingProblems, error } = useGetAllAdminProblemsQuery(queryParams);
 
     const filterParams = searchParams.get('filter');
@@ -134,9 +134,8 @@ const AdministrationProblemsPage = () => {
               setQueryParams={setQueryParams}
               selectedFilters={selectedFilters || []}
               selectedSorters={selectedSorters || []}
-              setFilterStateAction={setAdminProblemsFilters}
-              setSorterStateAction={setAdminProblemsSorters}
-              location="all-problems"
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               modals={[
                   { showModal: openEditProblemModal, modal: (i) => renderProblemsEditModal(i) },
                   { showModal: showRetestModal, modal: (i) => renderRetestModal(i) },

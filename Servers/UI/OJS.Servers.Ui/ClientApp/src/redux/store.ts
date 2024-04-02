@@ -3,21 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { checkersAdminSlice } from './features/admin/checkersAdminSLice';
 // features
-import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
-import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
-import { examGroupsAdminSlice } from './features/admin/examGroupsAdminSlice';
-import { participantsAdminSlice } from './features/admin/participantsAdminSlice';
-import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
-import { problemResourcesAdminSlice } from './features/admin/problemResourcesAdminSlice';
-import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
-import { rolesAdminSlice } from './features/admin/rolesAdminSlice';
-import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
-import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
-import { submissionTypesAdminSlice } from './features/admin/submissionTypesAdminSlice';
-import { testsAdminSlice } from './features/admin/testsSlice';
-import { usersAdminSlice } from './features/admin/usersAdminSlice';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
 import { submissionDetailsSlice } from './features/submissionDetailsSlice';
@@ -51,22 +37,8 @@ const rootReducer = combineReducers({
     [submissionsSlice.name]: submissionsSlice.reducer,
     [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
     [authorizationSlice.name]: authorizationSlice.reducer,
-    [contestsAdminSlice.name]: contestsAdminSlice.reducer,
-    [submissionsAdminSlice.name]: submissionsAdminSlice.reducer,
-    [submissionsForProcessingAdminSlice.name]: submissionsForProcessingAdminSlice.reducer,
-    [problemsAdminSlice.name]: problemsAdminSlice.reducer,
-    [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
-    [problemResourcesAdminSlice.name]: problemResourcesAdminSlice.reducer,
-    [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
-    [testsAdminSlice.name]: testsAdminSlice.reducer,
     [themeSlice.name]: themeSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
-    [submissionTypesAdminSlice.name]: submissionTypesAdminSlice.reducer,
-    [checkersAdminSlice.name]: checkersAdminSlice.reducer,
-    [participantsAdminSlice.name]: participantsAdminSlice.reducer,
-    [rolesAdminSlice.name]: rolesAdminSlice.reducer,
-    [usersAdminSlice.name]: usersAdminSlice.reducer,
-    [examGroupsAdminSlice.name]: examGroupsAdminSlice.reducer,
 
     // services
     [submissionsService.reducerPath]: submissionsService.reducer,
@@ -99,18 +71,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 // list reducers with data to be persisted here
 const reducersToPersist = [
     themeSlice.name,
-    contestsAdminSlice.name,
     authorizationSlice.name,
-    problemsAdminSlice.name,
-    problemGroupsAdminSlice.name,
-    problemResourcesAdminSlice.name,
-    contestCategoriesAdminSlice.name,
-    testsAdminSlice.name,
-    checkersAdminSlice.name,
-    participantsAdminSlice.name,
-    rolesAdminSlice.name,
-    usersAdminSlice.name,
-    examGroupsAdminSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

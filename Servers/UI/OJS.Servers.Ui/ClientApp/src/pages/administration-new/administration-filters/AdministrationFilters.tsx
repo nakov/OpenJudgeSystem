@@ -20,7 +20,6 @@ interface IFiltersColumnOperators {
 
 interface IAdministrationFilterProps {
     columns: IFilterColumn[];
-    location: string;
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;

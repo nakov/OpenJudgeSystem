@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import TestForm from '../../../components/administration/tests/test-form/TestForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminTestsFilters, setAdminTestsSorters } from '../../../redux/features/admin/testsSlice';
 import { useDeleteTestMutation, useGetAllAdminTestsQuery } from '../../../redux/services/admin/testsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import testsFilterableColums, { returnTestsNonFilterableColumns } from './testsGridColumns';
@@ -23,8 +23,9 @@ const AdministrationTestsPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
     const [ testId, setTestId ] = useState<number | null>(null);
-    const selectedFilters = useSelector((state: IRootStore) => state.adminTests['all-tests']?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminTests['all-tests']?.selectedSorters);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
     const { refetch: retakeTests, data: testsData, isLoading: isLoadingTests, error } = useGetAllAdminTestsQuery(queryParams);
 
     const filterParams = searchParams.get('filter');
@@ -78,9 +79,8 @@ const AdministrationTestsPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setFilterStateAction={setAdminTestsFilters}
-          setSorterStateAction={setAdminTestsSorters}
-          location="all-tests"
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: openEditTestModal, modal: (i) => renderTestEditModal(i) },
           ]}

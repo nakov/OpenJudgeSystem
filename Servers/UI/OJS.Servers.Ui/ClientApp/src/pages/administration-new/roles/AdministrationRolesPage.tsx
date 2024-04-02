@@ -87,7 +87,6 @@ const AdministrationRolesPage = () => {
           selectedSorters={[]}
           setFilterStateAction={undefined}
           setSorterStateAction={undefined}
-          location=""
           withSearchParams={false}
           showFiltersAndSorters={false}
           modals={[
