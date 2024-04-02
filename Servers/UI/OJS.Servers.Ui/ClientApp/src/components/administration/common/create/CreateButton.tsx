@@ -4,6 +4,7 @@ import { RiAddBoxFill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { CREATE_NEW_RECORD } from '../../../../common/labels';
+import { ACTION_NOT_ALLOWED_MESSAGE } from '../../../../common/messages';
 
 interface ICreateButtonProps {
     showModal: boolean;
@@ -12,11 +13,23 @@ interface ICreateButtonProps {
     Icon? : IconType;
     tooltipLabel?: string;
     disabled? :boolean;
+    disabledMessage?: string;
 }
 const CreateButton = (props: ICreateButtonProps) => {
-    const { showModal, showModalFunc, styles, Icon, tooltipLabel = CREATE_NEW_RECORD, disabled = false } = props;
+    const {
+        showModal,
+        showModalFunc,
+        styles,
+        Icon,
+        tooltipLabel = CREATE_NEW_RECORD,
+        disabled = false,
+        disabledMessage = ACTION_NOT_ALLOWED_MESSAGE,
+    } = props;
     return (
-        <Tooltip title={tooltipLabel}>
+        <Tooltip title={disabled
+            ? disabledMessage
+            : tooltipLabel}
+        >
             <span>
                 <IconButton
                   disabled={disabled}

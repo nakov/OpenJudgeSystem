@@ -5,6 +5,7 @@ import QueueIcon from '@mui/icons-material/Queue';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { DISABLED_USER_TO_EXAM_GROUP_BUTTON } from '../../../../common/messages';
 import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
 import {
     mapFilterParamsToQueryString,
@@ -176,8 +177,12 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
                       : 'rgb(25,118,210)',
               }}
               disabled={!isAllowedToAddUsers}
+              disabledMessage={DISABLED_USER_TO_EXAM_GROUP_BUTTON}
             />
-            <Tooltip title="Add multiple users">
+            <Tooltip title={!isAllowedToAddUsers
+                ? DISABLED_USER_TO_EXAM_GROUP_BUTTON
+                : 'Add multiple users'}
+            >
                 <span>
                     <IconButton
                       disabled={!isAllowedToAddUsers}

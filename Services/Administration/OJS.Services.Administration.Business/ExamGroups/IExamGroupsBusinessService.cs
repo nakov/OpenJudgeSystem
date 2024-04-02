@@ -13,5 +13,5 @@ public interface IExamGroupsBusinessService : IAdministrationOperationService<Ex
 
     Task<UserToExamGroupModel> RemoveUserFromExamGroup(UserToExamGroupModel model);
 
-    Task AddExternalUsersByIdAndUsernames(ExamGroup examGroup, IEnumerable<string> usernames);
+    Task AddExternalUsersByIdAndUsernames(int examGroupId, IEnumerable<string> usernames);
 }

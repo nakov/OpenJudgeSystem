@@ -119,7 +119,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
         if (externalUsernames.Any())
         {
             this.backgroundJobsService.AddFireAndForgetJob<IExamGroupsBusinessService>(
-                x => x.AddExternalUsersByIdAndUsernames(examGroup, externalUsernames));
+                x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames));
         }
 
         return model;
@@ -128,6 +128,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
     public async Task<UserToExamGroupModel> RemoveUserFromExamGroup(UserToExamGroupModel model)
     {
         var examGroup = await this.examGroupsDataService.GetByIdQuery(model.ExamGroupId)
+            .Include(x => x.UsersInExamGroups)
             .FirstAsync();
 
         var userExamGroup = examGroup.UsersInExamGroups.FirstOrDefault(x => x.UserId == model.UserId);
@@ -149,8 +150,17 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
         await this.examGroupsDataService.SaveChanges();
     }
 
-    public async Task AddExternalUsersByIdAndUsernames(ExamGroup examGroup, IEnumerable<string> usernames)
+    public async Task AddExternalUsersByIdAndUsernames(int examGroupId, IEnumerable<string> usernames)
     {
+        var examGroup = await this.examGroupsDataService
+            .GetByIdWithUsersQuery(examGroupId)
+            .FirstOrDefaultAsync();
+
+        if (examGroup == null)
+        {
+            throw new BusinessServiceException($"Exam group with id: {examGroupId} not found.");
+        }
+
         foreach (var username in usernames)
         {
             await this.AddExternalUser(examGroup, null, username);
