@@ -21,10 +21,11 @@ interface IUserFormProps {
     id: string;
 
     providedUser?: IUserAdministrationModel;
+    onSuccessfullyEdited?: Function;
 }
 
 const UserForm = (props: IUserFormProps) => {
-    const { id, providedUser } = props;
+    const { id, providedUser, onSuccessfullyEdited } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
 
@@ -33,7 +34,7 @@ const UserForm = (props: IUserFormProps) => {
         email: '',
         userName: '',
         userSettings: {
-            age: 0,
+            age: providedUser?.userSettings.age || 0,
             city: null,
             company: null,
             dateOfBirth: null,
@@ -47,6 +48,7 @@ const UserForm = (props: IUserFormProps) => {
     });
 
     const {
+        refetch,
         data: getData,
         error: getError,
         isLoading: isGetting,
@@ -78,12 +80,20 @@ const UserForm = (props: IUserFormProps) => {
     }, [ editError, getError ]);
 
     useEffect(() => {
+        if (isSuccessfullyEdited) {
+            if (onSuccessfullyEdited) {
+                onSuccessfullyEdited();
+            } else {
+                refetch();
+            }
+        }
+
         const message = getAndSetSuccesfullMessages([
             { message: editData, shouldGet: isSuccessfullyEdited },
         ]);
 
         setSuccessfullMessage(message);
-    }, [ editData, isSuccessfullyEdited ]);
+    }, [ editData, isSuccessfullyEdited, onSuccessfullyEdited, refetch ]);
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -188,6 +198,7 @@ const UserForm = (props: IUserFormProps) => {
                               InputLabelProps={{ shrink: true }}
                               type="number"
                               onChange={onChange}
+                              disabled
                             />
                         </FormControl>
                         <FormControl className={formStyles.spacing}>
