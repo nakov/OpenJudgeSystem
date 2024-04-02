@@ -33,5 +33,5 @@ public class CheckerTypeNameValueResolver : IValueResolver<TestsExecutionDetails
         string destMember,
         ResolutionContext context) => !string.IsNullOrEmpty(source.CheckerType) && this.nameToValueMap.ContainsKey(source.CheckerType)
         ? this.nameToValueMap[source.CheckerType]
-        : this.defaultValue;
+        : source.CheckerType ?? this.defaultValue;
 }
