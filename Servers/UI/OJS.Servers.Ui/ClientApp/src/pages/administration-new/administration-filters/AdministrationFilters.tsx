@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -7,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
@@ -26,7 +24,7 @@ interface IAdministrationFilterProps {
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction?: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: any;
     withSearchParams?: boolean;
 }
 
@@ -100,8 +98,7 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 const filterSeparator = '&&;';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
-    const dispatch = useDispatch();
+    const { columns, withSearchParams = true, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
     const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
@@ -113,9 +110,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     useEffect(() => {
         if (selectedFilters.length <= 0 && setStateAction) {
-            dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
+            setStateAction([ defaultFilter ]);
         }
-    }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
+    }, [ defaultFilter, selectedFilters, selectedFilters.length, setStateAction ]);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
@@ -162,7 +159,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     useEffect(() => {
         const urlSelectedFilters = mapUrlToFilters();
         if (urlSelectedFilters.length && setStateAction) {
-            dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
+            setStateAction([ urlSelectedFilters ]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -221,7 +218,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         })) ];
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+            setStateAction(newFiltersArray);
         }
     };
 
@@ -231,10 +228,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             setSearchParams(searchParams);
         }
         if (setStateAction) {
-            dispatch(setStateAction({
-                key: location,
-                filters: [ defaultFilter ],
-            }));
+            setStateAction([ defaultFilter ]);
         }
     };
 
@@ -247,7 +241,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         newFiltersArray.splice(idx, 1);
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+            setStateAction(newFiltersArray);
         }
 
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
@@ -285,7 +279,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         });
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+            setStateAction(newFiltersArray);
         }
     };
 

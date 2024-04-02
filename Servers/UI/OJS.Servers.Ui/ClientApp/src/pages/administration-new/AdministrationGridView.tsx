@@ -30,7 +30,7 @@ interface IAdministrationGridViewProps<T> {
     setQueryParams?: (params: IGetAllAdminParams) => void;
     selectedFilters: Array<IAdministrationFilter>;
     selectedSorters: Array<IAdministrationSorter>;
-    setFilterStateAction?: ActionCreatorWithPayload<any, string>;
+    setFilterStateAction?: any;
     setSorterStateAction?: ActionCreatorWithPayload<any, string>;
     location: string;
     withSearchParams?: boolean;

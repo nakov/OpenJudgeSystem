@@ -20,6 +20,7 @@ import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
+import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView from '../AdministrationGridView';
 
 import contestFilterableColumns, { returnContestsNonFilterableColumns } from './contestsGridColumns';
@@ -35,6 +36,7 @@ const AdministrationContestsPage = () => {
     const [ showDownloadSubsModal, setShowDownloadSubsModal ] = useState<boolean>(false);
     const [ showExportExcelModal, setShowExportExcelModal ] = useState<boolean>(false);
 
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter> | null>([]);
     const [ excelExportType, setExcelExportType ] = useState<number>(0);
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
@@ -44,9 +46,10 @@ const AdministrationContestsPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const selectedFilters = useAppSelector((state) => state.adminContests['all-contests']?.selectedFilters);
+    // const selectedFilters = useAppSelector((state) => state.adminContests['all-contests']?.selectedFilters);
     const selectedSorters = useAppSelector((state) => state.adminContests['all-contests']?.selectedSorters);
 
+    console.log(selectedSorters);
     const {
         refetch: retakeContests,
         data,
@@ -198,7 +201,7 @@ const AdministrationContestsPage = () => {
               selectedFilters={selectedFilters || []}
               selectedSorters={selectedSorters || []}
               setSorterStateAction={setAdminContestsSorters}
-              setFilterStateAction={setAdminContestsFilters}
+              setFilterStateAction={setSelectedFilters}
               location="all-contests"
               modals={[
                   { showModal: openShowCreateContestModal, modal: (i) => renderContestModal(i, false) },
