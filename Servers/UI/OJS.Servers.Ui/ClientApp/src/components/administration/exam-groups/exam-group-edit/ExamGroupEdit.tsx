@@ -30,7 +30,7 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IExamGroupEditProps {
     examGroupId: number | null;
     isEditMode?: boolean;
-    getContestId: Function;
+    getContestId?: Function;
 }
 
 const ExamGroupEdit = (props:IExamGroupEditProps) => {
@@ -78,7 +78,9 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         () => {
             if (data) {
                 setExamGroup(data);
-                getContestId(data.contestId);
+                if (getContestId) {
+                    getContestId(data.contestId);
+                }
             }
         },
         [ data, getContestId ],
