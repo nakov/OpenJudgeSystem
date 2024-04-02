@@ -11,6 +11,8 @@ export const CHECKER = 'Checker';
 
 export const DOWNLOAD = 'Download';
 
+export const USERS = 'Users';
+
 export const VIEW = 'View';
 export const EDIT = 'Edit';
 export const DELETE = 'Delete';
@@ -77,7 +79,6 @@ export const HIDE_INPUT = 'Hide Input';
 
 // Problem Resources
 export const FILE_EXTENSION = 'File Extension';
-
 // COMPILERS
 export const COMPILER = 'Compiler';
 export const ADDITIONAL_COMPILER_ARGUMENTS = 'Additional Compiler Arguments';
@@ -87,7 +88,6 @@ export const DLL_FILE = 'Dll File';
 export const PARAMETER = 'Parameter';
 
 // Participants
-
 export const IS_OFFICIAL = 'Is Official';
 
 // Users

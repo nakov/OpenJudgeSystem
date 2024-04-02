@@ -9,12 +9,10 @@ using System.Threading.Tasks;
 
 public class RoleDeleteValidator : BaseDeleteValidator<BaseDeleteValidationModel<string>, string>
 {
-    private readonly IDataService<Role> roleDataService;
     private readonly IDataService<UserInRole> userInRoleService;
 
     public RoleDeleteValidator(IDataService<Role> roleDataService, IDataService<UserInRole> userInRoleService)
     {
-        this.roleDataService = roleDataService;
         this.userInRoleService = userInRoleService;
 
         this.ClassLevelCascadeMode = CascadeMode.Stop;

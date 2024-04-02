@@ -23,3 +23,4 @@ export const PARTICIPANTS_PATH = 'participants';
 export const CHECKERS_PATH = 'checkers';
 export const ROLES_PATH = 'roles';
 export const USERS_PATH = 'users';
+export const EXAM_GROUPS_PATH = 'exam-groups';
