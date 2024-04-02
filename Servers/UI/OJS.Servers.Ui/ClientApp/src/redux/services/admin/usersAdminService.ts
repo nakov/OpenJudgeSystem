@@ -113,7 +113,7 @@ export const usersAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 0,
         }),
     }),
 });

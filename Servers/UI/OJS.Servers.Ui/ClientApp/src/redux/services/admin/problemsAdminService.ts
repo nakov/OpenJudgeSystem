@@ -105,7 +105,7 @@ export const problemsAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 10,
+            keepUnusedDataFor: 0,
         }),
     }),
 });

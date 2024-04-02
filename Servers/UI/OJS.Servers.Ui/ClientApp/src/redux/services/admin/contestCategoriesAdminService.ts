@@ -68,7 +68,7 @@ export const contestCategoriesAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 0,
         }),
     }),
 });

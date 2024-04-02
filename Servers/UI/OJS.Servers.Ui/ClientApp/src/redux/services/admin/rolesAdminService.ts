@@ -67,7 +67,7 @@ export const rolesAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 0,
         }),
     }),
 });

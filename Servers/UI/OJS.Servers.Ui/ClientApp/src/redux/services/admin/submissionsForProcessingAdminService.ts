@@ -41,7 +41,9 @@ export const submissionsForProcessingAdminService = createApi({
                     page,
                     itemsPerPage,
                     sorting,
-                } }) }),
+                } }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 

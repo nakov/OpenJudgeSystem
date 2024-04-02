@@ -50,7 +50,7 @@ export const checkerAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 0,
         }),
     }),
 });

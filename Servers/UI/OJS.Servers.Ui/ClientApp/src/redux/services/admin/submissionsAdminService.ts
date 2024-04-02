@@ -49,6 +49,7 @@ export const submissionsAdminService = createApi({
                     sorting,
                 },
             }),
+            keepUnusedDataFor: 0,
         }),
     }),
 });

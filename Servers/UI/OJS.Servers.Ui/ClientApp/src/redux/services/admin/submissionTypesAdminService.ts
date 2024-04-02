@@ -52,7 +52,7 @@ export const submissionTypesAdminService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 3,
+            keepUnusedDataFor: 0,
         }),
     }),
 });
