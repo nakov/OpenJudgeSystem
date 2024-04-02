@@ -18,4 +18,7 @@ public class ExamGroupsDataService : DataService<ExamGroup>, IExamGroupsDataServ
         => this.GetByIdQuery(id)
             .Select(eg => eg.ContestId)
             .FirstOrDefaultAsync();
+
+    public IQueryable<ExamGroup> GetByIdWithUsersQuery(int id)
+        => this.GetByIdQuery(id).Include(eg => eg.UsersInExamGroups);
 }

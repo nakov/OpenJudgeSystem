@@ -1,11 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable max-len */
-/* eslint-disable react/jsx-no-useless-fragment */
-/* eslint-disable func-style */
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
@@ -13,6 +6,7 @@ import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
 import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
+import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
@@ -91,7 +85,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
             {renderActionButtons
                 ? renderActionButtons()
                 : (
-                    <Tooltip title="Action not allowed">
+                    <Tooltip title={ACTION_NOT_ALLOWED_MESSAGE}>
                         <Box>
                             <IconButton disabled>
                                 {' '}
@@ -112,8 +106,25 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                 { renderActions() }
                 {showFiltersAndSorters && (
                 <div style={{ ...flexCenterObjectStyles, width: '100%', gap: '20px' }}>
-                    <AdministrationFilters searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setFilterStateAction} selectedFilters={selectedFilters} columns={filtersColumns} location={location} />
-                    <AdministrationSorting searchParams={searchParams} setSearchParams={setSearchParams} withSearchParams={withSearchParams} setStateAction={setSorterStateAction} selectedSorters={selectedSorters} columns={sortingColumns} location={location} />
+                    <AdministrationFilters
+                      searchParams={searchParams}
+                      setSearchParams={setSearchParams}
+                      withSearchParams={withSearchParams}
+                      setStateAction={setFilterStateAction}
+                      selectedFilters={selectedFilters}
+                      columns={filtersColumns}
+                      location={location}
+                    />
+
+                    <AdministrationSorting
+                      searchParams={searchParams}
+                      setSearchParams={setSearchParams}
+                      withSearchParams={withSearchParams}
+                      setStateAction={setSorterStateAction}
+                      selectedSorters={selectedSorters}
+                      columns={sortingColumns}
+                      location={location}
+                    />
                 </div>
                 )}
                 {legendProps

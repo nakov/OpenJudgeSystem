@@ -1,7 +1,8 @@
+/* eslint-disable prefer-destructuring */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IFileModel, IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
-import { IGetByRoleId, IGetByUserId } from '../../../common/url-types';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInExamGroupModel, IUserInListModel } from '../../../common/types';
+import { IGetByExamGroupId, IGetByRoleId, IGetByUserId } from '../../../common/url-types';
 import { EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
@@ -9,9 +10,22 @@ export const usersAdminService = createApi({
     reducerPath: 'users',
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({
+
         getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, string>({
             query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
+        }),
+
+        getByExamGroupId: builder.query<IPagedResultType<IUserInExamGroupModel>, IGetByExamGroupId>({
+            query: ({ examGroupId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetByExamGroupId/${examGroupId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
         }),
 
         getAllUsers: builder.query<IPagedResultType<IUserInListModel>, IGetAllAdminParams>({
@@ -131,5 +145,7 @@ export const {
     useAddLecturerToCategoryMutation,
     useRemoveLecturerFromCategoryMutation,
     useLazyExportUsersToExcelQuery,
+    useGetByExamGroupIdQuery,
+
 } = usersAdminService;
 export default usersAdminService;

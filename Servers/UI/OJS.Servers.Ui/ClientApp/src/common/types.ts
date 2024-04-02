@@ -521,11 +521,12 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminExamGroups: IAdminSlice;
+    adminUsers: IAdminSlice;
     adminSubmissionTypes: IAdminSlice;
     adminCheckers: IAdminSlice;
     adminParticipants: IAdminSlice;
     adminRoles: IAdminSlice;
-    adminUsers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -543,6 +544,41 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+}
+
+interface IIndexExamGroupsType {
+    id: number;
+    name: string;
+    contest: string;
+    externalAppId: string;
+    externalExamGroupId: string;
+}
+
+interface IExamGroupAdministration {
+    id: number;
+    name: string;
+    contestName: string;
+    contestId: number | null;
+    externalAppId: string;
+    externalExamGroupId: number;
+}
+
+interface IUserAdministration {
+    id: string;
+    username: string;
+    isDeleted: boolean;
+    createdOn: Date | null;
+    deletedOn: Date | null;
+}
+
+interface IUserInExamGroupModel {
+    id: string;
+    username: string;
+}
+
+interface IUserAutocomplete {
+    id: string;
+    userName: string;
 }
 
 interface ISubmissionTypeAdministrationModel {
@@ -693,6 +729,11 @@ export type {
     ITestsUploadModel,
     IFileModel,
     IEnumType,
+    IIndexExamGroupsType,
+    IExamGroupAdministration,
+    IUserAdministration,
+    IUserInExamGroupModel,
+    IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
