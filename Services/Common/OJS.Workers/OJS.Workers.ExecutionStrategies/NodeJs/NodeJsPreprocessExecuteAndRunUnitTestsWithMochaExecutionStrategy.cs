@@ -60,31 +60,6 @@
 	expect = chai.expect,
 	should = chai.should()";
 
-        protected override string JsCodePreevaulationCode => @"
-chai.use(sinonChai);
-describe('TestScope', function() {
-    let code = {
-        run: " + UserInputPlaceholder + @"
-    };
-
-    let result = code.run;
-    let bgCoderConsole = {};
-
-    before(function() {
-        Object.keys(console)
-            .forEach(function (prop) {
-                bgCoderConsole[prop] = console[prop];
-                console[prop] = new Function('');
-            });
-    });
-
-    after(function() {
-        Object.keys(bgCoderConsole)
-            .forEach(function (prop) {
-                console[prop] = bgCoderConsole[prop];
-            });
-    });";
-
         protected override string JsCodeEvaluation => @"
 	it('Test', function(done) {
 		let content = '';
