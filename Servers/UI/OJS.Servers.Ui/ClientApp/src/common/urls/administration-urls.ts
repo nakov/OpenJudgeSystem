@@ -8,7 +8,7 @@ export const DELETE_ENDPOINT = 'Delete';
 export const GET_ENDPOINT = 'Get';
 export const GETALL_ENDPOINT = 'GetAll';
 
-export const EXCEL_RESULTS_ENDPOINT = 'GetExcelResults';
+export const EXCEL_RESULTS_ENDPOINT = 'GetExcelFile';
 
 // Paths
 export const NEW_ADMINISTRATION_PATH = 'administration-new';

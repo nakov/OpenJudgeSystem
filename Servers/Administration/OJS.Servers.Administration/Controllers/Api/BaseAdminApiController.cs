@@ -58,7 +58,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
 
     [HttpGet]
     [ProtectedEntityAction(false)]
-    public virtual async Task<IActionResult> GetExcelResults([FromQuery]PaginationRequestModel model)
+    public virtual async Task<IActionResult> GetExcelFile([FromQuery]PaginationRequestModel model)
     {
         var user = this.User.Map<UserInfoModel>();
 
