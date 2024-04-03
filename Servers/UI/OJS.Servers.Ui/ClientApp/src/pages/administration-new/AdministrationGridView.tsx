@@ -43,7 +43,7 @@ interface IAdministrationGridViewProps<T> {
    withSearchParams?: boolean;
    legendProps?: Array<{color: string; message:string}>;
 
-   excelMutation?: IExcelProps;
+   excelMutation?: any;
 
    specificRowIdName?: string | null;
 }

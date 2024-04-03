@@ -13,7 +13,7 @@ import styles from './ExportExcel.module.scss';
 interface IExportExcelProps{
    mutation?: any;
    disabled?: boolean;
-   queryParams: IGetAllAdminParams;
+   queryParams?: IGetAllAdminParams;
 }
 const ExportExcel = (props:IExportExcelProps) => {
     const { mutation: lazyQuery, disabled = false, queryParams } = props;
