@@ -124,7 +124,6 @@ const SubmissionsGrid = ({
     return (
         <>
             {renderSubmissionsGrid()}
-            {console.log(submissions.pagesCount)}
             {submissions.totalItemsCount !== 0 && (
                 <PaginationControls
                   count={submissions.pagesCount}
