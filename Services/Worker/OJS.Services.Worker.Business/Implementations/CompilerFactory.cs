@@ -24,7 +24,7 @@ public class CompilerFactory : ICompilerFactory
             case CompilerType.Java:
             case CompilerType.JavaZip:
             case CompilerType.JavaInPlaceCompiler:
-                return this.settings.JavaCompilerPath;
+                return this.GetJavaCompilerPath(strategyType);
             case CompilerType.DotNetCompiler:
             case CompilerType.CSharpDotNetCore:
                 return this.settings.DotNetCompilerPath;
@@ -72,4 +72,9 @@ public class CompilerFactory : ICompilerFactory
             ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => this.settings.DotNetCore5SharedAssembliesPath,
             _ => this.settings.DotNetCore6SharedAssembliesPath,
         };
+
+    private string GetJavaCompilerPath(ExecutionStrategyType strategyType)
+        => strategyType.ToString().Contains("21")
+            ? this.settings.Java21CompilerPath
+            : this.settings.JavaCompilerPath;
 }

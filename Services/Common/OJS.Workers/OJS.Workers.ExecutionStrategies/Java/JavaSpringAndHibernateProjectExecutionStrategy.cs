@@ -2,7 +2,6 @@
 namespace OJS.Workers.ExecutionStrategies.Java
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -27,11 +26,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private const string PropertySourcePattern = @"(@PropertySources?\((?:.*?)\))";
         private const string PomXmlNamespace = @"http://maven.apache.org/POM/4.0.0";
         private const string StartClassNodeXPath = @"//pomns:properties/pomns:start-class";
-        private const string DependencyNodeXPathTemplate = @"//pomns:dependencies/pomns:dependency[pomns:groupId='##' and pomns:artifactId='!!']";
-        private const string DependenciesNodeXPath = @"//pomns:dependencies";
-        private const string MavenTestCommand = "test -f {0} -Dtest=\"{1}\"";
-        private const string MavenBuild = "compile";
-        private const string PomXmlBuildSettingsPattern = @"<build>(?s:.)*<\/build>";
+        private const string MavenTestCommand = "-o test -f {0} -Dtest=\"{1}\"";
+        private const string MavenBuild = "-o compile";
         private const string TestsFolderPattern = @"src/test/java/*";
         private const string MainCodeFolderPattern = @"src/main/java/";
 
@@ -47,29 +43,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
         {
         }
 
-        // Property contains Dictionary<GroupId, Tuple<ArtifactId, Version>>
-        public static Dictionary<string, Tuple<string, string>> Dependencies =>
-            new Dictionary<string, Tuple<string, string>>()
-            {
-                { "org.junit.jupiter", new Tuple<string, string>("junit-jupiter-api", "5.9.2") },
-                { "org.hibernate", new Tuple<string, string>("hibernate-core", "5.6.3.Final") },
-                { "mysql", new Tuple<string, string>("mysql-connector-java", "8.0.27") },
-                { "org.assertj", new Tuple<string, string>("assertj-core", "3.22.0") },
-                { "org.springframework.boot", new Tuple<string, string>("spring-boot-starter-test", "2.6.2") },
-            };
-
-        protected static string PomXmlBuildSettings => @"
-            <build>
-                <plugins>
-                    <!-- Maven Compiler Plugin -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
-                    </plugin>
-                </plugins>
-            </build>";
-
         protected string PackageName { get; set; }
 
         protected string MainClassFileName { get; set; }
@@ -81,7 +54,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected override string ClassPathArgument
             => $"-cp {this.Settings.JavaLibrariesPath}*{ClassPathArgumentSeparator}{this.WorkingDirectory}{Path.DirectorySeparatorChar}target{Path.DirectorySeparatorChar}* ";
 
-        protected static void PreparePomXml(string submissionFilePath)
+        protected void PreparePomXml(string submissionFilePath)
         {
             var extractionDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
 
@@ -95,8 +68,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 throw new FileNotFoundException("Pom.xml not found in submission!");
             }
 
-            AddBuildSettings(pomXmlFilePath);
-            AddDependencies(pomXmlFilePath);
+            this.ReplacePom(pomXmlFilePath);
             var mainClassFolderPathInZip = Path.GetDirectoryName(FileHelpers
                 .GetFilePathsFromZip(submissionFilePath)
                 .FirstOrDefault(f => f.EndsWith(PomXmlFileNameAndExtension)));
@@ -204,7 +176,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
             this.OverwriteApplicationProperties(submissionFilePath);
             this.RemovePropertySourceAnnotationsFromMainClass(submissionFilePath);
             this.AddTestsToUserSubmission(context, submissionFilePath);
-            PreparePomXml(submissionFilePath);
+            this.PreparePomXml(submissionFilePath);
 
             return submissionFilePath;
         }
@@ -327,72 +299,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
                 .Select(x => x.Contains(".") ? x.Substring(0, x.LastIndexOf(".", StringComparison.Ordinal)) : x)
                 .Select(x => x.Replace("/", ".")));
 
-        private static void AddBuildSettings(string pomXmlFilePath)
-        {
-            var pomXmlContent = File.ReadAllText(pomXmlFilePath);
-            var buildSettingsRegex = new Regex(PomXmlBuildSettingsPattern);
-            if (buildSettingsRegex.IsMatch(pomXmlContent))
-            {
-                pomXmlContent = Regex.Replace(pomXmlContent, PomXmlBuildSettingsPattern, PomXmlBuildSettings);
-            }
-
-            File.WriteAllText(pomXmlFilePath, pomXmlContent);
-        }
-
-        private static void AddDependencies(string pomXmlFilePath)
-        {
-            var doc = new XmlDocument();
-            doc.Load(pomXmlFilePath);
-
-            var namespaceManager = new XmlNamespaceManager(doc.NameTable);
-            namespaceManager.AddNamespace("pomns", PomXmlNamespace);
-
-            XmlNode rootNode = doc.DocumentElement;
-            if (rootNode == null)
-            {
-                throw new XmlException("Root element not specified in pom.xml");
-            }
-
-            var dependenciesNode = rootNode.SelectSingleNode(DependenciesNodeXPath, namespaceManager);
-            if (dependenciesNode == null)
-            {
-                throw new XmlException("No dependencies specified in pom.xml");
-            }
-
-            foreach (var groupIdArtifactId in Dependencies)
-            {
-                var dependencyNode = rootNode
-                    .SelectSingleNode(
-                     DependencyNodeXPathTemplate
-                        .Replace("##", groupIdArtifactId.Key)
-                        .Replace("!!", groupIdArtifactId.Value.Item1),
-                     namespaceManager);
-
-                if (dependencyNode == null)
-                {
-                    dependencyNode = doc.CreateNode(XmlNodeType.Element, "dependency", PomXmlNamespace);
-
-                    var groupId = doc.CreateNode(XmlNodeType.Element, "groupId", PomXmlNamespace);
-                    groupId.InnerText = groupIdArtifactId.Key;
-                    var artifactId = doc.CreateNode(XmlNodeType.Element, "artifactId", PomXmlNamespace);
-                    artifactId.InnerText = groupIdArtifactId.Value.Item1;
-
-                    if (groupIdArtifactId.Value.Item2 != null)
-                    {
-                        var versionNumber = doc.CreateNode(XmlNodeType.Element, "version", PomXmlNamespace);
-                        versionNumber.InnerText = groupIdArtifactId.Value.Item2;
-                        dependencyNode.AppendChild(versionNumber);
-                    }
-
-                    dependencyNode.AppendChild(groupId);
-                    dependencyNode.AppendChild(artifactId);
-                    dependenciesNode.AppendChild(dependencyNode);
-                }
-            }
-
-            doc.Save(pomXmlFilePath);
-        }
-
         private static string GetMavenErrorsComment(string testOutput)
         {
             var sb = new StringBuilder();
@@ -425,6 +331,14 @@ namespace OJS.Workers.ExecutionStrategies.Java
             var paths = FileHelpers.GetFilePathsFromZip(submissionFilePath).ToList();
 
             return paths.Any(x => x.StartsWith(MainCodeFolderPattern)) && paths.Any(x => x.StartsWith(PomXmlFileNameAndExtension));
+        }
+
+        private void ReplacePom(string pomXmlFilePath)
+        {
+            FileHelpers.DeleteFiles(pomXmlFilePath);
+
+            var newPomFileContent = File.ReadAllText(this.Settings.JavaSpringAndHibernateStrategyPomFilePath);
+            FileHelpers.WriteAllText(pomXmlFilePath, newPomFileContent);
         }
 
         private string ExtractEntryPointFromPomXml(string submissionFilePath)
@@ -462,7 +376,8 @@ namespace OJS.Workers.ExecutionStrategies.Java
         string JavaExecutablePath,
         string JavaLibrariesPath,
         int BaseUpdateTimeOffset,
-        string MavenPath)
+        string MavenPath,
+        string JavaSpringAndHibernateStrategyPomFilePath)
         : JavaProjectTestsExecutionStrategySettings(BaseTimeUsed, BaseMemoryUsed, JavaExecutablePath, JavaLibrariesPath,
             BaseUpdateTimeOffset);
 }

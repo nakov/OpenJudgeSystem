@@ -26,8 +26,7 @@ public class SubmissionsController : BaseAdminApiController<
             ISubmissionsGridDataService submissionsGridDataService,
             ISubmissionsBusinessService submissionsBusinessService,
             SubmissionsAdministrationModelValidator validator,
-            IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator,
-            ILecturerContestPrivilegesBusinessService lecturerPrivilegesBusinessService)
+            IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator)
         : base(
             submissionsGridDataService,
             submissionsBusinessService,

@@ -28,12 +28,16 @@ public class SubmissionInListModel : IMapExplicitly
 
     public bool IsDeleted { get; set; }
 
+    public bool IsBinaryFile { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionInListModel>()
         .ForMember(x => x.ContestId, opt
             => opt.MapFrom(x => x.Problem.ProblemGroup.ContestId))
+        .ForMember(x => x.IsBinaryFile, opt
+            => opt.MapFrom(x => !string.IsNullOrEmpty(x.FileExtension)))
         .ForMember(x => x.ContestName, opt
             => opt.MapFrom(x => x.Problem.ProblemGroup.Contest.Name))
         .ForMember(x => x.ParticipantName, opt
-    => opt.MapFrom(x => x.Participant!.User.UserName));
+            => opt.MapFrom(x => x.Participant!.User.UserName));
 }

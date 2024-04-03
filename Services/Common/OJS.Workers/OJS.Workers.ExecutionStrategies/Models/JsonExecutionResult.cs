@@ -84,7 +84,7 @@ namespace OJS.Workers.ExecutionStrategies.Models
                 }
             }
 
-            if (forceErrorExtracting)
+            if (forceErrorExtracting || totalTests <= 0)
             {
                 try
                 {
