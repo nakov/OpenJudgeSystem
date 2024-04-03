@@ -61,6 +61,7 @@ const SubmissionsGrid = ({
 
             if (isEmpty(submissions.items)) {
                 return (
+                    // TODO: Make this reusable (centered themed text)
                     <div className={concatClassNames(
                         styles.noSubmissionsFound,
                         getColorClassName(themeColors.textColor),
@@ -123,7 +124,8 @@ const SubmissionsGrid = ({
     return (
         <>
             {renderSubmissionsGrid()}
-            {!isEmpty(submissions) && submissions.pagesCount !== 0 && (
+            {console.log(submissions.pagesCount)}
+            {submissions.totalItemsCount !== 0 && (
                 <PaginationControls
                   count={submissions.pagesCount}
                   page={submissions.pageNumber}
