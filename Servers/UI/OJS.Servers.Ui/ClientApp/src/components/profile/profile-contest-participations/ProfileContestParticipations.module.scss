@@ -1,0 +1,11 @@
+@use 'src/styles/spacings';
+@use 'src/styles/fonts';
+
+.noParticipationsText {
+  @extend %font-family-montserrat;
+
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: spacings.$sp-18;
+}

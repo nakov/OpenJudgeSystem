@@ -6,6 +6,7 @@ import isNil from 'lodash/isNil';
 
 import { SortType, SortTypeDirection } from '../../../common/contest-types';
 import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
+import useTheme from '../../../hooks/use-theme';
 import {
     setProfileUserContestParticipationsPage,
     setUserContestParticipations,
@@ -13,10 +14,13 @@ import {
 import { useGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import isNilOrEmpty from '../../../utils/check-utils';
+import concatClassNames from '../../../utils/class-names';
 import ContestCard from '../../contests/contest-card/ContestCard';
 import List, { Orientation } from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+
+import styles from './ProfileContestParticipations.module.scss';
 
 interface IProfileContestParticipationsProps {
     userIsProfileOwner: boolean;
@@ -29,6 +33,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestPar
         userContestParticipations,
         profileUserContestParticipationsPage,
     } = useAppSelector((reduxState) => reduxState.contests);
+    const { getColorClassName, themeColors } = useTheme();
 
     const dispatch = useAppDispatch();
 
@@ -87,7 +92,15 @@ const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestPar
                     )}
                 </div>
             )
-            : <span>No participations in contests yet</span>;
+            : (
+                <div className={concatClassNames(
+                    styles.noParticipationsText,
+                    getColorClassName(themeColors.textColor),
+                )}
+                >
+                    No participations in contests yet
+                </div>
+            );
 };
 
 export default ProfileContestParticipations;
