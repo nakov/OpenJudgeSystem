@@ -25,6 +25,52 @@
     .solutionTitle {
       font-weight: font-weights.$font-weight-bold;
       font-size: variables.$f-size-24;
+      margin-bottom: spacings.$sp-32;
+    }
+    .innerBodyWrapper {
+      width: 100%;
+    }
+    .codeContentWrapper {
+      margin-top: spacings.$sp-32;
+
+      > div {
+        font-size: variables.$f-size-30;
+      }
+      section {
+        margin-top: spacings.$sp-12;
+      }
+    }
+
+    .submissionDetailsWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: spacings.$sp-32;
+
+      .detailsRow {
+        margin-bottom: spacings.$sp-8;
+
+        span:first-child {
+          font-weight: font-weights.$font-weight-bold;
+        }
+        span:nth-child(2) {
+          margin-left: spacings.$sp-8;
+        }
+      }
+
+      .strategyWrapper {
+        display: flex;
+        justify-content: flex-end;
+        span {
+          padding: spacings.$sp-12;
+          border-radius: border-radiuses.$br-6;
+        }
+      }
+      .buttonWrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: spacings.$sp-16;
+      }
     }
   }
 }

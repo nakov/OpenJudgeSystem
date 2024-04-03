@@ -1,0 +1,48 @@
+@use 'src/styles/spacings';
+
+.testRunWrapper {
+  margin: spacings.$sp-18 0;
+  padding: spacings.$sp-12;
+
+  .testRunTitleWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .testNameButtonWrapper {
+      display: flex;
+      align-items: center;
+    }
+    button {
+      margin-left: spacings.$sp-32;
+    }
+
+    .timeAndMemoryWrapper {
+      display: flex;
+      span:first-child {
+        margin-right: spacings.$sp-16;
+      }
+      span {
+        display: flex;
+        align-items: center;
+        span {
+          display: flex;
+          align-items: center;
+        }
+      }
+      svg {
+        cursor: pointer;
+      }
+      svg:first-child {
+        margin: 0 spacings.$sp-8
+      }
+    }
+  }
+  .inputWrapper {
+    margin: spacings.$sp-18 0;
+    padding: spacings.$sp-12;
+  }
+  .outputWrapper {
+    margin-top: spacings.$sp-12;
+  }
+}

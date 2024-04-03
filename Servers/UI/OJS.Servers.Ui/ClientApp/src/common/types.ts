@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
+import { ISubmissionDetailsType, ISubmissionResults, ITestRun, ITestRunType } from '../hooks/submissions/types';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
@@ -70,7 +70,7 @@ interface IPublicSubmission {
     isCompiledSuccessfully: boolean;
     maxMemoryUsed: number;
     maxTimeUsed: number;
-    testRuns: ITestRunType[];
+    testRuns: ITestRun[];
     processed: boolean;
 }
 
