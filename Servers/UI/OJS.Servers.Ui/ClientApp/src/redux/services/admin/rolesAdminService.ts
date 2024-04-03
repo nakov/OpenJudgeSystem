@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, IRoleAdministrationModel, IRoleInListModel } from '../../../common/types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, IRoleAdministrationModel, IRoleInListModel } from '../../../common/types';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import customBaseQuery from '../../middlewares/customBaseQuery';
 
 export const rolesAdminService = createApi({
@@ -56,6 +56,19 @@ export const rolesAdminService = createApi({
         }),
 
         deleteRoles: builder.mutation<string, string >({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
+
+        exportRolesToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -67,6 +80,7 @@ export const {
     useDeleteRolesMutation,
     useAddUserToRoleMutation,
     useRemoveUserFromRoleMutation,
+    useLazyExportRolesToExcelQuery,
 } = rolesAdminService;
 
 export default rolesAdminService;

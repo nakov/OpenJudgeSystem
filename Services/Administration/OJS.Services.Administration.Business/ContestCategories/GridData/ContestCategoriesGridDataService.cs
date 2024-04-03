@@ -2,13 +2,14 @@
 
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Data.Excel;
 using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Data.Pagination;
 
 public class ContestCategoriesGridDataService : GridDataService<ContestCategory>, IContestCategoriesGridDataService
 {
-    public ContestCategoriesGridDataService(IContestCategoriesDataService dataService, ISortingService sortingService, IFilteringService filteringService)
-        : base(dataService, sortingService, filteringService)
+    public ContestCategoriesGridDataService(IContestCategoriesDataService dataService, ISortingService sortingService, IFilteringService filteringService, IExcelService excelService)
+        : base(dataService, sortingService, filteringService, excelService)
     {
     }
 }

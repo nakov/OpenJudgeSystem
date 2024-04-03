@@ -7,7 +7,7 @@ import AdministrationModal from '../../../components/administration/common/modal
 import SubmissionTypesForm from '../../../components/administration/submission-types/form/SubmissionTypeForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { setAdminSUbmissionTypesFilters, setAdminSUbmissionTypesSorters } from '../../../redux/features/admin/submissionTypesAdminSlice';
-import { useGetAllSubmissionTypesQuery } from '../../../redux/services/admin/submissionTypesAdminService';
+import { useGetAllSubmissionTypesQuery, useLazyExportSubmissionTypesToExcelQuery } from '../../../redux/services/admin/submissionTypesAdminService';
 import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
@@ -102,6 +102,7 @@ const AdministrationSubmissionTypesPage = () => {
               { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },
           ]}
           renderActionButtons={renderGridSettings}
+          excelMutation={useLazyExportSubmissionTypesToExcelQuery}
         />
     );
 };

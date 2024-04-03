@@ -8,6 +8,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
+import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -24,18 +25,27 @@ interface IAdministrationGridViewProps<T> {
     data: IPagedResultType<T> | undefined;
     showFiltersAndSorters?: boolean;
     renderActionButtons?: () => ReactNode;
-    modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
-    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
-    queryParams?: IGetAllAdminParams;
-    setQueryParams?: (params: IGetAllAdminParams) => void;
-    selectedFilters: Array<IAdministrationFilter>;
-    selectedSorters: Array<IAdministrationSorter>;
-    setFilterStateAction?: ActionCreatorWithPayload<any, string>;
-    setSorterStateAction?: ActionCreatorWithPayload<any, string>;
-    location: string;
-    withSearchParams?: boolean;
-    legendProps?: Array<{color: string; message:string}>;
-    specificRowIdName?: string | null;
+
+   modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
+
+   error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
+   queryParams?: IGetAllAdminParams;
+
+   setQueryParams?: (params: IGetAllAdminParams) => void;
+
+   selectedFilters: Array<IAdministrationFilter>;
+   selectedSorters: Array<IAdministrationSorter>;
+   setFilterStateAction?: ActionCreatorWithPayload<any, string>;
+
+   setSorterStateAction?: ActionCreatorWithPayload<any, string>;
+
+   location: string;
+   withSearchParams?: boolean;
+   legendProps?: Array<{color: string; message:string}>;
+
+   excelMutation?: any;
+
+   specificRowIdName?: string | null;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -56,6 +66,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         location,
         withSearchParams = true,
         legendProps,
+        excelMutation,
         specificRowIdName: specifyColumnIdName,
     } = props;
 
@@ -83,6 +94,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                         </Box>
                     </Tooltip>
                 )}
+            <ExportExcel mutation={excelMutation} disabled={!excelMutation} queryParams={queryParams} />
         </div>
     );
     const renderGridSettings = () => {
