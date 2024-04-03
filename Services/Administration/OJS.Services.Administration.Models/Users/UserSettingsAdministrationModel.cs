@@ -14,7 +14,7 @@ public class UserSettingsAdministrationModel : IMapFrom<UserSettings>, IMapTo<Us
 
     public DateTime? DateOfBirth { get; set; }
 
-    public int Age { get; set; }
+    public byte? Age { get; set; }
 
     public string? Company { get; set; }
 

@@ -76,8 +76,8 @@ public class " + SandboxExecutorClassName + @" {
             }
 
             // Set the sandbox security manager
-            _$SandboxSecurityManager securityManager = new _$SandboxSecurityManager();
-            System.setSecurityManager(securityManager);
+            // _$SandboxSecurityManager securityManager = new _$SandboxSecurityManager();
+            // System.setSecurityManager(securityManager);
 
             startTime = System.nanoTime();
 
@@ -93,8 +93,10 @@ public class " + SandboxExecutorClassName + @" {
             }
         }
     }
-}
+}";
 
+        protected static string SandboxSecurityManagerCode
+            => @"
 class _$SandboxSecurityManager extends SecurityManager {
     private static final String JAVA_HOME_DIR = System.getProperty(""java.home"");
     private static final String USER_DIR = System.getProperty(""user.dir"");

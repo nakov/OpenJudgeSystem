@@ -62,7 +62,14 @@ import java.util.List;
 
 public class _$TestRunner {{
     public static void main(String[] args) {{
-        Class[] testClasses = new Class[]{{{string.Join(", ", this.TestNames.Select(x => x.Replace(".java", ".class").Replace("/", ".")))}}};
+        // Define test classes to run
+        Class[] testClasses = new Class[]{{{
+            string.Join(
+                ", ",
+                this.TestNames.Select(x
+                    => x
+                        .Replace(".java", ".class")
+                        .Replace("/", ".")))}}};
 
         InputStream originalIn = System.in;
         PrintStream originalOut = System.out;
@@ -98,6 +105,78 @@ public class _$TestRunner {{
         }}
 
         System.out.printf(""Total Tests: %d Successful: %d Failed: %d"", total, successful, failed);
+    }}
+}}";
+
+        protected virtual string JUnit5TestRunnerCode =>
+            $@"
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public class _$TestRunner {{
+    public static void main(String[] args) {{
+        // Define test classes to run
+        Class[] testClasses = new Class[]{{{
+            string.Join(
+                ", ",
+                this.TestNames.Select(x
+                    => x
+                        .Replace(".java", ".class")
+                        .Replace("/", ".")))}}};
+
+        // Set up streams to capture system output
+        InputStream originalIn = System.in;
+        PrintStream originalOut = System.out;
+
+        InputStream in = new ByteArrayInputStream(new byte[0]);
+        System.setIn(in);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        // Create a summary listener to get the test results
+        SummaryGeneratingListener listener = new SummaryGeneratingListener();
+
+        var classSelectors = Arrays.stream(testClasses)
+                .map(DiscoverySelectors::selectClass)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Create a LauncherDiscoveryRequest to configure which tests to run
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                .selectors(classSelectors)
+                .build();
+
+        Launcher launcher = LauncherFactory.create();
+        launcher.registerTestExecutionListeners(listener);
+
+        // Execute tests
+        launcher.execute(request);
+
+        // Restore system streams
+        System.setIn(originalIn);
+        System.setOut(originalOut);
+
+        // Process and display the summary of results
+        TestExecutionSummary summary = listener.getSummary();
+        long total = summary.getTestsFoundCount();
+        long successful = summary.getTestsSucceededCount();
+        long failed = summary.getTestsFailedCount();
+
+        System.out.printf(""Total Tests: %d Successful: %d Failed: %d"", total, successful, failed);
+        summary.getFailures().forEach(failure -> System.out.println(failure.getException()));
     }}
 }}";
 
@@ -271,7 +350,7 @@ public class _$TestRunner {{
         {
             // It is important to call the JUintTestRunnerCodeTemplate after the TestClasses have been filled
             // otherwise no tests will be queued in the JUnitTestRunner, which would result in no tests failing.
-            File.WriteAllText(this.JUnitTestRunnerSourceFilePath, this.JUnitTestRunnerCode);
+            File.WriteAllText(this.JUnitTestRunnerSourceFilePath, this.Type.ToString().Contains("21") ? this.JUnit5TestRunnerCode : this.JUnitTestRunnerCode);
             FileHelpers.AddFilesToZipArchive(submissionFilePath, string.Empty, this.JUnitTestRunnerSourceFilePath);
             FileHelpers.DeleteFiles(this.JUnitTestRunnerSourceFilePath);
         }
