@@ -1,5 +1,6 @@
 @use 'src/styles/spacings';
 @use 'src/styles/fonts';
+@use 'src/styles/variables';
 
 .noParticipationsText {
   @extend %font-family-montserrat;
@@ -12,4 +13,6 @@
 
 .participationsHeading {
   @extend %font-family-montserrat;
+  
+  font-size: variables.$f-size-24;
 }
