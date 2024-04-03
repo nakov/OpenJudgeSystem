@@ -50,7 +50,7 @@ export const examGroupsService = createApi({
             }),
         }),
         getExamGroupById: builder.query<IExamGroupAdministration, IExamGroupUrlParams>({ query: ({ id }) => ({ url: `/Get/${id}` }), keepUnusedDataFor: 10 }),
-        deleteExamGroup: builder.mutation<string, IExamGroupUrlParams >({ query: ({ id }) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+        deleteExamGroup: builder.mutation<string, number >({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateExamGroup: builder.mutation<string, IExamGroupAdministration >({ query: ({ ...examGroupAdministrationModel }) => ({ url: '/Edit', method: 'PATCH', body: examGroupAdministrationModel }) }),
         createExamGroup: builder.mutation<string, IExamGroupUrlParams & IExamGroupAdministration >({ query: ({ ...examGroupAdministrationModel }) => ({ url: '/Create', method: 'POST', body: examGroupAdministrationModel }) }),
     }),
