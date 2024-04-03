@@ -9,3 +9,7 @@
   justify-content: center;
   margin-top: spacings.$sp-18;
 }
+
+.participationsHeading {
+  @extend %font-family-montserrat;
+}

@@ -77,6 +77,12 @@ const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestPar
         : !isNilOrEmpty(userContestParticipations.items)
             ? (
                 <div>
+                    {/* If user is not owner and has no rights, */}
+                    {/* he wont see the submissions/contests toggle
+                    {/* but should be able to see user participations, */}
+                    {/* so this heading should get rendered */}
+                    { !userIsProfileOwner && !internalUser.canAccessAdministration &&
+                        <h2 className={styles.participationsHeading}>Participated in:</h2>}
                     <List
                       values={userContestParticipations.items!}
                       itemFunc={renderContestCard}

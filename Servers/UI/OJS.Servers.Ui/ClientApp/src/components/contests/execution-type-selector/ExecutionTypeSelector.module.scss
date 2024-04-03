@@ -2,7 +2,7 @@
 @use 'src/styles/fonts';
 
 .executionTypeSelector {
-  @extend %font-family-lato;
+  @extend %font-family-montserrat;
 
   border: 2px solid;
   color: colors.$primary-blue;

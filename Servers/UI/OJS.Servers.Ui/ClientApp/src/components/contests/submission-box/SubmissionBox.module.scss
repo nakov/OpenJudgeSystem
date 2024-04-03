@@ -18,7 +18,7 @@
 }
 
 .editorAndProblemControlsWrapper {
-  @extend %font-family-lato;
+  @extend %font-family-montserrat;
 
   display: flex;
   flex: 3;
@@ -49,7 +49,7 @@
 .submitCountdownWrapper {
   align-self: flex-end;
   color: colors.$background-color-btn-primary;
-  font-family: fonts.$font-family-lato;
+  font-family: fonts.$font-family-montserrat;
   font-size: 20px;
   padding: 10px;
 }
@@ -59,7 +59,7 @@
 }
 
 .fileSubmissionDetailsParagraph {
-  @extend %font-family-lato;
+  @extend %font-family-montserrat;
 
   color: colors.$text-dark-gray-color;
   font-size: variables.$f-size-16;

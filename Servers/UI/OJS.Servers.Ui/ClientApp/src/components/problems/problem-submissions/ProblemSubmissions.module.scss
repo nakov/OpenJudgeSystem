@@ -4,7 +4,7 @@
 @use 'src/styles/fonts';
 
 .submissionResultsContent {
-  @extend %font-family-lato;
+  @extend %font-family-montserrat;
 
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
   @extend %contentSize;
 
   color: colors.$text-dark-gray-color;
-  font-family: fonts.$font-family-lato;
+  font-family: fonts.$font-family-montserrat;
   font-size: variables.$f-size-18;
   margin-top: 30px;
   text-align: center;

@@ -4,7 +4,7 @@
 @use 'src/styles/variables';
 
 .footer {
-  @extend %font-family-lato;
+  @extend %font-family-montserrat;
 
   background: colors.$background-color-footer;
   color: colors.$text-light-gray-color;

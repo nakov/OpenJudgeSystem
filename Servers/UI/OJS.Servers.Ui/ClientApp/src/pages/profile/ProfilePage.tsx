@@ -117,7 +117,7 @@ const ProfilePage = () => {
                     {toggleValue === 1 &&
                         (currentUserIsProfileOwner || internalUser.canAccessAdministration) &&
                         <ProfileSubmissions userIsProfileOwner={currentUserIsProfileOwner} />}
-                    {toggleValue === 2 &&
+                    {(toggleValue === 2 || (!currentUserIsProfileOwner && !internalUser.canAccessAdministration)) &&
                         <ProfileContestParticipations userIsProfileOwner={currentUserIsProfileOwner} />}
                 </div>
             )

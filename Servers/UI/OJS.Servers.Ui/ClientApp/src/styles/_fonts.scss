@@ -1,5 +1,3 @@
-$font-family-lato: lato, montserrat, serif;
-$font-family-lato-regular: lato-regular, serif;
 $font-family-montserrat: montserrat, serif;
 $font-family-montserrat-medium: montserrat-medium, serif;
 $font-family-roboto: roboto, serif;
@@ -7,21 +5,23 @@ $font-style-normal: normal;
 
 %font-style-normal {
   font-style: $font-style-normal;
+
+  font-family: $font-family-montserrat;
 }
 
-%font-family-lato {
+%font-family-regular {
   @extend %font-style-normal;
 
-  font-family: $font-family-lato;
-}
-
-%font-family-lato-regular {
-  @extend %font-style-normal;
-
-  font-family: $font-family-lato-regular;
+  font-family: $font-family-montserrat;
 }
 
 %font-family-montserrat {
+  @extend %font-style-normal;
+
+  font-family: $font-family-montserrat;
+}
+
+%font-family-montserrat-regular {
   @extend %font-style-normal;
 
   font-family: $font-family-montserrat;
