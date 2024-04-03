@@ -337,15 +337,24 @@ namespace OJS.Services.Ui.Business.Implementations
             string username,
             ContestFiltersServiceModel? sortAndFilterModel)
         {
+            var loggedInUser = this.userProviderService.GetCurrentUser();
+            var loggedInUserProfile = await this.usersBusinessService.GetUserProfileById(loggedInUser.Id);
+
+            // if (username != loggedInUserProfile!.UserName && (loggedInUser.IsAdmin || loggedInUser.IsLecturer))
+            // {
+            //     throw new UnauthorizedAccessException("")
+            // }
+
+            // For category filter dropdown
             sortAndFilterModel = await this.GetNestedFilterCategoriesIfAny(sortAndFilterModel);
 
             var userParticipants = this.participantsData
                 .GetAllByUsername(username);
 
-            if (sortAndFilterModel.SortType == ContestSortType.ParticipantRegistrationTime)
-            {
-                userParticipants = userParticipants.OrderByDescending(p => p.CreatedOn);
-            }
+            // if (sortAndFilterModel.SortType == ContestSortType.ParticipantRegistrationTime)
+            // {
+            //     userParticipants = userParticipants.OrderByDescending(p => p.CreatedOn);
+            // }
 
             var participatedContestsInPage =
                 await GetPaginatedContestsByParticipants<ContestForListingServiceModel>(
@@ -425,8 +434,8 @@ namespace OJS.Services.Ui.Business.Implementations
             int? itemsPerPage,
             int? pageNumber)
             => await participants
-                .Include(p => p.Contest)
-                .Select(p => p.Contest)
+                .Select(o => o.Contest)
+                .Distinct()
                 .Paginate<TServiceModel>(itemsPerPage, pageNumber);
 
         private static bool ShouldRequirePassword(Contest contest, Participant participant, bool official)

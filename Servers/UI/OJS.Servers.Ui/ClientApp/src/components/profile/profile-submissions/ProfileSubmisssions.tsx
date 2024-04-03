@@ -8,9 +8,14 @@ import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
 
-const ProfileSubmissions = () => {
+interface IProfileSubmissionsProps {
+    userIsProfileOwner: boolean;
+}
+
+const ProfileSubmissions = ({ userIsProfileOwner }: IProfileSubmissionsProps) => {
     const dispatch = useAppDispatch();
 
+    const { internalUser } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((state) => state.users);
 
     const {
@@ -47,7 +52,7 @@ const ProfileSubmissions = () => {
                   handlePageChange={(page: number) => dispatch(setCurrentPage(page))}
                   options={{
                       showTaskDetails: true,
-                      showDetailedResults: true,
+                      showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
                       showCompeteMarker: false,
                       showSubmissionTypeInfo: false,
                       showParticipantUsername: false,

@@ -12,13 +12,15 @@ import styles from './ProfileAboutInfo.module.scss';
 interface IProfileAboutInfoProps {
     userProfile: IUserProfileType;
     isUserAdmin : boolean;
+    isUserLecturer : boolean;
     isUserProfileOwner : boolean;
 }
 
-const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IProfileAboutInfoProps) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProfileOwner } : IProfileAboutInfoProps) => {
     const { themeColors, getColorClassName } = useTheme();
 
-    const shouldRenderName = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
+    const firstNameOrLastNameHaveValue = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
 
     const aboutInfoClassName = concatClassNames(
         styles.profileAboutInfo,
@@ -33,7 +35,7 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IPr
                     <span className={styles.profileAboutInfoValue}>{userProfile.userName}</span>
                 </div>
                 {
-                    (isUserAdmin || isUserProfileOwner) && shouldRenderName && (
+                    (isUserAdmin || isUserProfileOwner) && firstNameOrLastNameHaveValue && (
                         <div className={styles.profileAboutInfoGroupControl}>
                             <span className={styles.profileAboutInfoLabel}>Name:</span>
                             <span className={styles.profileAboutInfoValue}>
@@ -61,7 +63,7 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IPr
                     )
                 }
                 {
-                    !isNilOrEmpty(userProfile.age) && (
+                    (isUserAdmin || isUserProfileOwner) && !isNilOrEmpty(userProfile.age) && (
                         <div className={styles.profileAboutInfoGroupControl}>
                             <span className={styles.profileAboutInfoLabel}>Age:</span>
                             <span className={styles.profileAboutInfoValue}>{userProfile.age}</span>
@@ -69,7 +71,7 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IPr
                     )
                 }
                 {
-                    !isNilOrEmpty(userProfile.city) &&
+                    (isUserAdmin || isUserProfileOwner) && !isNilOrEmpty(userProfile.city) &&
                         (
                             <div className={styles.profileAboutInfoGroupControl}>
                                 <span className={styles.profileAboutInfoLabel}>City:</span>

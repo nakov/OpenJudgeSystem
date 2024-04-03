@@ -15,30 +15,33 @@ import { setProfile } from '../../redux/features/usersSlice';
 import { useGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { decodeFromUrlParam } from '../../utils/urls';
-import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ProfilePage.module.scss';
 
 const ProfilePage = () => {
-    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const [ toggleValue, setToggleValue ] = useState<number>(1);
+    const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
 
     const { actions: { setPageTitle } } = usePageTitles();
-    const { usernameFromUrl } = useParams();
+    const { username } = useParams();
     const { themeColors, getColorClassName } = useTheme();
     const dispatch = useAppDispatch();
 
     // If {username} is present in url, then the the profile should be loaded for this username,
     // otherwise the profile is loaded for the logged in user
     const profileUsername = useMemo(
-        () => !isNil(usernameFromUrl)
-            ? decodeFromUrlParam(usernameFromUrl)
+        () => !isNil(username)
+            ? decodeFromUrlParam(username)
             : internalUser.userName,
-        [ internalUser, usernameFromUrl ],
+        [ internalUser, username ],
     );
+
+    useEffect(() => {
+        console.log(profileUsername);
+    }, [ profileUsername ]);
 
     const {
         data: profileInfo,
@@ -82,35 +85,43 @@ const ProfilePage = () => {
                     <ProfileAboutInfo
                       userProfile={profile}
                       isUserAdmin={internalUser.isAdmin}
+                      isUserLecturer={internalUser.isInRole}
                       isUserProfileOwner={currentUserIsProfileOwner}
                     />
-                    <div className={styles.submissionsAndParticipationsToggle}>
-                        <Button
-                          type={toggleValue === 1
-                              ? ButtonType.primary
-                              : ButtonType.secondary}
-                          className={styles.toggleBtn}
-                          text={currentUserIsProfileOwner
-                              ? 'My Submissions'
-                              : 'User Submissions'}
-                          onClick={() => setToggleValue(1)}
-                        />
-                        <Button
-                          type={toggleValue === 2
-                              ? ButtonType.primary
-                              : ButtonType.secondary}
-                          className={styles.toggleBtn}
-                          text={currentUserIsProfileOwner
-                              ? 'My Contests'
-                              : 'User Contests'}
-                          onClick={() => setToggleValue(2)}
-                        />
-                    </div>
-                    { toggleValue === 1 && <ProfileSubmissions />}
-                    { toggleValue === 2 && <ProfileContestParticipations />}
+                    {
+                        (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
+                        <div className={styles.submissionsAndParticipationsToggle}>
+                            <Button
+                              type={toggleValue === 1
+                                  ? ButtonType.primary
+                                  : ButtonType.secondary}
+                              className={styles.toggleBtn}
+                              text={currentUserIsProfileOwner
+                                  ? 'My Submissions'
+                                  : 'User Submissions'}
+                              onClick={() => setToggleValue(1)}
+                            />
+                            <Button
+                              type={toggleValue === 2
+                                  ? ButtonType.primary
+                                  : ButtonType.secondary}
+                              className={styles.toggleBtn}
+                              text={currentUserIsProfileOwner
+                                  ? 'My Contests'
+                                  : 'User Contests'}
+                              onClick={() => setToggleValue(2)}
+                            />
+                        </div>
+                        )
+                    }
+                    {toggleValue === 1 &&
+                        (currentUserIsProfileOwner || internalUser.canAccessAdministration) &&
+                        <ProfileSubmissions userIsProfileOwner={currentUserIsProfileOwner} />}
+                    {toggleValue === 2 &&
+                        <ProfileContestParticipations userIsProfileOwner={currentUserIsProfileOwner} />}
                 </div>
             )
     );
 };
 
-export default makePrivate(setLayout(ProfilePage));
+export default setLayout(ProfilePage);

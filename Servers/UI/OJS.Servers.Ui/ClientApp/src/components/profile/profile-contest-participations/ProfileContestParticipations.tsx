@@ -18,7 +18,12 @@ import List, { Orientation } from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
-const ProfileContestParticipations = () => {
+interface IProfileContestParticipationsProps {
+    userIsProfileOwner: boolean;
+}
+
+const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestParticipationsProps) => {
+    const { internalUser } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const {
         userContestParticipations,
@@ -55,7 +60,12 @@ const ProfileContestParticipations = () => {
         dispatch(setProfileUserContestParticipationsPage(page));
     };
 
-    const renderContestCard = (contest: IIndexContestsType) => (<ContestCard contest={contest} />);
+    const renderContestCard = (contest: IIndexContestsType) => (
+        <ContestCard
+          contest={contest}
+          showPoints={userIsProfileOwner || internalUser.isAdmin}
+        />
+    );
 
     return areContestParticipationsLoading
         ? (<SpinningLoader />)

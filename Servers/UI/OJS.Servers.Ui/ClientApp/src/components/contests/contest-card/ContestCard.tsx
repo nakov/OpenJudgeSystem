@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import isNil from 'lodash/isNil';
 
 import { IIndexContestsType } from '../../../common/types';
 import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
@@ -14,6 +15,7 @@ import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
     contest: IIndexContestsType;
+    showPoints?: boolean;
 }
 
 const iconNames = {
@@ -26,7 +28,7 @@ const iconNames = {
 };
 
 const ContestCard = (props: IContestCardProps) => {
-    const { contest } = props;
+    const { contest, showPoints } = props;
 
     const { themeColors, getColorClassName } = useTheme();
 
@@ -61,6 +63,10 @@ const ContestCard = (props: IContestCardProps) => {
 
     const remainingDuration = calculateTimeUntil(new Date(contestEndTime));
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
+
+    const shouldShowPoints = isNil(showPoints)
+        ? true
+        : showPoints;
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -112,21 +118,21 @@ const ContestCard = (props: IContestCardProps) => {
     };
 
     const renderPointsText = (isCompete: boolean) => userParticipationResult !== null && (
-    <span className={styles.points}>
-        {
-                isCompete
-                    ? userParticipationResult?.competePoints
-                    : userParticipationResult?.practicePoints
-        }
-        {' '}
-        /
-        {' '}
-        {
-                isCompete
-                    ? competeMaximumPoints
-                    : practiceMaximumPoints
-        }
-    </span>
+        <span className={styles.points}>
+            {
+                    isCompete
+                        ? userParticipationResult?.competePoints
+                        : userParticipationResult?.practicePoints
+            }
+            {' '}
+            /
+            {' '}
+            {
+                    isCompete
+                        ? competeMaximumPoints
+                        : practiceMaximumPoints
+            }
+        </span>
     );
 
     const renderContestButton = (isCompete: boolean) => {
@@ -181,11 +187,11 @@ const ContestCard = (props: IContestCardProps) => {
             </div>
             <div className={styles.contestBtnsWrapper}>
                 <div className={styles.buttonAndPointsLabelWrapper}>
-                    {renderPointsText(false)}
+                    { shouldShowPoints && renderPointsText(false)}
                     {renderContestButton(false)}
                 </div>
                 <div className={styles.buttonAndPointsLabelWrapper}>
-                    {renderPointsText(true)}
+                    { shouldShowPoints && renderPointsText(true)}
                     {renderContestButton(true)}
                 </div>
             </div>
