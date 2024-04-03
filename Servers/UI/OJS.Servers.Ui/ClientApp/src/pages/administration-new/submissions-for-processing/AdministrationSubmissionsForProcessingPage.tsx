@@ -7,7 +7,7 @@ import { IGetAllAdminParams } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../../common/urls/administration-urls';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
+import { useGetAllSubmissionsQuery, useLazyExportSubmissionsForProcessingToExcelQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
@@ -81,10 +81,11 @@ const AdministrationSubmissionsForProcessingPage = () => {
           notFilterableGridColumnDef={nonFilterableColumns}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
+          selectedFilters={selectedFilters}
+          selectedSorters={selectedSorters}
           setSorterStateAction={setSelectedSorters}
           setFilterStateAction={setSelectedFilters}
+          excelMutation={useLazyExportSubmissionsForProcessingToExcelQuery}
         />
     );
 };

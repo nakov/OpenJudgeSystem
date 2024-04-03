@@ -6,7 +6,7 @@ import CheckerForm from '../../components/administration/checkers/checker-form/C
 import CreateButton from '../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteCheckerMutation, useGetAllCheckersQuery } from '../../redux/services/admin/checkersAdminService';
+import { useDeleteCheckerMutation, useGetAllCheckersQuery, useLazyExportCheckersToExcelQuery } from '../../redux/services/admin/checkersAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
 import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-new/administration-sorting/AdministrationSorting';
@@ -109,6 +109,7 @@ const AdministrationCheckersPage = () => {
               { showModal: openCreateModal, modal: (i) => renderModal(i, false) },
           ]}
           legendProps={[ { color: '#FFA1A1', message: 'Checker is deleted.' } ]}
+          excelMutation={useLazyExportCheckersToExcelQuery}
         />
     );
 };

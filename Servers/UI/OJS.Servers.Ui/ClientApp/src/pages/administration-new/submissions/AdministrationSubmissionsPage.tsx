@@ -6,6 +6,7 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import { useDeleteSubmissionMutation,
     useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
+    useLazyExportSubmissionsToExcelQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
@@ -114,6 +115,8 @@ const AdministrationSubmissionsPage = () => {
               setSorterStateAction={setSelectedSorters}
               setFilterStateAction={setSelectedFilters}
               legendProps={[ { color: '#FFA1A1', message: 'Submission is deleted.' } ]}
+              excelMutation={useLazyExportSubmissionsToExcelQuery}
+
             />
         </>
     );

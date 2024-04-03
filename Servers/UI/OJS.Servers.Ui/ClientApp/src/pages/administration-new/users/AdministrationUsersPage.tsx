@@ -5,7 +5,7 @@ import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import UserForm from '../../../components/administration/users/form/UserForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useGetAllUsersQuery } from '../../../redux/services/admin/usersAdminService';
+import { useGetAllUsersQuery, useLazyExportUsersToExcelQuery } from '../../../redux/services/admin/usersAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
@@ -92,6 +92,7 @@ const AdministrationUsersPage = () => {
                 { showModal: showEditModal, modal: (i) => renderUserModal(i) },
             ]
           }
+          excelMutation={useLazyExportUsersToExcelQuery}
         />
     );
 };

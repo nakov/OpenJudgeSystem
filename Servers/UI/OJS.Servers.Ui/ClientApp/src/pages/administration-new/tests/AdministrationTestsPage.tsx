@@ -5,7 +5,7 @@ import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import TestForm from '../../../components/administration/tests/test-form/TestForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteTestMutation, useGetAllAdminTestsQuery } from '../../../redux/services/admin/testsAdminService';
+import { useDeleteTestMutation, useGetAllAdminTestsQuery, useLazyExportTestsToExcelQuery } from '../../../redux/services/admin/testsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
@@ -88,6 +88,7 @@ const AdministrationTestsPage = () => {
           modals={[
               { showModal: openEditTestModal, modal: (i) => renderTestEditModal(i) },
           ]}
+          excelMutation={useLazyExportTestsToExcelQuery}
         />
     );
 };

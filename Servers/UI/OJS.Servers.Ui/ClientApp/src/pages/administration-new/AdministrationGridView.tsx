@@ -8,6 +8,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
+import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
 import LegendBox from '../../components/administration/common/legendBox/LegendBox';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -35,6 +36,8 @@ interface IAdministrationGridViewProps<T> {
     withSearchParams?: boolean;
     legendProps?: Array<{color: string; message:string}>;
     specificRowIdName?: string | null;
+   excelMutation?: any;
+
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -54,6 +57,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         setSorterStateAction,
         withSearchParams = true,
         legendProps,
+        excelMutation,
         specificRowIdName: specifyColumnIdName,
     } = props;
 
@@ -81,6 +85,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                         </Box>
                     </Tooltip>
                 )}
+            <ExportExcel mutation={excelMutation} disabled={!excelMutation} queryParams={queryParams} />
         </div>
     );
     const renderGridSettings = () => {

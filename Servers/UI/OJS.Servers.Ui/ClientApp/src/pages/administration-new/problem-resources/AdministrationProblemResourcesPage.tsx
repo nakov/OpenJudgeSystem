@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemResourceForm from '../../../components/administration/problem-resources/problem-resource-form/ProblemResourceForm';
-import { useGetAllAdminProblemResourcesQuery } from '../../../redux/services/admin/problemResourcesAdminService';
+import { useGetAllAdminProblemResourcesQuery, useLazyExportProblemResourcesToExcelQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
@@ -76,6 +76,7 @@ const AdministrationProblemResourcesPage = () => {
           modals={[
               { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i) },
           ]}
+          excelMutation={useLazyExportProblemResourcesToExcelQuery}
         />
     );
 };

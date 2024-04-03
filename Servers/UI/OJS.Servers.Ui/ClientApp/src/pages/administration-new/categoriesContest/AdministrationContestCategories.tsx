@@ -7,7 +7,7 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import CategoryEdit from '../../../components/administration/ContestCategories/CategoryEdit/CategoryEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
+import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery, useLazyExportContestCategoriesToExcelQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
@@ -115,6 +115,7 @@ const AdministrationContestCategoriesPage = () => {
               { showModal: openEditContestCategoryModal, modal: (i) => renderCategoryModal(i, true) },
           ]}
           legendProps={[ { color: '#FFA1A1', message: 'Category is deleted.' }, { color: '#C0C0C0', message: 'Category is not visible' } ]}
+          excelMutation={useLazyExportContestCategoriesToExcelQuery}
         />
     );
 };

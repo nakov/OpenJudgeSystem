@@ -7,7 +7,7 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemGroupForm from '../../../components/administration/problem-groups/problem-group-form/ProblemGroupForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useGetAllAdminProblemGroupsQuery } from '../../../redux/services/admin/problemGroupsAdminService';
+import { useGetAllAdminProblemGroupsQuery, useLazyExportProblemGroupsToExcelQuery } from '../../../redux/services/admin/problemGroupsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -122,6 +122,7 @@ const AdministrationProblemGroupsPage = () => {
                   { showModal: openCreateModal, modal: (i) => renderProblemModal(i, true) },
               ]}
               legendProps={[ { color: '#FFA1A1', message: 'Problem Group is deleted.' } ]}
+              excelMutation={useLazyExportProblemGroupsToExcelQuery}
             />
         </>
     );

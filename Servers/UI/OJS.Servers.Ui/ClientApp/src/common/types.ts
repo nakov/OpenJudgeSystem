@@ -631,7 +631,6 @@ interface IParticipantAdministrationModel {
 interface IUserAutocompleteData {
 id: string;
 userName: string;
-
 }
 
 interface IRoleInListModel {

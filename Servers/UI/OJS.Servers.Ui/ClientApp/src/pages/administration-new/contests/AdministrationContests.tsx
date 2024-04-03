@@ -12,7 +12,7 @@ import ContestDownloadSubmissions from '../../../components/administration/conte
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteContestMutation, useDownloadResultsMutation, useGetAllAdminContestsQuery } from '../../../redux/services/admin/contestsAdminService';
+import { useDeleteContestMutation, useDownloadResultsMutation, useGetAllAdminContestsQuery, useLazyExportContestsToExcelQuery } from '../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
@@ -108,6 +108,7 @@ const AdministrationContestsPage = () => {
         }
         retakeContests();
     };
+
     const onClickExcel = (exelExportContestId: number) => {
         setShowExportExcelModal(true);
         setContestId(exelExportContestId);
@@ -211,6 +212,7 @@ const AdministrationContestsPage = () => {
                   { showModal: showExportExcelModal, modal: (i) => renderExcelExportModal(i) },
               ]}
               legendProps={[ { color: '#FFA1A1', message: CONTEST_IS_DELETED }, { color: '#C0C0C0', message: CONTEST_IS_NOT_VISIBLE } ]}
+              excelMutation={useLazyExportContestsToExcelQuery}
             />
         </>
     );
