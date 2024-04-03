@@ -9,8 +9,8 @@ import CategoryEdit from '../../../components/administration/ContestCategories/C
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import categoriesFilterableColumns, { returnCategoriesNonFilterableColumns } from './contestCategoriesGridColumns';
@@ -29,8 +29,15 @@ const AdministrationContestCategoriesPage = () => {
     const [ openShowCreateContestCategoryModal, setOpenShowCreateContestCategoryModal ] = useState<boolean>(false);
     const [ contestCategoryId, setContestCategoryId ] = useState<number>();
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter> | null>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter> | null>([]);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(categoriesFilterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(categoriesFilterableColumns),
+    ));
 
     const {
         refetch: retakeData,
@@ -44,16 +51,13 @@ const AdministrationContestCategoriesPage = () => {
         setContestCategoryId(id);
     };
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
-
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const onCloseModal = (isEditMode: boolean) => {
         if (isEditMode) {

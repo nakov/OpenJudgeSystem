@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -6,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { SortingEnum } from '../../../common/enums';
@@ -16,7 +15,7 @@ import styles from './AdministrationSorting.module.scss';
 interface IAdministrationSortProps {
     columns: string[];
     selectedSorters: Array<IAdministrationSorter>;
-    setStateAction?: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
     withSearchParams?: boolean;
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
@@ -277,10 +276,43 @@ const mapSorterParamsToQueryString = (selectedSorters: IAdministrationSorter[]) 
 const mapGridColumnsToAdministrationSortingProps =
     (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName?.replace(/\s/g, '') ?? '').filter((el) => el);
 
+const mapUrlToSorters = (searchParams: URLSearchParams | undefined, columns:Array<string>): IAdministrationSorter[] => {
+    if (!searchParams) {
+        return [];
+    }
+    const urlSelectedSorters: IAdministrationSorter[] = [];
+
+    const sorterParams = searchParams.get('sorting') ?? '';
+    const urlParams = sorterParams.split('&').filter((param) => param);
+    urlParams.forEach((param: string) => {
+        const paramChunks = param.split('=').filter((chunk) => chunk);
+
+        const sorterColumn = paramChunks[0];
+        const sorterOrderBy = paramChunks[1];
+
+        const columnName = columns.find((c) => c.toLowerCase() === sorterColumn) || '';
+        const orderBy = sorterOrderBy === 'ASC'
+            ? SortingEnum.ASC
+            : SortingEnum.DESC;
+        const availableColumns = columns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column));
+
+        const sorter: IAdministrationSorter = {
+            columnName,
+            orderBy,
+            availableColumns: [ ...availableColumns, columnName ],
+        };
+
+        urlSelectedSorters.push(sorter);
+    });
+
+    return urlSelectedSorters;
+};
+
 export {
     type IAdministrationSorter,
     mapGridColumnsToAdministrationSortingProps,
     mapSorterParamsToQueryString,
+    mapUrlToSorters,
 };
 
 export default AdministrationSorting;

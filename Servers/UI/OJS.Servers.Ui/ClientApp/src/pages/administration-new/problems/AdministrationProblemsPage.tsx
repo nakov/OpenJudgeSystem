@@ -11,8 +11,8 @@ import { useDeleteProblemMutation, useGetAllAdminProblemsQuery } from '../../../
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
-import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnProblemsNonFilterableColumns } from './problemGridColumns';
@@ -30,20 +30,26 @@ const AdministrationProblemsPage = () => {
     const [ showRetestModal, setShowRetestModal ] = useState<boolean>(false);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
     const [ showCopyModal, setShowCopyModal ] = useState<boolean>(false);
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(filterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(filterableColumns),
+    ));
+
     const { refetch: retakeProblems, data: problemsData, isLoading: isLoadingProblems, error } = useGetAllAdminProblemsQuery(queryParams);
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
-
     useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const onEditClick = (id: number) => {
         setOpenEditProblemModal(true);

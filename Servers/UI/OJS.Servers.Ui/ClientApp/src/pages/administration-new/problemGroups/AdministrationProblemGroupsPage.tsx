@@ -12,8 +12,8 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
-import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnNonFilterableColumns } from './problemGroupGridColumns';
@@ -30,22 +30,26 @@ const AdministrationProblemGroupsPage = () => {
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
     const [ problemGroupId, setProblemGroupId ] = useState<number | undefined>(undefined);
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(filterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(filterableColumns),
+    ));
 
     const { refetch: retakeGroups, data, isLoading, error } = useGetAllAdminProblemGroupsQuery(queryParams);
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
-
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ error ], setErrorMessages);
@@ -109,8 +113,8 @@ const AdministrationProblemGroupsPage = () => {
               error={error}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              selectedFilters={selectedFilters || []}
-              selectedSorters={selectedSorters || []}
+              selectedFilters={selectedFilters}
+              selectedSorters={selectedSorters}
               setSorterStateAction={setSelectedSorters}
               setFilterStateAction={setSelectedFilters}
               modals={[

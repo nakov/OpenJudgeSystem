@@ -9,8 +9,8 @@ import RedirectButton from '../../../components/administration/common/edit/Redir
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllSubmissionsQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
@@ -25,19 +25,23 @@ const AdministrationSubmissionsForProcessingPage = () => {
             sorting: searchParams.get('sorting') ?? '',
         });
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(dataColumns),
+    ));
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(dataColumns),
+    ));
 
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const {
         data,

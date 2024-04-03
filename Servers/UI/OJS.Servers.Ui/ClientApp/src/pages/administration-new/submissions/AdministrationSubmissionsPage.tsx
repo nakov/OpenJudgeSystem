@@ -11,8 +11,8 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
-import { IAdministrationFilter } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import dataColumns, { returnSubmissionsNonFilterableColumns } from './admin-submissions-grid-def';
@@ -25,8 +25,15 @@ const AdministrationSubmissionsPage = () => {
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(dataColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(dataColumns),
+    ));
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
@@ -55,8 +62,13 @@ const AdministrationSubmissionsPage = () => {
         { skip: shouldSkipDownloadOfSubmission },
     );
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
+    useEffect(() => {
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
@@ -68,14 +80,6 @@ const AdministrationSubmissionsPage = () => {
     useEffect(() => {
         getAndSetExceptionMessage([ retestError, downloadError ], setExceptionMessages);
     }, [ downloadError, retestError ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
 
     const startDownload = useCallback((id: number) => {
         setSubmissionToDownload(id);

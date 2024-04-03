@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
@@ -30,8 +30,8 @@ interface IAdministrationGridViewProps<T> {
     setQueryParams?: (params: IGetAllAdminParams) => void;
     selectedFilters: Array<IAdministrationFilter>;
     selectedSorters: Array<IAdministrationSorter>;
-    setFilterStateAction?: any;
-    setSorterStateAction?: any;
+    setFilterStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
+    setSorterStateAction?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
     withSearchParams?: boolean;
     legendProps?: Array<{color: string; message:string}>;
     specificRowIdName?: string | null;

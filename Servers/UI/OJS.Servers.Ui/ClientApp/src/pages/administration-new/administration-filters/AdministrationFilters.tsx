@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable import/group-exports */
+import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -23,7 +25,7 @@ interface IAdministrationFilterProps {
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction?: any;
+    setStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
     withSearchParams?: boolean;
 }
 
@@ -117,48 +119,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     const open = Boolean(anchor);
 
-    const mapUrlToFilters = (): IAdministrationFilter[] => {
-        if (!setSearchParams || !searchParams) {
-            return [];
-        }
-        const urlSelectedFilters: IAdministrationFilter[] = [];
-
-        const filterParams = searchParams.get('filter') ?? '';
-        const urlParams = filterParams.split(filterSeparator).filter((param) => param);
-        urlParams.forEach((param: string) => {
-            const paramChunks = param.split('~').filter((chunk) => chunk);
-
-            const columnValue = paramChunks[0];
-            const operator = paramChunks[1];
-            const value = paramChunks[2];
-
-            const column = columns.find((c) => c.columnName.toLowerCase() === columnValue) ||
-                { columnName: '', columnType: FilterColumnTypeEnum.STRING };
-            const availableColumns = columns.filter((c) => !urlSelectedFilters.some((f) => f.column === c.columnName) &&
-                !selectedFilters.some((sl) => sl.column === c.columnName));
-            const availableOperators = column?.columnType
-                ? DROPDOWN_OPERATORS[column.columnType]
-                : [];
-
-            const filter: IAdministrationFilter = {
-                column: column?.columnName || '',
-                operator,
-                value,
-                availableOperators,
-                availableColumns: [ ...availableColumns, { ...column } ],
-                inputType: column?.columnType || FilterColumnTypeEnum.STRING,
-            };
-
-            urlSelectedFilters.push(filter);
-        });
-
-        return urlSelectedFilters;
-    };
-
     useEffect(() => {
-        const urlSelectedFilters = mapUrlToFilters();
+        const urlSelectedFilters = mapUrlToFilters(searchParams, columns);
         if (urlSelectedFilters.length && setStateAction) {
-            setStateAction([ urlSelectedFilters ]);
+            setStateAction(urlSelectedFilters);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -447,10 +411,49 @@ const mapGridColumnsToAdministrationFilterProps =
     };
 });
 
+const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: Array<IFilterColumn>) => {
+    if (!urlSearchParams) {
+        return [];
+    }
+
+    const urlSelectedFilters: Array<IAdministrationFilter> = [];
+
+    const filterParams = urlSearchParams.get('filter') ?? '';
+    const urlParams = filterParams.split('&&;').filter((param) => param);
+    urlParams.forEach((param) => {
+        const paramChunks = param.split('~').filter((chunk) => chunk);
+
+        const columnValue = paramChunks[0];
+        const operator = paramChunks[1];
+        const value = paramChunks[2];
+
+        const column = columns.find((c) => c.columnName.toLowerCase() === columnValue) ||
+        { columnName: '', columnType: FilterColumnTypeEnum.STRING };
+        const availableColumns = columns.filter((c) => !urlSelectedFilters.some((f: { column: string }) => f.column === c.columnName));
+        const availableOperators = column?.columnType
+            ? DROPDOWN_OPERATORS[column.columnType]
+            : [];
+
+        const filter = {
+            column: column?.columnName || '',
+            operator,
+            value,
+            availableOperators,
+            availableColumns: [ ...availableColumns, { ...column } ],
+            inputType: column?.columnType || FilterColumnTypeEnum.STRING,
+        };
+
+        urlSelectedFilters.push(filter);
+    });
+
+    return urlSelectedFilters;
+};
+
 export {
     type IAdministrationFilter,
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
     mapFilterParamsToQueryString,
+    mapUrlToFilters,
 };
 export default AdministrationFilters;
