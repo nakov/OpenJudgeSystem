@@ -30,7 +30,9 @@ const ProfileSubmissions = ({ userIsProfileOwner }: IProfileSubmissionsProps) =>
         // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         username: profile?.userName!,
         page: currentPage,
-    }, { skip: isNil(profile) });
+    // Query should not get initiated for empty profile or
+    // if user is not profile owner or is not lecturer/admin
+    }, { skip: isNil(profile) || !userIsProfileOwner || (!userIsProfileOwner && !internalUser.canAccessAdministration) });
 
     useEffect(() => {
         if (!isNil(userSubmissions)) {
