@@ -5,7 +5,7 @@ import { Popover } from '@mui/material';
 
 import { ITestRun } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import Diff from '../../Diff';
+import Diff from '../../diff/Diff';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SubmissionTestRun.module.scss';
@@ -15,10 +15,15 @@ interface ISubmissionTestRun {
     idx: number;
 }
 
-const WRONG_ANSWER = 'WrongAnswer';
-const CORRECT_ANSWER = 'CorrectAnswer';
+export const enum testResultTypes {
+    correctAnswer = 'CorrectAnswer',
+    wrongAnswer = 'WrongAnswer',
+    runTimeError = 'RunTimeError',
+    timeLimit = 'TimeLimit',
+    memoryLimit = 'MemoryLimit'
+}
 
-const SubmissionTestRun = (props: ISubmissionTestRun) => {
+const SubmissionTest = (props: ISubmissionTestRun) => {
     const { testRun, idx } = props;
 
     const { themeColors, getColorClassName } = useTheme();
@@ -61,9 +66,9 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
     };
 
     const textIdColor = useMemo(() => {
-        if (resultType === WRONG_ANSWER) {
+        if (resultType === testResultTypes.wrongAnswer) {
             return 'red';
-        } if (resultType === CORRECT_ANSWER) {
+        } if (resultType === testResultTypes.correctAnswer) {
             return 'green';
         }
         return 'yellow';
@@ -149,7 +154,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                 </div>
             </div>
             {testShowInput && (<div className={styles.inputWrapper} style={{ backgroundColor: themeColors.baseColor100 }}>{input}</div>)}
-            {isTrialTest && resultType === WRONG_ANSWER && (
+            {isTrialTest && resultType === testResultTypes.wrongAnswer && (
                 <div className={styles.outputWrapper}>
                     <Diff expectedStr={expectedOutputFragment} actualStr={userOutputFragment} />
                 </div>
@@ -158,4 +163,4 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
     );
 };
 
-export default SubmissionTestRun;
+export default SubmissionTest;

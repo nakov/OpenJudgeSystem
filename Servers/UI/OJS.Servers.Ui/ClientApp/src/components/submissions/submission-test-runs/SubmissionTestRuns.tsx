@@ -6,17 +6,13 @@ import { IoCloseSharp } from 'react-icons/io5';
 
 import { ITestRun } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
+import { testResultTypes } from '../submission-test/SubmissionTest';
 
 import styles from './SubmissionTestRuns.module.scss';
 
 interface ISubmissionTestRunsProps {
     testRuns?: ITestRun[];
 }
-
-const WRONG_ANSWER = 'WrongAnswer';
-const CORRECT_ANSWER = 'CorrectAnswer';
-const TIME_LIMIT = 'TimeLimit';
-const MEMORY_LIMIT = 'MemoryLimit';
 
 const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const { testRuns } = props;
@@ -29,22 +25,22 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
         const { resultType } = testRun;
 
         const getTestColorByResultType = (resType: string) => {
-            if (resType === WRONG_ANSWER) {
+            if (resType === testResultTypes.wrongAnswer) {
                 return 'red';
-            } if (resType === CORRECT_ANSWER) {
+            } if (resType === testResultTypes.correctAnswer) {
                 return 'green';
             }
             return 'yellow';
         };
 
         const getIconByResultType = (resType: string, color: string) => {
-            if (resType === WRONG_ANSWER) {
+            if (resType === testResultTypes.wrongAnswer) {
                 return <IoCloseSharp size={20} color={color} />;
-            } if (resType === CORRECT_ANSWER) {
+            } if (resType === testResultTypes.correctAnswer) {
                 return <FaCheck size={20} color={color} />;
-            } if (resType === TIME_LIMIT) {
+            } if (resType === testResultTypes.timeLimit) {
                 return <FaRegClock size={20} color={color} />;
-            } if (resType === MEMORY_LIMIT) {
+            } if (resType === testResultTypes.memoryLimit) {
                 return <BiMemoryCard size={20} color={color} />;
             }
 

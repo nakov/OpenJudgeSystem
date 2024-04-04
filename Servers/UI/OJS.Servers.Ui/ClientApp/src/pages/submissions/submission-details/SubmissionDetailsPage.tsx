@@ -6,7 +6,7 @@ import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import Button from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
+import SubmissionTest from '../../../components/submissions/submission-test/SubmissionTest';
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
 import { ITestRun } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
@@ -140,7 +140,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        return testRuns.map((testRun: ITestRun, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
+        return testRuns.map((testRun: ITestRun, idx: number) => <SubmissionTest testRun={testRun} idx={idx + 1} />);
     };
 
     if (isLoading) {
