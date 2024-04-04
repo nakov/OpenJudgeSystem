@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.ContestCategories;
+﻿namespace OJS.Services.Administration.Models.ContestCategories;
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 

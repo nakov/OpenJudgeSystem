@@ -80,7 +80,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     [ProtectedEntityAction("id", AdministrationOperations.Read)]
     public virtual async Task<IActionResult> Get(TId id)
     {
-        var model = CreateModelAndSetProperties(id, CrudOperationType.Create);
+        var model = CreateModelAndSetProperties(id, CrudOperationType.Read);
 
         var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
 

@@ -2,25 +2,21 @@
 
 using FluentValidation;
 using OJS.Common.Enumerations;
+using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Common.Validation;
 using System.Threading.Tasks;
 
-public class ContestCategoryAdministrationModelValidator : BaseValidator<ContestCategoryAdministrationModel>
+public class ContestCategoryAdministrationModelValidator : BaseAdministrationModelValidator<ContestCategoryAdministrationModel, int, ContestCategory>
 {
     private readonly IContestCategoriesDataService categoriesDataService;
 
     public ContestCategoryAdministrationModelValidator(
         IContestCategoriesDataService categoriesDataService)
+        : base(categoriesDataService)
     {
         this.categoriesDataService = categoriesDataService;
-
-        this.RuleFor(model => model.Id)
-            .MustAsync(async (model, _)
-                => await this.categoriesDataService.ExistsById(model))
-            .WithMessage($"Category does not exists")
-            .When(model => model.OperationType is CrudOperationType.Delete or CrudOperationType.Update);
 
         this.RuleFor(model => model.Name)
             .NotNull()
