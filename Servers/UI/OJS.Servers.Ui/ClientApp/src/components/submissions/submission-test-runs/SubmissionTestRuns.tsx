@@ -1,4 +1,6 @@
-import { FaCheck } from 'react-icons/fa';
+import { useState } from 'react';
+import { BiMemoryCard } from 'react-icons/bi';
+import { FaCheck, FaRegClock } from 'react-icons/fa';
 import { GoPrimitiveDot } from 'react-icons/go';
 import { IoCloseSharp } from 'react-icons/io5';
 
@@ -13,10 +15,13 @@ interface ISubmissionTestRunsProps {
 
 const WRONG_ANSWER = 'WrongAnswer';
 const CORRECT_ANSWER = 'CorrectAnswer';
+const TIME_LIMIT = 'TimeLimit';
+const MEMORY_LIMIT = 'MemoryLimit';
 
 const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const { testRuns } = props;
     const { themeColors, getColorClassName } = useTheme();
+    const [ selectedTestRun, setSelectedTestRun ] = useState<number>(1);
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
@@ -37,17 +42,36 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
                 return <IoCloseSharp size={20} color={color} />;
             } if (resType === CORRECT_ANSWER) {
                 return <FaCheck size={20} color={color} />;
+            } if (resType === TIME_LIMIT) {
+                return <FaRegClock size={20} color={color} />;
+            } if (resType === MEMORY_LIMIT) {
+                return <BiMemoryCard size={20} color={color} />;
             }
 
             return <GoPrimitiveDot size={20} color={color} />;
         };
 
+        const onTestRunClick = (idx: number) => {
+            setSelectedTestRun(idx);
+            const scrollToElement = document.querySelector(`#test-run-${testRun.id}`);
+            if (!scrollToElement) { return; }
+
+            const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
+        };
+
         const color = getTestColorByResultType(resultType);
 
         return (
-            <div className={styles.submissionTestRun} style={{ color }}>
+            <div
+              className={`${styles.submissionTestRun} ${selectedTestRun === idx
+                  ? styles.selectedTestRun
+                  : ''}`}
+              style={{ color }}
+              onClick={() => onTestRunClick(idx)}
+            >
                 <span>
-                    {idx + 1}
+                    {idx}
                     .
                 </span>
                 {getIconByResultType(resultType, color)}
@@ -61,7 +85,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
     return (
         <div className={`${styles.submissionsTestRunsWrapper} ${backgroundColorClassName}`}>
-            {testRuns?.map((testRun, idx) => renderTestRunDetails(testRun, idx))}
+            {testRuns?.map((testRun, idx) => renderTestRunDetails(testRun, idx + 1))}
         </div>
     );
 };

@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
+import { Popover } from '@mui/material';
 
 import { ITestRun } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
@@ -11,18 +12,28 @@ import styles from './SubmissionTestRun.module.scss';
 
 interface ISubmissionTestRun {
     testRun: ITestRun;
+    idx: number;
 }
 
 const WRONG_ANSWER = 'WrongAnswer';
 const CORRECT_ANSWER = 'CorrectAnswer';
 
 const SubmissionTestRun = (props: ISubmissionTestRun) => {
-    const { testRun } = props;
+    const { testRun, idx } = props;
+
+    const { themeColors, getColorClassName } = useTheme();
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
+    const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
+    const [ timeAnchorEl, setTimeAnchorEl ] = useState<HTMLElement | null>(null);
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+
+    const isMemoryModalOpen = Boolean(memoryAnchorEl);
+    const isTimeModalOpen = Boolean(timeAnchorEl);
 
     const {
-        id,
         input,
         resultType,
         isTrialTest,
@@ -33,10 +44,21 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
         userOutputFragment,
     } = testRun;
 
-    const { themeColors, getColorClassName } = useTheme();
+    const onPopoverClose = (popover: string) => {
+        if (popover === 'memory') {
+            setMemoryAnchorEl(null);
+        } if (popover === 'time') {
+            setTimeAnchorEl(null);
+        }
+    };
 
-    const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+    const onPopoverOpen = (popover: string, event: React.MouseEvent<HTMLElement>) => {
+        if (popover === 'memory') {
+            setMemoryAnchorEl(event.currentTarget);
+        } if (popover === 'time') {
+            setTimeAnchorEl(event.currentTarget);
+        }
+    };
 
     const textIdColor = useMemo(() => {
         if (resultType === WRONG_ANSWER) {
@@ -51,12 +73,12 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
         setTestShowInput(!testShowInput);
     };
     return (
-        <div className={`${backgroundColorClassName} ${textColorClassName} ${styles.testRunWrapper}`}>
+        <div key={`test-run-${testRun.id}`} id={`test-run-${testRun.id}`} className={`${backgroundColorClassName} ${textColorClassName} ${styles.testRunWrapper}`}>
             <div className={styles.testRunTitleWrapper}>
                 <div className={styles.testNameButtonWrapper}>
                     <div style={{ color: textIdColor }}>
                         Test #
-                        {id}
+                        {idx}
                     </div>
                     { showInput && (
                         <Button
@@ -70,21 +92,59 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                     )}
                 </div>
                 <div className={styles.timeAndMemoryWrapper}>
-                    <span>
+                    <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={(e) => onPopoverClose('memory')}>
                         <BiMemoryCard size={20} color={themeColors.baseColor100} />
                         <span>
                             {(memoryUsed / 1000000).toFixed(2)}
                             {' '}
                             MB
                         </span>
+                        <Popover
+                          open={isMemoryModalOpen}
+                          anchorEl={memoryAnchorEl}
+                          anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                          }}
+                          sx={{ pointerEvents: 'none' }}
+                          onClose={() => onPopoverClose('memory')}
+                          disableRestoreFocus
+                        >
+                            <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
+                                Memory used
+                            </div>
+                        </Popover>
                     </span>
-                    <span>
+                    <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={(e) => onPopoverClose('time')}>
                         <FaRegClock size={20} color={themeColors.baseColor100} />
                         <span>
                             {timeUsed / 1000}
                             {' '}
                             s.
                         </span>
+                        <Popover
+                          open={isTimeModalOpen}
+                          anchorEl={timeAnchorEl}
+                          anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                          }}
+                          sx={{ pointerEvents: 'none' }}
+                          onClose={() => onPopoverClose('time')}
+                          disableRestoreFocus
+                        >
+                            <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
+                                Time required
+                            </div>
+                        </Popover>
                     </span>
                 </div>
             </div>

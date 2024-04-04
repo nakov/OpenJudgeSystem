@@ -1,4 +1,5 @@
 @use 'src/styles/spacings';
+@use 'src/styles/colors';
 @use 'src/styles/variables';
 
 .submissionsTestRunsWrapper {
@@ -9,17 +10,21 @@
   font-size: variables.$f-size-18;
   justify-content: center;
   margin-right: spacings.$sp-24;
-  padding: spacings.$sp-8 spacings.$sp-24;
+  padding: spacings.$sp-8;
 
   .submissionTestRun {
     align-items: center;
     cursor: pointer;
     display: flex;
     justify-content: center;
-    padding: spacings.$sp-16 0;
+    padding: spacings.$sp-16 spacings.$sp-8;
 
     svg {
       margin-left: spacings.$sp-8;
     }
+  }
+
+  .selectedTestRun {
+    border-bottom: 2px solid colors.$grey-color;
   }
 }

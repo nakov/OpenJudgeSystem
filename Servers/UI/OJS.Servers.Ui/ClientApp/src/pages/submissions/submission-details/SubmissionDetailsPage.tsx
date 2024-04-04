@@ -140,7 +140,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        return testRuns.map((testRun: ITestRun) => <SubmissionTestRun testRun={testRun} />);
+        return testRuns.map((testRun: ITestRun, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
     };
 
     if (isLoading) {
