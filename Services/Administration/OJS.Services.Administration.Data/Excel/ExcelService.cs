@@ -51,7 +51,6 @@ public class ExcelService : IExcelService
             var sheet = workbook.Worksheets.Add("Results");
 
             // Create a header row
-            // var headerRow = sheet.CreateRow(0);
             int columnNumber = 1;
             foreach (var property in dataTypeProperties)
             {
