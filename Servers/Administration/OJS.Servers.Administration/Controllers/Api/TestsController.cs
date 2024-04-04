@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common;
 using OJS.Data.Models.Tests;
@@ -13,7 +12,6 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.TestRuns;
 using OJS.Services.Administration.Models.Tests;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 

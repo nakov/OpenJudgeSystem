@@ -6,7 +6,6 @@ using OJS.Services.Administration.Business.SubmissionsForProcessing;
 using OJS.Services.Administration.Business.SubmissionsForProcessing.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionsForProcessing;
-using OJS.Services.Administration.Models.Validation;
 
 public class SubmissionsForProcessingController : BaseAdminApiController<
     SubmissionForProcessing,
