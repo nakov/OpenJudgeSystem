@@ -1,18 +1,19 @@
-@use 'src/styles/colors';
-@use 'src/styles/fonts';
-@use 'src/styles/spacings';
-@use 'src/styles/variables';
-@use 'src/styles/font-weights';
-@use 'src/styles/border-radiuses';
+@use '../../../styles/colors';
+@use '../../../styles/fonts';
+@use '../../../styles/spacings';
+@use '../../../styles/variables';
+@use '../../../styles/font-weights';
+@use '../../../styles/border-radiuses';
 
 .submissionsDetailsWrapper {
   @extend %font-family-roboto;
+
   padding: spacings.$sp-16 spacings.$sp-32;
 
   .submissionTitle {
-    padding: spacings.$sp-24 0;
-    font-size: variables.$f-size-24;
+    font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold;
+    padding: spacings.$sp-24 0;
   }
 
   .bodyWrapper {
@@ -22,28 +23,53 @@
       color: colors.$primary-blue;
       cursor: pointer;
     }
+
     .solutionTitle {
-      font-weight: font-weights.$font-weight-bold;
       font-size: variables.$f-size-24;
+      font-weight: font-weights.$font-weight-bold;
       margin-bottom: spacings.$sp-32;
     }
+
     .innerBodyWrapper {
       width: 100%;
     }
+
+    .compileTimeErrorWrapper {
+      background-color: colors.$primary-red;
+      border-radius: border-radiuses.$br-6;
+      padding: spacings.$sp-24 spacings.$sp-32;
+
+      div:first-child {
+        font-weight: font-weights.$font-weight-bold;
+        margin-bottom: spacings.$sp-18;
+      }
+    }
+
+    .retestWrapper {
+      align-items: center;
+      background-color: colors.$warning-color;
+      border-radius: border-radiuses.$br-6;
+      display: flex;
+      font-weight: font-weights.$font-weight-semi-bold;
+      justify-content: space-between;
+      padding: spacings.$sp-24 spacings.$sp-32;
+    }
+
     .codeContentWrapper {
       margin-top: spacings.$sp-32;
 
       > div {
         font-size: variables.$f-size-30;
       }
+
       section {
         margin-top: spacings.$sp-12;
       }
     }
 
     .submissionDetailsWrapper {
-      display: flex;
       align-items: center;
+      display: flex;
       justify-content: space-between;
       margin-top: spacings.$sp-32;
 
@@ -53,6 +79,7 @@
         span:first-child {
           font-weight: font-weights.$font-weight-bold;
         }
+
         span:nth-child(2) {
           margin-left: spacings.$sp-8;
         }
@@ -61,11 +88,13 @@
       .strategyWrapper {
         display: flex;
         justify-content: flex-end;
+
         span {
-          padding: spacings.$sp-12;
           border-radius: border-radiuses.$br-6;
+          padding: spacings.$sp-12;
         }
       }
+
       .buttonWrapper {
         display: flex;
         justify-content: flex-end;

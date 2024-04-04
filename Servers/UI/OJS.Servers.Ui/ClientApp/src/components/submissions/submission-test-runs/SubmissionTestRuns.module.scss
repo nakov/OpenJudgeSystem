@@ -2,20 +2,24 @@
 @use 'src/styles/variables';
 
 .submissionsTestRunsWrapper {
-  padding: spacings.$sp-8 spacings.$sp-24;
-  margin-right: spacings.$sp-24;
-  font-size: variables.$f-size-18;
+  align-items: center;
+  align-self: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  font-size: variables.$f-size-18;
   justify-content: center;
-  align-self: flex-start;
+  margin-right: spacings.$sp-24;
+  padding: spacings.$sp-8 spacings.$sp-24;
 
   .submissionTestRun {
-    display: flex;
     align-items: center;
+    cursor: pointer;
+    display: flex;
     justify-content: center;
     padding: spacings.$sp-16 0;
-    cursor: pointer;
+
+    svg {
+      margin-left: spacings.$sp-8;
+    }
   }
 }

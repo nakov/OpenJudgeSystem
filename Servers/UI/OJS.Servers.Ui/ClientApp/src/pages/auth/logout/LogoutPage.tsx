@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { resetInInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
-import { useLogOutMutation } from '../../redux/services/authorizationService';
-import { wait } from '../../utils/promise-utils';
+import { resetInInternalUser, setIsLoggedIn } from '../../../redux/features/authorizationSlice';
+import { useLogOutMutation } from '../../../redux/services/authorizationService';
+import { wait } from '../../../utils/promise-utils';
 
 import styles from './LogoutPage.module.scss';
 

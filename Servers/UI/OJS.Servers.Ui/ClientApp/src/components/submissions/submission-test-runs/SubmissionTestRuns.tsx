@@ -23,19 +23,19 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const renderTestRunDetails = (testRun: ITestRun, idx: number) => {
         const { resultType } = testRun;
 
-        const getTestColorByResultType = (resultType: string) => {
-            if (resultType === WRONG_ANSWER) {
+        const getTestColorByResultType = (resType: string) => {
+            if (resType === WRONG_ANSWER) {
                 return 'red';
-            } if (resultType === CORRECT_ANSWER) {
+            } if (resType === CORRECT_ANSWER) {
                 return 'green';
             }
             return 'yellow';
         };
 
-        const getIconByResultType = (resultType: string, color: string) => {
-            if (resultType === WRONG_ANSWER) {
+        const getIconByResultType = (resType: string, color: string) => {
+            if (resType === WRONG_ANSWER) {
                 return <IoCloseSharp size={20} color={color} />;
-            } if (resultType === CORRECT_ANSWER) {
+            } if (resType === CORRECT_ANSWER) {
                 return <FaCheck size={20} color={color} />;
             }
 
@@ -54,6 +54,10 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
             </div>
         );
     };
+
+    if (!testRuns || testRuns?.length === 0) {
+        return null;
+    }
 
     return (
         <div className={`${styles.submissionsTestRunsWrapper} ${backgroundColorClassName}`}>

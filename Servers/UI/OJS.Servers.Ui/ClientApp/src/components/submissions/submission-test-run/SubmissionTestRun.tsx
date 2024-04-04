@@ -9,18 +9,17 @@ import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button'
 
 import styles from './SubmissionTestRun.module.scss';
 
-interface SubmissionTestRun {
+interface ISubmissionTestRun {
     testRun: ITestRun;
 }
 
 const WRONG_ANSWER = 'WrongAnswer';
 const CORRECT_ANSWER = 'CorrectAnswer';
 
-const SubmissionTestRun = (props: SubmissionTestRun) => {
+const SubmissionTestRun = (props: ISubmissionTestRun) => {
     const { testRun } = props;
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
-    console.log('test run => ', testRun);
 
     const {
         id,
