@@ -12,7 +12,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Business.Cache;
     using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
-    using OJS.Services.Ui.Data.Implementations;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Submissions;
@@ -340,32 +339,27 @@ namespace OJS.Services.Ui.Business.Implementations
             var loggedInUser = this.userProviderService.GetCurrentUser();
             var loggedInUserProfile = await this.usersBusinessService.GetUserProfileById(loggedInUser.Id);
 
-            // if (username != loggedInUserProfile!.UserName && (loggedInUser.IsAdmin || loggedInUser.IsLecturer))
-            // {
-            //     throw new UnauthorizedAccessException("")
-            // }
-
             // For category filter dropdown
             sortAndFilterModel = await this.GetNestedFilterCategoriesIfAny(sortAndFilterModel);
 
-            var userParticipants = this.participantsData
-                .GetAllByUsername(username);
-
-            // if (sortAndFilterModel.SortType == ContestSortType.ParticipantRegistrationTime)
-            // {
-            //     userParticipants = userParticipants.OrderByDescending(p => p.CreatedOn);
-            // }
-
             var participatedContestsInPage =
-                await GetPaginatedContestsByParticipants<ContestForListingServiceModel>(
-                    userParticipants,
-                    sortAndFilterModel.ItemsPerPage,
-                    sortAndFilterModel.PageNumber);
+                await this.contestsData.ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
+                    this.contestsData.GetContestsByUsernameOrderedByParticipantCreatedOnDesc(username),
+                    sortAndFilterModel);
 
-            var participantResultsByContest =
-                await MapParticipationResultsToContestsInPage(participatedContestsInPage, userParticipants);
+            Dictionary<int, ParticipantResultServiceModel?>? participantResultsByContest = null;
 
-            return await this.PrepareActivityAndResults(participatedContestsInPage, participantResultsByContest!);
+            if (loggedInUserProfile!.UserName == username || loggedInUser.IsAdmin)
+            {
+                // Lecturers should not see points
+                var userParticipants = this.participantsData
+                    .GetAllByUsernameAndContests(username, participatedContestsInPage.Items.Select(c => c.Id));
+
+                participantResultsByContest =
+                    await MapParticipationResultsToContestsInPage(participatedContestsInPage, userParticipants);
+            }
+
+            return await this.PrepareActivityAndResults(participatedContestsInPage, participantResultsByContest);
         }
 
         public async Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex()
@@ -429,15 +423,6 @@ namespace OJS.Services.Ui.Business.Implementations
             return participantResultsByContest;
         }
 
-        private static async Task<PagedResult<TServiceModel>> GetPaginatedContestsByParticipants<TServiceModel>(
-            IQueryable<Participant> participants,
-            int? itemsPerPage,
-            int? pageNumber)
-            => await participants
-                .Select(o => o.Contest)
-                .Distinct()
-                .Paginate<TServiceModel>(itemsPerPage, pageNumber);
-
         private static bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
         {
             if (participant != null && !participant.IsInvalidated)
@@ -468,6 +453,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
                 if (participantResultsByContest != null)
                 {
+                    // TODO: If not admin or participant do not return these
                     c.UserParticipationResult = participantResultsByContest[c.Id];
                 }
             });

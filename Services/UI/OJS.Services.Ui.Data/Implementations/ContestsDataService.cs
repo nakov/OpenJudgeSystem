@@ -89,6 +89,13 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
     }
 
+    public IQueryable<Contest> GetContestsByUsernameOrderedByParticipantCreatedOnDesc(string username)
+        => this.GetQuery(c => c.Participants
+                .Any(p => p.User.UserName == username))
+            .OrderByDescending(c => c.Participants
+                .Where(p => p.User.UserName == username)
+                .Max(p => p.CreatedOn));
+
     public async Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
         IQueryable<Contest> contests,
         ContestFiltersServiceModel model)

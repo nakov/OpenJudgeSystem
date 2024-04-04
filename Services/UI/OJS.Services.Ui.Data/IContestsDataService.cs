@@ -34,6 +34,8 @@ namespace OJS.Services.Ui.Data
 
         Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
 
+        IQueryable<Contest> GetContestsByUsernameOrderedByParticipantCreatedOnDesc(string username);
+
         Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId);
 
         IQueryable<Contest> GetAllActive();

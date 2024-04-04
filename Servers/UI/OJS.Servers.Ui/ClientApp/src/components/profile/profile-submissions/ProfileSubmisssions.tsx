@@ -32,7 +32,7 @@ const ProfileSubmissions = ({ userIsProfileOwner }: IProfileSubmissionsProps) =>
         page: currentPage,
     // Query should not get initiated for empty profile or
     // if user is not profile owner or is not lecturer/admin
-    }, { skip: isNil(profile) || !userIsProfileOwner || (!userIsProfileOwner && !internalUser.canAccessAdministration) });
+    }, { skip: isNil(profile) || (!userIsProfileOwner && !internalUser.canAccessAdministration) });
 
     useEffect(() => {
         if (!isNil(userSubmissions)) {

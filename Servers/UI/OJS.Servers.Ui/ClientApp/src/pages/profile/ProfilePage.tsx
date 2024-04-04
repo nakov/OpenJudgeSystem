@@ -39,14 +39,13 @@ const ProfilePage = () => {
         [ internalUser, username ],
     );
 
-    useEffect(() => {
-        console.log(profileUsername);
-    }, [ profileUsername ]);
-
     const {
         data: profileInfo,
         isLoading: isProfileInfoLoading,
-    } = useGetProfileQuery({ username: profileUsername });
+    } = useGetProfileQuery(
+        { username: profileUsername },
+        { skip: isNil(internalUser) },
+    );
 
     useEffect(
         () => {
@@ -69,58 +68,60 @@ const ProfilePage = () => {
     }, [ internalUser, profile, isLoggedIn ]);
 
     return (
-        isProfileInfoLoading || isNil(profile)
+        isProfileInfoLoading
             ? <SpinningLoader />
-            : (
-                <div className={getColorClassName(themeColors.textColor)}>
-                    <PageBreadcrumbs
-                      keyPrefix="profile"
-                      items={[
-                            {
-                                text: 'My Profile',
-                                to: '/profile',
-                            } as IPageBreadcrumbsItem,
-                      ]}
-                    />
-                    <ProfileAboutInfo
-                      userProfile={profile}
-                      isUserAdmin={internalUser.isAdmin}
-                      isUserLecturer={internalUser.isInRole}
-                      isUserProfileOwner={currentUserIsProfileOwner}
-                    />
-                    {
-                        (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
-                        <div className={styles.submissionsAndParticipationsToggle}>
-                            <Button
-                              type={toggleValue === 1
-                                  ? ButtonType.primary
-                                  : ButtonType.secondary}
-                              className={styles.toggleBtn}
-                              text={currentUserIsProfileOwner
-                                  ? 'My Submissions'
-                                  : 'User Submissions'}
-                              onClick={() => setToggleValue(1)}
-                            />
-                            <Button
-                              type={toggleValue === 2
-                                  ? ButtonType.primary
-                                  : ButtonType.secondary}
-                              className={styles.toggleBtn}
-                              text={currentUserIsProfileOwner
-                                  ? 'My Contests'
-                                  : 'User Contests'}
-                              onClick={() => setToggleValue(2)}
-                            />
-                        </div>
-                        )
-                    }
-                    {toggleValue === 1 &&
-                        (currentUserIsProfileOwner || internalUser.canAccessAdministration) &&
-                        <ProfileSubmissions userIsProfileOwner={currentUserIsProfileOwner} />}
-                    {(toggleValue === 2 || (!currentUserIsProfileOwner && !internalUser.canAccessAdministration)) &&
-                        <ProfileContestParticipations userIsProfileOwner={currentUserIsProfileOwner} />}
-                </div>
-            )
+            : isNil(profile)
+                ? <span>No profile</span>
+                : (
+                    <div className={getColorClassName(themeColors.textColor)}>
+                        <PageBreadcrumbs
+                          keyPrefix="profile"
+                          items={[
+                                {
+                                    text: 'My Profile',
+                                    to: '/profile',
+                                } as IPageBreadcrumbsItem,
+                          ]}
+                        />
+                        <ProfileAboutInfo
+                          userProfile={profile}
+                          isUserAdmin={internalUser.isAdmin}
+                          isUserLecturer={internalUser.isInRole}
+                          isUserProfileOwner={currentUserIsProfileOwner}
+                        />
+                        {
+                            (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
+                            <div className={styles.submissionsAndParticipationsToggle}>
+                                <Button
+                                  type={toggleValue === 1
+                                      ? ButtonType.primary
+                                      : ButtonType.secondary}
+                                  className={styles.toggleBtn}
+                                  text={currentUserIsProfileOwner
+                                      ? 'My Submissions'
+                                      : 'User Submissions'}
+                                  onClick={() => setToggleValue(1)}
+                                />
+                                <Button
+                                  type={toggleValue === 2
+                                      ? ButtonType.primary
+                                      : ButtonType.secondary}
+                                  className={styles.toggleBtn}
+                                  text={currentUserIsProfileOwner
+                                      ? 'My Contests'
+                                      : 'User Contests'}
+                                  onClick={() => setToggleValue(2)}
+                                />
+                            </div>
+                            )
+                        }
+                        {toggleValue === 1 &&
+                            (currentUserIsProfileOwner || internalUser.canAccessAdministration) &&
+                            <ProfileSubmissions userIsProfileOwner={currentUserIsProfileOwner} />}
+                        {(toggleValue === 2 || (!currentUserIsProfileOwner && !internalUser.canAccessAdministration)) &&
+                            <ProfileContestParticipations userIsProfileOwner={currentUserIsProfileOwner} />}
+                    </div>
+                )
     );
 };
 
