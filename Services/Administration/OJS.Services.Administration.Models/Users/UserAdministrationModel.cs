@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.Users;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.Users;
 
 using AutoMapper;
 using OJS.Data.Models.Users;
@@ -21,7 +23,9 @@ public class UserAdministrationModel : BaseAdministrationModel<string>, IMapExpl
     {
         configuration.CreateMap<UserProfile, UserAdministrationModel>()
             .ForMember(uam => uam.Roles, opt
-                => opt.MapFrom(ur => ur.UsersInRoles.Select(uir => uir.Role)));
+                => opt.MapFrom(ur => ur.UsersInRoles.Select(uir => uir.Role)))
+            .ForMember(uam => uam.OperationType, opt
+                => opt.Ignore());
 
         configuration.CreateMap<UserAdministrationModel, UserProfile>()
             .ForMember(up => up.IsDeleted, opt

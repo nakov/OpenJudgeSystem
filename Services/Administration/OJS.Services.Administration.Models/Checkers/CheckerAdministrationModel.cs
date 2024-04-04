@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.Checkers;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.Checkers;
 
 using AutoMapper;
 using OJS.Data.Models.Checkers;
@@ -17,7 +19,9 @@ public class CheckerAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public string? Parameter { get; set; }
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<Checker, CheckerAdministrationModel>();
+        configuration.CreateMap<Checker, CheckerAdministrationModel>()
+            .ForMember(cam => cam.OperationType, opt
+                => opt.Ignore());
 
         configuration.CreateMap<CheckerAdministrationModel, Checker>()
             .ForMember(c => c.IsDeleted, opt

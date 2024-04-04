@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.Problems;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.Problems;
 
 using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
@@ -48,6 +50,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
+             .ForMember(p => p.OperationType, opt
+                 => opt.Ignore())
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt

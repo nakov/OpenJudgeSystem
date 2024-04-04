@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.Tests;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.Tests;
 
 using AutoMapper;
 using OJS.Data.Models.Tests;
@@ -40,6 +42,8 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
                 tam => tam.Type,
                 opt => opt.MapFrom(t
                     => MapTestType(t.IsTrialTest, t.IsOpenTest)))
+            .ForMember(t => t.OperationType, opt
+                => opt.Ignore())
             .ForMember(tam => tam.RetestProblem, op => op.Ignore());
 
         configuration.CreateMap<TestAdministrationModel, Test>()

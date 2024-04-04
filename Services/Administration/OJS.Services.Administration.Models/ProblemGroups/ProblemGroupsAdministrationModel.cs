@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.ProblemGroups;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.ProblemGroups;
 
 using AutoMapper;
 using OJS.Data.Models.Problems;
@@ -17,6 +19,8 @@ public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IM
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<ProblemGroup, ProblemGroupsAdministrationModel>()
+            .ForMember(pgam => pgam.OperationType, opt
+                => opt.Ignore())
             .ForMember(pgam => pgam.Contest, opt
                 => opt.MapFrom(pg => pg.Contest.Map<ContestCopyProblemsValidationServiceModel>()));
 

@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.ContestCategories.Validators;
 
 using FluentValidation;
+using OJS.Common.Enumerations;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Common.Validation;
@@ -14,18 +15,28 @@ public class ContestCategoryAdministrationModelValidator : BaseValidator<Contest
         IContestCategoriesDataService categoriesDataService)
     {
         this.categoriesDataService = categoriesDataService;
+
+        this.RuleFor(model => model.Id)
+            .MustAsync(async (model, _)
+                => await this.categoriesDataService.ExistsById(model))
+            .WithMessage($"Category does not exists")
+            .When(model => model.OperationType is CrudOperationType.Delete or CrudOperationType.Update);
+
         this.RuleFor(model => model.Name)
             .NotNull()
-            .NotEmpty();
+            .NotEmpty()
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.OrderBy)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("Order By cannot be negative number");
+            .WithMessage("Order By cannot be negative number")
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _)
                 => await this.ValidateParentCategoryIsValid(model))
-            .WithMessage($"Provided Parent category does not exist.");
+            .WithMessage($"Provided Parent category does not exist.")
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
     }
 
     private async Task<bool> ValidateParentCategoryIsValid(ContestCategoryAdministrationModel model)

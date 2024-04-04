@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.ExamGroups;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.ExamGroups;
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
@@ -14,7 +16,9 @@ public class ExamGroupAdministrationModel : BaseAdministrationModel<int>, IMapEx
 
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<ExamGroup, ExamGroupAdministrationModel>();
+        configuration.CreateMap<ExamGroup, ExamGroupAdministrationModel>()
+            .ForMember(egam => egam.OperationType, opt
+                => opt.Ignore());
 
         configuration.CreateMap<ExamGroupAdministrationModel, ExamGroup>()
             .ForMember(eg => eg.ExternalAppId, opt => opt.Ignore())

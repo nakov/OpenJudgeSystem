@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.SubmissionTypes;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.SubmissionTypes;
 
 using AutoMapper;
 using OJS.Data.Models.Submissions;
@@ -24,7 +26,9 @@ public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, I
 
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<SubmissionType, SubmissionTypeAdministrationModel>();
+        configuration.CreateMap<SubmissionType, SubmissionTypeAdministrationModel>()
+            .ForMember(stam => stam.OperationType, opt
+                => opt.Ignore());
 
         configuration.CreateMap<SubmissionTypeAdministrationModel, SubmissionType>()
             .ForMember(st => st.SubmissionTypesInProblems, opt

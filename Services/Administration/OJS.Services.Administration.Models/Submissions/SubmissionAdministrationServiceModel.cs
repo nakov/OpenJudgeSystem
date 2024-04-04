@@ -1,3 +1,5 @@
+using OJS.Services.Common.Models;
+
 namespace OJS.Services.Administration.Models.Submissions;
 
 using System;
@@ -46,6 +48,8 @@ public class SubmissionAdministrationServiceModel : BaseAdministrationModel<int>
         => configuration.CreateMap<Submission, SubmissionAdministrationServiceModel>()
             .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
                 s.Content))
+            .ForMember(crm => crm.OperationType, opt
+                => opt.Ignore())
             .ForMember(d => d.Content, opt => opt.MapFrom(s =>
                 s.IsBinaryFile
                     ? null

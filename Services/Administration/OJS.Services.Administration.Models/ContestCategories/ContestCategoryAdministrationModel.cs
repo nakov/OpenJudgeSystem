@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.ContestCategories;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.ContestCategories;
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
@@ -41,6 +43,8 @@ public class ContestCategoryAdministrationModel : BaseAdministrationModel<int>, 
             .ForMember(dest => dest.Parent, opt
                 => opt.MapFrom(src => src.Parent!.Name))
             .ForMember(c => c.ModifiedOn, opt
+                => opt.Ignore())
+            .ForMember(dest => dest.OperationType, opt
                 => opt.Ignore());
     }
 }

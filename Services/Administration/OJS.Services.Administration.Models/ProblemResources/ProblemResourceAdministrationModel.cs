@@ -1,4 +1,6 @@
-﻿namespace OJS.Services.Administration.Models.ProblemResources;
+﻿using OJS.Services.Common.Models;
+
+namespace OJS.Services.Administration.Models.ProblemResources;
 
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +33,8 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
         configuration.CreateMap<ProblemResource, ProblemResourceAdministrationModel>()
             .ForMember(pram => pram.HasFile, opt
                 => opt.MapFrom(pr => pr.File != null))
+            .ForMember(pram => pram.OperationType, opt
+                => opt.Ignore())
             .ForMember(pram => pram.File, opt
                 => opt.Ignore());
 
