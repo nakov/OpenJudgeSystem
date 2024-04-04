@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
@@ -12,7 +11,6 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Submissions;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
@@ -27,7 +25,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         IContestsBusinessService contestsBusinessService,
         ContestAdministrationModelValidator validator,
         IContestsGridDataService contestGridDataService,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator,
+        ContestDeleteValidator deleteValidator,
         IContestsDataService contestsData)
     : base(
         contestGridDataService,

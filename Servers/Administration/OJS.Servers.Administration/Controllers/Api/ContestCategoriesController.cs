@@ -1,13 +1,11 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.GridData;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
 using OJS.Services.Administration.Models.ContestCategories;
-using OJS.Services.Administration.Models.Validation;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Linq;
 
@@ -19,7 +17,7 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
         IContestCategoriesGridDataService contestCategoryGridDataService,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
+        ContestCategoryDeleteValidator deleteValidator)
     : base(
         contestCategoryGridDataService,
         contestCategoriesBusinessService,

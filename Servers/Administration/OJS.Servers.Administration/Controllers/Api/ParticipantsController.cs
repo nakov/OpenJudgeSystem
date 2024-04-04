@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
 using OJS.Servers.Administration.Attributes;
@@ -10,7 +9,6 @@ using OJS.Services.Administration.Business.Participants.GridData;
 using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
 using OJS.Services.Administration.Models.Participants;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 
@@ -22,7 +20,7 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, P
         IParticipantsGridDataService participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
         ParticipantAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
+        ParticipantDeleteValidator deleteValidator)
         : base(
             participantsGridDataService,
             participantsBusinessService,

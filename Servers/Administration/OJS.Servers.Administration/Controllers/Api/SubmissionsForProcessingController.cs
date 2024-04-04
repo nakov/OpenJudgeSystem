@@ -18,7 +18,7 @@ public class SubmissionsForProcessingController : BaseAdminApiController<
         IGridDataService<SubmissionForProcessing> submissionsGridDataService,
         ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService,
         SubmissionsForProcessingAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> submissionsForProcessingDeleteValidator)
+        SubmissionForProcessingDeleteValidator submissionsForProcessingDeleteValidator)
         : base(
             submissionsGridDataService,
             submissionsForProcessingBusinessService,
