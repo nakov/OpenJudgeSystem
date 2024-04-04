@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
 import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid';
-import { ActionCreatorWithPayload, SerializedError } from '@reduxjs/toolkit';
+import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
@@ -25,27 +25,19 @@ interface IAdministrationGridViewProps<T> {
     data: IPagedResultType<T> | undefined;
     showFiltersAndSorters?: boolean;
     renderActionButtons?: () => ReactNode;
-
-   modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
-
-   error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
-   queryParams?: IGetAllAdminParams;
-
-   setQueryParams?: (params: IGetAllAdminParams) => void;
-
-   selectedFilters: Array<IAdministrationFilter>;
-   selectedSorters: Array<IAdministrationSorter>;
-   setFilterStateAction?: ActionCreatorWithPayload<any, string>;
-
-   setSorterStateAction?: ActionCreatorWithPayload<any, string>;
-
-   location: string;
-   withSearchParams?: boolean;
-   legendProps?: Array<{color: string; message:string}>;
-
+    modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
+    error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
+    queryParams?: IGetAllAdminParams;
+    setQueryParams?: (params: IGetAllAdminParams) => void;
+    selectedFilters: Array<IAdministrationFilter>;
+    selectedSorters: Array<IAdministrationSorter>;
+    setFilterStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
+    setSorterStateAction?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
+    withSearchParams?: boolean;
+    legendProps?: Array<{color: string; message:string}>;
+    specificRowIdName?: string | null;
    excelMutation?: any;
 
-   specificRowIdName?: string | null;
 }
 
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
@@ -63,7 +55,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         selectedSorters,
         setFilterStateAction,
         setSorterStateAction,
-        location,
         withSearchParams = true,
         legendProps,
         excelMutation,
@@ -113,7 +104,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setFilterStateAction}
                       selectedFilters={selectedFilters}
                       columns={filtersColumns}
-                      location={location}
                     />
 
                     <AdministrationSorting
@@ -123,7 +113,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setSorterStateAction}
                       selectedSorters={selectedSorters}
                       columns={sortingColumns}
-                      location={location}
                     />
                 </div>
                 )}

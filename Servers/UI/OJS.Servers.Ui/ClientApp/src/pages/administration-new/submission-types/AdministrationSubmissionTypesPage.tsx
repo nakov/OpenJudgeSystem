@@ -6,15 +6,14 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import SubmissionTypesForm from '../../../components/administration/submission-types/form/SubmissionTypeForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminSUbmissionTypesFilters, setAdminSUbmissionTypesSorters } from '../../../redux/features/admin/submissionTypesAdminSlice';
 import { useGetAllSubmissionTypesQuery, useLazyExportSubmissionTypesToExcelQuery } from '../../../redux/services/admin/submissionTypesAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import submissionTypesFilterableColumns, { returnNonFilterableColumns } from './submissionTypesGridColumns';
 
-const location = 'all-submission-types';
 const AdministrationSubmissionTypesPage = () => {
     const [ searchParams ] = useSearchParams();
 
@@ -28,20 +27,25 @@ const AdministrationSubmissionTypesPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(submissionTypesFilterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(submissionTypesFilterableColumns),
+    ));
+
     const { refetch, data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
-    const selectedFilters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedFilters);
-    const selectedSorters = useAppSelector((state) => state.adminSubmissionTypes[location]?.selectedSorters);
-
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const onEditClick = (id: number) => {
         setSubmissionTypeId(id);
@@ -94,9 +98,8 @@ const AdministrationSubmissionTypesPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setFilterStateAction={setAdminSUbmissionTypesFilters}
-          setSorterStateAction={setAdminSUbmissionTypesSorters}
-          location={location}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: showEditModal, modal: (i) => renderFormModal(i, true) },
               { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },

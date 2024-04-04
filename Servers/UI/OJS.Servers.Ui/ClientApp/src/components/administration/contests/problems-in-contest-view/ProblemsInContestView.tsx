@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { MdCopyAll, MdDeleteForever } from 'react-icons/md';
-import { useSelector } from 'react-redux';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IGetAllAdminParams } from '../../../../common/types';
+import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
 import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -29,12 +27,8 @@ interface IProblemsInContestViewProps {
 
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId, contestType } = props;
-    const filtersAndSortersLocation = `contest-details-problems-${contestId}`;
-
-    const selectedFilters =
-        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemId, setProblemId ] = useState<number>(-1);
@@ -247,7 +241,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                         )
 }
                       queryParams={queryParams}
-                      location={filtersAndSortersLocation}
                       selectedFilters={selectedFilters}
                       selectedSorters={selectedSorters}
                       setQueryParams={setQueryParams}
@@ -269,8 +262,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                           },
                       ]}
                       renderActionButtons={renderGridSettings}
-                      setFilterStateAction={setAdminContestsFilters}
-                      setSorterStateAction={setAdminContestsSorters}
+                      setSorterStateAction={setSelectedSorters}
+                      setFilterStateAction={setSelectedFilters}
                       withSearchParams={false}
                       legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
                     />

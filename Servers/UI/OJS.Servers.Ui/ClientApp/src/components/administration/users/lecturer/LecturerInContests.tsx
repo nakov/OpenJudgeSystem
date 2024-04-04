@@ -2,14 +2,12 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../../common/messages';
 import { IContestAutocomplete, IGetAllAdminParams } from '../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInContestFilterableColumns, { returnLecturerInContestNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-contests/lecturersInContestsGridColumns';
-import { setAdminUsersFilters, setAdminUsersSorters } from '../../../../redux/features/admin/usersAdminSlice';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useAddLecturerToContestMutation, useGetLecturerContestsQuery, useRemoveLecturerFromContestMutation } from '../../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -25,12 +23,10 @@ interface ILeturerInContestsProps {
 }
 const LecturerInContests = (props: ILeturerInContestsProps) => {
     const { userId } = props;
-    const filtersAndSortersLocation = `lecturer-in-contests${userId}`;
 
-    const selectedFilters =
-        useAppSelector((state) => state.adminUsers[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-    useAppSelector((state) => state.adminUsers[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
 
     const [ contestId, setContestId ] = useState<number>(0);
@@ -200,15 +196,14 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             <AdministrationGridView
               data={data}
               error={error}
-              location={filtersAndSortersLocation}
               selectedFilters={selectedFilters}
               selectedSorters={selectedSorters}
               setQueryParams={setQueryParams}
               queryParams={queryParams}
               withSearchParams={false}
               filterableGridColumnDef={lecturerInContestFilterableColumns}
-              setFilterStateAction={setAdminUsersFilters}
-              setSorterStateAction={setAdminUsersSorters}
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               renderActionButtons={renderGridSettings}
               notFilterableGridColumnDef={
             returnLecturerInContestNonFilterableColumns(onRemoveFromRowClicked)

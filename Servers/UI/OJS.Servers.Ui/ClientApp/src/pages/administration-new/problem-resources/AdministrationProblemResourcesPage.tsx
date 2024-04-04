@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemResourceForm from '../../../components/administration/problem-resources/problem-resource-form/ProblemResourceForm';
-import { setAdminProblemResourceFilters, setAdminProblemResourceSorters } from '../../../redux/features/admin/problemResourcesAdminSlice';
 import { useGetAllAdminProblemResourcesQuery, useLazyExportProblemResourcesToExcelQuery } from '../../../redux/services/admin/problemResourcesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import problemResourceFilterableColumns, { returnProblemResourceNonFilterableColumns } from './problemResourcesGridColumns';
 
-const location = 'all-resources';
 const AdministrationProblemResourcesPage = () => {
     const [ searchParams ] = useSearchParams();
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
@@ -23,20 +22,26 @@ const AdministrationProblemResourcesPage = () => {
     });
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemResourceId, setProblemResourceId ] = useState<number>(0);
-    const selectedFilters = useSelector((state : IRootStore) => state.adminProblemResources[location]?.selectedFilters);
-    const selectedSorters = useSelector((state : IRootStore) => state.adminProblemResources[location]?.selectedSorters);
+
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(problemResourceFilterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(problemResourceFilterableColumns),
+    ));
 
     const { refetch: retakeData, data, error } = useGetAllAdminProblemResourcesQuery(queryParams);
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const onEditClick = (id: number) => {
         setOpenEditModal(true);
@@ -63,11 +68,10 @@ const AdministrationProblemResourcesPage = () => {
           error={error}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          location={location}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          setFilterStateAction={setAdminProblemResourceFilters}
-          setSorterStateAction={setAdminProblemResourceSorters}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           legendProps={[ { color: '#FFA1A1', message: 'Resource is deleted.' } ]}
           modals={[
               { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i) },
