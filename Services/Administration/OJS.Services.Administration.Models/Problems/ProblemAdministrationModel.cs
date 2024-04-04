@@ -1,14 +1,13 @@
-﻿using OJS.Services.Common.Models;
+﻿namespace OJS.Services.Administration.Models.Problems;
 
-namespace OJS.Services.Administration.Models.Problems;
-
-using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
-using System.Collections.Generic;
-using OJS.Data.Models.Problems;
-using OJS.Common.Enumerations;
-using System;
 using Microsoft.AspNetCore.Http;
+using OJS.Common.Enumerations;
+using OJS.Data.Models.Problems;
+using OJS.Services.Common.Models;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
+using System.Collections.Generic;
 
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {

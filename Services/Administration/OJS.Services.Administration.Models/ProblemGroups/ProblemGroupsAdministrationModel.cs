@@ -1,12 +1,11 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.ProblemGroups;
+﻿namespace OJS.Services.Administration.Models.ProblemGroups;
 
 using AutoMapper;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Contests.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {

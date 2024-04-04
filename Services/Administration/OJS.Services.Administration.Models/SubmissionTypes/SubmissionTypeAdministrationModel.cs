@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.SubmissionTypes;
+﻿namespace OJS.Services.Administration.Models.SubmissionTypes;
 
 using AutoMapper;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly

@@ -1,14 +1,13 @@
-using OJS.Services.Common.Models;
-
 namespace OJS.Services.Administration.Models.Submissions;
 
-using System;
 using AutoMapper;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Administration.Models.SubmissionTypes;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 
 public class SubmissionAdministrationServiceModel : BaseAdministrationModel<int>, IMapExplicitly
 {

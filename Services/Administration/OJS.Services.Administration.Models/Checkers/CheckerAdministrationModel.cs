@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.Checkers;
+﻿namespace OJS.Services.Administration.Models.Checkers;
 
 using AutoMapper;
 using OJS.Data.Models.Checkers;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class CheckerAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly

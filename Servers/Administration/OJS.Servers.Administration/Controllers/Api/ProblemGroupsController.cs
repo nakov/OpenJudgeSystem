@@ -21,13 +21,11 @@ public class ProblemGroupsController : BaseAdminApiController<ProblemGroup, int,
     public ProblemGroupsController(
         IProblemGroupsGridDataService problemGroupGridDataService,
         IProblemGroupsBusinessService problemGroupsBusinessService,
-        ProblemGroupAdministrationModelValidator validator,
-        ProblemGroupAdministrationDeleteValidator deleteValidator)
+        ProblemGroupAdministrationModelValidator validator)
         : base(
             problemGroupGridDataService,
             problemGroupsBusinessService,
-            validator,
-            deleteValidator) =>
+            validator) =>
         this.problemGroupsBusinessService = problemGroupsBusinessService;
 
     [HttpGet]

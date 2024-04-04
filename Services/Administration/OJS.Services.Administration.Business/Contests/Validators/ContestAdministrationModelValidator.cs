@@ -63,6 +63,12 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
             .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}")
             .When(model => model.OperationType == CrudOperationType.Create &&
                            model.Type == ContestType.OnlinePracticalExam.ToString());
+
+        this.RuleFor(model => model.Id)
+            .MustAsync(async (x, _) => !await this.activityService.IsContestActive(x))
+            .NotNull()
+            .WithMessage($"Cannot delete active contest")
+            .When(model => model.OperationType is CrudOperationType.Delete);
     }
 
     private static bool BeAValidContestType(string? type)

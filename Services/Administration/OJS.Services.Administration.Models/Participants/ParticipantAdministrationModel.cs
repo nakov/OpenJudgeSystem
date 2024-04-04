@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.Participants;
+﻿namespace OJS.Services.Administration.Models.Participants;
 
 using AutoMapper;
 using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly

@@ -18,13 +18,11 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
     public SubmissionTypesController(
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
-        SubmissionTypeAdministrationModelValidator validator,
-        SubmissionTypeDeleteValidator deleteValidator)
+        SubmissionTypeAdministrationModelValidator validator)
             : base(
                 submissionTypesGridDataService,
                 submissionTypesBusinessService,
-                validator,
-                deleteValidator) =>
+                validator) =>
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]

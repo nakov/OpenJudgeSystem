@@ -17,13 +17,11 @@ public class SubmissionsForProcessingController : BaseAdminApiController<
     public SubmissionsForProcessingController(
         IGridDataService<SubmissionForProcessing> submissionsGridDataService,
         ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService,
-        SubmissionsForProcessingAdministrationModelValidator validator,
-        SubmissionForProcessingDeleteValidator submissionsForProcessingDeleteValidator)
+        SubmissionsForProcessingAdministrationModelValidator validator)
         : base(
             submissionsGridDataService,
             submissionsForProcessingBusinessService,
-            validator,
-            submissionsForProcessingDeleteValidator)
+            validator)
     {
     }
 }

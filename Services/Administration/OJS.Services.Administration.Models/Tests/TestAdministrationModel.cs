@@ -1,10 +1,8 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.Tests;
+﻿namespace OJS.Services.Administration.Models.Tests;
 
 using AutoMapper;
 using OJS.Data.Models.Tests;
-using OJS.Workers.Common.Extensions;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly

@@ -15,13 +15,11 @@ public class CheckersController : BaseAdminApiController<Checker, int, CheckerIn
         ICheckersDataService checkersDataService,
         IGridDataService<Checker> checkerGridDataService,
         ICheckersBusinessService checkersBusinessService,
-        CheckerAdministrationModelValidator validator,
-        CheckerDeleteValidator deleteValidator)
+        CheckerAdministrationModelValidator validator)
     : base(
         checkerGridDataService,
         checkersBusinessService,
-        validator,
-        deleteValidator)
+        validator)
         => this.checkersDataService = checkersDataService;
 
     [HttpGet]

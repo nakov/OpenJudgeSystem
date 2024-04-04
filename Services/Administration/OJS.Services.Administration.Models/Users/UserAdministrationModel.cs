@@ -1,10 +1,9 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.Users;
+﻿namespace OJS.Services.Administration.Models.Users;
 
 using AutoMapper;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Models.Roles;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Linq;

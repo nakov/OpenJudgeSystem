@@ -19,13 +19,11 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, P
     public ParticipantsController(
         IParticipantsGridDataService participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
-        ParticipantAdministrationModelValidator validator,
-        ParticipantDeleteValidator deleteValidator)
+        ParticipantAdministrationModelValidator validator)
         : base(
             participantsGridDataService,
             participantsBusinessService,
-            validator,
-            deleteValidator)
+            validator)
         => this.participantsGridDataService = participantsGridDataService;
 
     [HttpGet("{contestId:int}")]

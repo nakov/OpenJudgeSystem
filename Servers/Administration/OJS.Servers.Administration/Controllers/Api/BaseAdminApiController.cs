@@ -11,15 +11,11 @@ using OJS.Servers.Administration.Filters;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Data.Infrastructure.Models;
-using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using static OJS.Services.Administration.Models.AdministrationConstants;
 
@@ -27,23 +23,20 @@ using static OJS.Services.Administration.Models.AdministrationConstants;
 [TypeFilter(typeof(EntityPermissionsFilter))]
 public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateModel> : BaseApiController
     where TEntity : class, IEntity<TId>
-    where TUpdateModel : BaseAdministrationModel<TId>
+    where TUpdateModel : BaseAdministrationModel<TId>, new()
 {
     private readonly IGridDataService<TEntity> gridDataService;
     private readonly IAdministrationOperationService<TEntity, TId, TUpdateModel> operationService;
     private readonly IValidator<TUpdateModel> validator;
-    private readonly IValidator<BaseDeleteValidationModel<TId>> deleteValidator;
 
     protected BaseAdminApiController(
         IGridDataService<TEntity> gridDataService,
         IAdministrationOperationService<TEntity, TId, TUpdateModel> operationService,
-        IValidator<TUpdateModel> validator,
-        IValidator<BaseDeleteValidationModel<TId>> deleteValidator)
+        IValidator<TUpdateModel> validator)
     {
         this.gridDataService = gridDataService;
         this.operationService = operationService;
         this.validator = validator;
-        this.deleteValidator = deleteValidator;
     }
 
     [HttpGet]
@@ -80,9 +73,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     [ProtectedEntityAction("id", AdministrationOperations.Read)]
     public virtual async Task<IActionResult> Get(TId id)
     {
-        var model = CreateModelAndSetProperties(id, CrudOperationType.Read);
-
-        var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
+        var validationResult = await this.validator.ValidateAsync(CreateModelAndSetProperties(id, CrudOperationType.Read)).ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
         {
@@ -129,9 +120,9 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     [ProtectedEntityAction("id", AdministrationOperations.Delete)]
     public virtual async Task<IActionResult> Delete(TId id)
     {
-        var model = CreateModelAndSetProperties(id, CrudOperationType.Delete);
-
-        var validationResult = await this.validator.ValidateAsync(model).ToExceptionResponseAsync();
+        var validationResult = await this.validator
+            .ValidateAsync(CreateModelAndSetProperties(id, CrudOperationType.Delete))
+            .ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
         {
@@ -143,17 +134,5 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     }
 
     private static TUpdateModel CreateModelAndSetProperties(TId id, CrudOperationType operationTypeValue)
-    {
-        var modelType = typeof(TUpdateModel);
-
-        var model = (TUpdateModel)Activator.CreateInstance(modelType)!;
-
-        var idProperty = modelType.GetProperty(nameof(BaseAdministrationModel<TId>.Id))!;
-        var operationTypeProperty = modelType.GetProperty(nameof(BaseAdministrationModel<TId>.OperationType))!;
-
-        idProperty.SetValue(model, id);
-        operationTypeProperty.SetValue(model, operationTypeValue);
-
-        return model;
-    }
+        => new() { Id = id, OperationType = operationTypeValue, };
 }

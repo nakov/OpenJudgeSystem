@@ -1,9 +1,8 @@
-﻿using OJS.Services.Common.Models;
-
-namespace OJS.Services.Administration.Models.Roles;
+﻿namespace OJS.Services.Administration.Models.Roles;
 
 using AutoMapper;
 using OJS.Data.Models.Users;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class RoleAdministrationModel : BaseAdministrationModel<string>, IMapExplicitly
