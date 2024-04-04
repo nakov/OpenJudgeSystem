@@ -45,14 +45,14 @@ public class ExcelService : IExcelService
             var dataTypeProperties = dataType.GetProperties();
 
             // Create new Excel workbook
-            var workbook = new HSSFWorkbook();
+            var workbook = new XLWorkbook();
 
             // Create new Excel sheet
-            var sheet = workbook.CreateSheet();
+            var sheet = workbook.Worksheets.Add("Results");
 
             // Create a header row
-            var headerRow = sheet.CreateRow(0);
-            int columnNumber = 0;
+            // var headerRow = sheet.CreateRow(0);
+            int columnNumber = 1;
             foreach (var property in dataTypeProperties)
             {
                 string cellName = property.Name;
@@ -66,46 +66,41 @@ public class ExcelService : IExcelService
                     }
                 }
 
-                headerRow.CreateCell(columnNumber++).SetCellValue(cellName);
+                sheet.Cell(1, columnNumber++).Value = cellName;
             }
 
-            // (Optional) freeze the header row so it is not scrolled
-            sheet.CreateFreezePane(0, 1, 0, 1);
-
-            int rowNumber = 1;
+            int rowNumber = 2;
 
             // Populate the sheet with values from the grid data
             foreach (object? item in items)
             {
                 // Create a new row
-                var row = sheet.CreateRow(rowNumber++);
+                var row = sheet.Row(rowNumber++);
 
-                int cellNumber = 0;
+                int cellNumber = 1;
                 foreach (var property in dataTypeProperties)
                 {
                     object propertyValue = item?.GetType()?.GetProperty(property.Name)!.GetValue(item, null)!;
                     if (propertyValue == null)
                     {
-                        row.CreateCell(cellNumber).SetCellType(NPOI.SS.UserModel.CellType.Blank);
+                        sheet.Cell(row.RowNumber(), cellNumber).Value = string.Empty;
                     }
                     else
                     {
-                        var cell = row.CreateCell(cellNumber);
                         double value;
                         var typeCode = Type.GetTypeCode(property.PropertyType);
                         if (typeCode == TypeCode.Single || typeCode == TypeCode.Char)
                         {
-                            cell.SetCellValue(propertyValue.ToString());
+                            sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValue.ToString();
                         }
 
                         if (double.TryParse(propertyValue.ToString(), out value))
                         {
-                            cell.SetCellValue(value);
-                            cell.SetCellType(NPOI.SS.UserModel.CellType.Numeric);
+                            sheet.Cell(row.RowNumber(), cellNumber).Value = value;
                         }
                         else if (typeCode == TypeCode.DateTime)
                         {
-                            cell.SetCellValue((DateTime)propertyValue);
+                            sheet.Cell(row.RowNumber(), cellNumber).Value = (DateTime)propertyValue;
                         }
                         else
                         {
@@ -115,7 +110,7 @@ public class ExcelService : IExcelService
                                 propertyValueAsString = "THIS CELL DOES NOT CONTAIN FULL INFORMATION: " + propertyValueAsString.Substring(0, 10000);
                             }
 
-                            cell.SetCellValue(propertyValueAsString);
+                            sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValueAsString;
                         }
                     }
 
@@ -123,11 +118,12 @@ public class ExcelService : IExcelService
                 }
             }
 
-            sheet.AutoSizeColumns(columnNumber);
+            sheet.Columns().AdjustToContents();
 
             // Write the workbook to a memory stream
             var outputStream = new MemoryStream();
-            workbook.Write(outputStream);
+
+            workbook.SaveAs(outputStream);
 
             // Return the result to the end user
             return new FileResponseModel(
