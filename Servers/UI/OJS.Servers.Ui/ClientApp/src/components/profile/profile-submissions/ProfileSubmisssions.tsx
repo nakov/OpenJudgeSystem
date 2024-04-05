@@ -37,14 +37,12 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
     }, { skip: shouldSkipFetchData });
 
     useEffect(() => {
-        // Preliminary checks for common conditions
         const isProfileAvailable = !isNil(profile);
         const canAccess = isLoggedIn && isProfileAvailable;
         const hasAdminAccess = internalUser.canAccessAdministration;
         const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle && !hasAdminAccess;
         const isNonOwnerAccessNotAllowed = !userIsProfileOwner && (!hasAdminAccess || !isChosenInToggle);
 
-        // Combined condition to set 'setShouldSkipFetchData'
         if (!canAccess || isOwnerAccessNotAllowed || isNonOwnerAccessNotAllowed) {
             setShouldSkipFetchData(true);
             return;
@@ -91,7 +89,6 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
                     />
                 )
                 : null
-
     );
 };
 

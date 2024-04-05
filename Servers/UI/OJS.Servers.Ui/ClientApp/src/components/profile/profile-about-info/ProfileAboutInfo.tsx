@@ -80,11 +80,19 @@ const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProf
                         )
                 }
             </div>
+
             <div className={styles.imageAndLogoutButtonContainer}>
                 <img height={180} width={180} src={MyProfileSvg} alt="my-profile" />
-                <Link to="/logout" className={concatClassNames(styles.logoutButton, getColorClassName(themeColors.textColor))}>
-                    LOG OUT
-                </Link>
+                {
+                        isUserProfileOwner && (
+                            <Link
+                              to="/logout"
+                              className={concatClassNames(styles.logoutButton, getColorClassName(themeColors.textColor))}
+                            >
+                                LOG OUT
+                            </Link>
+                        )
+                    }
             </div>
         </div>
     );

@@ -67,9 +67,10 @@ const ProfilePage = () => {
     }, [ internalUser, profile, isLoggedIn ]);
 
     const renderError = useCallback(() => {
-        let text = 'Error fetching profile.';
+        let text = 'Could not load profile.';
 
         if (isError) {
+            text += ' ';
             text += 'Are you sure this user exists?';
         }
 
