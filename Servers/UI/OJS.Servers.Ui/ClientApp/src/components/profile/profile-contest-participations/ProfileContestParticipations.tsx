@@ -58,6 +58,8 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
             // If anonymous user but profile is not fetched
             (!isLoggedIn && isNil(profile)) ||
             // User is profile owner but is not chosen in toggle
+            (isLoggedIn && !isNil(profile) && !isChosenInToggle && (!userIsProfileOwner && internalUser.canAccessAdministration)) ||
+            // User is profile owner but is not chosen in toggle
             (isLoggedIn && !isNil(profile) && !isChosenInToggle && userIsProfileOwner) ||
             // Profile is not fetched
             isNil(profile)) {
@@ -66,10 +68,12 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         }
 
         setShouldSkipFetchData(false);
-    }, [ isChosenInToggle, isLoggedIn, profile, userIsProfileOwner ]);
+    }, [ internalUser.canAccessAdministration, isChosenInToggle, isLoggedIn, profile, userIsProfileOwner ]);
 
     useEffect(() => {
-        if (shouldSkipFetchData || areContestParticipationsLoading || isNil(contestsParticipations)) {
+        if (((userIsProfileOwner || internalUser.canAccessAdministration) && !isChosenInToggle) ||
+            areContestParticipationsLoading ||
+            isNil(contestsParticipations)) {
             setShouldRender(false);
             return;
         }
