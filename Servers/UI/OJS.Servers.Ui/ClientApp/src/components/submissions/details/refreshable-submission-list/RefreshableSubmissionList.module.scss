@@ -9,7 +9,8 @@
 }
 
 .submissionInfo {
-  font-family: fonts.$font-family-montserrat;
+  @extend %font-family-normal;
+
   margin-top: 15px;
 }
 

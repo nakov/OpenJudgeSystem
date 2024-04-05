@@ -47,9 +47,10 @@
 }
 
 .submitCountdownWrapper {
+  @extend %font-family-normal;
+
   align-self: flex-end;
   color: colors.$background-color-btn-primary;
-  font-family: fonts.$font-family-montserrat;
   font-size: 20px;
   padding: 10px;
 }

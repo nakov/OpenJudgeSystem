@@ -12,12 +12,13 @@
 }
 
 .loginForm {
+  @extend %font-family-normal;
+
   align-content: center;
   border-radius: border-radiuses.$br-4;
   box-shadow: colors.$box-shadow-color;
   display: flex;
   flex-direction: column;
-  font-family: fonts.$font-family-montserrat, serif;
   margin: 20px auto;
   padding: spacings.$sp-48;
   text-align: center;
