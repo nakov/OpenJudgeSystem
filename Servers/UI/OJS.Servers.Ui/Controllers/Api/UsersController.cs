@@ -1,7 +1,6 @@
-﻿using FluentExtensions.Extensions;
+﻿namespace OJS.Servers.Ui.Controllers.Api;
 
-namespace OJS.Servers.Ui.Controllers.Api;
-
+using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
@@ -27,6 +26,7 @@ public class UsersController : BaseApiController
     /// <param name="username">The username of the user.</param>
     /// <returns>User profile info model.</returns>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(UserProfileResponseModel), Status200OK)]
     public async Task<IActionResult> GetProfileInfo([FromQuery] string username)
         => await this.usersBusiness

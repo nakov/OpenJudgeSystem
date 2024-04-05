@@ -336,10 +336,6 @@ namespace OJS.Services.Ui.Business.Implementations
             string username,
             ContestFiltersServiceModel? sortAndFilterModel)
         {
-            var loggedInUser = this.userProviderService.GetCurrentUser();
-            var loggedInUserProfile = await this.usersBusinessService.GetUserProfileById(loggedInUser.Id);
-
-            // For category filter dropdown
             sortAndFilterModel = await this.GetNestedFilterCategoriesIfAny(sortAndFilterModel);
 
             var participatedContestsInPage =
@@ -349,7 +345,10 @@ namespace OJS.Services.Ui.Business.Implementations
 
             Dictionary<int, ParticipantResultServiceModel?>? participantResultsByContest = null;
 
-            if (loggedInUserProfile!.UserName == username || loggedInUser.IsAdmin)
+            var loggedInUser = this.userProviderService.GetCurrentUser();
+            var loggedInUserProfile = await this.usersBusinessService.GetUserProfileById(loggedInUser.Id);
+
+            if (!loggedInUserProfile.IsNull() && (loggedInUserProfile!.UserName == username || loggedInUser.IsAdmin))
             {
                 // Lecturers should not see points
                 var userParticipants = this.participantsData

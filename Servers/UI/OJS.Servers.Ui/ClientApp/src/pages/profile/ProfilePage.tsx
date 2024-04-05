@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
@@ -14,6 +14,7 @@ import useTheme from '../../hooks/use-theme';
 import { setProfile } from '../../redux/features/usersSlice';
 import { useGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
+import concatClassNames from '../../utils/class-names';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
@@ -41,11 +42,9 @@ const ProfilePage = () => {
 
     const {
         data: profileInfo,
+        isError,
         isLoading: isProfileInfoLoading,
-    } = useGetProfileQuery(
-        { username: profileUsername },
-        { skip: isNil(internalUser) },
-    );
+    } = useGetProfileQuery({ username: profileUsername });
 
     useEffect(
         () => {
@@ -67,11 +66,25 @@ const ProfilePage = () => {
         setCurrentUserIsProfileOwner(profile.userName === internalUser.userName);
     }, [ internalUser, profile, isLoggedIn ]);
 
+    const renderError = useCallback(() => {
+        let text = 'Error fetching profile.';
+
+        if (isError) {
+            text += 'Are you sure this user exists?';
+        }
+
+        return (
+            <span className={concatClassNames(getColorClassName(themeColors.textColor), styles.errorText)}>
+                {text}
+            </span>
+        );
+    }, [ getColorClassName, isError, themeColors.textColor ]);
+
     return (
         isProfileInfoLoading
             ? <SpinningLoader />
             : isNil(profile)
-                ? <span>No profile</span>
+                ? renderError()
                 : (
                     <div className={getColorClassName(themeColors.textColor)}>
                         <PageBreadcrumbs
@@ -115,11 +128,14 @@ const ProfilePage = () => {
                             </div>
                             )
                         }
-                        {toggleValue === 1 &&
-                            (currentUserIsProfileOwner || internalUser.canAccessAdministration) &&
-                            <ProfileSubmissions userIsProfileOwner={currentUserIsProfileOwner} />}
-                        {(toggleValue === 2 || (!currentUserIsProfileOwner && !internalUser.canAccessAdministration)) &&
-                            <ProfileContestParticipations userIsProfileOwner={currentUserIsProfileOwner} />}
+                        <ProfileSubmissions
+                          userIsProfileOwner={currentUserIsProfileOwner}
+                          isChosenInToggle={toggleValue === 1}
+                        />
+                        <ProfileContestParticipations
+                          userIsProfileOwner={currentUserIsProfileOwner}
+                          isChosenInToggle={toggleValue === 2}
+                        />
                     </div>
                 )
     );

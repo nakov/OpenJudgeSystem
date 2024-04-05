@@ -362,6 +362,13 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         int itemsInPage = DefaultSubmissionsPerPage)
     {
         var user = await this.usersBusiness.GetUserProfileByUsername(username);
+        var loggedInUser = this.userProviderService.GetCurrentUser();
+        var loggedInUserProfile = await this.usersBusiness.GetUserProfileById(loggedInUser.Id);
+
+        if (!loggedInUser.IsAdminOrLecturer && loggedInUserProfile!.UserName != username)
+        {
+            throw new UnauthorizedAccessException("You are not authorized for this action");
+        }
 
         var userParticipantsIds = await this.participantsDataService
             .GetAllByUser(user!.Id)

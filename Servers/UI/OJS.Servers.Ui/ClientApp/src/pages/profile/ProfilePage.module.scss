@@ -1,5 +1,6 @@
 @use 'src/styles/spacings';
 @use 'src/styles/variables';
+@use 'src/styles/fonts';
 
 .submissionsAndParticipationsToggle {
     display: flex;
@@ -12,4 +13,8 @@
         border-radius: 4px;
         font-size: variables.$f-size-18;
     }
+}
+
+.errorText {
+    @extend %font-family-roboto;
 }

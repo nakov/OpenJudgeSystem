@@ -1,16 +1,17 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations
 {
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data.Models.Users;
     using OJS.Services.Common;
+    using OJS.Services.Infrastructure.Exceptions;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using X.PagedList;
 
     public class UsersBusinessService : IUsersBusinessService
@@ -26,14 +27,36 @@
             this.userProvider = userProvider;
         }
 
-        public Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)
+        public async Task<UserProfileServiceModel?> GetUserProfileByUsername(string? username)
         {
-            bool isUserAdminOrProfileOwner = this.IsUserAdminOrProfileOwner(username);
+            var currentUser = this.userProvider.GetCurrentUser();
 
-            return isUserAdminOrProfileOwner
+            if (username.IsNull() || username!.IsEmpty())
+            {
+                throw new BusinessServiceException("Empty username is not valid");
+            }
+
+            var userWithUsernameExists = await this.usersProfileData.Exists(p => p.UserName == username);
+
+            if (!userWithUsernameExists)
+            {
+                throw new BusinessServiceException("User with this username does not exist");
+            }
+
+            if (currentUser.Id == null && userWithUsernameExists)
+            {
+                return await Task.FromResult(new UserProfileServiceModel
+                {
+                    UserName = username ?? string.Empty,
+                });
+            }
+
+            bool isLoggedInUserAdminOrProfileOwner = this.IsUserAdminOrProfileOwner(username);
+
+            return await (isLoggedInUserAdminOrProfileOwner
                 ? this.usersProfileData
                     .GetByUsername<UserProfileServiceModel>(username)
-                : this.GetByUsernameAsShortProfile(username);
+                : this.GetByUsernameAsShortProfile(username));
         }
 
         public async Task<UserProfileServiceModel?> GetUserProfileById(string userId) =>

@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -13,7 +13,6 @@ import {
 } from '../../../redux/features/contestsSlice';
 import { useGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
 import ContestCard from '../../contests/contest-card/ContestCard';
 import List, { Orientation } from '../../guidelines/lists/List';
@@ -24,10 +23,14 @@ import styles from './ProfileContestParticipations.module.scss';
 
 interface IProfileContestParticipationsProps {
     userIsProfileOwner: boolean;
+    isChosenInToggle: boolean;
 }
 
-const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestParticipationsProps) => {
-    const { internalUser } = useAppSelector((reduxState) => reduxState.authorization);
+const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: IProfileContestParticipationsProps) => {
+    const [ shouldSkipFetchData, setShouldSkipFetchData ] = useState<boolean>(true);
+    const [ shouldRender, setShouldRender ] = useState<boolean>(false);
+
+    const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const {
         userContestParticipations,
@@ -47,8 +50,31 @@ const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestPar
             sortTypeDirection: SortTypeDirection.Descending,
             page: profileUserContestParticipationsPage,
         } as IGetContestParticipationsForUserQueryParams,
-        { skip: isNil(profile) },
+        { skip: shouldSkipFetchData },
     );
+
+    useEffect(() => {
+        if (// If anonymous user but profile is not fetched
+            (!isLoggedIn && isNil(profile)) ||
+            // If not chosen in toggle and profile is fetched
+            (isLoggedIn && !isChosenInToggle && !isNil(profile)) ||
+            // Profile is not fetched
+            isNil(profile)) {
+            setShouldSkipFetchData(true);
+            return;
+        }
+
+        setShouldSkipFetchData(false);
+    }, [ isChosenInToggle, isLoggedIn, profile ]);
+
+    useEffect(() => {
+        if (shouldSkipFetchData || areContestParticipationsLoading || isNil(contestsParticipations)) {
+            setShouldRender(false);
+            return;
+        }
+
+        setShouldRender(true);
+    }, [ areContestParticipationsLoading, contestsParticipations, isLoggedIn, profile, shouldSkipFetchData ]);
 
     useEffect(
         () => {
@@ -74,14 +100,10 @@ const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestPar
 
     return areContestParticipationsLoading
         ? (<SpinningLoader />)
-        : !isNilOrEmpty(userContestParticipations.items)
+        : shouldRender
             ? (
                 <div>
-                    {/* If user is not owner and has no rights, */}
-                    {/* he wont see the submissions/contests toggle
-                    {/* but should be able to see user participations, */}
-                    {/* so this heading should get rendered */}
-                    { !userIsProfileOwner && !internalUser.canAccessAdministration &&
+                    { !isEmpty(userContestParticipations.items) && !isLoggedIn &&
                         <h2 className={styles.participationsHeading}>Participated in:</h2>}
                     <List
                       values={userContestParticipations.items!}
@@ -89,24 +111,26 @@ const ProfileContestParticipations = ({ userIsProfileOwner }: IProfileContestPar
                       orientation={Orientation.vertical}
                       fullWidth
                     />
-                    {!isEmpty(userContestParticipations) && userContestParticipations.pagesCount !== 0 && (
+                    {!isEmpty(userContestParticipations) && userContestParticipations.pagesCount > 1 && (
                         <PaginationControls
                           count={userContestParticipations.pagesCount}
                           page={userContestParticipations.pageNumber}
                           onChange={onPageChange}
                         />
                     )}
+                    {isEmpty(userContestParticipations.items) &&
+                        (
+                            <div className={concatClassNames(
+                                styles.noParticipationsText,
+                                getColorClassName(themeColors.textColor),
+                            )}
+                            >
+                                No participations in contests yet
+                            </div>
+                        )}
                 </div>
             )
-            : (
-                <div className={concatClassNames(
-                    styles.noParticipationsText,
-                    getColorClassName(themeColors.textColor),
-                )}
-                >
-                    No participations in contests yet
-                </div>
-            );
+            : null;
 };
 
 export default ProfileContestParticipations;
