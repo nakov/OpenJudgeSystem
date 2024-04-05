@@ -39,13 +39,11 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
         IProblemGroupsBusinessService problemGroupsBusinessService,
         IProblemsGridDataService problemGridDataService,
         ProblemAdministrationValidator validator,
-        ProblemsDeleteValidator deleteValidator,
         IGridDataService<ProblemResource> problemResourceGridDataService)
             : base(
                 problemGridDataService,
                 problemsBusinessService,
-                validator,
-                deleteValidator)
+                validator)
     {
         this.problemsBusinessService = problemsBusinessService;
         this.problemsDataService = problemsDataService;

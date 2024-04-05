@@ -40,7 +40,6 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
        IUsersGridDataService usersGridData,
        IUsersBusinessService usersBusinessService,
        UserAdministrationModelValidator validator,
-       UserDeleteValidator deleteValidator,
        IUsersDataService usersDataService,
        ILecturersInContestsGridDataService lecturersInContestsGridDataService,
        ILecturersInContestsBusinessService lecturersInContestsBusinessService,
@@ -49,8 +48,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
         : base(
             usersGridData,
             usersBusinessService,
-            validator,
-            deleteValidator)
+            validator)
     {
         this.usersGridData = usersGridData;
         this.usersDataService = usersDataService;

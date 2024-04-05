@@ -3,8 +3,9 @@
 using AutoMapper;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Contests.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
+using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -17,6 +18,8 @@ public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IM
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<ProblemGroup, ProblemGroupsAdministrationModel>()
+            .ForMember(pgam => pgam.OperationType, opt
+                => opt.Ignore())
             .ForMember(pgam => pgam.Contest, opt
                 => opt.MapFrom(pg => pg.Contest.Map<ContestCopyProblemsValidationServiceModel>()));
 

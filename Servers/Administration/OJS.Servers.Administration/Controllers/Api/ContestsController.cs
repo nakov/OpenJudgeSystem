@@ -25,13 +25,11 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         IContestsBusinessService contestsBusinessService,
         ContestAdministrationModelValidator validator,
         IContestsGridDataService contestGridDataService,
-        ContestDeleteValidator deleteValidator,
         IContestsDataService contestsData)
     : base(
         contestGridDataService,
         contestsBusinessService,
-        validator,
-        deleteValidator)
+        validator)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.contestsData = contestsData;

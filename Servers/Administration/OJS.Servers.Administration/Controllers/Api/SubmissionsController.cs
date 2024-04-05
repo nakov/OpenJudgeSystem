@@ -21,13 +21,11 @@ public class SubmissionsController : BaseAdminApiController<
     public SubmissionsController(
             ISubmissionsGridDataService submissionsGridDataService,
             ISubmissionsBusinessService submissionsBusinessService,
-            SubmissionsAdministrationModelValidator validator,
-            SubmissionsDeleteValidator submissionsDeleteValidator)
+            SubmissionsAdministrationModelValidator validator)
         : base(
             submissionsGridDataService,
             submissionsBusinessService,
-            validator,
-            submissionsDeleteValidator) =>
+            validator) =>
         this.submissionsBusinessService = submissionsBusinessService;
 
     [HttpPost("{id:int}")]

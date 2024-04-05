@@ -16,13 +16,11 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
     public ContestCategoriesController(
         IContestCategoriesBusinessService contestCategoriesBusinessService,
         ContestCategoryAdministrationModelValidator validator,
-        IContestCategoriesGridDataService contestCategoryGridDataService,
-        ContestCategoryDeleteValidator deleteValidator)
+        IContestCategoriesGridDataService contestCategoryGridDataService)
     : base(
         contestCategoryGridDataService,
         contestCategoriesBusinessService,
-        validator,
-        deleteValidator)
+        validator)
         => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
 
     [HttpGet]

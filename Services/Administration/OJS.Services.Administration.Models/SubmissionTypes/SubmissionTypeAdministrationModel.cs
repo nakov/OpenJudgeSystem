@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Submissions;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -24,7 +25,9 @@ public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, I
 
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<SubmissionType, SubmissionTypeAdministrationModel>();
+        configuration.CreateMap<SubmissionType, SubmissionTypeAdministrationModel>()
+            .ForMember(stam => stam.OperationType, opt
+                => opt.Ignore());
 
         configuration.CreateMap<SubmissionTypeAdministrationModel, SubmissionType>()
             .ForMember(st => st.SubmissionTypesInProblems, opt
