@@ -54,10 +54,11 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
     );
 
     useEffect(() => {
-        if (// If anonymous user but profile is not fetched
+        if (
+            // If anonymous user but profile is not fetched
             (!isLoggedIn && isNil(profile)) ||
-            // If not chosen in toggle and profile is fetched
-            (isLoggedIn && !isChosenInToggle && !isNil(profile)) ||
+            // User is profile owner but is not chosen in toggle
+            (isLoggedIn && !isNil(profile) && !isChosenInToggle && userIsProfileOwner) ||
             // Profile is not fetched
             isNil(profile)) {
             setShouldSkipFetchData(true);
@@ -65,7 +66,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         }
 
         setShouldSkipFetchData(false);
-    }, [ isChosenInToggle, isLoggedIn, profile ]);
+    }, [ isChosenInToggle, isLoggedIn, profile, userIsProfileOwner ]);
 
     useEffect(() => {
         if (shouldSkipFetchData || areContestParticipationsLoading || isNil(contestsParticipations)) {
@@ -103,7 +104,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         : shouldRender
             ? (
                 <div>
-                    { !isEmpty(userContestParticipations.items) && !isLoggedIn &&
+                    { !userIsProfileOwner && !isEmpty(userContestParticipations.items) &&
                         <h2 className={styles.participationsHeading}>Participated in:</h2>}
                     <List
                       values={userContestParticipations.items!}
@@ -118,7 +119,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
                           onChange={onPageChange}
                         />
                     )}
-                    {isEmpty(userContestParticipations.items) &&
+                    { isChosenInToggle && isEmpty(userContestParticipations.items) &&
                         (
                             <div className={concatClassNames(
                                 styles.noParticipationsText,
