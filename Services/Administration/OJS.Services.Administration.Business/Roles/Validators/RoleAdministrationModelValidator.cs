@@ -6,7 +6,6 @@ using OJS.Data.Models.Users;
 using OJS.Services.Administration.Models.Roles;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Validation;
-using System.Threading.Tasks;
 
 public class RoleAdministrationModelValidator : BaseAdministrationModelValidator<RoleAdministrationModel, string, Role>
 {
@@ -22,12 +21,8 @@ public class RoleAdministrationModelValidator : BaseAdministrationModelValidator
 
         this.RuleFor(x => x.Id)
             .NotEmpty()
-            .MustAsync(async (model, _)
-                => await this.NotHaveUsersToRole(model))
+            .MustAsync(async (roleId, _) => !await this.userInRoleService.Exists(x => x.RoleId == roleId))
             .When(x => x.OperationType is CrudOperationType.Delete)
             .WithMessage("Cannot delete role which has users.");
     }
-
-    private async Task<bool> NotHaveUsersToRole(string? roleId)
-        => !await this.userInRoleService.Exists(x => x.RoleId == roleId);
 }

@@ -8,7 +8,6 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
-using System.Threading.Tasks;
 
 public class ProblemAdministrationValidator : BaseAdministrationModelValidator<ProblemAdministrationModel, int, Problem>
 {
@@ -61,11 +60,7 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
             this.RuleFor(model => model.ContestId)
-                .MustAsync(async (id, _)
-                    => await this.ValidateContestIsNotActive(id))
+                .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))
                 .When(x => x.OperationType is CrudOperationType.Delete);
         }
-
-    private async Task<bool> ValidateContestIsNotActive(int id)
-        => !await this.contestsActivityService.IsContestActive(id);
 }

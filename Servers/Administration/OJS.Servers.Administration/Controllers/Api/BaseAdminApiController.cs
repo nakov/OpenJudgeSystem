@@ -73,7 +73,9 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     [ProtectedEntityAction("id", AdministrationOperations.Read)]
     public virtual async Task<IActionResult> Get(TId id)
     {
-        var validationResult = await this.validator.ValidateAsync(CreateModelAndSetProperties(id, CrudOperationType.Read)).ToExceptionResponseAsync();
+        var validationResult = await this.validator
+            .ValidateAsync(new TUpdateModel { Id = id, OperationType = CrudOperationType.Read })
+            .ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
         {
@@ -121,7 +123,7 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
     public virtual async Task<IActionResult> Delete(TId id)
     {
         var validationResult = await this.validator
-            .ValidateAsync(CreateModelAndSetProperties(id, CrudOperationType.Delete))
+            .ValidateAsync(new TUpdateModel { Id = id, OperationType = CrudOperationType.Delete })
             .ToExceptionResponseAsync();
 
         if (!validationResult.IsValid)
@@ -132,7 +134,4 @@ public abstract class BaseAdminApiController<TEntity, TId, TGridModel, TUpdateMo
         await this.operationService.Delete(id);
         return this.Ok($"Successfully deleted {typeof(TEntity).Name} with id: {id}");
     }
-
-    private static TUpdateModel CreateModelAndSetProperties(TId id, CrudOperationType operationTypeValue)
-        => new() { Id = id, OperationType = operationTypeValue, };
 }

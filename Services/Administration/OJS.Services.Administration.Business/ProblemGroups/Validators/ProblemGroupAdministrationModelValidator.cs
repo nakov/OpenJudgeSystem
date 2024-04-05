@@ -10,7 +10,6 @@ using OJS.Services.Administration.Models.ProblemGroups;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 public class ProblemGroupAdministrationModelValidator : BaseAdministrationModelValidator<ProblemGroupsAdministrationModel, int, ProblemGroup>
@@ -50,7 +49,7 @@ public class ProblemGroupAdministrationModelValidator : BaseAdministrationModelV
                          $"{Resources.ProblemGroupsControllers.ActiveContestCannotAddProblemGroup}");
 
         this.RuleFor(x => x.Contest.Id)
-            .MustAsync(async (model, _) => await this.NotBeActiveContest(model))
+            .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))
             .WithMessage("Cannot delete problem group when the related contest is active");
     }
 
@@ -58,17 +57,6 @@ public class ProblemGroupAdministrationModelValidator : BaseAdministrationModelV
     {
         var problemGroup = await this.problemGroupsDataService.GetByIdQuery(model.Id).AsNoTracking().FirstOrDefaultAsync();
         if (Math.Abs(problemGroup!.OrderBy - model.OrderBy) > 0 && !await this.IsOnline(model.Contest.Id))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private async Task<bool> NotBeActiveContest(int id)
-    {
-        var isContestActive = await this.contestsActivityService.IsContestActive(id);
-        if (isContestActive)
         {
             return false;
         }
