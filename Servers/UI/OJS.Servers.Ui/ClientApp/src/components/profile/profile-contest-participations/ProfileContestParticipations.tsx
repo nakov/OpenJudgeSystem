@@ -59,7 +59,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
             (!isLoggedIn && isNil(profile)) ||
             // User is profile owner but is not chosen in toggle
             (isLoggedIn && !isNil(profile) && !isChosenInToggle && (!userIsProfileOwner && internalUser.canAccessAdministration)) ||
-            // User is profile owner but is not chosen in toggle
+            // User is profile owner but has not chosen in toggle
             (isLoggedIn && !isNil(profile) && !isChosenInToggle && userIsProfileOwner) ||
             // Profile is not fetched
             isNil(profile)) {

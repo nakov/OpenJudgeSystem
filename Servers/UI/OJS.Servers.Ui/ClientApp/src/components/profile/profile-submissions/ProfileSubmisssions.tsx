@@ -37,17 +37,15 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
     }, { skip: shouldSkipFetchData });
 
     useEffect(() => {
-        if (
-            // If anonymous user
-            !isLoggedIn ||
-            // Regular user is profile owner but not chosen in toggle
-            ((isLoggedIn && !isNil(profile) && userIsProfileOwner && !internalUser.canAccessAdministration && !isChosenInToggle)) ||
-            // Regular user is profile owner but has no rights
-            ((isLoggedIn && !isNil(profile) && (!userIsProfileOwner && !internalUser.canAccessAdministration))) ||
-            // User is not owner of profile and has rights, but is not chosen in toggle
-            (isLoggedIn && !isNil(profile) && !userIsProfileOwner && !isChosenInToggle) ||
-            // Profile is not fetched
-            isNil(profile)) {
+        // Preliminary checks for common conditions
+        const isProfileAvailable = !isNil(profile);
+        const canAccess = isLoggedIn && isProfileAvailable;
+        const hasAdminAccess = internalUser.canAccessAdministration;
+        const isOwnerAccessNotAllowed = userIsProfileOwner && !isChosenInToggle && !hasAdminAccess;
+        const isNonOwnerAccessNotAllowed = !userIsProfileOwner && (!hasAdminAccess || !isChosenInToggle);
+
+        // Combined condition to set 'setShouldSkipFetchData'
+        if (!canAccess || isOwnerAccessNotAllowed || isNonOwnerAccessNotAllowed) {
             setShouldSkipFetchData(true);
             return;
         }
