@@ -38,26 +38,16 @@
   %secondary {
     @extend %font-family-roboto;
 
+    background: none;
     border: 2px solid colors.$primary-blue;
     border-radius: border-radiuses.$br-6;
-    color: colors.$primary-blue;
-    background: none;
     box-shadow: none;
+    color: colors.$primary-blue;
 
     &:hover {
       cursor: pointer;
     }
-
-    .lightSecondary {
-      // TODO: Fix this color
-      background-color: colors.$horizontal-line-gray;
-    }
-
-    .darkSecondary {
-      background-color: colors.$primary-dark-grey-color;
-    }
   }
-  
 
   &.plain {
     background: none;
@@ -137,4 +127,13 @@
     margin: 0;
     padding: 0;
   }
+}
+
+.lightSecondary {
+  // TODO: Fix this color
+  background-color: colors.$horizontal-line-gray;
+}
+
+.darkSecondary {
+  background-color: colors.$primary-dark-grey-color;
 }

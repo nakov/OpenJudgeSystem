@@ -3,18 +3,18 @@
 @use 'src/styles/fonts';
 
 .submissionsAndParticipationsToggle {
-    display: flex;
-    flex-direction: row;
-    gap: spacings.$sp-24;
-    margin-bottom: spacings.$sp-24;
-    
-    .toggleBtn {
-        width: 300px;
-        border-radius: 4px;
-        font-size: variables.$f-size-18;
-    }
+  display: flex;
+  flex-direction: row;
+  gap: spacings.$sp-24;
+  margin-bottom: spacings.$sp-24;
+
+  .toggleBtn {
+    border-radius: 4px;
+    font-size: variables.$f-size-18;
+    width: 300px;
+  }
 }
 
 .errorText {
-    @extend %font-family-roboto;
+  @extend %font-family-roboto;
 }

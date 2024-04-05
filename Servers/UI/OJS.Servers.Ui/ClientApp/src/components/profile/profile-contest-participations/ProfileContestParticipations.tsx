@@ -79,7 +79,8 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         }
 
         setShouldRender(true);
-    }, [ areContestParticipationsLoading, contestsParticipations, isLoggedIn, profile, shouldSkipFetchData ]);
+    }, [ areContestParticipationsLoading, contestsParticipations, internalUser, isChosenInToggle, isLoggedIn,
+        profile, shouldSkipFetchData, userIsProfileOwner ]);
 
     useEffect(
         () => {

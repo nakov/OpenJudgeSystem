@@ -66,13 +66,13 @@
   display: flex;
   flex-direction: column;
   font-size: variables.$f-size-16;
-  
+
   .buttonAndPointsLabelWrapper {
-    display: flex;
     align-items: center;
-    justify-content: flex-end;
+    display: flex;
     gap: spacings.$sp-12;
-    
+    justify-content: flex-end;
+
     .points {
       flex: 1;
       text-align: right;
