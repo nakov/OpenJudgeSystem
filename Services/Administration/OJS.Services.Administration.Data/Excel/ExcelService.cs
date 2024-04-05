@@ -1,9 +1,7 @@
 ﻿namespace OJS.Services.Administration.Data.Excel;
 
 using ClosedXML.Excel;
-using NPOI.HSSF.UserModel;
 using OJS.Common;
-using OJS.Common.Extensions;
 using OJS.Services.Common.Models.Contests.Results;
 using OJS.Services.Common.Models.Files;
 using System;
@@ -51,15 +49,14 @@ public class ExcelService : IExcelService
             var sheet = workbook.Worksheets.Add("Results");
 
             // Create a header row
-            int columnNumber = 1;
+            var columnNumber = 1;
             foreach (var property in dataTypeProperties)
             {
-                string cellName = property.Name;
-                object[] attributes = property.GetCustomAttributes(typeof(DisplayAttribute), true);
+                var cellName = property.Name;
+                var attributes = property.GetCustomAttributes(typeof(DisplayAttribute), true);
                 if (attributes.Any())
                 {
-                    var attribute = attributes[0] as DisplayAttribute;
-                    if (attribute != null)
+                    if (attributes[0] is DisplayAttribute attribute)
                     {
                         cellName = attribute.Name ?? property.Name;
                     }
@@ -68,7 +65,7 @@ public class ExcelService : IExcelService
                 sheet.Cell(1, columnNumber++).Value = cellName;
             }
 
-            int rowNumber = 2;
+            var rowNumber = 2;
 
             // Populate the sheet with values from the grid data
             foreach (object? item in items)
@@ -76,24 +73,23 @@ public class ExcelService : IExcelService
                 // Create a new row
                 var row = sheet.Row(rowNumber++);
 
-                int cellNumber = 1;
+                var cellNumber = 1;
                 foreach (var property in dataTypeProperties)
                 {
-                    object propertyValue = item?.GetType()?.GetProperty(property.Name)!.GetValue(item, null)!;
+                    var propertyValue = item?.GetType().GetProperty(property.Name)?.GetValue(item, null);
                     if (propertyValue == null)
                     {
                         sheet.Cell(row.RowNumber(), cellNumber).Value = string.Empty;
                     }
                     else
                     {
-                        double value;
                         var typeCode = Type.GetTypeCode(property.PropertyType);
                         if (typeCode == TypeCode.Single || typeCode == TypeCode.Char)
                         {
                             sheet.Cell(row.RowNumber(), cellNumber).Value = propertyValue.ToString();
                         }
 
-                        if (double.TryParse(propertyValue.ToString(), out value))
+                        if (double.TryParse(propertyValue.ToString(), out var value))
                         {
                             sheet.Cell(row.RowNumber(), cellNumber).Value = value;
                         }
@@ -103,7 +99,7 @@ public class ExcelService : IExcelService
                         }
                         else
                         {
-                            string propertyValueAsString = propertyValue.ToString()!;
+                            var propertyValueAsString = propertyValue.ToString()!;
                             if (propertyValue.ToString()!.Length > 10000)
                             {
                                 propertyValueAsString = "THIS CELL DOES NOT CONTAIN FULL INFORMATION: " + propertyValueAsString.Substring(0, 10000);
@@ -127,7 +123,7 @@ public class ExcelService : IExcelService
             // Return the result to the end user
             return new FileResponseModel(
                 outputStream.ToArray(), // The binary data of the XLS file
-                string.Format("{0}.xls", this.GetType().Name),
+                $"{this.GetType().Name}.xls",
                 GlobalConstants.MimeTypes.ExcelSheet);
     }
 
