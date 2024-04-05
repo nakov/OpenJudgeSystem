@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Extensions;
@@ -11,7 +12,7 @@
 
     public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
     {
-        public ContestCategoriesDataService(DbContext db)
+        public ContestCategoriesDataService(OjsDbContext db)
             : base(db)
         {
         }

@@ -11,6 +11,10 @@
         private const string ClassNameRegEx = @"class\s+([a-zA-Z_][a-zA-Z_0-9$]{0,150})\s*{";
         private const int PublicClassNameRegExGroup = 1;
         private const int ClassNameRegExGroup = 1;
+        private const string ClassNameRegexUnmatchedMessage =
+            "Check your class name and make sure it is only latin letters, " +
+            "digits, underscores and dollar signs and is not longer than 150 characters. " +
+            "The class name is validated by the following regex: {0}";
 
         public static string CreateSubmissionFile(string sourceCode, string directory)
         {
@@ -28,7 +32,9 @@
             var classNameMatch = Regex.Match(sourceCode, ClassNameRegEx);
             if (!classNameMatch.Success)
             {
-                throw new ArgumentException("No valid class found!");
+                throw new ArgumentException(
+                    $"No valid class found! " +
+                    $"{string.Format(ClassNameRegexUnmatchedMessage, ClassNameRegEx)}");
             }
 
             return classNameMatch.Groups[ClassNameRegExGroup].Value;
@@ -39,7 +45,9 @@
             var classNameMatch = Regex.Match(sourceCode, PublicClassNameRegEx);
             if (!classNameMatch.Success)
             {
-                throw new ArgumentException("No valid public class found!");
+                throw new ArgumentException(
+                    $"No valid public class found! " +
+                    $"{string.Format(ClassNameRegexUnmatchedMessage, PublicClassNameRegEx)}");
             }
 
             return classNameMatch.Groups[PublicClassNameRegExGroup].Value;

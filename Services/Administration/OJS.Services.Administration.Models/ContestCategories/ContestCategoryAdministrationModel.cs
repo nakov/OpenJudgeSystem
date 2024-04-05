@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 
@@ -41,6 +42,8 @@ public class ContestCategoryAdministrationModel : BaseAdministrationModel<int>, 
             .ForMember(dest => dest.Parent, opt
                 => opt.MapFrom(src => src.Parent!.Name))
             .ForMember(c => c.ModifiedOn, opt
+                => opt.Ignore())
+            .ForMember(dest => dest.OperationType, opt
                 => opt.Ignore());
     }
 }

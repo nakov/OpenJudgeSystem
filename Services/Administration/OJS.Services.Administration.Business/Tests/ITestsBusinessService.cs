@@ -2,6 +2,7 @@
 
 using OJS.Data.Models.Tests;
 using OJS.Services.Administration.Models.Tests;
+using OJS.Services.Common.Models.Files;
 using System.Threading.Tasks;
 
 public interface ITestsBusinessService : IAdministrationOperationService<Test, int, TestAdministrationModel>
@@ -10,5 +11,5 @@ public interface ITestsBusinessService : IAdministrationOperationService<Test, i
 
     Task<string> Import(TestsImportRequestModel model);
 
-    Task<TestsZipExportModel> ExportZip(int problemId);
+    Task<FileResponseModel> ExportZip(int problemId);
 }

@@ -1,6 +1,7 @@
 namespace OJS.Services.Administration.Data.Implementations;
 
 using Microsoft.EntityFrameworkCore;
+using OJS.Data;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Data.Implementations;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 public class ExamGroupsDataService : DataService<ExamGroup>, IExamGroupsDataService
 {
-    public ExamGroupsDataService(DbContext db)
+    public ExamGroupsDataService(OjsDbContext db)
         : base(db)
     {
     }
@@ -17,4 +18,7 @@ public class ExamGroupsDataService : DataService<ExamGroup>, IExamGroupsDataServ
         => this.GetByIdQuery(id)
             .Select(eg => eg.ContestId)
             .FirstOrDefaultAsync();
+
+    public IQueryable<ExamGroup> GetByIdWithUsersQuery(int id)
+        => this.GetByIdQuery(id).Include(eg => eg.UsersInExamGroups);
 }

@@ -6,7 +6,6 @@ using OJS.Services.Administration.Business.SubmissionsForProcessing;
 using OJS.Services.Administration.Business.SubmissionsForProcessing.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionsForProcessing;
-using OJS.Services.Administration.Models.Validation;
 
 public class SubmissionsForProcessingController : BaseAdminApiController<
     SubmissionForProcessing,
@@ -17,13 +16,11 @@ public class SubmissionsForProcessingController : BaseAdminApiController<
     public SubmissionsForProcessingController(
         IGridDataService<SubmissionForProcessing> submissionsGridDataService,
         ISubmissionsForProcessingBusinessService submissionsForProcessingBusinessService,
-        SubmissionsForProcessingAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> submissionsForProcessingDeleteValidator)
+        SubmissionsForProcessingAdministrationModelValidator validator)
         : base(
             submissionsGridDataService,
             submissionsForProcessingBusinessService,
-            validator,
-            submissionsForProcessingDeleteValidator)
+            validator)
     {
     }
 }

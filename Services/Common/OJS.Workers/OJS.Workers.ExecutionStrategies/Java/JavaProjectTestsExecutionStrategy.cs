@@ -99,6 +99,87 @@ class Classes{{
     public static Map<String, Class> allClasses = new HashMap<>();
 }}";
 
+        protected override string JUnit5TestRunnerCode
+            => $@"
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+class Classes {{
+    public static Map<String, Class> allClasses = new HashMap<>();
+}}
+
+public class _$TestRunner {{
+    public static void main(String[] args) {{
+        Map<String, Class<?>> allClasses = new HashMap<>();
+        for (String arg: args) {{
+            try {{
+                Class<?> currentClass = Class.forName(arg);
+                Classes.allClasses.put(currentClass.getSimpleName(), currentClass);
+            }} catch (ClassNotFoundException e) {{
+                // Handle the exception, if needed
+            }}
+        }}
+
+        Class[] testClasses = {{
+                {string.Join(", ", this.TestNames.Select(x => x + ".class"))}
+        }};
+
+        InputStream originalIn = System.in;
+        PrintStream originalOut = System.out;
+
+        InputStream in = new ByteArrayInputStream(new byte[0]);
+        System.setIn(in);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        List<SummaryGeneratingListener> listeners = new ArrayList<>();
+        Launcher launcher = LauncherFactory.create();
+
+        for (Class<?> testClass : testClasses) {{
+            LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                    .selectors(DiscoverySelectors.selectClass(testClass))
+                    .build();
+
+            SummaryGeneratingListener listener = new SummaryGeneratingListener();
+            listeners.add(listener);
+
+            launcher.execute(request, listener);
+        }}
+
+        System.setIn(originalIn);
+        System.setOut(originalOut);
+
+        for (int i = 0; i < listeners.size(); i++) {{
+            SummaryGeneratingListener listener = listeners.get(i);
+            var summary = listener.getSummary();
+
+            var hasFailures = summary.getTotalFailureCount() > 0;
+            System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + !hasFailures);
+
+            summary.getFailures().forEach(failure -> {{
+                String failureClass = failure.getTestIdentifier().getDisplayName();
+                String failureException = failure.getException().toString().replaceAll(""\r"", ""\\r"").replaceAll(""\n"",""\\n"");
+                System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
+            }});
+        }}
+    }}
+}}";
+
         protected override async Task<IExecutionResult<TestResult>> ExecuteAgainstTestsInput(
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
@@ -290,7 +371,9 @@ class Classes{{
         {
             // It is important to call the JUintTestRunnerCodeTemplate after the TestClasses have been filled
             // otherwise no tests will be queued in the JUnitTestRunner, which would result in no tests failing.
-            File.WriteAllText(this.JUnitTestRunnerSourceFilePath, this.JUnitTestRunnerCode);
+            File.WriteAllText(
+                    this.JUnitTestRunnerSourceFilePath,
+                    this.Type.ToString().Contains("21") ? this.JUnit5TestRunnerCode : this.JUnitTestRunnerCode);
             FileHelpers.AddFilesToZipArchive(submissionFilePath, string.Empty, this.JUnitTestRunnerSourceFilePath);
             FileHelpers.DeleteFiles(this.JUnitTestRunnerSourceFilePath);
         }

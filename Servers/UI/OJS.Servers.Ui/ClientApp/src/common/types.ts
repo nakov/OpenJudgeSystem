@@ -462,19 +462,15 @@ interface IContestAdministration {
 
 interface ISubmissionsAdminGridViewType {
     id: number;
-    isCompiledSuccessfully: boolean;
     processed: boolean;
-    isDeleted: boolean;
-    isBinaryFile: boolean;
-    processingComment: boolean;
     points: number;
-    participant: IParticipantType;
-    problem: IProblemSimpleType;
-    submissionType: ISubmissionTypeSimpleType;
-    createdOn: Date;
-    modifiedOn: Date;
-    startedExecutionOn: Date;
-    completedExecutionOn: Date;
+    participantId: number;
+    participantName: string;
+    problemId: number;
+    problemName: string;
+    submissionTypeId: number;
+    submissionTypeName: string;
+    isDeleted: boolean;
 }
 
 interface ISubmissionForProcessingAdminGridViewType {
@@ -489,21 +485,6 @@ interface ISubmissionForProcessingAdminGridViewType {
     modifiedOn: Date;
 }
 
-interface IParticipantType {
-    id: number;
-    username: string;
-}
-
-interface IProblemSimpleType {
-    id: number;
-    name: string;
-}
-
-interface ISubmissionTypeSimpleType {
-    id: number;
-    name: string;
-}
-
 interface IContestAutocomplete {
     id: number;
     name: string;
@@ -515,6 +496,7 @@ interface ITestsUploadModel {
     retestProblem: boolean;
     deleteOldTests: boolean;
 }
+
 interface ITestsDropdownData {
     id: number;
     name: string;
@@ -564,9 +546,12 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminExamGroups: IAdminSlice;
+    adminUsers: IAdminSlice;
     adminSubmissionTypes: IAdminSlice;
     adminCheckers: IAdminSlice;
     adminParticipants: IAdminSlice;
+    adminRoles: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -584,6 +569,41 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+}
+
+interface IIndexExamGroupsType {
+    id: number;
+    name: string;
+    contest: string;
+    externalAppId: string;
+    externalExamGroupId: string;
+}
+
+interface IExamGroupAdministration {
+    id: number;
+    name: string;
+    contestName: string;
+    contestId: number | null;
+    externalAppId: string;
+    externalExamGroupId: number;
+}
+
+interface IUserAdministration {
+    id: string;
+    username: string;
+    isDeleted: boolean;
+    createdOn: Date | null;
+    deletedOn: Date | null;
+}
+
+interface IUserInExamGroupModel {
+    id: string;
+    username: string;
+}
+
+interface IUserAutocomplete {
+    id: string;
+    userName: string;
 }
 
 interface ISubmissionTypeAdministrationModel {
@@ -636,8 +656,54 @@ interface IParticipantAdministrationModel {
 interface IUserAutocompleteData {
 id: string;
 userName: string;
-
 }
+
+interface IRoleInListModel {
+    id: string;
+    name: string;
+}
+
+interface IRoleAdministrationModel {
+    id: string | null;
+    name: string;
+}
+
+interface IUserInListModel {
+    id: string;
+    userName: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    city: string;
+    dateOfBirth: Date;
+    age: number;
+}
+
+interface IUserSettingsAdministrationModel {
+    firstName: string | null;
+    lastName: string | null;
+    city: string | null;
+    dateOfBirth: Date | null;
+    age: number;
+    company: string | null;
+    jobTitle: string | null;
+    facultyNumber: number | null;
+    educationalInstitution: string | null;
+}
+
+interface IUserAdministrationModel {
+    id: string;
+    userName: string;
+    email: string;
+    userSettings: IUserSettingsAdministrationModel;
+    roles: Array<IUserRoleType>;
+}
+
+interface ILecturerInContestInListModel {
+    contestId: string;
+    contestName: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -691,6 +757,11 @@ export type {
     ITestsUploadModel,
     IFileModel,
     IEnumType,
+    IIndexExamGroupsType,
+    IExamGroupAdministration,
+    IUserAdministration,
+    IUserInExamGroupModel,
+    IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
@@ -702,4 +773,9 @@ export type {
     IParticipantAdministrationModel,
     IParticipantInListModel,
     IUserAutocompleteData,
+    IRoleInListModel,
+    IRoleAdministrationModel,
+    IUserInListModel,
+    IUserAdministrationModel,
+    ILecturerInContestInListModel,
 };

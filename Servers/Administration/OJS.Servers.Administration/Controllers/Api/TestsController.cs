@@ -1,6 +1,5 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common;
 using OJS.Data.Models.Tests;
@@ -13,7 +12,6 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.TestRuns;
 using OJS.Services.Administration.Models.Tests;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 
@@ -27,13 +25,11 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
         IGridDataService<Test> testGridDataService,
         ITestsBusinessService testsBusinessService,
         TestAdministrationModelValidator validator,
-        TestDeleteValidator deleteValidator,
         IGridDataService<TestRun> testRunsGridDataService)
         : base(
             testGridDataService,
             testsBusinessService,
-            validator,
-            deleteValidator)
+            validator)
     {
         this.testGridDataService = testGridDataService;
         this.testsBusinessService = testsBusinessService;

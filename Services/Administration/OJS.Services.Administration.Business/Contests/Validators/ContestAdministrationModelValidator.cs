@@ -3,6 +3,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
+using OJS.Data.Models.Contests;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;
@@ -12,7 +13,7 @@ using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
 
-public class ContestAdministrationModelValidator : BaseValidator<ContestAdministrationModel>
+public class ContestAdministrationModelValidator : BaseAdministrationModelValidator<ContestAdministrationModel, int, Contest>
 {
     private const int ProblemGroupsCountLimit = 40;
     private readonly IContestsActivityService activityService;
@@ -21,41 +22,53 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
     public ContestAdministrationModelValidator(
         IContestsActivityService activityService,
         IContestsDataService contestService)
+        : base(contestService)
     {
         this.activityService = activityService;
         this.contestService = contestService;
         this.RuleFor(model => model.Name)
-            .Length(4, 100);
+            .Length(4, 100)
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.EndTime)
             .GreaterThan(model => model.StartTime)
             .When(model => model.StartTime.HasValue)
-            .WithMessage("End Time must be greater than Start Time");
+            .WithMessage("End Time must be greater than Start Time")
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.PracticeEndTime).GreaterThan(model => model.PracticeStartTime)
             .When(model => model.PracticeStartTime.HasValue)
-            .WithMessage("Practice end time must be greater than Practice start time");
+            .WithMessage("Practice end time must be greater than Practice start time")
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model.Type)
             .NotNull()
             .NotEmpty()
             .Must(BeAValidContestType)
-            .WithMessage("There is no contest type with this value");
+            .WithMessage("There is no contest type with this value")
+            .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
         this.RuleFor(model => model)
             .MustAsync(async (model, _)
                 => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
-            .When(model => model.Id > 0)
             .WithName("Duration")
             .NotNull()
-            .WithMessage("Cannot change duration or type in an active contest.");
+            .WithMessage("Cannot change duration or type in an active contest.")
+            .When(model => model.OperationType is CrudOperationType.Update);
 
         this.RuleFor(model => model)
             .Must(ValidateOnlineContestProblemGroups)
-            .When(model => model.Id > 0)
             .WithName("Number of problem groups")
             .NotNull()
-            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
+            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}")
+            .When(model => model.OperationType == CrudOperationType.Create &&
+                           model.Type == ContestType.OnlinePracticalExam.ToString());
+
+        this.RuleFor(model => model.Id)
+            .MustAsync(async (x, _) => !await this.activityService.IsContestActive(x))
+            .NotNull()
+            .WithMessage($"Cannot delete active contest")
+            .When(model => model.OperationType is CrudOperationType.Delete);
     }
 
     private static bool BeAValidContestType(string? type)
@@ -106,15 +119,5 @@ public class ContestAdministrationModelValidator : BaseValidator<ContestAdminist
         return !isActive ||
                (contest.Duration == model.Duration &&
                 contest.Type == contestType);
-    }
-
-    private async Task ValidateContestExists(ContestAdministrationModel model)
-    {
-        var contest = await this.contestService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
-
-        if (contest is null)
-        {
-            throw new ArgumentNullException($"Contest with Id:{model.Id} not found");
-        }
     }
 }

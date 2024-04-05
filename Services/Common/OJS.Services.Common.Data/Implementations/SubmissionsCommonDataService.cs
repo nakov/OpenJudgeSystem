@@ -1,6 +1,6 @@
 namespace OJS.Services.Common.Data.Implementations;
 
-using Microsoft.EntityFrameworkCore;
+using OJS.Data;
 using OJS.Data.Models.Submissions;
 using System.Linq;
 
@@ -9,7 +9,7 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingCommonDataService;
 
     public SubmissionsCommonDataService(
-        DbContext db,
+        OjsDbContext db,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingCommonDataService)
         : base(db)
         => this.submissionsForProcessingCommonDataService = submissionsForProcessingCommonDataService;

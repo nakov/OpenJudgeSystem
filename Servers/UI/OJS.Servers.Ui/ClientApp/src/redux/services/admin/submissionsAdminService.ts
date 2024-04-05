@@ -1,71 +1,56 @@
-/* eslint-disable object-curly-newline */
-/* eslint-disable max-len */
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { defaultPathIdentifier } from '../../../common/constants';
 import {
+    IFileModel,
     IGetAllAdminParams,
     IPagedResultType,
     ISubmissionsAdminGridViewType,
 } from '../../../common/types';
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
+import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
+import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const submissionsAdminService = createApi({
-    reducerPath: 'adminSubmissionsService',
-    baseQuery: fetchBaseQuery({
-        credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/submissions`,
-        prepareHeaders: (headers) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
-        },
-        responseHandler: async (response: Response) => {
-            const contentType = response.headers.get('Content-Type');
-            if (contentType?.includes('application/octet-stream')) {
-                const contentDisposition = response.headers.get('Content-Disposition');
-                let filename = 'submission.zip';
-                if (contentDisposition) {
-                    const match = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
-                    if (match) {
-                        filename = decodeURIComponent(match[1]);
-                    }
-                }
-                const blob = await response.blob();
-                return { blob, filename };
-            }
-
-            if (response.headers.get('Content-Length')) {
-                return '';
-            }
-
-            return response.json();
-        },
-    }),
+    reducerPath: 'submissionsAdminService',
+    baseQuery: getCustomBaseQuery('submissions'),
     endpoints: (builder) => ({
         getAllSubmissions: builder.query<IPagedResultType<ISubmissionsAdminGridViewType>, IGetAllAdminParams>({
-            query: ({
-                filter, page, itemsPerPage, sorting }) => ({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
                 url: '/getAll',
                 params: {
                     filter,
                     page,
                     itemsPerPage,
                     sorting,
-                } }) }),
+                },
+            }),
+        }),
         deleteSubmission: builder.mutation({
             query: (id) => ({
                 url: `/delete/${id}`,
                 method: 'DELETE',
-            }) }),
+            }),
+        }),
         retest: builder.mutation({
             query: (submissionId) => ({
                 url: `/retest/${submissionId}`,
                 method: 'POST',
-            }) }),
-        downloadFileSubmission: builder.query<{ blob: Blob; filename: string }, IRetestSubmissionUrlParams>({
-            query: ({ id }) => ({
-                url: `/download/${id}`,
-            }) }),
+            }),
+        }),
+        // eslint-disable-next-line max-len
+        downloadFileSubmission: builder.query<IFileModel, IRetestSubmissionUrlParams>({ query: ({ id }) => ({ url: `/download/${id}` }) }),
+        exportSubmissionsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -74,6 +59,7 @@ export const {
     useDownloadFileSubmissionQuery,
     useDeleteSubmissionMutation,
     useRetestMutation,
+    useLazyExportSubmissionsToExcelQuery,
 } = submissionsAdminService;
 
 export default submissionsAdminService;

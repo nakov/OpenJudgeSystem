@@ -1,11 +1,6 @@
 namespace OJS.Servers.Administration.Controllers
 {
-    using System;
     using AutoCrudAdmin.Extensions;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
     using AutoCrudAdmin.Models;
     using AutoCrudAdmin.ViewModels;
     using Microsoft.AspNetCore.Mvc;
@@ -14,16 +9,21 @@ namespace OJS.Servers.Administration.Controllers
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
-    using OJS.Servers.Administration.Extensions;
-    using OJS.Servers.Administration.Models.Contests;
     using OJS.Services.Administration.Business;
     using OJS.Services.Administration.Business.Extensions;
     using OJS.Services.Administration.Business.Validation.Factories;
     using OJS.Services.Administration.Business.Validation.Helpers;
     using OJS.Services.Administration.Data;
     using OJS.Services.Administration.Models;
+    using OJS.Services.Administration.Models.Contests;
+    using OJS.Services.Administration.Models.Submissions;
     using OJS.Services.Common.Validation.Helpers;
     using OJS.Services.Infrastructure.Extensions;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using AdminResource = OJS.Common.Resources.AdministrationGeneral;
     using Resource = OJS.Common.Resources.ContestsControllers;
 

@@ -70,7 +70,6 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
           selectedSorters={[]}
           showFiltersAndSorters={false}
           renderActionButtons={renderGridSettings}
-          location=""
           legendProps={[ { color: '#FFA1A1', message: 'Problem Resource is deleted.' } ]}
           modals={[
               { showModal: openEditModal, modal: (i) => renderProblemResourceModal(i, false) },

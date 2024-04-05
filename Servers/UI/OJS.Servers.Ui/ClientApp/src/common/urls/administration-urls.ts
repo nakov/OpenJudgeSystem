@@ -8,6 +8,8 @@ export const DELETE_ENDPOINT = 'Delete';
 export const GET_ENDPOINT = 'Get';
 export const GETALL_ENDPOINT = 'GetAll';
 
+export const EXCEL_RESULTS_ENDPOINT = 'GetExcelFile';
+
 // Paths
 export const NEW_ADMINISTRATION_PATH = 'administration-new';
 export const CONTESTS_PATH = 'contests';
@@ -21,3 +23,6 @@ export const PROBLEM_RESOURCES_PATH = 'problem-resources';
 export const SUBMISSION_TYPES_PATH = 'submission-types';
 export const PARTICIPANTS_PATH = 'participants';
 export const CHECKERS_PATH = 'checkers';
+export const ROLES_PATH = 'roles';
+export const USERS_PATH = 'users';
+export const EXAM_GROUPS_PATH = 'exam-groups';

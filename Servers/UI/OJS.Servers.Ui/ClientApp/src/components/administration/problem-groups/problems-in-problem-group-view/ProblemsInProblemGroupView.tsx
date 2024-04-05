@@ -3,7 +3,7 @@ import React from 'react';
 import { IGetAllAdminParams } from '../../../../common/types';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums from '../../../../pages/administration-new/problems/problemGridColumns';
-import { useGetByProblemGroupIdQuery } from '../../../../redux/services/admin/problemsAdminService';
+import { useGetAllAdminProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 
 interface IProblemsInProblemGroupViewProps {
@@ -16,14 +16,14 @@ const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => 
     const queryParams: IGetAllAdminParams = {
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: '',
+        filter: `problemgroupid~equals~${problemGroupId}`,
         sorting: '',
     };
 
     const {
         data: problemData,
         error: problemDataError,
-    } = useGetByProblemGroupIdQuery({ problemGroupId: Number(problemGroupId), ...queryParams });
+    } = useGetAllAdminProblemsQuery(queryParams);
 
     return (
         <AdministrationGridView
@@ -34,7 +34,6 @@ const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => 
           selectedFilters={[]}
           selectedSorters={[]}
           showFiltersAndSorters={false}
-          location=""
           legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
         />
     );

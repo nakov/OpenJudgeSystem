@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { useEffect, useState } from 'react';
-import { FaCheckDouble } from 'react-icons/fa';
+import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
-import { MdOutlineRememberMe } from 'react-icons/md';
+import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -24,27 +24,34 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH } from '../../../common/urls/administration-urls';
+import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
+import AdministrationExamGroupsPage from '../../../pages/administration-new/exam-groups/AdministrationExamGroups';
 import ParticipantsAdministrationPage from '../../../pages/administration-new/participants/ParticipantsAdministrationPage';
 import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
+import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
 import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
+import AdministrationUsersPage from '../../../pages/administration-new/users/AdministrationUsersPage';
 import AdministrationCheckersPage from '../../../pages/checkers/AdministrationCheckersPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
+import { useAppSelector } from '../../../redux/store';
 import AdministrationContestPage from '../../administration/contests/AdministrationContestPage';
+import AdministrationExamGroupPage from '../../administration/exam-groups/AdministrationExamGroupPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
 import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
+import AdministrationRole from '../../administration/roles/AdministrationRole';
 import AdministrationTest from '../../administration/tests/AdministrationTest';
+import AdministrationUser from '../../administration/users/AdministrationUser';
 
 import styles from './AdministrationPortal.module.scss';
 
@@ -59,56 +66,97 @@ const administrationItems = [
         name: 'Contests',
         icon: <AutoStoriesIcon />,
         path: `${CONTESTS_PATH}`,
+        visibleOnlyForAdmin: false,
     },
     {
         name: 'Contest Categories',
         icon: <BookmarksIcon />,
         path: `${CONTEST_CATEGORIES_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Submissions',
         icon: <PlaylistAddCheckCircleIcon />,
         path: `${SUBMISSIONS_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
         path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Tests',
         icon: <ScienceIcon />,
         path: `${TESTS_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Problems',
         icon: <NotListedLocationIcon />,
         path: `${PROBLEMS_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Problem Groups',
         icon: <TableViewIcon />,
         path: `${PROBLEM_GROUPS_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Problem Resources',
         icon: <GiFiles />,
         path: `${PROBLEM_RESOURCES_PATH}`,
+        visibleOnlyForAdmin: false,
+
     },
     {
         name: 'Submission Types',
         icon: <BorderAllIcon />,
         path: `${SUBMISSION_TYPES_PATH}`,
+        visibleOnlyForAdmin: true,
+
     },
     {
         name: 'Checkers',
         icon: <FaCheckDouble />,
         path: `${CHECKERS_PATH}`,
+        visibleOnlyForAdmin: true,
+
     },
     {
         name: 'Participants',
         icon: <MdOutlineRememberMe />,
         path: `${PARTICIPANTS_PATH}`,
+        visibleOnlyForAdmin: false,
+
+    },
+    {
+        name: 'Roles',
+        icon: <MdOutlineAirlineStops />,
+        path: `${ROLES_PATH}`,
+        visibleOnlyForAdmin: true,
+
+    },
+    {
+        name: 'Users',
+        icon: <FaUsers />,
+        path: `${USERS_PATH}`,
+        visibleOnlyForAdmin: true,
+
+    },
+    {
+        name: 'Exam Groups',
+        icon: <FaLayerGroup />,
+        path: `${EXAM_GROUPS_PATH}`,
+        visibleOnlyForAdmin: false,
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -179,6 +227,8 @@ const AdministrationPortal = () => {
     const [ open, setOpen ] = useState(true);
     const [ locationTitle, setLocationTitle ] = useState('');
 
+    const user = useAppSelector((x) => x.authorization.internalUser);
+
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
         const lastElementOfThePathname = locationPathnameElements[locationPathnameElements.length - 1];
@@ -231,72 +281,118 @@ const AdministrationPortal = () => {
         {
             path: `${CONTESTS_PATH}`,
             Element: AdministrationContestsPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${CONTESTS_PATH}/:id`,
             Element: AdministrationContestPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${CONTEST_CATEGORIES_PATH}`,
             Element: AdministrationContestCategories,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${SUBMISSIONS_PATH}`,
             Element: AdministrationSubmissionsPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
             Element: AdministrationSubmissionsForProcessingPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
             Element: AdminSubmissionForProcessingDetails,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${TESTS_PATH}`,
             Element: AdministrationTestsPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${TESTS_PATH}/:id`,
             Element: AdministrationTest,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${PROBLEMS_PATH}`,
             Element: AdministrationProblemsPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${PROBLEMS_PATH}/:id`,
             Element: AdministrationProblem,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${PROBLEM_GROUPS_PATH}`,
             Element: AdministrationProblemGroupsPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${PROBLEM_GROUPS_PATH}/:id`,
             Element: AdministrationProblemGroup,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${PROBLEM_RESOURCES_PATH}`,
             Element: AdministrationProblemResourcesPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${PROBLEM_RESOURCES_PATH}/:id`,
             Element: AdministrationProblemResource,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${SUBMISSION_TYPES_PATH}`,
             Element: AdministrationSubmissionTypesPage,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${CHECKERS_PATH}`,
             Element: AdministrationCheckersPage,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${PARTICIPANTS_PATH}`,
             Element: ParticipantsAdministrationPage,
+            visibleOnlyForAdmin: false,
         },
         {
+            path: `${ROLES_PATH}`,
+            Element: AdministrationRolesPage,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${ROLES_PATH}/:id`,
+            Element: AdministrationRole,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${USERS_PATH}`,
+            Element: AdministrationUsersPage,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${USERS_PATH}/:id`,
+            Element: AdministrationUser,
+            visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${EXAM_GROUPS_PATH}`,
+            Element: AdministrationExamGroupsPage,
+        },
+        {
+            path: `${EXAM_GROUPS_PATH}/:id`,
+            Element: AdministrationExamGroupPage,
+        },
+        {
+
             path: '/administration',
             Element: AdministrationPage,
             title: 'Administration',
@@ -350,7 +446,7 @@ const AdministrationPortal = () => {
                         <div />
                     </DrawerHeader>
                     <List sx={{ overflow: 'hidden' }}>
-                        {administrationItems.map((item) => (
+                        {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
                             <Box key={item.path}>
                                 <ListItem key={item.name} disablePadding>
                                     <Link
@@ -381,7 +477,12 @@ const AdministrationPortal = () => {
                 <Box className={styles.main} component="main" sx={{ flexGrow: 1 }}>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="bg">
                         <Routes>
-                            {adminRoutes.map(({ path, Element }) => <Route key={path} path={path} element={<Element />} />)}
+                            {adminRoutes.map(({ path, Element, visibleOnlyForAdmin }) => {
+                                if (user.isAdmin || !visibleOnlyForAdmin) {
+                                    return <Route key={path} path={path} element={<Element />} />;
+                                }
+                                return null;
+                            })}
                             <Route path="/" element={<Navigate to={`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`} replace />} />
                             <Route path="*" element={<NotFoundPage />} />
                         </Routes>
