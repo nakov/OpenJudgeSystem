@@ -20,7 +20,7 @@
 }
 
 .profileAboutInfoGroupControl {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   display: contents;
 
@@ -37,7 +37,7 @@
 }
 
 .imageAndLogoutButtonContainer {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   align-items: center;
   display: flex;

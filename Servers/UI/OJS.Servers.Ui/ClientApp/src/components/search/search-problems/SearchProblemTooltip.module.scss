@@ -63,7 +63,7 @@
 }
 
 .problemCardHeader {
-  @extend %font-family-montserrat;
+  @extend %font-family-normal;
 
   border-bottom: 1px solid;
   border-bottom-color: colors.$bottom-border-color;

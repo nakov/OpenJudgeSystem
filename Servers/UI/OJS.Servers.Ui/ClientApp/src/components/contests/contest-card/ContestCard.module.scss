@@ -7,7 +7,7 @@
 @use 'src/styles/font-weights';
 
 .contestCardWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   align-items: center;
   border-radius: border-radiuses.$br-6;
