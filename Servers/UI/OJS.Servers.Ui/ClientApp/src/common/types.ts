@@ -99,6 +99,13 @@ interface ITestRunInListModel {
     resultType: string;
 }
 
+interface IGetAllContestsOptions {
+    strategy?: number;
+    sortType: string;
+    page: number;
+    category?: number | null;
+}
+
 interface IGetAllAdminParams {
     filter?: string;
     itemsPerPage: number;
@@ -732,6 +739,7 @@ export type {
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IContestCategory,
+    IGetAllContestsOptions,
     IGetAllAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,

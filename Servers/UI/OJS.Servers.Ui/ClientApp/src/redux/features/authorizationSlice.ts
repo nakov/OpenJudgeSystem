@@ -10,7 +10,6 @@ export interface IAuthorizationReduxState {
     internalUser: IUserType;
     defaultLoginErrorMessage: string;
     isLoggedIn: boolean;
-
 }
 
 const initialState: IAuthorizationReduxState = {
@@ -22,7 +21,7 @@ const initialState: IAuthorizationReduxState = {
         isInRole: false,
         isAdmin: false,
         canAccessAdministration: false,
-    },
+    } as IUserType,
     defaultLoginErrorMessage: 'Invalid username or password',
     isLoggedIn: false,
 
