@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { EDIT } from '../../../common/labels';
+import { SettingTypeEnums } from '../../../common/enums';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
-import { NEW_ADMINISTRATION_PATH, ROLES_PATH } from '../../../common/urls/administration-urls';
+import { IEnumType } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
-import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const settingsFilterableColumns: GridColDef[] = [
     {
@@ -18,6 +18,7 @@ const settingsFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        valueFormatter: (params) => params.value.toString(),
     },
     {
         field: 'name',
@@ -29,6 +30,33 @@ const settingsFilterableColumns: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
     },
+    {
+        field: 'value',
+        headerName: 'Value',
+        flex: 3,
+        type: 'string',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'type',
+        headerName: 'Type',
+        flex: 3,
+        type: 'enum',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        enumValues: getStringObjectKeys(SettingTypeEnums),
+        valueFormatter: (params) => {
+            if (params.value === '') {
+                return 'None';
+            }
+            return params.value.toString();
+        },
+    } as GridColDef & IEnumType,
 ];
 
 export const returnSettingsNonFilterableColumns = (
@@ -47,7 +75,6 @@ export const returnSettingsNonFilterableColumns = (
         renderCell: (params: GridRenderCellParams) => (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <QuickEditButton onEdit={() => onEditClick(params.row.id)} />
-                <RedirectButton path={`/${NEW_ADMINISTRATION_PATH}/${ROLES_PATH}/${params.row.id}`} location={`${EDIT} page`} />
                 <DeleteButton
                   id={params.row.id}
                   name={params.row.name}

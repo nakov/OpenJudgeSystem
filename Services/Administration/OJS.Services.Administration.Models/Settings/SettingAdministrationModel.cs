@@ -12,7 +12,7 @@ public class SettingAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public string? Value { get; set; }
 
-    public SettingType Type { get; set; }
+    public string? Type { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
     {

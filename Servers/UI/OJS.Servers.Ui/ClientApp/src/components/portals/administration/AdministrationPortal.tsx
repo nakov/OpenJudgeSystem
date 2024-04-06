@@ -35,6 +35,7 @@ import AdministrationProblemResourcesPage from '../../../pages/administration-ne
 import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
+import AdministrationSettingsPage from '../../../pages/administration-new/settings/SettingsAdministrationPage';
 import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
@@ -397,6 +398,10 @@ const AdministrationPortal = () => {
         {
             path: `${EXAM_GROUPS_PATH}/:id`,
             Element: AdministrationExamGroupPage,
+        },
+        {
+            path: `${SETTINGS_PATH}`,
+            Element: AdministrationSettingsPage,
         },
         {
 
