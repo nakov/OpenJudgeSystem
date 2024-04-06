@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Checkers;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class CheckerAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -17,7 +18,9 @@ public class CheckerAdministrationModel : BaseAdministrationModel<int>, IMapExpl
     public string? Parameter { get; set; }
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<Checker, CheckerAdministrationModel>();
+        configuration.CreateMap<Checker, CheckerAdministrationModel>()
+            .ForMember(cam => cam.OperationType, opt
+                => opt.Ignore());
 
         configuration.CreateMap<CheckerAdministrationModel, Checker>()
             .ForMember(c => c.IsDeleted, opt

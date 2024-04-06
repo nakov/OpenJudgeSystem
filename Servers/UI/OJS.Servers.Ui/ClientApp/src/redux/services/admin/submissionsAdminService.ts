@@ -7,6 +7,7 @@ import {
     ISubmissionsAdminGridViewType,
 } from '../../../common/types';
 import { IRetestSubmissionUrlParams } from '../../../common/url-types';
+import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const submissionsAdminService = createApi({
@@ -37,7 +38,19 @@ export const submissionsAdminService = createApi({
             }),
         }),
         // eslint-disable-next-line max-len
-        downloadFileSubmission: builder.query<IFileModel, IRetestSubmissionUrlParams>({ query: ({ id }) => ({ url: `/Download/${id}` }) }),
+        downloadFileSubmission: builder.query<IFileModel, IRetestSubmissionUrlParams>({ query: ({ id }) => ({ url: `/download/${id}` }) }),
+        exportSubmissionsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -46,6 +59,7 @@ export const {
     useDownloadFileSubmissionQuery,
     useDeleteSubmissionMutation,
     useRetestMutation,
+    useLazyExportSubmissionsToExcelQuery,
 } = submissionsAdminService;
 
 export default submissionsAdminService;

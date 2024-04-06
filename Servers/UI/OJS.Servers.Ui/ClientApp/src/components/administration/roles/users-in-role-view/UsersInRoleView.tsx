@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react';
 import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, IUserAutocompleteData } from '../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import usersFilterableColumns, { returnUsersNonFilterableColumns } from '../../../../pages/administration-new/users/usersGridColumns';
-import { setAdminRolesFilters, setAdminRolesSorters } from '../../../../redux/features/admin/rolesAdminSlice';
 import { useAddUserToRoleMutation, useRemoveUserFromRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
 import { useGetUsersAutocompleteQuery, useGetUsersByRoleQuery } from '../../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -31,10 +29,8 @@ interface IUsersInRoleViewProps {
 const UsersInRoleView = (props: IUsersInRoleViewProps) => {
     const { roleId } = props;
 
-    const filtersAndSortersLocation = `users-in-role-${roleId}`;
-
-    const selectedFilters = useAppSelector((state) => state.adminRoles[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters = useAppSelector((state) => state.adminRoles[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
@@ -250,12 +246,11 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
                   data={usersData}
                   error={getError}
                   queryParams={queryParams}
-                  location={filtersAndSortersLocation}
                   selectedFilters={selectedFilters}
                   selectedSorters={selectedSorters}
                   setQueryParams={setQueryParams}
-                  setFilterStateAction={setAdminRolesFilters}
-                  setSorterStateAction={setAdminRolesSorters}
+                  setSorterStateAction={setSelectedSorters}
+                  setFilterStateAction={setSelectedFilters}
                   withSearchParams={false}
                   renderActionButtons={renderGridSettings}
                   legendProps={[ { color: '#FFA1A1', message: 'User is deleted.' } ]}

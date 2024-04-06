@@ -1,11 +1,12 @@
 ﻿namespace OJS.Services.Administration.Models.Contests;
 
 using AutoMapper;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
-using OJS.Common.Enumerations;
 using System.Linq;
 
 public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -56,6 +57,8 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
         configuration.CreateMap<Contest, ContestAdministrationModel>()
             .ForMember(crm => crm.CategoryName, opt
                 => opt.MapFrom(c => c.Category!.Name))
+            .ForMember(crm => crm.OperationType, opt
+                => opt.Ignore())
             .ForMember(crm => crm.AllowedIps, opt
                 => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
 

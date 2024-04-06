@@ -4,9 +4,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Extensions;
 using OJS.Data.Models.Problems;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using System.IO;
-using Microsoft.AspNetCore.Http.Internal;
 
 public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -31,6 +30,8 @@ public class ProblemResourceAdministrationModel : BaseAdministrationModel<int>, 
         configuration.CreateMap<ProblemResource, ProblemResourceAdministrationModel>()
             .ForMember(pram => pram.HasFile, opt
                 => opt.MapFrom(pr => pr.File != null))
+            .ForMember(pram => pram.OperationType, opt
+                => opt.Ignore())
             .ForMember(pram => pram.File, opt
                 => opt.Ignore());
 

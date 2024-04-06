@@ -21,10 +21,9 @@ public class ExamGroupsController : BaseAdminApiController<ExamGroup, int, ExamG
        IExamGroupsGridDataService gridDataService,
        IExamGroupsBusinessService operationService,
        ExamGroupAdministrationModelValidator validator,
-       ExamGroupDeleteValidator deleteValidator,
        UserToExamGroupValidator userToExamGroupValidator,
        MultipleUsersToExamGroupModelValidator multipleUsersToExamGroupModelValidator)
-        : base(gridDataService, operationService, validator, deleteValidator)
+        : base(gridDataService, operationService, validator)
     {
         this.operationService = operationService;
         this.userToExamGroupValidator = userToExamGroupValidator;

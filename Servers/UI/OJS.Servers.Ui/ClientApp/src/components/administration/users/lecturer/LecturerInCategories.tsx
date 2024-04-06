@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { SELECT_CATEGORY } from '../../../../common/labels';
 import { IContestCategories, IGetAllAdminParams } from '../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInCategoriesFilterableColumns, { returnLecturerInCategoriesNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-categories/lecturersInCategoriesGridColumns';
-import { setAdminUsersFilters, setAdminUsersSorters } from '../../../../redux/features/admin/usersAdminSlice';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import { useAddLecturerToCategoryMutation, useGetLecturerCategoriesQuery, useRemoveLecturerFromCategoryMutation } from '../../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -25,12 +23,9 @@ interface ILecturerInCategoriesProps {
 
 const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
     const { userId } = props;
-    const filtersAndSortersLocation = `lecturer-in-categories${userId}`;
 
-    const selectedFilters =
-        useAppSelector((state) => state.adminUsers[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-        useAppSelector((state) => state.adminUsers[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const [ showConfirmDialog, setShowConfirmDialog ] = useState<boolean>(false);
 
@@ -178,15 +173,14 @@ const LecturerInCategories = (props: ILecturerInCategoriesProps) => {
             <AdministrationGridView
               data={data}
               error={error}
-              location={filtersAndSortersLocation}
               selectedFilters={selectedFilters}
               selectedSorters={selectedSorters}
               setQueryParams={setQueryParams}
               queryParams={queryParams}
               withSearchParams={false}
               filterableGridColumnDef={lecturerInCategoriesFilterableColumns}
-              setFilterStateAction={setAdminUsersFilters}
-              setSorterStateAction={setAdminUsersSorters}
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               renderActionButtons={renderGridSettings}
               notFilterableGridColumnDef={
             returnLecturerInCategoriesNonFilterableColumns(onRemoveFromRowClicked)

@@ -1,44 +1,66 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Validators;
 
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using OJS.Common;
+using OJS.Common.Enumerations;
+using OJS.Data.Models.Problems;
 using OJS.Data.Validation;
+using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 
-public class ProblemAdministrationValidator : BaseValidator<ProblemAdministrationModel>
+public class ProblemAdministrationValidator : BaseAdministrationModelValidator<ProblemAdministrationModel, int, Problem>
 {
-    private readonly IFileSystemService fileSystemService;
+    private readonly IContestsActivityService contestsActivityService;
 
-    public ProblemAdministrationValidator(IFileSystemService fileSystemService)
+    public ProblemAdministrationValidator(IProblemsDataService problemsDataService, IContestsActivityService contestsActivityService)
+        : base(problemsDataService)
         {
-            this.fileSystemService = fileSystemService;
+            this.contestsActivityService = contestsActivityService;
+
             this.RuleFor(model => model.Name)
-                .Length(1, ConstraintConstants.Problem.NameMaxLength);
+                .Length(1, ConstraintConstants.Problem.NameMaxLength)
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.TimeLimit)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Time limit cannot be zero or less.");
+                .WithMessage("Time limit cannot be zero or less.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.MemoryLimit)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Memory limit cannot be zero or less.");
+                .WithMessage("Memory limit cannot be zero or less.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.SourceCodeSizeLimit)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Source code size limit cannot be zero or less.");
+                .WithMessage("Source code size limit cannot be zero or less.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.MaximumPoints)
                 .GreaterThanOrEqualTo((short)0)
-                .WithMessage("Maximum points cannot be zero or less.");
+                .WithMessage("Maximum points cannot be zero or less.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.SubmissionTypes.Count)
                 .GreaterThanOrEqualTo(1)
-                .WithMessage("There must be at least one submission type.");
+                .WithMessage("There must be at least one submission type.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.ContestId)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Must select valid contest.");
+                .WithMessage("Must select valid contest.")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
             this.RuleFor(model => model.CheckerId)
                 .NotNull()
                 .WithMessage("Checker cannot be null")
                 .GreaterThanOrEqualTo(1)
-                .WithMessage("Checker must be valid type");
+                .WithMessage("Checker must be valid type")
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
+            this.RuleFor(model => model.ContestId)
+                .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))
+                .When(x => x.OperationType is CrudOperationType.Delete);
         }
 }
