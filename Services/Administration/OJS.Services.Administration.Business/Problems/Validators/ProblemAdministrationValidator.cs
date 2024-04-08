@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Validators;
 
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Data.Validation;
@@ -8,14 +9,18 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class ProblemAdministrationValidator : BaseAdministrationModelValidator<ProblemAdministrationModel, int, Problem>
 {
+    private readonly IProblemsDataService problemsDataService;
     private readonly IContestsActivityService contestsActivityService;
 
     public ProblemAdministrationValidator(IProblemsDataService problemsDataService, IContestsActivityService contestsActivityService)
         : base(problemsDataService)
         {
+            this.problemsDataService = problemsDataService;
             this.contestsActivityService = contestsActivityService;
 
             this.RuleFor(model => model.Name)
@@ -59,8 +64,18 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
                 .WithMessage("Checker must be valid type")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.ContestId)
-                .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))
+            this.RuleFor(model => model.Id)
+                .MustAsync(async (id, _) => await this.ContestMustNotBeActive(id))
                 .When(x => x.OperationType is CrudOperationType.Delete);
         }
+
+    private async Task<bool> ContestMustNotBeActive(int problemId)
+    {
+        var contestId = await this.problemsDataService
+            .GetByIdQuery(problemId)
+            .Select(x => x.ProblemGroup.ContestId)
+            .FirstAsync();
+
+        return !await this.contestsActivityService.IsContestActive(contestId);
+    }
 }
