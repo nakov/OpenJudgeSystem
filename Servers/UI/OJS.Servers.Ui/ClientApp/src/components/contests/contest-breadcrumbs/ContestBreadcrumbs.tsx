@@ -52,7 +52,8 @@ const ContestBreadcrumbs = () => {
                 dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
             }
         }
-    }, [ contestCategories, breadcrumbItems.length, contestDetails, contestId, dispatch ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ contestCategories, breadcrumbItems.length, contestDetails, dispatch ]);
 
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean, idx: number) => (
         <Link to={getAllContestsUrl(breadcrumbItem.id)}>

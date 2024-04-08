@@ -47,8 +47,8 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
             return <GoPrimitiveDot size={20} color={color} />;
         };
 
-        const onTestRunClick = (idx: number) => {
-            setSelectedTestRun(idx);
+        const onTestRunClick = (i: number) => {
+            setSelectedTestRun(i);
             const scrollToElement = document.querySelector(`#test-run-${testRun.id}`);
             if (!scrollToElement) { return; }
 

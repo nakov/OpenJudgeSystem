@@ -63,7 +63,7 @@ const SubmissionDetailsPage = () => {
         isEligibleForRetest,
     } = data || {};
 
-    const handleDownloadFile = async () => {
+    const handleDownloadFile = useCallback(async () => {
         try {
             setDownloadSolutionErrorMessage('');
             const response = await downloadUploadedFile({ id: solutionId });
@@ -81,7 +81,7 @@ const SubmissionDetailsPage = () => {
         } catch {
             setDownloadSolutionErrorMessage('Error download solution submitted file!');
         }
-    };
+    }, [ downloadUploadedFile, solutionId ]);
 
     const renderSolutionTitle = useCallback(() => (
         <div className={styles.solutionTitle}>
@@ -142,7 +142,14 @@ const SubmissionDetailsPage = () => {
                     (<div className={styles.solutionDownloadFileErrorWrapper}>{downloadSolutionErrorMessage}</div>)}
             </>
         );
-    }, [ submissionType, createdOn, maxUsedMemory, themeColors.baseColor100 ]);
+    }, [
+        submissionType,
+        createdOn,
+        maxUsedMemory,
+        downloadSolutionErrorMessage,
+        handleDownloadFile,
+        themeColors.baseColor100,
+    ]);
 
     const renderSolutionTestDetails = useCallback(() => {
         if (!isCompiledSuccessfully) {
@@ -169,7 +176,7 @@ const SubmissionDetailsPage = () => {
         }
 
         return testRuns.map((testRun: ITestRun, idx: number) => <SubmissionTest testRun={testRun} idx={idx + 1} />);
-    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns ]);
+    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment ]);
 
     if (isLoading) {
         return (
@@ -191,7 +198,7 @@ const SubmissionDetailsPage = () => {
                     <div className={styles.innerBodyWrapper}>
                         {renderSolutionTitle()}
                         {renderSolutionTestDetails()}
-                        { !isEligibleForRetest || !submissionType.allowBinaryFilesUpload && (
+                        { !isEligibleForRetest && content && (
                             <div className={styles.codeContentWrapper}>
                                 <div>Source Code</div>
                                 <CodeEditor code={content} readOnly />

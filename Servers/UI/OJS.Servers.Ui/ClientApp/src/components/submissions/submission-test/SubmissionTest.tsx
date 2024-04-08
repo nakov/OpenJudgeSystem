@@ -1,3 +1,4 @@
+/* eslint-disable import/exports-last */
 import React, { useMemo, useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
@@ -78,7 +79,11 @@ const SubmissionTest = (props: ISubmissionTestRun) => {
         setTestShowInput(!testShowInput);
     };
     return (
-        <div key={`test-run-${testRun.id}`} id={`test-run-${testRun.id}`} className={`${backgroundColorClassName} ${textColorClassName} ${styles.testRunWrapper}`}>
+        <div
+          key={`test-run-${testRun.id}`}
+          id={`test-run-${testRun.id}`}
+          className={`${backgroundColorClassName} ${textColorClassName} ${styles.testRunWrapper}`}
+        >
             <div className={styles.testRunTitleWrapper}>
                 <div className={styles.testNameButtonWrapper}>
                     <div style={{ color: textIdColor }}>
@@ -97,7 +102,7 @@ const SubmissionTest = (props: ISubmissionTestRun) => {
                     )}
                 </div>
                 <div className={styles.timeAndMemoryWrapper}>
-                    <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={(e) => onPopoverClose('memory')}>
+                    <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
                         <BiMemoryCard size={20} color={themeColors.baseColor100} />
                         <span>
                             {(memoryUsed / 1000000).toFixed(2)}
@@ -124,7 +129,7 @@ const SubmissionTest = (props: ISubmissionTestRun) => {
                             </div>
                         </Popover>
                     </span>
-                    <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={(e) => onPopoverClose('time')}>
+                    <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={() => onPopoverClose('time')}>
                         <FaRegClock size={20} color={themeColors.baseColor100} />
                         <span>
                             {timeUsed / 1000}

@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
@@ -57,14 +58,12 @@ const submissionsService = createApi({
             }),
         }),
         getSubmissionDetails: builder.query<any, { id: number }>({
-            query: ({ id }) => ({
-                url: `${defaultPathIdentifier}/Submissions/Details/${id}`
-            })
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
         }),
         getSubmissionUploadedFile: builder.query<{ blob: Blob }, { id: number }>({
-            query: ({ id }) => ({
-                url: `${defaultPathIdentifier}/Submissions/Download/${id}`,
-            }),
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Submissions/Download/${id}` }),
         }),
     }),
 });
@@ -74,7 +73,7 @@ const {
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
     useGetSubmissionDetailsQuery,
-    useLazyGetSubmissionUploadedFileQuery
+    useLazyGetSubmissionUploadedFileQuery,
 } = submissionsService;
 
 export {

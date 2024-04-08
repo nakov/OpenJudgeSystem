@@ -58,7 +58,12 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
                   showDiffOnly
                   renderContent={highlightSyntax}
                   styles={{
-                      gutter: { minWidth: 'unset', height: 'inherit', backgroundColor: themeColors.baseColor500, color: themeColors.textColor },
+                      gutter: {
+                          minWidth: 'unset',
+                          height: 'inherit',
+                          backgroundColor: themeColors.baseColor500,
+                          color: themeColors.textColor,
+                      },
                       diffContainer: { backgroundColor: themeColors.baseColor500, color: themeColors.textColor },
                   }}
                 />
