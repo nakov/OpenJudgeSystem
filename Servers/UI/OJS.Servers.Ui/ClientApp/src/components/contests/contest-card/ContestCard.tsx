@@ -4,6 +4,7 @@ import isNil from 'lodash/isNil';
 import { IIndexContestsType } from '../../../common/types';
 import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
+import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil,
@@ -31,6 +32,7 @@ const ContestCard = (props: IContestCardProps) => {
     const { contest, showPoints } = props;
 
     const { themeColors, getColorClassName } = useTheme();
+    const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
 
     const textColorClass = getColorClassName(themeColors.textColor);
     const backgroundColorClass = getColorClassName(themeColors.baseColor200);
@@ -150,11 +152,13 @@ const ContestCard = (props: IContestCardProps) => {
             <div>
                 <Link className={styles.contestCardTitle} to={`/contests/${id}`}>
                     {name}
-                    {' '}
-                    -
-                    {id}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
+                {
+                    isLoggedIn && internalUser.canAccessAdministration
+                        ? <div className={styles.contestCardId}>{id}</div>
+                        : null
+                }
                 <div className={styles.contestDetailsFragmentsWrapper}>
                     {renderContestDetailsFragment(iconNames.time, preciseFormatDate(new Date(contestStartTime), 'HH:MM'))}
                     {renderContestDetailsFragment(iconNames.date, preciseFormatDate(new Date(contestStartTime), 'D MMM YY'))}
