@@ -26,12 +26,12 @@ import 'dayjs/locale/bg';
 
 import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
-import AdministrationContestCategories from '../../../pages/administration-new/categoriesContest/AdministrationContestCategories';
+import AdministrationContestCategories from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
 import AdministrationExamGroupsPage from '../../../pages/administration-new/exam-groups/AdministrationExamGroups';
 import ParticipantsAdministrationPage from '../../../pages/administration-new/participants/ParticipantsAdministrationPage';
+import AdministrationProblemGroupsPage from '../../../pages/administration-new/problem-groups/AdministrationProblemGroupsPage';
 import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
-import AdministrationProblemGroupsPage from '../../../pages/administration-new/problemGroups/AdministrationProblemGroupsPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
 import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';

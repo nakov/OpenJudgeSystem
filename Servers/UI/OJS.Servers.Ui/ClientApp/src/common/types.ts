@@ -433,6 +433,7 @@ interface IContestAdministration {
     allowedIps: string;
     numberOfProblemGroups: number;
     duration: string | undefined;
+    canBeCompeted: boolean;
 }
 
 interface ISubmissionsAdminGridViewType {
@@ -679,6 +680,10 @@ interface ILecturerInContestInListModel {
     contestName: string;
 }
 
+interface IContestActivity {
+    canBeCompeted: boolean;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -750,4 +755,5 @@ export type {
     IUserInListModel,
     IUserAdministrationModel,
     ILecturerInContestInListModel,
+    IContestActivity,
 };

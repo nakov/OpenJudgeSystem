@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Autocomplete, Checkbox, debounce, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
-import { CREATE, IS_OFFICIAL } from '../../../../common/labels';
+import { IS_OFFICIAL } from '../../../../common/labels';
 import { IContestAutocomplete, IParticipantAdministrationModel, IUserAutocompleteData } from '../../../../common/types';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateParticipantMutation } from '../../../../redux/services/admin/participantsAdminService';
@@ -9,7 +9,7 @@ import { useGetUsersAutocompleteQuery } from '../../../../redux/services/admin/u
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -196,11 +196,9 @@ const ParticipantForm = (props: IParticipantFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => createParticipant(participant)}
-                  name={CREATE}
+                <AdministrationFormButtons
+                  isEditMode={false}
+                  onCreateClick={() => createParticipant(participant)}
                 />
             </form>
         </>

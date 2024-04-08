@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
-import { CREATE, EDIT, HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, RECORD, TYPE } from '../../../../common/labels';
-import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
-import { NEW_ADMINISTRATION_PATH, TESTS_PATH } from '../../../../common/urls/administration-urls';
-import { useCreateTestMutation, useDeleteTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
+import { HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, TYPE } from '../../../../common/labels';
+import { useCreateTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import { ITestAdministration, TestTypes } from '../types';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -25,7 +21,6 @@ interface ITestFormProps {
 const TestForm = (props: ITestFormProps) => {
     const { id = 0, isEditMode = true, problemName = '' } = props;
 
-    const navigate = useNavigate();
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
     const [ test, setTest ] = useState<ITestAdministration>({
@@ -82,37 +77,6 @@ const TestForm = (props: ITestFormProps) => {
                     : value,
         }));
     };
-
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <>
-                    <FormActionButton
-                      className={formStyles.buttonsWrapper}
-                      buttonClassName={formStyles.button}
-                      onClick={() => editTest(test)}
-                      name={EDIT}
-                    />
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(id!)}
-                          name={RECORD}
-                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${TESTS_PATH}`)}
-                          mutation={useDeleteTestMutation}
-                          text={DELETE_CONFIRMATION_MESSAGE}
-                        />
-                    </Box>
-                </>
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => createTest(test)}
-                  name={CREATE}
-                />
-            )
-    );
 
     if (isGettingData || isEditing || isCreating) {
         return <SpinningLoader />;
@@ -215,7 +179,11 @@ const TestForm = (props: ITestFormProps) => {
                         </FormControl>
                     </FormGroup>
                 </Box>
-                {renderFormSubmitButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => createTest(test)}
+                  onEditClick={() => editTest(test)}
+                />
             </form>
         </>
     );

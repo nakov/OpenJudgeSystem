@@ -6,7 +6,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATE, DESCRIPTION, DURATION, EDIT, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, DESCRIPTION, DURATION, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
@@ -17,8 +17,8 @@ import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../..
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import DeleteButton from '../../common/delete/DeleteButton';
-import FormActionButton from '../../form-action-button/FormActionButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -379,28 +379,6 @@ const ContestEdit = (props:IContestEditProps) => {
         navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}`);
     };
 
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  disabled={!isValidForm}
-                  buttonClassName={formStyles.button}
-                  onClick={edit}
-                  name={EDIT}
-                />
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  disabled={!isValidForm}
-                  buttonClassName={formStyles.button}
-                  onClick={create}
-                  name={CREATE}
-                />
-            )
-    );
-
     if (isGettingCategories || isUpdating || isCreating || isLoading) {
         return (<SpinningLoader />);
     }
@@ -664,7 +642,14 @@ const ContestEdit = (props:IContestEditProps) => {
                     />
                 </Box>
             </form>
-            {renderFormSubmitButtons()}
+
+            <AdministrationFormButtons
+              isEditMode={isEditMode}
+              onCreateClick={() => create()}
+              onEditClick={() => edit()}
+              disabled={!isValidForm}
+            />
+
             <Box sx={{ alignSelf: 'flex-end' }}>
                 <DeleteButton
                   id={Number(contestId!)}

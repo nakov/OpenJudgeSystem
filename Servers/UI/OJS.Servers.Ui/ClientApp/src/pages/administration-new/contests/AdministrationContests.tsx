@@ -12,7 +12,7 @@ import ContestDownloadSubmissions from '../../../components/administration/conte
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteContestMutation, useDownloadResultsMutation, useGetAllAdminContestsQuery, useLazyExportContestsToExcelQuery } from '../../../redux/services/admin/contestsAdminService';
+import { useDownloadResultsMutation, useGetAllAdminContestsQuery, useLazyExportContestsToExcelQuery } from '../../../redux/services/admin/contestsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
@@ -193,7 +193,6 @@ const AdministrationContestsPage = () => {
               filterableGridColumnDef={contestFilterableColumns}
               notFilterableGridColumnDef={returnContestsNonFilterableColumns(
                   onEditClick,
-                  useDeleteContestMutation,
                   retakeContests,
                   onClickExcel,
                   onDownloadSubmissionClick,

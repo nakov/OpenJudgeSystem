@@ -2,6 +2,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { useDeleteParticipantMutation } from '../../../redux/services/admin/participantsAdminService';
 
 const participantsFilteringColumns: GridColDef[] = [
     {
@@ -51,10 +52,7 @@ const participantsFilteringColumns: GridColDef[] = [
     },
 ];
 
-export const returnparticipantsNonFilterableColumns = (
-    deleteMutation: any,
-    onSuccessFullDelete: () => void,
-) => [
+export const returnparticipantsNonFilterableColumns = (onSuccessFullDelete: () => void) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -69,7 +67,7 @@ export const returnparticipantsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteParticipantMutation}
                   onSuccess={onSuccessFullDelete}
                 />
             </div>
