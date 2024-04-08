@@ -65,6 +65,10 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
                         .SelectMany(pg => pg.Problems)
                         .Where(x => !x.IsDeleted)
                         .Sum(pr => pr.MaximumPoints)))
+            // For online contests:
+            // In a problem group with multiple problems, compete points are derived from a single problem,
+            // unlike practice mode where points can be accumulated from all problems across groups.
+            // Onsite contests have only 1 problem per problem group
             .ForMember(
                 d => d.CompeteMaximumPoints,
                 opt => opt.MapFrom(src => src.ProblemGroups
