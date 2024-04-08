@@ -34,7 +34,6 @@ module.exports = {
     ignorePatterns: [
         '*.cjs',
         'vite.config.js',
-        'dist/',
     ],
     rules: {
         "jsx-a11y/click-events-have-key-events": "off",
