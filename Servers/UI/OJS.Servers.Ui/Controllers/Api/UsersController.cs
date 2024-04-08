@@ -22,6 +22,9 @@ public class UsersController : BaseApiController
 
     /// <summary>
     /// Gets user info for the profile page.
+    /// If no profile exists an error will be returned.
+    /// If the user is not logged in but the profile exists, then only the Username will be returned.
+    /// If the user is owner or has a role, then the profile is returned with more details.
     /// </summary>
     /// <param name="username">The username of the user.</param>
     /// <returns>User profile info model.</returns>
