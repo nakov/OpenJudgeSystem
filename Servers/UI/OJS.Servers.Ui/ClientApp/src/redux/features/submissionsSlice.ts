@@ -28,9 +28,6 @@ export const submissionsSlice = createSlice({
         setLatestSubmissions: (state: IRecentSubmissionsReduxState, action) => {
             state.latestSubmissions = action.payload;
         },
-        setProfileSubmissions: (state: IRecentSubmissionsReduxState, action) => {
-            state.profileSubmissions = action.payload;
-        },
         setCurrentPage: (state: IRecentSubmissionsReduxState, action) => {
             state.currentPage = action.payload;
         },
@@ -39,13 +36,11 @@ export const submissionsSlice = createSlice({
 
 const {
     setLatestSubmissions,
-    setProfileSubmissions,
     setCurrentPage,
 } = submissionsSlice.actions;
 
 export {
     setLatestSubmissions,
-    setProfileSubmissions,
     setCurrentPage,
 };
 

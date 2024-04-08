@@ -1,19 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { SortType, SortTypeDirection } from '../../../common/contest-types';
 import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import {
-    setProfileUserContestParticipationsPage,
-    setUserContestParticipations,
-} from '../../../redux/features/contestsSlice';
 import { useGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
+import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import ContestCard from '../../contests/contest-card/ContestCard';
 import List, { Orientation } from '../../guidelines/lists/List';
 import PaginationControls from '../../guidelines/pagination/PaginationControls';
@@ -29,26 +26,22 @@ interface IProfileContestParticipationsProps {
 const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: IProfileContestParticipationsProps) => {
     const [ shouldSkipFetchData, setShouldSkipFetchData ] = useState<boolean>(true);
     const [ shouldRender, setShouldRender ] = useState<boolean>(false);
+    const [ userContestParticipationsPage, setUserContestParticipationsPage ] = useState<number>(1);
 
     const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
-    const {
-        userContestParticipations,
-        profileUserContestParticipationsPage,
-    } = useAppSelector((reduxState) => reduxState.contests);
     const { getColorClassName, themeColors } = useTheme();
 
-    const dispatch = useAppDispatch();
-
     const {
-        data: contestsParticipations,
+        data: userContestParticipations,
+        error: contestParticipationsQueryError,
         isLoading: areContestParticipationsLoading,
     } = useGetContestsParticipationsForUserQuery(
         {
             username: profile?.userName,
             sortType: SortType.ParticipantRegistrationTime,
             sortTypeDirection: SortTypeDirection.Descending,
-            page: profileUserContestParticipationsPage,
+            page: userContestParticipationsPage,
         } as IGetContestParticipationsForUserQueryParams,
         { skip: shouldSkipFetchData },
     );
@@ -73,70 +66,79 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
     useEffect(() => {
         if (((userIsProfileOwner || internalUser.canAccessAdministration) && !isChosenInToggle) ||
             areContestParticipationsLoading ||
-            isNil(contestsParticipations)) {
+            isNil(userContestParticipations)) {
             setShouldRender(false);
             return;
         }
 
         setShouldRender(true);
-    }, [ areContestParticipationsLoading, contestsParticipations, internalUser, isChosenInToggle, isLoggedIn,
+    }, [ areContestParticipationsLoading, userContestParticipations, internalUser, isChosenInToggle, isLoggedIn,
         profile, shouldSkipFetchData, userIsProfileOwner ]);
 
-    useEffect(
-        () => {
-            if (areContestParticipationsLoading || isNil(contestsParticipations)) {
-                return;
-            }
+    const onPageChange = useCallback((page: number) => {
+        setUserContestParticipationsPage(page);
+    }, []);
 
-            dispatch(setUserContestParticipations(contestsParticipations));
-        },
-        [ areContestParticipationsLoading, contestsParticipations, dispatch ],
-    );
-
-    const onPageChange = (page: number) => {
-        dispatch(setProfileUserContestParticipationsPage(page));
-    };
-
-    const renderContestCard = (contest: IIndexContestsType) => (
+    const renderContestCard = useCallback((contest: IIndexContestsType) => (
         <ContestCard
           contest={contest}
           showPoints={userIsProfileOwner || internalUser.isAdmin}
         />
-    );
+    ), [ internalUser, userIsProfileOwner ]);
 
-    return areContestParticipationsLoading
-        ? (<SpinningLoader />)
-        : shouldRender
-            ? (
-                <div>
-                    { !userIsProfileOwner && !isEmpty(userContestParticipations.items) &&
-                        <h2 className={styles.participationsHeading}>Participated in:</h2>}
-                    <List
-                      values={userContestParticipations.items!}
-                      itemFunc={renderContestCard}
-                      orientation={Orientation.vertical}
-                      fullWidth
+    const render = useCallback(() => {
+        if (areContestParticipationsLoading) {
+            return (<SpinningLoader style={{ ...flexCenterObjectStyles }} />);
+        }
+
+        if (!isNil(contestParticipationsQueryError)) {
+            return <span>{contestParticipationsQueryError.data.detail}</span>;
+        }
+
+        if (!shouldRender) {
+            return null;
+        }
+
+        return (
+            <div>
+                { !userIsProfileOwner && !isEmpty(userContestParticipations.items) &&
+                    <h2 className={styles.participationsHeading}>Participated in:</h2>}
+                <List
+                  values={userContestParticipations.items!}
+                  itemFunc={renderContestCard}
+                  orientation={Orientation.vertical}
+                  fullWidth
+                />
+                {!isEmpty(userContestParticipations) && userContestParticipations.pagesCount > 1 && (
+                    <PaginationControls
+                      count={userContestParticipations.pagesCount}
+                      page={userContestParticipations.pageNumber}
+                      onChange={onPageChange}
                     />
-                    {!isEmpty(userContestParticipations) && userContestParticipations.pagesCount > 1 && (
-                        <PaginationControls
-                          count={userContestParticipations.pagesCount}
-                          page={userContestParticipations.pageNumber}
-                          onChange={onPageChange}
-                        />
-                    )}
-                    { isChosenInToggle && isEmpty(userContestParticipations.items) &&
-                        (
-                            <div className={concatClassNames(
-                                styles.noParticipationsText,
-                                getColorClassName(themeColors.textColor),
-                            )}
-                            >
-                                No participations in contests yet
-                            </div>
+                )}
+                { isChosenInToggle && isEmpty(userContestParticipations.items) &&
+                    (
+                        <div className={concatClassNames(
+                            styles.noParticipationsText,
+                            getColorClassName(themeColors.textColor),
                         )}
-                </div>
-            )
-            : null;
+                        >
+                            No participations in contests yet
+                        </div>
+                    )}
+            </div>
+        );
+    }, [
+        areContestParticipationsLoading,
+        contestParticipationsQueryError,
+        userContestParticipations,
+        userIsProfileOwner,
+        isChosenInToggle,
+        shouldRender,
+        getColorClassName, onPageChange, renderContestCard, themeColors.textColor,
+    ]);
+
+    return render();
 };
 
 export default ProfileContestParticipations;

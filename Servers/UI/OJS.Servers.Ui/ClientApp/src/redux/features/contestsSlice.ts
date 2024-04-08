@@ -4,7 +4,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import { IContestCategory, IContestDetailsResponseType, IIndexContestsType, IPagedResultType } from '../../common/types';
+import { IContestCategory, IContestDetailsResponseType } from '../../common/types';
 
 interface IContestState {
     selectedCategory: IContestCategory | null;
@@ -12,8 +12,6 @@ interface IContestState {
     breadcrumbItems: Array<ContestBreadcrumb>;
     contestDetails: IContestDetailsResponseType | null;
     contestCategories: Array<IContestCategory>;
-    userContestParticipations: IPagedResultType<IIndexContestsType>;
-    profileUserContestParticipationsPage: number;
 }
 
 const initialState: IContestState = {
@@ -22,14 +20,6 @@ const initialState: IContestState = {
     breadcrumbItems: [],
     contestDetails: null,
     contestCategories: [],
-    userContestParticipations: {
-        items: [],
-        totalItemsCount: 0,
-        itemsPerPage: 0,
-        pagesCount: 0,
-        pageNumber: 0,
-    },
-    profileUserContestParticipationsPage: 1,
 };
 
 // eslint-disable-next-line import/group-exports
@@ -42,12 +32,6 @@ export const contestSlice = createSlice({
         },
         setContestStrategy: (state, action: PayloadAction<IContestStrategyFilter | null>) => {
             state.selectedStrategy = action.payload;
-        },
-        setUserContestParticipations: (state, action: PayloadAction<IPagedResultType<IIndexContestsType>>) => {
-            state.userContestParticipations = action.payload;
-        },
-        setProfileUserContestParticipationsPage: (state, action: PayloadAction<number>) => {
-            state.profileUserContestParticipationsPage = action.payload;
         },
         updateContestCategoryBreadcrumbItem: (state, action: PayloadAction<{ elements: Array<ContestBreadcrumb> | undefined}>) => {
             const { elements } = action.payload;
@@ -75,8 +59,6 @@ export const {
     setContestDetails,
     setContestCategory,
     setContestStrategy,
-    setUserContestParticipations,
-    setProfileUserContestParticipationsPage,
     updateContestCategoryBreadcrumbItem,
     clearContestCategoryBreadcrumbItems,
     setContestCategories,
