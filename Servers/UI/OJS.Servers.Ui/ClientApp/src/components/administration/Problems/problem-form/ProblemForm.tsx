@@ -13,9 +13,8 @@ import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../ut
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import FileUpload from '../../common/file-upload/FileUpload';
+import ProblemFormBasicInfo from '../problem-form-basic-info.tsx/ProblemFormBasicInfo';
 import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissionTypes';
-
-import ProblemFormBasicInfo from './problem-form-basic-info.tsx/ProblemFormBasicInfo';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';

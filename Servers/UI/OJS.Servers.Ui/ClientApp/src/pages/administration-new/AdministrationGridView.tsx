@@ -9,7 +9,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
-import LegendBox from '../../components/administration/common/legendBox/LegendBox';
+import LegendBox from '../../components/administration/common/legend-box/LegendBox';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 

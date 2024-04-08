@@ -4,16 +4,16 @@ import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, MenuItem, T
 import {
     IContestCategories,
     IContestCategoryAdministration,
-} from '../../../../common/types';
+} from '../../../common/types';
 import {
     useCreateContestCategoryMutation,
     useGetCategoriesQuery,
     useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation,
-} from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
-import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
+} from '../../../redux/services/admin/contestCategoriesAdminService';
+import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+import AdministrationFormButtons from '../common/administration-form-buttons/AdministrationFormButtons';
 
 import styles from './CategoryEdit.module.scss';
 

@@ -7,8 +7,8 @@ import { renderErrorMessagesAlert } from '../../../utils/render-utils';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import TabsInView from '../common/tabs/TabsInView';
 
-import ResourcesInProblemView from './problem-resources/problem-resources-in-problem-view/ResourcesInProblemView';
-import ProblemForm from './problemForm/ProblemForm';
+import ProblemForm from './problem-form/ProblemForm';
+import ResourcesInProblemView from './problem-resources-in-problem-view/ResourcesInProblemView';
 import TestsInProblemView from './tests-in-problem-view/TestsInProblemView';
 
 enum PROBLEM_LISTED_DATA {

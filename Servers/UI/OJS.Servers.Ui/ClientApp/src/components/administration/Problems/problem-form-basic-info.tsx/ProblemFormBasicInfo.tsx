@@ -2,14 +2,14 @@
 import { Box, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
-import { ContestVariation } from '../../../../../common/contest-types';
-import { ProblemGroupTypes } from '../../../../../common/enums';
-import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../../common/labels';
-import { IProblemAdministration, IProblemGroupDropdownModel } from '../../../../../common/types';
-import { useGetCheckersForProblemQuery } from '../../../../../redux/services/admin/checkersAdminService';
+import { ContestVariation } from '../../../../common/contest-types';
+import { ProblemGroupTypes } from '../../../../common/enums';
+import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../common/labels';
+import { IProblemAdministration, IProblemGroupDropdownModel } from '../../../../common/types';
+import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
 
 // eslint-disable-next-line css-modules/no-unused-class
-import formStyles from '../../../common/styles/FormStyles.module.scss';
+import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IProblemFormBasicInfoProps {
     onChange: Function;

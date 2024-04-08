@@ -48,7 +48,7 @@ import AdministrationContestPage from '../../administration/contests/Administrat
 import AdministrationExamGroupPage from '../../administration/exam-groups/AdministrationExamGroupPage';
 import AdministrationProblemGroup from '../../administration/problem-groups/AdministrationProblemGroup';
 import AdministrationProblemResource from '../../administration/problem-resources/AdministrationProblemResource';
-import AdministrationProblem from '../../administration/Problems/AdministrationProblem';
+import AdministrationProblem from '../../administration/problems/AdministrationProblem';
 import AdministrationRole from '../../administration/roles/AdministrationRole';
 import AdministrationTest from '../../administration/tests/AdministrationTest';
 import AdministrationUser from '../../administration/users/AdministrationUser';
