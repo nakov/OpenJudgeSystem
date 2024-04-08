@@ -31,6 +31,10 @@ module.exports = {
         'simple-import-sort',
     ],
     settings: { 'import/resolver': { typescript: {} } },
+    ignorePatterns: [
+        '*.cjs',
+        'vite.config.js'
+    ],
     rules: {
         "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/no-static-element-interactions": "off",
