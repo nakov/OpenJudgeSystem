@@ -53,22 +53,22 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
                 => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
             .WithName("Duration")
             .NotNull()
-            .WithMessage("Cannot change duration or type in an active contest.")
-            .When(model => model.OperationType is CrudOperationType.Update);
+            .When(model => model.OperationType is CrudOperationType.Update)
+            .WithMessage("Cannot change duration or type in an active contest.");
 
         this.RuleFor(model => model)
             .Must(ValidateOnlineContestProblemGroups)
             .WithName("Number of problem groups")
             .NotNull()
-            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}")
             .When(model => model.OperationType == CrudOperationType.Create &&
-                           model.Type == ContestType.OnlinePracticalExam.ToString());
+                           model.Type == ContestType.OnlinePracticalExam.ToString())
+            .WithMessage($"The number of problem groups cannot be less than 0 and more than {ProblemGroupsCountLimit}");
 
         this.RuleFor(model => model.Id)
             .MustAsync(async (x, _) => !await this.activityService.IsContestActive(x))
             .NotNull()
-            .WithMessage($"Cannot delete active contest")
-            .When(model => model.OperationType is CrudOperationType.Delete);
+            .When(model => model.OperationType is CrudOperationType.Delete)
+            .WithMessage($"Cannot delete active contest");
     }
 
     private static bool BeAValidContestType(string? type)
