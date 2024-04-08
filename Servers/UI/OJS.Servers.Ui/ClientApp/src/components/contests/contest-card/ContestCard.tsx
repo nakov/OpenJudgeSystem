@@ -155,9 +155,7 @@ const ContestCard = (props: IContestCardProps) => {
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
                 {
-                    isLoggedIn && internalUser.canAccessAdministration
-                        ? <div className={styles.contestCardId}>{id}</div>
-                        : null
+                    isLoggedIn && internalUser.canAccessAdministration && <div className={styles.contestCardSubTitle}>{id}</div>
                 }
                 <div className={styles.contestDetailsFragmentsWrapper}>
                     {renderContestDetailsFragment(iconNames.time, preciseFormatDate(new Date(contestStartTime), 'HH:MM'))}
