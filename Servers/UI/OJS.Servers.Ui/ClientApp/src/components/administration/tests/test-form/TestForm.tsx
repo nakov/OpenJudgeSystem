@@ -21,9 +21,11 @@ interface ITestFormProps {
     id?:number;
     problemName?: string;
     isEditMode?: boolean;
+
+    problemId?: number;
 }
 const TestForm = (props: ITestFormProps) => {
-    const { id = 0, isEditMode = true, problemName = '' } = props;
+    const { id = 0, isEditMode = true, problemName = '', problemId = 0 } = props;
 
     const navigate = useNavigate();
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
@@ -36,7 +38,7 @@ const TestForm = (props: ITestFormProps) => {
         retestProblem: false,
         type: Object.keys(TestTypes).filter((key) => isNaN(Number(key)))[0],
         hideInput: false,
-        problemId: id,
+        problemId,
         problemName,
     });
 
