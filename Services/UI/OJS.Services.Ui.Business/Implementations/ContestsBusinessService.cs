@@ -340,7 +340,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participatedContestsInPage =
                 await this.contestsData.ApplyFiltersSortAndPagination<ContestForListingServiceModel>(
-                    this.contestsData.GetContestsByUsernameOrderedByParticipantCreatedOnDesc(username),
+                    this.contestsData.GetLatestForParticipantByUsername(username),
                     sortAndFilterModel);
 
             Dictionary<int, ParticipantResultServiceModel?>? participantResultsByContest = null;
