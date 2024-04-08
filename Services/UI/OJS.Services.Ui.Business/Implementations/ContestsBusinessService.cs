@@ -23,7 +23,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Linq;
     using System.Threading.Tasks;
     using X.PagedList;
-    using static OJS.Common.PaginationConstants.Contests;
+    using static OJS.Services.Common.PaginationConstants.Contests;
 
     public class ContestsBusinessService : IContestsBusinessService
     {
@@ -380,13 +380,13 @@ namespace OJS.Services.Ui.Business.Implementations
             => await this.contestsData
                 .GetAllCompetable<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.EndTime)
-                .TakeAsync(DefaultContestsToTake);
+                .TakeAsync(DefaultContestsPerPage);
 
         public async Task<IEnumerable<ContestForHomeIndexServiceModel>> GetAllPastContests()
             => await this.contestsData
                 .GetAllExpired<ContestForHomeIndexServiceModel>()
                 .OrderByDescendingAsync(ac => ac.EndTime)
-                .TakeAsync(DefaultContestsToTake);
+                .TakeAsync(DefaultContestsPerPage);
 
         public async Task DeleteById(int id)
         {
@@ -464,7 +464,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             model ??= new ContestFiltersServiceModel();
             model.PageNumber ??= 1;
-            model.ItemsPerPage ??= DefaultContestsToTake;
+            model.ItemsPerPage ??= DefaultContestsPerPage;
 
             // TODO: This is repeated in GetAllByFiltersAndSorting
             if (model.CategoryIds.Count() == 1)

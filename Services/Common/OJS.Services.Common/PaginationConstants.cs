@@ -1,6 +1,6 @@
-namespace OJS.Common;
+namespace OJS.Services.Common;
 
-public static partial class PaginationConstants
+public static class PaginationConstants
 {
     public static class Submissions
     {
@@ -13,8 +13,6 @@ public static partial class PaginationConstants
 
     public static class Contests
     {
-        public const int DefaultContestsToTake = 6;
-
         public const int DefaultContestsPerPage = 10;
     }
 }

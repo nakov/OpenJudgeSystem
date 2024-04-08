@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
-using static OJS.Services.Ui.Business.PaginationConstants.Submissions;
+using static OJS.Services.Common.PaginationConstants.Submissions;
 
 public class SubmissionsController : BaseApiController
 {
