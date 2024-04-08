@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { usersSliceName } from '../../common/reduxNames';
-import { IUsersState } from '../../common/types';
+import { IUserProfileType, IUsersState } from '../../common/types';
 
 const initialState: IUsersState = { profile: null };
 
@@ -9,7 +9,7 @@ export const usersSlice = createSlice({
     name: usersSliceName,
     initialState,
     reducers: {
-        setProfile: (state: IUsersState, action) => {
+        setProfile: (state: IUsersState, action: PayloadAction<IUserProfileType | null>) => {
             state.profile = action.payload;
         },
     },
