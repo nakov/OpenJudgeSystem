@@ -3,7 +3,7 @@
 /* eslint-disable no-undefined */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, debounce, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { CREATE, EDIT, RECORD } from '../../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
