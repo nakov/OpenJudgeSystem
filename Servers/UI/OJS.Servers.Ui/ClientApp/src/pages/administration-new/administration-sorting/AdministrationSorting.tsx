@@ -19,6 +19,9 @@ interface IAdministrationSortProps {
     withSearchParams?: boolean;
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
+
+    isFiltersOpened: boolean;
+    setOpenedSorters: Dispatch<SetStateAction<string | null>>;
 }
 
 interface IAdministrationSorter {
@@ -33,7 +36,16 @@ const orderByOptions = [
 ];
 
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns, selectedSorters, setStateAction, searchParams, setSearchParams, withSearchParams = true } = props;
+    const {
+        columns,
+        selectedSorters,
+        setStateAction,
+        searchParams,
+        setSearchParams,
+        withSearchParams = true,
+        isFiltersOpened,
+        setOpenedSorters,
+    } = props;
     const defaultSorter = {
         columnName: '',
         orderBy: SortingEnum.ASC,
@@ -93,6 +105,12 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     }, []);
 
     useEffect(() => {
+        if (isFiltersOpened) {
+            setAnchor(null);
+        }
+    }, [ isFiltersOpened ]);
+
+    useEffect(() => {
         const formatSorterToString = (sorter: IAdministrationSorter) => {
             if (!sorter?.columnName) {
                 return;
@@ -128,6 +146,10 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
     }, [ selectedSorters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+        if (!anchor) {
+            setOpenedSorters('sorters');
+        }
+
         setAnchor(anchor
             ? null
             : event.currentTarget);

@@ -27,6 +27,8 @@ interface IAdministrationFilterProps {
     selectedFilters: Array<IAdministrationFilter>;
     setStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
     withSearchParams?: boolean;
+    isSortersOpened: boolean;
+    setOpenedFilters: Dispatch<SetStateAction<string | null>>;
 }
 
 interface IAdministrationFilter {
@@ -66,15 +68,13 @@ const DROPDOWN_OPERATORS = {
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Not Equals', value: 'notequals' },
     ],
     [FilterColumnTypeEnum.DATE]: [
-        { name: 'Equals', value: 'equals' },
+        // { name: 'Equals', value: 'equals' },
         { name: 'Greater Than', value: 'greaterthan' },
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Not Equals', value: 'notequals' },
     ],
 };
 
@@ -99,7 +99,17 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 const filterSeparator = '&&;';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, withSearchParams = true, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
+    const {
+        columns,
+        withSearchParams = true,
+        selectedFilters,
+        setStateAction,
+        searchParams,
+        setSearchParams,
+        isSortersOpened,
+        setOpenedFilters,
+    } = props;
+
     const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
@@ -126,6 +136,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (isSortersOpened) {
+            setAnchor(null);
+        }
+    }, [ isSortersOpened ]);
 
     useEffect(() => {
         if (!searchParams || !setSearchParams) {
@@ -168,6 +184,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, [ selectedFilters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+        if (!anchor) {
+            setOpenedFilters('filters');
+        }
         setAnchor(anchor
             ? null
             : event.currentTarget);

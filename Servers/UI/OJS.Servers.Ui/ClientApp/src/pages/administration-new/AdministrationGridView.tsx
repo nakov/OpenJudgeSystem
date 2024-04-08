@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
@@ -71,6 +71,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         return '';
     };
 
+    const [ opened, setOpened ] = useState<string | null>(null);
+
     const renderActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
             {renderActionButtons
@@ -104,6 +106,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setFilterStateAction}
                       selectedFilters={selectedFilters}
                       columns={filtersColumns}
+                      isSortersOpened={opened === 'sorters'}
+                      setOpenedFilters={setOpened}
                     />
 
                     <AdministrationSorting
@@ -113,6 +117,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setSorterStateAction}
                       selectedSorters={selectedSorters}
                       columns={sortingColumns}
+                      isFiltersOpened={opened === 'filters'}
+                      setOpenedSorters={setOpened}
                     />
                 </div>
                 )}
