@@ -103,3 +103,10 @@
     }
   }
 }
+
+.solutionDownloadFileErrorWrapper {
+  background-color: colors.$primary-red;
+  border-radius: border-radiuses.$br-6;
+  padding: spacings.$sp-12;
+  margin: spacings.$sp-18 0;
+}

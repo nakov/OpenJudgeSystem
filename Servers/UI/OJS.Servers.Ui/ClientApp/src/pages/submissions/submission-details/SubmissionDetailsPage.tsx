@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ import { ITestRun } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
-import { useGetSubmissionDetailsQuery } from '../../../redux/services/submissionsService';
+import { useGetSubmissionDetailsQuery, useLazyGetSubmissionUploadedFileQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { defaultDateTimeFormat, formatDate } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -28,8 +28,10 @@ const SubmissionDetailsPage = () => {
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
+    const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
     const [ getContestById ] = useLazyGetContestByIdQuery();
+    const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
 
     // fetch submission details if not present (when opened from url directly)
     // in order to load breadcrumbs and name of contest properly
@@ -61,6 +63,26 @@ const SubmissionDetailsPage = () => {
         isEligibleForRetest,
     } = data || {};
 
+    const handleDownloadFile = async () => {
+        try {
+            setDownloadSolutionErrorMessage('');
+            const response = await downloadUploadedFile({ id: solutionId });
+
+            if (response.data) {
+                const blob = new Blob([ response.data.blob ]);
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `submission-${solutionId}.zip`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        } catch {
+            setDownloadSolutionErrorMessage('Error download solution submitted file!');
+        }
+    };
+
     const renderSolutionTitle = useCallback(() => (
         <div className={styles.solutionTitle}>
             Solution #
@@ -81,42 +103,48 @@ const SubmissionDetailsPage = () => {
         const { allowBinaryFilesUpload } = submissionType || {};
 
         return (
-            <div className={styles.submissionDetailsWrapper}>
-                <div>
-                    <div className={styles.detailsRow}>
-                        <span>
-                            Submitted on:
-                        </span>
-                        <span>{formatDate(createdOn, defaultDateTimeFormat)}</span>
+            <>
+                <div className={styles.submissionDetailsWrapper}>
+                    <div>
+                        <div className={styles.detailsRow}>
+                            <span>
+                                Submitted on:
+                            </span>
+                            <span>{formatDate(createdOn, defaultDateTimeFormat)}</span>
+                        </div>
+                        <div className={styles.detailsRow}>
+                            <span>Allowed memory:</span>
+                            <span>
+                                {(maxUsedMemory / 1000000).toFixed(2)}
+                                {' '}
+                                MB
+                            </span>
+                        </div>
                     </div>
-                    <div className={styles.detailsRow}>
-                        <span>Allowed memory:</span>
-                        <span>
-                            {(maxUsedMemory / 1000000).toFixed(2)}
-                            {' '}
-                            MB
-                        </span>
+                    <div>
+                        <div className={styles.strategyWrapper}>
+                            <span style={{
+                                border: `2px solid ${themeColors.baseColor100}`,
+                                color: `${themeColors.baseColor100}`,
+                            }}
+                            >
+                                {submissionType?.name}
+                            </span>
+                        </div>
+                        {allowBinaryFilesUpload && (
+                        <div className={styles.buttonWrapper}>
+                            <Button text="DOWNLOAD" onClick={handleDownloadFile} />
+                        </div>
+                        )}
                     </div>
                 </div>
-                <div className={styles.strategyWrapper}>
-                    <span style={{
-                        border: `2px solid ${themeColors.baseColor100}`,
-                        color: `${themeColors.baseColor100}`,
-                    }}
-                    >
-                        {submissionType?.name}
-                    </span>
-                </div>
-                {allowBinaryFilesUpload && (
-                    <div className={styles.buttonWrapper}>
-                        <Button text="DOWNLOAD" onClick={() => {}} />
-                    </div>
-                )}
-            </div>
+                {downloadSolutionErrorMessage &&
+                    (<div className={styles.solutionDownloadFileErrorWrapper}>{downloadSolutionErrorMessage}</div>)}
+            </>
         );
     }, [ submissionType, createdOn, maxUsedMemory, themeColors.baseColor100 ]);
 
-    const renderSolutionTestDetails = () => {
+    const renderSolutionTestDetails = useCallback(() => {
         if (!isCompiledSuccessfully) {
             return (
                 <div className={styles.compileTimeErrorWrapper}>
@@ -141,7 +169,7 @@ const SubmissionDetailsPage = () => {
         }
 
         return testRuns.map((testRun: ITestRun, idx: number) => <SubmissionTest testRun={testRun} idx={idx + 1} />);
-    };
+    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns ]);
 
     if (isLoading) {
         return (
@@ -163,10 +191,12 @@ const SubmissionDetailsPage = () => {
                     <div className={styles.innerBodyWrapper}>
                         {renderSolutionTitle()}
                         {renderSolutionTestDetails()}
-                        <div className={styles.codeContentWrapper}>
-                            <div>Source Code</div>
-                            <CodeEditor code={content} readOnly />
-                        </div>
+                        { !isEligibleForRetest || !submissionType.allowBinaryFilesUpload && (
+                            <div className={styles.codeContentWrapper}>
+                                <div>Source Code</div>
+                                <CodeEditor code={content} readOnly />
+                            </div>
+                        )}
                         {renderSolutionDetails()}
                     </div>
                 </div>
