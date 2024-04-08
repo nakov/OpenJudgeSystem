@@ -43,7 +43,7 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
 
     public int PracticeMaximumPoints { get; set; }
 
-    public ParticipantResultServiceModel? UserParticipationResult { get; set; }
+    public ContestParticipantResultServiceModel? UserParticipationResult { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Contest, ContestForListingServiceModel>()

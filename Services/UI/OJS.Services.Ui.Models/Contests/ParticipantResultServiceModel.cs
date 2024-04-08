@@ -10,28 +10,18 @@ public class ParticipantResultServiceModel : IMapExplicitly
 {
     public int ContestId { get; set; }
 
-    public int CompetePoints { get; set; }
+    public bool IsOfficial { get; set; }
 
-    public int PracticePoints { get; set; }
+    public int Points { get; set; }
 
     public DateTime CreatedOn { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ParticipantResultServiceModel>()
             .ForMember(
-                d => d.PracticePoints,
+                d => d.Points,
                 opt =>
                     opt.MapFrom(src => src.Scores
-                        .Where(s => !s.IsOfficial)
-                        .Sum(s => s.Points)))
-            .ForMember(
-                d => d.CompetePoints,
-                opt =>
-                    opt.MapFrom(src => src.Scores
-                        .Where(s => s.IsOfficial)
-                        .Sum(s => s.Points)))
-            .ForMember(
-                d => d.CreatedOn,
-                opt =>
-                    opt.MapFrom(src => src.CreatedOn));
+                        .Where(s => s.IsOfficial == src.IsOfficial)
+                        .Sum(s => s.Points)));
 }

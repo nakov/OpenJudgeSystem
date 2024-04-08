@@ -343,7 +343,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     this.contestsData.GetLatestForParticipantByUsername(username),
                     sortAndFilterModel);
 
-            Dictionary<int, ParticipantResultServiceModel?>? participantResultsByContest = null;
+            Dictionary<int, List<ParticipantResultServiceModel>>? participantResultsByContest = null;
 
             var loggedInUser = this.userProviderService.GetCurrentUser();
             var loggedInUserProfile = await this.usersBusinessService.GetUserProfileById(loggedInUser.Id);
@@ -396,7 +396,7 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.contestsData.SaveChanges();
         }
 
-        private static async Task<Dictionary<int, ParticipantResultServiceModel?>> MapParticipationResultsToContestsInPage(
+        private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
             PagedResult<ContestForListingServiceModel> participatedContestsInPage,
             IQueryable<Participant> participants)
         {
@@ -411,15 +411,21 @@ namespace OJS.Services.Ui.Business.Implementations
                 .MapCollection<ParticipantResultServiceModel>()
                 .ToListAsync();
 
+            var dict = new Dictionary<int, List<ParticipantResultServiceModel>>();
             // Map participant results to contests in page
-            var participantResultsByContest = participantsInPage
-                .GroupBy(p => p.ContestId) // Group by ContestId to handle duplicates
-                .Select(g => g.FirstOrDefault())
-                .Where(p => p != null)
-                .ToDictionary(
-                    p => p!.ContestId, p => p);
+            participantsInPage
+                .ForEach(pr =>
+                {
+                    if (dict.ContainsKey(pr!.ContestId))
+                    {
+                        dict[pr.ContestId].Add(pr);
+                        return;
+                    }
 
-            return participantResultsByContest;
+                    dict[pr.ContestId] = new List<ParticipantResultServiceModel> { pr, };
+                });
+
+            return dict;
         }
 
         private static bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
@@ -434,7 +440,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
         private async Task<PagedResult<ContestForListingServiceModel>> PrepareActivityAndResults(
             PagedResult<ContestForListingServiceModel> pagedContests,
-            Dictionary<int, ParticipantResultServiceModel?>? participantResultsByContest = null)
+            Dictionary<int, List<ParticipantResultServiceModel>>? participantResultsByContest = null)
         {
             var participantsCount = await this.contestParticipantsCacheService
                 .GetParticipantsCount(
@@ -452,8 +458,29 @@ namespace OJS.Services.Ui.Business.Implementations
 
                 if (participantResultsByContest != null)
                 {
-                    // TODO: If not admin or participant do not return these
-                    c.UserParticipationResult = participantResultsByContest[c.Id];
+                    if (participantResultsByContest[c.Id].Count > 1)
+                    {
+                        // Compete and practice participants
+                        var practiceParticipant = participantResultsByContest[c.Id].First(p => !p.IsOfficial);
+
+                        var competeParticipant = participantResultsByContest[c.Id].First(p => p.IsOfficial);
+
+                        c.UserParticipationResult = new ContestParticipantResultServiceModel
+                        {
+                            CompetePoints = competeParticipant.Points,
+                            PracticePoints = practiceParticipant.Points,
+                        };
+
+                        return;
+                    }
+
+                    var participant = participantResultsByContest[c.Id].First();
+
+                    c.UserParticipationResult = new ContestParticipantResultServiceModel
+                    {
+                        CompetePoints = participant.IsOfficial ? participant.Points : 0,
+                        PracticePoints = !participant.IsOfficial ? participant.Points : 0,
+                    };
                 }
             });
 
