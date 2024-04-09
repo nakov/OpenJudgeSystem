@@ -458,28 +458,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
                 if (participantResultsByContest != null)
                 {
-                    if (participantResultsByContest[c.Id].Count > 1)
-                    {
-                        // Compete and practice participants
-                        var practiceParticipant = participantResultsByContest[c.Id].First(p => !p.IsOfficial);
-
-                        var competeParticipant = participantResultsByContest[c.Id].First(p => p.IsOfficial);
-
-                        c.UserParticipationResult = new ContestParticipantResultServiceModel
-                        {
-                            CompetePoints = competeParticipant.Points,
-                            PracticePoints = practiceParticipant.Points,
-                        };
-
-                        return;
-                    }
-
-                    var participant = participantResultsByContest[c.Id].First();
+                    var participants = participantResultsByContest[c.Id];
+                    var competePoints = participants.Where(p => p.IsOfficial).Select(p => p.Points).SingleOrDefault();
+                    var practicePoints = participants.Where(p => !p.IsOfficial).Select(p => p.Points).SingleOrDefault();
 
                     c.UserParticipationResult = new ContestParticipantResultServiceModel
                     {
-                        CompetePoints = participant.IsOfficial ? participant.Points : 0,
-                        PracticePoints = !participant.IsOfficial ? participant.Points : 0,
+                        CompetePoints = competePoints,
+                        PracticePoints = practicePoints,
                     };
                 }
             });
