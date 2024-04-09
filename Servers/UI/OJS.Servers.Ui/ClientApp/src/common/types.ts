@@ -711,6 +711,19 @@ interface ILecturerInContestInListModel {
     contestName: string;
 }
 
+interface ISettingInListModel {
+    id: number;
+    name: string;
+    value: string;
+    type: string;
+}
+
+interface ISettingAdministrationModel {
+    id: number | null;
+    name: string;
+    value: string;
+    type: string;
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -786,4 +799,6 @@ export type {
     IUserInListModel,
     IUserAdministrationModel,
     ILecturerInContestInListModel,
+    ISettingInListModel,
+    ISettingAdministrationModel,
 };

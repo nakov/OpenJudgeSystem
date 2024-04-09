@@ -24,10 +24,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 
 interface IUsersInRoleViewProps {
     roleId: string;
+    roleName: string;
 }
 
 const UsersInRoleView = (props: IUsersInRoleViewProps) => {
-    const { roleId } = props;
+    const { roleId, roleName } = props;
 
     const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
     const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
@@ -202,6 +203,8 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
             <form className={formStyles.form}>
                 <Typography variant="h4" className="centralize">
                     Add user to role
+                    {' '}
+                    {roleName}
                 </Typography>
                 <FormControl className={formStyles.inputRow}>
                     <Autocomplete

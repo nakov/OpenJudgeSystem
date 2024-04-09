@@ -14,19 +14,21 @@ const AdministrationRole = () => {
     const { pathname } = useLocation();
     const [ , , , roleId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(ROLE_LISTED_DATA.USERS);
+    const [ roleName, setRoleName ] = useState<string>('');
 
     const onTabChange = (event: React.SyntheticEvent, newValue: ROLE_LISTED_DATA) => {
         setTabName(newValue);
     };
 
     const returnRoleForm = () => (
-        <RoleForm id={roleId} isEditMode />
+        <RoleForm id={roleId} isEditMode getRoleName={(role:string) => setRoleName(role)} />
     );
 
     const returnUsersInRoleView = (key:string) => (
         <UsersInRoleView
           key={key}
           roleId={roleId}
+          roleName={roleName}
         />
     );
 
