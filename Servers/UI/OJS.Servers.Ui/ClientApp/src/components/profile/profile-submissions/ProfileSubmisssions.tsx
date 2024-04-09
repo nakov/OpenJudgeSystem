@@ -3,8 +3,6 @@ import isNil from 'lodash/isNil';
 
 import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
 
 interface IProfileSubmissionsProps {
