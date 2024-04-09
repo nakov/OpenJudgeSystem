@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
-import CopyModal, { AllowedOperations } from '../../../components/administration/Problems/copy-modal/CopyModal';
 import ProblemForm from '../../../components/administration/problems/problem-form/ProblemForm';
 import ProblemRetest from '../../../components/administration/problems/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -16,6 +15,7 @@ import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapU
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnProblemsNonFilterableColumns } from './problemGridColumns';
+import CopyModal, { AllowedOperations } from '../../../components/administration/Problems/copy-modal/CopyModal';
 
 const AdministrationProblemsPage = () => {
     const [ searchParams ] = useSearchParams();

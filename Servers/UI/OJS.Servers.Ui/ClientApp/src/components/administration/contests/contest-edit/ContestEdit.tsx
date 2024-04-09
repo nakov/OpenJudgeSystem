@@ -64,6 +64,7 @@ const ContestEdit = (props:IContestEditProps) => {
         type: getEnumMemberName(ContestVariation, ContestVariation.Exercise).toString(),
         numberOfProblemGroups: 0,
         duration: undefined,
+        canBeCompeted: false,
     });
 
     const [ contestValidations, setContestValidations ] = useState({
