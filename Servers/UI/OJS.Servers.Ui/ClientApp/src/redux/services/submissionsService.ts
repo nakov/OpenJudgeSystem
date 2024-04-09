@@ -5,6 +5,7 @@ import { defaultPathIdentifier } from '../../common/constants';
 import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
 import { IGetSubmissionsUrlParams, IGetSubmissionsByUserParams } from '../../common/url-types';
+import { ISubmissionType } from '../../hooks/submissions/types';
 
 const submissionsService = createApi({
     reducerPath: submissionsServiceName,
@@ -57,7 +58,7 @@ const submissionsService = createApi({
                 },
             }),
         }),
-        getSubmissionDetails: builder.query<any, { id: number }>({
+        getSubmissionDetails: builder.query<ISubmissionType, { id: number }>({
             query: ({ id }) => (
                 { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
         }),

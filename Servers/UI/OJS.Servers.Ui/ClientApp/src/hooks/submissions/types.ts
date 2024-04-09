@@ -19,6 +19,9 @@ interface ITestRunType {
     expectedOutputFragment: string;
     userOutputFragment: string;
     orderBy: number;
+    input: string;
+    isTrialTest: boolean;
+    showInput: boolean;
 }
 
 interface ISubmissionType {
@@ -42,6 +45,9 @@ interface ISubmissionType {
     processingComment: string;
     completedExecutionOn?: Date;
     contestId:number;
+    memoryLimit: number;
+    user: IUserProfileType;
+    isEligibleForRetest: boolean;
 }
 
 interface ITestRunDetailsType extends ITestRunType {

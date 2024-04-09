@@ -8,13 +8,14 @@ import Button from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionTest from '../../../components/submissions/submission-test/SubmissionTest';
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
-import { ITestRun } from '../../../hooks/submissions/types';
+import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useGetSubmissionDetailsQuery, useLazyGetSubmissionUploadedFileQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { defaultDateTimeFormat, formatDate } from '../../../utils/dates';
+import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './SubmissionsDetailsPage.module.scss';
@@ -62,24 +63,17 @@ const SubmissionDetailsPage = () => {
         createdOn,
         isCompiledSuccessfully,
         compilerComment,
-        maxUsedMemory,
+        memoryLimit,
         isEligibleForRetest,
     } = data || {};
 
     const handleDownloadFile = useCallback(async () => {
         try {
             setDownloadSolutionErrorMessage('');
-            const response = await downloadUploadedFile({ id: solutionId });
+            const response = await downloadUploadedFile({ id: solutionId! });
 
             if (response.data) {
-                const blob = new Blob([ response.data.blob ]);
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.setAttribute('download', `submission-${solutionId}.zip`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                downloadFile(response.data.blob, `submission-${solutionId}.zip`);
             }
         } catch {
             setDownloadSolutionErrorMessage('Error download solution submitted file!');
@@ -113,12 +107,12 @@ const SubmissionDetailsPage = () => {
                             <span>
                                 Submitted on:
                             </span>
-                            <span>{formatDate(createdOn, defaultDateTimeFormat)}</span>
+                            <span>{formatDate(createdOn!, defaultDateTimeFormat)}</span>
                         </div>
                         <div className={styles.detailsRow}>
                             <span>Allowed memory:</span>
                             <span>
-                                {(maxUsedMemory / 1000000).toFixed(2)}
+                                {(memoryLimit! / 1000000).toFixed(2)}
                                 {' '}
                                 MB
                             </span>
@@ -148,7 +142,7 @@ const SubmissionDetailsPage = () => {
     }, [
         submissionType,
         createdOn,
-        maxUsedMemory,
+        memoryLimit,
         downloadSolutionErrorMessage,
         handleDownloadFile,
         themeColors.baseColor100,
@@ -178,7 +172,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        return testRuns.map((testRun: ITestRun, idx: number) => <SubmissionTest testRun={testRun} idx={idx + 1} />);
+        return testRuns?.map((testRun: ITestRunType, idx: number) => <SubmissionTest testRun={testRun} idx={idx + 1} />);
     }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment ]);
 
     if (isLoading) {
@@ -197,7 +191,7 @@ const SubmissionDetailsPage = () => {
             <div>
                 <div className={styles.submissionTitle}>{name}</div>
                 <div className={styles.bodyWrapper}>
-                    <SubmissionTestRuns testRuns={testRuns} />
+                    <SubmissionTestRuns testRuns={testRuns || []} />
                     <div className={styles.innerBodyWrapper}>
                         {renderSolutionTitle()}
                         {renderSolutionTestDetails()}

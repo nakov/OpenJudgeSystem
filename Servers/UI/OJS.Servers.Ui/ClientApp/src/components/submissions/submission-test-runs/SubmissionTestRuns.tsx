@@ -4,14 +4,14 @@ import { FaCheck, FaRegClock } from 'react-icons/fa';
 import { GoPrimitiveDot } from 'react-icons/go';
 import { IoCloseSharp } from 'react-icons/io5';
 
-import { ITestRun } from '../../../hooks/submissions/types';
+import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import { testResultTypes } from '../submission-test/SubmissionTest';
 
 import styles from './SubmissionTestRuns.module.scss';
 
 interface ISubmissionTestRunsProps {
-    testRuns?: ITestRun[];
+    testRuns?: ITestRunType[];
 }
 
 const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
@@ -21,7 +21,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
-    const renderTestRunDetails = (testRun: ITestRun, idx: number) => {
+    const renderTestRunDetails = (testRun: ITestRunType, idx: number) => {
         const { resultType } = testRun;
 
         const getTestColorByResultType = (resType: string) => {

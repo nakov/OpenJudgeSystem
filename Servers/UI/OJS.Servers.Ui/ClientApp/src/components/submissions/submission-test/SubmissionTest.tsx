@@ -4,7 +4,7 @@ import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
 import { Popover } from '@mui/material';
 
-import { ITestRun } from '../../../hooks/submissions/types';
+import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import Diff from '../../diff/Diff';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
@@ -12,7 +12,7 @@ import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button'
 import styles from './SubmissionTestRun.module.scss';
 
 interface ISubmissionTestRun {
-    testRun: ITestRun;
+    testRun: ITestRunType;
     idx: number;
 }
 
