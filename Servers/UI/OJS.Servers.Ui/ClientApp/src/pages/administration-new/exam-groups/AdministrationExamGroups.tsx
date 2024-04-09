@@ -10,6 +10,7 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import {
     useDeleteExamGroupMutation,
     useGetAllAdminExamGroupsQuery,
+    useLazyExportExamGroupsToExcelQuery,
 } from '../../../redux/services/admin/examGroupsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
@@ -112,6 +113,7 @@ const AdministrationExamGroupsPage = () => {
               { showModal: openShowCreateExamGroupModal, modal: (i) => renderCreateExamGroupModal(i) },
               { showModal: openEditExamGroupModal, modal: (i) => renderEditExamGroupModal(i) },
           ]}
+          excelMutation={useLazyExportExamGroupsToExcelQuery}
         />
     );
 };
