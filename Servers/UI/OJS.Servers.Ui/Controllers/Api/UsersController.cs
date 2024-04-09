@@ -31,7 +31,7 @@ public class UsersController : BaseApiController
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(typeof(UserProfileResponseModel), Status200OK)]
-    public async Task<IActionResult> GetProfileInfo([FromQuery] string username)
+    public async Task<IActionResult> GetProfileInfo([FromQuery] string? username)
         => await this.usersBusiness
             .GetUserProfileByUsername(username)
             .Map<UserProfileResponseModel>()

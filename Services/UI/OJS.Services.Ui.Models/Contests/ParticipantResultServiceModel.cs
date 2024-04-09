@@ -21,7 +21,5 @@ public class ParticipantResultServiceModel : IMapExplicitly
             .ForMember(
                 d => d.Points,
                 opt =>
-                    opt.MapFrom(src => src.Scores
-                        .Where(s => s.IsOfficial == src.IsOfficial)
-                        .Sum(s => s.Points)));
+                    opt.MapFrom(src => src.TotalScoreSnapshot));
 }

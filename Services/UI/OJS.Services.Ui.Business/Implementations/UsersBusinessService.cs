@@ -31,7 +31,7 @@
         {
             var currentUser = this.userProvider.GetCurrentUser();
 
-            if (username.IsNull() || username!.IsEmpty())
+            if (currentUser.Id == null && (username.IsNull() || username!.IsEmpty()))
             {
                 throw new BusinessServiceException("Empty username is not valid");
             }

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import isNil from 'lodash/isNil';
 
-import { useGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
+import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
@@ -13,7 +13,6 @@ interface IProfileSubmissionsProps {
 }
 
 const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSubmissionsProps) => {
-    const [ shouldSkipFetchData, setShouldSkipFetchData ] = useState<boolean>(true);
     const [ shouldRender, setShouldRender ] = useState<boolean>(false);
     const [ userSubmissionsPage, setUserSubmissionsPage ] = useState<number>(1);
 
@@ -22,15 +21,11 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
 
     const dispatch = useAppDispatch();
 
-    const {
+    const [ getUserSubmissionsQuery, {
         data: userSubmissions,
-        error: userSubmissionsQueryError,
         isLoading: areSubmissionsLoading,
-    } = useGetUserSubmissionsQuery({
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-        username: profile?.userName!,
-        page: userSubmissionsPage,
-    }, { skip: shouldSkipFetchData });
+        error: userSubmissionsQueryError,
+    } ] = useLazyGetUserSubmissionsQuery();
 
     useEffect(() => {
         const isProfileAvailable = !isNil(profile);
@@ -40,12 +35,15 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         const isNonOwnerAccessNotAllowed = !userIsProfileOwner && (!hasAdminAccess || !isChosenInToggle);
 
         if (!canAccess || isOwnerAccessNotAllowed || isNonOwnerAccessNotAllowed) {
-            setShouldSkipFetchData(true);
             return;
         }
 
-        setShouldSkipFetchData(false);
-    }, [ internalUser, isChosenInToggle, isLoggedIn, profile, userIsProfileOwner ]);
+        getUserSubmissionsQuery({
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            username: profile?.userName!,
+            page: userSubmissionsPage,
+        });
+    }, [ getUserSubmissionsQuery, internalUser, isChosenInToggle, isLoggedIn, profile, userIsProfileOwner, userSubmissionsPage ]);
 
     useEffect(() => {
         if (!isChosenInToggle || areSubmissionsLoading || isNil(userSubmissions)) {
@@ -54,11 +52,11 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         }
 
         setShouldRender(true);
-    }, [ areSubmissionsLoading, dispatch, isChosenInToggle, shouldSkipFetchData, userSubmissions ]);
+    }, [ areSubmissionsLoading, dispatch, isChosenInToggle, userSubmissions ]);
 
     const render = useCallback(() => {
         if (areSubmissionsLoading) {
-            return (<SpinningLoader style={{ ...flexCenterObjectStyles }} />);
+            return (<div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>);
         }
 
         if (!isNil(userSubmissionsQueryError)) {

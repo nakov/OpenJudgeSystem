@@ -52,13 +52,13 @@ const {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
-    useGetUserSubmissionsQuery,
+    useLazyGetUserSubmissionsQuery,
 } = submissionsService;
 
 export {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
-    useGetUserSubmissionsQuery,
+    useLazyGetUserSubmissionsQuery,
 };
 export default submissionsService;

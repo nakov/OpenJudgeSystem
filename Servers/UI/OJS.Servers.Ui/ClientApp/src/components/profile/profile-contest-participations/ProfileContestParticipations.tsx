@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import React, { useCallback, useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
@@ -7,8 +5,9 @@ import isNil from 'lodash/isNil';
 import { SortType, SortTypeDirection } from '../../../common/contest-types';
 import { IGetContestParticipationsForUserQueryParams, IIndexContestsType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import { useGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
+import { useLazyGetContestsParticipationsForUserQuery } from '../../../redux/services/contestsService';
 import { useAppSelector } from '../../../redux/store';
+import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import ContestCard from '../../contests/contest-card/ContestCard';
@@ -24,7 +23,6 @@ interface IProfileContestParticipationsProps {
 }
 
 const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: IProfileContestParticipationsProps) => {
-    const [ shouldSkipFetchData, setShouldSkipFetchData ] = useState<boolean>(true);
     const [ shouldRender, setShouldRender ] = useState<boolean>(false);
     const [ userContestParticipationsPage, setUserContestParticipationsPage ] = useState<number>(1);
 
@@ -32,19 +30,11 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const { getColorClassName, themeColors } = useTheme();
 
-    const {
+    const [ getContestsParticipationsQuery, {
         data: userContestParticipations,
-        error: contestParticipationsQueryError,
         isLoading: areContestParticipationsLoading,
-    } = useGetContestsParticipationsForUserQuery(
-        {
-            username: profile?.userName,
-            sortType: SortType.ParticipantRegistrationTime,
-            sortTypeDirection: SortTypeDirection.Descending,
-            page: userContestParticipationsPage,
-        } as IGetContestParticipationsForUserQueryParams,
-        { skip: shouldSkipFetchData },
-    );
+        error: contestParticipationsQueryError,
+    } ] = useLazyGetContestsParticipationsForUserQuery();
 
     useEffect(() => {
         if (
@@ -56,12 +46,24 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
             (isLoggedIn && !isNil(profile) && !isChosenInToggle && userIsProfileOwner) ||
             // Profile is not fetched
             isNil(profile)) {
-            setShouldSkipFetchData(true);
             return;
         }
 
-        setShouldSkipFetchData(false);
-    }, [ internalUser.canAccessAdministration, isChosenInToggle, isLoggedIn, profile, userIsProfileOwner ]);
+        getContestsParticipationsQuery({
+            username: profile?.userName,
+            sortType: SortType.ParticipantRegistrationTime,
+            sortTypeDirection: SortTypeDirection.Descending,
+            page: userContestParticipationsPage,
+        } as IGetContestParticipationsForUserQueryParams);
+    }, [
+        getContestsParticipationsQuery,
+        internalUser,
+        isChosenInToggle,
+        isLoggedIn,
+        profile,
+        userContestParticipationsPage,
+        userIsProfileOwner,
+    ]);
 
     useEffect(() => {
         if (((userIsProfileOwner || internalUser.canAccessAdministration) && !isChosenInToggle) ||
@@ -72,8 +74,15 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         }
 
         setShouldRender(true);
-    }, [ areContestParticipationsLoading, userContestParticipations, internalUser, isChosenInToggle, isLoggedIn,
-        profile, shouldSkipFetchData, userIsProfileOwner ]);
+    }, [
+        areContestParticipationsLoading,
+        userContestParticipations,
+        internalUser,
+        isChosenInToggle,
+        isLoggedIn,
+        profile,
+        userIsProfileOwner,
+    ]);
 
     const onPageChange = useCallback((page: number) => {
         setUserContestParticipationsPage(page);
@@ -88,7 +97,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
 
     const render = useCallback(() => {
         if (areContestParticipationsLoading) {
-            return (<SpinningLoader style={{ ...flexCenterObjectStyles }} />);
+            return (<div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>);
         }
 
         if (!isNil(contestParticipationsQueryError)) {
@@ -101,10 +110,10 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
 
         return (
             <div>
-                { !userIsProfileOwner && !isEmpty(userContestParticipations.items) &&
-                    <h2 className={styles.participationsHeading}>Participated in:</h2>}
+                { (!userIsProfileOwner || !internalUser.canAccessAdministration) && !isNilOrEmpty(userContestParticipations.items) &&
+                    <h2 className={styles.participationsHeading}>Participated In:</h2>}
                 <List
-                  values={userContestParticipations.items!}
+                  values={userContestParticipations!.items!}
                   itemFunc={renderContestCard}
                   orientation={Orientation.vertical}
                   fullWidth
