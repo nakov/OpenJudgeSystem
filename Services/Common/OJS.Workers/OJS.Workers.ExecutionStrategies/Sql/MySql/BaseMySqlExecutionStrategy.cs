@@ -121,6 +121,7 @@
             workerDbConnectionString =
                 passwordRegex.Replace(workerDbConnectionString, $"Password={this.Settings.RestrictedUserPassword};");
 
+            workerDbConnectionString += workerDbConnectionString.EndsWith(';') ? string.Empty : ';';
             workerDbConnectionString += $"Database={databaseName};Pooling=False;";
 
             return workerDbConnectionString;
