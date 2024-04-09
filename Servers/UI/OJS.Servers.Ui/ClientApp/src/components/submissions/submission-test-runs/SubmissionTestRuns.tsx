@@ -26,21 +26,25 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
         const getTestColorByResultType = (resType: string) => {
             if (resType === testResultTypes.wrongAnswer) {
-                return 'red';
-            } if (resType === testResultTypes.correctAnswer) {
-                return 'green';
+                return '#fc4c50';
             }
-            return 'yellow';
+            if (resType === testResultTypes.correctAnswer) {
+                return '#23be5e';
+            }
+            return '#fec112';
         };
 
         const getIconByResultType = (resType: string, color: string) => {
             if (resType === testResultTypes.wrongAnswer) {
                 return <IoCloseSharp size={20} color={color} />;
-            } if (resType === testResultTypes.correctAnswer) {
+            }
+            if (resType === testResultTypes.correctAnswer) {
                 return <FaCheck size={20} color={color} />;
-            } if (resType === testResultTypes.timeLimit) {
+            }
+            if (resType === testResultTypes.timeLimit) {
                 return <FaRegClock size={20} color={color} />;
-            } if (resType === testResultTypes.memoryLimit) {
+            }
+            if (resType === testResultTypes.memoryLimit) {
                 return <BiMemoryCard size={20} color={color} />;
             }
 

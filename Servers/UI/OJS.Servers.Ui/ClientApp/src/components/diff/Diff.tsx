@@ -64,7 +64,10 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
                           backgroundColor: themeColors.baseColor500,
                           color: themeColors.textColor,
                       },
-                      diffContainer: { backgroundColor: themeColors.baseColor500, color: themeColors.textColor },
+                      diffContainer: {
+                          backgroundColor: themeColors.baseColor500,
+                          color: themeColors.textColor,
+                      },
                   }}
                 />
             </div>

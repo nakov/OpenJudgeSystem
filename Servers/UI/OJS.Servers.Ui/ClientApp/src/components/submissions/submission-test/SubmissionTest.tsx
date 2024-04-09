@@ -68,11 +68,11 @@ const SubmissionTest = (props: ISubmissionTestRun) => {
 
     const textIdColor = useMemo(() => {
         if (resultType === testResultTypes.wrongAnswer) {
-            return 'red';
+            return '#fc4c50';
         } if (resultType === testResultTypes.correctAnswer) {
-            return 'green';
+            return '#23be5e';
         }
-        return 'yellow';
+        return '#fec112';
     }, [ resultType ]);
 
     const onShowHideInputButtonClick = () => {

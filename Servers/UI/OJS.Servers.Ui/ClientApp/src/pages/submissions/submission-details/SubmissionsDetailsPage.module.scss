@@ -13,21 +13,25 @@
   .submissionTitle {
     font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold;
-    padding: spacings.$sp-24 0;
+    margin: spacings.$sp-24 0;
+
+    a {
+      color: inherit;
+    }
   }
 
   .bodyWrapper {
     display: flex;
 
-    .problemName {
-      color: colors.$primary-blue;
-      cursor: pointer;
-    }
-
     .solutionTitle {
       font-size: variables.$f-size-24;
       font-weight: font-weights.$font-weight-bold;
       margin-bottom: spacings.$sp-32;
+
+      a {
+        color: colors.$primary-blue;
+        cursor: pointer;
+      }
     }
 
     .innerBodyWrapper {
@@ -60,6 +64,7 @@
 
       > div {
         font-size: variables.$f-size-30;
+        font-weight: font-weights.$font-weight-semi-bold;
       }
 
       section {

@@ -14,24 +14,29 @@
       display: flex;
       align-items: center;
     }
+
     button {
       margin-left: spacings.$sp-32;
     }
 
     .timeAndMemoryWrapper {
       display: flex;
+
       span:first-child {
         margin-right: spacings.$sp-16;
       }
+
       span {
         display: flex;
         align-items: center;
         cursor: pointer;
+
         span {
           display: flex;
           align-items: center;
         }
       }
+
       svg:first-child {
         margin: 0 spacings.$sp-8
       }
@@ -42,6 +47,7 @@
     margin: spacings.$sp-18 0;
     padding: spacings.$sp-12;
   }
+
   .outputWrapper {
     margin-top: spacings.$sp-12;
   }

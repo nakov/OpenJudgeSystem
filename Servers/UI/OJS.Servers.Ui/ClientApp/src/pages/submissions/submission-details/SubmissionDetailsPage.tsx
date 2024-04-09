@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -21,7 +21,6 @@ import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import styles from './SubmissionsDetailsPage.module.scss';
 
 const SubmissionDetailsPage = () => {
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
     const { themeColors, getColorClassName } = useTheme();
@@ -86,15 +85,16 @@ const SubmissionDetailsPage = () => {
             {solutionId}
             {' '}
             by
-            {user?.userName}
+            {' '}
+            <Link to={`/profile/${user?.userName}`}>
+                {user?.userName}
+            </Link>
             {' '}
             for problem
             {' '}
-            <span className={styles.problemName} onClick={() => navigate(`/contests/${contestId}`)}>
-                {problem?.name}
-            </span>
+            <Link to={`/contests/${contestId}`}>{problem?.name}</Link>
         </div>
-    ), [ solutionId, user?.userName, problem?.name, contestId, navigate ]);
+    ), [ solutionId, user?.userName, problem?.name, contestId ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
@@ -189,7 +189,9 @@ const SubmissionDetailsPage = () => {
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div>
-                <div className={styles.submissionTitle}>{name}</div>
+                <div className={styles.submissionTitle}>
+                    <Link to={`/contests/${contestId}`}>{name}</Link>
+                </div>
                 <div className={styles.bodyWrapper}>
                     <SubmissionTestRuns testRuns={testRuns || []} />
                     <div className={styles.innerBodyWrapper}>
