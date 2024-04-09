@@ -41,7 +41,6 @@ const AdministrationRole = () => {
               { value: ROLE_LISTED_DATA.USERS, label: 'Users', node: returnUsersInRoleView },
           ]}
         />
-        
     );
 };
 export default AdministrationRole;
