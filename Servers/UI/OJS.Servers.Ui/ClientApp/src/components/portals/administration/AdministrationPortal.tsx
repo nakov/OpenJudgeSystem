@@ -82,7 +82,6 @@ const administrationItems = [
         icon: <PlaylistAddCheckCircleIcon />,
         path: `${SUBMISSIONS_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Submissions For Processing',
@@ -159,15 +158,12 @@ const administrationItems = [
         icon: <FaLayerGroup />,
         path: `${EXAM_GROUPS_PATH}`,
         visibleOnlyForAdmin: false,
-<<<<<<< HEAD
-=======
     },
     {
         name: 'Settings',
         icon: <IoSettingsSharp />,
         path: `${SETTINGS_PATH}`,
         visibleOnlyForAdmin: true,
->>>>>>> v2-development
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -312,16 +308,12 @@ const AdministrationPortal = () => {
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
             Element: AdministrationSubmissionsForProcessingPage,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
             Element: AdminSubmissionForProcessingDetails,
-<<<<<<< HEAD
             visibleOnlyForAdmin: true,
-=======
-            visibleOnlyForAdmin: false,
->>>>>>> v2-development
         },
         {
             path: `${TESTS_PATH}`,
