@@ -3,9 +3,9 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
-import CopyModal, { AllowedOperations } from '../../../components/administration/problems/copy/CopyModal';
-import ProblemForm from '../../../components/administration/problems/problem-form/ProblemForm';
-import ProblemRetest from '../../../components/administration/problems/retest/ProblemRetest';
+import CopyModal, { AllowedOperations } from '../../../components/administration/prb/copy/CopyModal';
+import ProblemForm from '../../../components/administration/prb/problem-form/ProblemForm';
+import ProblemRetest from '../../../components/administration/prb/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllAdminProblemsQuery, useLazyExportProblemsToExcelQuery } from '../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
