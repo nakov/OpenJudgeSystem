@@ -50,13 +50,18 @@ public class ProblemGroupAdministrationModelValidator : BaseAdministrationModelV
 
         this.RuleFor(x => x.Contest.Id)
             .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))
-            .WithMessage("Cannot delete problem group when the related contest is active");
+            .WithMessage("Cannot delete problem group when the related contest is active")
+            .When(x => x.OperationType is CrudOperationType.Update);
     }
 
     private async Task<bool> NotBeActiveOrOnlineContest(ProblemGroupsAdministrationModel model)
     {
         var problemGroup = await this.problemGroupsDataService.GetByIdQuery(model.Id).AsNoTracking().FirstOrDefaultAsync();
-        if (Math.Abs(problemGroup!.OrderBy - model.OrderBy) > 0 && !await this.IsOnline(model.Contest.Id))
+
+        var contestIdToCheck =
+            model.OperationType is CrudOperationType.Update ? model.Contest.Id : problemGroup!.ContestId;
+
+        if (Math.Abs(problemGroup!.OrderBy - model.OrderBy) > 0 && !await this.IsOnline(contestIdToCheck))
         {
             return false;
         }

@@ -226,6 +226,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
                   : 0}
               isEditMode={isEditMode}
               problemName={problemName}
+              problemId={problemId}
             />
         </AdministrationModal>
     );

@@ -18,6 +18,7 @@ public class BaseAdministrationModelValidator<TAdministrationModel, TId, TEntity
         this.dataService = dataService;
 
         this.RuleLevelCascadeMode = CascadeMode.Stop;
+        this.ClassLevelCascadeMode = CascadeMode.Stop;
 
         if (typeof(TId) == typeof(int?) || typeof(TId) == typeof(int))
         {
