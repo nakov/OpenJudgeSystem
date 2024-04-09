@@ -55,10 +55,6 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
     }, [ areSubmissionsLoading, dispatch, isChosenInToggle, userSubmissions ]);
 
     const render = useCallback(() => {
-        if (areSubmissionsLoading) {
-            return (<div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>);
-        }
-
         if (!isNil(userSubmissionsQueryError)) {
             return (<span>{userSubmissionsQueryError.data.detail}</span>);
         }
