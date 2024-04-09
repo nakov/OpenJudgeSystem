@@ -9,7 +9,7 @@
 }
 
 .wrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   background-color: colors.$white-color;
   border-radius: variables.$f-size-12;

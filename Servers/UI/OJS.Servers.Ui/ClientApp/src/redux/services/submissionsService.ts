@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { defaultPathIdentifier } from '../../common/constants';
 import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
-import { IGetSubmissionsUrlParams } from '../../common/url-types';
+import { IGetSubmissionsUrlParams, IGetUserSubmissionsUrlParams } from '../../common/url-types';
 
 const submissionsService = createApi({
     reducerPath: submissionsServiceName,
@@ -39,6 +39,12 @@ const submissionsService = createApi({
                 query: ({ status, page }) => (
                     { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
+        getUserSubmissions: builder.query<
+            IPagedResultType<IPublicSubmission>,
+            IGetUserSubmissionsUrlParams>({
+                query: ({ username, page }) => (
+                    { url: `/${defaultPathIdentifier}/Submissions/GetUserSubmissions?username=${username}&page=${page}` }),
+            }),
     }),
 });
 
@@ -46,11 +52,13 @@ const {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetUserSubmissionsQuery,
 } = submissionsService;
 
 export {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetUserSubmissionsQuery,
 };
 export default submissionsService;

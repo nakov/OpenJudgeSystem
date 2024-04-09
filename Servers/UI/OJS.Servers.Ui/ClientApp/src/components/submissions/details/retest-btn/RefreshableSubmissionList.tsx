@@ -8,7 +8,7 @@ import {
 import { ISubmissionDetailsReduxState } from '../../../../common/types';
 import { setCurrentPage } from '../../../../redux/features/submissionDetailsSlice';
 import { preciseFormatDate } from '../../../../utils/dates';
-import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
+import { encodeAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../../utils/urls';
 import Button, { ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../../../guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../guidelines/headings/Heading';
 import PaginationControls from '../../../guidelines/pagination/PaginationControls';
@@ -120,7 +120,7 @@ const RefreshableSubmissionList = ({ reload }: IRefreshableSubmissionListProps) 
                         <LinkButton
                           type={LinkButtonType.plain}
                           size={ButtonSize.none}
-                          to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(userName))}
+                          to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(userName))}
                           text={userName}
                           internalClassName={styles.redirectButton}
                         />

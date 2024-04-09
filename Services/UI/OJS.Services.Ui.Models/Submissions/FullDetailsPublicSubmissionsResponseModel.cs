@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class AdminPublicSubmissionsResponseModel : IMapFrom<AdminPublicSubmissionsServiceModel>
+public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPublicSubmissionsServiceModel>
 {
     public int Id { get; set; }
 

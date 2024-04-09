@@ -12,7 +12,7 @@
 }
 
 .testRun {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   align-items: center;
   background-color: transparent;
@@ -64,7 +64,7 @@
 }
 
 .testRunDataParagraph {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   align-items: center;
   color: colors.$text-dark-gray-color;

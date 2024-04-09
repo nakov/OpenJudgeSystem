@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
+import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -24,7 +25,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
+import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SETTINGS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import AdministrationContestCategories from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
@@ -34,6 +35,7 @@ import AdministrationProblemGroupsPage from '../../../pages/administration-new/p
 import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
+import AdministrationSettingsPage from '../../../pages/administration-new/settings/SettingsAdministrationPage';
 import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
@@ -157,6 +159,12 @@ const administrationItems = [
         icon: <FaLayerGroup />,
         path: `${EXAM_GROUPS_PATH}`,
         visibleOnlyForAdmin: false,
+    },
+    {
+        name: 'Settings',
+        icon: <IoSettingsSharp />,
+        path: `${SETTINGS_PATH}`,
+        visibleOnlyForAdmin: true,
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -390,6 +398,10 @@ const AdministrationPortal = () => {
         {
             path: `${EXAM_GROUPS_PATH}/:id`,
             Element: AdministrationExamGroupPage,
+        },
+        {
+            path: `${SETTINGS_PATH}`,
+            Element: AdministrationSettingsPage,
         },
         {
 

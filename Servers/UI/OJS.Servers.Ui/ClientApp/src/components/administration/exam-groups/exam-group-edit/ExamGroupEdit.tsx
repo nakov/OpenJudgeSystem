@@ -2,7 +2,7 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-undefined */
 import { useEffect, useState } from 'react';
-import { Autocomplete, debounce, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import {
     IContestAutocomplete,
@@ -34,8 +34,8 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
-    const [ contestSearchString, setContestSearchString ] = useState<string>('');
     const [ contestsData, setContestsData ] = useState <Array<IContestAutocomplete>>([]);
+
     const [ examGroup, setExamGroup ] = useState<IExamGroupAdministration>({
         id: 0,
         name: '',
@@ -44,6 +44,8 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         externalAppId: '',
         externalExamGroupId: 0,
     });
+
+    const [ contestSearchString, setContestSearchString ] = useState<string>(examGroup.contestName);
 
     const [ examGroupValidations, setExamGroupValidations ] = useState({
         isNameTouched: false,
@@ -74,6 +76,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         () => {
             if (data) {
                 setExamGroup(data);
+                setContestSearchString(data.contestName);
                 if (getContestId) {
                     getContestId(data.contestId);
                 }
@@ -166,9 +169,13 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         }));
     };
 
-    const onInputChange = debounce((event: any, newInputValue: string) => {
+    const onInputChange = (event: any, newInputValue: string) => {
+        if (!newInputValue) {
+            return;
+        }
+
         setContestSearchString(newInputValue);
-    }, 300);
+    };
 
     const edit = () => {
         if (isValidForm) {
@@ -224,9 +231,12 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                       onChange={(event, newValue) => handleAutocompleteChange('contest', newValue!)}
                       onInputChange={onInputChange}
                       options={contestsData}
+                      inputValue={contestSearchString}
                       renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
                       isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}
                       getOptionLabel={(option) => option?.name}
+                      disableCloseOnSelect
+                      disableClearable
                       renderOption={(properties, option) => (
                           <MenuItem {...properties} key={option.id} value={option.id}>
                               {option.name}

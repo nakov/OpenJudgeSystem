@@ -9,6 +9,7 @@ import { contestSlice } from './features/contestsSlice';
 import { submissionDetailsSlice } from './features/submissionDetailsSlice';
 import { submissionsSlice } from './features/submissionsSlice';
 import { themeSlice } from './features/themeSlice';
+import { usersSlice } from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // admin services
@@ -20,6 +21,7 @@ import { problemResourcesAdminService } from './services/admin/problemResourcesA
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
 import rolesAdminService from './services/admin/rolesAdminService';
+import settingsAdminService from './services/admin/settingsAdminService';
 import submissionsAdminService from './services/admin/submissionsAdminService';
 import submissionsForProcessingAdminService from './services/admin/submissionsForProcessingAdminService';
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
@@ -31,20 +33,23 @@ import { contestsService } from './services/contestsService';
 import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionDetailsService from './services/submissionDetailsService';
 import submissionsService from './services/submissionsService';
+import usersService from './services/usersService';
 
 const rootReducer = combineReducers({
     // reducers
+    [themeSlice.name]: themeSlice.reducer,
+    [authorizationSlice.name]: authorizationSlice.reducer,
+    [usersSlice.name]: usersSlice.reducer,
     [submissionsSlice.name]: submissionsSlice.reducer,
     [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
-    [authorizationSlice.name]: authorizationSlice.reducer,
-    [themeSlice.name]: themeSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
 
     // services
+    [authorizationService.reducerPath]: authorizationService.reducer,
+    [usersService.reducerPath]: usersService.reducer,
     [submissionsService.reducerPath]: submissionsService.reducer,
     [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
     [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
-    [authorizationService.reducerPath]: authorizationService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
@@ -60,6 +65,7 @@ const rootReducer = combineReducers({
     [usersAdminService.reducerPath]: usersAdminService.reducer,
     [rolesAdminService.reducerPath]: rolesAdminService.reducer,
     [examGroupsService.reducerPath]: examGroupsService.reducer,
+    [settingsAdminService.reducerPath]: settingsAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -79,13 +85,14 @@ const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]
 const store = configureStore({
     reducer: persistRootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat([
+        authorizationService.middleware,
+        usersService.middleware,
         submissionsService.middleware,
         submissionDetailsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
         problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
-        authorizationService.middleware,
         contestsService.middleware,
         homeStatisticsService.middleware,
         problemsAdminService.middleware,
@@ -98,6 +105,7 @@ const store = configureStore({
         usersAdminService.middleware,
         rolesAdminService.middleware,
         examGroupsService.middleware,
+        settingsAdminService.middleware,
     ]),
 });
 

@@ -1,23 +1,51 @@
 @use 'src/styles/colors';
 @use 'src/styles/fonts';
 @use 'src/styles/variables';
+@use 'src/styles/spacings';
 @use 'src/styles/font-weights';
 
-.profileAboutInfo {
+.profileAbout {
   display: flex;
-  flex-direction: column;
-  padding: 10px;
+  justify-content: space-between;
+  padding: spacings.$sp-24;
+}
+
+.profileAboutInfo {
+  align-self: flex-start;
+  display: grid;
+  font-size: variables.$f-size-20;
+  gap: spacings.$sp-12 spacings.$sp-32;
+  grid-template-columns: auto 1fr;
+  margin-top: spacings.$sp-24;
 }
 
 .profileAboutInfoGroupControl {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
-  color: colors.$text-dark-gray-color;
-  margin-bottom: 10px;
+  display: contents;
 
-  h2 {
-    font-size: variables.$f-size-18;
-    font-weight: font-weights.$font-weight-bolder;
-    margin-bottom: 10px;
+  .profileAboutInfoLabel {
+    color: colors.$primary-blue;
+    font-weight: font-weights.$font-weight-medium;
+    margin-bottom: spacings.$sp-8;
+    text-align: left;
   }
+
+  .profileAboutInfoValue {
+    text-align: left;
+  }
+}
+
+.imageAndLogoutButtonContainer {
+  @extend %font-family-normal;
+
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.logoutButton {
+  font-size: variables.$f-size-18;
+  font-weight: font-weights.$font-weight-regular;
+  text-decoration: none;
 }

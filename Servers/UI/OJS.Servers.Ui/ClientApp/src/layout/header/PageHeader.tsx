@@ -73,9 +73,6 @@ const PageHeader = () => {
                             <Link to="/profile" className={styles.navButton}>
                                 <img height={40} width={40} src={MyProfileSvg} alt="my-profile" />
                             </Link>
-                            <Link to="/logout" className={styles.navButton}>
-                                LOGOUT
-                            </Link>
                         </>
                     )
                     : (

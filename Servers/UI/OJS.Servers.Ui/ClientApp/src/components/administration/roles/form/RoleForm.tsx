@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
 import { FormControl, TextField, Typography } from '@mui/material';
 
@@ -15,10 +16,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IRoleFormProps {
     id?: string | null;
     isEditMode?: boolean;
+    getRoleName?: Function;
 }
 
 const RoleForm = (props: IRoleFormProps) => {
-    const { id, isEditMode = true } = props;
+    const { id, isEditMode = true, getRoleName } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
 
@@ -56,8 +58,11 @@ const RoleForm = (props: IRoleFormProps) => {
     useEffect(() => {
         if (roleData) {
             setRole(roleData);
+            if (getRoleName) {
+                getRoleName(roleData.name);
+            }
         }
-    }, [ roleData ]);
+    }, [ getRoleName, roleData ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ getError, updateError, createError ], setExceptionMessages);

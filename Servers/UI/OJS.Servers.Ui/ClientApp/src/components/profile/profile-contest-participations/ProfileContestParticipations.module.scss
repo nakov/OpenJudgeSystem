@@ -1,0 +1,18 @@
+@use 'src/styles/spacings';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+
+.noParticipationsText {
+  @extend %font-family-normal;
+
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: spacings.$sp-18;
+}
+
+.participationsHeading {
+  @extend %font-family-normal;
+
+  font-size: variables.$f-size-24;
+}
