@@ -438,6 +438,13 @@ namespace OJS.Services.Ui.Business.Implementations
             return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
         }
 
+        /// <summary>
+        /// Maps activity properties, total results count and user participant results if any.
+        /// </summary>
+        /// <param name="pagedContests">Contests.</param>
+        /// <param name="participantResultsByContest">The user participant results, grouped by contestId.
+        /// The values are of list type representing the participants associated with this contest id - usually practice and compete participants.</param>
+        /// <returns>A paged collection of contests.</returns>
         private async Task<PagedResult<ContestForListingServiceModel>> PrepareActivityAndResults(
             PagedResult<ContestForListingServiceModel> pagedContests,
             Dictionary<int, List<ParticipantResultServiceModel>>? participantResultsByContest = null)
