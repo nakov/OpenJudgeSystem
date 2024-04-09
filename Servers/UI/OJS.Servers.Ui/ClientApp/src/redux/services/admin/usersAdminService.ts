@@ -7,7 +7,7 @@ import { EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const usersAdminService = createApi({
-    reducerPath: 'users',
+    reducerPath: 'adminUsers',
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({
 

@@ -47,11 +47,7 @@ const ClientPortal = () => {
             Element: HomePage,
         },
         {
-            path: '/profile',
-            Element: ProfilePage,
-        },
-        {
-            path: '/profile/:username',
+            path: '/profile/:username?',
             Element: ProfilePage,
         },
         {

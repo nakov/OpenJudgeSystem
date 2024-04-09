@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
+import isNil from 'lodash/isNil';
 
 import { IIndexContestsType } from '../../../common/types';
 import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
+import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil,
@@ -14,6 +16,7 @@ import styles from './ContestCard.module.scss';
 
 interface IContestCardProps {
     contest: IIndexContestsType;
+    showPoints?: boolean;
 }
 
 const iconNames = {
@@ -26,9 +29,10 @@ const iconNames = {
 };
 
 const ContestCard = (props: IContestCardProps) => {
-    const { contest } = props;
+    const { contest, showPoints } = props;
 
     const { themeColors, getColorClassName } = useTheme();
+    const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
 
     const textColorClass = getColorClassName(themeColors.textColor);
     const backgroundColorClass = getColorClassName(themeColors.baseColor200);
@@ -46,11 +50,9 @@ const ContestCard = (props: IContestCardProps) => {
         numberOfProblems,
         competeResults,
         practiceResults,
-        hasCompeted = false,
-        hasPracticed = false,
-        competeContestPoints = 0,
-        practiceContestPoints = 0,
-        maxPoints = 0,
+        competeMaximumPoints,
+        practiceMaximumPoints,
+        userParticipationResult,
     } = contest;
 
     const contestStartTime = canBeCompeted
@@ -63,6 +65,10 @@ const ContestCard = (props: IContestCardProps) => {
 
     const remainingDuration = calculateTimeUntil(new Date(contestEndTime));
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
+
+    const shouldShowPoints = isNil(showPoints)
+        ? true
+        : showPoints;
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -113,24 +119,31 @@ const ContestCard = (props: IContestCardProps) => {
         );
     };
 
-    const renderContestButton = (isCompete: boolean, hasParticipated: boolean, participationPoints: number) => {
+    const renderPointsText = (isCompete: boolean) => userParticipationResult !== null && (
+        <span className={styles.points}>
+            {
+                    isCompete
+                        ? userParticipationResult?.competePoints
+                        : userParticipationResult?.practicePoints
+            }
+            {' '}
+            /
+            {' '}
+            {
+                    isCompete
+                        ? competeMaximumPoints
+                        : practiceMaximumPoints
+            }
+        </span>
+    );
+
+    const renderContestButton = (isCompete: boolean) => {
         const isDisabled = isCompete
             ? !canBeCompeted
             : !canBePracticed;
 
         return (
-            <div className={styles.contestBtn}>
-                {hasParticipated && (
-                <div>
-                    {participationPoints}
-                    {' '}
-                    /
-                    {' '}
-                    {maxPoints}
-                </div>
-                )}
-                <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
-            </div>
+            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
         );
     };
 
@@ -141,6 +154,9 @@ const ContestCard = (props: IContestCardProps) => {
                     {name}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
+                {
+                    isLoggedIn && internalUser.canAccessAdministration && <div className={styles.contestCardSubTitle}>{id}</div>
+                }
                 <div className={styles.contestDetailsFragmentsWrapper}>
                     {renderContestDetailsFragment(iconNames.time, preciseFormatDate(new Date(contestStartTime), 'HH:MM'))}
                     {renderContestDetailsFragment(iconNames.date, preciseFormatDate(new Date(contestStartTime), 'D MMM YY'))}
@@ -172,9 +188,13 @@ const ContestCard = (props: IContestCardProps) => {
                 </div>
             </div>
             <div className={styles.contestBtnsWrapper}>
-                <div className={styles.contestBtn}>
-                    {renderContestButton(true, hasCompeted, competeContestPoints)}
-                    {renderContestButton(false, hasPracticed, practiceContestPoints)}
+                <div className={styles.buttonAndPointsLabelWrapper}>
+                    { shouldShowPoints && renderPointsText(false)}
+                    {renderContestButton(false)}
+                </div>
+                <div className={styles.buttonAndPointsLabelWrapper}>
+                    { shouldShowPoints && renderPointsText(true)}
+                    {renderContestButton(true)}
                 </div>
             </div>
         </div>

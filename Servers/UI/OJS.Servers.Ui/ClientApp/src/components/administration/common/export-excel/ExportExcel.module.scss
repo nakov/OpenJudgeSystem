@@ -1,14 +1,14 @@
 @use 'src/styles/colors';
 
 .size {
-width: 35px;
-height: 35px;
+  height: 35px;
+  width: 35px;
 }
 
 .activeColor {
-    color: colors.$primary-blue
+  color: colors.$primary-blue;
 }
 
 .disabledColor {
-    color: colors.$color-btn-disabled
+  color: colors.$color-btn-disabled;
 }

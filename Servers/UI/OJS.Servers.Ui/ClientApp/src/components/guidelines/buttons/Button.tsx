@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -80,6 +81,9 @@ const sizeToClassName = {
     [ButtonSize.none]: styles.none,
 };
 
+const themingButtonsClassNames:{ [key in ButtonType]?: string[] } =
+    { [ButtonType.secondary]: [ styles.lightSecondary, styles.darkSecondary ] };
+
 const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
     if (!isNil(text) && !isNil(children)) {
         throw new Error('Buttons must have only `text` or `children`');
@@ -103,10 +107,15 @@ const Button = ({
     style,
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
+    const { isDarkMode } = useTheme();
 
     const { [type]: typeClassName } = classNameToButonType;
 
     const { [size]: sizeClassName } = sizeToClassName;
+
+    const themingClassName = themingButtonsClassNames[type]?.at(isDarkMode
+        ? 1
+        : 0);
 
     const stateClassName = state === ButtonState.disabled
         ? styles.disabled
@@ -129,6 +138,7 @@ const Button = ({
                 stateClassName,
                 wideClassName,
                 competeClassName,
+                themingClassName,
                 className,
             )
             : internalClassName;

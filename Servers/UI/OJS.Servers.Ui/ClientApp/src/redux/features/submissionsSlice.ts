@@ -11,6 +11,13 @@ const initialState: IRecentSubmissionsReduxState = {
         pagesCount: 0,
         pageNumber: 0,
     },
+    profileSubmissions: {
+        items: [],
+        totalItemsCount: 0,
+        itemsPerPage: 0,
+        pagesCount: 0,
+        pageNumber: 0,
+    },
     currentPage: 1,
 };
 

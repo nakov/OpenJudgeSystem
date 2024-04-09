@@ -9,12 +9,13 @@
 }
 
 .submissionInfo {
-  font-family: fonts.$font-family-lato-regular;
+  @extend %font-family-normal;
+
   margin-top: 15px;
 }
 
 .submissionInfoParagraph {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   color: colors.$text-dark-gray-color;
   margin-bottom: 10px;

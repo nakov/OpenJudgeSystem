@@ -1,61 +1,99 @@
-import { IUserProfileType } from '../../../hooks/use-users';
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+import MyProfileSvg from '../../../assets/my-profile.svg';
+import { IUserProfileType } from '../../../common/types';
+import useTheme from '../../../hooks/use-theme';
 import isNilOrEmpty from '../../../utils/check-utils';
+import concatClassNames from '../../../utils/class-names';
 
 import styles from './ProfileAboutInfo.module.scss';
 
 interface IProfileAboutInfoProps {
     userProfile: IUserProfileType;
     isUserAdmin : boolean;
+    isUserLecturer : boolean;
     isUserProfileOwner : boolean;
 }
 
-const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserProfileOwner } : IProfileAboutInfoProps) => {
-    const shouldRenderName = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const ProfileAboutInfo = ({ userProfile, isUserAdmin, isUserLecturer, isUserProfileOwner } : IProfileAboutInfoProps) => {
+    const { themeColors, getColorClassName } = useTheme();
+
+    const firstNameOrLastNameHaveValue = !isNilOrEmpty(userProfile.firstName) || !isNilOrEmpty(userProfile.lastName);
+
+    const aboutInfoClassName = concatClassNames(
+        styles.profileAboutInfo,
+        getColorClassName(themeColors.textColor),
+    );
 
     return (
-        <div className={styles.profileAboutInfo}>
-            <div className={styles.profileAboutInfoGroupControl}>
-                <h2>Username:</h2>
-                <p>{userProfile.userName}</p>
-            </div>
-            {(isUserAdmin || isUserProfileOwner) && (
-            <div className={styles.profileAboutInfoGroupControl}>
-                {shouldRenderName && (
+        <div className={styles.profileAbout}>
+            <div className={aboutInfoClassName}>
                 <div className={styles.profileAboutInfoGroupControl}>
-                    <h2>Name:</h2>
-                    <p>
-                        {userProfile.firstName}
-                        {' '}
-                        {userProfile.lastName}
-                    </p>
+                    <span className={styles.profileAboutInfoLabel}>Username:</span>
+                    <span className={styles.profileAboutInfoValue}>{userProfile.userName}</span>
                 </div>
-                )}
-                <div className={styles.profileAboutInfoGroupControl}>
-                    <h2>Email:</h2>
-                    <p>{userProfile.email}</p>
-                </div>
-                {isUserAdmin && (
-                <div className={styles.profileAboutInfoGroupControl}>
-                    <h2>Id:</h2>
-                    <p>{userProfile.id}</p>
-                </div>
-                )}
-                {!isNilOrEmpty(userProfile.age) &&
-                            (
+                {
+                    (isUserAdmin || isUserProfileOwner) && firstNameOrLastNameHaveValue && (
+                        <div className={styles.profileAboutInfoGroupControl}>
+                            <span className={styles.profileAboutInfoLabel}>Name:</span>
+                            <span className={styles.profileAboutInfoValue}>
+                                {userProfile.firstName}
+                                {' '}
+                                {userProfile.lastName}
+                            </span>
+                        </div>
+                    )
+                }
+                {
+                    (isUserAdmin || isUserProfileOwner) && (
+                        <div className={styles.profileAboutInfoGroupControl}>
+                            <span className={styles.profileAboutInfoLabel}>Email:</span>
+                            <span className={styles.profileAboutInfoValue}>{userProfile.email}</span>
+                        </div>
+                    )
+                }
+                {
+                    isUserAdmin && (
+                        <div className={styles.profileAboutInfoGroupControl}>
+                            <span className={styles.profileAboutInfoLabel}>Id:</span>
+                            <span className={styles.profileAboutInfoValue}>{userProfile.id}</span>
+                        </div>
+                    )
+                }
+                {
+                    (isUserAdmin || isUserProfileOwner) && !isNilOrEmpty(userProfile.age) && (
+                        <div className={styles.profileAboutInfoGroupControl}>
+                            <span className={styles.profileAboutInfoLabel}>Age:</span>
+                            <span className={styles.profileAboutInfoValue}>{userProfile.age}</span>
+                        </div>
+                    )
+                }
+                {
+                    (isUserAdmin || isUserProfileOwner) && !isNilOrEmpty(userProfile.city) &&
+                        (
                             <div className={styles.profileAboutInfoGroupControl}>
-                                <h2>Age:</h2>
-                                <p>{userProfile.age}</p>
+                                <span className={styles.profileAboutInfoLabel}>City:</span>
+                                <span className={styles.profileAboutInfoValue}>{userProfile.city}</span>
                             </div>
-                            )}
-                {!isNilOrEmpty(userProfile.city) &&
-                            (
-                                <div className={styles.profileAboutInfoGroupControl}>
-                                    <h2>City:</h2>
-                                    <p>{userProfile.city}</p>
-                                </div>
-                            )}
+                        )
+                }
             </div>
-            )}
+
+            <div className={styles.imageAndLogoutButtonContainer}>
+                <img height={180} width={180} src={MyProfileSvg} alt="my-profile" />
+                {
+                        isUserProfileOwner && (
+                            <Link
+                              to="/logout"
+                              className={concatClassNames(styles.logoutButton, getColorClassName(themeColors.textColor))}
+                            >
+                                LOG OUT
+                            </Link>
+                        )
+                    }
+            </div>
         </div>
     );
 };

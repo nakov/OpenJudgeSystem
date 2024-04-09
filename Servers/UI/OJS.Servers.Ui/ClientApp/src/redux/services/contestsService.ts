@@ -5,7 +5,8 @@ import { IContestStrategyFilter } from '../../common/contest-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
-    IGetAllContestsOptions,
+    IContestsSortAndFilterOptions,
+    IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
     IPagedResultType,
 } from '../../common/types';
@@ -23,7 +24,7 @@ export const contestsService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsOptions>({
+        getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IContestsSortAndFilterOptions>({
             query: ({ sortType, page, category, strategy }) => ({
                 url: '/Contests/GetAll',
                 params: {
@@ -38,8 +39,28 @@ export const contestsService = createApi({
             query: ({ id }) => ({ url: `/Contests/Details/${id}` }),
             keepUnusedDataFor: 10,
         }),
-        getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
-        getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+        getContestCategories: builder.query<Array<IContestCategory>, void>({
+            query: () => ({ url: '/ContestCategories/GetCategoriesTree' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        getContestStrategies: builder.query<IContestStrategyFilter[], void>({
+            query: () => ({ url: '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        getContestsParticipationsForUser: builder.query<
+            IPagedResultType<IIndexContestsType>,
+            IGetContestParticipationsForUserQueryParams>({
+                query: ({ username, sortType, sortTypeDirection, page, category, strategy }) => ({
+                    url: `/Contests/GetParticipatedByUser?username=${username}`,
+                    params: {
+                        sortType,
+                        sortTypeDirection,
+                        page,
+                        category,
+                        strategy,
+                    },
+                }),
+            }),
     }),
 });
 
@@ -49,4 +70,5 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
+    useLazyGetContestsParticipationsForUserQuery,
 } = contestsService;

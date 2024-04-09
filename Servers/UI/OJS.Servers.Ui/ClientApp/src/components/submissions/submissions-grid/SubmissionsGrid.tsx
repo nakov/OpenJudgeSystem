@@ -61,6 +61,7 @@ const SubmissionsGrid = ({
 
             if (isEmpty(submissions.items)) {
                 return (
+                    // TODO: Make this reusable (centered themed text)
                     <div className={concatClassNames(
                         styles.noSubmissionsFound,
                         getColorClassName(themeColors.textColor),
@@ -76,23 +77,19 @@ const SubmissionsGrid = ({
                     <thead>
                         <tr className={headerClassName}>
                             <td>ID</td>
-                            <td>Task</td>
+                            {
+                                options.showTaskDetails && <td>Task</td>
+                            }
                             <td>From</td>
                             {
-                                options.showCompeteMarker
-                                    ? <td />
-                                    : null
+                                options.showCompeteMarker && <td />
                             }
                             {
-                                options.showDetailedResults
-                                    ? <td>Time and Memory Used</td>
-                                    : null
+                                options.showDetailedResults && <td>Time and Memory Used</td>
                             }
                             <td className={styles.tdRight}>Result</td>
                             {
-                                options.showSubmissionTypeInfo
-                                    ? <td className={styles.tdRight}>Strategy</td>
-                                    : null
+                                options.showSubmissionTypeInfo && <td className={styles.tdRight}>Strategy</td>
                             }
                             <td />
                         </tr>
@@ -119,7 +116,7 @@ const SubmissionsGrid = ({
     return (
         <>
             {renderSubmissionsGrid()}
-            {!isEmpty(submissions) && submissions.pagesCount !== 0 && (
+            {submissions.totalItemsCount !== 0 && (
                 <PaginationControls
                   count={submissions.pagesCount}
                   page={submissions.pageNumber}
