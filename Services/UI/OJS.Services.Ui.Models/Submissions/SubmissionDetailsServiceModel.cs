@@ -28,6 +28,8 @@
 
         public double MaxUsedMemory { get; set; }
 
+        public int MemoryLimit { get; set; }
+
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; } = null!;
 
         public bool IsOfficial { get; set; }
@@ -79,6 +81,8 @@
                         : s.ContentAsString))
                 .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
                     s.Participant!.IsOfficial))
+                .ForMember(d => d.MemoryLimit, opt => opt.MapFrom(s =>
+                    s.Problem!.MemoryLimit))
                 .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
                     s.Content))
                 .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
