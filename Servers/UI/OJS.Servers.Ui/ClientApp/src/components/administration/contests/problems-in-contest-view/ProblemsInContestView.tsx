@@ -17,7 +17,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import SubmitSolution from '../../common/submit-solution/SubmitSolution';
-import CopyModal, { AllowedOperations } from '../../Problems/copy-modal/CopyModal';
+import CopyModal, { AllowedOperations } from '../../problems/copy/CopyModal';
 import ProblemForm from '../../problems/problem-form/ProblemForm';
 import ProblemRetest from '../../problems/retest/ProblemRetest';
 
