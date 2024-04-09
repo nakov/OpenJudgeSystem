@@ -86,6 +86,8 @@ namespace OJS.Common
             public const string ValueCannotBeLessThanOrEqualToZero = "Value cannot be less than or equal to 0";
             public const string ValueCannotBeNullOrWhiteSpaceTemplate = "{0} cannot be null or white space";
 
+            public const string AdministrationModelIdValidationMessage = "The provided id for the entity is invalid.";
+
             public const string InactiveLoginSystem =
                 "We are sorry for the inconvenience, but the login system is currently unavailable";
             public const string NonExistentUser =

@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Participants;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -20,7 +21,10 @@ public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMap
     {
         configuration.CreateMap<Participant, ParticipantAdministrationModel>()
             .ForMember(pam => pam.UserName, opt
-                => opt.MapFrom(p => p.User.UserName));
+                => opt.MapFrom(p => p.User.UserName))
+            .ForMember(pam => pam.OperationType, opt
+                => opt.Ignore());
+
         configuration.CreateMap<ParticipantAdministrationModel, Participant>()
             .ForMember(p => p.CreatedOn, opt
                 => opt.Ignore())
