@@ -396,7 +396,7 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.contestsData.SaveChanges();
         }
 
-        private static Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
+        private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
             PagedResult<ContestForListingServiceModel> participatedContestsInPage,
             IQueryable<Participant> participants)
         {
@@ -405,12 +405,12 @@ namespace OJS.Services.Ui.Business.Implementations
                 .Select(c => c.Id)
                 .Distinct();
 
-            return Task.FromResult(participants
+            return (await participants
                 .Where(p => participatedContestIds.Contains(p.ContestId))
                 .MapCollection<ParticipantResultServiceModel>()
-                .ToList()
+                .ToListAsync())
                 .GroupBy(p => p.ContestId)
-                .ToDictionary(g => g.Key, g => g.ToList()));
+                .ToDictionary(g => g.Key, g => g.ToList());
         }
 
         private static bool ShouldRequirePassword(Contest contest, Participant participant, bool official)
