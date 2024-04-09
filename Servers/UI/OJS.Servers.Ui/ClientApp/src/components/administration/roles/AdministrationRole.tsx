@@ -14,7 +14,7 @@ const AdministrationRole = () => {
     const { pathname } = useLocation();
     const [ , , , roleId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(ROLE_LISTED_DATA.USERS);
-    const [roleName, setRoleName] = useState<string>('')
+    const [ roleName, setRoleName ] = useState<string>('');
 
     const onTabChange = (event: React.SyntheticEvent, newValue: ROLE_LISTED_DATA) => {
         setTabName(newValue);
