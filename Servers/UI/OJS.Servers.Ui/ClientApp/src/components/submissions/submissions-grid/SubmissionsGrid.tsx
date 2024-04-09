@@ -78,26 +78,18 @@ const SubmissionsGrid = ({
                         <tr className={headerClassName}>
                             <td>ID</td>
                             {
-                                options.showTaskDetails
-                                    ? <td>Task</td>
-                                    : null
+                                options.showTaskDetails && <td>Task</td>
                             }
                             <td>From</td>
                             {
-                                options.showCompeteMarker
-                                    ? <td />
-                                    : null
+                                options.showCompeteMarker && <td />
                             }
                             {
-                                options.showDetailedResults
-                                    ? <td>Time and Memory Used</td>
-                                    : null
+                                options.showDetailedResults && <td>Time and Memory Used</td>
                             }
                             <td className={styles.tdRight}>Result</td>
                             {
-                                options.showSubmissionTypeInfo
-                                    ? <td className={styles.tdRight}>Strategy</td>
-                                    : null
+                                options.showSubmissionTypeInfo && <td className={styles.tdRight}>Strategy</td>
                             }
                             <td />
                         </tr>
