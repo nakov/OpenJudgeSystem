@@ -18,7 +18,7 @@ public interface IContestParticipantsCacheService : IService
     /// /// <param name="contestIds">The Ids of the contests.</param>
     /// /// <param name="page">The page for which to get the info and cache the results.</param>
     /// /// <param name="cacheSeconds">Seconds to cache.</param>
-    Task<IDictionary<int, ContestParticipantsCountCacheModel>> GetParticipantsCountForContestsPage(
+    Task<IDictionary<int, ContestParticipantsCountCacheModel>> GetParticipantsCount(
         IReadOnlyCollection<int> contestIds,
         int? page,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds);

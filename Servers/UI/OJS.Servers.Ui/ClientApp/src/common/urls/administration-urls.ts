@@ -26,3 +26,4 @@ export const CHECKERS_PATH = 'checkers';
 export const ROLES_PATH = 'roles';
 export const USERS_PATH = 'users';
 export const EXAM_GROUPS_PATH = 'exam-groups';
+export const SETTINGS_PATH = 'Settings';

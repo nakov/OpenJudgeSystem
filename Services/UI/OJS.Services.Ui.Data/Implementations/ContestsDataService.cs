@@ -75,6 +75,33 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             : this.GetAllVisibleQuery()
                 .Include(c => c.Category);
 
+        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
+    }
+
+    public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSortingAndParticipants<TServiceModel>(
+        ContestFiltersServiceModel model,
+        string username)
+    {
+        var contests = model.CategoryIds.Any()
+            ? this.GetAllVisibleByCategories(model.CategoryIds)
+            : this.GetAllVisibleQuery()
+                .Include(c => c.Category);
+
+        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
+    }
+
+    public IQueryable<Contest> GetLatestForParticipantByUsername(string username)
+        => this.GetQuery(c => c.Participants
+                .Any(p => p.User.UserName == username))
+            .OrderByDescending(c => c.Participants
+                .Where(p => p.User.UserName == username)
+                .Max(p => p.CreatedOn));
+
+    public async Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
+        IQueryable<Contest> contests,
+        ContestFiltersServiceModel model)
+    {
+        // TODO: Remove filter by status (not used anumorE)
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
         contests = Sort(contests, model.SortType, model.CategoryIds.Count());
 
@@ -84,9 +111,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .Where(ContainsSubmissionTypeIds(model.SubmissionTypeIds));
         }
 
-        return await contests
-            .MapCollection<TServiceModel>()
-            .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
+        return await contests.Paginate<TServiceModel>(model.ItemsPerPage, model.PageNumber);
     }
 
     public Task<Contest?> GetByIdWithProblems(int id)
@@ -194,13 +219,13 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 c.Id == id &&
                 c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
-    // After removing the sorting menu for the user, we are using OrderBy as default sorting value
-    //Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
     private static IQueryable<Contest> Sort(
         IQueryable<Contest> contests,
         ContestSortType? sorting,
         int categoriesCount)
     {
+        // After removing the sorting menu for the user, we are using OrderBy as default sorting value
+        // Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
         // if (sorting == ContestSortType.StartDate)
         // {
         //     return contests
@@ -226,7 +251,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         // }
 
         // By checking the number of categories we can determine if the contest is a parent or a child contest
-        //based on this we display the contests differently
+        // based on this we display the contests differently
         // 0 categories - main contest page displays the contest which have the LEAST time left
         // 1 category - child contest and we order the by the order by property of the category
         // > 1 categories - we first order them by the Contest.Category's OrderBy and then by the Contest's OrderBy
@@ -235,22 +260,17 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         {
             switch (categoriesCount)
             {
+                // No category chosen - contests are ordered by most recent activity
                 case 0:
-                    return contests
-                        .OrderBy(c => c.EndTime.HasValue && c.EndTime.Value < DateTime.UtcNow ? 2 :
-                            c.EndTime.HasValue ? 1 : 3)
-                        .ThenBy(c => c.EndTime);
+                    return contests.OrderByActivity();
 
+                // Inner most category
                 case 1:
-                    return contests
-                            .OrderBy(c => c.OrderBy)
-                            .ThenByDescending(c => c.EndTime)
-                            .ThenByDescending(c => c.PracticeEndTime);
+                    return contests.OrderByOrderBy();
+
+                // Has child categories
                 default:
-                    return contests
-                        .OrderBy(c => c.Category == null ? int.MaxValue : c.Category.OrderBy)
-                        .ThenBy(c => c.OrderBy)
-                        .ThenByDescending(c => c.EndTime);
+                    return contests.OrderByCategoryAndContestOrderBy();
             }
         }
 

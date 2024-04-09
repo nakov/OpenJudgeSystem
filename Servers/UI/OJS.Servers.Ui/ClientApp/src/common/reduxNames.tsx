@@ -6,7 +6,12 @@ const submissionsServiceName = 'submissionsService';
 const submissionDetailsSliceName = 'submissionDetails';
 const submissionDetailsPageServiceName = 'submissionDetailsPage';
 
+// Users
 const authorizationServiceName = 'authorizationService';
+
+const usersSliceName = 'users';
+
+const usersServiceName = 'usersService';
 
 export {
     submissionsSliceName,
@@ -14,4 +19,6 @@ export {
     submissionDetailsPageServiceName,
     submissionsServiceName,
     authorizationServiceName,
+    usersSliceName,
+    usersServiceName,
 };

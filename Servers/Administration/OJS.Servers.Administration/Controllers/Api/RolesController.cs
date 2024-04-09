@@ -21,13 +21,11 @@ public class RolesController : BaseAdminApiController<Role, string, RoleInListMo
        IRoleGridDataService gridDataService,
        IRolesBusinessService rolesBusinessService,
        RoleAdministrationModelValidator validator,
-       RoleDeleteValidator deleteValidator,
        UserToRoleModelValidator userToRoleModelValidator)
         : base(
         gridDataService,
         rolesBusinessService,
-        validator,
-        deleteValidator)
+        validator)
     {
         this.rolesBusinessService = rolesBusinessService;
         this.userToRoleModelValidator = userToRoleModelValidator;

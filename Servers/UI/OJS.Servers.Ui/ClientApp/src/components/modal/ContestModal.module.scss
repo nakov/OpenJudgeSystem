@@ -4,7 +4,7 @@
 @use 'src/styles/font-weights';
 
 .bodyText {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   color: colors.$text-dark-gray-color;
   display: inline-block;
@@ -31,7 +31,7 @@
 }
 
 .headingText {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   align-self: center;
   color: colors.$white-color;

@@ -17,9 +17,8 @@ public class ProblemResourcesController : BaseAdminApiController<ProblemResource
     public ProblemResourcesController(
         IProblemResourcesGridDataService problemResourceGridService,
         IProblemResourcesBusinessService problemResourcesBusinessService,
-        ProblemResourceAdministrationModelValidator modelValidator,
-        ProblemResourceDeleteValidator deleteValidator)
-        : base(problemResourceGridService, problemResourcesBusinessService, modelValidator, deleteValidator) =>
+        ProblemResourceAdministrationModelValidator modelValidator)
+        : base(problemResourceGridService, problemResourcesBusinessService, modelValidator) =>
         this.problemResourcesBusinessService = problemResourcesBusinessService;
 
     [HttpGet("{id:int}")]

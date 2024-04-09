@@ -2,15 +2,13 @@ import { useEffect, useState } from 'react';
 import { FaFileImport } from 'react-icons/fa';
 import { MdDeleteForever } from 'react-icons/md';
 import { RiFolderZipFill } from 'react-icons/ri';
-import { useSelector } from 'react-redux';
 import { Checkbox, FormControl, FormControlLabel, IconButton, Tooltip, Typography } from '@mui/material';
 
-import { IGetAllAdminParams, IRootStore, ITestsUploadModel } from '../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IGetAllAdminParams, ITestsUploadModel } from '../../../../common/types';
+import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import testsFilterableColums, { returnTestsNonFilterableColumns } from '../../../../pages/administration-new/tests/testsGridColumns';
-import { setAdminProblemsFilters, setAdminProblemsSorters } from '../../../../redux/features/admin/problemsAdminSlice';
 import { useDeleteByProblemMutation, useDeleteTestMutation, useExportZipQuery, useGetTestsByProblemIdQuery, useImportTestsMutation } from '../../../../redux/services/admin/testsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import downloadFile from '../../../../utils/file-download-utils';
@@ -41,8 +39,6 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
         problemId,
     } as ITestsUploadModel;
 
-    const filtersAndSortersLocation = `problem-details-tests-${problemId}`;
-
     const [ testId, setTestId ] = useState<number | null>(null);
     const [ openEditTestModal, setOpenEditTestModal ] = useState(false);
     const [ openCreateModal, setOpenCreateModal ] = useState(false);
@@ -53,10 +49,8 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const [ shouldSkip, setShouldSkip ] = useState<boolean>(true);
     const [ testsToUpload, setTestsToUpload ] = useState<ITestsUploadModel>({ ...defaultStateForUploadTests });
 
-    const selectedFilters =
-    useSelector((state: IRootStore) => state.adminProblems[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-    useSelector((state: IRootStore) => state.adminProblems[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
@@ -227,6 +221,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
                   : 0}
               isEditMode={isEditMode}
               problemName={problemName}
+              problemId={problemId}
             />
         </AdministrationModal>
     );
@@ -314,9 +309,8 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               setQueryParams={setQueryParams}
               selectedFilters={selectedFilters || []}
               selectedSorters={selectedSorters || []}
-              setFilterStateAction={setAdminProblemsFilters}
-              setSorterStateAction={setAdminProblemsSorters}
-              location={filtersAndSortersLocation}
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               withSearchParams={false}
               modals={[
                   { showModal: openCreateModal, modal: (i) => renderModal(i, false) },

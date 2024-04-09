@@ -1,13 +1,11 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Business.SubmissionTypes;
 using OJS.Services.Administration.Business.SubmissionTypes.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Workers.Common.Models;
 using System;
 using System.Linq;
@@ -20,13 +18,11 @@ public class SubmissionTypesController : BaseAdminApiController<SubmissionType, 
     public SubmissionTypesController(
         ISubmissionTypesBusinessService submissionTypesBusinessService,
         IGridDataService<SubmissionType> submissionTypesGridDataService,
-        SubmissionTypeAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
+        SubmissionTypeAdministrationModelValidator validator)
             : base(
                 submissionTypesGridDataService,
                 submissionTypesBusinessService,
-                validator,
-                deleteValidator) =>
+                validator) =>
         this.submissionTypesBusinessService = submissionTypesBusinessService;
 
     [HttpGet]

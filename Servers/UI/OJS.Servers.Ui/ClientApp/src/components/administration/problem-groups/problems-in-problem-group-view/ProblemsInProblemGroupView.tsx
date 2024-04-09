@@ -34,7 +34,6 @@ const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => 
           selectedFilters={[]}
           selectedSorters={[]}
           showFiltersAndSorters={false}
-          location=""
           legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
         />
     );

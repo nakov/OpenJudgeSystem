@@ -5,15 +5,14 @@ import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import UserForm from '../../../components/administration/users/form/UserForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminUsersFilters, setAdminUsersSorters } from '../../../redux/features/admin/usersAdminSlice';
 import { useGetAllUsersQuery, useLazyExportUsersToExcelQuery } from '../../../redux/services/admin/usersAdminService';
-import { useAppSelector } from '../../../redux/store';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import usersFilterableColumns, { returnUsersNonFilterableColumns } from './usersGridColumns';
 
-const location = 'all-users';
 const AdministrationUsersPage = () => {
     const [ searchParams ] = useSearchParams();
 
@@ -27,8 +26,15 @@ const AdministrationUsersPage = () => {
     const [ showEditModal, setShowEditModal ] = useState<boolean>(false);
     const [ userId, setUserId ] = useState<string>('');
 
-    const selectedFilters = useAppSelector((state) => state.adminUsers[location]?.selectedFilters);
-    const selectedSorters = useAppSelector((state) => state.adminUsers[location]?.selectedSorters);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(usersFilterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(usersFilterableColumns),
+    ));
 
     const {
         refetch: retakeUsers,
@@ -37,16 +43,13 @@ const AdministrationUsersPage = () => {
         error,
     } = useGetAllUsersQuery(queryParams);
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
-
     useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const onEditClick = (id: string) => {
         setShowEditModal(true);
@@ -81,9 +84,8 @@ const AdministrationUsersPage = () => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setFilterStateAction={setAdminUsersFilters}
-          setSorterStateAction={setAdminUsersSorters}
-          location={location}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           legendProps={[ { color: '#FFA1A1', message: 'User is deleted.' } ]}
           modals={
             [

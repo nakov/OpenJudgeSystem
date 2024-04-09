@@ -43,7 +43,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessages ] = useState<string | null>(null);
 
-    const { data: resourceData, error: resourceError, isLoading: isGetting } = useGetProblemResourceByIdQuery(id);
+    const { data: resourceData, error: resourceError, isLoading: isGetting } = useGetProblemResourceByIdQuery(id, { skip: !isEditMode });
     const [
         create,
         {

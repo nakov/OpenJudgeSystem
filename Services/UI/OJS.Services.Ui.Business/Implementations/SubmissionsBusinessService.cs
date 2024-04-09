@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+using static OJS.Services.Common.PaginationConstants.Submissions;
 
 public class SubmissionsBusinessService : ISubmissionsBusinessService
 {
@@ -356,9 +356,19 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     //     return Task.CompletedTask;
     // }
 
-    public async Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page)
+    public async Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
+        string? username,
+        int page,
+        int itemsInPage = DefaultSubmissionsPerPage)
     {
         var user = await this.usersBusiness.GetUserProfileByUsername(username);
+        var loggedInUser = this.userProviderService.GetCurrentUser();
+        var loggedInUserProfile = await this.usersBusiness.GetUserProfileById(loggedInUser.Id);
+
+        if (!loggedInUser.IsAdminOrLecturer && loggedInUserProfile!.UserName != username)
+        {
+            throw new UnauthorizedAccessException("You are not authorized for this action");
+        }
 
         var userParticipantsIds = await this.participantsDataService
             .GetAllByUser(user!.Id)
@@ -366,9 +376,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .ToEnumerableAsync();
 
         return await this.submissionsData
-            .GetLatestSubmissionsByUserParticipations<SubmissionForProfileServiceModel>(
+            .GetLatestSubmissionsByUserParticipations<TServiceModel>(
                 userParticipantsIds.MapCollection<int?>(),
-                DefaultSubmissionsPerPage,
+                itemsInPage,
                 page);
     }
 

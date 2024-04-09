@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import QueueIcon from '@mui/icons-material/Queue';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { DISABLED_USER_TO_EXAM_GROUP_BUTTON } from '../../../../common/messages';
-import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { IGetAllAdminParams } from '../../../../common/types';
 import {
+    IAdministrationFilter,
     mapFilterParamsToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import {
+    IAdministrationSorter,
     mapSorterParamsToQueryString,
 } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
-import { setAdminUsersFilters, setAdminUsersSorters } from '../../../../redux/features/admin/usersAdminSlice';
 import { useDeleteUserFromExamGroupMutation } from '../../../../redux/services/admin/examGroupsAdminService';
 import { useGetByExamGroupIdQuery } from '../../../../redux/services/admin/usersAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
@@ -32,12 +32,10 @@ interface IUsersInExamGroupViewProps {
 
 const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
     const { examGroupId, isAllowedToAddUsers } = props;
-    const filtersAndSortersLocation = `examGroup-details-users-${examGroupId}`;
 
-    const selectedFilters =
-        useSelector((state: IRootStore) => state.adminUsers[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-        useSelector((state: IRootStore) => state.adminUsers[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
@@ -206,13 +204,12 @@ const UsersInExamGroupView = (props: IUsersInExamGroupViewProps) => {
           error={error}
           filterableGridColumnDef={dataColumns}
           notFilterableGridColumnDef={notFilterableGridColumns}
-          location={filtersAndSortersLocation}
           queryParams={queryParams}
           renderActionButtons={renderActions}
           selectedFilters={selectedFilters}
           selectedSorters={selectedSorters}
-          setFilterStateAction={setAdminUsersFilters}
-          setSorterStateAction={setAdminUsersSorters}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: openShowAddUserModal, modal: (i) => renderAddUserModal(i) },
               { showModal: openShowAddBulkUsersModal, modal: (i) => renderAddBulkUsersModal(i) },

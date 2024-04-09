@@ -48,6 +48,7 @@ const AdministrationRolesPage = () => {
         }
         refetch();
     };
+
     const renderRoleModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           key={index}
@@ -87,7 +88,6 @@ const AdministrationRolesPage = () => {
           selectedSorters={[]}
           setFilterStateAction={undefined}
           setSorterStateAction={undefined}
-          location=""
           withSearchParams={false}
           showFiltersAndSorters={false}
           modals={[

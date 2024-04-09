@@ -1,24 +1,22 @@
 /* eslint-disable no-undefined */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../common/types';
+import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ProblemGroupForm from '../../../components/administration/problem-groups/problem-group-form/ProblemGroupForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminProblemGroupsFilters, setAdminProblemGroupsSorters } from '../../../redux/features/admin/problemGroupsSlice';
 import { useGetAllAdminProblemGroupsQuery, useLazyExportProblemGroupsToExcelQuery } from '../../../redux/services/admin/problemGroupsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import filterableColumns, { returnNonFilterableColumns } from './problemGroupGridColumns';
-
-const LOCATION = 'all-problem-groups';
 
 const AdministrationProblemGroupsPage = () => {
     const [ searchParams ] = useSearchParams();
@@ -31,21 +29,27 @@ const AdministrationProblemGroupsPage = () => {
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
     const [ problemGroupId, setProblemGroupId ] = useState<number | undefined>(undefined);
+
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(filterableColumns),
+    ));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(filterableColumns),
+    ));
+
     const { refetch: retakeGroups, data, isLoading, error } = useGetAllAdminProblemGroupsQuery(queryParams);
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
-    const selectedFilters = useSelector((state: IRootStore) => state.adminProblemGroups[LOCATION]?.selectedFilters);
-    const selectedSorters = useSelector((state: IRootStore) => state.adminProblemGroups[LOCATION]?.selectedSorters);
-
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
 
     useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ error ], setErrorMessages);
@@ -109,11 +113,10 @@ const AdministrationProblemGroupsPage = () => {
               error={error}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              selectedFilters={selectedFilters || []}
-              selectedSorters={selectedSorters || []}
-              setFilterStateAction={setAdminProblemGroupsFilters}
-              setSorterStateAction={setAdminProblemGroupsSorters}
-              location={LOCATION}
+              selectedFilters={selectedFilters}
+              selectedSorters={selectedSorters}
+              setSorterStateAction={setSelectedSorters}
+              setFilterStateAction={setSelectedFilters}
               modals={[
                   { showModal: openEditModal, modal: (i) => renderProblemModal(i, false) },
                   { showModal: openCreateModal, modal: (i) => renderProblemModal(i, true) },

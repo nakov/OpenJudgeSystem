@@ -40,6 +40,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
+    const [ contestsData, setContestsData ] = useState <Array<IContestAutocomplete>>([]);
 
     const [ examGroup, setExamGroup ] = useState<IExamGroupAdministration>({
         id: 0,
@@ -49,13 +50,16 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         externalAppId: '',
         externalExamGroupId: 0,
     });
+
+    const [ contestSearchString, setContestSearchString ] = useState<string>(examGroup.contestName);
+
     const [ examGroupValidations, setExamGroupValidations ] = useState({
         isNameTouched: false,
         isNameValid: !!isEditMode,
     });
 
     const { data, isFetching, isLoading } = useGetExamGroupByIdQuery({ id: Number(examGroupId) }, { skip: !isEditMode });
-    const { isFetching: isGettingContests, data: contestsForDropdown } = useGetContestAutocompleteQuery('');
+    const { data: contestsForDropdown } = useGetContestAutocompleteQuery(contestSearchString);
 
     const [
         updateExamGroup, {
@@ -78,6 +82,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         () => {
             if (data) {
                 setExamGroup(data);
+                setContestSearchString(data.contestName);
                 if (getContestId) {
                     getContestId(data.contestId);
                 }
@@ -85,6 +90,18 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         },
         [ data, getContestId ],
     );
+
+    useEffect(() => {
+        if (contestsForDropdown) {
+            if (examGroup.contestId && !contestsForDropdown.find((x) => x.id === examGroup.contestId)) {
+                setContestsData(contestsForDropdown.concat([
+                    { id: examGroup.contestId, name: examGroup.contestName } as IContestAutocomplete,
+                ]));
+            } else {
+                setContestsData(contestsForDropdown);
+            }
+        }
+    }, [ contestsForDropdown, examGroup.contestId, examGroup.contestName ]);
 
     useEffect(() => {
         setErrorMessages([]);
@@ -151,13 +168,19 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
     };
 
     const handleAutocompleteChange = (name: string, newValue:IContestCategories) => {
-        const event = {
-            target: {
-                name,
-                value: newValue?.id,
-            },
-        };
-        onChange(event);
+        setExamGroup((prevState) => ({
+            ...prevState,
+            contestId: newValue.id ?? null,
+            contestName: newValue.name ?? null,
+        }));
+    };
+
+    const onInputChange = (event: any, newInputValue: string) => {
+        if (!newInputValue) {
+            return;
+        }
+
+        setContestSearchString(newInputValue);
     };
 
     const edit = () => {
@@ -203,7 +226,7 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
             )
     );
 
-    if (isFetching || isLoading || isUpdating || isCreating || isGettingContests) {
+    if (isFetching || isLoading || isUpdating || isCreating) {
         return <SpinningLoader />;
     }
     return (
@@ -241,18 +264,16 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                 />
                 <FormControl className={formStyles.inputRow} sx={{ margin: '20px 0' }}>
                     <Autocomplete
-                      sx={{ width: '100%' }}
                       className={formStyles.inputRow}
                       onChange={(event, newValue) => handleAutocompleteChange('contest', newValue!)}
-                      value={contestsForDropdown?.find((contest) => contest.id === examGroup.contestId) ?? examGroup.contestName
-                          ? {
-                              id: examGroup.contestId,
-                              name: examGroup.contestName,
-                          } as IContestAutocomplete
-                          : null}
-                      options={contestsForDropdown!}
-                      renderInput={(params) => <TextField {...params} label="Contest" key={params.id} />}
+                      onInputChange={onInputChange}
+                      options={contestsData}
+                      inputValue={contestSearchString}
+                      renderInput={(params) => <TextField {...params} label="Select Contest" key={params.id} />}
+                      isOptionEqualToValue={(option, value) => option.id === value.id && option.name === value.name}
                       getOptionLabel={(option) => option?.name}
+                      disableCloseOnSelect
+                      disableClearable
                       renderOption={(properties, option) => (
                           <MenuItem {...properties} key={option.id} value={option.id}>
                               {option.name}

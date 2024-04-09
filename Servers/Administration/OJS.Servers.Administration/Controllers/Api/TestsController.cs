@@ -26,13 +26,11 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
         ITestsGridDataService testGridDataService,
         ITestsBusinessService testsBusinessService,
         TestAdministrationModelValidator validator,
-        TestDeleteValidator deleteValidator,
         IGridDataService<TestRun> testRunsGridDataService)
         : base(
             testGridDataService,
             testsBusinessService,
-            validator,
-            deleteValidator)
+            validator)
     {
         this.testGridDataService = testGridDataService;
         this.testsBusinessService = testsBusinessService;
