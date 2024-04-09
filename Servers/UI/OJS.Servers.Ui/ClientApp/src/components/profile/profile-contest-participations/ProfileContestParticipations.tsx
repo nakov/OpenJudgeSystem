@@ -101,7 +101,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         }
 
         if (!isNil(contestParticipationsQueryError)) {
-            return <span>{contestParticipationsQueryError.data.detail}</span>;
+            return <span>Error fetching user contest participations</span>;
         }
 
         if (!shouldRender) {
@@ -110,7 +110,9 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
 
         return (
             <div>
-                { (!userIsProfileOwner || !internalUser.canAccessAdministration) && !isNilOrEmpty(userContestParticipations.items) &&
+                { (!userIsProfileOwner || !internalUser.canAccessAdministration) &&
+                    userContestParticipations !== undefined &&
+                    !isNilOrEmpty(userContestParticipations.items) &&
                     <h2 className={styles.participationsHeading}>Participated In:</h2>}
                 <List
                   values={userContestParticipations!.items!}
@@ -125,7 +127,9 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
                       onChange={onPageChange}
                     />
                 )}
-                { isChosenInToggle && isEmpty(userContestParticipations.items) &&
+                { isChosenInToggle &&
+                    userContestParticipations !== undefined &&
+                    isNilOrEmpty(userContestParticipations.items) &&
                     (
                         <div className={concatClassNames(
                             styles.noParticipationsText,

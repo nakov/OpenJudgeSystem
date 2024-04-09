@@ -54,7 +54,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
 
     const render = useCallback(() => {
         if (!isNil(userSubmissionsQueryError)) {
-            return (<span>{userSubmissionsQueryError.data.detail}</span>);
+            return (<span>Error fetching user submissions</span>);
         }
 
         if (!shouldRender) {
