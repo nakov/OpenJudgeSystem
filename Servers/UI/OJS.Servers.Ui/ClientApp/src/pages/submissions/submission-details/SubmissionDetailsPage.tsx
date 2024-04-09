@@ -36,6 +36,9 @@ const SubmissionDetailsPage = () => {
     // fetch submission details if not present (when opened from url directly)
     // in order to load breadcrumbs and name of contest properly
     useEffect(() => {
+        if (!data?.contestId) {
+            return;
+        }
         if (!contestDetails || contestDetails?.id !== data?.contestId) {
             const fetchContestById = async () => {
                 const { data: contestData } = await getContestById({ id: data?.contestId });
