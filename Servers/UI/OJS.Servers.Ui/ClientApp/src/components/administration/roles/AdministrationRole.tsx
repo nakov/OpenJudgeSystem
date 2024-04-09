@@ -11,7 +11,7 @@ enum ROLE_LISTED_DATA {
 }
 
 const AdministrationRole = () => {
-    const { pathname } = useLocation();
+    const { pathname, hash } = useLocation();
     const [ , , , roleId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(ROLE_LISTED_DATA.USERS);
 
@@ -39,6 +39,7 @@ const AdministrationRole = () => {
               { value: ROLE_LISTED_DATA.USERS, label: 'Users', node: returnUsersInRoleView },
           ]}
         />
+        
     );
 };
 export default AdministrationRole;

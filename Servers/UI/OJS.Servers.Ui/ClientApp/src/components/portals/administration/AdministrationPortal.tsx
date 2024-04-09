@@ -86,7 +86,7 @@ const administrationItems = [
         name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
         path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
-        visibleOnlyForAdmin: false,
+        visibleOnlyForAdmin: true,
 
     },
     {
@@ -306,7 +306,7 @@ const AdministrationPortal = () => {
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
             Element: AdminSubmissionForProcessingDetails,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${TESTS_PATH}`,

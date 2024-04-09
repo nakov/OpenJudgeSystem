@@ -1,19 +1,18 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common;
 using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Business.Tests;
+using OJS.Services.Administration.Business.Tests.GridData;
 using OJS.Services.Administration.Business.Tests.Permissions;
 using OJS.Services.Administration.Business.Tests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.TestRuns;
 using OJS.Services.Administration.Models.Tests;
-using OJS.Services.Administration.Models.Validation;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
 
@@ -24,7 +23,7 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
     private readonly IGridDataService<TestRun> testRunsGridDataService;
 
     public TestsController(
-        IGridDataService<Test> testGridDataService,
+        ITestsGridDataService testGridDataService,
         ITestsBusinessService testsBusinessService,
         TestAdministrationModelValidator validator,
         TestDeleteValidator deleteValidator,
