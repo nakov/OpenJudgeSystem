@@ -11,7 +11,7 @@ enum ROLE_LISTED_DATA {
 }
 
 const AdministrationRole = () => {
-    const { pathname, hash } = useLocation();
+    const { pathname } = useLocation();
     const [ , , , roleId ] = pathname.split('/');
     const [ tabName, setTabName ] = useState(ROLE_LISTED_DATA.USERS);
     const [ roleName, setRoleName ] = useState<string>('');
