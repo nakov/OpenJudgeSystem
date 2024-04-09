@@ -119,9 +119,9 @@
                 userIdRegex.Replace(workerDbConnectionString, $"UID={this.RestrictedUserId};");
 
             workerDbConnectionString =
-                passwordRegex.Replace(workerDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
+                passwordRegex.Replace(workerDbConnectionString, $"Password={this.Settings.RestrictedUserPassword};");
 
-            workerDbConnectionString += $";Database={databaseName};Pooling=False;";
+            workerDbConnectionString += $"Database={databaseName};Pooling=False;";
 
             return workerDbConnectionString;
         }
