@@ -1,18 +1,18 @@
-@use '../../../styles/fonts';
-@use '../../../styles/spacings';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
 
 .testRunWrapper {
   margin: spacings.$sp-18 0;
   padding: spacings.$sp-12;
 
   .testRunTitleWrapper {
-    display: flex;
     align-items: center;
+    display: flex;
     justify-content: space-between;
 
     .testNameButtonWrapper {
-      display: flex;
       align-items: center;
+      display: flex;
     }
 
     button {
@@ -20,8 +20,8 @@
     }
 
     .testRunIdWrapper {
-      margin-left: spacings.$sp-18;
       color: inherit;
+      margin-left: spacings.$sp-18;
       text-decoration: underline;
 
       &:visited {
@@ -37,18 +37,18 @@
       }
 
       span {
-        display: flex;
         align-items: center;
         cursor: pointer;
+        display: flex;
 
         span {
-          display: flex;
           align-items: center;
+          display: flex;
         }
       }
 
       svg:first-child {
-        margin: 0 spacings.$sp-8
+        margin: 0 spacings.$sp-8;
       }
     }
   }
@@ -64,6 +64,7 @@
 }
 
 .timeAndMemoryModal {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
+
   padding: spacings.$sp-8;
 }

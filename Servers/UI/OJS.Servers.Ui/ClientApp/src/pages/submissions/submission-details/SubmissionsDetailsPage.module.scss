@@ -6,8 +6,7 @@
 @use 'src/styles/border-radiuses';
 
 .submissionsDetailsWrapper {
-  @extend %font-family-roboto;
-
+  @extend %font-family-normal;
   padding: spacings.$sp-16 spacings.$sp-32;
 
   .submissionTitle {
