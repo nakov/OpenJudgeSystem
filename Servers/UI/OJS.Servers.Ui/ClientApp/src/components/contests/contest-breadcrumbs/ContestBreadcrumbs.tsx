@@ -4,7 +4,7 @@
 
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
 import { getAllContestsUrl } from '../../../common/urls/compose-client-urls';
@@ -21,6 +21,7 @@ import styles from './ContestBreadcrumbs.module.scss';
 
 const ContestBreadcrumbs = () => {
     const dispatch = useAppDispatch();
+    const { pathname } = useLocation();
     const { contestId } = useParams();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
@@ -44,18 +45,18 @@ const ContestBreadcrumbs = () => {
 
     // set selected category when loading from specific url and no data is present beforehand
     useEffect(() => {
-        if (contestId && breadcrumbItems.length === 0 && contestDetails) {
-            const selectedCategory = findContestCategoryByIdRecursive(contestCategories, contestDetails?.categoryId);
+        // contest Id should be part of the check only when on contests page, otherwise causes endless recursion
+        if (pathname.includes('/contest')
+            ? contestId
+            : breadcrumbItems.length === 0 && contestDetails) {
+            const selectedCategory = findContestCategoryByIdRecursive(contestCategories, contestDetails?.categoryId!);
             if (selectedCategory) {
                 const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);
 
                 dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
             }
         }
-        // contestId is removed from dependency array, since it
-        // causes recursive loading when its not present in the url
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ contestCategories, breadcrumbItems.length, contestDetails, dispatch ]);
+    }, [ contestCategories, breadcrumbItems.length, contestDetails, pathname, contestId, dispatch ]);
 
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean, idx: number) => (
         <Link to={getAllContestsUrl(breadcrumbItem.id)}>

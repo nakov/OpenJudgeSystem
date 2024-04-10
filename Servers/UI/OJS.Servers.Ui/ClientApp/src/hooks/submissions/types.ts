@@ -22,6 +22,7 @@ interface ITestRunType {
     input: string;
     isTrialTest: boolean;
     showInput: boolean;
+    testId: number;
 }
 
 interface ISubmissionType {

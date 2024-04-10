@@ -19,6 +19,16 @@
       margin-left: spacings.$sp-32;
     }
 
+    .testRunIdWrapper {
+      margin-left: spacings.$sp-18;
+      color: inherit;
+      text-decoration: underline;
+
+      &:visited {
+        color: inherit;
+      }
+    }
+
     .timeAndMemoryWrapper {
       display: flex;
 

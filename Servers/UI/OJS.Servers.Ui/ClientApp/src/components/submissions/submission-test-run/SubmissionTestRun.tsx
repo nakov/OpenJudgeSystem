@@ -2,10 +2,12 @@
 import React, { useMemo, useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { Popover } from '@mui/material';
 
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
+import { useAppSelector } from '../../../redux/store';
 import Diff from '../../diff/Diff';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 
@@ -29,6 +31,8 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
 
     const { themeColors, getColorClassName } = useTheme();
 
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
+
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
     const [ timeAnchorEl, setTimeAnchorEl ] = useState<HTMLElement | null>(null);
@@ -41,6 +45,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
 
     const {
         input,
+        testId,
         resultType,
         isTrialTest,
         memoryUsed,
@@ -78,6 +83,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
     const onShowHideInputButtonClick = () => {
         setTestShowInput(!testShowInput);
     };
+
     return (
         <div
           key={`test-run-${testRun.id}`}
@@ -87,8 +93,16 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
             <div className={styles.testRunTitleWrapper}>
                 <div className={styles.testNameButtonWrapper}>
                     <div style={{ color: textIdColor }}>
+                        { isTrialTest && 'Zero '}
                         Test #
-                        {idx}
+                        { idx }
+                        { resultType !== testResultTypes.correctAnswer && ` (${resultType})`}
+                        { user.canAccessAdministration && (
+                            <Link to={`/administration-new/tests/${testId}`} className={styles.testRunIdWrapper}>
+                                Test #
+                                {testId}
+                            </Link>
+                        )}
                     </div>
                     { showInput && (
                         <Button
@@ -159,7 +173,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                 </div>
             </div>
             {testShowInput && (<div className={styles.inputWrapper} style={{ backgroundColor: themeColors.baseColor100 }}>{input}</div>)}
-            {isTrialTest && resultType === testResultTypes.wrongAnswer && (
+            {expectedOutputFragment && userOutputFragment && (
                 <div className={styles.outputWrapper}>
                     <Diff expectedStr={expectedOutputFragment} actualStr={userOutputFragment} />
                 </div>

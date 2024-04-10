@@ -12,7 +12,11 @@ import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
-import { useGetSubmissionDetailsQuery, useLazyGetSubmissionUploadedFileQuery } from '../../../redux/services/submissionsService';
+import {
+    useGetSubmissionDetailsQuery,
+    useLazyGetCompeteRetestQuery,
+    useLazyGetSubmissionUploadedFileQuery,
+} from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { defaultDateTimeFormat, formatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
@@ -35,6 +39,7 @@ const SubmissionDetailsPage = () => {
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
     const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
+    const [ retestSubmission, { data: retestData, isLoading: retestIsLoading, error: retestError } ] = useLazyGetCompeteRetestQuery();
 
     // fetch submission details if not present (when opened from url directly)
     // in order to load breadcrumbs and name of contest properly
@@ -183,7 +188,7 @@ const SubmissionDetailsPage = () => {
                         /100) submission is now outdated. Click &quot;Restart&quot; to resubmit
                         your solution for re-evaluation against the new test cases. Your score may change.
                     </div>
-                    <Button text="RETEST" onClick={() => {}} />
+                    <Button text="RETEST" onClick={() => retestSubmission({ id: solutionId! })} />
                 </div>
             );
         }
@@ -208,35 +213,44 @@ const SubmissionDetailsPage = () => {
                 <Button text="Edit" onClick={goToAdministrationForContest} />
                 <Button text="Delete" onClick={goToAdministrationForContest} />
                 <Button text="Tests" onClick={goToAdministrationForContest} />
-                <Button text="Retest" onClick={() => {}} />
+                <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
             </div>
         );
     }, [ content, contestId, navigate ]);
 
-    if (isLoading) {
+    if (isLoading || retestIsLoading) {
         return (
             <div style={{ ...flexCenterObjectStyles }}>
                 <SpinningLoader />
             </div>
         );
     }
-    if (error) {
-        return (<div>Error fetching submission data!</div>);
+    if (error || retestError) {
+        return (
+            <div>
+                { retestError
+                    ? 'Error retesting solution. Please try again!'
+                    : 'Error fetching submission data!' }
+            </div>
+        );
+    }
+    if (retestData) {
+        return (<div className={styles.succesfulRetestWrapper}>Submission has been retested successfully, reload page to refresh results.</div>);
     }
     return (
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div>
                 <div className={styles.submissionTitle}>
-                    <Link to={`/contests/${contestId}`}>{name}</Link>
+                    {renderSolutionTitle()}
                 </div>
                 <div className={styles.bodyWrapper}>
                     <SubmissionTestRuns testRuns={testRuns || []} />
                     <div className={styles.innerBodyWrapper}>
-                        {renderSolutionTitle()}
-                        { user.canAccessAdministration && renderAdminButtons() }
+                        <Link to={`/contests/${contestId}`}>{name}</Link>
+                        {user.canAccessAdministration && renderAdminButtons()}
                         {renderSolutionTestDetails()}
-                        { !isEligibleForRetest && content && (
+                        {!isEligibleForRetest && content && (
                             <div className={styles.codeContentWrapper}>
                                 <div>Source Code</div>
                                 <CodeEditor code={content} readOnly />

@@ -17,7 +17,6 @@ interface ISubmissionTestRunsProps {
 const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const { testRuns } = props;
     const { themeColors, getColorClassName } = useTheme();
-    const [ selectedTestRun, setSelectedTestRun ] = useState<number>(1);
 
     const backgroundColorClassName = getColorClassName(themeColors.baseColor500);
 
@@ -51,8 +50,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
             return <GoPrimitiveDot size={20} color={color} />;
         };
 
-        const onTestRunClick = (i: number) => {
-            setSelectedTestRun(i);
+        const onTestRunClick = () => {
             const scrollToElement = document.querySelector(`#test-run-${testRun.id}`);
             if (!scrollToElement) { return; }
 
@@ -64,11 +62,11 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
         return (
             <div
-              className={`${styles.submissionTestRun} ${selectedTestRun === idx
-                  ? styles.selectedTestRun
+              className={`${styles.submissionTestRun} ${testRun.isTrialTest
+                  ? styles.trialTest
                   : ''}`}
               style={{ color }}
-              onClick={() => onTestRunClick(idx)}
+              onClick={() => onTestRunClick()}
             >
                 <span>
                     {idx}
