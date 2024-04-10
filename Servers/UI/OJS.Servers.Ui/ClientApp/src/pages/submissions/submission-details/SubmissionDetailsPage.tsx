@@ -194,7 +194,7 @@ const SubmissionDetailsPage = () => {
         }
 
         return testRuns?.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
-    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment ]);
+    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment, retestSubmission, solutionId ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
@@ -216,7 +216,7 @@ const SubmissionDetailsPage = () => {
                 <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
             </div>
         );
-    }, [ content, contestId, navigate ]);
+    }, [ content, contestId, navigate, retestSubmission, solutionId ]);
 
     if (isLoading || retestIsLoading) {
         return (
@@ -235,7 +235,11 @@ const SubmissionDetailsPage = () => {
         );
     }
     if (retestData) {
-        return (<div className={styles.succesfulRetestWrapper}>Submission has been retested successfully, reload page to refresh results.</div>);
+        return (
+            <div className={styles.succesfulRetestWrapper}>
+                Submission has been retested successfully, reload page to refresh results.
+            </div>
+        );
     }
     return (
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>

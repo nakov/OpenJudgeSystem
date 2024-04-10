@@ -64,16 +64,16 @@ const submissionsService = createApi({
             }),
         }),
         getSubmissionDetails: builder.query<ISubmissionType, { id: number }>({
-            query: ({ id }) =>
-                ({ url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
         }),
         getCompeteRetest: builder.query<any, { id: number }>({
-            query: ({ id }) =>
-                ({ url: `${defaultPathIdentifier}/Compete/Retest/${id}`}),
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Compete/Retest/${id}` }),
         }),
         getSubmissionUploadedFile: builder.query<{ blob: Blob }, { id: number }>({
-            query: ({ id }) =>
-                ({ url: `${defaultPathIdentifier}/Submissions/Download/${id}` }),
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Submissions/Download/${id}` }),
         }),
     }),
 });

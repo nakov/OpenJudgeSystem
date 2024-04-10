@@ -45,10 +45,12 @@ const ContestBreadcrumbs = () => {
 
     // set selected category when loading from specific url and no data is present beforehand
     useEffect(() => {
-        // contest Id should be part of the check only when on contests page, otherwise causes endless recursion
+        // contestId should be part of the check only when
+        // on contests page, otherwise causes endless recursion
         if (pathname.includes('/contest')
             ? contestId
             : breadcrumbItems.length === 0 && contestDetails) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             const selectedCategory = findContestCategoryByIdRecursive(contestCategories, contestDetails?.categoryId!);
             if (selectedCategory) {
                 const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);

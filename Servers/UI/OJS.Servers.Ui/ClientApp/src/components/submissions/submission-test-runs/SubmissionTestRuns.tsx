@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaCheck, FaRegClock } from 'react-icons/fa';
 import { GoPrimitiveDot } from 'react-icons/go';
