@@ -4,7 +4,7 @@
 @use 'src/styles/fonts';
 
 .breadcrumbsWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   align-items: center;
   cursor: pointer;

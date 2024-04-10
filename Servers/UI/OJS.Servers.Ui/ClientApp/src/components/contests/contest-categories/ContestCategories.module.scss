@@ -5,7 +5,7 @@
 @use 'src/styles/font-weights';
 
 .contestCategoriesWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   min-height: 700px;
   width: 250px;

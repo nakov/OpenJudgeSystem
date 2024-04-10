@@ -48,6 +48,7 @@ const AdministrationRolesPage = () => {
         }
         refetch();
     };
+
     const renderRoleModal = (index: number, isEditMode: boolean) => (
         <AdministrationModal
           key={index}

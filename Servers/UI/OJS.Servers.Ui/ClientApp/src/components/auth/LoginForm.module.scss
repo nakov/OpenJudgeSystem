@@ -1,5 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/spacings';
+@use 'src/styles/fonts';
 @use 'src/styles/border-radiuses';
 
 .loginFormContentContainer {
@@ -11,12 +12,13 @@
 }
 
 .loginForm {
+  @extend %font-family-normal;
+
   align-content: center;
   border-radius: border-radiuses.$br-4;
   box-shadow: colors.$box-shadow-color;
   display: flex;
   flex-direction: column;
-  font-family: Lato, serif;
   margin: 20px auto;
   padding: spacings.$sp-48;
   text-align: center;

@@ -1,8 +1,9 @@
-﻿@use '../../../styles/fonts';
+﻿@use 'src/styles/fonts';
 
 .logout {
+  @extend %font-family-normal;
+
   display: flex;
-  font: fonts.$font-family-lato;
   justify-content: center;
   margin-top: 50px;
 }

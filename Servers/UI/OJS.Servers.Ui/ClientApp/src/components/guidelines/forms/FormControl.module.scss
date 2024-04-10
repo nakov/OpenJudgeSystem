@@ -47,7 +47,7 @@ input:-webkit-autofill:active {
 }
 
 .formControl {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   border-radius: 6px;
   box-sizing: border-box;

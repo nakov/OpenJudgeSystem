@@ -1,148 +1,145 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import Heading from '../../components/guidelines/headings/Heading';
+import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
+import Button, { ButtonType } from '../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
 import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
-import { useUserProfileSubmissions } from '../../hooks/submissions/use-profile-submissions';
 import { usePageTitles } from '../../hooks/use-page-titles';
-import { useUsers } from '../../hooks/use-users';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
-import isNilOrEmpty from '../../utils/check-utils';
-import { flexCenterObjectStyles } from '../../utils/object-utils';
-import { decodeUsernameFromUrlParam } from '../../utils/urls';
-import NotFoundPage from '../not-found/NotFoundPage';
-import { makePrivate } from '../shared/make-private';
+import useTheme from '../../hooks/use-theme';
+import { setProfile } from '../../redux/features/usersSlice';
+import { useGetProfileQuery } from '../../redux/services/usersService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import concatClassNames from '../../utils/class-names';
+import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
-// import Tabs from '../../components/guidelines/tabs/Tabs';
+import styles from './ProfilePage.module.scss';
 
 const ProfilePage = () => {
-    const {
-        state: {
-            myProfile,
-            isProfileInfoLoaded,
-            isProfileInfoLoading,
-            isGetProfileQueryInitiated,
-        },
-        actions: {
-            getProfile,
-            clearUserProfileInformation,
-        },
-    } = useUsers();
-    const { internalUser } =
-        useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
-    const { state: { usernameForProfile }, actions: { setUsernameForProfile } } = useUserProfileSubmissions();
-    const { actions: { setPageTitle } } = usePageTitles();
-    const { username } = useParams();
+    const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
+    const { profile } = useAppSelector((reduxState) => reduxState.users);
+    const [ toggleValue, setToggleValue ] = useState<number>(1);
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
 
+    const { actions: { setPageTitle } } = usePageTitles();
+    const { username } = useParams();
+    const { themeColors, getColorClassName } = useTheme();
+    const dispatch = useAppDispatch();
+
+    // If {username} is present in url, then the the profile should be loaded for this username,
+    // otherwise the profile is loaded for the logged in user
+    const profileUsername = useMemo(
+        () => !isNil(username)
+            ? decodeFromUrlParam(username)
+            : internalUser.userName,
+        [ internalUser, username ],
+    );
+
+    const {
+        data: profileInfo,
+        isError,
+        isLoading: isProfileInfoLoading,
+    } = useGetProfileQuery({ username: profileUsername });
+
     useEffect(
         () => {
-            if (!isEmpty(myProfile.userName) || isGetProfileQueryInitiated || isProfileInfoLoading) {
+            if (isNil(profileInfo)) {
                 return;
             }
 
-            const usernameParam = !isNil(username)
-                ? username
-                : internalUser.userName;
-
-            setUsernameForProfile(usernameParam);
-            getProfile(decodeUsernameFromUrlParam(usernameParam));
+            dispatch(setProfile(profileInfo));
+            setPageTitle(`${profileInfo.userName}'s profile`);
         },
-        [ getProfile, myProfile.userName, internalUser.userName, setUsernameForProfile,
-            username, isGetProfileQueryInitiated, isProfileInfoLoading ],
+        [ dispatch, profileInfo, setPageTitle ],
     );
 
-    useEffect(
-        () => {
-            if (!isProfileInfoLoaded || isEmpty(myProfile.userName)) {
-                return;
-            }
+    useEffect(() => {
+        if (!isLoggedIn || isNil(profile)) {
+            return;
+        }
 
-            setPageTitle(`${usernameForProfile}'s profile`);
-        },
-        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile ],
-    );
+        setCurrentUserIsProfileOwner(profile.userName === internalUser.userName);
+    }, [ internalUser, profile, isLoggedIn ]);
 
-    useEffect(
-        () => {
-            if (isEmpty(myProfile.userName)) {
-                return;
-            }
+    const renderError = useCallback(() => {
+        let text = 'Could not load profile.';
 
-            setCurrentUserIsProfileOwner(decodeUsernameFromUrlParam(usernameForProfile) === internalUser.userName);
-        },
-        [ setPageTitle, myProfile, isProfileInfoLoaded, usernameForProfile, internalUser.userName ],
-    );
+        if (isError) {
+            text += ' ';
+            text += 'Are you sure this user exists?';
+        }
 
-    useEffect(
-        () => () => {
-            clearUserProfileInformation();
-        },
-        [ clearUserProfileInformation ],
-    );
-
-    const renderUsernameHeading = useCallback(
-        () => {
-            const usernameForHeading = isEmpty(myProfile.userName)
-                ? username
-                : myProfile.userName;
-
-            return isNilOrEmpty(username)
-                ? (
-                    <Heading>Profile</Heading>
-                )
-                : (
-                    <Heading>
-                        {usernameForHeading}
-                        &apos;s
-                        profile
-                    </Heading>
-                );
-        },
-        [ myProfile.userName, username ],
-    );
-
-    const renderPage = useCallback(
-        () => (isEmpty(myProfile.userName)
-            ? <NotFoundPage />
-            : (
-                <>
-                    {renderUsernameHeading()}
-                    <ProfileAboutInfo
-                      userProfile={myProfile}
-                      isUserAdmin={internalUser.isAdmin}
-                      isUserProfileOwner={currentUserIsProfileOwner}
-                    />
-                    {(internalUser.canAccessAdministration || currentUserIsProfileOwner) && <ProfileSubmissions />}
-                    <ProfileContestParticipations />
-                    {/* Tabs will be hidden for alpha version,
-                         as it is not production ready yet */}
-                    {/* <Tabs */}
-                    {/*  labels={[ 'Submissions', 'Contest Participations' ]} */}
-                    {/*  contents={[ <ProfileSubmissions />, */}
-                    {/*  <ProfileContestParticipations /> ]} */}
-                    {/* /> */}
-                </>
-            )
-        ),
-        [ myProfile, renderUsernameHeading, internalUser.isAdmin, internalUser.canAccessAdministration, currentUserIsProfileOwner ],
-    );
-
-    return isProfileInfoLoaded && !isProfileInfoLoading
-        ? renderPage()
-        : (
-            <div style={{ ...flexCenterObjectStyles }}>
-                <SpinningLoader />
-            </div>
+        return (
+            <span className={concatClassNames(getColorClassName(themeColors.textColor), styles.errorText)}>
+                {text}
+            </span>
         );
+    }, [ getColorClassName, isError, themeColors.textColor ]);
+
+    return (
+        isProfileInfoLoading
+            ? <SpinningLoader />
+            : isNil(profile)
+                ? renderError()
+                : (
+                    <div className={getColorClassName(themeColors.textColor)}>
+                        <PageBreadcrumbs
+                          keyPrefix="profile"
+                          items={[
+                                {
+                                    text: 'My Profile',
+                                    to: '/profile',
+                                } as IPageBreadcrumbsItem,
+                          ]}
+                        />
+                        <ProfileAboutInfo
+                          userProfile={profile}
+                          isUserAdmin={internalUser.isAdmin}
+                          isUserLecturer={internalUser.isInRole}
+                          isUserProfileOwner={currentUserIsProfileOwner}
+                        />
+                        {
+                            (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
+                            <div className={styles.submissionsAndParticipationsToggle}>
+                                <Button
+                                  type={toggleValue === 1
+                                      ? ButtonType.primary
+                                      : ButtonType.secondary}
+                                  className={styles.toggleBtn}
+                                  text={currentUserIsProfileOwner
+                                      ? 'My Submissions'
+                                      : 'User Submissions'}
+                                  onClick={() => setToggleValue(1)}
+                                />
+                                <Button
+                                  type={toggleValue === 2
+                                      ? ButtonType.primary
+                                      : ButtonType.secondary}
+                                  className={styles.toggleBtn}
+                                  text={currentUserIsProfileOwner
+                                      ? 'My Contests'
+                                      : 'User Contests'}
+                                  onClick={() => setToggleValue(2)}
+                                />
+                            </div>
+                            )
+                        }
+                        <ProfileSubmissions
+                          userIsProfileOwner={currentUserIsProfileOwner}
+                          isChosenInToggle={toggleValue === 1}
+                        />
+                        <ProfileContestParticipations
+                          userIsProfileOwner={currentUserIsProfileOwner}
+                          isChosenInToggle={toggleValue === 2}
+                        />
+                    </div>
+                )
+    );
 };
 
-export default makePrivate(setLayout(ProfilePage));
+export default setLayout(ProfilePage);

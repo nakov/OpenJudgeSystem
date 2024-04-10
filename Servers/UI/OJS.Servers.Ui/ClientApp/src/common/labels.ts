@@ -27,6 +27,8 @@ export const CREATE_NEW_RECORD = 'Create new record';
 
 export const CLASS_NAME = 'Class Name';
 
+export const VALUE = 'Value';
+
 // Contests
 export const LIMIT_BETWEEN_SUBMISSIONS = 'Limit between submissions';
 export const CONTEST_ID = 'Contest Id';

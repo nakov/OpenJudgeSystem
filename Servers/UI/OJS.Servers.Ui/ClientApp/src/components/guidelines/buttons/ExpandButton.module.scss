@@ -1,7 +1,7 @@
 @use 'src/styles/fonts';
 
 .container {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   margin-top: 10px;
 }

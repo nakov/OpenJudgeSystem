@@ -23,7 +23,7 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         this.participantsDataService = participantsDataService;
     }
 
-    public async Task<IDictionary<int, ContestParticipantsCountCacheModel>> GetParticipantsCountForContestsPage(
+    public async Task<IDictionary<int, ContestParticipantsCountCacheModel>> GetParticipantsCount(
         IReadOnlyCollection<int> contestIds,
         int? page,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)

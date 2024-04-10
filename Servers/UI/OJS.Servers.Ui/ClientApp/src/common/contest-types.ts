@@ -12,6 +12,12 @@ enum SortType {
     StartDate = 'StartDate',
     EndDate = 'EndDate',
     OrderBy = 'OrderBy',
+    ParticipantRegistrationTime = 'ParticipantRegistrationTime',
+}
+
+enum SortTypeDirection {
+    Ascending = 'Ascending',
+    Descending = 'Descending',
 }
 
 type FilterSortType = FilterType | SortType;
@@ -84,5 +90,6 @@ export {
     ContestStatus,
     FilterType,
     SortType,
+    SortTypeDirection,
     ContestVariation,
 };

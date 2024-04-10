@@ -1,10 +1,9 @@
-/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
-import { IGetSubmissionsUrlParams, IGetSubmissionsByUserParams } from '../../common/url-types';
+import { IGetSubmissionsUrlParams, IGetUserSubmissionsUrlParams, IGetSubmissionsByUserParams } from '../../common/url-types';
 import { ISubmissionType } from '../../hooks/submissions/types';
 
 const submissionsService = createApi({
@@ -49,6 +48,12 @@ const submissionsService = createApi({
                 query: ({ status, page }) => (
                     { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
+        getUserSubmissions: builder.query<
+            IPagedResultType<IPublicSubmission>,
+            IGetUserSubmissionsUrlParams>({
+                query: ({ username, page }) => (
+                    { url: `/${defaultPathIdentifier}/Submissions/GetUserSubmissions?username=${username}&page=${page}` }),
+            }),
         getSubmissionResultsByProblem: builder.query<IPagedResultType<IPublicSubmission>, IGetSubmissionsByUserParams>({
             query: ({ id, page, isOfficial }) => ({
                 url: `${defaultPathIdentifier}/Submissions/GetUserSubmissionsByProblem/${id}`,
@@ -77,6 +82,7 @@ const {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetUserSubmissionsQuery,
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
     useLazyGetCompeteRetestQuery,
@@ -87,6 +93,7 @@ export {
     useGetLatestSubmissionsQuery,
     useGetSubmissionDetailsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetUserSubmissionsQuery,
     useLazyGetSubmissionUploadedFileQuery,
     useLazyGetCompeteRetestQuery,
 };

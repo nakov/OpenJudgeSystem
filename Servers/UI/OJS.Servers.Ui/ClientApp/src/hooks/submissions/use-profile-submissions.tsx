@@ -8,14 +8,14 @@ import { IKeyValuePair } from '../../common/common-types';
 import { IPage, IPagedResultType, IPublicSubmission } from '../../common/types';
 import {
     IGetUserSubmissionsForProfileByContestUrlParams,
-    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
     IUserInfoUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../utils/check-utils';
 import {
-    decodeUsernameFromUrlParam,
+    decodeFromUrlParam,
     getAllParticipationsForUserUrl,
     getSubmissionsForProfileByContestUrl,
     getSubmissionsForProfileUrl,
@@ -68,7 +68,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     const [
         userSubmissionsForProfileUrlParams,
         setUserSubmissionsForProfileUrlParams,
-    ] = useState<IGetUserSubmissionsForProfileUrlParams | null>(null);
+    ] = useState<IGetUserSubmissionsUrlParams | null>(null);
     const [
         submissionsByContestIdParams,
         setSubmissionsByContestIdParams,
@@ -88,7 +88,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         get: getUserSubmissions,
         data: userSubmissionsData,
     } = useHttp<
-        IGetUserSubmissionsForProfileUrlParams,
+        IGetUserSubmissionsUrlParams,
         IPagedResultType<IPublicSubmission>>({
             url: getSubmissionsForProfileUrl,
             parameters: userSubmissionsForProfileUrlParams,
@@ -121,7 +121,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     );
 
     const getDecodedUsernameFromProfile = useCallback(
-        () => decodeUsernameFromUrlParam(usernameForProfile),
+        () => decodeFromUrlParam(usernameForProfile),
         [ usernameForProfile ],
     );
 
@@ -186,7 +186,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
             const pathSegments = pathname.split('/').filter(Boolean);
 
             if (pathSegments.length > 1) {
-                const decodedUsername = decodeUsernameFromUrlParam(pathSegments[1]);
+                const decodedUsername = decodeFromUrlParam(pathSegments[1]);
                 setParticipationsForProfileUrlParam({ username: decodedUsername });
                 return;
             }

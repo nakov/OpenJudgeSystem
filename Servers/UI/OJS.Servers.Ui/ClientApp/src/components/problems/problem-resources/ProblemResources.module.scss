@@ -3,7 +3,7 @@
 @use 'src/styles/fonts';
 
 .resourcesList {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   align-items: start;
   font-size: variables.$f-size-18;
@@ -15,7 +15,7 @@
 }
 
 .noResourcesParagraph {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   font-size: variables.$f-size-16;
   padding: 10px;

@@ -40,6 +40,14 @@ enum ProblemResourceType
     Link = 3,
 }
 
+enum SettingTypeEnums {
+    Numeric = 1,
+    ShortString = 2,
+    LongString= 3,
+    DateTime= 4,
+    Boolean= 5,
+}
+
 export {
     ThemeMode,
     FilterColumnTypeEnum,
@@ -48,4 +56,5 @@ export {
     ProblemResourceType,
     SubmissionStatus,
     PublicSubmissionState,
+    SettingTypeEnums,
 };
