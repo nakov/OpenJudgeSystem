@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
