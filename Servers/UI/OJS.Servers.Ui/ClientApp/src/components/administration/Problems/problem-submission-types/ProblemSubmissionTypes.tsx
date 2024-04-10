@@ -2,18 +2,20 @@
 import { MdOutlineRemoveCircle } from 'react-icons/md';
 import { FormControl, FormGroup, FormLabel, IconButton, TextareaAutosize, TextField } from '@mui/material';
 
-import { NAME, SOLUTION_SKELETON } from '../../../../common/labels';
+import { MEMORY_LIMIT, NAME, SOLUTION_SKELETON, TIME_LIMIT } from '../../../../common/labels';
 import { SOLUTION_SKELETON_PLACEHOLDER } from '../../../../common/messages';
 import { IProblemSubmissionType } from '../../../../common/types';
 
+import styles from './ProblemSubmissionTypes.module.scss';
+
 interface IProblemSUbmissionTypesProps{
-    onSkeletonChange: Function;
+  onPropChange: Function;
     onStrategyRemoved: Function;
     strategy: IProblemSubmissionType;
 }
 
 const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
-    const { onSkeletonChange, onStrategyRemoved, strategy } = props;
+    const { onPropChange, onStrategyRemoved, strategy } = props;
     return (
         <FormGroup
           sx={{
@@ -23,7 +25,8 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
               justifyContent: 'space-around',
               margin: '1rem',
               alignSelf: 'flex-start',
-              width: '85%',
+              minWidth: '95%',
+              flexWrap: 'wrap',
           }}
           key={strategy.id}
         >
@@ -33,7 +36,7 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
             >
                 <MdOutlineRemoveCircle color="red" />
             </IconButton>
-            <FormControl sx={{ width: '25%' }}>
+            <FormControl className={styles.solutionSkeleton}>
                 <TextField
                   variant="standard"
                   label={NAME}
@@ -43,18 +46,41 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
                   InputProps={{ readOnly: true }}
                 />
             </FormControl>
-            <FormControl sx={{ width: '60%' }}>
+            <FormControl className={styles.solutionSkeleton}>
                 <FormLabel>{SOLUTION_SKELETON}</FormLabel>
                 <TextareaAutosize
                   placeholder={SOLUTION_SKELETON_PLACEHOLDER}
-                  minRows={10}
-                  maxRows={20}
+                  minRows={5}
+                  maxRows={5}
                   value={strategy.solutionSkeleton ?? ''}
-                  name="description"
-                  onChange={(e) => onSkeletonChange(e.target.value, strategy.id)}
+                  name="skeleton"
+                  onChange={(e) => onPropChange(e.target.value, strategy.id, 'solutionSkeleton')}
                 />
             </FormControl>
+            <FormGroup className={styles.limitsWrapper}>
+                <TextField
+                  variant="standard"
+                  label={TIME_LIMIT}
+                  value={strategy.timeLimit ?? ''}
+                  InputLabelProps={{ shrink: true }}
+                  name="timeLimit"
+                  type="number"
+                  className={styles.limitField}
+                  onChange={(e) => onPropChange(e.target.value, strategy.id, 'timeLimit')}
+                />
+                <TextField
+                  variant="standard"
+                  label={MEMORY_LIMIT}
+                  value={strategy.memoryLimit ?? ''}
+                  InputLabelProps={{ shrink: true }}
+                  type="number"
+                  name="memoryLimit"
+                  className={styles.limitField}
+                  onChange={(e) => onPropChange(e.target.value, strategy.id, 'memoryLimit')}
+                />
+            </FormGroup>
         </FormGroup>
     );
 };
+
 export default ProblemSubmissionTypes;

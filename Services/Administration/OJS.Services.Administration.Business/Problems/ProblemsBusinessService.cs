@@ -204,11 +204,6 @@ namespace OJS.Services.Administration.Business.Problems
 
         public override async Task<ProblemAdministrationModel> Edit(ProblemAdministrationModel model)
         {
-            if (model.Id < 0)
-            {
-                throw new ArgumentNullException("Problem must have an Id");
-            }
-
             var problem = await this.problemsData.GetByIdQuery(model.Id)
                 .Include(s => s.SubmissionTypesInProblems)
                 .Include(s => s.ProblemGroup)
@@ -273,6 +268,8 @@ namespace OJS.Services.Administration.Business.Problems
                     SolutionSkeleton = x.SolutionSkeleton != null
                         ? x.SolutionSkeleton.ToString().Compress()
                         : Array.Empty<byte>(),
+                    TimeLimit = x.TimeLimit,
+                    MemoryLimit = x.MemoryLimit,
                 });
 
             problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);

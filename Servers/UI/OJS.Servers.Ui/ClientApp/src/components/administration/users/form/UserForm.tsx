@@ -250,8 +250,9 @@ const UserForm = (props: IUserFormProps) => {
                               name="userSettings.educationalInstitution"
                               value={user?.userSettings.educationalInstitution ?? ''}
                               InputLabelProps={{ shrink: true }}
-                              type="text"
+                              type="number"
                               onChange={onChange}
+                              inputProps={{ min: '0', step: '1' }}
                             />
                         </FormControl>
                         <FormControl className={formStyles.spacing}>
@@ -263,6 +264,7 @@ const UserForm = (props: IUserFormProps) => {
                               InputLabelProps={{ shrink: true }}
                               type="number"
                               onChange={onChange}
+                              inputProps={{ min: '0', step: '1' }}
                             />
                         </FormControl>
                     </FormGroup>
