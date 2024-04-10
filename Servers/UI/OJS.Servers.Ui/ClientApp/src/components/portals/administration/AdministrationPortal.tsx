@@ -82,13 +82,12 @@ const administrationItems = [
         icon: <PlaylistAddCheckCircleIcon />,
         path: `${SUBMISSIONS_PATH}`,
         visibleOnlyForAdmin: false,
-
     },
     {
         name: 'Submissions For Processing',
         icon: <DataSaverOnIcon />,
         path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
-        visibleOnlyForAdmin: false,
+        visibleOnlyForAdmin: true,
 
     },
     {
@@ -309,12 +308,12 @@ const AdministrationPortal = () => {
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}`,
             Element: AdministrationSubmissionsForProcessingPage,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${SUBMISSIONS_FOR_PROCESSING_PATH}/:id`,
             Element: AdminSubmissionForProcessingDetails,
-            visibleOnlyForAdmin: false,
+            visibleOnlyForAdmin: true,
         },
         {
             path: `${TESTS_PATH}`,

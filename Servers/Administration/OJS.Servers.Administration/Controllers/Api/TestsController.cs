@@ -6,6 +6,7 @@ using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Problems.Permissions;
 using OJS.Services.Administration.Business.Tests;
+using OJS.Services.Administration.Business.Tests.GridData;
 using OJS.Services.Administration.Business.Tests.Permissions;
 using OJS.Services.Administration.Business.Tests.Validators;
 using OJS.Services.Administration.Data;
@@ -22,7 +23,7 @@ public class TestsController : BaseAdminApiController<Test, int, TestsInListMode
     private readonly IGridDataService<TestRun> testRunsGridDataService;
 
     public TestsController(
-        IGridDataService<Test> testGridDataService,
+        ITestsGridDataService testGridDataService,
         ITestsBusinessService testsBusinessService,
         TestAdministrationModelValidator validator,
         IGridDataService<TestRun> testRunsGridDataService)
