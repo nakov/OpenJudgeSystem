@@ -52,6 +52,8 @@ const ContestBreadcrumbs = () => {
                 dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
             }
         }
+        // contestId is removed from dependency array, since it
+        // causes recursive loading when its not present in the url
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ contestCategories, breadcrumbItems.length, contestDetails, dispatch ]);
 

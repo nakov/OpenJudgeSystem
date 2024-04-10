@@ -6,7 +6,7 @@ import { IoCloseSharp } from 'react-icons/io5';
 
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { testResultTypes } from '../submission-test/SubmissionTest';
+import { testResultTypes } from '../submission-test-run/SubmissionTestRun';
 
 import styles from './SubmissionTestRuns.module.scss';
 

@@ -24,7 +24,7 @@ export const enum testResultTypes {
     memoryLimit = 'MemoryLimit'
 }
 
-const SubmissionTest = (props: ISubmissionTestRun) => {
+const SubmissionTestRun = (props: ISubmissionTestRun) => {
     const { testRun, idx } = props;
 
     const { themeColors, getColorClassName } = useTheme();
@@ -168,4 +168,4 @@ const SubmissionTest = (props: ISubmissionTestRun) => {
     );
 };
 
-export default SubmissionTest;
+export default SubmissionTestRun;

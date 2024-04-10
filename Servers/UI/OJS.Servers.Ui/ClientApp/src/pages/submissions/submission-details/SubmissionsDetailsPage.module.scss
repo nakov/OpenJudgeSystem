@@ -36,6 +36,14 @@
 
     .innerBodyWrapper {
       width: 100%;
+
+      .adminButtonsWrapper {
+        margin-bottom: spacings.$sp-32;
+
+        button {
+          margin-right: spacings.$sp-18;
+        }
+      }
     }
 
     .compileTimeErrorWrapper {
@@ -112,6 +120,6 @@
 .solutionDownloadFileErrorWrapper {
   background-color: colors.$primary-red;
   border-radius: border-radiuses.$br-6;
-  padding: spacings.$sp-12;
   margin: spacings.$sp-18 0;
+  padding: spacings.$sp-12;
 }

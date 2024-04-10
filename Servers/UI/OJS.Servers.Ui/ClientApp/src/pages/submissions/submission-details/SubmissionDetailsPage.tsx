@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import Button from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import SubmissionTest from '../../../components/submissions/submission-test/SubmissionTest';
+import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
@@ -21,9 +21,12 @@ import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import styles from './SubmissionsDetailsPage.module.scss';
 
 const SubmissionDetailsPage = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
     const { themeColors, getColorClassName } = useTheme();
+
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
     const { contestDetails } = useAppSelector((state) => state.contests);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -54,7 +57,7 @@ const SubmissionDetailsPage = () => {
         id: solutionId,
         contestId,
         problem,
-        user,
+        user: contestUser,
         content,
         points,
         submissionType,
@@ -62,8 +65,10 @@ const SubmissionDetailsPage = () => {
         createdOn,
         isCompiledSuccessfully,
         compilerComment,
-        memoryLimit,
         isEligibleForRetest,
+        modifiedOn,
+        startedExecutionOn,
+        completedExecutionOn,
     } = data || {};
 
     const handleDownloadFile = useCallback(async () => {
@@ -86,15 +91,15 @@ const SubmissionDetailsPage = () => {
             {' '}
             by
             {' '}
-            <Link to={`/profile/${user?.userName}`}>
-                {user?.userName}
+            <Link to={`/profile/${contestUser?.userName}`}>
+                {contestUser?.userName}
             </Link>
             {' '}
             for problem
             {' '}
             <Link to={`/contests/${contestId}`}>{problem?.name}</Link>
         </div>
-    ), [ solutionId, user?.userName, problem?.name, contestId ]);
+    ), [ solutionId, contestUser?.userName, problem?.name, contestId ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
@@ -109,14 +114,22 @@ const SubmissionDetailsPage = () => {
                             </span>
                             <span>{formatDate(createdOn!, defaultDateTimeFormat)}</span>
                         </div>
-                        <div className={styles.detailsRow}>
-                            <span>Allowed memory:</span>
-                            <span>
-                                {(memoryLimit! / 1000000).toFixed(2)}
-                                {' '}
-                                MB
-                            </span>
-                        </div>
+                        { user.canAccessAdministration && (
+                            <>
+                                <div className={styles.detailsRow}>
+                                    <span>Modified on:</span>
+                                    { modifiedOn && <span>{formatDate(modifiedOn, defaultDateTimeFormat)}</span> }
+                                </div>
+                                <div className={styles.detailsRow}>
+                                    <span>Started Execution on:</span>
+                                    { startedExecutionOn && <span>{formatDate(startedExecutionOn, defaultDateTimeFormat)}</span> }
+                                </div>
+                                <div className={styles.detailsRow}>
+                                    <span>Completed Execution on:</span>
+                                    { completedExecutionOn && <span>{formatDate(completedExecutionOn, defaultDateTimeFormat)}</span> }
+                                </div>
+                            </>
+                        )}
                     </div>
                     <div>
                         <div className={styles.strategyWrapper}>
@@ -140,11 +153,14 @@ const SubmissionDetailsPage = () => {
             </>
         );
     }, [
+        user.canAccessAdministration,
         submissionType,
         createdOn,
-        memoryLimit,
         downloadSolutionErrorMessage,
         handleDownloadFile,
+        completedExecutionOn,
+        modifiedOn,
+        startedExecutionOn,
         themeColors.baseColor100,
     ]);
 
@@ -172,8 +188,30 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        return testRuns?.map((testRun: ITestRunType, idx: number) => <SubmissionTest testRun={testRun} idx={idx + 1} />);
+        return testRuns?.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
     }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment ]);
+
+    const renderAdminButtons = useCallback(() => {
+        const onViewCodeClick = () => {
+            const scrollToElement = document.querySelector('[class*="codeContentWrapper"]');
+            if (!scrollToElement) { return; }
+
+            const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
+        };
+
+        const goToAdministrationForContest = () => navigate(`/administration-new/contests/details/${contestId}`);
+
+        return (
+            <div className={styles.adminButtonsWrapper}>
+                { content && <Button text="View Code" onClick={onViewCodeClick} /> }
+                <Button text="Edit" onClick={goToAdministrationForContest} />
+                <Button text="Delete" onClick={goToAdministrationForContest} />
+                <Button text="Tests" onClick={goToAdministrationForContest} />
+                <Button text="Retest" onClick={() => {}} />
+            </div>
+        );
+    }, [ content, contestId, navigate ]);
 
     if (isLoading) {
         return (
@@ -196,6 +234,7 @@ const SubmissionDetailsPage = () => {
                     <SubmissionTestRuns testRuns={testRuns || []} />
                     <div className={styles.innerBodyWrapper}>
                         {renderSolutionTitle()}
+                        { user.canAccessAdministration && renderAdminButtons() }
                         {renderSolutionTestDetails()}
                         { !isEligibleForRetest && content && (
                             <div className={styles.codeContentWrapper}>
