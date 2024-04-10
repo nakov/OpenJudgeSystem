@@ -60,6 +60,7 @@ const SubmissionDetailsPage = () => {
     const { name } = contestDetails || {};
     const {
         id: solutionId,
+        isProcessed,
         contestId,
         problem,
         user: contestUser,
@@ -193,8 +194,16 @@ const SubmissionDetailsPage = () => {
             );
         }
 
+        if (!isProcessed) {
+            return (
+                <div className={styles.submissionInQueueWrapper}>
+                    The submission is in queue and will be processed shortly. Please wait.
+                </div>
+            );
+        }
+
         return testRuns?.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
-    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment, retestSubmission, solutionId ]);
+    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment, retestSubmission, solutionId, isProcessed ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {

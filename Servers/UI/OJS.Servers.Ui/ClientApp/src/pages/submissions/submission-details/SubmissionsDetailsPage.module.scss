@@ -73,6 +73,15 @@
       padding: spacings.$sp-24 spacings.$sp-32;
     }
 
+    .submissionInQueueWrapper {
+      background-color: colors.$primary-blue;
+      border-radius: border-radiuses.$br-6;
+      margin-top: spacings.$sp-24;
+      padding: spacings.$sp-24 spacings.$sp-32;
+      font-weight: font-weights.$font-weight-semi-bold;
+
+    }
+
     .codeContentWrapper {
       margin-top: spacings.$sp-32;
 
