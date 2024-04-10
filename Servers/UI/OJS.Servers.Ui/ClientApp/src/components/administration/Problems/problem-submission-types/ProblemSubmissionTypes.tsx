@@ -36,7 +36,7 @@ const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
             >
                 <MdOutlineRemoveCircle color="red" />
             </IconButton>
-            <FormControl className={styles.solutionSkeleton}>
+            <FormControl className={styles.submissionTypeName}>
                 <TextField
                   variant="standard"
                   label={NAME}

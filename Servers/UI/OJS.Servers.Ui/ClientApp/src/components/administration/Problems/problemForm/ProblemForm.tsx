@@ -207,8 +207,8 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     id: submissionType.id,
                     name: removedSubmissionType.name,
                     solutionSkeleton: null,
-                    memoryLimit: 0,
-                    timeLimit: 0,
+                    memoryLimit: null,
+                    timeLimit: null,
                 });
 
                 newSubmissionTypes = newSubmissionTypes.filter((x) => x.id !== submissionType.id);

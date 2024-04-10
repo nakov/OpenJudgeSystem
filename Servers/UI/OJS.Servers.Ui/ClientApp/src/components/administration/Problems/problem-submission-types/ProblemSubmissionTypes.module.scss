@@ -11,6 +11,11 @@
     margin: 8px !important;
 }
 
-.solutionSkeleton {
+.submissionTypeName {
     width: 30%;
+}
+
+.solutionSkeleton {
+    width: 35%;
+    overflow-x: scroll;
 }
