@@ -1,15 +1,6 @@
 @use 'src/styles/colors';
 
-.adminHeaderWrapper {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  width: 100%;
-}
-
 .adminHeaderLink {
-  color: colors.$white-color;
   font-family: Roboto, Helvetica, Arial, sans-serif;
   text-decoration: none;
   text-transform: uppercase;
@@ -23,11 +14,6 @@
 
 .activeAdminNavLink {
   color: #42abf8 !important;
-}
-
-.locationTitle {
-  font-family: montserrat, sans-serif;
-  font-size: 20px;
 }
 
 .arrowCommon {
@@ -56,10 +42,6 @@
   color: colors.$white-color !important;
 }
 
-.appBar {
-  background-color: #2196f3 !important;
-}
-
 .listItemIcon {
   color: inherit !important;
 }
@@ -67,8 +49,34 @@
 .main {
   display: flex;
   flex-direction: column;
-  margin-top: 3.5rem;
+  margin-top: 0.1rem;
   max-width: 100%;
-  min-height: 100vh;
+  min-height: 90vh;
   padding: 1rem;
+}
+
+.drawerHeader {
+  display: 'flex';
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-between;
+  color: inherit !important;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.profileIcon {
+  width: 3rem;
+  height: 3rem;
+  color: #2196f3 !important;
+}
+
+.drawer {
+  border-top-right-radius: 50px !important;
+  border-bottom-right-radius: 70px !important;
+  box-shadow: 3px 0px 22px -4px rgba(22,0,0,0.75);
+}
+
+.userName {
+  font-size: 14px;
 }

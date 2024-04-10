@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { useEffect, useState } from 'react';
-import { FaCheckDouble, FaLayerGroup, FaUsers } from 'react-icons/fa';
+import { useEffect, useRef, useState } from 'react';
+import { FaCheckDouble, FaLayerGroup, FaUserCircle, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
@@ -12,13 +12,11 @@ import BorderAllIcon from '@mui/icons-material/BorderAll';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
-import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Box, CSSObject, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme, Toolbar, Tooltip } from '@mui/material';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import { Box, CSSObject, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, styled, Theme, Tooltip, Typography } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -56,10 +54,6 @@ import AdministrationTest from '../../administration/tests/AdministrationTest';
 import AdministrationUser from '../../administration/users/AdministrationUser';
 
 import styles from './AdministrationPortal.module.scss';
-
-interface IAppBarProps extends MuiAppBarProps {
-    open?: boolean;
-}
 
 const drawerWidth = 240;
 
@@ -196,26 +190,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
-const AppBar = styled(MuiAppBar, { shouldForwardProp: (prop) => prop !== 'open' })<IAppBarProps>(({ theme, open }) => ({
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create([ 'width', 'margin' ], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    ...open && {
-        marginLeft: drawerWidth,
-        transition: theme.transitions.create([ 'width', 'margin' ], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    },
-}));
-
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: 'nowrap',
-    boxShadow: '0px 0px 19px -4px rgba(22,0,0,0.75)',
     boxSizing: 'border-box',
     ...open && {
         ...openedMixin(theme),
@@ -231,10 +209,12 @@ const mobileBreak = 1300;
 
 const AdministrationPortal = () => {
     const location = useLocation();
-    const [ open, setOpen ] = useState(true);
-    const [ locationTitle, setLocationTitle ] = useState('');
 
     const user = useAppSelector((x) => x.authorization.internalUser);
+
+    const [ open, setOpen ] = useState(true);
+    const [ showMenu, setShowMenu ] = useState<boolean>(false);
+    const iconButtonRef = useRef(null);
 
     useEffect(() => {
         const locationPathnameElements = location.pathname.split('/');
@@ -245,13 +225,11 @@ const AdministrationPortal = () => {
             pageTitle = capitalizeFirstLetter(section
                 ? section.name
                 : '');
-            setLocationTitle(pageTitle);
         } else {
             pageTitle = capitalizeFirstLetter(`${locationPathnameElements[locationPathnameElements.length - 2]}
             Id: ${lastElementOfThePathname}`);
-
-            setLocationTitle(pageTitle);
         }
+
         document.title = `Administration ${pageTitle} - SoftUni Judge`;
     }, [ location.pathname ]);
 
@@ -424,23 +402,11 @@ const AdministrationPortal = () => {
     return (
         <Box sx={{ zIndex: 0 }}>
             <Box sx={{ display: 'flex', zIndex: 0 }}>
-                <AppBar position="fixed" open={open} className={styles.appBar}>
-                    <Toolbar>
-                        <div className={styles.adminHeaderWrapper}>
-                            <Link to="/" className={styles.adminHeaderLink}>
-                                <Tooltip title="Return to client app">
-                                    <KeyboardReturnIcon />
-                                </Tooltip>
-                            </Link>
-                            <div className={styles.locationTitle}>{locationTitle}</div>
-                            <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
-                        </div>
-                    </Toolbar>
-                </AppBar>
                 <Drawer
                   variant="permanent"
                   open={open}
-                  sx={{ zIndex: 100 }}
+                  sx={{ '& .MuiDrawer-paper': { borderTopRightRadius: '16px', borderBottomRightRadius: '16px' } }}
+                  className={styles.drawer}
                 >
                     {!open
                         ? (
@@ -453,10 +419,30 @@ const AdministrationPortal = () => {
                                 <ChevronLeftIcon />
                             </IconButton>
                         )}
-                    <DrawerHeader>
-                        <div />
+                    <DrawerHeader className={styles.drawerHeader}>
+                        <IconButton ref={iconButtonRef} onClick={() => setShowMenu(!showMenu)}>
+                            <FaUserCircle className={styles.profileIcon} />
+                        </IconButton>
+                        {open && (
+                            <>
+                                <Typography variant="subtitle1" className={styles.userName}>
+                                    {user.userName}
+                                </Typography>
+                                <Divider sx={{ color: 'red', width: '90%' }} />
+                            </>
+                        )}
+                        <Menu
+                          anchorEl={iconButtonRef.current}
+                          open={showMenu}
+                          onClose={() => setShowMenu(false)}
+                        >
+                            <MenuItem>
+                                <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
+                            </MenuItem>
+                        </Menu>
                     </DrawerHeader>
                     <List sx={{ overflow: 'hidden' }}>
+                        <Divider />
                         {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
                             <Box key={item.path}>
                                 <ListItem key={item.name} disablePadding>
