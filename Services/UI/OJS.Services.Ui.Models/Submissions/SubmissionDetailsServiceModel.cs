@@ -28,8 +28,6 @@
 
         public double MaxUsedMemory { get; set; }
 
-        public int MemoryLimit { get; set; }
-
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; } = null!;
 
         public bool IsOfficial { get; set; }
