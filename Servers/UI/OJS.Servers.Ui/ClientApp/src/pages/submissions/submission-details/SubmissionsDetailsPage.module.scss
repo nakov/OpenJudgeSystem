@@ -1,9 +1,9 @@
-@use '../../../styles/colors';
-@use '../../../styles/fonts';
-@use '../../../styles/spacings';
-@use '../../../styles/variables';
-@use '../../../styles/font-weights';
-@use '../../../styles/border-radiuses';
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+@use 'src/styles/font-weights';
+@use 'src/styles/border-radiuses';
 
 .submissionsDetailsWrapper {
   @extend %font-family-roboto;

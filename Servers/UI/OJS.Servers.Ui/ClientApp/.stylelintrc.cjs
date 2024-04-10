@@ -8,7 +8,7 @@ module.exports = {
         'selector-class-pattern': null,
         'scss/percent-placeholder-pattern': null,
         'max-nesting-depth': [
-            3,
+            5,
         ],
         'selector-max-id': 1,
         // 'no-invalid-position-at-import-rule': null,
