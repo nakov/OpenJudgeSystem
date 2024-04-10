@@ -29,8 +29,6 @@
 
         public double MaxUsedMemory { get; set; }
 
-        public int MemoryLimit { get; set; }
-
         public bool IsOfficial { get; set; }
 
         public bool IsCompiledSuccessfully { get; set; }
