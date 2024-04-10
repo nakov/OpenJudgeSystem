@@ -70,6 +70,7 @@ const DROPDOWN_OPERATORS = {
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
     ],
     [FilterColumnTypeEnum.DATE]: [
+        // Commented because it is not working
         // { name: 'Equals', value: 'equals' },
         { name: 'Greater Than', value: 'greaterthan' },
         { name: 'Less Than', value: 'lessthan' },

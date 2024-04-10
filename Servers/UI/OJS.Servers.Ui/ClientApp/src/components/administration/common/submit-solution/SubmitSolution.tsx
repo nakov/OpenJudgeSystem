@@ -5,17 +5,18 @@ import { IconButton, Tooltip } from '@mui/material';
 interface ISubmitSolutionProps {
     contestId: number;
     canBeCompeted: boolean;
+    problemOrderBy?: number;
 }
 
 const SubmitSolution = (props:ISubmitSolutionProps) => {
-    const { contestId, canBeCompeted } = props;
+    const { contestId, canBeCompeted, problemOrderBy = 1 } = props;
     return (
         <Tooltip title="Submit Solution">
             <IconButton>
                 <Link
                   to={`/contests/${contestId}/${canBeCompeted
                       ? 'compete'
-                      : 'practice'}#1`}
+                      : 'practice'}#${problemOrderBy}`}
                   target="_blank"
                 >
                     <AiOutlineSolution style={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }} color="primary" />
