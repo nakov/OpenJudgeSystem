@@ -576,6 +576,8 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+    timeLimit: number | null;
+    memoryLimit: number | null;
 }
 
 interface IIndexExamGroupsType {

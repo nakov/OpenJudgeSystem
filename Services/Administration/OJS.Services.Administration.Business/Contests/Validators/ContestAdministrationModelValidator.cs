@@ -36,7 +36,8 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
             .WithMessage("End Time must be greater than Start Time")
             .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-        this.RuleFor(model => model.PracticeEndTime).GreaterThan(model => model.PracticeStartTime)
+        this.RuleFor(model => model.PracticeEndTime)
+            .GreaterThan(model => model.PracticeStartTime)
             .When(model => model.PracticeStartTime.HasValue)
             .WithMessage("Practice end time must be greater than Practice start time")
             .When(model => model.OperationType is CrudOperationType.Create or CrudOperationType.Update);

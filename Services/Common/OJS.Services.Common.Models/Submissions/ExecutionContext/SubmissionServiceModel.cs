@@ -1,13 +1,15 @@
 ﻿namespace OJS.Services.Common.Models.Submissions.ExecutionContext
 {
-    using System;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models.Mappings;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
+    using System;
+    using System.Linq;
 
     public class SubmissionServiceModel : IMapExplicitly
     {
@@ -80,12 +82,10 @@
                 .ForMember(
                     d => d.ExecutionType,
                     opt => opt.MapFrom(s => ExecutionType.TestsExecution))
-                .ForMember(
-                    d => d.TimeLimit,
-                    opt => opt.MapFrom(s => s.Problem!.TimeLimit))
-                .ForMember(
-                    d => d.MemoryLimit,
-                    opt => opt.MapFrom(s => s.Problem!.MemoryLimit))
+                .ForMember(dest => dest.TimeLimit, opt
+                    => opt.MapFrom<TimeLimitResolver>())
+                .ForMember(dest => dest.MemoryLimit, opt
+                    => opt.MapFrom<MemoryLimitValueResolver>())
                 .ForMember(
                     d => d.TestsExecutionDetails,
                     opt => opt.MapFrom(s => s.Problem))
