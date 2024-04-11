@@ -18,7 +18,7 @@ import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -45,23 +45,13 @@ const AdministrationContestsPage = () => {
         mapGridColumnsToAdministrationSortingProps(contestFilterableColumns),
     ));
 
-    const mapSearchParam = () => {
-        let filters = searchParams.get('filter')
-        console.log(filters);
-        if(filters === null){
-            console.log("inside")
-            return 'isdeleted~equals~false';
-        }
-        return filters;
-    }
-
     const [ excelExportType, setExcelExportType ] = useState<number>(0);
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        filter: mapSearchParam(),
+        filter: applyDefaultFilterToQueryString(searchParams, contestFilterableColumns),
         sorting: searchParams.get('sorting') ?? '',
     });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -73,7 +63,6 @@ const AdministrationContestsPage = () => {
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
 
-   
     const [
         exportResutls,
         {
@@ -92,10 +81,10 @@ const AdministrationContestsPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: mapSearchParam(),
+            filter: applyDefaultFilterToQueryString(searchParams, contestFilterableColumns),
             sorting: searchParams.get('sorting') ?? '',
         }));
-    }, [mapSearchParam, searchParams]);
+    }, [ searchParams ]);
 
     useEffect(() => {
         if (isSuccessfullyDownloaded) {

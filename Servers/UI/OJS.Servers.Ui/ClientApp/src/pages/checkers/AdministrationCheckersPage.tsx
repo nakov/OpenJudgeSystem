@@ -8,7 +8,7 @@ import AdministrationModal from '../../components/administration/common/modals/a
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useDeleteCheckerMutation, useGetAllCheckersQuery, useLazyExportCheckersToExcelQuery } from '../../redux/services/admin/checkersAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../utils/constants';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-new/administration-filters/AdministrationFilters';
+import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../administration-new/AdministrationGridView';
 
@@ -19,7 +19,7 @@ const AdministrationCheckersPage = () => {
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
+        filter: applyDefaultFilterToQueryString(searchParams, checkersFilterableColumns),
         sorting: searchParams.get('sorting') ?? '',
     });
 
@@ -47,7 +47,7 @@ const AdministrationCheckersPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: searchParams.get('filter') ?? '',
+            filter: applyDefaultFilterToQueryString(searchParams, checkersFilterableColumns),
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

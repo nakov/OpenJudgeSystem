@@ -9,7 +9,7 @@ import CategoryEdit from '../../../components/administration/ContestCategories/C
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery, useLazyExportContestCategoriesToExcelQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -21,7 +21,7 @@ const AdministrationContestCategoriesPage = () => {
     useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
+        filter: applyDefaultFilterToQueryString(searchParams, categoriesFilterableColumns),
         sorting: searchParams.get('sorting') ?? '',
     });
 
@@ -54,7 +54,7 @@ const AdministrationContestCategoriesPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: searchParams.get('filter') ?? '',
+            filter: applyDefaultFilterToQueryString(searchParams, categoriesFilterableColumns),
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

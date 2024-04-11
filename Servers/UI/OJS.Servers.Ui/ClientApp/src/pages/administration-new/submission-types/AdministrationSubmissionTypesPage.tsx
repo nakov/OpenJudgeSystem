@@ -8,7 +8,7 @@ import SubmissionTypesForm from '../../../components/administration/submission-t
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllSubmissionTypesQuery, useLazyExportSubmissionTypesToExcelQuery } from '../../../redux/services/admin/submissionTypesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -23,7 +23,7 @@ const AdministrationSubmissionTypesPage = () => {
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
+        filter: applyDefaultFilterToQueryString(searchParams, submissionTypesFilterableColumns),
         sorting: searchParams.get('sorting') ?? '',
     });
 
@@ -42,7 +42,7 @@ const AdministrationSubmissionTypesPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: searchParams.get('filter') ?? '',
+            filter: applyDefaultFilterToQueryString(searchParams, submissionTypesFilterableColumns),
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

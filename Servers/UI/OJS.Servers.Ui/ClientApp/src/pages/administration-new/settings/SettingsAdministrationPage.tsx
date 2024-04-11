@@ -7,7 +7,7 @@ import AdministrationModal from '../../../components/administration/common/modal
 import SettingForm from '../../../components/administration/settings/form/SettingForm';
 import { useDeleteSettingMutation, useGetAllSettingsQuery, useLazyExportSettingsToExcelQuery } from '../../../redux/services/admin/settingsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -19,7 +19,7 @@ const AdministrationSettingsPage = () => {
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
+        filter: applyDefaultFilterToQueryString(searchParams, settingsFilterableColumns),
         sorting: searchParams.get('sorting') ?? '',
     });
 
@@ -43,7 +43,7 @@ const AdministrationSettingsPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: searchParams.get('filter') ?? '',
+            filter: applyDefaultFilterToQueryString(searchParams, settingsFilterableColumns),
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

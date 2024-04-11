@@ -120,9 +120,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const open = Boolean(anchor);
 
     useEffect(() => {
-        console.log(searchParams)
         const urlSelectedFilters = mapUrlToFilters(searchParams, columns);
-        console.log(urlSelectedFilters)
 
         if (urlSelectedFilters.length && setStateAction) {
             setStateAction(urlSelectedFilters);
@@ -222,7 +220,6 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
-
         const newFiltersArray = [ ...selectedFilters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 if (updateProperty === 'column') {
@@ -423,11 +420,11 @@ const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: 
 
     const filterParams = urlSearchParams.get('filter') ?? '';
     const urlParams = filterParams.split('&&;').filter((param) => param);
-    if(!filterParams || urlParams.find(x => x.includes("IsDeleted"))) {
-        urlParams.push('isdeleted~equals~false')
+    const indexOfIsDeleted = columns.findIndex((x) => x.columnName === 'IsDeleted');
+    if ((!filterParams || !urlParams.find((x) => x.includes('isdeleted'))) && indexOfIsDeleted >= 0) {
+        urlParams.push('isdeleted~equals~false');
     }
 
-    console.log(urlParams)
     urlParams.forEach((param) => {
         const paramChunks = param.split('~').filter((chunk) => chunk);
 
@@ -457,11 +454,28 @@ const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: 
     return urlSelectedFilters;
 };
 
+const applyDefaultFilterToQueryString = (searchParams : URLSearchParams, columns:Array<GridColDef>) => {
+    const filters = searchParams.get('filter');
+    let defaultFilter = '';
+
+    if (columns.find((x) => x.field === 'isDeleted')) {
+        defaultFilter = 'isdeleted~equals~false';
+    }
+    if (filters === null) {
+        return defaultFilter;
+    }
+    if (!filters.includes('isdeleted') && defaultFilter !== '') {
+        return `${filters}${filterSeparator}${defaultFilter}`;
+    }
+    return filters;
+};
+
 export {
     type IAdministrationFilter,
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
     mapFilterParamsToQueryString,
     mapUrlToFilters,
+    applyDefaultFilterToQueryString,
 };
 export default AdministrationFilters;

@@ -12,7 +12,7 @@ import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
 import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -39,7 +39,7 @@ const AdministrationSubmissionsPage = () => {
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
+        filter: applyDefaultFilterToQueryString(searchParams, dataColumns),
         sorting: searchParams.get('sorting') ?? '',
     });
 
@@ -66,7 +66,7 @@ const AdministrationSubmissionsPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: searchParams.get('filter') ?? '',
+            filter: applyDefaultFilterToQueryString(searchParams, dataColumns),
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);
