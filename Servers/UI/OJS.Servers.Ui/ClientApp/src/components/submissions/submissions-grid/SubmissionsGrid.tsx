@@ -78,35 +78,35 @@ const SubmissionsGrid = ({
                         <tr className={headerClassName}>
                             <td>ID</td>
                             <td>
-                                { options.showTaskDetails
+                                {options.showTaskDetails
                                     ? 'Task'
                                     : ''}
                             </td>
                             <td>From</td>
                             {
-                                options.showCompeteMarker && <td />
-                            }
+                            options.showCompeteMarker && <td />
+                        }
                             {
-                                options.showDetailedResults && <td>Time and Memory Used</td>
-                            }
+                            options.showDetailedResults && <td>Time and Memory Used</td>
+                        }
                             <td className={styles.tdRight}>Result</td>
                             {
-                                options.showSubmissionTypeInfo && <td className={styles.tdRight}>Strategy</td>
-                            }
+                            options.showSubmissionTypeInfo && <td className={styles.tdRight}>Strategy</td>
+                        }
                             <td />
                         </tr>
                     </thead>
                     <tbody>
                         {
-                            !isNil(submissions?.items) && !isEmpty(submissions?.items)
-                                ? submissions.items.map((s) => (
-                                    <SubmissionGridRow
-                                      submission={s}
-                                      options={options}
-                                      key={s.id}
-                                    />
-                                ))
-                                : null
+                        !isNil(submissions?.items) && !isEmpty(submissions?.items)
+                            ? submissions.items.map((s) => (
+                                <SubmissionGridRow
+                                  submission={s}
+                                  options={options}
+                                  key={s.id}
+                                />
+                            ))
+                            : null
                         }
                     </tbody>
                 </table>

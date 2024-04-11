@@ -6,7 +6,7 @@
 @use 'src/styles/font-weights';
 
 .contestSolutionSubmitWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   padding: spacings.$sp-16 spacings.$sp-64;
 
@@ -138,7 +138,7 @@
 }
 
 .popoverContent {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   font-size: variables.$f-size-18;
   overflow: hidden;

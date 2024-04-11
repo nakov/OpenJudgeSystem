@@ -6,7 +6,7 @@
 @use 'src/styles/border-radiuses';
 
 .modalWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
   font-size: variables.$f-size-18;
   width: 80%;
   align-self: center;
