@@ -1,0 +1,149 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+@use 'src/styles/font-weights';
+@use 'src/styles/border-radiuses';
+
+.submissionsDetailsWrapper {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-16 spacings.$sp-32;
+
+  .submissionTitle {
+    font-size: variables.$f-size-30;
+    font-weight: font-weights.$font-weight-bold;
+    margin: spacings.$sp-24 0;
+
+    a {
+      color: inherit;
+    }
+  }
+
+  .solutionTitle {
+    font-size: variables.$f-size-30;
+    font-weight: font-weights.$font-weight-bold;
+    margin-bottom: spacings.$sp-32;
+
+    a {
+      color: colors.$primary-blue;
+      cursor: pointer;
+    }
+  }
+
+  .bodyWrapper {
+    display: flex;
+
+    .innerBodyWrapper {
+      width: 100%;
+
+      a {
+        color: colors.$primary-blue;
+        font-size: variables.$f-size-24;
+        font-weight: font-weights.$font-weight-bold;
+      }
+
+      .adminButtonsWrapper {
+        margin: spacings.$sp-32 0;
+
+        button {
+          margin-right: spacings.$sp-18;
+        }
+      }
+    }
+
+    .compileTimeErrorWrapper {
+      background-color: colors.$primary-red;
+      border-radius: border-radiuses.$br-6;
+      padding: spacings.$sp-24 spacings.$sp-32;
+
+      div:first-child {
+        font-weight: font-weights.$font-weight-bold;
+        margin-bottom: spacings.$sp-18;
+      }
+    }
+
+    .retestWrapper {
+      align-items: center;
+      background-color: colors.$warning-color;
+      border-radius: border-radiuses.$br-6;
+      display: flex;
+      font-weight: font-weights.$font-weight-semi-bold;
+      justify-content: space-between;
+      margin-top: spacings.$sp-24;
+      padding: spacings.$sp-24 spacings.$sp-32;
+    }
+
+    .submissionInQueueWrapper {
+      background-color: colors.$primary-blue;
+      border-radius: border-radiuses.$br-6;
+      font-weight: font-weights.$font-weight-semi-bold;
+      margin-top: spacings.$sp-24;
+      padding: spacings.$sp-24 spacings.$sp-32;
+    }
+
+    .codeContentWrapper {
+      margin-top: spacings.$sp-32;
+
+      > div {
+        font-size: variables.$f-size-30;
+        font-weight: font-weights.$font-weight-semi-bold;
+      }
+
+      section {
+        margin-top: spacings.$sp-12;
+      }
+    }
+
+    .submissionDetailsWrapper {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-top: spacings.$sp-32;
+
+      .detailsRow {
+        margin-bottom: spacings.$sp-8;
+
+        span:first-child {
+          font-weight: font-weights.$font-weight-bold;
+        }
+
+        span:nth-child(2) {
+          margin-left: spacings.$sp-8;
+        }
+      }
+
+      .strategyWrapper {
+        display: flex;
+        justify-content: flex-end;
+
+        span {
+          border-radius: border-radiuses.$br-6;
+          padding: spacings.$sp-12;
+        }
+      }
+
+      .buttonWrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: spacings.$sp-16;
+      }
+    }
+  }
+}
+
+.succesfulRetestWrapper {
+  align-self: center;
+  background-color: colors.$primary-green;
+  border-radius: border-radiuses.$br-6;
+  margin-top: spacings.$sp-24;
+  padding: spacings.$sp-24 spacings.$sp-32;
+  width: 90%;
+}
+
+.solutionDownloadFileErrorWrapper {
+  background-color: colors.$primary-red;
+  border-radius: border-radiuses.$br-6;
+  margin: spacings.$sp-18 0;
+  padding: spacings.$sp-12;
+}

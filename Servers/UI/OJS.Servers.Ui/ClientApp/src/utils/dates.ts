@@ -130,6 +130,7 @@ export {
     defaultDateTimeFormat,
     defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
+    defaultPreciseDateTimeFormat,
     formatDate,
     preciseFormatDate,
     secondsToFullTime,

@@ -6,6 +6,8 @@ import Prism from 'prismjs';
 
 import 'prismjs/components/prism-javascript';
 
+import useTheme from '../../hooks/use-theme';
+
 import 'prismjs/themes/prism-okaidia.css';
 import styles from './Diff.module.scss';
 
@@ -15,6 +17,8 @@ interface ITestsRunDiffProps {
 }
 
 const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
+    const { themeColors } = useTheme();
+
     const highlightSyntax = useCallback((str: string) => {
         if (str) {
             return (
@@ -53,7 +57,18 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
                   splitView
                   showDiffOnly
                   renderContent={highlightSyntax}
-                  styles={{ gutter: { minWidth: 'unset', height: 'inherit' } }}
+                  styles={{
+                      gutter: {
+                          minWidth: 'unset',
+                          height: 'inherit',
+                          backgroundColor: themeColors.baseColor500,
+                          color: themeColors.textColor,
+                      },
+                      diffContainer: {
+                          backgroundColor: themeColors.baseColor500,
+                          color: themeColors.textColor,
+                      },
+                  }}
                 />
             </div>
         </>

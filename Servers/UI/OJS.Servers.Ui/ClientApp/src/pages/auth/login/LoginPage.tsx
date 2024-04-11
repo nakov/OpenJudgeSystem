@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import LoginForm from '../../components/auth/LoginForm';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
+import LoginForm from '../../../components/auth/LoginForm';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 
 const LoginPage = () => {
     const navigate = useNavigate();
