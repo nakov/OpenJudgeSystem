@@ -6,7 +6,6 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import { submissionDetailsSlice } from './features/submissionDetailsSlice';
 import { submissionsSlice } from './features/submissionsSlice';
 import { themeSlice } from './features/themeSlice';
 import { usersSlice } from './features/usersSlice';
@@ -31,7 +30,6 @@ import usersAdminService from './services/admin/usersAdminService';
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
 import { homeStatisticsService } from './services/homeStatisticsService';
-import submissionDetailsService from './services/submissionDetailsService';
 import submissionsService from './services/submissionsService';
 import usersService from './services/usersService';
 
@@ -41,14 +39,12 @@ const rootReducer = combineReducers({
     [authorizationSlice.name]: authorizationSlice.reducer,
     [usersSlice.name]: usersSlice.reducer,
     [submissionsSlice.name]: submissionsSlice.reducer,
-    [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
 
     // services
     [authorizationService.reducerPath]: authorizationService.reducer,
     [usersService.reducerPath]: usersService.reducer,
     [submissionsService.reducerPath]: submissionsService.reducer,
-    [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
     [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
@@ -89,7 +85,6 @@ const store = configureStore({
         authorizationService.middleware,
         usersService.middleware,
         submissionsService.middleware,
-        submissionDetailsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
         problemGroupsAdminService.middleware,
