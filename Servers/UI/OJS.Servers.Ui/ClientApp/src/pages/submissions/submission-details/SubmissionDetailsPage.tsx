@@ -18,7 +18,7 @@ import {
     useLazyRetestSubmissionQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { defaultPreciseDateTimeFormat, formatDate } from '../../../utils/dates';
+import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
@@ -118,21 +118,21 @@ const SubmissionDetailsPage = () => {
                             <span>
                                 Submitted on:
                             </span>
-                            <span>{formatDate(createdOn!, defaultPreciseDateTimeFormat)}</span>
+                            <span>{preciseFormatDate(createdOn!)}</span>
                         </div>
                         { user.canAccessAdministration && (
                             <>
                                 <div className={styles.detailsRow}>
                                     <span>Modified on:</span>
-                                    { modifiedOn && <span>{formatDate(modifiedOn, defaultPreciseDateTimeFormat)}</span> }
+                                    { modifiedOn && <span>{preciseFormatDate(modifiedOn)}</span> }
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Started Execution on:</span>
-                                    { startedExecutionOn && <span>{formatDate(startedExecutionOn, defaultPreciseDateTimeFormat)}</span> }
+                                    { startedExecutionOn && <span>{preciseFormatDate(startedExecutionOn)}</span> }
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Completed Execution on:</span>
-                                    { completedExecutionOn && <span>{formatDate(completedExecutionOn, defaultPreciseDateTimeFormat)}</span> }
+                                    { completedExecutionOn && <span>{preciseFormatDate(completedExecutionOn)}</span> }
                                 </div>
                             </>
                         )}

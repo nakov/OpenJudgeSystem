@@ -111,7 +111,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                 </div>
                 <div className={styles.timeAndMemoryWrapper}>
                     { user.canAccessAdministration && (
-                        <Link to={`/administration-new/tests/${testId}`} className={styles.testRunIdWrapper}>
+                        <Link to={`/administration-new/tests/${testId}`} className={`${styles.testRunIdWrapper} ${textColorClassName}`}>
                             Test #
                             {testId}
                         </Link>
