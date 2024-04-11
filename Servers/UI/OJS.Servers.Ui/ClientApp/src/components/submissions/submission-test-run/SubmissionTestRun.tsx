@@ -84,6 +84,24 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
         setTestShowInput(!testShowInput);
     };
 
+    const formatTestResultType = (resultType: string) => {
+        if (resultType === testResultTypes.correctAnswer) {
+            return 'Correct Answer';
+        }
+        if (resultType === testResultTypes.wrongAnswer) {
+            return 'Wrong Answer';
+        }
+        if (resultType === testResultTypes.memoryLimit) {
+            return 'Memory Limit';
+        }
+        if (resultType === testResultTypes.timeLimit) {
+            return 'Time Limit';
+        }
+        if (resultType === testResultTypes.runTimeError) {
+            return 'Run Time Error';
+        }
+    };
+
     return (
         <div
           key={`test-run-${testRun.id}`}
@@ -96,7 +114,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                         { isTrialTest && 'Zero '}
                         Test #
                         { idx }
-                        { resultType !== testResultTypes.correctAnswer && ` (${resultType})`}
+                        { resultType !== testResultTypes.correctAnswer && ` (${formatTestResultType(resultType)})` }
                     </div>
                     { showInput && (
                         <Button

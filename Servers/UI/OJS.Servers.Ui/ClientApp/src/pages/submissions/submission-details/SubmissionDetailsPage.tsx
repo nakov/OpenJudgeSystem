@@ -39,7 +39,7 @@ const SubmissionDetailsPage = () => {
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
     const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
-    const [ retestSubmission, { data: retestData, isLoading: retestIsLoading, error: retestError } ] = useLazyRetestSubmissionQuery();
+    const [ retestSubmission, { isLoading: retestIsLoading, isError: retestError, isSuccess: retestSuccess } ] = useLazyRetestSubmissionQuery();
 
     // fetch submission details if not present (when opened from url directly)
     // in order to load breadcrumbs and name of contest properly
@@ -202,7 +202,19 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        return testRuns?.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
+        const sortByTrialTest = (a: ITestRunType, b: ITestRunType) => {
+            if (a.isTrialTest && !b.isTrialTest) {
+                return -1;
+            }
+            if (!a.isTrialTest && b.isTrialTest) {
+                return 1;
+            }
+            return 0;
+        };
+
+        const sortedTestRuns = [ ...testRuns || [] ]?.sort(sortByTrialTest);
+
+        return sortedTestRuns.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
     }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment, retestSubmission, solutionId, isProcessed ]);
 
     const renderAdminButtons = useCallback(() => {
@@ -243,7 +255,7 @@ const SubmissionDetailsPage = () => {
             </div>
         );
     }
-    if (retestData) {
+    if (retestSuccess) {
         return (
             <div className={styles.succesfulRetestWrapper}>
                 Submission has been retested successfully, reload page to refresh results.
