@@ -14,11 +14,11 @@ import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
 import {
     useGetSubmissionDetailsQuery,
-    useLazyGetCompeteRetestQuery,
     useLazyGetSubmissionUploadedFileQuery,
+    useLazyRetestSubmissionQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { defaultDateTimeFormat, formatDate } from '../../../utils/dates';
+import { defaultPreciseDateTimeFormat, formatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
@@ -39,7 +39,7 @@ const SubmissionDetailsPage = () => {
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
     const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
-    const [ retestSubmission, { data: retestData, isLoading: retestIsLoading, error: retestError } ] = useLazyGetCompeteRetestQuery();
+    const [ retestSubmission, { data: retestData, isLoading: retestIsLoading, error: retestError } ] = useLazyRetestSubmissionQuery();
 
     // fetch submission details if not present (when opened from url directly)
     // in order to load breadcrumbs and name of contest properly
@@ -118,21 +118,21 @@ const SubmissionDetailsPage = () => {
                             <span>
                                 Submitted on:
                             </span>
-                            <span>{formatDate(createdOn!, defaultDateTimeFormat)}</span>
+                            <span>{formatDate(createdOn!, defaultPreciseDateTimeFormat)}</span>
                         </div>
                         { user.canAccessAdministration && (
                             <>
                                 <div className={styles.detailsRow}>
                                     <span>Modified on:</span>
-                                    { modifiedOn && <span>{formatDate(modifiedOn, defaultDateTimeFormat)}</span> }
+                                    { modifiedOn && <span>{formatDate(modifiedOn, defaultPreciseDateTimeFormat)}</span> }
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Started Execution on:</span>
-                                    { startedExecutionOn && <span>{formatDate(startedExecutionOn, defaultDateTimeFormat)}</span> }
+                                    { startedExecutionOn && <span>{formatDate(startedExecutionOn, defaultPreciseDateTimeFormat)}</span> }
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Completed Execution on:</span>
-                                    { completedExecutionOn && <span>{formatDate(completedExecutionOn, defaultDateTimeFormat)}</span> }
+                                    { completedExecutionOn && <span>{formatDate(completedExecutionOn, defaultPreciseDateTimeFormat)}</span> }
                                 </div>
                             </>
                         )}

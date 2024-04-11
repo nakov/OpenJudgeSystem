@@ -4,7 +4,12 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { defaultPathIdentifier } from '../../common/constants';
 import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
-import { IGetSubmissionsUrlParams, IGetUserSubmissionsUrlParams, IGetSubmissionsByUserParams } from '../../common/url-types';
+import {
+    IGetSubmissionsUrlParams,
+    IGetUserSubmissionsUrlParams,
+    IGetSubmissionsByUserParams,
+    IRetestSubmissionUrlParams,
+} from '../../common/url-types';
 import { ISubmissionType } from '../../hooks/submissions/types';
 
 const submissionsService = createApi({
@@ -68,13 +73,17 @@ const submissionsService = createApi({
             query: ({ id }) => (
                 { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
         }),
-        getCompeteRetest: builder.query<any, { id: number }>({
-            query: ({ id }) => (
-                { url: `${defaultPathIdentifier}/Compete/Retest/${id}` }),
-        }),
         getSubmissionUploadedFile: builder.query<{ blob: Blob }, { id: number }>({
             query: ({ id }) => (
                 { url: `${defaultPathIdentifier}/Submissions/Download/${id}` }),
+        }),
+        retestSubmission: builder.query<
+            void,
+            IRetestSubmissionUrlParams>({
+            query: ({ id }) => ({
+                url: `/${defaultPathIdentifier}/Compete/Retest/${id}`,
+                method: 'POST',
+            }),
         }),
     }),
 });
@@ -86,7 +95,7 @@ const {
     useLazyGetUserSubmissionsQuery,
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
-    useLazyGetCompeteRetestQuery,
+    useLazyRetestSubmissionQuery,
 } = submissionsService;
 
 export {
@@ -96,6 +105,6 @@ export {
     useGetLatestSubmissionsInRoleQuery,
     useLazyGetUserSubmissionsQuery,
     useLazyGetSubmissionUploadedFileQuery,
-    useLazyGetCompeteRetestQuery,
+    useLazyRetestSubmissionQuery,
 };
 export default submissionsService;

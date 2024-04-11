@@ -97,12 +97,6 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                         Test #
                         { idx }
                         { resultType !== testResultTypes.correctAnswer && ` (${resultType})`}
-                        { user.canAccessAdministration && (
-                            <Link to={`/administration-new/tests/${testId}`} className={styles.testRunIdWrapper}>
-                                Test #
-                                {testId}
-                            </Link>
-                        )}
                     </div>
                     { showInput && (
                         <Button
@@ -116,6 +110,12 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                     )}
                 </div>
                 <div className={styles.timeAndMemoryWrapper}>
+                    { user.canAccessAdministration && (
+                        <Link to={`/administration-new/tests/${testId}`} className={styles.testRunIdWrapper}>
+                            Test #
+                            {testId}
+                        </Link>
+                    )}
                     <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
                         <BiMemoryCard size={20} color={themeColors.baseColor100} />
                         <span>

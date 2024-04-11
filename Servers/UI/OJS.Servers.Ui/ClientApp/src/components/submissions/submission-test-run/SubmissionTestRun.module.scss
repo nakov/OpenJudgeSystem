@@ -1,5 +1,7 @@
 @use 'src/styles/fonts';
 @use 'src/styles/spacings';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
 
 .testRunWrapper {
   margin: spacings.$sp-18 0;
@@ -19,18 +21,19 @@
       margin-left: spacings.$sp-32;
     }
 
-    .testRunIdWrapper {
-      color: inherit;
-      margin-left: spacings.$sp-18;
-      text-decoration: underline;
-
-      &:visited {
-        color: inherit;
-      }
-    }
-
     .timeAndMemoryWrapper {
       display: flex;
+
+      .testRunIdWrapper {
+        font-size: variables.$f-size-16;
+        margin-left: spacings.$sp-12;
+        text-decoration: underline;
+        color: #868686FF;
+
+        &:visited {
+          color: #868686FF;
+        }
+      }
 
       span:first-child {
         margin-right: spacings.$sp-16;

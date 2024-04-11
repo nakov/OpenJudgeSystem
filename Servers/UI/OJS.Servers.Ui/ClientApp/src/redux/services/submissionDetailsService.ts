@@ -71,8 +71,10 @@ const {
     useRetestSubmissionQuery,
 } = submissionDetailsService;
 
-export { useGetCurrentSubmissionQuery,
+export {
+    useGetCurrentSubmissionQuery,
     useGetSubmissionResultsQuery,
     useSaveAttachmentQuery,
-    useRetestSubmissionQuery };
+    useRetestSubmissionQuery,
+};
 export default submissionDetailsService;
