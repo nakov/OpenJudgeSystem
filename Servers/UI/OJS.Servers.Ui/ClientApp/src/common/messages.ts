@@ -7,6 +7,10 @@ export const DELETE_CONFIRMATION_MESSAGE = 'Are you sure that you want to delete
 export const CLEAR_SELECTION = 'Clear selection';
 export const UNAUTHORIZED_MESSAGE = 'You do not have a permission to perform this action';
 
+export const DISABLED_USER_TO_EXAM_GROUP_BUTTON = 'You cannot add users to exam group which has no contest attached to it.';
+
+export const ACTION_NOT_ALLOWED_MESSAGE = 'Action not allowed';
+
 // Contensts
 export const CONTEST_NAME_VALIDATION = 'Contest name length must be between 4 and 100 characters long';
 export const CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION = 'Limit between submissions cannot be less than 0';

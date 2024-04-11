@@ -1,17 +1,31 @@
+/* eslint-disable prefer-destructuring */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInListModel } from '../../../common/types';
-import { IGetByRoleId, IGetByUserId } from '../../../common/url-types';
-import { GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { IFileModel, IGetAllAdminParams, IPagedResultType, IUserAdministrationModel, IUserAutocompleteData, IUserInExamGroupModel, IUserInListModel } from '../../../common/types';
+import { IGetByExamGroupId, IGetByRoleId, IGetByUserId } from '../../../common/url-types';
+import { EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const usersAdminService = createApi({
-    reducerPath: 'users',
+    reducerPath: 'adminUsers',
     baseQuery: getCustomBaseQuery('users'),
     endpoints: (builder) => ({
+
         getUsersAutocomplete: builder.query<Array<IUserAutocompleteData>, string>({
             query: (queryString) => ({ url: `/GetNameAndId?searchString=${encodeURIComponent(queryString)}` }),
             keepUnusedDataFor: 10,
+        }),
+
+        getByExamGroupId: builder.query<IPagedResultType<IUserInExamGroupModel>, IGetByExamGroupId>({
+            query: ({ examGroupId, filter, page, itemsPerPage, sorting }) => ({
+                url: `/GetByExamGroupId/${examGroupId}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
         }),
 
         getAllUsers: builder.query<IPagedResultType<IUserInListModel>, IGetAllAdminParams>({
@@ -102,6 +116,19 @@ export const usersAdminService = createApi({
                 method: 'DELETE',
             }),
         }),
+
+        exportUsersToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -117,5 +144,8 @@ export const {
     useGetLecturerCategoriesQuery,
     useAddLecturerToCategoryMutation,
     useRemoveLecturerFromCategoryMutation,
+    useLazyExportUsersToExcelQuery,
+    useGetByExamGroupIdQuery,
+
 } = usersAdminService;
 export default usersAdminService;

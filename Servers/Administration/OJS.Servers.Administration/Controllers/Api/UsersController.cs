@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Servers.Administration.Attributes;
+using OJS.Services.Administration.Business.ExamGroups.Permissions;
 using OJS.Services.Administration.Business.LecturersInCategories;
 using OJS.Services.Administration.Business.LecturersInCategories.GridData;
 using OJS.Services.Administration.Business.LecturersInCategories.Permissions;
@@ -39,7 +40,6 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
        IUsersGridDataService usersGridData,
        IUsersBusinessService usersBusinessService,
        UserAdministrationModelValidator validator,
-       UserDeleteValidator deleteValidator,
        IUsersDataService usersDataService,
        ILecturersInContestsGridDataService lecturersInContestsGridDataService,
        ILecturersInContestsBusinessService lecturersInContestsBusinessService,
@@ -48,8 +48,7 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
         : base(
             usersGridData,
             usersBusinessService,
-            validator,
-            deleteValidator)
+            validator)
     {
         this.usersGridData = usersGridData;
         this.usersDataService = usersDataService;
@@ -142,4 +141,12 @@ public class UsersController : BaseAdminApiController<UserProfile, string, UserI
             });
         return this.Ok("Lecturer successfully removed from category");
     }
+
+    [HttpGet("{examGroupId}")]
+    [ProtectedEntityAction("examGroupId", typeof(ExamGroupIdPermissionsService))]
+    public async Task<IActionResult> GetByExamGroupId([FromQuery] PaginationRequestModel model, [FromRoute] int examGroupId)
+        => this.Ok(
+            await this.usersGridData.GetAll<UserInListModel>(
+                model,
+                user => user.UsersInExamGroups.Any(ur => ur.ExamGroupId == examGroupId)));
 }

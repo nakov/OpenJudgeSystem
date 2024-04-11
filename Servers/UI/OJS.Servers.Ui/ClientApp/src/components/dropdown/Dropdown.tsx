@@ -12,11 +12,12 @@ interface IDropdownItem {
 interface IDropdownProps {
     dropdownItems: Array<IDropdownItem>;
     value: string;
-    handleDropdownItemClick: (arg?: any) => any;
+    handleDropdownItemClick?: (arg?: any) => any;
+    isDisabled?: boolean;
 }
 
 const Dropdown = (props: IDropdownProps) => {
-    const { dropdownItems, value, handleDropdownItemClick } = props;
+    const { dropdownItems, value, handleDropdownItemClick, isDisabled = false } = props;
 
     const { getColorClassName, themeColors } = useTheme();
 
@@ -28,13 +29,16 @@ const Dropdown = (props: IDropdownProps) => {
           value={value}
           autoWidth
           displayEmpty
+          disabled={isDisabled}
         >
-            <MenuItem key="dropdown-default-item" value="" selected disabled>Select element</MenuItem>
+            <MenuItem key="dropdown-default-item" value="" disabled>Select element</MenuItem>
             {dropdownItems.map((item: IDropdownItem) => (
                 <MenuItem
                   key={`dropdown-item-${item.id}`}
                   value={item.id}
-                  onClick={() => handleDropdownItemClick(item)}
+                  selected
+                  onClick={() => handleDropdownItemClick?.(item)}
+                  className={textColorClassName}
                 >
                     {item.name}
                 </MenuItem>

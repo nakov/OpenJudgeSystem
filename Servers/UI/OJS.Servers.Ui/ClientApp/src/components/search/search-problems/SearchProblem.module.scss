@@ -5,7 +5,7 @@
 @use 'src/styles/font-weights';
 
 .problemElement {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   align-content: center;
   border-radius: 8px;

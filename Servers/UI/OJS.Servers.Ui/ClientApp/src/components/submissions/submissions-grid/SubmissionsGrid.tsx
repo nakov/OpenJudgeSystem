@@ -61,6 +61,7 @@ const SubmissionsGrid = ({
 
             if (isEmpty(submissions?.items)) {
                 return (
+                    // TODO: Make this reusable (centered themed text)
                     <div className={concatClassNames(
                         styles.noSubmissionsFound,
                         getColorClassName(themeColors.textColor),
@@ -83,20 +84,14 @@ const SubmissionsGrid = ({
                             </td>
                             <td>From</td>
                             {
-                                options.showCompeteMarker
-                                    ? <td />
-                                    : null
+                                options.showCompeteMarker && <td />
                             }
                             {
-                                options.showDetailedResults
-                                    ? <td>Time and Memory Used</td>
-                                    : null
+                                options.showDetailedResults && <td>Time and Memory Used</td>
                             }
                             <td className={styles.tdRight}>Result</td>
                             {
-                                options.showSubmissionTypeInfo
-                                    ? <td className={styles.tdRight}>Strategy</td>
-                                    : null
+                                options.showSubmissionTypeInfo && <td className={styles.tdRight}>Strategy</td>
                             }
                             <td />
                         </tr>

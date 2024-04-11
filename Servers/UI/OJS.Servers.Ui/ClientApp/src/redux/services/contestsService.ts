@@ -1,4 +1,3 @@
-/* eslint-disable object-curly-newline */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
@@ -6,7 +5,8 @@ import { IContestStrategyFilter } from '../../common/contest-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
-    IGetAllContestsOptions,
+    IContestsSortAndFilterOptions,
+    IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
     IPagedResultType, IRegisterForContestResponseType, IStartParticipationResponseType,
 } from '../../common/types';
@@ -29,7 +29,7 @@ export const contestsService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IGetAllContestsOptions>({
+        getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IContestsSortAndFilterOptions>({
             query: ({ sortType, page, category, strategy }) => ({
                 url: '/Contests/GetAll',
                 params: {
@@ -44,8 +44,28 @@ export const contestsService = createApi({
             query: ({ id }) => ({ url: `/Contests/Details/${id}` }),
             keepUnusedDataFor: 10,
         }),
-        getContestCategories: builder.query<Array<IContestCategory>, void>({ query: () => '/ContestCategories/GetCategoriesTree' }),
-        getContestStrategies: builder.query<IContestStrategyFilter[], void>({ query: () => '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+        getContestCategories: builder.query<Array<IContestCategory>, void>({
+            query: () => ({ url: '/ContestCategories/GetCategoriesTree' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        getContestStrategies: builder.query<IContestStrategyFilter[], void>({
+            query: () => ({ url: '/SubmissionTypes/GetAllOrderedByLatestUsage' }),
+            /* eslint-disable object-curly-newline */
+        }),
+        getContestsParticipationsForUser: builder.query<
+            IPagedResultType<IIndexContestsType>,
+            IGetContestParticipationsForUserQueryParams>({
+                query: ({ username, sortType, sortTypeDirection, page, category, strategy }) => ({
+                    url: `/Contests/GetParticipatedByUser?username=${username}`,
+                    params: {
+                        sortType,
+                        sortTypeDirection,
+                        page,
+                        category,
+                        strategy,
+                    },
+                }),
+            }),
         getContestRegisteredUser: builder.query<IRegisterForContestResponseType, IStartParticipationParams>({
             query: ({ id, isOfficial }) => ({
                 url: `/Contests/Register/${id}`,
@@ -90,8 +110,9 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
-    useGetContestRegisteredUserQuery,
     useLazyGetContestByIdQuery,
+    useLazyGetContestsParticipationsForUserQuery,
+    useGetContestRegisteredUserQuery,
     useLazyGetContestUserParticipationQuery,
     useSubmitContestSolutionMutation,
     useSubmitContestPasswordMutation,

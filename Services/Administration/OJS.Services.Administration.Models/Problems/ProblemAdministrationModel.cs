@@ -1,12 +1,13 @@
 ﻿namespace OJS.Services.Administration.Models.Problems;
 
-using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
-using System.Collections.Generic;
-using OJS.Data.Models.Problems;
-using OJS.Common.Enumerations;
-using System;
 using Microsoft.AspNetCore.Http;
+using OJS.Common.Enumerations;
+using OJS.Data.Models.Problems;
+using OJS.Services.Common.Models;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
+using System.Collections.Generic;
 
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -48,6 +49,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
+             .ForMember(p => p.OperationType, opt
+                 => opt.Ignore())
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt

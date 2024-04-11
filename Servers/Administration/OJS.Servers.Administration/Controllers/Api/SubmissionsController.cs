@@ -1,17 +1,13 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Common;
 using OJS.Data.Models.Submissions;
 using OJS.Servers.Administration.Attributes;
-using OJS.Servers.Infrastructure.Extensions;
-using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Submissions;
 using OJS.Services.Administration.Business.Submissions.GridData;
 using OJS.Services.Administration.Business.Submissions.Validation;
 using OJS.Services.Administration.Models.Submissions;
-using OJS.Services.Administration.Models.Validation;
 using System.Threading.Tasks;
 
 public class SubmissionsController : BaseAdminApiController<
@@ -25,14 +21,11 @@ public class SubmissionsController : BaseAdminApiController<
     public SubmissionsController(
             ISubmissionsGridDataService submissionsGridDataService,
             ISubmissionsBusinessService submissionsBusinessService,
-            SubmissionsAdministrationModelValidator validator,
-            IValidator<BaseDeleteValidationModel<int>> submissionsDeleteValidator,
-            ILecturerContestPrivilegesBusinessService lecturerPrivilegesBusinessService)
+            SubmissionsAdministrationModelValidator validator)
         : base(
             submissionsGridDataService,
             submissionsBusinessService,
-            validator,
-            submissionsDeleteValidator) =>
+            validator) =>
         this.submissionsBusinessService = submissionsBusinessService;
 
     [HttpPost("{id:int}")]

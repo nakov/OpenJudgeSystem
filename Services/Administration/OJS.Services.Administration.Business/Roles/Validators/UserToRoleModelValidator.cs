@@ -7,8 +7,8 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
-using OJS.Services.Common.Data;
 using OJS.Services.Common.Validation;
+using OJS.Services.Common.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
