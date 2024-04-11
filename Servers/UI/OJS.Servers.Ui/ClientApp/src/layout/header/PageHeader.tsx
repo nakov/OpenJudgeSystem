@@ -62,7 +62,8 @@ const PageHeader = () => {
                 <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>SoftUni Judge</Link>
                 <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
                 <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                {user.canAccessAdministration && <Link to="/administration-new" className={styles.navButton}>ADMINISTRATION</Link>}
+                {user.canAccessAdministration &&
+                <Link to="/administration-new" target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
             </div>
             <div className={styles.authButtons}>
                 <i className={`fas fa-search ${styles.searchIcon}`} onClick={toggleVisibility} />

@@ -1,0 +1,73 @@
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+
+.testRunWrapper {
+  margin: spacings.$sp-18 0;
+  padding: spacings.$sp-12;
+
+  .testRunTitleWrapper {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    .testNameButtonWrapper {
+      align-items: center;
+      display: flex;
+    }
+
+    button {
+      margin-left: spacings.$sp-32;
+    }
+
+    .timeAndMemoryWrapper {
+      display: flex;
+
+      .testRunIdWrapper {
+        font-size: variables.$f-size-16;
+        margin-left: spacings.$sp-12;
+        text-decoration: underline;
+        color: #868686FF;
+
+        &:visited {
+          color: #868686FF;
+        }
+      }
+
+      span:first-child {
+        margin-right: spacings.$sp-16;
+      }
+
+      span {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+
+        span {
+          align-items: center;
+          display: flex;
+        }
+      }
+
+      svg:first-child {
+        margin: 0 spacings.$sp-8;
+      }
+    }
+  }
+
+  .inputWrapper {
+    margin: spacings.$sp-18 0;
+    padding: spacings.$sp-12;
+  }
+
+  .outputWrapper {
+    margin-top: spacings.$sp-12;
+  }
+}
+
+.timeAndMemoryModal {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-8;
+}

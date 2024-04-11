@@ -1,9 +1,0 @@
-@use 'src/styles/fonts';
-
-.logout {
-  @extend %font-family-normal;
-
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
-}
