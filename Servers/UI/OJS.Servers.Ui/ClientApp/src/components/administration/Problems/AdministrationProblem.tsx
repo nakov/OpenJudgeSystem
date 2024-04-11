@@ -14,7 +14,7 @@ enum PROBLEM_LISTED_DATA {
 const AdministrationProblem = () => {
     const { pathname } = useLocation();
     const [ , , , problemId ] = pathname.split('/');
-    const [ tabName, setTabName ] = useState(PROBLEM_LISTED_DATA.RESOURCES);
+    const [ tabName, setTabName ] = useState(PROBLEM_LISTED_DATA.TESTS);
     const [ problemName, setProblemName ] = useState<string>('');
 
     const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_LISTED_DATA) => {

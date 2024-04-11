@@ -30,7 +30,7 @@ const ParticipantsAdministrationPage = () => {
     ));
 
     const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
+        setDefaultSorter(searchParams, "id=desc") ?? '',
         mapGridColumnsToAdministrationSortingProps(participantsFilteringColumns),
     ));
 

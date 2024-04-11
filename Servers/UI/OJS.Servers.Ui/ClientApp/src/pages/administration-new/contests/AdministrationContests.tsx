@@ -45,12 +45,23 @@ const AdministrationContestsPage = () => {
         mapGridColumnsToAdministrationSortingProps(contestFilterableColumns),
     ));
 
+    const mapSearchParam = () => {
+        let filters = searchParams.get('filter')
+        console.log(filters);
+        if(filters === null){
+            console.log("inside")
+            return 'isdeleted~equals~false';
+        }
+        return filters;
+    }
+
     const [ excelExportType, setExcelExportType ] = useState<number>(0);
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
         page: 1,
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        filter: mapSearchParam(),
         sorting: searchParams.get('sorting') ?? '',
     });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
@@ -62,6 +73,7 @@ const AdministrationContestsPage = () => {
         isLoading,
     } = useGetAllAdminContestsQuery(queryParams);
 
+   
     const [
         exportResutls,
         {
@@ -80,10 +92,10 @@ const AdministrationContestsPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: searchParams.get('filter') ?? '',
+            filter: mapSearchParam(),
             sorting: searchParams.get('sorting') ?? '',
         }));
-    }, [ searchParams ]);
+    }, [mapSearchParam, searchParams]);
 
     useEffect(() => {
         if (isSuccessfullyDownloaded) {

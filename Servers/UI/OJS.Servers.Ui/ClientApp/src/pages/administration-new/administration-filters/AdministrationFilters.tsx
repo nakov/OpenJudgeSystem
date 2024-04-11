@@ -120,7 +120,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const open = Boolean(anchor);
 
     useEffect(() => {
+        console.log(searchParams)
         const urlSelectedFilters = mapUrlToFilters(searchParams, columns);
+        console.log(urlSelectedFilters)
+
         if (urlSelectedFilters.length && setStateAction) {
             setStateAction(urlSelectedFilters);
         }
@@ -420,6 +423,11 @@ const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: 
 
     const filterParams = urlSearchParams.get('filter') ?? '';
     const urlParams = filterParams.split('&&;').filter((param) => param);
+    if(!filterParams || urlParams.find(x => x.includes("IsDeleted"))) {
+        urlParams.push('isdeleted~equals~false')
+    }
+
+    console.log(urlParams)
     urlParams.forEach((param) => {
         const paramChunks = param.split('~').filter((chunk) => chunk);
 
