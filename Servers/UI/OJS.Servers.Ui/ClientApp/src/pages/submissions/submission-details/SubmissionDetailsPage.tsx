@@ -178,6 +178,14 @@ const SubmissionDetailsPage = () => {
     ]);
 
     const renderSolutionTestDetails = useCallback(() => {
+        if (!isProcessed) {
+            return (
+                <div className={styles.submissionInQueueWrapper}>
+                    The submission is in queue and will be processed shortly. Please wait.
+                </div>
+            );
+        }
+
         if (!isCompiledSuccessfully) {
             return (
                 <div className={styles.compileTimeErrorWrapper}>
@@ -197,14 +205,6 @@ const SubmissionDetailsPage = () => {
                         your solution for re-evaluation against the new test cases. Your score may change.
                     </div>
                     <Button text="RETEST" onClick={() => retestSubmission({ id: solutionId! })} />
-                </div>
-            );
-        }
-
-        if (!isProcessed) {
-            return (
-                <div className={styles.submissionInQueueWrapper}>
-                    The submission is in queue and will be processed shortly. Please wait.
                 </div>
             );
         }
