@@ -38,7 +38,7 @@ const AdministrationProblemResourcesPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, problemResourceFilterableColumns),
+            filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

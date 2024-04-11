@@ -32,6 +32,7 @@ const orderByOptions = [
     { name: 'Descending', value: SortingEnum.DESC },
 ];
 
+const sorterSeparator = '&';
 const AdministrationSorting = (props: IAdministrationSortProps) => {
     const { columns, selectedSorters, setStateAction, searchParams, setSearchParams, withSearchParams = true } = props;
     const defaultSorter = {
@@ -58,7 +59,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         const urlSelectedSorters: IAdministrationSorter[] = [];
 
         const sorterParams = searchParams.get('sorting') ?? '';
-        const urlParams = sorterParams.split('&').filter((param) => param);
+        const urlParams = sorterParams.split(sorterSeparator).filter((param) => param);
         urlParams.forEach((param: string) => {
             const paramChunks = param.split('=').filter((chunk) => chunk);
 
@@ -113,7 +114,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
         const delayedSetOfSearch = debounce(() => {
             if (searchParams && setSearchParams && withSearchParams) {
-                searchParams.set('sorting', sorterFormattedArray.join('&'));
+                searchParams.set('sorting', sorterFormattedArray.join(sorterSeparator));
                 setSearchParams(searchParams);
             }
         }, 500);
@@ -270,20 +271,33 @@ const mapSorterParamsToQueryString = (selectedSorters: IAdministrationSorter[]) 
         }
         queryString.push(`${sorter.columnName.replace(/\s/g, '').toLowerCase()}=${sorter.orderBy}`);
     });
-    return queryString.filter((el) => el).join('&') ?? '';
+    return queryString.filter((el) => el).join(sorterSeparator) ?? '';
 };
 
 const mapGridColumnsToAdministrationSortingProps =
     (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName?.replace(/\s/g, '') ?? '').filter((el) => el);
 
-const mapUrlToSorters = (searchParams: URLSearchParams | undefined, columns:Array<string>): IAdministrationSorter[] => {
+const mapUrlToSorters = (
+    searchParams: URLSearchParams | undefined,
+    columns:Array<string>,
+    defaultSorter?: string,
+): IAdministrationSorter[] => {
     if (!searchParams) {
         return [];
     }
     const urlSelectedSorters: IAdministrationSorter[] = [];
 
     const sorterParams = searchParams.get('sorting') ?? '';
-    const urlParams = sorterParams.split('&').filter((param) => param);
+    const urlParams = sorterParams.split(sorterSeparator).filter((param) => param);
+
+    if (defaultSorter) {
+        const sorterProperty = defaultSorter.split('=')[0];
+        const indexOfSorter = columns.findIndex((x) => x.toLowerCase() === sorterProperty.toLowerCase());
+        if ((!sorterParams || !urlParams.find((x) => x.includes(sorterProperty))) && indexOfSorter >= 0) {
+            urlParams.push(defaultSorter);
+        }
+    }
+
     urlParams.forEach((param: string) => {
         const paramChunks = param.split('=').filter((chunk) => chunk);
 
@@ -308,11 +322,38 @@ const mapUrlToSorters = (searchParams: URLSearchParams | undefined, columns:Arra
     return urlSelectedSorters;
 };
 
+/* Debounce is needed because the state of the search params is not shared between
+sorters and filters, this means if you get the params at the same time in filters and sorters
+and make some change on them, the sorters will not get them. (same for above debounce)
+*/
+const applyDefaultSorter = debounce((searchParams:URLSearchParams, defaultSorter:string, shouldSkipDefault: boolean = false) => {
+    const sorters = searchParams.get('sorting');
+
+    if (!defaultSorter) {
+        return sorters ?? '';
+    }
+    const sorterProperty = defaultSorter.split('=')[0];
+    if (!sorters || !sorters.includes(sorterProperty)) {
+        if (sorters === null) {
+            return shouldSkipDefault
+                ? ''
+                : defaultSorter;
+        }
+        if (!sorters.includes(sorterProperty) && defaultSorter !== '') {
+            return shouldSkipDefault
+                ? sorters
+                : `${sorters}${sorterSeparator}${defaultSorter}`;
+        }
+    }
+    return sorters;
+}, 500);
+
 export {
     type IAdministrationSorter,
     mapGridColumnsToAdministrationSortingProps,
     mapSorterParamsToQueryString,
     mapUrlToSorters,
+    applyDefaultSorter,
 };
 
 export default AdministrationSorting;

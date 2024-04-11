@@ -30,7 +30,7 @@ const ParticipantsAdministrationPage = () => {
     ));
 
     const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        setDefaultSorter(searchParams, "id=desc") ?? '',
+        searchParams,
         mapGridColumnsToAdministrationSortingProps(participantsFilteringColumns),
     ));
 
@@ -46,7 +46,7 @@ const ParticipantsAdministrationPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, participantsFilteringColumns),
+            filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

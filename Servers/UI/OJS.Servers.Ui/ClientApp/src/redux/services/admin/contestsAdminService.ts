@@ -21,7 +21,7 @@ export const contestService = createApi({
                     sorting,
                 },
             }),
-            keepUnusedDataFor: 10,
+            keepUnusedDataFor: 3,
         }),
 
         getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({

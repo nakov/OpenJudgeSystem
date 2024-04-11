@@ -47,7 +47,7 @@ const AdministrationCheckersPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, checkersFilterableColumns),
+            filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

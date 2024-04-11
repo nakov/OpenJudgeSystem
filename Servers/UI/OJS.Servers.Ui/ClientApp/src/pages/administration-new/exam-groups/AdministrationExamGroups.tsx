@@ -56,7 +56,7 @@ const AdministrationExamGroupsPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, examGroupsFilterableColumns),
+            filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

@@ -46,7 +46,7 @@ const AdministrationUsersPage = () => {
     useEffect(() => {
         setQueryParams((currentParams) => ({
             ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, usersFilterableColumns),
+            filter: searchParams.get('filter') ?? '',
             sorting: searchParams.get('sorting') ?? '',
         }));
     }, [ searchParams ]);

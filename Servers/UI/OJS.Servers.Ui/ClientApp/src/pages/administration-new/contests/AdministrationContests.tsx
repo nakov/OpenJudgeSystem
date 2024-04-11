@@ -19,7 +19,7 @@ import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
+import { applyDefaultSorter, IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import contestFilterableColumns, { returnContestsNonFilterableColumns } from './contestsGridColumns';
@@ -35,6 +35,8 @@ const AdministrationContestsPage = () => {
     const [ showDownloadSubsModal, setShowDownloadSubsModal ] = useState<boolean>(false);
     const [ showExportExcelModal, setShowExportExcelModal ] = useState<boolean>(false);
 
+    const defaultSorter = 'id=DESC';
+
     const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
         searchParams ?? '',
         mapGridColumnsToAdministrationFilterProps(contestFilterableColumns),
@@ -43,6 +45,7 @@ const AdministrationContestsPage = () => {
     const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
         searchParams ?? '',
         mapGridColumnsToAdministrationSortingProps(contestFilterableColumns),
+        defaultSorter,
     ));
 
     const [ excelExportType, setExcelExportType ] = useState<number>(0);
@@ -52,7 +55,7 @@ const AdministrationContestsPage = () => {
         itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         filter: applyDefaultFilterToQueryString(searchParams, contestFilterableColumns),
-        sorting: searchParams.get('sorting') ?? '',
+        sorting: applyDefaultSorter(searchParams, defaultSorter),
     });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
