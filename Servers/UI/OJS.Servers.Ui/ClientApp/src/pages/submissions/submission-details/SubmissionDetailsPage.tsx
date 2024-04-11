@@ -39,7 +39,14 @@ const SubmissionDetailsPage = () => {
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
     const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
-    const [ retestSubmission, { isLoading: retestIsLoading, isError: retestError, isSuccess: retestSuccess } ] = useLazyRetestSubmissionQuery();
+    const [
+        retestSubmission,
+        {
+            isLoading: retestIsLoading,
+            isError: retestError,
+            isSuccess: retestSuccess,
+        },
+    ] = useLazyRetestSubmissionQuery();
 
     // fetch submission details if not present (when opened from url directly)
     // in order to load breadcrumbs and name of contest properly

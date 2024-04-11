@@ -84,22 +84,23 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
         setTestShowInput(!testShowInput);
     };
 
-    const formatTestResultType = (resultType: string) => {
-        if (resultType === testResultTypes.correctAnswer) {
+    const formatTestResultType = (resType: string) => {
+        if (resType === testResultTypes.correctAnswer) {
             return 'Correct Answer';
         }
-        if (resultType === testResultTypes.wrongAnswer) {
+        if (resType === testResultTypes.wrongAnswer) {
             return 'Wrong Answer';
         }
-        if (resultType === testResultTypes.memoryLimit) {
+        if (resType === testResultTypes.memoryLimit) {
             return 'Memory Limit';
         }
-        if (resultType === testResultTypes.timeLimit) {
+        if (resType === testResultTypes.timeLimit) {
             return 'Time Limit';
         }
-        if (resultType === testResultTypes.runTimeError) {
+        if (resType === testResultTypes.runTimeError) {
             return 'Run Time Error';
         }
+        return '';
     };
 
     return (
