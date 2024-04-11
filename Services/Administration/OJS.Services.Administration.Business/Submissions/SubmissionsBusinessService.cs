@@ -210,6 +210,8 @@ namespace OJS.Services.Administration.Business.Submissions
                     .ThenInclude(p => p.Checker)
                 .Include(s => s.Problem)
                     .ThenInclude(p => p.Tests)
+                .Include(s => s.Problem)
+                .ThenInclude(p => p.SubmissionTypesInProblems)
                 .FirstOrDefault();
 
             if (submission == null || submission.Id == 0)
