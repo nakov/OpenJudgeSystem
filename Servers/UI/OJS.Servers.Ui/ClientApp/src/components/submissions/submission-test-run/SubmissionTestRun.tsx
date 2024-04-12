@@ -130,10 +130,14 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                 </div>
                 <div className={styles.testDetailsAndMemoryWrapper}>
                     { user.canAccessAdministration && (
-                    <Link target="_blank" to={`/administration-new/tests/${testId}`} className={`${styles.testRunIdWrapper} ${textColorClassName}`}>
-                        Test #
-                        {testId}
-                    </Link>
+                        <Link
+                          target="_blank"
+                          to={`/administration-new/tests/${testId}`}
+                          className={`${styles.testRunIdWrapper} ${textColorClassName}`}
+                        >
+                            Test #
+                            {testId}
+                        </Link>
                     )}
                     <div className={styles.timeAndMemoryWrapper}>
                         <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
