@@ -121,12 +121,18 @@ const SubmissionDetailsPage = () => {
             <>
                 <div className={styles.submissionDetailsWrapper}>
                     <div>
+                        {allowBinaryFilesUpload && (
+                            <div className={styles.buttonWrapper}>
+                                <Button text="Download binary file" onClick={handleDownloadFile} />
+                            </div>
+                        )}
                         <div className={styles.detailsRow}>
                             <span>
                                 Submitted on:
                             </span>
                             <span>{preciseFormatDate(createdOn!)}</span>
                         </div>
+
                         { user.canAccessAdministration && (
                             <>
                                 <div className={styles.detailsRow}>
@@ -154,11 +160,6 @@ const SubmissionDetailsPage = () => {
                                 {submissionType?.name}
                             </span>
                         </div>
-                        {allowBinaryFilesUpload && (
-                        <div className={styles.buttonWrapper}>
-                            <Button text="DOWNLOAD" onClick={handleDownloadFile} />
-                        </div>
-                        )}
                     </div>
                 </div>
                 {downloadSolutionErrorMessage &&
@@ -180,7 +181,7 @@ const SubmissionDetailsPage = () => {
     const renderSolutionTestDetails = useCallback(() => {
         if (!isProcessed) {
             return (
-                <div className={styles.submissionInQueueWrapper}>
+                <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
                     The submission is in queue and will be processed shortly. Please wait.
                 </div>
             );
@@ -188,16 +189,16 @@ const SubmissionDetailsPage = () => {
 
         if (!isCompiledSuccessfully) {
             return (
-                <div className={styles.compileTimeErrorWrapper}>
+                <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
                     <div>A compile time error occurred:</div>
-                    <div>{compilerComment}</div>
+                    { compilerComment && <div>{compilerComment}</div>}
                 </div>
             );
         }
 
         if (isEligibleForRetest) {
             return (
-                <div className={styles.retestWrapper}>
+                <div className={`${styles.retestWrapper} ${textColorClassName}`}>
                     <div>
                         The input/ output data changed. Your (
                         {points}
@@ -238,10 +239,15 @@ const SubmissionDetailsPage = () => {
         return (
             <div className={styles.adminButtonsWrapper}>
                 { content && <Button text="View Code" onClick={onViewCodeClick} /> }
-                <Button text="Edit" onClick={goToAdministrationForContest} />
-                <Button text="Delete" onClick={goToAdministrationForContest} />
-                <Button text="Tests" onClick={goToAdministrationForContest} />
-                <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
+                { user.canAccessAdministration && (
+                    <>
+                        <Button text="Edit" onClick={goToAdministrationForContest} />
+                        <Button text="Delete" onClick={goToAdministrationForContest} />
+                        <Button text="Tests" onClick={goToAdministrationForContest} />
+                        <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
+                    </>
+                )}
+
             </div>
         );
     }, [ content, contestId, navigate, retestSubmission, solutionId ]);
@@ -262,15 +268,13 @@ const SubmissionDetailsPage = () => {
             </div>
         );
     }
-    if (retestSuccess) {
-        return (
-            <div className={styles.succesfulRetestWrapper}>
-                Submission has been retested successfully, reload page to refresh results.
-            </div>
-        );
-    }
     return (
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>
+            { retestSuccess && (
+                <div className={styles.succesfulRetestWrapper}>
+                    Submission has been retested successfully, reload page to refresh results.
+                </div>
+            )}
             <ContestBreadcrumbs />
             <div>
                 <div className={styles.submissionTitle}>
@@ -280,7 +284,7 @@ const SubmissionDetailsPage = () => {
                     <SubmissionTestRuns testRuns={testRuns || []} />
                     <div className={styles.innerBodyWrapper}>
                         <Link to={`/contests/${contestId}`}>{name}</Link>
-                        {user.canAccessAdministration && renderAdminButtons()}
+                        {renderAdminButtons()}
                         {renderSolutionTestDetails()}
                         {!isEligibleForRetest && content && (
                             <div className={styles.codeContentWrapper}>
