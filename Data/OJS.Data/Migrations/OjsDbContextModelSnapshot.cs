@@ -1133,9 +1133,15 @@ namespace OJS.Data.Migrations
                     b.Property<int>("ProblemId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MemoryLimit")
+                        .HasColumnType("int");
+
                     b.Property<byte[]>("SolutionSkeleton")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("TimeLimit")
+                        .HasColumnType("int");
 
                     b.HasKey("SubmissionTypeId", "ProblemId");
 

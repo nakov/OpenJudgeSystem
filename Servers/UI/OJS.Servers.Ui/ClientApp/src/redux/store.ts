@@ -6,9 +6,9 @@ import storage from 'redux-persist/lib/storage';
 // features
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import { submissionDetailsSlice } from './features/submissionDetailsSlice';
 import { submissionsSlice } from './features/submissionsSlice';
 import { themeSlice } from './features/themeSlice';
+import { usersSlice } from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
 // admin services
@@ -30,22 +30,22 @@ import usersAdminService from './services/admin/usersAdminService';
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
 import { homeStatisticsService } from './services/homeStatisticsService';
-import submissionDetailsService from './services/submissionDetailsService';
 import submissionsService from './services/submissionsService';
+import usersService from './services/usersService';
 
 const rootReducer = combineReducers({
     // reducers
-    [submissionsSlice.name]: submissionsSlice.reducer,
-    [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
-    [authorizationSlice.name]: authorizationSlice.reducer,
     [themeSlice.name]: themeSlice.reducer,
+    [authorizationSlice.name]: authorizationSlice.reducer,
+    [usersSlice.name]: usersSlice.reducer,
+    [submissionsSlice.name]: submissionsSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
 
     // services
-    [submissionsService.reducerPath]: submissionsService.reducer,
-    [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
-    [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
+    [usersService.reducerPath]: usersService.reducer,
+    [submissionsService.reducerPath]: submissionsService.reducer,
+    [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
@@ -74,6 +74,7 @@ const persistConfig = (reducersToPersist: string[]) => ({
 const reducersToPersist = [
     themeSlice.name,
     authorizationSlice.name,
+    contestSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -81,13 +82,13 @@ const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]
 const store = configureStore({
     reducer: persistRootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat([
+        authorizationService.middleware,
+        usersService.middleware,
         submissionsService.middleware,
-        submissionDetailsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
         problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
-        authorizationService.middleware,
         contestsService.middleware,
         homeStatisticsService.middleware,
         problemsAdminService.middleware,

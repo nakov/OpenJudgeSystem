@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Validators;
 
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Data.Validation;
@@ -8,14 +9,21 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class ProblemAdministrationValidator : BaseAdministrationModelValidator<ProblemAdministrationModel, int, Problem>
 {
+    private readonly IProblemsDataService problemsDataService;
     private readonly IContestsActivityService contestsActivityService;
+    private readonly int maxTimeLimitValue = 50000;
+    private readonly int maxMemoryLimitValue = int.MaxValue;
 
     public ProblemAdministrationValidator(IProblemsDataService problemsDataService, IContestsActivityService contestsActivityService)
         : base(problemsDataService)
         {
+            this.problemsDataService = problemsDataService;
             this.contestsActivityService = contestsActivityService;
 
             this.RuleFor(model => model.Name)
@@ -23,12 +31,12 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
             this.RuleFor(model => model.TimeLimit)
-                .GreaterThanOrEqualTo(0)
+                .GreaterThan(0)
                 .WithMessage("Time limit cannot be zero or less.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
             this.RuleFor(model => model.MemoryLimit)
-                .GreaterThanOrEqualTo(0)
+                .GreaterThan(0)
                 .WithMessage("Memory limit cannot be zero or less.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
@@ -39,8 +47,8 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
 
             this.RuleFor(model => model.MaximumPoints)
                 .GreaterThanOrEqualTo((short)0)
-                .WithMessage("Maximum points cannot be zero or less.")
-                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update)
+                .WithMessage("Maximum points cannot be zero or less.");
 
             this.RuleFor(model => model.SubmissionTypes.Count)
                 .GreaterThanOrEqualTo(1)
@@ -59,8 +67,40 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
                 .WithMessage("Checker must be valid type")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
-            this.RuleFor(model => model.ContestId)
-                .MustAsync(async (id, _) => !await this.contestsActivityService.IsContestActive(id))
+            this.RuleFor(model => model.Id)
+                .MustAsync(async (id, _) => await this.ContestMustNotBeActive(id))
                 .When(x => x.OperationType is CrudOperationType.Delete);
+
+            this.RuleFor(model => model.SubmissionTypes)
+                .Must(this.MustHaveValidSubmissionTypeDetails)
+                .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
         }
+
+    private async Task<bool> ContestMustNotBeActive(int problemId)
+    {
+        var contestId = await this.problemsDataService
+            .GetByIdQuery(problemId)
+            .Select(x => x.ProblemGroup.ContestId)
+            .FirstAsync();
+
+        return !await this.contestsActivityService.IsContestActive(contestId);
+    }
+
+    private bool MustHaveValidSubmissionTypeDetails(IEnumerable<ProblemSubmissionType> problemSubmissionTypes)
+    {
+        foreach (var problemSubmissionType in problemSubmissionTypes)
+        {
+            if (problemSubmissionType.TimeLimit <= 0 || problemSubmissionType.TimeLimit > this.maxTimeLimitValue)
+            {
+                return false;
+            }
+
+            if (problemSubmissionType.MemoryLimit <= 0 || problemSubmissionType.MemoryLimit > this.maxMemoryLimitValue)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

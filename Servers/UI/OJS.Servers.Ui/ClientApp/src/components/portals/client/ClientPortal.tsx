@@ -10,19 +10,19 @@ import ContestEditPage from '../../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../../pages/administration/ContestProblemsPage';
 import SubmissionRetestPage from '../../../pages/administration/SubmissionRetestPage';
 import TestEditPage from '../../../pages/administration/TestEditPage';
+import LoginPage from '../../../pages/auth/login/LoginPage';
+import LogoutPage from '../../../pages/auth/logout/LogoutPage';
+import RegisterPage from '../../../pages/auth/register/RegisterPage';
 import ContestPage from '../../../pages/contest/ContestPage';
 import ContestResultsPage from '../../../pages/contest-results/ContestResultsPage';
 import ContestDetailsPage from '../../../pages/contests/contest-details/ContestDetailsPage';
 import ContestsPage from '../../../pages/contests/ContestsPage';
 import HomePage from '../../../pages/home/HomePage';
-import LoginPage from '../../../pages/login/LoginPage';
-import LogoutPage from '../../../pages/logout/LogoutPage';
 import NotFoundPage from '../../../pages/not-found/NotFoundPage';
 import ProfilePage from '../../../pages/profile/ProfilePage';
-import RegisterPage from '../../../pages/register/RegisterPage';
 import SearchPage from '../../../pages/search/SearchPage';
 import { asPage } from '../../../pages/shared/set-page-params';
-import SubmissionDetailsPage from '../../../pages/submission-details/SubmissionDetailsPage';
+import SubmissionDetailsPage from '../../../pages/submissions/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../../pages/submissions/SubmissionsPage';
 
 import styles from '../../../layout/content/PageContent.module.scss';
@@ -47,11 +47,7 @@ const ClientPortal = () => {
             Element: HomePage,
         },
         {
-            path: '/profile',
-            Element: ProfilePage,
-        },
-        {
-            path: '/profile/:username',
+            path: '/profile/:username?',
             Element: ProfilePage,
         },
         {

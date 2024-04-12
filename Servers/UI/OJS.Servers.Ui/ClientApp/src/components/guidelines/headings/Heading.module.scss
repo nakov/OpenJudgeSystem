@@ -4,7 +4,7 @@
 @use 'src/styles/font-weights';
 
 .heading {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   color: colors.$text-dark-gray-color;
   font-weight: font-weights.$font-weight-regular;

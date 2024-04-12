@@ -89,7 +89,7 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
-interface IGetUserSubmissionsForProfileUrlParams {
+interface IGetUserSubmissionsUrlParams {
     username: string;
     page: number;
 }
@@ -104,6 +104,12 @@ interface IGetSubmissionResultsByProblemUrlParams {
     problemId: number;
     isOfficial: boolean;
     page: number;
+}
+
+interface IGetSubmissionsByUserParams {
+    id: number;
+    page: number;
+    isOfficial: boolean;
 }
 
 interface IGetContestResultsParams {
@@ -168,7 +174,7 @@ export type {
     IRetestSubmissionUrlParams,
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
-    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
     IGetByExamGroupId,
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
@@ -181,4 +187,5 @@ export type {
     IGetByTestId,
     IGetByRoleId,
     IGetByUserId,
+    IGetSubmissionsByUserParams,
 };

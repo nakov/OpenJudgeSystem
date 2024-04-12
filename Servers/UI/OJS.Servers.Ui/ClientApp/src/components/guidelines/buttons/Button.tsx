@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -21,6 +22,7 @@ enum ButtonType {
     submit = 5,
     toggled = 6,
     untoggled = 7,
+    neutral = 8,
 }
 enum LinkButtonType {
     primary = 1,
@@ -64,6 +66,7 @@ const classNameToButonType = {
     [ButtonType.image]: styles.image,
     [ButtonType.toggled]: styles.toggled,
     [ButtonType.untoggled]: styles.untoggled,
+    [ButtonType.neutral]: styles.neutral,
 };
 
 const classNameToLinkButonType = {
@@ -79,6 +82,9 @@ const sizeToClassName = {
     [ButtonSize.large]: styles.large,
     [ButtonSize.none]: styles.none,
 };
+
+const themingButtonsClassNames:{ [key in ButtonType]?: string[] } =
+    { [ButtonType.secondary]: [ styles.lightSecondary, styles.darkSecondary ] };
 
 const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
     if (!isNil(text) && !isNil(children)) {
@@ -103,10 +109,15 @@ const Button = ({
     style,
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
+    const { isDarkMode } = useTheme();
 
     const { [type]: typeClassName } = classNameToButonType;
 
     const { [size]: sizeClassName } = sizeToClassName;
+
+    const themingClassName = themingButtonsClassNames[type]?.at(isDarkMode
+        ? 1
+        : 0);
 
     const stateClassName = state === ButtonState.disabled
         ? styles.disabled
@@ -129,6 +140,7 @@ const Button = ({
                 stateClassName,
                 wideClassName,
                 competeClassName,
+                themingClassName,
                 className,
             )
             : internalClassName;

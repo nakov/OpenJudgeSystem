@@ -1,6 +1,6 @@
 import { IUserSearchType } from '../../../common/search-types';
 import concatClassNames from '../../../utils/class-names';
-import { encodeUsernameAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../utils/urls';
+import { encodeAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SearchUser.module.scss';
@@ -21,7 +21,7 @@ const SearchUser = ({ user }: ISearchUser) => {
                 <LinkButton
                   type={LinkButtonType.plain}
                   size={ButtonSize.none}
-                  to={getUserProfileInfoUrlByUsername(encodeUsernameAsUrlParam(user.name))}
+                  to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(user.name))}
                   text={user.name}
                 />
             </span>

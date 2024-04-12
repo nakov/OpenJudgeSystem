@@ -3,7 +3,7 @@
 @use 'src/styles/variables';
 
 .label {
-  @extend %font-family-lato;
+  @extend %font-family-normal;
 
   border: 2px solid transparent;
   border-radius: 2px;

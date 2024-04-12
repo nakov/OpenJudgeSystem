@@ -34,6 +34,10 @@ namespace OJS.Services.Ui.Business
 
         Task DeleteById(int id);
 
+        Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
+            string username,
+            ContestFiltersServiceModel? sortAndFilterModel);
+
         Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(ContestFiltersServiceModel? model);
     }
 }

@@ -4,11 +4,13 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import {
     IExamGroupAdministration,
+    IFileModel,
     IGetAllAdminParams,
     IIndexExamGroupsType,
     IPagedResultType,
 } from '../../../common/types';
 import { IExamGroupUrlParams } from '../../../common/url-types';
+import { EXCEL_RESULTS_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 // eslint-disable-next-line import/group-exports
@@ -53,6 +55,19 @@ export const examGroupsService = createApi({
         deleteExamGroup: builder.mutation<string, number >({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
         updateExamGroup: builder.mutation<string, IExamGroupAdministration >({ query: ({ ...examGroupAdministrationModel }) => ({ url: '/Edit', method: 'PATCH', body: examGroupAdministrationModel }) }),
         createExamGroup: builder.mutation<string, IExamGroupUrlParams & IExamGroupAdministration >({ query: ({ ...examGroupAdministrationModel }) => ({ url: '/Create', method: 'POST', body: examGroupAdministrationModel }) }),
+
+        exportExamGroupsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -66,5 +81,6 @@ export const {
     useAddUserInExamGroupByIdMutation,
     useAddBulkUsersInExamGroupByIdMutation,
     useDeleteUserFromExamGroupMutation,
+    useLazyExportExamGroupsToExcelQuery,
 } = examGroupsService;
 export default examGroupsService;

@@ -1,20 +1,35 @@
+/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { submissionsServiceName } from '../../common/reduxNames';
 import { IPagedResultType, IPublicSubmission } from '../../common/types';
-import { IGetSubmissionsUrlParams } from '../../common/url-types';
+import {
+    IGetSubmissionsUrlParams,
+    IGetUserSubmissionsUrlParams,
+    IGetSubmissionsByUserParams,
+    IRetestSubmissionUrlParams,
+} from '../../common/url-types';
+import { ISubmissionType } from '../../hooks/submissions/types';
 
 const submissionsService = createApi({
     reducerPath: submissionsServiceName,
     baseQuery: fetchBaseQuery({
         baseUrl: window.URLS.UI_URL,
+        credentials: 'include',
         prepareHeaders: (headers: Headers) => {
             headers.set('Content-Type', 'application/json');
             return headers;
         },
-        credentials: 'include',
         responseHandler: async (response: Response) => {
+            const contentType = response.headers.get('Content-Type');
+
+            if (contentType?.includes('application/octet-stream') ||
+                contentType?.includes('application/zip')) {
+                const blob = await response.blob();
+
+                return { blob, fileName: 'file.zip' };
+            }
             if (response.headers.get('Content-Length')) {
                 return '';
             }
@@ -39,6 +54,35 @@ const submissionsService = createApi({
                 query: ({ status, page }) => (
                     { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
+        getUserSubmissions: builder.query<
+            IPagedResultType<IPublicSubmission>,
+            IGetUserSubmissionsUrlParams>({
+                query: ({ username, page }) => (
+                    { url: `/${defaultPathIdentifier}/Submissions/GetUserSubmissions?username=${username}&page=${page}` }),
+            }),
+        getSubmissionResultsByProblem: builder.query<IPagedResultType<IPublicSubmission>, IGetSubmissionsByUserParams>({
+            query: ({ id, page, isOfficial }) => ({
+                url: `${defaultPathIdentifier}/Submissions/GetUserSubmissionsByProblem/${id}`,
+                params: {
+                    isOfficial,
+                    page,
+                },
+            }),
+        }),
+        getSubmissionDetails: builder.query<ISubmissionType, { id: number }>({
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
+        }),
+        getSubmissionUploadedFile: builder.query<{ blob: Blob }, { id: number }>({
+            query: ({ id }) => (
+                { url: `${defaultPathIdentifier}/Submissions/Download/${id}` }),
+        }),
+        retestSubmission: builder.query<
+            void,
+            IRetestSubmissionUrlParams>({
+                query: ({ id }) => (
+                    { url: `/${defaultPathIdentifier}/Compete/Retest/${id}`, method: 'POST' }),
+            }),
     }),
 });
 
@@ -46,11 +90,19 @@ const {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetUserSubmissionsQuery,
+    useGetSubmissionDetailsQuery,
+    useLazyGetSubmissionUploadedFileQuery,
+    useLazyRetestSubmissionQuery,
 } = submissionsService;
 
 export {
     useGetUnprocessedCountQuery,
     useGetLatestSubmissionsQuery,
+    useGetSubmissionDetailsQuery,
     useGetLatestSubmissionsInRoleQuery,
+    useLazyGetUserSubmissionsQuery,
+    useLazyGetSubmissionUploadedFileQuery,
+    useLazyRetestSubmissionQuery,
 };
 export default submissionsService;
