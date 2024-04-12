@@ -7,6 +7,7 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Models.Users;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -136,6 +137,11 @@ namespace OJS.Services.Administration.Data.Implementations
         public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
             => this.GetAllByContest(contestId)
                 .Where(p => p.IsOfficial == isOfficial);
+
+        protected override Expression<Func<Participant, bool>> GetUserFilter(UserInfoModel user)
+            => participant => user.IsAdmin ||
+                              participant.Contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
+                          participant.Contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
 
         private IQueryable<Participant> GetAllByContestAndUser(int contestId, string userId) =>
             this.participantsCommonData

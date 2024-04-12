@@ -18,5 +18,9 @@ namespace OJS.Data.Models
         /// Gets or sets a predefined skeleton for the task and strategy.
         /// </summary>
         public byte[] SolutionSkeleton { get; set; } = default!;
+
+        public int? TimeLimit { get; set; }
+
+        public int? MemoryLimit { get; set; }
     }
 }

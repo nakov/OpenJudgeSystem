@@ -167,6 +167,18 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     type?.solutionSkeleton!.toString(),
                 );
             }
+            if (type.timeLimit) {
+                formData.append(
+                    `SubmissionTypes[${index}].TimeLimit`,
+                    type?.timeLimit.toString(),
+                );
+            }
+            if (type.memoryLimit) {
+                formData.append(
+                    `SubmissionTypes[${index}].MemoryLimit`,
+                    type?.memoryLimit.toString(),
+                );
+            }
         });
         if (currentProblem.tests) {
             formData.append('tests', currentProblem.tests);
@@ -195,6 +207,8 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                     id: submissionType.id,
                     name: removedSubmissionType.name,
                     solutionSkeleton: null,
+                    memoryLimit: null,
+                    timeLimit: null,
                 });
 
                 newSubmissionTypes = newSubmissionTypes.filter((x) => x.id !== submissionType.id);
@@ -233,12 +247,27 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         }
     };
 
-    const onSkeletonChange = (value: string, submissionTypeId: number) => {
+    const onPropChangeInSubmissionType = (value: string | number | null, submissionTypeId: number, propName: string) => {
         const index = currentProblem.submissionTypes.findIndex((st) => st.id === submissionTypeId);
 
-        const newSubmissionTypes = currentProblem.submissionTypes.map((item, idx) => idx === index
-            ? { ...item, solutionSkeleton: value }
-            : item);
+        const newSubmissionTypes = currentProblem.submissionTypes.map((item, idx) => {
+            if (idx === index) {
+                // Check the type of the property to determine how to parse the value
+                let updatedValue = value;
+                if (propName === 'timeLimit' || propName === 'memoryLimit') {
+                    let number = null;
+
+                    if (Number(value) > 0) {
+                        number = Number(value);
+                    }
+                    // Assuming you want to convert these to numbers
+                    updatedValue = number;
+                }
+
+                return { ...item, [propName]: updatedValue };
+            }
+            return item;
+        });
 
         setCurrentProblem((prevState) => ({
             ...prevState,
@@ -316,7 +345,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
             currentProblem?.submissionTypes.map((st : IProblemSubmissionType) => (
                 <ProblemSubmissionTypes
                   key={st.id}
-                  onSkeletonChange={onSkeletonChange}
+                  onPropChange={onPropChangeInSubmissionType}
                   onStrategyRemoved={onStrategyRemoved}
                   strategy={st}
                 />

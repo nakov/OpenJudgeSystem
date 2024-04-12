@@ -34,6 +34,7 @@ const testRunsFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        valueFormatter: (params) => `${(params.value * 0.001).toFixed(3)} sec`,
     },
     {
         field: 'memoryUsed',
@@ -44,6 +45,7 @@ const testRunsFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+        valueFormatter: (params) => `${(params.value * 0.000001).toFixed(2)} MB`,
     },
     {
         field: 'executionComment',
