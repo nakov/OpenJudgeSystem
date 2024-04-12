@@ -226,7 +226,7 @@ const SettingForm = (props: ISettingFormProps) => {
         <>
             {renderSuccessfullAlert(successfullMessage)}
             {renderErrorMessagesAlert(exceptionMessages)}
-            <Typography className={formStyles.centralize} variant="h4">Role administration form</Typography>
+            <Typography className={formStyles.centralize} variant="h4">Setting administration form</Typography>
             <form className={formStyles.form}>
                 {isEditMode && (
                 <FormControl className={formStyles.inputRow}>
