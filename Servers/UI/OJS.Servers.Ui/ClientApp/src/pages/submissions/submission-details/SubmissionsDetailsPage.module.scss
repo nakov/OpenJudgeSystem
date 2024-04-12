@@ -60,6 +60,7 @@
       div:first-child {
         font-weight: font-weights.$font-weight-bold;
       }
+
       div:nth-child(2) {
         margin-top: spacings.$sp-18;
       }
@@ -94,6 +95,7 @@
       > div {
         font-size: variables.$f-size-30;
         font-weight: font-weights.$font-weight-semi-bold;
+        margin-bottom: spacings.$sp-18;
       }
 
       section {
