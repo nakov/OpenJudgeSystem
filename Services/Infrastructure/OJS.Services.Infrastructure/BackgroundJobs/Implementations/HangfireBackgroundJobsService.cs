@@ -1,6 +1,9 @@
 namespace OJS.Services.Infrastructure.BackgroundJobs.Implementations
 {
     using Hangfire;
+    using Hangfire.Common;
+    using Hangfire.States;
+    using OJS.Common.Enumerations;
     using System;
     using System.Linq.Expressions;
 
@@ -8,7 +11,12 @@ namespace OJS.Services.Infrastructure.BackgroundJobs.Implementations
     {
         public object AddFireAndForgetJob<T>(
             Expression<Action<T>> methodCall)
-            => BackgroundJob.Enqueue(methodCall);
+        {
+            var client = new BackgroundJobClient();
+            var job = Job.FromExpression(methodCall);
+
+            return client.Create(job, new EnqueuedState(ApplicationName.Administration.ToString().ToLower()));
+        }
 
         public void AddOrUpdateRecurringJob(
             object recurringJobId,
