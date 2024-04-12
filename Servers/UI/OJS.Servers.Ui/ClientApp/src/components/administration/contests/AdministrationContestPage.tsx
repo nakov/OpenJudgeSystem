@@ -30,7 +30,7 @@ const AdministrationContestPage = () => {
 
     const { refetch: retake, data, isFetching, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
 
-    const { data: activityData, error: activityError, isLoading: isGettingActivity, isFetching: isFetchingActivity } =
+    const { data: activityData, error: activityError, isLoading: isLoadingActivity, isFetching: isFetchingActivity } =
     useGetContestActivityQuery(Number(contestId));
 
     useEffect(() => {
@@ -54,7 +54,7 @@ const AdministrationContestPage = () => {
         <ParticipantsInContestView key={key} contestId={Number(contestId)} contestName={data!.name} />
     );
 
-    if (isFetching || isLoading || isGettingActivity || isFetchingActivity) {
+    if (isFetching || isLoading || isLoadingActivity || isFetchingActivity) {
         return (<SpinningLoader />);
     }
 
