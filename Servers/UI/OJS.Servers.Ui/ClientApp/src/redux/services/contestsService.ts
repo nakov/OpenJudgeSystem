@@ -3,12 +3,13 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { defaultPathIdentifier } from '../../common/constants';
 import { IContestStrategyFilter } from '../../common/contest-types';
 import {
+    ICompeteContestResponseType,
     IContestCategory,
     IContestDetailsResponseType,
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
-    IPagedResultType, IRegisterForContestResponseType, IStartParticipationResponseType,
+    IPagedResultType, IRegisterForContestResponseType, IRegisterUserForContestResponseType, IStartParticipationResponseType,
 } from '../../common/types';
 import {
     IContestDetailsUrlParams,
@@ -66,6 +67,7 @@ export const contestsService = createApi({
                     },
                 }),
             }),
+        // should be replaced with: registerUserForContest
         getContestRegisteredUser: builder.query<IRegisterForContestResponseType, IStartParticipationParams>({
             query: ({ id, isOfficial }) => ({
                 url: `/Contests/Register/${id}`,
@@ -74,12 +76,19 @@ export const contestsService = createApi({
                 },
             }),
         }),
+        // this should be replaced with the one below
         getContestUserParticipation: builder.query<IStartParticipationResponseType, IStartParticipationParams>({
             query: ({ id, isOfficial }) => ({
                 url: `/Compete/Index/${id}`,
                 params: {
                     official: isOfficial,
                 },
+            }),
+        }),
+        getContestUserParticipation2: builder.query<ICompeteContestResponseType, { id: number, isOfficial: boolean }>({
+            query: ({ id, isOfficial }) => ({
+                url: `${defaultPathIdentifier}/compete/${id}`,
+                params: { isOfficial }
             }),
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
@@ -93,13 +102,18 @@ export const contestsService = createApi({
             query: ({ contestId, isOfficial, password }) => ({
                 url: `/Contests/SubmitContestPassword/${contestId}`,
                 method: 'POST',
-                params: {
-                    isOfficial,
-                },
-                body: {
-                    password,
-                },
+                params: { isOfficial },
+                body: { password },
             }),
+        }),
+        // this should replace: getContestRegisteredUser
+        registerUserForContest: builder.mutation<IRegisterUserForContestResponseType, { password: string | null, isOfficial: boolean, id: number }>({
+            query: ({ password, isOfficial, id }) => ({
+                url: `${defaultPathIdentifier}/compete/${id}/register`,
+                method: 'POST',
+                params: { isOfficial },
+                body: { password }
+            })
         }),
     }),
 });
@@ -116,4 +130,5 @@ export const {
     useLazyGetContestUserParticipationQuery,
     useSubmitContestSolutionMutation,
     useSubmitContestPasswordMutation,
+    useRegisterUserForContestMutation,
 } = contestsService;

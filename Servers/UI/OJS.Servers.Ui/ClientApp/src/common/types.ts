@@ -337,6 +337,24 @@ interface IStartParticipationResponseType {
     participantsCount: number;
 }
 
+interface IRegisterUserForContestResponseType {
+    id: number;
+    name: string;
+    isOfficial: boolean;
+    requirePassword: boolean;
+    shouldConfirmParticipation: boolean; // if practice this should be false
+    isRegisteredSuccessfully: boolean;
+    duration: number;
+    numberOfProblems: number;
+    categoryId: number;
+}
+
+interface ICompeteContestResponseType {
+    isRegisteredParticipant: boolean; // if user has participant,
+    isActiveParticipant: boolean; // if participant is valid,
+    contest: IContestType | null;
+}
+
 interface IPagedResultType<TItem> {
     totalItemsCount: number;
     itemsPerPage: number;
@@ -797,4 +815,6 @@ export type {
     ILecturerInContestInListModel,
     ISettingInListModel,
     ISettingAdministrationModel,
+    IRegisterUserForContestResponseType,
+    ICompeteContestResponseType,
 };

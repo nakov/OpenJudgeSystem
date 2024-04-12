@@ -123,12 +123,6 @@ interface IGetSubmissionResultsByProblemUrlParams {
     page: number;
 }
 
-interface IGetSubmissionsByUserParams {
-    id: number;
-    page: number;
-    isOfficial: boolean;
-}
-
 interface IGetContestResultsParams {
     id: number;
     official: boolean;
