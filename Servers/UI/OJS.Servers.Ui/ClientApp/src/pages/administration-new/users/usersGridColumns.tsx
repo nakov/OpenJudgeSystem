@@ -2,7 +2,7 @@
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridDeleteIcon, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { EDIT } from '../../../common/labels';
+import { CREATED_ON, EDIT, MODIFIED_ON } from '../../../common/labels';
 import { NEW_ADMINISTRATION_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
@@ -89,6 +89,22 @@ const usersFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
     },
 ];
 

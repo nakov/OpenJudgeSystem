@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { VIEW } from '../../../common/labels';
+import { CREATED_ON, MODIFIED_ON, VIEW } from '../../../common/labels';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
@@ -108,6 +108,22 @@ const dataColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
     },
 ];
 

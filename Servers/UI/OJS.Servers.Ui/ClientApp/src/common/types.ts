@@ -169,6 +169,8 @@ interface IProblemResouceInLinstModel {
     isDeleted: boolean;
     problemId: number;
     problemName: string;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IProblemType {
@@ -271,6 +273,8 @@ interface IIndexContestsType {
     competeMaximumPoints: number;
     practiceMaximumPoints: number;
     userParticipationResult?: IUserParticipationResult;
+    createdOn: Date;
+    modifiedOn: Date | null;
 }
 
 interface IContestModalInfoType {
@@ -294,6 +298,8 @@ interface IIndexProblemsType {
     competeTetstsCount: number;
     isDeleted: boolean;
     contestId: number;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IIndexContestCategoriesType {
@@ -571,6 +577,8 @@ interface IProblemGroupsData {
     isDeleted:boolean;
     orderBy:number;
     type:string;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 interface IProblemSubmissionType{
     id: number;
@@ -634,6 +642,8 @@ interface ICheckerInListModel {
     className: string;
     parameter: string;
     isDeleted: boolean;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface ICheckerAdministrationModel {
@@ -651,6 +661,8 @@ interface IParticipantInListModel {
     contestName: string;
     contestId: number;
     isOfficial: boolean;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IParticipantAdministrationModel {
@@ -686,6 +698,8 @@ interface IUserInListModel {
     city: string;
     dateOfBirth: Date;
     age: number;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IUserSettingsAdministrationModel {

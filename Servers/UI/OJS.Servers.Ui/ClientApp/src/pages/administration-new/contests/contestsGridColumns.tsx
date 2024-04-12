@@ -3,7 +3,7 @@ import { FaCloudDownloadAlt } from 'react-icons/fa';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATED_ON, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, MODIFIED_ON, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import AdministrationGridDropdown from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
@@ -113,6 +113,22 @@ const contestFilterableColumns: GridColDef[] = [
         field: 'isVisible',
         headerName: `${IS_VISIBLE}`,
         type: 'boolean',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
         flex: 0,
         filterable: false,
         sortable: false,

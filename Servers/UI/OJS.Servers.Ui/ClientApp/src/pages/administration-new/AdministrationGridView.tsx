@@ -154,6 +154,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                                   columnVisibilityModel: {
                                       isDeleted: false,
                                       isVisible: false,
+                                      createdOn: false,
+                                      modifiedOn: false,
                                   },
                               },
                               pagination: {

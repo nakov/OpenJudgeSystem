@@ -1,5 +1,6 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 
@@ -46,6 +47,22 @@ const participantsFilteringColumns: GridColDef[] = [
         align: 'center',
         type: 'boolean',
         flex: 2,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
         filterable: false,
         sortable: false,
     },
