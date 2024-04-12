@@ -31,11 +31,12 @@ interface IContestEditProps {
     currentContest?: IContestAdministration;
     onSuccess?: Function;
     onDeleteSuccess? : Function;
+    skipGettingContest?: boolean;
 }
 
 const NAME_PROP = 'name';
 const ContestEdit = (props:IContestEditProps) => {
-    const { contestId, isEditMode = true, currentContest, onSuccess, onDeleteSuccess } = props;
+    const { contestId, isEditMode = true, currentContest, onSuccess, onDeleteSuccess, skipGettingContest = false } = props;
 
     const navigate = useNavigate();
 
@@ -85,7 +86,7 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const { data, isLoading } = useGetContestByIdQuery(
         { id: Number(contestId) },
-        { skip: !isEditMode || (isEditMode && !currentContest === undefined) },
+        { skip: !isEditMode || skipGettingContest },
     );
 
     const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);

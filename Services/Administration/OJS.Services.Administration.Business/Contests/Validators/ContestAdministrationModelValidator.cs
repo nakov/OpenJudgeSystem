@@ -54,8 +54,8 @@ public class ContestAdministrationModelValidator : BaseAdministrationModelValida
                 => await this.ValidateActiveContestCannotEditDurationTypeOnEdit(model))
             .WithName("Duration")
             .NotNull()
-            .When(model => model.OperationType is CrudOperationType.Update)
-            .WithMessage("Cannot change duration or type in an active contest.");
+            .WithMessage("Cannot change duration or type in an active contest.")
+            .When(model => model.OperationType is CrudOperationType.Update);
 
         this.RuleFor(model => model)
             .Must(ValidateOnlineContestProblemGroups)

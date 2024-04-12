@@ -27,7 +27,7 @@ const AdministrationContestPage = () => {
     const { refetch: retake, data, isFetching, isLoading } = useGetContestByIdQuery({ id: Number(contestId) });
 
     const renderContestEdit = () => (
-        <ContestEdit contestId={Number(contestId)} currentContest={data} onSuccess={retake} />
+        <ContestEdit contestId={Number(contestId)} currentContest={data} onSuccess={retake} skipGettingContest />
     );
     const renderProblemsInContestView = (key:string) => (
         <ProblemsInContestView
