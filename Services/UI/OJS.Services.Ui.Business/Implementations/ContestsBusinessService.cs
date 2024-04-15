@@ -190,7 +190,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 requiredPasswordIsValid = true;
             }
 
-            if (!registerModel.RequirePassword || requiredPasswordIsValid)
+            if ((!registerModel.RequirePassword && participant == null) || requiredPasswordIsValid)
             {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
@@ -540,6 +540,12 @@ namespace OJS.Services.Ui.Business.Implementations
             string userId,
             bool isUserAdminOrLecturerInContest)
         {
+            var participant = await this.participantsData.GetByContestByUserAndByIsOfficial(contest.Id, userId, official);
+            if (participant != null)
+            {
+                return participant;
+            }
+
             if (contest.IsOnlineExam &&
                 official &&
                 !isUserAdminOrLecturerInContest &&
