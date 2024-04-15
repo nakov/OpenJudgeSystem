@@ -36,12 +36,13 @@ public class ContestParticipationValidationService : IContestParticipationValida
         var (contest, contestId, user, official) = item;
 
         // TODO: Fix so it uses lecturers in contests business service
-        var userIsAdminOrLecturerInContest = user != null && (this.lecturersInContestsBusiness
+        var userIsAdminOrLecturerInContest = user != null && (user.IsAdmin || this.lecturersInContestsBusiness
             .IsCurrentUserAdminOrLecturerInContest(contest?.Id)
             .GetAwaiter()
-            .GetResult() || user.IsAdmin);
+            .GetResult());
 
         if (contest == null ||
+            user == null ||
             contest.IsDeleted ||
             ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !userIsAdminOrLecturerInContest))
