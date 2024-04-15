@@ -51,7 +51,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly IUserProviderService userProviderService;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
-    private readonly IContestValidationService contestValidationService;
+    private readonly IContestParticipationValidationService contestParticipationValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
@@ -72,7 +72,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         IParticipantScoresBusinessService participantScoresBusinessService,
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
         ISubmissionDetailsValidationService submissionDetailsValidationService,
-        IContestValidationService contestValidationService,
+        IContestParticipationValidationService contestParticipationValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
@@ -94,7 +94,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.userProviderService = userProviderService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
-        this.contestValidationService = contestValidationService;
+        this.contestParticipationValidationService = contestParticipationValidationService;
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
@@ -438,7 +438,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id!,
                 model.Official);
 
-        var contestValidationResult = this.contestValidationService.GetValidationResult(
+        var contestValidationResult = this.contestParticipationValidationService.GetValidationResult(
             (participant?.Contest,
                 participant?.ContestId,
                 currentUser,

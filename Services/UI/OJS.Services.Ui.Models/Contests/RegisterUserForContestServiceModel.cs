@@ -17,6 +17,8 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
 
     public bool ShouldConfirmParticipation { get; set; }
 
+    public bool IsRegisteredSuccessfully { get; set; }
+
     public TimeSpan? Duration { get; set; }
 
     public int NumberOfProblems { get; set; }
@@ -43,6 +45,9 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
                 opt => opt.Ignore())
             .ForMember(
                 opt => opt.ShouldConfirmParticipation,
+                opt => opt.Ignore())
+            .ForMember(
+                opt => opt.IsRegisteredSuccessfully,
                 opt => opt.Ignore())
             .ForMember(
                 opt => opt.ParticipantId,
