@@ -53,6 +53,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
             username: profile?.userName,
             sortType: SortType.ParticipantRegistrationTime,
             sortTypeDirection: SortTypeDirection.Descending,
+            itemsPerPage: 6,
             page: userContestParticipationsPage,
         } as IGetContestParticipationsForUserQueryParams);
     }, [
@@ -110,10 +111,10 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
 
         return (
             <div>
-                { (!userIsProfileOwner || !internalUser.canAccessAdministration) &&
+                { ((!isLoggedIn || (isLoggedIn && !userIsProfileOwner && !internalUser.canAccessAdministration)) &&
                     userContestParticipations !== undefined &&
                     !isNilOrEmpty(userContestParticipations.items) &&
-                    <h2 className={styles.participationsHeading}>Participated In:</h2>}
+                    <h2 className={styles.participationsHeading}>Participated In:</h2>)}
                 <List
                   values={userContestParticipations!.items!}
                   itemFunc={renderContestCard}

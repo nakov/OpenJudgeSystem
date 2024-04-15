@@ -118,6 +118,7 @@ interface IContestsSortAndFilterOptions {
     sortType: SortType;
     sortTypeDirection?: SortTypeDirection;
     page: number;
+    itemsPerPage: number;
     category?: number | null;
 }
 
