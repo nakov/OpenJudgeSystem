@@ -10,12 +10,13 @@ namespace OJS.Services.Infrastructure.BackgroundJobs.Implementations
     public class HangfireBackgroundJobsService : IHangfireBackgroundJobsService
     {
         public object AddFireAndForgetJob<T>(
-            Expression<Action<T>> methodCall)
+            Expression<Action<T>> methodCall,
+            string queueName)
         {
             var client = new BackgroundJobClient();
             var job = Job.FromExpression(methodCall);
 
-            return client.Create(job, new EnqueuedState(ApplicationName.Administration.ToString().ToLower()));
+            return client.Create(job, new EnqueuedState(queueName));
         }
 
         public void AddOrUpdateRecurringJob(
