@@ -69,8 +69,8 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
                           color: themeColors.textColor,
                           pre: { color: themeColors.textColor },
                       },
-                      diffAdded: { color: 'inherit' },
-                      diffRemoved: { color: 'inherit' },
+                      diffAdded: { color: 'inherit', backgroundColor: '#e6ffed' },
+                      diffRemoved: { color: 'inherit', backgroundColor: '#ffeef0' },
                   }}
                 />
             </div>
