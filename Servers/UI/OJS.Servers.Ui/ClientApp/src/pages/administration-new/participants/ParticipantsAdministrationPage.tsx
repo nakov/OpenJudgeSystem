@@ -6,15 +6,13 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ParticipantForm from '../../../components/administration/participants/form/ParticipantForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { setAdminParticipantsFilters, setAdminParticipantsSorters } from '../../../redux/features/admin/participantsAdminSlice';
-import { useDeleteParticipantMutation, useGetAllParticipantsQuery } from '../../../redux/services/admin/participantsAdminService';
-import { useAppSelector } from '../../../redux/store';
+import { useGetAllParticipantsQuery, useLazyExportParticipantsToExcelQuery } from '../../../redux/services/admin/participantsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../AdministrationGridView';
 
 import participantsFilteringColumns, { returnparticipantsNonFilterableColumns } from './participantsGridColumns';
-
-const location = 'all-participants';
 
 const ParticipantsAdministrationPage = () => {
     const [ searchParams ] = useSearchParams();
@@ -26,10 +24,17 @@ const ParticipantsAdministrationPage = () => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
-    const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationFilterProps(participantsFilteringColumns),
+    ));
 
-    const selectedFilters = useAppSelector((state) => state.adminParticipants[location]?.selectedFilters);
-    const selectedSorters = useAppSelector((state) => state.adminParticipants[location]?.selectedSorters);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(participantsFilteringColumns),
+    ));
+
+    const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
 
     const {
         refetch: retakeParticipants,
@@ -38,16 +43,13 @@ const ParticipantsAdministrationPage = () => {
         error,
     } = useGetAllParticipantsQuery(queryParams);
 
-    const filterParams = searchParams.get('filter');
-    const sortingParams = searchParams.get('sorting');
-
     useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filterParams ?? '' }));
-    }, [ filterParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortingParams ?? '' }));
-    }, [ sortingParams ]);
+        setQueryParams((currentParams) => ({
+            ...currentParams,
+            filter: searchParams.get('filter') ?? '',
+            sorting: searchParams.get('sorting') ?? '',
+        }));
+    }, [ searchParams ]);
 
     const onModalClose = () => {
         setOpenCreateModal(false);
@@ -80,20 +82,20 @@ const ParticipantsAdministrationPage = () => {
     return (
         <AdministrationGridView
           filterableGridColumnDef={participantsFilteringColumns}
-          notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(useDeleteParticipantMutation, retakeParticipants)}
+          notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(retakeParticipants)}
           data={participantsData}
           error={error}
           queryParams={queryParams}
-          location={location}
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
-          setFilterStateAction={setAdminParticipantsFilters}
-          setSorterStateAction={setAdminParticipantsSorters}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           selectedSorters={selectedSorters || []}
           renderActionButtons={renderGridSettings}
           modals={[
               { showModal: openCreateModal, modal: (i) => renderParticipantModal(i) },
           ]}
+          excelMutation={useLazyExportParticipantsToExcelQuery}
         />
     );
 };

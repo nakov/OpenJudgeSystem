@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable import/group-exports */
+import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { SetURLSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
@@ -7,7 +8,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum } from '../../../common/enums';
@@ -22,12 +22,13 @@ interface IFiltersColumnOperators {
 
 interface IAdministrationFilterProps {
     columns: IFilterColumn[];
-    location: string;
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction?: ActionCreatorWithPayload<unknown, string>;
+    setStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
     withSearchParams?: boolean;
+    isSortersOpened: boolean;
+    setOpenedFilters: Dispatch<SetStateAction<string | null>>;
 }
 
 interface IAdministrationFilter {
@@ -67,15 +68,14 @@ const DROPDOWN_OPERATORS = {
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Not Equals', value: 'notequals' },
     ],
     [FilterColumnTypeEnum.DATE]: [
-        { name: 'Equals', value: 'equals' },
+        // Commented because it is not working
+        // { name: 'Equals', value: 'equals' },
         { name: 'Greater Than', value: 'greaterthan' },
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Not Equals', value: 'notequals' },
     ],
 };
 
@@ -100,8 +100,17 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
 const filterSeparator = '&&;';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
-    const { columns, withSearchParams = true, location, selectedFilters, setStateAction, searchParams, setSearchParams } = props;
-    const dispatch = useDispatch();
+    const {
+        columns,
+        withSearchParams = true,
+        selectedFilters,
+        setStateAction,
+        searchParams,
+        setSearchParams,
+        isSortersOpened,
+        setOpenedFilters,
+    } = props;
+
     const defaultFilter = useMemo<IDefaultFilter>(() => ({
         column: '',
         operator: '',
@@ -113,59 +122,27 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
 
     useEffect(() => {
         if (selectedFilters.length <= 0 && setStateAction) {
-            dispatch(setStateAction({ key: location, filters: [ defaultFilter ] }));
+            setStateAction([ defaultFilter ]);
         }
-    }, [ defaultFilter, dispatch, location, selectedFilters.length, setStateAction ]);
+    }, [ defaultFilter, selectedFilters, selectedFilters.length, setStateAction ]);
 
     const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
 
     const open = Boolean(anchor);
 
-    const mapUrlToFilters = (): IAdministrationFilter[] => {
-        if (!setSearchParams || !searchParams) {
-            return [];
-        }
-        const urlSelectedFilters: IAdministrationFilter[] = [];
-
-        const filterParams = searchParams.get('filter') ?? '';
-        const urlParams = filterParams.split(filterSeparator).filter((param) => param);
-        urlParams.forEach((param: string) => {
-            const paramChunks = param.split('~').filter((chunk) => chunk);
-
-            const columnValue = paramChunks[0];
-            const operator = paramChunks[1];
-            const value = paramChunks[2];
-
-            const column = columns.find((c) => c.columnName.toLowerCase() === columnValue) ||
-                { columnName: '', columnType: FilterColumnTypeEnum.STRING };
-            const availableColumns = columns.filter((c) => !urlSelectedFilters.some((f) => f.column === c.columnName) &&
-                !selectedFilters.some((sl) => sl.column === c.columnName));
-            const availableOperators = column?.columnType
-                ? DROPDOWN_OPERATORS[column.columnType]
-                : [];
-
-            const filter: IAdministrationFilter = {
-                column: column?.columnName || '',
-                operator,
-                value,
-                availableOperators,
-                availableColumns: [ ...availableColumns, { ...column } ],
-                inputType: column?.columnType || FilterColumnTypeEnum.STRING,
-            };
-
-            urlSelectedFilters.push(filter);
-        });
-
-        return urlSelectedFilters;
-    };
-
     useEffect(() => {
-        const urlSelectedFilters = mapUrlToFilters();
+        const urlSelectedFilters = mapUrlToFilters(searchParams, columns);
         if (urlSelectedFilters.length && setStateAction) {
-            dispatch(setStateAction({ key: location, filters: urlSelectedFilters }));
+            setStateAction(urlSelectedFilters);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (isSortersOpened) {
+            setAnchor(null);
+        }
+    }, [ isSortersOpened ]);
 
     useEffect(() => {
         if (!searchParams || !setSearchParams) {
@@ -208,6 +185,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, [ selectedFilters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+        if (!anchor) {
+            setOpenedFilters('filters');
+        }
         setAnchor(anchor
             ? null
             : event.currentTarget);
@@ -221,7 +201,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         })) ];
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+            setStateAction(newFiltersArray);
         }
     };
 
@@ -231,10 +211,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             setSearchParams(searchParams);
         }
         if (setStateAction) {
-            dispatch(setStateAction({
-                key: location,
-                filters: [ defaultFilter ],
-            }));
+            setStateAction([ defaultFilter ]);
         }
     };
 
@@ -247,7 +224,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         newFiltersArray.splice(idx, 1);
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+            setStateAction(newFiltersArray);
         }
 
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
@@ -285,7 +262,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         });
 
         if (setStateAction) {
-            dispatch(setStateAction({ key: location, filters: newFiltersArray }));
+            setStateAction(newFiltersArray);
         }
     };
 
@@ -454,10 +431,49 @@ const mapGridColumnsToAdministrationFilterProps =
     };
 });
 
+const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: Array<IFilterColumn>) => {
+    if (!urlSearchParams) {
+        return [];
+    }
+
+    const urlSelectedFilters: Array<IAdministrationFilter> = [];
+
+    const filterParams = urlSearchParams.get('filter') ?? '';
+    const urlParams = filterParams.split('&&;').filter((param) => param);
+    urlParams.forEach((param) => {
+        const paramChunks = param.split('~').filter((chunk) => chunk);
+
+        const columnValue = paramChunks[0];
+        const operator = paramChunks[1];
+        const value = paramChunks[2];
+
+        const column = columns.find((c) => c.columnName.toLowerCase() === columnValue) ||
+        { columnName: '', columnType: FilterColumnTypeEnum.STRING };
+        const availableColumns = columns.filter((c) => !urlSelectedFilters.some((f: { column: string }) => f.column === c.columnName));
+        const availableOperators = column?.columnType
+            ? DROPDOWN_OPERATORS[column.columnType]
+            : [];
+
+        const filter = {
+            column: column?.columnName || '',
+            operator,
+            value,
+            availableOperators,
+            availableColumns: [ ...availableColumns, { ...column } ],
+            inputType: column?.columnType || FilterColumnTypeEnum.STRING,
+        };
+
+        urlSelectedFilters.push(filter);
+    });
+
+    return urlSelectedFilters;
+};
+
 export {
     type IAdministrationFilter,
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
     mapFilterParamsToQueryString,
+    mapUrlToFilters,
 };
 export default AdministrationFilters;

@@ -8,6 +8,7 @@ import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH, TESTS_PATH } from '../../../com
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteTestMutation } from '../../../redux/services/admin/testsAdminService';
 
 const testsFilterableColums: GridColDef[] = [
     {
@@ -82,7 +83,6 @@ const testsFilterableColums: GridColDef[] = [
 
 export const returnTestsNonFilterableColumns = (
     onEditClick: Function,
-    deleteMutation: any,
     onSuccessFullDelete: () => void,
 ) => [
     {
@@ -101,7 +101,7 @@ export const returnTestsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteTestMutation}
                   onSuccess={onSuccessFullDelete}
                 />
             </div>

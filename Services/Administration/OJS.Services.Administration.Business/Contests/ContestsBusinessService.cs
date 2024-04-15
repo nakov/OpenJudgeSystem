@@ -9,8 +9,8 @@ using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
-using OJS.Services.Administration.Business.Excel;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Data.Excel;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Administration.Models.Problems;
@@ -186,6 +186,10 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             FileName = zipFileName, Content = zipFile, MimeType = GlobalConstants.MimeTypes.ApplicationZip,
         };
     }
+
+    public async Task<ContestActivityModel> GetContestActivity(int contestId) =>
+        this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
+            .MapCollection<ContestForActivityServiceModel>().FirstAsync()).Map<ContestActivityModel>();
 
     public override async Task<ContestAdministrationModel> Get(int id)
         => await this.contestsData.GetByIdWithProblems(id).Map<ContestAdministrationModel>();

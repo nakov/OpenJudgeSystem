@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Divider, FormControl, FormGroup, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import isNaN from 'lodash/isNaN';
 
 import { ProblemResourceType } from '../../../../common/enums';
-import { CREATE, EDIT, ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
+import { ID, LINK, NAME, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IProblemResourceAdministrationModel } from '../../../../common/types';
 import { useCreateProblemResourceMutation, useDownloadResourceQuery, useGetProblemResourceByIdQuery, useUpdateProblemResourceMutation } from '../../../../redux/services/admin/problemResourcesAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import FileUpload from '../../common/file-upload/FileUpload';
-import FormActionButton from '../../form-action-button/FormActionButton';
 
 /*
 The rule is disabled because the formStyles are common scss file.
@@ -43,7 +43,7 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessages ] = useState<string | null>(null);
 
-    const { data: resourceData, error: resourceError, isLoading: isGetting } = useGetProblemResourceByIdQuery(id);
+    const { data: resourceData, error: resourceError, isLoading: isGetting } = useGetProblemResourceByIdQuery(id, { skip: !isEditMode });
     const [
         create,
         {
@@ -148,26 +148,6 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
         }
     };
 
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => submitForm()}
-                  name={EDIT}
-                />
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => submitForm()}
-                  name={CREATE}
-                />
-            )
-    );
-
     if (isDownloadingFiles || isUpdating || isCreating || isGetting) {
         return <SpinningLoader />;
     }
@@ -252,7 +232,11 @@ const ProblemResourceForm = (props :IProblemResourceFormProps) => {
                       disableClearButton={currentResource.file === null}
                     />
                 </FormControl>
-                {renderFormSubmitButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => submitForm()}
+                  onEditClick={() => submitForm()}
+                />
             </form>
         </>
     );

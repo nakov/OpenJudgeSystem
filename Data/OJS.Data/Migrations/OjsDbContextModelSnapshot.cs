@@ -17,7 +17,7 @@ namespace OJS.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.16")
+                .HasAnnotation("ProductVersion", "6.0.25")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -900,14 +900,24 @@ namespace OJS.Data.Migrations
 
             modelBuilder.Entity("OJS.Data.Models.Setting", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Name");
+                    b.HasKey("Id");
 
                     b.ToTable("Settings");
                 });
@@ -1123,9 +1133,15 @@ namespace OJS.Data.Migrations
                     b.Property<int>("ProblemId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MemoryLimit")
+                        .HasColumnType("int");
+
                     b.Property<byte[]>("SolutionSkeleton")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("TimeLimit")
+                        .HasColumnType("int");
 
                     b.HasKey("SubmissionTypeId", "ProblemId");
 

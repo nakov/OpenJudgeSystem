@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { adminPreciseFormatDate } from '../../../utils/administration/administration-dates';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -47,6 +47,7 @@ const dataColumns: GridColDef[] = [
         renderCell: (params: GridRenderCellParams) => (
             <Link
               to={`/submissions/${Number(params.row?.submissionId)}/details`}
+              target="_blank"
             >
                 {params.row?.submissionId}
             </Link>
@@ -57,22 +58,22 @@ const dataColumns: GridColDef[] = [
         headerName: 'Created On',
         align: 'center',
         headerAlign: 'center',
-        type: 'dateTime',
+        type: 'date',
         width: 200,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => adminPreciseFormatDate(params.value?.createdOn),
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
         headerName: 'Modified On',
         align: 'center',
         headerAlign: 'center',
-        type: 'dateTime',
+        type: 'date',
         width: 200,
         filterable: true,
         sortable: true,
-        valueFormatter: (params) => adminPreciseFormatDate(params.value?.modifiedOn),
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

@@ -2,11 +2,12 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Box, FormControl, FormGroup, TextField, Typography } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
+import isNaN from 'lodash/isNaN';
 
 import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, ID, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
 import { IUserAdministrationModel } from '../../../../common/types';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../../redux/services/admin/usersAdminService';
-import { getDateAsLocal } from '../../../../utils/administration/administration-dates';
+import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -20,10 +21,11 @@ interface IUserFormProps {
     id: string;
 
     providedUser?: IUserAdministrationModel;
+    onSuccessfullyEdited?: Function;
 }
 
 const UserForm = (props: IUserFormProps) => {
-    const { id, providedUser } = props;
+    const { id, providedUser, onSuccessfullyEdited } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
 
@@ -32,7 +34,7 @@ const UserForm = (props: IUserFormProps) => {
         email: '',
         userName: '',
         userSettings: {
-            age: 0,
+            age: providedUser?.userSettings.age || 0,
             city: null,
             company: null,
             dateOfBirth: null,
@@ -46,6 +48,7 @@ const UserForm = (props: IUserFormProps) => {
     });
 
     const {
+        refetch,
         data: getData,
         error: getError,
         isLoading: isGetting,
@@ -77,12 +80,20 @@ const UserForm = (props: IUserFormProps) => {
     }, [ editError, getError ]);
 
     useEffect(() => {
+        if (isSuccessfullyEdited) {
+            if (onSuccessfullyEdited) {
+                onSuccessfullyEdited();
+            } else {
+                refetch();
+            }
+        }
+
         const message = getAndSetSuccesfullMessages([
             { message: editData, shouldGet: isSuccessfullyEdited },
         ]);
 
         setSuccessfullMessage(message);
-    }, [ editData, isSuccessfullyEdited ]);
+    }, [ editData, isSuccessfullyEdited, onSuccessfullyEdited, refetch ]);
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -97,6 +108,9 @@ const UserForm = (props: IUserFormProps) => {
                 let currVal = val;
                 if (currVal === '') {
                     currVal = null;
+                }
+                if (!isNaN(new Date(currVal).getDate())) {
+                    currVal = convertToUtc(currVal);
                 }
                 return { ...obj, [key]: updateState(path.slice(1), currVal, obj[key] ?? {}) };
             };
@@ -184,6 +198,7 @@ const UserForm = (props: IUserFormProps) => {
                               InputLabelProps={{ shrink: true }}
                               type="number"
                               onChange={onChange}
+                              disabled
                             />
                         </FormControl>
                         <FormControl className={formStyles.spacing}>
@@ -235,8 +250,9 @@ const UserForm = (props: IUserFormProps) => {
                               name="userSettings.educationalInstitution"
                               value={user?.userSettings.educationalInstitution ?? ''}
                               InputLabelProps={{ shrink: true }}
-                              type="text"
+                              type="number"
                               onChange={onChange}
+                              inputProps={{ min: '0', step: '1' }}
                             />
                         </FormControl>
                         <FormControl className={formStyles.spacing}>
@@ -248,6 +264,7 @@ const UserForm = (props: IUserFormProps) => {
                               InputLabelProps={{ shrink: true }}
                               type="number"
                               onChange={onChange}
+                              inputProps={{ min: '0', step: '1' }}
                             />
                         </FormControl>
                     </FormGroup>

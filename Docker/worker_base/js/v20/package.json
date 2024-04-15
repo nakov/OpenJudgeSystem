@@ -1,0 +1,28 @@
+{
+  "name": "js",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babelify": "^10.0.0",
+    "bootstrap": "^4.6.2",
+    "chai": "4.3.10",
+    "handlebars": "^4.7.8",
+    "jquery": "^3.7.1",
+    "jsdom": "22.1.0",
+    "mocha": "10.2.0",
+    "node-fetch": "^2.7.0",
+    "playwright": "1.40.0",
+    "playwright-chromium": "1.40.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sinon": "^17.0.1",
+    "sinon-chai": "^3.7.0",
+    "underscore": "^1.13.6",
+    "http-server": "14.1.1"
+  }
+}

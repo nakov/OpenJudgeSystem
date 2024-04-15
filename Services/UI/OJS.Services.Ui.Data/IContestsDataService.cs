@@ -10,6 +10,10 @@ namespace OJS.Services.Ui.Data
 
     public interface IContestsDataService : IDataService<Contest>
     {
+        public Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
+            IQueryable<Contest> contests,
+            ContestFiltersServiceModel model);
+
         Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>();
 
         Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>();
@@ -29,6 +33,8 @@ namespace OJS.Services.Ui.Data
         IQueryable<Contest> GetAllNonDeletedContests();
 
         Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
+
+        IQueryable<Contest> GetLatestForParticipantByUsername(string username);
 
         Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId);
 

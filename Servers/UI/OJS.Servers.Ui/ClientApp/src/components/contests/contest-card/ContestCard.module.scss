@@ -7,7 +7,7 @@
 @use 'src/styles/font-weights';
 
 .contestCardWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   align-items: center;
   border-radius: border-radiuses.$br-6;
@@ -63,13 +63,19 @@
 }
 
 .contestBtnsWrapper {
-  .contestBtn {
-    font-size: variables.$f-size-16;
+  display: flex;
+  flex-direction: column;
+  font-size: variables.$f-size-16;
 
-    > div {
-      align-items: center;
-      display: flex;
-      margin-right: spacings.$sp-12;
+  .buttonAndPointsLabelWrapper {
+    align-items: center;
+    display: flex;
+    gap: spacings.$sp-12;
+    justify-content: flex-end;
+
+    .points {
+      flex: 1;
+      text-align: right;
     }
 
     &:nth-child(2) {

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { LECTURER } from '../../../common/constants';
+import { IUserAdministrationModel } from '../../../common/types';
 import { useGetUserByIdQuery } from '../../../redux/services/admin/usersAdminService';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import TabsInView from '../common/tabs/TabsInView';
@@ -19,19 +20,29 @@ const AdministrationUser = () => {
     const { pathname } = useLocation();
     const [ , , , userId ] = pathname.split('/');
 
+    const [ user, setUser ] = useState<IUserAdministrationModel | undefined>(undefined);
+
     const [ tabName, setTabName ] = useState(USER_LISTED_DATA.LECTURER_IN_CONTEST);
 
     const {
+        refetch,
         data: userData,
         isLoading: isGetting,
+        isSuccess,
     } = useGetUserByIdQuery(userId);
+
+    useEffect(() => {
+        if (userData && isSuccess) {
+            setUser(user);
+        }
+    }, [ isSuccess, refetch, user, userData ]);
 
     const onTabChange = (event: React.SyntheticEvent, newValue: USER_LISTED_DATA) => {
         setTabName(newValue);
     };
 
     const renderForm = () => (
-        <UserForm id={userId} providedUser={userData} />
+        <UserForm id={userId} providedUser={user} onSuccessfullyEdited={refetch} />
     );
 
     const renderProblemsInContestView = (key:string) => (

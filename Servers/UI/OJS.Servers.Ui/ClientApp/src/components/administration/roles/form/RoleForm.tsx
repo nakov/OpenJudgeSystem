@@ -1,17 +1,14 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, FormControl, TextField, Typography } from '@mui/material';
+import { FormControl, TextField, Typography } from '@mui/material';
 
-import { CREATE, EDIT, ID, NAME, RECORD } from '../../../../common/labels';
-import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
+import { ID, NAME } from '../../../../common/labels';
 import { IRoleAdministrationModel } from '../../../../common/types';
-import { NEW_ADMINISTRATION_PATH, ROLES_PATH } from '../../../../common/urls/administration-urls';
-import { useCreateRoleMutation, useDeleteRolesMutation, useGetRoleByIdQuery, useUpdateRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
+import { useCreateRoleMutation, useGetRoleByIdQuery, useUpdateRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -19,11 +16,11 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IRoleFormProps {
     id?: string | null;
     isEditMode?: boolean;
+    getRoleName?: Function;
 }
 
 const RoleForm = (props: IRoleFormProps) => {
-    const { id, isEditMode = true } = props;
-    const navigate = useNavigate();
+    const { id, isEditMode = true, getRoleName } = props;
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
 
@@ -61,8 +58,11 @@ const RoleForm = (props: IRoleFormProps) => {
     useEffect(() => {
         if (roleData) {
             setRole(roleData);
+            if (getRoleName) {
+                getRoleName(roleData.name);
+            }
         }
-    }, [ roleData ]);
+    }, [ getRoleName, roleData ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ getError, updateError, createError ], setExceptionMessages);
@@ -85,37 +85,6 @@ const RoleForm = (props: IRoleFormProps) => {
             [name]: value,
         }));
     };
-
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <>
-                    <FormActionButton
-                      className={formStyles.buttonsWrapper}
-                      buttonClassName={formStyles.button}
-                      onClick={() => update(role)}
-                      name={EDIT}
-                    />
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(id!)}
-                          name={RECORD}
-                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${ROLES_PATH}`)}
-                          mutation={useDeleteRolesMutation}
-                          text={DELETE_CONFIRMATION_MESSAGE}
-                        />
-                    </Box>
-                </>
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => create(role)}
-                  name={CREATE}
-                />
-            )
-    );
 
     if (isGettingRole || isCreating || isUpdating) {
         return <SpinningLoader />;
@@ -151,7 +120,11 @@ const RoleForm = (props: IRoleFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                {renderFormSubmitButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => create(role)}
+                  onEditClick={() => update(role)}
+                />
             </form>
         </>
     );

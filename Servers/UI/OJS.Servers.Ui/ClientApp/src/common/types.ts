@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
+import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/submissions/types';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
-import { ContestVariation } from './contest-types';
+import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
 import { SearchCategory } from './search-types';
 
@@ -25,6 +25,20 @@ interface IPublicSubmissionContest {
     name: string;
 }
 
+interface IUserProfileType {
+    id: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    city?: string;
+    age?: number;
+}
+
+interface IUsersState {
+    profile: IUserProfileType | null;
+}
+
 interface IPublicSubmissionUser {
     id: string;
     username: string;
@@ -32,7 +46,7 @@ interface IPublicSubmissionUser {
 
 interface ISubmissionDetailsState {
     currentSubmission: ISubmissionDetailsType | null;
-    currentSubmissionResults:IPagedResultType<ISubmissionResults>;
+    currentSubmissionResults: IPagedResultType<ISubmissionResults>;
     validationErrors: IErrorDataType[];
     downloadErrorMessage: string | null;
 }
@@ -43,6 +57,7 @@ interface ISubmissionDetailsReduxState extends ISubmissionDetailsState {
 
 interface IRecentSubmissionsReduxState {
     latestSubmissions: IPagedResultType<IPublicSubmission>;
+    profileSubmissions: IPagedResultType<IPublicSubmission>;
     currentPage: number;
 }
 
@@ -70,7 +85,7 @@ interface IPublicSubmission {
     isCompiledSuccessfully: boolean;
     maxMemoryUsed: number;
     maxTimeUsed: number;
-    testRuns: ITestRunType[];
+    testRuns: ITestRun[];
     processed: boolean;
 }
 
@@ -84,6 +99,13 @@ interface ITestRunInListModel {
     resultType: string;
 }
 
+interface IGetAllContestsOptions {
+    strategy?: number;
+    sortType: string;
+    page: number;
+    category?: number | null;
+}
+
 interface IGetAllAdminParams {
     filter?: string;
     itemsPerPage: number;
@@ -91,11 +113,17 @@ interface IGetAllAdminParams {
     sorting?: string;
 }
 
-interface IGetAllContestsOptions {
+interface IContestsSortAndFilterOptions {
     strategy?: number;
-    sortType: string;
+    sortType: SortType;
+    sortTypeDirection?: SortTypeDirection;
     page: number;
     category?: number | null;
+}
+
+// TODO: Unify these types, some are called params, others options
+interface IGetContestParticipationsForUserQueryParams extends IContestsSortAndFilterOptions {
+    username: string;
 }
 
 interface IAllowedStrategyType {
@@ -219,6 +247,11 @@ interface IContestType {
     numberOfProblems: number;
 }
 
+interface IUserParticipationResult {
+    practicePoints: number;
+    competePoints: number;
+}
+
 interface IIndexContestsType {
     id: number;
     name: string;
@@ -235,11 +268,9 @@ interface IIndexContestsType {
     numberOfProblems: number;
     practiceResults: number;
     competeResults: number;
-    hasCompeted: boolean;
-    hasPracticed: boolean;
-    competeContestPoints: number;
-    practiceContestPoints: number;
-    maxPoints: number;
+    competeMaximumPoints: number;
+    practiceMaximumPoints: number;
+    userParticipationResult?: IUserParticipationResult;
 }
 
 interface IGetContestsForIndexResponseType {
@@ -306,6 +337,24 @@ interface IStartParticipationResponseType {
     participantsCount: number;
 }
 
+interface IRegisterUserForContestResponseType {
+    id: number;
+    name: string;
+    isOfficial: boolean;
+    requirePassword: boolean;
+    shouldConfirmParticipation: boolean; // if practice this should be false
+    isRegisteredSuccessfully: boolean;
+    duration: number;
+    numberOfProblems: number;
+    categoryId: number;
+}
+
+interface ICompeteContestResponseType {
+    isRegisteredParticipant: boolean; // if user has participant,
+    isActiveParticipant: boolean; // if participant is valid,
+    contest: IContestType | null;
+}
+
 interface IPagedResultType<TItem> {
     totalItemsCount: number;
     itemsPerPage: number;
@@ -348,6 +397,7 @@ interface IUserType {
     permissions: IUserPermissionsType;
     isInRole: boolean;
     isAdmin: boolean;
+    isLecturer: boolean;
     canAccessAdministration: boolean;
 }
 
@@ -428,6 +478,7 @@ interface IContestAdministration {
     allowedIps: string;
     numberOfProblemGroups: number;
     duration: string | undefined;
+    canBeCompeted: boolean;
 }
 
 interface ISubmissionsAdminGridViewType {
@@ -516,11 +567,12 @@ interface IRootStore {
     adminProblemGroups: IAdminSlice;
     adminContestsCategories: IAdminSlice;
     adminProblemResources: IAdminSlice;
+    adminExamGroups: IAdminSlice;
+    adminUsers: IAdminSlice;
     adminSubmissionTypes: IAdminSlice;
     adminCheckers: IAdminSlice;
     adminParticipants: IAdminSlice;
     adminRoles: IAdminSlice;
-    adminUsers: IAdminSlice;
 }
 type ExceptionData = {
     name: string;
@@ -538,6 +590,43 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+    timeLimit: number | null;
+    memoryLimit: number | null;
+}
+
+interface IIndexExamGroupsType {
+    id: number;
+    name: string;
+    contest: string;
+    externalAppId: string;
+    externalExamGroupId: string;
+}
+
+interface IExamGroupAdministration {
+    id: number;
+    name: string;
+    contestName: string;
+    contestId: number | null;
+    externalAppId: string;
+    externalExamGroupId: number;
+}
+
+interface IUserAdministration {
+    id: string;
+    username: string;
+    isDeleted: boolean;
+    createdOn: Date | null;
+    deletedOn: Date | null;
+}
+
+interface IUserInExamGroupModel {
+    id: string;
+    username: string;
+}
+
+interface IUserAutocomplete {
+    id: string;
+    userName: string;
 }
 
 interface ISubmissionTypeAdministrationModel {
@@ -590,7 +679,6 @@ interface IParticipantAdministrationModel {
 interface IUserAutocompleteData {
 id: string;
 userName: string;
-
 }
 
 interface IRoleInListModel {
@@ -639,6 +727,23 @@ interface ILecturerInContestInListModel {
     contestName: string;
 }
 
+interface IContestActivity {
+    canBeCompeted: boolean;
+}
+
+interface ISettingInListModel {
+    id: number;
+    name: string;
+    value: string;
+    type: string;
+}
+
+interface ISettingAdministrationModel {
+    id: number | null;
+    name: string;
+    value: string;
+    type: string;
+}
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -655,14 +760,18 @@ export type {
     IPagedResultType,
     IUserType,
     IPage,
+    IUserProfileType,
+    IUsersState,
     IUserResponseType,
     IUserPermissionsType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
     ISubmissionDetailsState,
     ISubmissionDetailsReduxState,
-    IGetAllContestsOptions,
+    IContestsSortAndFilterOptions,
+    IGetContestParticipationsForUserQueryParams,
     IContestCategory,
+    IGetAllContestsOptions,
     IGetAllAdminParams,
     IAdminPagedResultType,
     IAdminContestResponseType,
@@ -688,6 +797,11 @@ export type {
     ITestsUploadModel,
     IFileModel,
     IEnumType,
+    IIndexExamGroupsType,
+    IExamGroupAdministration,
+    IUserAdministration,
+    IUserInExamGroupModel,
+    IUserAutocomplete,
     ISubmissionTypesInListModel,
     ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
@@ -704,4 +818,9 @@ export type {
     IUserInListModel,
     IUserAdministrationModel,
     ILecturerInContestInListModel,
+    IContestActivity,
+    ISettingInListModel,
+    ISettingAdministrationModel,
+    IRegisterUserForContestResponseType,
+    ICompeteContestResponseType,
 };

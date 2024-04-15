@@ -5,12 +5,12 @@
 @use 'src/styles/colors';
 
 .contestDetailsWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   padding: spacings.$sp-64;
 
   .heading {
-    @extend %font-family-roboto;
+    @extend %font-family-normal;
 
     border-bottom-width: 0;
     font-weight: font-weights.$font-weight-semi-bold;

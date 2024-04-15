@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
-import { mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
+import { IGetAllAdminParams } from '../../../../common/types';
+import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import testRunsFilterableColumns from '../../../../pages/administration-new/test-runs/testRunsGridColumns';
-import { setAdminTestsFilters, setAdminTestsSorters } from '../../../../redux/features/admin/testsSlice';
 import { useGetTestRunsByTestIdQuery } from '../../../../redux/services/admin/testsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
@@ -18,7 +16,6 @@ interface ITestRunsInTestViewProps {
 
 const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
     const { testId } = props;
-    const location = `tests-testRuns-${testId}`;
     const [ searchParams ] = useSearchParams();
 
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
@@ -28,8 +25,8 @@ const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
         sorting: searchParams.get('sorting') ?? '',
     });
 
-    const selectedFilters = useSelector((state: IRootStore) => state.adminTests[location]?.selectedFilters) ?? [];
-    const selectedSorters = useSelector((state: IRootStore) => state.adminTests[location]?.selectedSorters) ?? [];
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const { data: testData, error, isLoading } = useGetTestRunsByTestIdQuery({ testId, ...queryParams });
 
@@ -61,9 +58,8 @@ const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
           setQueryParams={setQueryParams}
           selectedFilters={selectedFilters || []}
           selectedSorters={selectedSorters || []}
-          setFilterStateAction={setAdminTestsFilters}
-          setSorterStateAction={setAdminTestsSorters}
-          location={location}
+          setSorterStateAction={setSelectedSorters}
+          setFilterStateAction={setSelectedFilters}
           withSearchParams={false}
 
         />

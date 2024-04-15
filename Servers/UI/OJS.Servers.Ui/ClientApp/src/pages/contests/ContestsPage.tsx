@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { IGetAllContestsOptions, IIndexContestsType } from '../../common/types';
+import { SortType } from '../../common/contest-types';
+import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
 import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
@@ -54,8 +55,8 @@ const ContestsPage = () => {
     }, [ searchParams ]);
 
     const contestParams = useMemo(() => {
-        const params: IGetAllContestsOptions = {
-            sortType: 'OrderBy',
+        const params: IContestsSortAndFilterOptions = {
+            sortType: SortType.OrderBy,
             page: selectedPage,
         };
         if (selectedCategory) {

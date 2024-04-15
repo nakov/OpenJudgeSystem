@@ -18,6 +18,8 @@ const renderSuccessfullAlert = (message: string | null, autoHideDuration?:number
 
 const renderErrorMessagesAlert = (messages:Array<string>, autoHideDuration?: number) => messages.map((x, i) => renderAlert(x, AlertSeverity.Error, i, autoHideDuration));
 
+const renderInfoMessage = (message: string, autoHideDuration?:number) => renderAlert(message, AlertSeverity.Info, 0, autoHideDuration);
+
 const renderAlert = (message: string, severity:AlertSeverity, index:number, autoHideDuration?:number | undefined) => (
     <Alert
       autoHideDuration={autoHideDuration}
@@ -33,4 +35,5 @@ const renderAlert = (message: string, severity:AlertSeverity, index:number, auto
 export {
     renderSuccessfullAlert,
     renderErrorMessagesAlert,
+    renderInfoMessage,
 };

@@ -1,0 +1,62 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+
+.excludedFromHomeworkIcon {
+  margin: 5px;
+}
+
+.tasksSideNavigation {
+  text-align: center;
+}
+
+.taskListItem {
+  align-items: center;
+  border-bottom: 1px solid colors.$bottom-border-color;
+  display: flex;
+  justify-content: space-between;
+  padding: 35px 0 5px;
+  position: relative;
+  width: 100%;
+
+  @media only screen and (max-width: variables.$r-large-desktop-max) {
+    font-size: variables.$f-size-16;
+  }
+}
+
+.tasksListSideNavigation {
+  align-items: flex-start;
+  display: flex;
+  padding: 20px;
+
+  .taskSideNavigationItem {
+    @extend %font-family-normal;
+
+    color: colors.$text-dark-gray-color;
+    font-size: variables.$f-size-18;
+    margin-top: 10px;
+    text-align: start;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &.selected {
+      color: colors.$color-btn-secondary;
+    }
+  }
+}
+
+.resultsButton {
+  align-self: end;
+  border: 0;
+
+  &:hover {
+    background: none;
+    cursor: pointer;
+  }
+}
+
+.noTasksText {
+  margin-bottom: 20px;
+}

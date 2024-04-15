@@ -12,7 +12,7 @@
 
         byte[] FileContent { get; set; }
 
-        string AllowedFileExtensions { get; }
+        string? AllowedFileExtensions { get; }
 
         int TimeLimit { get; }
 

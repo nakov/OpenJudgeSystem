@@ -18,7 +18,6 @@ import PageProvider from './hooks/use-pages';
 import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
 import SearchProvider from './hooks/use-search';
-import UsersProvider from './hooks/use-users';
 import PageContent from './layout/content/PageContent';
 import store, { persistor } from './redux/store';
 
@@ -31,7 +30,6 @@ const App = () => {
         RouteUrlParamsProvider,
         PageProvider,
         PageWithTitleProvider,
-        UsersProvider,
         ContestCategoriesProvider,
         CategoriesBreadcrumbProvider,
         ParticipationsProvider,

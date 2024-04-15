@@ -155,6 +155,7 @@ namespace OJS.Services.Administration.Data.Implementations
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
+        // Lecturers can see contests in which they are lecturers or contests that are in a category for which they are lecturers.
         protected override Expression<Func<Contest, bool>> GetUserFilter(UserInfoModel user)
             => contest => user.IsAdmin ||
                 contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||

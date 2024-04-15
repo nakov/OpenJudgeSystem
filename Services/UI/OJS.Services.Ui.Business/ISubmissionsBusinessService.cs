@@ -9,7 +9,7 @@
     using SoftUni.Services.Infrastructure;
     using System.Linq;
     using System.Threading.Tasks;
-    using static OJS.Services.Ui.Business.Constants.PublicSubmissions;
+    using static OJS.Services.Common.PaginationConstants.Submissions;
 
     public interface ISubmissionsBusinessService : IService
     {
@@ -25,7 +25,10 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page);
+        Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
+            string? username,
+            int page,
+            int itemsInPage = DefaultSubmissionsPerPage);
 
         Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId);
 

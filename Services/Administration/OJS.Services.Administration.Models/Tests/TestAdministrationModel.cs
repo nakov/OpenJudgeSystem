@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Tests;
-using OJS.Workers.Common.Extensions;
+using OJS.Services.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Models;
 
 public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -40,6 +40,8 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
                 tam => tam.Type,
                 opt => opt.MapFrom(t
                     => MapTestType(t.IsTrialTest, t.IsOpenTest)))
+            .ForMember(t => t.OperationType, opt
+                => opt.Ignore())
             .ForMember(tam => tam.RetestProblem, op => op.Ignore());
 
         configuration.CreateMap<TestAdministrationModel, Test>()
