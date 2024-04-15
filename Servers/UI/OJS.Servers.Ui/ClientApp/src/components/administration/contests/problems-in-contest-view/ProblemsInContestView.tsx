@@ -8,7 +8,7 @@ import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../..
 import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
 import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
-import { useDeleteByContestMutation, useDeleteProblemMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
+import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -16,17 +16,19 @@ import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
-import CopyModal, { AllowedOperations } from '../../Problems/copy-modal/CopyModal';
-import ProblemForm from '../../Problems/problemForm/ProblemForm';
-import ProblemRetest from '../../Problems/retest/ProblemRetest';
+import SubmitSolution from '../../common/submit-solution/SubmitSolution';
+import CopyModal, { AllowedOperations } from '../../problems/copy/CopyModal';
+import ProblemForm from '../../problems/problem-form/ProblemForm';
+import ProblemRetest from '../../problems/retest/ProblemRetest';
 
 interface IProblemsInContestViewProps {
     contestId: number;
     contestType: ContestVariation | undefined;
+    canContestBeCompeted: boolean;
 }
 
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
-    const { contestId, contestType } = props;
+    const { contestId, contestType, canContestBeCompeted } = props;
     const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
     const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
@@ -165,6 +167,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
         setSuccessMessage(message);
         setShowRetestModal(false);
     };
+
     const renderRetestModal = (index: number) => (
         <ProblemRetest
           key={index}
@@ -200,6 +203,8 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                     <MdDeleteForever style={{ width: '40px', height: '40px', color: 'red' }} />
                 </IconButton>
             </Tooltip>
+
+            <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} />
         </>
     );
 
@@ -234,7 +239,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                       notFilterableGridColumnDef={
                         returnProblemsNonFilterableColumns(
                             onEditClick,
-                            useDeleteProblemMutation,
                             openCopyModal,
                             openRetestModal,
                             retakeData,
