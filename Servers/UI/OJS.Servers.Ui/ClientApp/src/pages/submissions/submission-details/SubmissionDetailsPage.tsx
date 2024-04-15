@@ -223,7 +223,17 @@ const SubmissionDetailsPage = () => {
         const sortedTestRuns = [ ...testRuns || [] ]?.sort(sortByTrialTest);
 
         return sortedTestRuns.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
-    }, [ isCompiledSuccessfully, isEligibleForRetest, points, testRuns, compilerComment, retestSubmission, solutionId, isProcessed ]);
+    }, [
+        isCompiledSuccessfully,
+        isEligibleForRetest,
+        points,
+        testRuns,
+        compilerComment,
+        retestSubmission,
+        solutionId,
+        isProcessed,
+        textColorClassName,
+    ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
@@ -250,7 +260,7 @@ const SubmissionDetailsPage = () => {
 
             </div>
         );
-    }, [ content, contestId, navigate, retestSubmission, solutionId ]);
+    }, [ content, contestId, navigate, retestSubmission, solutionId, user.canAccessAdministration ]);
 
     if (isLoading || retestIsLoading) {
         return (
