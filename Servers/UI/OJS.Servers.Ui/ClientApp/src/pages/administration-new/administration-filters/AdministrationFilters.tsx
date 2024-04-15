@@ -34,12 +34,6 @@ interface IAdministrationFilterProps {
     setQueryParams?: Dispatch<React.SetStateAction<IGetAllAdminParams>>;
 }
 
-interface IAdministrationSorter {
-    columnName: string;
-    orderBy: SortingEnum;
-    availableColumns: string[];
-}
-
 interface IAdministrationFilter {
     column: string;
     operator: string;
@@ -262,6 +256,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     }, [ selectedSorters ]);
 
     const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+        if (!filterAnchor) {
+            setSortersAnchor(null);
+        }
+
         setFilterAnchor(filterAnchor
             ? null
             : event.currentTarget);
@@ -406,6 +404,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const handleOpenSorters = (event: React.MouseEvent<HTMLElement>) => {
+        if (!sortersAnchor) {
+            setFilterAnchor(null);
+        }
+
         setSortersAnchor(sortersAnchor
             ? null
             : event.currentTarget);
@@ -515,7 +517,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         <div className={styles.sortWrapper} key={`a-s-w-${idx}`}>
             <CloseIcon className={styles.closeIcon} onClick={() => setSortersAnchor(null)} />
             { idx !== 0 && (
-                <DeleteIcon className={styles.removeSorterButton} onClick={() => removeSingleSorter(idx)} />
+                <DeleteIcon color="error" className={styles.removeSorterButton} onClick={() => removeSingleSorter(idx)} />
             )}
             <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
                 <InputLabel id="column-sorting-label">Sort by</InputLabel>

@@ -25,8 +25,9 @@
       color: #1976d2;
     }
   }
+}
 
-  .closeIcon {
+.closeIcon {
     cursor: pointer;
     position: absolute;
     right: 20px;
@@ -36,7 +37,6 @@
       color: #1976d2;
     }
   }
-}
 
 .administrationSorters {
   background-color: #fbfbfb;
@@ -50,17 +50,6 @@
     display: flex;
     justify-content: center;
     margin: 10px 0 25px;
-
-    .closeIcon {
-      cursor: pointer;
-      position: absolute;
-      right: 20px;
-      top: 10px;
-
-      &:hover {
-        color: #1976d2;
-      }
-    }
   }
 
   .buttonsSection {
