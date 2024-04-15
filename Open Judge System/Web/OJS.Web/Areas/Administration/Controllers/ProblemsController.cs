@@ -156,6 +156,7 @@ namespace OJS.Web.Areas.Administration.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         [ValidateAntiForgeryToken]
         [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult Create(int id, ViewModelType problem)
@@ -337,6 +338,7 @@ namespace OJS.Web.Areas.Administration.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         [ValidateAntiForgeryToken]
         [ClearContestFromProblemAttribute(queryKeyForContestId: nameof(ViewModelType.ContestId))]
         public ActionResult Edit(int id, ViewModelType problem)
