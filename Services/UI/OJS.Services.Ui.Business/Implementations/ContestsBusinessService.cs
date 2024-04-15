@@ -175,7 +175,7 @@ namespace OJS.Services.Ui.Business.Implementations
             registerModel.IsRegisteredSuccessfully = participant != null;
             registerModel.ShouldConfirmParticipation = contest!.IsOnlineExam && isOfficial && participant == null;
 
-            bool shouldCreateParticipant = registerModel.RequirePassword;
+            bool requiredPasswordIsValid = false;
 
             // Validate password if present
             if (password != null && !password.IsNullOrEmpty() && ShouldRequirePassword(contest!, participant, isOfficial))
@@ -187,10 +187,10 @@ namespace OJS.Services.Ui.Business.Implementations
                     throw new UnauthorizedAccessException("Invalid contest password");
                 }
 
-                shouldCreateParticipant = true;
+                requiredPasswordIsValid = true;
             }
 
-            if (shouldCreateParticipant)
+            if (!registerModel.RequirePassword || requiredPasswordIsValid)
             {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
