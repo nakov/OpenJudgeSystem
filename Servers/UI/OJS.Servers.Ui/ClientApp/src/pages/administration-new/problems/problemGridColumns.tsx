@@ -13,6 +13,7 @@ import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/adm
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteProblemMutation } from '../../../redux/services/admin/problemsAdminService';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemFilterableColums: GridColDef[] = [
@@ -120,7 +121,6 @@ const problemFilterableColums: GridColDef[] = [
 
 export const returnProblemsNonFilterableColumns = (
     onEditClick: Function,
-    deleteMutation: any,
     onCopyProblem?: Function,
     retestProblem?: Function,
     onDeleteSuccess?:() => void,
@@ -141,7 +141,7 @@ export const returnProblemsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteProblemMutation}
                   onSuccess={onDeleteSuccess}
                 />
                 {retestProblem && (

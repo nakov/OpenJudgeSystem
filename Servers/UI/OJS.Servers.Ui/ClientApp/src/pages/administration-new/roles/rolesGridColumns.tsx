@@ -7,6 +7,7 @@ import { NEW_ADMINISTRATION_PATH, ROLES_PATH } from '../../../common/urls/admini
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteRolesMutation } from '../../../redux/services/admin/rolesAdminService';
 
 const rolesFilterableColumns: GridColDef[] = [
     {
@@ -33,7 +34,6 @@ const rolesFilterableColumns: GridColDef[] = [
 
 export const returnRolesNonFilterableColumns = (
     onEditClick: Function,
-    deleteMutation: any,
     onDeleteSuccess?:() => void,
 ) => [
     {
@@ -52,7 +52,7 @@ export const returnRolesNonFilterableColumns = (
                   id={params.row.id}
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteRolesMutation}
                   onSuccess={onDeleteSuccess}
                 />
             </div>

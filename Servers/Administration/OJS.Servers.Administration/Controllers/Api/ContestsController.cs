@@ -2,10 +2,13 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
+using OJS.Common.Extensions;
 using OJS.Data.Models.Contests;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Contests.GridData;
+using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
@@ -19,6 +22,7 @@ using System.Threading.Tasks;
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
     private readonly IContestsBusinessService contestsBusinessService;
+    private readonly ContestAdministrationModelValidator validator;
     private readonly IContestsDataService contestsData;
 
     public ContestsController(
@@ -32,6 +36,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         validator)
     {
         this.contestsBusinessService = contestsBusinessService;
+        this.validator = validator;
         this.contestsData = contestsData;
     }
 
@@ -57,6 +62,23 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         var file = await this.contestsBusinessService.DownloadSubmissions(model);
 
         return this.File(file.Content!, file.MimeType!, file.FileName);
+    }
+
+    [HttpGet]
+    [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
+    public async Task<IActionResult> Activity(int contestId)
+    {
+        var validationResult = await this.validator
+            .ValidateAsync(new ContestAdministrationModel { Id = contestId, OperationType = CrudOperationType.Read })
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
+        }
+
+        var result = await this.contestsBusinessService.GetContestActivity(contestId);
+        return this.Ok(result);
     }
 
     [HttpPost]

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
 
-import { ADDITIONAL_COMPILER_ARGUMENTS, ALLOW_BINARY_FILES_UPLOAD, ALLOWED_FILE_EXTENSIONS, COMPILER, CREATE, DESCRIPTION, EDIT, EXECUTION_STRATEGY, ID, IS_SELECTED, NAME } from '../../../../common/labels';
+import { ADDITIONAL_COMPILER_ARGUMENTS, ALLOW_BINARY_FILES_UPLOAD, ALLOWED_FILE_EXTENSIONS, COMPILER, DESCRIPTION, EXECUTION_STRATEGY, ID, IS_SELECTED, NAME } from '../../../../common/labels';
 import { SUBMISSION_TYPE_FILE_EXTENSION_PLACEHOLDER, SUBMISSION_TYPE_FORM_NAME } from '../../../../common/messages';
 import { ISubmissionTypeAdministrationModel } from '../../../../common/types';
 import { useCreateSubmissionTypeMutation, useGetByIdQuery, useGetCompilersQuery, useGetExecutionStrategiesQuery, useUpdateSubmissionTypeMutation } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -133,26 +133,6 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
         }));
     };
 
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => update(currentSubmissionType)}
-                  name={EDIT}
-                />
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => create(currentSubmissionType)}
-                  name={CREATE}
-                />
-            )
-    );
-
     if (isGettingCompilers || isGettingStrategies || isGettingSubmissionType || isCreating || isUpdating) {
         return <SpinningLoader />;
     }
@@ -274,7 +254,12 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                       onChange={(e) => onChange(e)}
                     />
                 </FormControl>
-                {renderFormSubmitButtons()}
+
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => create(currentSubmissionType)}
+                  onEditClick={() => update(currentSubmissionType)}
+                />
             </form>
         </>
     );

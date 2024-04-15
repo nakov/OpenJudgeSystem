@@ -1,23 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { Autocomplete, Button, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, Divider, FormControl, FormGroup, MenuItem, TextField, Typography } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { SUBMISSION_TYPES, TESTS } from '../../../../common/labels';
 import { IProblemAdministration, IProblemGroupDropdownModel, IProblemSubmissionType, ISubmissionTypeInProblem } from '../../../../common/types';
-import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../../common/urls/administration-urls';
 import { useGetIdsByContestIdQuery } from '../../../../redux/services/admin/problemGroupsAdminService';
-import { useCreateProblemMutation, useDeleteProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
+import { useCreateProblemMutation, useGetProblemByIdQuery, useUpdateProblemMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { useGetForProblemQuery } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import FileUpload from '../../common/file-upload/FileUpload';
+import ProblemFormBasicInfo from '../problem-form-basic-info.tsx/ProblemFormBasicInfo';
 import ProblemSubmissionTypes from '../problem-submission-types/ProblemSubmissionTypes';
-
-import ProblemFormBasicInfo from './problem-form-basic-info.tsx/ProblemFormBasicInfo';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -25,6 +22,7 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface IProblemFormProps {
     isEditMode?: boolean;
     getName?: Function;
+    getContestId?: Function;
 }
 
 interface IProblemFormCreateProps extends IProblemFormProps{
@@ -45,8 +43,7 @@ const defaultTimeLimit = 100;
 const defaultSourceCodeSizeLimit = 16384;
 
 const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => {
-    const { problemId, isEditMode = true, contestId, contestType, getName } = props;
-    const navigate = useNavigate();
+    const { problemId, isEditMode = true, contestId, contestType, getName, getContestId } = props;
 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ problemGroupIds, setProblemGroupsIds ] = useState<Array<IProblemGroupDropdownModel>>([]);
@@ -104,8 +101,11 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
             if (getName) {
                 getName(problemData.name);
             }
+            if (getContestId) {
+                getContestId(problemData.contestId);
+            }
         }
-    }, [ getName, problemData ]);
+    }, [ getContestId, getName, problemData ]);
 
     useEffect(() => {
         getAndSetExceptionMessage([ gettingDataError, createError, updateError ], setErrorMessages);
@@ -293,43 +293,6 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         }));
     };
 
-    const renderButtons = () => (
-        <FormGroup sx={{ display: 'flex', width: '100%' }}>
-            {isEditMode
-                ? (
-                    <>
-                        <Button
-                          size="large"
-                          sx={{ width: '20%', alignSelf: 'center' }}
-                          onClick={() => submitForm()}
-                          variant="contained"
-                        >
-                            Edit
-                        </Button>
-                        <DeleteButton
-                          id={problemId!}
-                          name={currentProblem.name}
-                          style={{ alignSelf: 'flex-end' }}
-                          onSuccess={(() => navigate(`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}`))}
-                          text="Are you sure you want to delete this problem."
-                          mutation={useDeleteProblemMutation}
-                        />
-                    </>
-                )
-                : (
-                    <Button
-                      onClick={() => submitForm()}
-                      size="large"
-                      sx={{ width: '20%', alignSelf: 'center' }}
-                      variant="contained"
-                    >
-                        Create
-                    </Button>
-                )}
-
-        </FormGroup>
-    );
-
     if (isGettingData) {
         return <SpinningLoader />;
     }
@@ -388,7 +351,11 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
                 />
             ))
         }
-                {renderButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => submitForm()}
+                  onEditClick={() => submitForm()}
+                />
 
             </form>
         </>

@@ -4,6 +4,7 @@ import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { useDeleteContestCategoryMutation } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const categoriesFilterableColumns: GridColDef[] = [
@@ -114,10 +115,7 @@ const categoriesFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnCategoriesNonFilterableColumns = (
-    onEditClick: Function,
-    deleteMutation: any,
-) => [
+export const returnCategoriesNonFilterableColumns = (onEditClick: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -135,7 +133,7 @@ export const returnCategoriesNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text="Are you sure that you want to delete the contest category?"
-                  mutation={deleteMutation}
+                  mutation={useDeleteContestCategoryMutation}
                 />
             </div>
         ),

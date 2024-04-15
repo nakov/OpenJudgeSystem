@@ -6,7 +6,7 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import RoleForm from '../../../components/administration/roles/form/RoleForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteRolesMutation, useGetAllRolesQuery, useLazyExportRolesToExcelQuery } from '../../../redux/services/admin/rolesAdminService';
+import { useGetAllRolesQuery, useLazyExportRolesToExcelQuery } from '../../../redux/services/admin/rolesAdminService';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import AdministrationGridView from '../AdministrationGridView';
 
@@ -78,7 +78,7 @@ const AdministrationRolesPage = () => {
     return (
         <AdministrationGridView
           filterableGridColumnDef={rolesFilterableColumns}
-          notFilterableGridColumnDef={returnRolesNonFilterableColumns(onEditClick, useDeleteRolesMutation, onDeleteSuccess)}
+          notFilterableGridColumnDef={returnRolesNonFilterableColumns(onEditClick, onDeleteSuccess)}
           data={data}
           error={error}
           queryParams={queryParams}

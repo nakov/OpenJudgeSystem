@@ -3,14 +3,14 @@ import { Autocomplete, debounce, FormControl, FormGroup, InputLabel, MenuItem, S
 import isNaN from 'lodash/isNaN';
 
 import { ProblemGroupTypes } from '../../../../common/enums';
-import { CREATE, EDIT, ID, ORDER_BY, TYPE } from '../../../../common/labels';
+import { ID, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IContestAutocomplete } from '../../../../common/types';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateProblemGroupMutation, useGetProblemGroupByIdQuery, useUpdateProblemGroupMutation } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import { IProblemGroupAdministrationModel } from '../types';
 
 // The classes are used in multiple files. But not all of them are used in single file
@@ -129,26 +129,6 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
         }));
     };
 
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => updateProblemGroup(currentProblemGroup)}
-                  name={EDIT}
-                />
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => createProblemGroup(currentProblemGroup)}
-                  name={CREATE}
-                />
-            )
-    );
-
     if (isGettingProblemGroupData || isUpdating || isCreating) {
         return <SpinningLoader />;
     }
@@ -216,7 +196,11 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
                       )}
                     />
                 </FormControl>
-                {renderFormSubmitButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => createProblemGroup(currentProblemGroup)}
+                  onEditClick={() => updateProblemGroup(currentProblemGroup)}
+                />
             </form>
         </>
 
