@@ -21,7 +21,10 @@
             IExecutionStrategySettingsProvider settingsProvider)
         {
             this.Type = type;
-            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)!;
+            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)
+                ?? throw new ArgumentException(
+                    $"Cannot get settings of type {typeof(TSettings).Name} for execution strategy {this.Type}. ",
+                    nameof(settingsProvider));
         }
 
         protected ExecutionStrategyType Type { get; }
