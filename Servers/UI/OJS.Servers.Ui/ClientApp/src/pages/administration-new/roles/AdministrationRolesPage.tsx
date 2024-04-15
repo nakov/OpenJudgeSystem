@@ -84,10 +84,6 @@ const AdministrationRolesPage = () => {
           queryParams={queryParams}
           setQueryParams={setQueryParams}
           renderActionButtons={renderGridActions}
-          selectedFilters={[]}
-          selectedSorters={[]}
-          setFilterStateAction={undefined}
-          setSorterStateAction={undefined}
           withSearchParams={false}
           showFiltersAndSorters={false}
           modals={[

@@ -37,3 +37,50 @@
     }
   }
 }
+
+.administrationSorters {
+  background-color: #fbfbfb;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgb(0 0 0/ 30%);
+  margin-left: 380px;
+  padding: 10px 50px;
+
+  .sortWrapper {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 25px;
+
+    .closeIcon {
+      cursor: pointer;
+      position: absolute;
+      right: 20px;
+      top: 10px;
+
+      &:hover {
+        color: #1976d2;
+      }
+    }
+  }
+
+  .buttonsSection {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .removeSorterButton {
+    cursor: pointer;
+    left: 386px;
+    margin-top: 16px;
+    position: absolute;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: #1976d2;
+    }
+  }
+}
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
@@ -7,10 +7,8 @@ import AdministrationModal from '../../../components/administration/common/modal
 import SubmissionTypesForm from '../../../components/administration/submission-types/form/SubmissionTypeForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllSubmissionTypesQuery, useLazyExportSubmissionTypesToExcelQuery } from '../../../redux/services/admin/submissionTypesAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
 import submissionTypesFilterableColumns, { returnNonFilterableColumns } from './submissionTypesGridColumns';
 
@@ -20,32 +18,11 @@ const AdministrationSubmissionTypesPage = () => {
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
     const [ showEditModal, setShowEditModal ] = useState<boolean>(false);
     const [ submissionTypeId, setSubmissionTypeId ] = useState<number | null>(null);
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: applyDefaultFilterToQueryString(searchParams, submissionTypesFilterableColumns),
-        sorting: searchParams.get('sorting') ?? '',
-    });
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(submissionTypesFilterableColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationSortingProps(submissionTypesFilterableColumns),
-    ));
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd, searchParams));
 
     const { refetch, data: submissionTypesData, isLoading: isGettingData, error } = useGetAllSubmissionTypesQuery(queryParams);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, submissionTypesFilterableColumns),
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
 
     const onEditClick = (id: number) => {
         setSubmissionTypeId(id);
@@ -96,10 +73,6 @@ const AdministrationSubmissionTypesPage = () => {
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setSelectedSorters}
-          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: showEditModal, modal: (i) => renderFormModal(i, true) },
               { showModal: showCreateModal, modal: (i) => renderFormModal(i, false) },

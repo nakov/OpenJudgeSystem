@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
@@ -7,32 +7,16 @@ import AdministrationModal from '../../../components/administration/common/modal
 import ParticipantForm from '../../../components/administration/participants/form/ParticipantForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useDeleteParticipantMutation, useGetAllParticipantsQuery, useLazyExportParticipantsToExcelQuery } from '../../../redux/services/admin/participantsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
 import participantsFilteringColumns, { returnparticipantsNonFilterableColumns } from './participantsGridColumns';
 
 const ParticipantsAdministrationPage = () => {
     const [ searchParams ] = useSearchParams();
 
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: applyDefaultFilterToQueryString(searchParams, participantsFilteringColumns),
-        sorting: searchParams.get('sorting') ?? '',
-    });
-
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(participantsFilteringColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams,
-        mapGridColumnsToAdministrationSortingProps(participantsFilteringColumns),
-    ));
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd, searchParams));
 
     const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
 
@@ -42,14 +26,6 @@ const ParticipantsAdministrationPage = () => {
         isLoading: isLoadingParticipants,
         error,
     } = useGetAllParticipantsQuery(queryParams);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: searchParams.get('filter') ?? '',
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
 
     const onModalClose = () => {
         setOpenCreateModal(false);
@@ -87,10 +63,6 @@ const ParticipantsAdministrationPage = () => {
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          setSorterStateAction={setSelectedSorters}
-          setFilterStateAction={setSelectedFilters}
-          selectedSorters={selectedSorters || []}
           renderActionButtons={renderGridSettings}
           modals={[
               { showModal: openCreateModal, modal: (i) => renderParticipantModal(i) },

@@ -13,14 +13,12 @@ import ContestEdit from '../../../components/administration/contests/contest-edi
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useDeleteContestMutation, useDownloadResultsMutation, useGetAllAdminContestsQuery, useLazyExportContestsToExcelQuery } from '../../../redux/services/admin/contestsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
-import { applyDefaultFilterToQueryString, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { applyDefaultSorter, IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 
 import contestFilterableColumns, { returnContestsNonFilterableColumns } from './contestsGridColumns';
 
@@ -35,28 +33,10 @@ const AdministrationContestsPage = () => {
     const [ showDownloadSubsModal, setShowDownloadSubsModal ] = useState<boolean>(false);
     const [ showExportExcelModal, setShowExportExcelModal ] = useState<boolean>(false);
 
-    const defaultSorter = 'id=DESC';
-
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(contestFilterableColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationSortingProps(contestFilterableColumns),
-        defaultSorter,
-    ));
-
     const [ excelExportType, setExcelExportType ] = useState<number>(0);
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd, searchParams));
 
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        filter: applyDefaultFilterToQueryString(searchParams, contestFilterableColumns),
-        sorting: applyDefaultSorter(searchParams, defaultSorter),
-    });
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
 
     const {
@@ -81,13 +61,13 @@ const AdministrationContestsPage = () => {
         setContestId(id);
     };
 
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: applyDefaultFilterToQueryString(searchParams, contestFilterableColumns),
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
+    // useEffect(() => {
+    //     setQueryParams((currentParams) => ({
+    //         ...currentParams,
+    //         filter: searchParams.get('filter') ?? '',
+    //         sorting: searchParams.get('sorting') ?? '',
+    //     }));
+    // }, [ searchParams ]);
 
     useEffect(() => {
         if (isSuccessfullyDownloaded) {
@@ -205,10 +185,6 @@ const AdministrationContestsPage = () => {
               renderActionButtons={renderGridActions}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              selectedFilters={selectedFilters}
-              selectedSorters={selectedSorters}
-              setSorterStateAction={setSelectedSorters}
-              setFilterStateAction={setSelectedFilters}
               modals={[
                   { showModal: openShowCreateContestModal, modal: (i) => renderContestModal(i, false) },
                   { showModal: openEditContestModal, modal: (i) => renderContestModal(i, true) },

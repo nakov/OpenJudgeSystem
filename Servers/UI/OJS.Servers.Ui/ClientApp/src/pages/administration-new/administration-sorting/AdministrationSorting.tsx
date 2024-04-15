@@ -13,9 +13,9 @@ import { SortingEnum } from '../../../common/enums';
 import styles from './AdministrationSorting.module.scss';
 
 interface IAdministrationSortProps {
-    columns: string[];
+    sortingColumns: string[];
     selectedSorters: Array<IAdministrationSorter>;
-    setStateAction?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
+    setSelectedSorters?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
     withSearchParams?: boolean;
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
@@ -34,23 +34,23 @@ const orderByOptions = [
 
 const sorterSeparator = '&';
 const AdministrationSorting = (props: IAdministrationSortProps) => {
-    const { columns, selectedSorters, setStateAction, searchParams, setSearchParams, withSearchParams = true } = props;
+    const { sortingColumns, selectedSorters, setSelectedSorters, searchParams, setSearchParams, withSearchParams = true } = props;
     const defaultSorter = {
         columnName: '',
         orderBy: SortingEnum.ASC,
-        availableColumns: columns,
+        availableColumns: sortingColumns,
     };
 
-    const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
+    const [ sortersAnchor, setSortersAnchor ] = useState<null | HTMLElement>(null);
 
     useEffect(() => {
-        if (selectedSorters.length <= 0 && setStateAction) {
-            setStateAction([ defaultSorter ]);
+        if (selectedSorters.length <= 0 && setSelectedSorters) {
+            setSelectedSorters([ defaultSorter ]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const open = Boolean(anchor);
+    const openSorters = Boolean(sortersAnchor);
 
     const mapUrlToSorters = (): IAdministrationSorter[] => {
         if (!searchParams || !setSearchParams) {
@@ -66,11 +66,11 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             const sorterColumn = paramChunks[0];
             const sorterOrderBy = paramChunks[1];
 
-            const columnName = columns.find((c) => c.toLowerCase() === sorterColumn) || '';
+            const columnName = sortingColumns.find((c) => c.toLowerCase() === sorterColumn) || '';
             const orderBy = sorterOrderBy === 'ASC'
                 ? SortingEnum.ASC
                 : SortingEnum.DESC;
-            const availableColumns = columns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column) &&
+            const availableColumns = sortingColumns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column) &&
                 !selectedSorters.some((ss) => ss.columnName === column));
 
             const sorter: IAdministrationSorter = {
@@ -87,8 +87,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
     useEffect(() => {
         const urlSelectedSorters = mapUrlToSorters();
-        if (urlSelectedSorters.length && setStateAction) {
-            setStateAction(urlSelectedSorters);
+        if (urlSelectedSorters.length && setSelectedSorters) {
+            setSelectedSorters(urlSelectedSorters);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -128,21 +128,21 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedSorters ]);
 
-    const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchor(anchor
+    const handleOpenSorters = (event: React.MouseEvent<HTMLElement>) => {
+        setSortersAnchor(sortersAnchor
             ? null
             : event.currentTarget);
     };
 
     const addSorter = () => {
-        const availableColumns = columns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
+        const availableColumns = sortingColumns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
         const newSortersArray = [ { ...defaultSorter, availableColumns }, ...selectedSorters.map((sorter) => ({
             ...sorter,
             availableColumns: [ ...availableColumns, sorter.columnName ],
         })) ];
 
-        if (setStateAction) {
-            setStateAction(newSortersArray);
+        if (setSelectedSorters) {
+            setSelectedSorters(newSortersArray);
         }
     };
 
@@ -152,8 +152,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             setSearchParams(searchParams);
         }
 
-        if (setStateAction) {
-            setStateAction([ defaultSorter ]);
+        if (setSelectedSorters) {
+            setSelectedSorters([ defaultSorter ]);
         }
     };
 
@@ -165,8 +165,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
         })) ];
         newSortersArray.splice(idx, 1);
 
-        if (setStateAction) {
-            setStateAction(newSortersArray);
+        if (setSelectedSorters) {
+            setSelectedSorters(newSortersArray);
         }
 
         if (newSortersArray.length === 1) {
@@ -187,14 +187,14 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
             return element;
         });
 
-        if (setStateAction) {
-            setStateAction(newSortersArray);
+        if (setSelectedSorters) {
+            setSelectedSorters(newSortersArray);
         }
     };
 
     const renderSorter = (idx: number) => (
         <div className={styles.sortWrapper} key={`a-s-w-${idx}`}>
-            <CloseIcon className={styles.closeIcon} onClick={() => setAnchor(null)} />
+            <CloseIcon className={styles.closeIcon} onClick={() => setSortersAnchor(null)} />
             { idx !== 0 && (
                 <DeleteIcon className={styles.removeSorterButton} onClick={() => removeSingleSorter(idx)} />
             )}
@@ -229,8 +229,8 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
 
     return (
         <div>
-            <Button onClick={handleOpenClick}>
-                { open
+            <Button onClick={handleOpenSorters}>
+                { openSorters
                     ? 'close'
                     : 'open' }
                 {' '}
@@ -241,7 +241,7 @@ const AdministrationSorting = (props: IAdministrationSortProps) => {
                     ) Active
                 </span>
             </Button>
-            <BasePopup anchor={anchor} open={open}>
+            <BasePopup anchor={sortersAnchor} open={openSorters}>
                 <div className={styles.administrationSorters}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         { selectedSorters.map((sorter, idx) => renderSorter(idx))}
