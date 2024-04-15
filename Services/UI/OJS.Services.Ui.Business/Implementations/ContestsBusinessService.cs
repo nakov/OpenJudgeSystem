@@ -172,8 +172,12 @@ namespace OJS.Services.Ui.Business.Implementations
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, isOfficial);
             registerModel.ParticipantId = participant?.Id;
+            registerModel.IsRegisteredSuccessfully = participant != null;
             registerModel.ShouldConfirmParticipation = contest!.IsOnlineExam && isOfficial && participant == null;
 
+            bool shouldCreateParticipant = registerModel.RequirePassword;
+
+            // Validate password if present
             if (password != null && !password.IsNullOrEmpty() && ShouldRequirePassword(contest!, participant, isOfficial))
             {
                 var isPasswordValid = GetIsPasswordValid(contest!, password, isOfficial);
@@ -183,10 +187,16 @@ namespace OJS.Services.Ui.Business.Implementations
                     throw new UnauthorizedAccessException("Invalid contest password");
                 }
 
+                shouldCreateParticipant = true;
+            }
+
+            if (shouldCreateParticipant)
+            {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
                 await this.AddNewParticipantToContestIfNotExists(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
                 registerModel.IsRegisteredSuccessfully = true;
+                registerModel.RequirePassword = false;
             }
 
             return registerModel;
@@ -241,8 +251,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null)
             {
-                // participant = await this.AddNewParticipantToContestIfNotExists(contest!, model.IsOfficial, user.Id, userIsAdminOrLecturerInContest);
-
                 return new ContestParticipationServiceModel
                 {
                     IsActiveParticipant = false, IsRegisteredParticipant = false, Contest = null,
@@ -266,21 +274,27 @@ namespace OJS.Services.Ui.Business.Implementations
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
             var participationModel = participant!.Map<ContestParticipationServiceModel>();
+            participationModel.IsRegisteredParticipant = true;
+            participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
+            participationModel.IsActiveParticipant = true;
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
                 .GetAllForUserByContest(contest!.Id, user.Id)
                 .Select(x => (DateTime?)x.CreatedOn)
                 .Max();
-            // participationModel.LastSubmissionTime = lastSubmissionTime;
+            participationModel.LastSubmissionTime = lastSubmissionTime;
 
-            participationModel.Contest!.AllowedSubmissionTypes =
-                participationModel.Contest.AllowedSubmissionTypes.DistinctBy(st => st.Id);
-            // participationModel.ParticipantId = participant!.Id;
-            // participationModel.ContestIsCompete = model.IsOfficial;
-            // participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
-            //         participant.Id,
-            //         contest!.LimitBetweenSubmissions);
+            participationModel.Contest!.AllowedSubmissionTypes = participationModel
+                .Contest
+                .AllowedSubmissionTypes
+                .DistinctBy(st => st.Id);
+
+            participationModel.ParticipantId = participant!.Id;
+            participationModel.ContestIsCompete = model.IsOfficial;
+            participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
+                    participant.Id,
+                    contest!.LimitBetweenSubmissions);
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -290,12 +304,14 @@ namespace OJS.Services.Ui.Business.Implementations
                     participantsList);
 
             var isOfficialOnlineContest = model.IsOfficial && contest.IsOnlineExam;
-            participationModel.Contest.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
             if (!userIsAdminOrLecturerInContest && isOfficialOnlineContest)
             {
-                var problemsForParticipant = participant.ProblemsForParticipants.Select(x => x.Problem);
-                participationModel.Contest.Problems = problemsForParticipant.MapCollection<ContestProblemServiceModel>().ToList();
+                participationModel.Contest.Problems = participant
+                    .ProblemsForParticipants
+                    .Select(x => x.Problem)
+                    .MapCollection<ContestProblemServiceModel>()
+                    .ToList();
             }
 
             await participationModel.Contest.Problems.ForEachAsync(problem =>
@@ -309,9 +325,9 @@ namespace OJS.Services.Ui.Business.Implementations
             var participantsCount =
                 await this.contestParticipantsCacheService.GetParticipantsCountForContest(model.ContestId);
 
-            // participationModel.ParticipantsCount = model.IsOfficial
-            //     ? participantsCount.Official
-            //     : participantsCount.Practice;
+            participationModel.ParticipantsCount = model.IsOfficial
+                ? participantsCount.Official
+                : participantsCount.Practice;
 
             return participationModel;
         }

@@ -40,16 +40,16 @@ public class CompeteController : BaseApiController
     /// Starts a contest for the user. Creates participant and starts time counter.
     /// </summary>
     /// <param name="id">The id of the contest.</param>
-    /// <param name="official">Is the contest compete or practice.</param>
+    /// <param name="isOfficial">Is the contest compete or practice.</param>
     /// <returns>The new participant.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestParticipationServiceModel), Status200OK)]
-    public async Task<IActionResult> Index(int id, [FromQuery] bool official)
+    public async Task<IActionResult> Index(int id, [FromQuery] bool isOfficial)
         => await this.contestsBusiness
             .StartContestParticipation(new StartContestParticipationServiceModel
             {
                 ContestId = id,
-                IsOfficial = official,
+                IsOfficial = isOfficial,
             })
             .ToOkResult();
 
