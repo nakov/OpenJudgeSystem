@@ -471,6 +471,7 @@ interface IContestAdministration {
     allowedIps: string;
     numberOfProblemGroups: number;
     duration: string | undefined;
+    canBeCompeted: boolean;
 }
 
 interface ISubmissionsAdminGridViewType {
@@ -727,6 +728,10 @@ interface ILecturerInContestInListModel {
     contestName: string;
 }
 
+interface IContestActivity {
+    canBeCompeted: boolean;
+}
+
 interface ISettingInListModel {
     id: number;
     name: string;
@@ -815,6 +820,7 @@ export type {
     IUserInListModel,
     IUserAdministrationModel,
     ILecturerInContestInListModel,
+    IContestActivity,
     ISettingInListModel,
     ISettingAdministrationModel,
 };

@@ -10,6 +10,7 @@ import ViewRedirectButton from '../../../components/administration/common/edit/V
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
+import { useDeleteSubmissionMutation } from '../../../redux/services/admin/submissionsAdminService';
 
 const dataColumns: GridColDef[] = [
     {
@@ -128,7 +129,6 @@ const dataColumns: GridColDef[] = [
 ];
 
 export const returnSubmissionsNonFilterableColumns = (
-    deleteMutation: any,
     retest: Function,
     downloadClicked: Function,
     onSuccessFullyDelete:() => void,
@@ -158,7 +158,7 @@ export const returnSubmissionsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name="Submission"
                   text={`Are you sure that you want to delete submission #${params.row.id}?`}
-                  mutation={deleteMutation}
+                  mutation={useDeleteSubmissionMutation}
                   onSuccess={onSuccessFullyDelete}
                 />
 

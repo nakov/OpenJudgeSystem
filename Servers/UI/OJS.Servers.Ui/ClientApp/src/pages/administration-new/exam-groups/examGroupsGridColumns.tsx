@@ -6,6 +6,7 @@ import { EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteExamGroupMutation } from '../../../redux/services/admin/examGroupsAdminService';
 
 const examGroupsFilterableColumns: GridColDef[] = [
     {
@@ -64,10 +65,7 @@ const examGroupsFilterableColumns: GridColDef[] = [
     },
 ];
 
-export const returnExamGroupsNonFilterableColumns = (
-    onEditClick: Function,
-    deleteMutation: any,
-) => [
+export const returnExamGroupsNonFilterableColumns = (onEditClick: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -87,7 +85,7 @@ export const returnExamGroupsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text="Are you sure that you want to delete the exam group."
-                  mutation={deleteMutation}
+                  mutation={useDeleteExamGroupMutation}
                 />
             </div>
         ),

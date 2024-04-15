@@ -1,17 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { Box, FormControl, FormGroup, FormLabel, TextareaAutosize, TextField, Typography } from '@mui/material';
 
-import { CLASS_NAME, CREATE, DESCRIPTION, DLL_FILE, EDIT, ID, NAME, PARAMETER, RECORD } from '../../../../common/labels';
-import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
+import { CLASS_NAME, DESCRIPTION, DLL_FILE, ID, NAME, PARAMETER } from '../../../../common/labels';
 import { ICheckerAdministrationModel } from '../../../../common/types';
-import { CHECKERS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
-import { useCreateCheckerMutation, useDeleteCheckerMutation, useGetCheckerByIdQuery, useUpdateCheckerMutation } from '../../../../redux/services/admin/checkersAdminService';
+import { useCreateCheckerMutation, useGetCheckerByIdQuery, useUpdateCheckerMutation } from '../../../../redux/services/admin/checkersAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -23,7 +19,6 @@ interface ICheckerFormProps {
 
 const CheckerForm = (props: ICheckerFormProps) => {
     const { isEditMode = true, id = null } = props;
-    const navigate = useNavigate();
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
     const [ successfullMessage, setSuccessfullMessage ] = useState<string | null>(null);
     const [ checker, setChecker ] = useState<ICheckerAdministrationModel>({
@@ -89,37 +84,6 @@ const CheckerForm = (props: ICheckerFormProps) => {
                 : value,
         }));
     };
-
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <>
-                    <FormActionButton
-                      className={formStyles.buttonsWrapper}
-                      buttonClassName={formStyles.button}
-                      onClick={() => updateChecker(checker)}
-                      name={EDIT}
-                    />
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(id!)}
-                          name={RECORD}
-                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CHECKERS_PATH}`)}
-                          mutation={useDeleteCheckerMutation}
-                          text={DELETE_CONFIRMATION_MESSAGE}
-                        />
-                    </Box>
-                </>
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => createChecker(checker)}
-                  name={CREATE}
-                />
-            )
-    );
 
     if (isGettingChecker || isCreating || isUpdating) {
         <SpinningLoader />;
@@ -203,7 +167,11 @@ const CheckerForm = (props: ICheckerFormProps) => {
                         </FormControl>
                     </FormGroup>
                 </Box>
-                {renderFormSubmitButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => updateChecker(checker)}
+                  onEditClick={() => createChecker(checker)}
+                />
             </form>
         </>
     );
