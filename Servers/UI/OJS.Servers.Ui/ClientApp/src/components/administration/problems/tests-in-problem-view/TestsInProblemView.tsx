@@ -8,7 +8,7 @@ import { IGetAllAdminParams, ITestsUploadModel } from '../../../../common/types'
 import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import testsFilterableColums, { returnTestsNonFilterableColumns } from '../../../../pages/administration-new/tests/testsGridColumns';
-import { useDeleteByProblemMutation, useDeleteTestMutation, useExportZipQuery, useGetTestsByProblemIdQuery, useImportTestsMutation } from '../../../../redux/services/admin/testsAdminService';
+import { useDeleteByProblemMutation, useExportZipQuery, useGetTestsByProblemIdQuery, useImportTestsMutation } from '../../../../redux/services/admin/testsAdminService';
 import downloadFile from '../../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -17,6 +17,7 @@ import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import CreateButton from '../../common/create/CreateButton';
 import FileUpload from '../../common/file-upload/FileUpload';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
+import SubmitSolution from '../../common/submit-solution/SubmitSolution';
 import FormActionButton from '../../form-action-button/FormActionButton';
 import TestForm from '../../tests/test-form/TestForm';
 
@@ -26,10 +27,12 @@ import formStyles from '../../common/styles/FormStyles.module.scss';
 interface ITestsInProblemsViewProps {
     problemId: number;
     problemName: string;
+    contestId: number;
+    canBeCompeted: boolean;
 }
 
 const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
-    const { problemId, problemName } = props;
+    const { problemId, problemName, canBeCompeted, contestId } = props;
     const defaultStateForUploadTests = {
         deleteOldTests: true,
         retestProblem: false,
@@ -152,6 +155,8 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
                     <RiFolderZipFill style={{ width: '40px', height: '40px', color: 'rgb(25,118,210)' }} />
                 </IconButton>
             </Tooltip>
+
+            <SubmitSolution canBeCompeted={canBeCompeted} contestId={contestId} />
         </>
     );
 
@@ -277,7 +282,6 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               notFilterableGridColumnDef={
                 returnTestsNonFilterableColumns(
                     onEditClick,
-                    useDeleteTestMutation,
                     onSuccessDelete,
                 )
 }

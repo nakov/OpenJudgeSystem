@@ -5,7 +5,7 @@ import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import TestForm from '../../../components/administration/tests/test-form/TestForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteTestMutation, useGetAllAdminTestsQuery, useLazyExportTestsToExcelQuery } from '../../../redux/services/admin/testsAdminService';
+import { useGetAllAdminTestsQuery, useLazyExportTestsToExcelQuery } from '../../../redux/services/admin/testsAdminService';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -51,7 +51,6 @@ const AdministrationTestsPage = () => {
           notFilterableGridColumnDef={
                 returnTestsNonFilterableColumns(
                     onEditClick,
-                    useDeleteTestMutation,
                     onSuccessDelete,
                 )
 }

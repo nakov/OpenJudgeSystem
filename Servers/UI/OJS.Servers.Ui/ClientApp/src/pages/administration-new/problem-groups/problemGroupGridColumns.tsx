@@ -4,7 +4,7 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ProblemGroupTypes } from '../../../common/enums';
-import { EDIT, PROBLEM_GROUP } from '../../../common/labels';
+import { CREATED_ON, EDIT, MODIFIED_ON, PROBLEM_GROUP } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEM_GROUPS_PATH } from '../../../common/urls/administration-urls';
@@ -73,6 +73,22 @@ const filterableColumns: GridColDef[] = [
             return params.value.toString();
         },
     } as GridColDef & IEnumType,
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
 ];
 
 export const returnNonFilterableColumns = (onEditClick: Function) => [

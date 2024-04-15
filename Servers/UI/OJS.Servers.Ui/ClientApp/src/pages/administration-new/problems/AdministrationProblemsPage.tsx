@@ -3,11 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
-import CopyModal, { AllowedOperations } from '../../../components/administration/Problems/copy-modal/CopyModal';
-import ProblemForm from '../../../components/administration/Problems/problemForm/ProblemForm';
-import ProblemRetest from '../../../components/administration/Problems/retest/ProblemRetest';
+import CopyModal, { AllowedOperations } from '../../../components/administration/problems/copy/CopyModal';
+import ProblemForm from '../../../components/administration/problems/problem-form/ProblemForm';
+import ProblemRetest from '../../../components/administration/problems/retest/ProblemRetest';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteProblemMutation, useGetAllAdminProblemsQuery, useLazyExportProblemsToExcelQuery } from '../../../redux/services/admin/problemsAdminService';
+import { useGetAllAdminProblemsQuery, useLazyExportProblemsToExcelQuery } from '../../../redux/services/admin/problemsAdminService';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
@@ -106,7 +106,6 @@ const AdministrationProblemsPage = () => {
               notFilterableGridColumnDef={
                 returnProblemsNonFilterableColumns(
                     onEditClick,
-                    useDeleteProblemMutation,
                     openCopyModal,
                     openRetestModal,
                     retakeProblems,

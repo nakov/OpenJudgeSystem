@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, Button, Checkbox, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Checkbox, FormControl, FormControlLabel, MenuItem, TextField, Typography } from '@mui/material';
 
 import {
     IContestCategories,
     IContestCategoryAdministration,
-} from '../../../../common/types';
-import { CONTEST_CATEGORIES_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
+} from '../../../common/types';
 import {
     useCreateContestCategoryMutation,
-    useDeleteContestCategoryMutation,
     useGetCategoriesQuery,
     useGetContestCategoryByIdQuery, useUpdateContestCategoryByIdMutation,
-} from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
-import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
-import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
+} from '../../../redux/services/admin/contestCategoriesAdminService';
+import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
+import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
+import AdministrationFormButtons from '../common/administration-form-buttons/AdministrationFormButtons';
 
 import styles from './CategoryEdit.module.scss';
 
@@ -40,7 +37,6 @@ const initialState : IContestCategoryAdministration = {
 const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
     const { contestCategoryId, isEditMode = true } = props;
 
-    const navigate = useNavigate();
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
@@ -186,45 +182,6 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
         }
     };
 
-    const renderFormActionButtons = () => (
-        isEditMode
-            ? (
-                <>
-                    <div className={styles.buttonsWrapper}>
-                        <Button
-                          variant="contained"
-                          onClick={() => edit()}
-                          className={styles.button}
-                          disabled={!isValidForm}
-                        >
-                            Edit
-                        </Button>
-                    </div>
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(contestCategoryId!)}
-                          name={contestCategory.name}
-                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTEST_CATEGORIES_PATH}`)}
-                          mutation={useDeleteContestCategoryMutation}
-                          text="Are you sure that you want to delete the contest category?"
-                        />
-                    </Box>
-                </>
-            )
-            : (
-                <div className={styles.buttonsWrapper}>
-                    <Button
-                      variant="contained"
-                      onClick={() => create()}
-                      className={styles.button}
-                      disabled={!isValidForm}
-                    >
-                        Create
-                    </Button>
-                </div>
-            )
-
-    );
     return (
         isFetching || isLoading || isGettingCategories || isCreating || isUpdating
             ? <SpinningLoader />
@@ -294,7 +251,12 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                             </FormControl>
                         </Box>
                     </form>
-                    {renderFormActionButtons()}
+                    <AdministrationFormButtons
+                      isEditMode={isEditMode}
+                      onCreateClick={() => edit()}
+                      onEditClick={() => create()}
+                      disabled={!isValidForm}
+                    />
                 </div>
             )
     );

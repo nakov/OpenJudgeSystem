@@ -5,9 +5,9 @@ import { useSearchParams } from 'react-router-dom';
 import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
-import CategoryEdit from '../../../components/administration/ContestCategories/CategoryEdit/CategoryEdit';
+import CategoryEdit from '../../../components/administration/contest-categories/CategoryEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteContestCategoryMutation, useGetAllAdminContestCategoriesQuery, useLazyExportContestCategoriesToExcelQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
+import { useGetAllAdminContestCategoriesQuery, useLazyExportContestCategoriesToExcelQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -77,7 +77,7 @@ const AdministrationContestCategoriesPage = () => {
           data={data}
           error={error}
           filterableGridColumnDef={categoriesFilterableColumns}
-          notFilterableGridColumnDef={returnCategoriesNonFilterableColumns(onEditClick, useDeleteContestCategoryMutation)}
+          notFilterableGridColumnDef={returnCategoriesNonFilterableColumns(onEditClick)}
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}

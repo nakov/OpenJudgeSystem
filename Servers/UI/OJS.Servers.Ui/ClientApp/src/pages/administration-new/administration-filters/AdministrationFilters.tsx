@@ -34,6 +34,12 @@ interface IAdministrationFilterProps {
     setQueryParams?: Dispatch<React.SetStateAction<IGetAllAdminParams>>;
 }
 
+interface IAdministrationSorter {
+    columnName: string;
+    orderBy: SortingEnum;
+    availableColumns: string[];
+}
+
 interface IAdministrationFilter {
     column: string;
     operator: string;
@@ -62,15 +68,14 @@ const DROPDOWN_OPERATORS = {
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Not Equals', value: 'notequals' },
     ],
     [FilterColumnTypeEnum.DATE]: [
-        { name: 'Equals', value: 'equals' },
+        // Commented because it is not working
+        // { name: 'Equals', value: 'equals' },
         { name: 'Greater Than', value: 'greaterthan' },
         { name: 'Less Than', value: 'lessthan' },
         { name: 'Less Than Or Equal', value: 'lessthanorequal' },
         { name: 'Greater Than Or Equal', value: 'greaterthanorequal' },
-        { name: 'Not Equals', value: 'notequals' },
     ],
 };
 
@@ -833,10 +838,15 @@ const applyQueryParam = (
     return valueToReturn;
 };
 
+const mapGridColumnsToAdministrationSortingProps =
+    (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName?.replace(/\s/g, '') ?? '').filter((el) => el);
+
 export {
     type IAdministrationFilter,
+    type IAdministrationSorter,
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
+    mapGridColumnsToAdministrationSortingProps,
     mapFilterParamsToQueryString,
     mapUrlToFilters,
     mapUrlToSorters,

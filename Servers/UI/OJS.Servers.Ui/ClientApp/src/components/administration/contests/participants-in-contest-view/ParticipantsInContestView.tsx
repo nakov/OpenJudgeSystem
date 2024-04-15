@@ -6,7 +6,7 @@ import {
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import participantsFilteringColumns, { returnparticipantsNonFilterableColumns } from '../../../../pages/administration-new/participants/participantsGridColumns';
-import { useDeleteParticipantMutation, useGetByContestIdQuery } from '../../../../redux/services/admin/participantsAdminService';
+import { useGetByContestIdQuery } from '../../../../redux/services/admin/participantsAdminService';
 import CreateButton from '../../common/create/CreateButton';
 import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
 import ParticipantForm from '../../participants/form/ParticipantForm';
@@ -55,7 +55,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
               data={data}
               error={error}
               filterableGridColumnDef={participantsFilteringColumns}
-              notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(useDeleteParticipantMutation, refetch)}
+              notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(refetch)}
               queryParams={queryParams}
               renderActionButtons={renderActions}
               modals={[

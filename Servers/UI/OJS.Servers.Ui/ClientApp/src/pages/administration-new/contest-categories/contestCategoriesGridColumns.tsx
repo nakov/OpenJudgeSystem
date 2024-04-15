@@ -3,7 +3,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import { IconButton } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
+import { useDeleteContestCategoryMutation } from '../../../redux/services/admin/contestCategoriesAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const categoriesFilterableColumns: GridColDef[] = [
@@ -15,6 +17,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         width: 10,
         type: 'number',
         filterable: false,
+        align: 'center',
         sortable: false,
         valueFormatter: (params) => params.value.toString(),
     },
@@ -25,6 +28,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         type: 'boolean',
         flex: 0,
         filterable: false,
+        align: 'center',
         sortable: false,
     },
     {
@@ -34,6 +38,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         type: 'boolean',
         flex: 0,
         filterable: false,
+        align: 'center',
         sortable: false,
     },
     {
@@ -43,6 +48,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         width: 200,
         flex: 2,
         type: 'string',
+        align: 'center',
         filterable: false,
         sortable: false,
     },
@@ -51,7 +57,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         headerName: 'Order By',
         headerAlign: 'center',
         flex: 0.5,
-        align: 'left',
+        align: 'center',
         type: 'number',
         filterable: false,
         sortable: false,
@@ -60,6 +66,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         field: 'parent',
         headerName: 'Parent',
         headerAlign: 'center',
+        align: 'center',
         width: 150,
         flex: 2,
         type: 'string',
@@ -70,6 +77,7 @@ const categoriesFilterableColumns: GridColDef[] = [
         field: 'parentId',
         headerName: 'Parent Id',
         headerAlign: 'center',
+        align: 'center',
         width: 150,
         flex: 2,
         type: 'number',
@@ -77,47 +85,36 @@ const categoriesFilterableColumns: GridColDef[] = [
         sortable: false,
     },
     {
-        field: 'createdOn',
-        headerName: 'Created On',
-        headerAlign: 'center',
-        width: 105,
-        flex: 1,
-        align: 'left',
-        type: 'date',
-        filterable: false,
-        sortable: false,
-        valueFormatter: (params) => adminFormatDate(params.value),
-    },
-    {
         field: 'deletedOn',
         headerName: 'Deleted On',
         headerAlign: 'center',
         width: 105,
         flex: 1,
-        align: 'left',
+        align: 'center',
         type: 'date',
         filterable: false,
         sortable: false,
         valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
-        field: 'modifiedOn',
-        headerName: 'Modified On',
-        headerAlign: 'center',
-        width: 105,
-        flex: 1,
-        align: 'left',
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
         type: 'date',
+        flex: 0,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
     },
 ];
 
-export const returnCategoriesNonFilterableColumns = (
-    onEditClick: Function,
-    deleteMutation: any,
-) => [
+export const returnCategoriesNonFilterableColumns = (onEditClick: Function) => [
     {
         field: 'actions',
         headerName: 'Actions',
@@ -135,7 +132,7 @@ export const returnCategoriesNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text="Are you sure that you want to delete the contest category?"
-                  mutation={deleteMutation}
+                  mutation={useDeleteContestCategoryMutation}
                 />
             </div>
         ),

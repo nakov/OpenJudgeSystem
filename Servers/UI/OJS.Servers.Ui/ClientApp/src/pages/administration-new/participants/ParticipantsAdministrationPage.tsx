@@ -6,7 +6,7 @@ import CreateButton from '../../../components/administration/common/create/Creat
 import AdministrationModal from '../../../components/administration/common/modals/administration-modal/AdministrationModal';
 import ParticipantForm from '../../../components/administration/participants/form/ParticipantForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteParticipantMutation, useGetAllParticipantsQuery, useLazyExportParticipantsToExcelQuery } from '../../../redux/services/admin/participantsAdminService';
+import { useGetAllParticipantsQuery, useLazyExportParticipantsToExcelQuery } from '../../../redux/services/admin/participantsAdminService';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -58,7 +58,7 @@ const ParticipantsAdministrationPage = () => {
     return (
         <AdministrationGridView
           filterableGridColumnDef={participantsFilteringColumns}
-          notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(useDeleteParticipantMutation, retakeParticipants)}
+          notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(retakeParticipants)}
           data={participantsData}
           error={error}
           queryParams={queryParams}

@@ -2,27 +2,22 @@
 /* eslint-disable no-case-declarations */
 /* eslint-disable no-undefined */
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Autocomplete, Box, FormControl, MenuItem, TextField, Typography } from '@mui/material';
+import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
-import { CREATE, EDIT, RECORD } from '../../../../common/labels';
-import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import {
     IContestAutocomplete,
     IContestCategories,
     IExamGroupAdministration,
 } from '../../../../common/types';
-import { EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import {
-    useCreateExamGroupMutation, useDeleteExamGroupMutation, useGetExamGroupByIdQuery,
+    useCreateExamGroupMutation, useGetExamGroupByIdQuery,
     useUpdateExamGroupMutation,
 } from '../../../../redux/services/admin/examGroupsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
-import DeleteButton from '../../common/delete/DeleteButton';
-import FormActionButton from '../../form-action-button/FormActionButton';
+import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 
 // eslint-disable-next-line css-modules/no-unused-class
 import formStyles from '../../common/styles/FormStyles.module.scss';
@@ -36,7 +31,6 @@ interface IExamGroupEditProps {
 const ExamGroupEdit = (props:IExamGroupEditProps) => {
     const { examGroupId, isEditMode = true, getContestId } = props;
 
-    const navigate = useNavigate();
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
@@ -195,37 +189,6 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
         }
     };
 
-    const renderFormSubmitButtons = () => (
-        isEditMode
-            ? (
-                <>
-                    <FormActionButton
-                      className={formStyles.buttonsWrapper}
-                      buttonClassName={formStyles.button}
-                      onClick={() => edit()}
-                      name={EDIT}
-                    />
-                    <Box sx={{ alignSelf: 'flex-end' }}>
-                        <DeleteButton
-                          id={Number(examGroupId!)}
-                          name={RECORD}
-                          onSuccess={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${EXAM_GROUPS_PATH}`)}
-                          mutation={useDeleteExamGroupMutation}
-                          text={DELETE_CONFIRMATION_MESSAGE}
-                        />
-                    </Box>
-                </>
-            )
-            : (
-                <FormActionButton
-                  className={formStyles.buttonsWrapper}
-                  buttonClassName={formStyles.button}
-                  onClick={() => create()}
-                  name={CREATE}
-                />
-            )
-    );
-
     if (isFetching || isLoading || isUpdating || isCreating) {
         return <SpinningLoader />;
     }
@@ -281,7 +244,12 @@ const ExamGroupEdit = (props:IExamGroupEditProps) => {
                       )}
                     />
                 </FormControl>
-                {renderFormSubmitButtons()}
+                <AdministrationFormButtons
+                  isEditMode={isEditMode}
+                  onCreateClick={() => create()}
+                  onEditClick={() => edit()}
+                  disabled={!isValidForm}
+                />
             </form>
         </>
     );

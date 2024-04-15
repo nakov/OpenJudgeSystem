@@ -3,8 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useDeleteSubmissionMutation,
-    useDownloadFileSubmissionQuery,
+import { useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
     useLazyExportSubmissionsToExcelQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
@@ -82,7 +81,7 @@ const AdministrationSubmissionsPage = () => {
               error={error}
               filterableGridColumnDef={dataColumns}
               notFilterableGridColumnDef={
-                returnSubmissionsNonFilterableColumns(useDeleteSubmissionMutation, retest, startDownload, retakeSubmissions)
+                returnSubmissionsNonFilterableColumns(retest, startDownload, retakeSubmissions)
             }
               queryParams={queryParams}
               setQueryParams={setQueryParams}

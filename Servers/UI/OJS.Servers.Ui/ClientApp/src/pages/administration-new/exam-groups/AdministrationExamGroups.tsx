@@ -8,7 +8,6 @@ import AdministrationModal from '../../../components/administration/common/modal
 import ExamGroupEdit from '../../../components/administration/exam-groups/exam-group-edit/ExamGroupEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import {
-    useDeleteExamGroupMutation,
     useGetAllAdminExamGroupsQuery,
     useLazyExportExamGroupsToExcelQuery,
 } from '../../../redux/services/admin/examGroupsAdminService';
@@ -77,7 +76,7 @@ const AdministrationExamGroupsPage = () => {
           data={data}
           error={error}
           filterableGridColumnDef={examGroupsFilterableColumns}
-          notFilterableGridColumnDef={returnExamGroupsNonFilterableColumns(onEditClick, useDeleteExamGroupMutation)}
+          notFilterableGridColumnDef={returnExamGroupsNonFilterableColumns(onEditClick)}
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}

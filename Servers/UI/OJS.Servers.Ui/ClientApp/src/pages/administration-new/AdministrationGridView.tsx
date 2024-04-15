@@ -9,12 +9,11 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
-import LegendBox from '../../components/administration/common/legendBox/LegendBox';
+import LegendBox from '../../components/administration/common/legend-box/LegendBox';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
-import AdministrationFilters, { addDefaultFilter, IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToSorters } from './administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps } from './administration-sorting/AdministrationSorting';
+import AdministrationFilters, { addDefaultFilter, IAdministrationFilter, IAdministrationSorter, mapGridColumnsToAdministrationFilterProps, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from './administration-filters/AdministrationFilters';
 
 import styles from './AdministrationStyles.module.scss';
 
@@ -159,6 +158,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                                   columnVisibilityModel: {
                                       isDeleted: false,
                                       isVisible: false,
+                                      createdOn: false,
+                                      modifiedOn: false,
                                   },
                               },
                               pagination: {

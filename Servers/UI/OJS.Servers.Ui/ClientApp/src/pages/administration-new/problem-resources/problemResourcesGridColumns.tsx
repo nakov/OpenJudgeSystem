@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ProblemResourceType } from '../../../common/enums';
-import { PROBLEM_RESOURCE } from '../../../common/labels';
+import { CREATED_ON, MODIFIED_ON, PROBLEM_RESOURCE } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
@@ -112,6 +112,22 @@ const problemResourceFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
     },
 ];
 

@@ -6,13 +6,14 @@ import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ProblemGroupTypes } from '../../../common/enums';
-import { EDIT } from '../../../common/labels';
+import { CREATED_ON, EDIT, MODIFIED_ON } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteProblemMutation } from '../../../redux/services/admin/problemsAdminService';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemFilterableColums: GridColDef[] = [
@@ -116,11 +117,26 @@ const problemFilterableColums: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
     },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
 ];
 
 export const returnProblemsNonFilterableColumns = (
     onEditClick: Function,
-    deleteMutation: any,
     onCopyProblem?: Function,
     retestProblem?: Function,
     onDeleteSuccess?:() => void,
@@ -141,7 +157,7 @@ export const returnProblemsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteProblemMutation}
                   onSuccess={onDeleteSuccess}
                 />
                 {retestProblem && (

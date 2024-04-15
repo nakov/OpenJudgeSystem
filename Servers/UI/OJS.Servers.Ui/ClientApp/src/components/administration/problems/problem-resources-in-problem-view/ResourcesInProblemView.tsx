@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-import AdministrationGridView from '../../../../../pages/administration-new/AdministrationGridView';
-import problemResourceFilterableColumns, { returnProblemResourceNonFilterableColumns } from '../../../../../pages/administration-new/problem-resources/problemResourcesGridColumns';
-import { useGetResourcesQuery } from '../../../../../redux/services/admin/problemsAdminService';
-import SpinningLoader from '../../../../guidelines/spinning-loader/SpinningLoader';
-import CreateButton from '../../../common/create/CreateButton';
-import AdministrationModal from '../../../common/modals/administration-modal/AdministrationModal';
-import ProblemResourceForm from '../../../problem-resources/problem-resource-form/ProblemResourceForm';
+import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import problemResourceFilterableColumns, { returnProblemResourceNonFilterableColumns } from '../../../../pages/administration-new/problem-resources/problemResourcesGridColumns';
+import { useGetResourcesQuery } from '../../../../redux/services/admin/problemsAdminService';
+import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
+import CreateButton from '../../common/create/CreateButton';
+import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
+import ProblemResourceForm from '../../problem-resources/problem-resource-form/ProblemResourceForm';
 
 interface IResourceInproblemViewProps {
 problemId: number;
