@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ISubmissionDetailsType, ISubmissionResults, ITestRunType } from '../hooks/submissions/types';
+import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/submissions/types';
 import { IErrorDataType } from '../hooks/use-http';
 import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
 import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
@@ -85,7 +85,7 @@ interface IPublicSubmission {
     isCompiledSuccessfully: boolean;
     maxMemoryUsed: number;
     maxTimeUsed: number;
-    testRuns: ITestRunType[];
+    testRuns: ITestRun[];
     processed: boolean;
 }
 
@@ -465,6 +465,7 @@ interface IContestAdministration {
     allowedIps: string;
     numberOfProblemGroups: number;
     duration: string | undefined;
+    canBeCompeted: boolean;
 }
 
 interface ISubmissionsAdminGridViewType {
@@ -576,6 +577,8 @@ interface IProblemSubmissionType{
     id: number;
     name: string;
     solutionSkeleton: string | null;
+    timeLimit: number | null;
+    memoryLimit: number | null;
 }
 
 interface IIndexExamGroupsType {
@@ -711,6 +714,10 @@ interface ILecturerInContestInListModel {
     contestName: string;
 }
 
+interface IContestActivity {
+    canBeCompeted: boolean;
+}
+
 interface ISettingInListModel {
     id: number;
     name: string;
@@ -799,6 +806,7 @@ export type {
     IUserInListModel,
     IUserAdministrationModel,
     ILecturerInContestInListModel,
+    IContestActivity,
     ISettingInListModel,
     ISettingAdministrationModel,
 };

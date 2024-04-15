@@ -187,6 +187,10 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         };
     }
 
+    public async Task<ContestActivityModel> GetContestActivity(int contestId) =>
+        this.activityService.GetContestActivity(await this.contestsData.GetByIdQuery(contestId)
+            .MapCollection<ContestForActivityServiceModel>().FirstAsync()).Map<ContestActivityModel>();
+
     public override async Task<ContestAdministrationModel> Get(int id)
         => await this.contestsData.GetByIdWithProblems(id).Map<ContestAdministrationModel>();
 

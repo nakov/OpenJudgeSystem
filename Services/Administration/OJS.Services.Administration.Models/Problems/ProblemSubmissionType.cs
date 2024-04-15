@@ -13,6 +13,10 @@ public class ProblemSubmissionType : IMapExplicitly
 
     public string? SolutionSkeleton { get; set; }
 
+    public int? TimeLimit { get; set; }
+
+    public int? MemoryLimit { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<SubmissionTypeInProblem, ProblemSubmissionType>()
             .ForMember(pam => pam.Id, opt

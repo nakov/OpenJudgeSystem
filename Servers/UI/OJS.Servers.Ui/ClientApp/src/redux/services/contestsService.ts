@@ -70,5 +70,6 @@ export const {
     useGetContestCategoriesQuery,
     useGetContestStrategiesQuery,
     useGetContestByIdQuery,
+    useLazyGetContestByIdQuery,
     useLazyGetContestsParticipationsForUserQuery,
 } = contestsService;

@@ -18,6 +18,10 @@ interface ITestRunType {
     expectedOutputFragment: string;
     userOutputFragment: string;
     orderBy: number;
+    input: string;
+    isTrialTest: boolean;
+    showInput: boolean;
+    testId: number;
 }
 
 interface ISubmissionType {
@@ -41,6 +45,9 @@ interface ISubmissionType {
     processingComment: string;
     completedExecutionOn?: Date;
     contestId:number;
+    memoryLimit: number;
+    user: IUserProfileType;
+    isEligibleForRetest: boolean;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
@@ -116,6 +123,23 @@ interface IUserAuthData {
     userName: string;
 }
 
+interface ITestRun {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
+    expectedOutputFragment: string;
+    userOutputFragment: string;
+    isTrialTest: boolean;
+    input: string;
+    orderBy: number;
+    showInput: boolean;
+    testId: number;
+}
+
 export type {
     IProblemType,
     ITestRunType,
@@ -128,4 +152,5 @@ export type {
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
+    ITestRun,
 };
