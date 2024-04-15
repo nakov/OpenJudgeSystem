@@ -11,6 +11,9 @@ export const CHECKER = 'Checker';
 
 export const DOWNLOAD = 'Download';
 
+export const CREATED_ON = 'Created On';
+export const MODIFIED_ON = 'Modified On';
+
 export const USERS = 'Users';
 
 export const VIEW = 'View';

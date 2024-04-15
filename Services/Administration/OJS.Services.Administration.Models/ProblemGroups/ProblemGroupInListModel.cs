@@ -1,8 +1,9 @@
 ﻿namespace OJS.Services.Administration.Models.ProblemGroups;
 
+using AutoMapper;
 using OJS.Data.Models.Problems;
 using SoftUni.AutoMapper.Infrastructure.Models;
-using AutoMapper;
+using System;
 
 public class ProblemGroupInListModel : IMapExplicitly
 {
@@ -15,6 +16,10 @@ public class ProblemGroupInListModel : IMapExplicitly
     public double OrderBy { get; set; }
 
     public string? Type { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<ProblemGroup, ProblemGroupInListModel>()
