@@ -2,6 +2,7 @@
 
 using OJS.Data.Models.Checkers;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 
 public class CheckerInListModel : IMapFrom<Checker>
 {
@@ -16,4 +17,8 @@ public class CheckerInListModel : IMapFrom<Checker>
     public string? Parameter { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
 }

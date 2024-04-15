@@ -25,6 +25,10 @@ public class UserInListModel : IMapExplicitly
 
     public int Age { get; set; }
 
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<UserProfile, UserInListModel>()
             .ForMember(uilm => uilm.Age, opt
