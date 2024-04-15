@@ -8,7 +8,7 @@
 .submissionsDetailsWrapper {
   @extend %font-family-normal;
 
-  padding: spacings.$sp-16 spacings.$sp-32;
+  padding: spacings.$sp-16 spacings.$sp-64;
 
   .submissionTitle {
     font-size: variables.$f-size-30;
@@ -35,7 +35,7 @@
     display: flex;
 
     .innerBodyWrapper {
-      width: 100%;
+      width: 95%;
 
       a {
         color: colors.$primary-blue;
@@ -59,7 +59,10 @@
 
       div:first-child {
         font-weight: font-weights.$font-weight-bold;
-        margin-bottom: spacings.$sp-18;
+      }
+
+      div:nth-child(2) {
+        margin-top: spacings.$sp-18;
       }
     }
 
@@ -72,6 +75,10 @@
       justify-content: space-between;
       margin-top: spacings.$sp-24;
       padding: spacings.$sp-24 spacings.$sp-32;
+
+      button {
+        margin-left: spacings.$sp-12;
+      }
     }
 
     .submissionInQueueWrapper {
@@ -88,6 +95,7 @@
       > div {
         font-size: variables.$f-size-30;
         font-weight: font-weights.$font-weight-semi-bold;
+        margin-bottom: spacings.$sp-18;
       }
 
       section {
@@ -125,8 +133,8 @@
 
       .buttonWrapper {
         display: flex;
-        justify-content: flex-end;
-        margin-top: spacings.$sp-16;
+        justify-content: flex-start;
+        margin-bottom: spacings.$sp-16;
       }
     }
   }
@@ -136,9 +144,8 @@
   align-self: center;
   background-color: colors.$primary-green;
   border-radius: border-radiuses.$br-6;
-  margin-top: spacings.$sp-24;
+  margin: spacings.$sp-24 0;
   padding: spacings.$sp-24 spacings.$sp-32;
-  width: 90%;
 }
 
 .solutionDownloadFileErrorWrapper {

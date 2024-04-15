@@ -3,6 +3,7 @@
 using AutoMapper;
 using OJS.Data.Models.Submissions;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 
 public class SubmissionInListModel : IMapExplicitly
 {
@@ -29,6 +30,10 @@ public class SubmissionInListModel : IMapExplicitly
     public bool IsDeleted { get; set; }
 
     public bool IsBinaryFile { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Submission, SubmissionInListModel>()

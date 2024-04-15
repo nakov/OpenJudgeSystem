@@ -5,7 +5,7 @@
 
 .testRunWrapper {
   margin: spacings.$sp-18 0;
-  padding: spacings.$sp-12;
+  padding: spacings.$sp-12 spacings.$sp-24;
 
   .testRunTitleWrapper {
     align-items: center;
@@ -21,43 +21,51 @@
       margin-left: spacings.$sp-32;
     }
 
-    .timeAndMemoryWrapper {
+    .testDetailsAndMemoryWrapper {
+      align-items: center;
       display: flex;
 
       .testRunIdWrapper {
-        font-size: variables.$f-size-16;
+        color: #868686ff;
+        font-size: variables.$f-size-14;
         margin-left: spacings.$sp-12;
         text-decoration: underline;
-        color: #868686FF;
 
         &:visited {
-          color: #868686FF;
+          color: #868686ff;
         }
       }
 
-      span:first-child {
-        margin-right: spacings.$sp-16;
-      }
-
-      span {
-        align-items: center;
-        cursor: pointer;
+      .timeAndMemoryWrapper {
         display: flex;
+        justify-content: space-between;
+        width: 200px;
+
+        span:first-child {
+          margin-right: spacings.$sp-16;
+        }
 
         span {
           align-items: center;
+          cursor: pointer;
           display: flex;
-        }
-      }
 
-      svg:first-child {
-        margin: 0 spacings.$sp-8;
+          span {
+            align-items: center;
+            display: flex;
+          }
+        }
+
+        svg:first-child {
+          margin: 0 spacings.$sp-8;
+        }
       }
     }
   }
 
   .inputWrapper {
-    margin: spacings.$sp-18 0;
+    margin-bottom: spacings.$sp-18;
+    margin-top: spacings.$sp-8;
     padding: spacings.$sp-12;
   }
 

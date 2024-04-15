@@ -3,13 +3,14 @@ import { FaCloudDownloadAlt } from 'react-icons/fa';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME } from '../../../common/labels';
+import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATED_ON, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, MODIFIED_ON, NAME } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import AdministrationGridDropdown from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
+import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const contestFilterableColumns: GridColDef[] = [
@@ -117,11 +118,26 @@ const contestFilterableColumns: GridColDef[] = [
         filterable: false,
         sortable: false,
     },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
 ];
 
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
-    deleteMutation: any,
     onSuccessDelete: () => void,
     onMoreClick: Function,
     onDownloadSubmissionClick: Function,
@@ -142,7 +158,7 @@ export const returnContestsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name={params.row.name}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                  mutation={deleteMutation}
+                  mutation={useDeleteContestMutation}
                   onSuccess={onSuccessDelete}
                 />
                 <AdministrationGridDropdown

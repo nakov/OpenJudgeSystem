@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Box, IconButton, Slide, Tooltip } from '@mui/material';
@@ -9,7 +9,7 @@ import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { ACTION_NOT_ALLOWED_MESSAGE } from '../../common/messages';
 import { ExceptionData, IGetAllAdminParams, IPagedResultType } from '../../common/types';
 import ExportExcel from '../../components/administration/common/export-excel/ExportExcel';
-import LegendBox from '../../components/administration/common/legendBox/LegendBox';
+import LegendBox from '../../components/administration/common/legend-box/LegendBox';
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
@@ -71,6 +71,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         return '';
     };
 
+    const [ opened, setOpened ] = useState<string | null>(null);
+
     const renderActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
             {renderActionButtons
@@ -104,6 +106,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setFilterStateAction}
                       selectedFilters={selectedFilters}
                       columns={filtersColumns}
+                      isSortersOpened={opened === 'sorters'}
+                      setOpenedFilters={setOpened}
                     />
 
                     <AdministrationSorting
@@ -113,6 +117,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       setStateAction={setSorterStateAction}
                       selectedSorters={selectedSorters}
                       columns={sortingColumns}
+                      isFiltersOpened={opened === 'filters'}
+                      setOpenedSorters={setOpened}
                     />
                 </div>
                 )}
@@ -154,6 +160,8 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                                   columnVisibilityModel: {
                                       isDeleted: false,
                                       isVisible: false,
+                                      createdOn: false,
+                                      modifiedOn: false,
                                   },
                               },
                               pagination: {

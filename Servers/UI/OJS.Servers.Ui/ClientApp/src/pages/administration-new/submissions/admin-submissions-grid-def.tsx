@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { VIEW } from '../../../common/labels';
+import { CREATED_ON, MODIFIED_ON, VIEW } from '../../../common/labels';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
+import { useDeleteSubmissionMutation } from '../../../redux/services/admin/submissionsAdminService';
 
 const dataColumns: GridColDef[] = [
     {
@@ -109,10 +110,25 @@ const dataColumns: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
     },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 0,
+        filterable: false,
+        sortable: false,
+    },
 ];
 
 export const returnSubmissionsNonFilterableColumns = (
-    deleteMutation: any,
     retest: Function,
     downloadClicked: Function,
     onSuccessFullyDelete:() => void,
@@ -142,7 +158,7 @@ export const returnSubmissionsNonFilterableColumns = (
                   id={Number(params.row.id)}
                   name="Submission"
                   text={`Are you sure that you want to delete submission #${params.row.id}?`}
-                  mutation={deleteMutation}
+                  mutation={useDeleteSubmissionMutation}
                   onSuccess={onSuccessFullyDelete}
                 />
 

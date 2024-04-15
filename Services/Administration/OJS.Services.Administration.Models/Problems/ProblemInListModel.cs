@@ -1,9 +1,11 @@
 ﻿namespace OJS.Services.Administration.Models.Problems;
 
-using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
 using OJS.Data.Models.Problems;
+using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
 using System.Linq;
+
 public class ProblemInListModel : IMapExplicitly
 {
     public int Id { get; set; }
@@ -26,6 +28,10 @@ public class ProblemInListModel : IMapExplicitly
     public short MaximumPoints { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Problem, ProblemInListModel>()

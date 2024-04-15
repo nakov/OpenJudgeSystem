@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IContestAdministration, IContestAutocomplete, IFileModel, IGetAllAdminParams,
+import { IContestActivity, IContestAdministration, IContestAutocomplete, IFileModel, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
@@ -85,6 +85,11 @@ export const contestService = createApi({
             }),
             keepUnusedDataFor: 0,
         }),
+
+        getContestActivity: builder.query<IContestActivity, number>({
+            query: (id) => ({ url: `/Activity?contestId=${id}` }),
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 
@@ -98,5 +103,6 @@ export const {
     useDownloadSubmissionsMutation,
     useGetContestAutocompleteQuery,
     useLazyExportContestsToExcelQuery,
+    useGetContestActivityQuery,
 } = contestService;
 export default contestService;
