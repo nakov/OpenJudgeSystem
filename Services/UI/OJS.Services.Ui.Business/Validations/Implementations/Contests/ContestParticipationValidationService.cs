@@ -70,7 +70,6 @@ public class ContestParticipationValidationService : IContestParticipationValida
         if (contest.IsOnlineExam &&
             official &&
             !userIsAdminOrLecturerInContest &&
-            user != null &&
             !this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, user.Id).GetAwaiter().GetResult())
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam);
