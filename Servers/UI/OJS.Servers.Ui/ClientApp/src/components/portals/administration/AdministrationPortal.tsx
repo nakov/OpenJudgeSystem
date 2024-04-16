@@ -309,7 +309,7 @@ const AdministrationPortal = () => {
         },
         {
             path: `${PROBLEMS_PATH}/:id`,
-            Element: AdministrationRole,
+            Element: AdministrationProblem,
             visibleOnlyForAdmin: false,
         },
         {

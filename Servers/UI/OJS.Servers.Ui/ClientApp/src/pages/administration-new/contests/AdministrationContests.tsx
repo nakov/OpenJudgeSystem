@@ -61,14 +61,6 @@ const AdministrationContestsPage = () => {
         setContestId(id);
     };
 
-    // useEffect(() => {
-    //     setQueryParams((currentParams) => ({
-    //         ...currentParams,
-    //         filter: searchParams.get('filter') ?? '',
-    //         sorting: searchParams.get('sorting') ?? '',
-    //     }));
-    // }, [ searchParams ]);
-
     useEffect(() => {
         if (isSuccessfullyDownloaded) {
             if (file) {
