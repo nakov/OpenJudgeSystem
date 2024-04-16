@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,6 +37,7 @@ const ContestRegister = () => {
         shouldConfirmParticipation,
         duration,
         numberOfProblems,
+        isRegisteredSuccessfully,
     } = data || {};
 
     useEffect(() => {
@@ -46,17 +47,10 @@ const ContestRegister = () => {
     }, [ shouldConfirmParticipation ]);
 
     useEffect(() => {
-        if (!shouldConfirmParticipation && hasAcceptedOnlineModal && !requirePassword) {
+        if (!isLoading && isRegisteredSuccessfully) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
-    }, [
-        shouldConfirmParticipation,
-        hasAcceptedOnlineModal,
-        requirePassword,
-        contestId,
-        participationType,
-        navigate,
-    ]);
+    }, [ isLoading, isRegisteredSuccessfully ]);
 
     const renderContestRegisterBody = useCallback(() => {
         if (shouldConfirmParticipation && !hasAcceptedOnlineModal) {

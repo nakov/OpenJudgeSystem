@@ -86,7 +86,7 @@ const ClientPortal = () => {
             Element: ContestDetailsPage,
         },
         {
-            path: '/contests/register/:contestId',
+            path: '/contests/register/:contestId/:participationType',
             Element: ContestRegister,
         },
         {

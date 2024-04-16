@@ -62,7 +62,9 @@ const Page = ({ children }: IHaveChildrenProps) => {
 
 const asPage = (ComponentToWrap: FC) => (props: any) => {
     if (!isPathInAllowedRoutes(window.location.pathname)) {
-        return <NotFoundPage />;
+        if (!window.location.pathname.includes('/contests/register')) {
+            return <NotFoundPage />;
+        }
     }
 
     return (
