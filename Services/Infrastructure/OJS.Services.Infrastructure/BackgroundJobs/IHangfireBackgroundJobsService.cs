@@ -6,7 +6,7 @@ namespace OJS.Services.Infrastructure.BackgroundJobs
 
     public interface IHangfireBackgroundJobsService : IService
     {
-        object AddFireAndForgetJob<T>(Expression<Action<T>> methodCall);
+        object AddFireAndForgetJob<T>(Expression<Action<T>> methodCall, string queueName);
 
         /// <summary>
         /// A method that adds or updates a recurring job.

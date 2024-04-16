@@ -248,7 +248,7 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectTests => new
-                PythonProjectUnitTestsExecutionStrategySettings(
+                PythonProjectTestsExecutionStrategySettings(
                     this.settings.PythonBaseTimeUsedInMilliseconds,
                     this.settings.PythonBaseMemoryUsedInBytes,
                     this.settings.PythonExecutablePath)

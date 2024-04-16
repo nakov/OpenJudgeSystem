@@ -89,9 +89,10 @@
                 userIdRegex.Replace(createdDbConnectionString, $"User Id={this.RestrictedUserId};");
 
             createdDbConnectionString =
-                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
+                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword};");
 
-            createdDbConnectionString += $";Database={databaseName};Pooling=False;";
+            createdDbConnectionString += createdDbConnectionString.EndsWith(';') ? string.Empty : ";";
+            createdDbConnectionString += $"Database={databaseName};Pooling=False;";
 
             return createdDbConnectionString;
         }

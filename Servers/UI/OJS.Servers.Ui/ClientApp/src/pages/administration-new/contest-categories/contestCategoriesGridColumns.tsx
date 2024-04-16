@@ -103,7 +103,6 @@ const categoriesFilterableColumns: GridColDef[] = [
         flex: 1,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
@@ -112,7 +111,6 @@ const categoriesFilterableColumns: GridColDef[] = [
         flex: 1,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 
