@@ -10,7 +10,7 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import MyProfileSvg from '../../assets/my-profile.svg';
 import { useSearch } from '../../hooks/use-search';
 import useTheme from '../../hooks/use-theme';
-import { resetInInternalUser, setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { resetInInternalUser, setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
@@ -24,19 +24,21 @@ const PageHeader = () => {
     const { actions: { toggleVisibility } } = useSearch();
     const { mode } = useAppSelector((state) => state.theme);
     const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
-    const { data: userData, isSuccess: isSuccessfullRequest } = useGetUserinfoQuery(null);
+    const { data: userData, isSuccess: isSuccessfulRequest } = useGetUserinfoQuery(null);
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (isSuccessfullRequest && userData) {
+        if (isSuccessfulRequest && userData) {
             dispatch(setInternalUser(userData));
             dispatch(setIsLoggedIn(true));
         } else {
             dispatch(resetInInternalUser());
             dispatch(setIsLoggedIn(false));
         }
-    }, [ isSuccessfullRequest, userData, dispatch ]);
+
+        dispatch(setIsGetUserInfoCompleted(true));
+    }, [ isSuccessfulRequest, userData, dispatch ]);
 
     const renderThemeSwitcher = () => (
         <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>

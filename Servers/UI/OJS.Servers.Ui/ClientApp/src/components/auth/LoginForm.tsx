@@ -13,7 +13,7 @@ import {
     UsernameFormatErrorMessage, UsernameLengthErrorMessage,
 } from '../../common/constants';
 import useTheme from '../../hooks/use-theme';
-import { setInternalUser, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import concatClassNames from '../../utils/class-names';
@@ -38,7 +38,7 @@ const LoginForm = () => {
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
     const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
-    const { data, isSuccess: isGetInfoSuccessfull, refetch } = useGetUserinfoQuery(null);
+    const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
     const dispatch = useAppDispatch();
     const usernameFieldName = 'Username';
@@ -64,11 +64,12 @@ const LoginForm = () => {
     }, [ setUsername ]);
 
     useEffect(() => {
-        if (isGetInfoSuccessfull && data) {
+        if (isGetInfoSuccessful && data) {
             dispatch(setInternalUser(data));
             dispatch(setIsLoggedIn(true));
+            dispatch(setIsGetUserInfoCompleted(true));
         }
-    }, [ isGetInfoSuccessfull, data, dispatch ]);
+    }, [ isGetInfoSuccessful, data, dispatch ]);
 
     const handleOnChangeUpdatePassword = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
