@@ -17,7 +17,7 @@ interface ITestsRunDiffProps {
 }
 
 const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
-    const { themeColors, isDarkMode } = useTheme();
+    const { isDarkMode } = useTheme();
 
     const highlightSyntax = useCallback((str: string) => {
         if (str) {
