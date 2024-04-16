@@ -21,6 +21,7 @@ interface ICodeEditorProps {
     code?: string;
     selectedSubmissionType?: ISubmissionTypeType | null;
     onCodeChange?: (newValue: string | undefined) => void;
+    customEditorStyles?: object;
 }
 
 const CodeEditor = ({
@@ -28,6 +29,7 @@ const CodeEditor = ({
     code,
     selectedSubmissionType = null,
     onCodeChange,
+    customEditorStyles = {},
 }: ICodeEditorProps) => {
     const [ selectedSubmissionTypeName, setSelectedSubmissionTypeName ] = useState<string | null>(null);
 
@@ -46,7 +48,7 @@ const CodeEditor = ({
 
     /* eslint-disable @typescript-eslint/no-empty-function */
     return (
-        <div className={styles.editor}>
+        <div className={styles.editor} style={{ ...customEditorStyles }}>
             <Editor
               language={getMonacoLanguage(selectedSubmissionTypeName) ?? 'javascript'}
               theme="vs-dark"
