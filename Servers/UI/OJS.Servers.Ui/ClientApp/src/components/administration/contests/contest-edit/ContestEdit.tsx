@@ -86,7 +86,7 @@ const ContestEdit = (props:IContestEditProps) => {
 
     const { data, isLoading } = useGetContestByIdQuery(
         { id: Number(contestId) },
-        { skip: !isEditMode || skipGettingContest },
+        { skip: skipGettingContest },
     );
 
     const { isFetching: isGettingCategories, data: contestCategories } = useGetCategoriesQuery(null);
