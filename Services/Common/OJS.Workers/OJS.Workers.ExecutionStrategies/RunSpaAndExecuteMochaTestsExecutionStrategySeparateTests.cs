@@ -192,12 +192,18 @@ try:
 
     # need to get container by name from docker again, so we can get info about the dynamically assigned port
     current_container = executor.get_container_by_name(name)
-    first_element = list(current_container.ports)[0]
-
-    # get container host port
-    host_port = current_container.ports[first_element][0]['HostPort']
-
-    print(f'Container port: {{host_port}};Container name: {{name}};')
+    if current_container.ports and list(current_container.ports):
+        first_element = list(current_container.ports)[0]
+        if current_container.ports[first_element]:
+            # get container host port
+            host_port = current_container.ports[first_element][0]['HostPort']
+            print(f'Container port: {{host_port}};Container name: {{name}};')
+        else:
+            print(""No ports assigned to the container."")
+            print(""Container logs:"", current_container.logs().decode('utf-8'))
+    else:
+        print(""No port information available."")
+        print(""Container logs:"", current_container.logs().decode('utf-8'))
 except Exception as e:
     print(e)
     executor.stop()
@@ -479,7 +485,10 @@ finally:
         }
 
         private void SaveNginxFile()
-            => FileHelpers.SaveStringToFile(NginxFileContent, this.NginxConfFileFullPath);
+        {
+            var nginxCorrectedContent = NginxFileContent.Replace("{{", "{").Replace("}}", "}");
+            FileHelpers.SaveStringToFile(nginxCorrectedContent, this.NginxConfFileFullPath);
+        }
 
         private string ReplaceNodeModulesRequireStatementsInTests(string testInputContent)
         {
