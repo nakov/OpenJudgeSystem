@@ -12,7 +12,7 @@ public int Resolve(Submission source, SubmissionServiceModel destination, int de
     var submissionTypeInProblem = source.Problem.SubmissionTypesInProblems.FirstOrDefault(stp =>
         stp.SubmissionTypeId == source.SubmissionTypeId);
 
-    if (submissionTypeInProblem != null && submissionTypeInProblem.MemoryLimit.HasValue)
+    if (submissionTypeInProblem?.MemoryLimit.HasValue == true)
     {
         return submissionTypeInProblem.MemoryLimit.Value;
     }
