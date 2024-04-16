@@ -617,18 +617,15 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             var user = this.userProviderService.GetCurrentUser();
             if (user.IsAdminOrLecturer)
             {
-                return await this.submissionsData
-                    .GetLatestSubmissions<TServiceModel>(
-                        itemsPerPage, page);
+                return await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, page);
             }
 
-            var modelResult = new PagedResult<TServiceModel>
+            var submissions = await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, 1);
+            return new PagedResult<TServiceModel>
             {
-                Items = await this.submissionsData.GetLatestSubmissions<TServiceModel>(
-                    itemsPerPage),
+                Items = submissions.Items,
+                TotalItemsCount = submissions.TotalItemsCount,
             };
-
-            return modelResult;
         }
 
         return await query

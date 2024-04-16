@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.ExamGroups;
 
 using Microsoft.EntityFrameworkCore;
+using OJS.Common.Enumerations;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Users;
@@ -119,7 +120,8 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
         if (externalUsernames.Any())
         {
             this.backgroundJobsService.AddFireAndForgetJob<IExamGroupsBusinessService>(
-                x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames));
+                x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames),
+                ApplicationName.Administration.ToString().ToLower());
         }
 
         return model;

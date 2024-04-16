@@ -56,11 +56,12 @@ export const contestsService = createApi({
         getContestsParticipationsForUser: builder.query<
             IPagedResultType<IIndexContestsType>,
             IGetContestParticipationsForUserQueryParams>({
-                query: ({ username, sortType, sortTypeDirection, page, category, strategy }) => ({
+                query: ({ username, sortType, sortTypeDirection, page, itemsPerPage, category, strategy }) => ({
                     url: `/Contests/GetParticipatedByUser?username=${username}`,
                     params: {
                         sortType,
                         sortTypeDirection,
+                        itemsPerPage,
                         page,
                         category,
                         strategy,

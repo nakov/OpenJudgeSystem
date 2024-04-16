@@ -27,6 +27,6 @@ export const usersService = createApi({
     }),
 });
 
-export const { useGetProfileQuery } = usersService;
+export const { useLazyGetProfileQuery } = usersService;
 
 export default usersService;
