@@ -39,6 +39,10 @@ export const authorizationService = createApi({
     }),
 });
 
-export const { useLoginMutation, useGetUserinfoQuery, useLogOutMutation } = authorizationService;
+export const {
+    useLoginMutation,
+    useGetUserinfoQuery,
+    useLogOutMutation,
+} = authorizationService;
 
 export default authorizationService;
