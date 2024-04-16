@@ -104,5 +104,6 @@ export const {
     useGetContestAutocompleteQuery,
     useLazyExportContestsToExcelQuery,
     useGetContestActivityQuery,
+    useLazyGetContestActivityQuery,
 } = contestService;
 export default contestService;
