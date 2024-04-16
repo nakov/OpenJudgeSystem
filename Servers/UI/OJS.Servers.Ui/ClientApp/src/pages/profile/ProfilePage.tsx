@@ -12,7 +12,6 @@ import ProfileSubmissions from '../../components/profile/profile-submissions/Pro
 import { usePageTitles } from '../../hooks/use-page-titles';
 import useTheme from '../../hooks/use-theme';
 import { setProfile } from '../../redux/features/usersSlice';
-import { useLazyGetContestsParticipationsForUserQuery } from '../../redux/services/contestsService';
 import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';

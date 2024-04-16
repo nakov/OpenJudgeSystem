@@ -148,6 +148,7 @@ const ProfileContestParticipations = ({ userIsProfileOwner, isChosenInToggle }: 
         userContestParticipations,
         userIsProfileOwner,
         internalUser,
+        isLoggedIn,
         isChosenInToggle,
         shouldRender,
         getColorClassName, onPageChange, renderContestCard, themeColors.textColor,
