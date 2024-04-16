@@ -12,6 +12,7 @@ import DownloadIconButton from '../../../components/administration/common/downlo
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteProblemResourceMutation, useDownloadResourceQuery } from '../../../redux/services/admin/problemResourcesAdminService';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemResourceFilterableColumns: GridColDef[] = [
@@ -117,17 +118,19 @@ const problemResourceFilterableColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
         headerName: `${MODIFIED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 
