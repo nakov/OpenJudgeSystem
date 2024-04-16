@@ -359,7 +359,14 @@ interface IRegisterUserForContestResponseType {
 interface ICompeteContestResponseType {
     isRegisteredParticipant: boolean; // if user has participant,
     isActiveParticipant: boolean; // if participant is valid,
+    participantId: number;
+    lastSubmissionTime: Date;
+    contestIsCompete: boolean;
+    userSubmissionsTimeLimit: number;
+    endDateTimeForParticipantOrContest: Date | null;
+    participantsCount: number;
     contest: IContestType | null;
+    shouldEnterPassword: boolean;
 }
 
 interface IPagedResultType<TItem> {

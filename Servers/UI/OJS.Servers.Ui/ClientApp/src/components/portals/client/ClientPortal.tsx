@@ -15,6 +15,7 @@ import LogoutPage from '../../../pages/auth/logout/LogoutPage';
 import RegisterPage from '../../../pages/auth/register/RegisterPage';
 import ContestResultsPage from '../../../pages/contest-results/ContestResultsPage';
 import ContestDetailsPage from '../../../pages/contests/contest-details/ContestDetailsPage';
+import ContestRegister from '../../../pages/contests/contest-register/ContestRegister';
 import ContestSolutionSubmitPage from '../../../pages/contests/contest-solution-submit/ContestSolutionSubmitPage';
 import ContestsPage from '../../../pages/contests/ContestsPage';
 import HomePage from '../../../pages/home/HomePage';
@@ -29,6 +30,11 @@ import styles from '../../../layout/content/PageContent.module.scss';
 
 const ClientPortal = () => {
     const routes = [
+        // Static Routes
+        {
+            path: '/',
+            Element: HomePage,
+        },
         {
             path: '/login',
             Element: LoginPage,
@@ -43,12 +49,8 @@ const ClientPortal = () => {
             Element: LogoutPage,
         },
         {
-            path: '/',
-            Element: HomePage,
-        },
-        {
-            path: '/profile/:username?',
-            Element: ProfilePage,
+            path: '/search',
+            Element: SearchPage,
         },
         {
             path: '/submissions',
@@ -56,46 +58,54 @@ const ClientPortal = () => {
             title: 'Submissions',
         },
         {
+            title: '/contests',
+            path: 'contests',
+            Element: ContestsPage,
+        },
+        // Profile routes
+        {
+            path: '/profile/:username?',
+            Element: ProfilePage,
+        },
+        // Submissions routes,
+        {
             path: '/submissions/:submissionId/details',
             Element: SubmissionDetailsPage,
         },
         {
-            title: 'Contests',
-            path: 'contests',
-            Element: ContestsPage,
-        },
-        {
-            path: 'contests/:contestId',
-            Element: ContestDetailsPage,
-        },
-        {
-            path: 'contests/:contestId/:participationType',
-            Element: ContestSolutionSubmitPage,
-        },
-        {
-            path: 'contests/:contestId/:participationType/results/:resultType',
-            Element: ContestResultsPage,
-        },
-        {
-            path: 'Submissions/Retest/:submissionId',
+            path: '/submissions/retest/:submissionId',
             Element: SubmissionRetestPage,
         },
         {
-            path: 'Contest/Problems/:contestId',
+            path: '/tests/edit/:testId',
+            Element: TestEditPage,
+        },
+        // Contest Routes
+        {
+            path: '/contests/:contestId',
+            Element: ContestDetailsPage,
+        },
+        {
+            path: '/contests/register/:contestId',
+            Element: ContestRegister,
+        },
+        {
+            path: '/contest/problems/:contestId',
             Element: ContestProblemsPage,
         },
         {
-            path: 'Contest/Edit/:contestId',
+            path: '/contest/edit/:contestId',
             Element: ContestEditPage,
         },
         {
-            path: 'Tests/Edit/:testId',
-            Element: TestEditPage,
+            path: '/contests/:contestId/:participationType',
+            Element: ContestSolutionSubmitPage,
         },
         {
-            path: 'search',
-            Element: SearchPage,
+            path: '/contests/:contestId/:participationType/results/:resultType',
+            Element: ContestResultsPage,
         },
+        // Catch-All Route
         {
             path: '*',
             Element: NotFoundPage,

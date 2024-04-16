@@ -15,11 +15,10 @@ import Button, { ButtonState } from '../../../components/guidelines/buttons/Butt
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails, setUserContestParticipationData } from '../../../redux/features/contestsSlice';
+import { setContestDetails } from '../../../redux/features/contestsSlice';
 import {
-    useGetContestRegisteredUserQuery,
+    useGetContestUserParticipationQuery,
     useLazyGetContestByIdQuery,
-    useLazyGetContestUserParticipationQuery,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
@@ -39,12 +38,11 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
-    const [ hasAcceptedOnlineExamModal, setHasAcceptedOnlineExamModal ] = useState<boolean>(false);
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
 
-    const { selectedContestDetailsProblem, contestDetails, userContestParticipationData } = useAppSelector((state) => state.contests);
+    const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
 
     const [ submitSolution ] = useSubmitContestSolutionMutation();
     const [ getContestById ] = useLazyGetContestByIdQuery();
@@ -55,15 +53,9 @@ const ContestSolutionSubmitPage = () => {
             isLoading: submissionsDataLoading,
         },
     ] = useLazyGetSubmissionResultsByProblemQuery();
-    const [
-        getContestUserParticipation, {
-            isError: userParticipationError,
-            isLoading: userParticipationDataLoading,
-        },
-    ] = useLazyGetContestUserParticipationQuery();
 
-    const isCompete = participationType === 'compete';
     const isModalOpen = Boolean(anchorEl);
+    const isCompete = participationType === 'compete';
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
@@ -72,24 +64,17 @@ const ContestSolutionSubmitPage = () => {
         data,
         isLoading,
         error,
-    } = useGetContestRegisteredUserQuery({ id: contestId!.toString(), isOfficial: isCompete });
-
-    const {
-        requirePassword,
-        name,
-        numberOfProblems,
-        duration,
-        id,
-        shouldConfirmParticipation,
-    } = data || {};
+    } = useGetContestUserParticipationQuery({ id: Number(contestId!), isOfficial: isCompete });
 
     const {
         contest,
+        isRegisteredParticipant,
+        isActiveParticipant,
         participantsCount,
         lastSubmissionTime,
         userSubmissionsTimeLimit,
         endDateTimeForParticipantOrContest,
-    } = userContestParticipationData || {};
+    } = data || {};
 
     const { problems, allowedSubmissionTypes = [] } = contest || {};
 
@@ -99,19 +84,6 @@ const ContestSolutionSubmitPage = () => {
         fileSizeLimit,
         checkerName,
     } = selectedContestDetailsProblem || {};
-
-    const fetchUserParticipationDetails = async () => {
-        try {
-            const { data: queryData } = await getContestUserParticipation({
-                id: contestId!,
-                isOfficial: isCompete,
-            });
-
-            dispatch(setUserContestParticipationData({ participationData: queryData! }));
-        } catch {
-            dispatch(setUserContestParticipationData({ participationData: null }));
-        }
-    };
 
     const onStrategyDropdownItemSelect = useCallback((s: any) => {
         const submissionType = allowedSubmissionTypes.find((type: ISubmissionTypeType) => type.id === s.id);
@@ -125,20 +97,20 @@ const ContestSolutionSubmitPage = () => {
         [ allowedSubmissionTypes ],
     );
 
+    // in case of not registered user for compete contest, redirect
+    // user to register page in order to keep the flow correct
+    useEffect(() => {
+        if (isLoading) {
+            return;
+        }
+        if (!isRegisteredParticipant && !isActiveParticipant) {
+            navigate(`/contests/register/${contestId}`);
+        }
+    }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, navigate ]);
+
     useEffect(() => {
         setSubmissionCode('');
     }, [ selectedContestDetailsProblem ]);
-
-    // fetch contest data, when user has accepted online exam modal,
-    // entered password correctly and has accessed contest data
-    useEffect(() => {
-        if (!userContestParticipationData || userContestParticipationData.contest.id !== Number(contestId)) {
-            fetchUserParticipationDetails();
-        }
-        // rule is disabled because it requires adding fetchUserParticipationDetails to the dependencies which
-        // makes it to call itself endlessly, which makes recursive updates and crashes the application
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ userContestParticipationData, contestId ]);
 
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
@@ -164,17 +136,27 @@ const ContestSolutionSubmitPage = () => {
     // fetching submissions only when we have selected problem,
     // otherwise the id is NaN and the query is invalid
     useEffect(() => {
-        if (selectedContestDetailsProblem) {
+        if (selectedContestDetailsProblem && isActiveParticipant && isRegisteredParticipant) {
             getSubmissionsData({
                 id: Number(selectedContestDetailsProblem!.id),
                 page: selectedSubmissionsPage,
                 isOfficial: isCompete,
             });
         }
-        // rule is disabled because it requires adding fetchUserParticipationDetails to the dependencies which
-        // makes it to call itself endlessly, which makes recursive updates and crashes the application
+        // rule is disabled because it requires adding fetchUserParticipationDetails to the
+        // dependencies which makes it to call itself endlessly, which makes recursive
+        // updates and crashes the application
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ selectedContestDetailsProblem, participationType, getSubmissionsData, selectedSubmissionsPage, isCompete ]);
+    }, [
+        isActiveParticipant,
+        isRegisteredParticipant,
+        selectedContestDetailsProblem,
+        participationType,
+        getSubmissionsData,
+        selectedSubmissionsPage,
+        isCompete,
+    ]);
 
     const remainingTimeForParticipationOrContest = useMemo(() => {
         if (endDateTimeForParticipantOrContest) {
@@ -326,7 +308,7 @@ const ContestSolutionSubmitPage = () => {
                     {fileUploadError && <div className={styles.fileUploadError}>{fileUploadError}</div>}
                     <FileUploader
                       file={uploadedFile}
-                      problemId={id}
+                      problemId={123}
                       allowedFileExtensions={allowedFileExtensions}
                       onInvalidFileExtension={(e) => setFileUploadError(e.detail)}
                       onFileUpload={(file) => {
@@ -371,11 +353,11 @@ const ContestSolutionSubmitPage = () => {
         );
     };
 
-    if (isLoading || userParticipationDataLoading) {
+    if (isLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
 
-    if (error || userParticipationError) {
+    if (error) {
         return (
             <div className={styles.contestSolutionSubmitWrapper}>
                 <div className={textColorClassName}>Error fetching user participation data!</div>
@@ -383,14 +365,18 @@ const ContestSolutionSubmitPage = () => {
         );
     }
 
+    if (isRegisteredParticipant && !isActiveParticipant) {
+        return <div>Contest expired page</div>;
+    }
+
     return (
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <div className={styles.title}>{name}</div>
+                <div className={styles.title}>{contest?.name}</div>
                 <div
                   className={styles.allResultsLink}
-                  onClick={() => navigate(`/contests/${id}/${participationType}/results/simple`)}
+                  onClick={() => navigate(`/contests/${contest?.id}/${participationType}/results/simple`)}
                 >
                     Show all results
                 </div>

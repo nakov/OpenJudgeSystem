@@ -15,6 +15,7 @@ const ContestRegister = () => {
     const { contestId, participationType } = useParams();
     const [ password, setPassword ] = useState<string | null>('');
     const [ hasAcceptedOnlineModal, setHasAcceptedOnlineModal ] = useState<boolean>(false);
+
     const [
         registerUserForContest, {
             data,
@@ -23,10 +24,9 @@ const ContestRegister = () => {
         },
     ] = useRegisterUserForContestMutation();
 
-    const isContestOfficial = participationType === 'compete';
-
     useEffect(() => {
-        registerUserForContest({ id: Number(contestId), isOfficial: isContestOfficial, password });
+        registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const {
@@ -35,10 +35,8 @@ const ContestRegister = () => {
         isOfficial,
         requirePassword,
         shouldConfirmParticipation,
-        isRegisteredSuccessfully,
         duration,
         numberOfProblems,
-        categoryId,
     } = data || {};
 
     useEffect(() => {
@@ -46,6 +44,19 @@ const ContestRegister = () => {
             setHasAcceptedOnlineModal(true);
         }
     }, [ shouldConfirmParticipation ]);
+
+    useEffect(() => {
+        if (!shouldConfirmParticipation && hasAcceptedOnlineModal && !requirePassword) {
+            navigate(`/contests/${contestId}/${participationType}`);
+        }
+    }, [
+        shouldConfirmParticipation,
+        hasAcceptedOnlineModal,
+        requirePassword,
+        contestId,
+        participationType,
+        navigate,
+    ]);
 
     const renderContestRegisterBody = useCallback(() => {
         if (shouldConfirmParticipation && !hasAcceptedOnlineModal) {
@@ -69,7 +80,21 @@ const ContestRegister = () => {
                 />
             );
         }
-    }, []);
+        return <div />;
+    }, [
+        shouldConfirmParticipation,
+        hasAcceptedOnlineModal,
+        name,
+        duration,
+        numberOfProblems,
+        contestId,
+        isOfficial,
+        id,
+        participationType,
+        requirePassword,
+        setHasAcceptedOnlineModal,
+        navigate,
+    ]);
 
     if (isLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;

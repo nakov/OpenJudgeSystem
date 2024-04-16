@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { LOGIN_PATH } from '../../../common/urls/client-urls';
 import { getContestSubmissionPageUrl } from '../../../common/urls/compose-client-urls';
-import { setUserContestParticipationData } from '../../../redux/features/contestsSlice';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { useAppSelector } from '../../../redux/store';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
 
 interface IContestButtonProps {
@@ -20,12 +19,10 @@ const ContestButton = (props: IContestButtonProps) => {
     const { isCompete, isDisabled, id, onClick } = props;
 
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
 
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
 
     const onButtonClick = async () => {
-        dispatch(setUserContestParticipationData({ participationData: null }));
         if (onClick) {
             onClick();
             return;
