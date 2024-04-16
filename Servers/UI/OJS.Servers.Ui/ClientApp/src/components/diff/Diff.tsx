@@ -17,7 +17,7 @@ interface ITestsRunDiffProps {
 }
 
 const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
-    const { themeColors } = useTheme();
+    const { themeColors, isDarkMode } = useTheme();
 
     const highlightSyntax = useCallback((str: string) => {
         if (str) {
@@ -57,20 +57,7 @@ const Diff = ({ expectedStr, actualStr } : ITestsRunDiffProps) => {
                   splitView
                   showDiffOnly
                   renderContent={highlightSyntax}
-                  styles={{
-                      gutter: {
-                          backgroundColor: themeColors.baseColor500,
-                          ':hover': {
-                              backgroundColor: 'none',
-                              color: 'none',
-                          },
-                      },
-                      diffContainer: {
-                          backgroundColor: themeColors.baseColor500,
-                          pre: { color: themeColors.textColor },
-                      },
-                      wordDiff: { pre: { color: 'black' } },
-                  }}
+                  useDarkTheme={isDarkMode}
                 />
             </div>
         </>
