@@ -62,9 +62,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
                 userIdRegex.Replace(createdDbConnectionString, $"User Id={this.RestrictedUserId};");
 
             createdDbConnectionString =
-                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword}");
+                passwordRegex.Replace(createdDbConnectionString, $"Password={this.Settings.RestrictedUserPassword};");
 
-            createdDbConnectionString += $";Database={databaseName};";
+            createdDbConnectionString += createdDbConnectionString.EndsWith(';') ? string.Empty : ";";
+            createdDbConnectionString += $"Database={databaseName};";
 
             return createdDbConnectionString;
         }
