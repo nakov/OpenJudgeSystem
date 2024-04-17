@@ -2,13 +2,11 @@ import { ChangeEvent, useEffect, useState } from 'react';
 
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../../common/messages';
 import { IContestAutocomplete, IGetAllAdminParams } from '../../../../common/types';
-import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import lecturerInContestFilterableColumns, { returnLecturerInContestNonFilterableColumns } from '../../../../pages/administration-new/lecturers-in-contests/lecturersInContestsGridColumns';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useAddLecturerToContestMutation, useGetLecturerContestsQuery, useRemoveLecturerFromContestMutation } from '../../../../redux/services/admin/usersAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
@@ -24,9 +22,6 @@ interface ILeturerInContestsProps {
 const LecturerInContests = (props: ILeturerInContestsProps) => {
     const { userId } = props;
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
-
     const [ contestSearchString, setContestSearchString ] = useState<string>('');
 
     const [ contestId, setContestId ] = useState<number>(0);
@@ -36,12 +31,8 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
 
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: mapFilterParamsToQueryString(selectedFilters),
-        sorting: mapSorterParamsToQueryString(selectedSorters),
-    });
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
 
     const [ contestAutocomplete, setContestsAutocomplete ] = useState<Array<IContestAutocomplete>>([
         {
@@ -83,18 +74,6 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             isLoading: isRemoving,
         },
     ] = useRemoveLecturerFromContestMutation();
-
-    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
-
-    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
-    }, [ filtersQueryParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
-    }, [ sortersQueryParams ]);
 
     useEffect(() => {
         if (isSuccessfullyRemoved || isSuccessfullyAdded) {
@@ -196,14 +175,10 @@ const LecturerInContests = (props: ILeturerInContestsProps) => {
             <AdministrationGridView
               data={data}
               error={error}
-              selectedFilters={selectedFilters}
-              selectedSorters={selectedSorters}
               setQueryParams={setQueryParams}
               queryParams={queryParams}
               withSearchParams={false}
               filterableGridColumnDef={lecturerInContestFilterableColumns}
-              setSorterStateAction={setSelectedSorters}
-              setFilterStateAction={setSelectedFilters}
               renderActionButtons={renderGridSettings}
               notFilterableGridColumnDef={
             returnLecturerInContestNonFilterableColumns(onRemoveFromRowClicked)

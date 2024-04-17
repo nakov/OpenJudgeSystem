@@ -7,13 +7,11 @@ import { useDownloadFileSubmissionQuery,
     useGetAllSubmissionsQuery,
     useLazyExportSubmissionsToExcelQuery,
     useRetestMutation } from '../../../redux/services/admin/submissionsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import downloadFile from '../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 
 import dataColumns, { returnSubmissionsNonFilterableColumns } from './admin-submissions-grid-def';
 
@@ -25,22 +23,8 @@ const AdministrationSubmissionsPage = () => {
     const [ submissionToDownload, setSubmissionToDownload ] = useState<number | null>(null);
     const [ shouldSkipDownloadOfSubmission, setShouldSkipDownloadOfSubmission ] = useState<boolean>(true);
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(dataColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationSortingProps(dataColumns),
-    ));
-
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
-        sorting: searchParams.get('sorting') ?? '',
-    });
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd, searchParams));
 
     const {
         refetch: retakeSubmissions,
@@ -61,14 +45,6 @@ const AdministrationSubmissionsPage = () => {
         { id: submissionToDownload! },
         { skip: shouldSkipDownloadOfSubmission },
     );
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: searchParams.get('filter') ?? '',
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
@@ -109,10 +85,6 @@ const AdministrationSubmissionsPage = () => {
             }
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              selectedFilters={selectedFilters || []}
-              selectedSorters={selectedSorters || []}
-              setSorterStateAction={setSelectedSorters}
-              setFilterStateAction={setSelectedFilters}
               legendProps={[ { color: '#FFA1A1', message: 'Submission is deleted.' } ]}
               excelMutation={useLazyExportSubmissionsToExcelQuery}
 

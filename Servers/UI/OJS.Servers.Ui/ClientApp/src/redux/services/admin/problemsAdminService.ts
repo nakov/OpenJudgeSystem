@@ -22,7 +22,10 @@ export const problemsAdminService = createApi({
             keepUnusedDataFor: 10,
         }),
 
-        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
+        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({
+            query: ({ id }) => ({ url: `/Get/${id}` }),
+            keepUnusedDataFor: 0,
+        }),
 
         deleteProblem: builder.mutation<string, number>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
 

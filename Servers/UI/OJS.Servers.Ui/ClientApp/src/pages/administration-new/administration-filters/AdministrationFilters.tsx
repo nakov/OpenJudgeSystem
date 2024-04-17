@@ -10,8 +10,9 @@ import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@m
 import { GridColDef } from '@mui/x-data-grid';
 import debounce from 'lodash/debounce';
 
-import { FilterColumnTypeEnum } from '../../../common/enums';
-import { IEnumType, IFilterColumn } from '../../../common/types';
+import { FilterColumnTypeEnum, SortingEnum } from '../../../common/enums';
+import { IEnumType, IFilterColumn, IGetAllAdminParams } from '../../../common/types';
+import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -21,14 +22,16 @@ interface IFiltersColumnOperators {
 }
 
 interface IAdministrationFilterProps {
-    columns: IFilterColumn[];
+    filterColumns: IFilterColumn[];
     searchParams?: URLSearchParams;
     setSearchParams?: SetURLSearchParams;
     selectedFilters: Array<IAdministrationFilter>;
-    setStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
+    setSelectedFilters?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
     withSearchParams?: boolean;
-    isSortersOpened: boolean;
-    setOpenedFilters: Dispatch<SetStateAction<string | null>>;
+    sortingColumns: string[];
+    selectedSorters: Array<IAdministrationSorter>;
+    setSelectedSorters?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
+    setQueryParams?: Dispatch<React.SetStateAction<IGetAllAdminParams>>;
 }
 
 interface IAdministrationFilter {
@@ -38,15 +41,6 @@ interface IAdministrationFilter {
     inputType: FilterColumnTypeEnum;
     availableOperators?: IFiltersColumnOperators[];
     availableColumns: IFilterColumn[];
-}
-
-interface IDefaultFilter {
-    column: string;
-    operator: string;
-    value: string;
-    availableOperators: IFiltersColumnOperators[];
-    availableColumns: IFilterColumn[];
-    inputType: FilterColumnTypeEnum;
 }
 
 const DROPDOWN_OPERATORS = {
@@ -97,52 +91,73 @@ const mapStringToFilterColumnTypeEnum = (type: string) => {
     }
     return FilterColumnTypeEnum.STRING;
 };
+
+interface IAdministrationSorter {
+    columnName: string;
+    orderBy: SortingEnum;
+    availableColumns: string[];
+}
+
+const orderByOptions = [
+    { name: 'Ascending', value: SortingEnum.ASC },
+    { name: 'Descending', value: SortingEnum.DESC },
+];
+
 const filterSeparator = '&&;';
+const filterParamsSeparator = '~';
+const sorterSeparator = '&';
+const sorterParamSeparator = '=';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
     const {
-        columns,
+        filterColumns,
         withSearchParams = true,
         selectedFilters,
-        setStateAction,
+        setSelectedFilters,
+        setQueryParams,
         searchParams,
+        sortingColumns,
+        selectedSorters,
+        setSelectedSorters,
         setSearchParams,
-        isSortersOpened,
-        setOpenedFilters,
     } = props;
 
-    const defaultFilter = useMemo<IDefaultFilter>(() => ({
+    const defaultFilter = useMemo<IAdministrationFilter>(() => ({
         column: '',
         operator: '',
         value: '',
         availableOperators: [],
-        availableColumns: columns,
+        availableColumns: filterColumns,
         inputType: FilterColumnTypeEnum.STRING,
-    }), [ columns ]);
+    }), [ filterColumns ]);
+
+    const defaultSorter = useMemo<IAdministrationSorter>(() => ({
+        columnName: '',
+        orderBy: SortingEnum.ASC,
+        availableColumns: sortingColumns,
+    }), [ sortingColumns ]);
 
     useEffect(() => {
-        if (selectedFilters.length <= 0 && setStateAction) {
-            setStateAction([ defaultFilter ]);
+        if (selectedFilters.length <= 0 && setSelectedFilters) {
+            setSelectedFilters([ defaultFilter ]);
         }
-    }, [ defaultFilter, selectedFilters, selectedFilters.length, setStateAction ]);
 
-    const [ anchor, setAnchor ] = useState<null | HTMLElement>(null);
-
-    const open = Boolean(anchor);
-
-    useEffect(() => {
-        const urlSelectedFilters = mapUrlToFilters(searchParams, columns);
-        if (urlSelectedFilters.length && setStateAction) {
-            setStateAction(urlSelectedFilters);
+        if (selectedSorters.length <= 0 && setSelectedSorters) {
+            setSelectedSorters([ defaultSorter ]);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [
+        defaultFilter,
+        selectedFilters,
+        setSelectedFilters,
+        setSelectedSorters,
+        selectedSorters,
+        defaultSorter,
+    ]);
 
-    useEffect(() => {
-        if (isSortersOpened) {
-            setAnchor(null);
-        }
-    }, [ isSortersOpened ]);
+    const [ filterAnchor, setFilterAnchor ] = useState<null | HTMLElement>(null);
+    const [ sortersAnchor, setSortersAnchor ] = useState<null | HTMLElement>(null);
+    const filterOpen = Boolean(filterAnchor);
+    const openSorters = Boolean(sortersAnchor);
 
     useEffect(() => {
         if (!searchParams || !setSearchParams) {
@@ -154,8 +169,8 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                 return;
             }
 
-            // eslint-disable-next-line consistent-return
-            return `${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`;
+            // eslint-disable-next-line consistent-return, max-len
+            return `${filter.column}${filterParamsSeparator}${filter.operator}${filterParamsSeparator}${filter.value}`.toLowerCase();
         };
 
         const filtersFormattedArray = selectedFilters.map(formatFilterToString).filter((filter) => filter);
@@ -163,6 +178,13 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             searchParams.delete('filter');
             if (withSearchParams) {
                 setSearchParams(searchParams);
+            }
+
+            if (setQueryParams) {
+                setQueryParams((currentParams) => ({
+                    ...currentParams,
+                    filter: filtersFormattedArray.join(filterSeparator) ?? '',
+                }));
             }
 
             return;
@@ -176,42 +198,91 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }, 300);
 
         delayedSetOfSearch();
+        const filtersToSet = filtersFormattedArray.join(filterSeparator);
 
-        // eslint-disable-next-line consistent-return
-        return () => {
-            delayedSetOfSearch.cancel();
-        };
+        searchParams.set('filter', filtersToSet);
+        if (withSearchParams) {
+            setSearchParams(searchParams);
+        }
+        if (setQueryParams) {
+            setQueryParams((currentParams) => ({
+                ...currentParams,
+                filter: filtersToSet,
+            }));
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ selectedFilters ]);
 
-    const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
-        if (!anchor) {
-            setOpenedFilters('filters');
+    useEffect(() => {
+        const formatSorterToString = (sorter: IAdministrationSorter) => {
+            if (!sorter?.columnName) {
+                return;
+            }
+
+            // eslint-disable-next-line consistent-return
+            return `${sorter.columnName.replace(/\s/g, '').toLowerCase()}=${sorter.orderBy}`;
+        };
+
+        const sorterFormattedArray = selectedSorters.map(formatSorterToString).filter((sorter) => sorter);
+        if (!sorterFormattedArray.length && searchParams && setSearchParams) {
+            searchParams.delete('sorting');
+            if (withSearchParams) {
+                setSearchParams(searchParams);
+            }
+
+            if (setQueryParams) {
+                setQueryParams((currentParams) => ({
+                    ...currentParams,
+                    sorting: sorterFormattedArray.join(sorterSeparator) ?? '',
+                }));
+            }
+
+            return;
         }
-        setAnchor(anchor
+
+        if (searchParams && setSearchParams && withSearchParams) {
+            searchParams.set('sorting', sorterFormattedArray.join('&'));
+            setSearchParams(searchParams);
+        }
+
+        if (setQueryParams) {
+            setQueryParams((currentParams) => ({
+                ...currentParams,
+                sorting: sorterFormattedArray.join(sorterSeparator) ?? '',
+            }));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ selectedSorters ]);
+
+    const handleOpenClick = (event: React.MouseEvent<HTMLElement>) => {
+        if (!filterAnchor) {
+            setSortersAnchor(null);
+        }
+
+        setFilterAnchor(filterAnchor
             ? null
             : event.currentTarget);
     };
 
     const addFilter = () => {
-        const availableColumns = columns.filter((column) => !selectedFilters.some((f) => f.column === column.columnName));
+        const availableColumns = filterColumns.filter((column) => !selectedFilters.some((f) => f.column === column.columnName));
         const newFiltersArray = [ { ...defaultFilter, availableColumns }, ...selectedFilters.map((filter) => ({
             ...filter,
             availableColumns: [ ...availableColumns, { columnName: filter.column, columnType: filter.inputType } ],
         })) ];
 
-        if (setStateAction) {
-            setStateAction(newFiltersArray);
+        if (setSelectedFilters) {
+            setSelectedFilters(newFiltersArray);
         }
     };
 
     const removeAllFilters = () => {
         if (searchParams && setSearchParams && withSearchParams) {
             searchParams.delete('filter');
-            setSearchParams(searchParams);
         }
-        if (setStateAction) {
-            setStateAction([ defaultFilter ]);
+        if (setSelectedFilters) {
+            setSelectedFilters([ defaultFilter ]);
         }
     };
 
@@ -223,8 +294,8 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         })) ];
         newFiltersArray.splice(idx, 1);
 
-        if (setStateAction) {
-            setStateAction(newFiltersArray);
+        if (setSelectedFilters) {
+            setSelectedFilters(newFiltersArray);
         }
 
         if (newFiltersArray.length === 1 && searchParams && setSearchParams) {
@@ -235,11 +306,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
     };
 
-    const getColumnTypeByName = (columnName: string) => columns.find((column) => column.columnName === columnName)?.columnType;
+    const getColumnTypeByName = (columnName: string) => filterColumns.find((column) => column.columnName === columnName)?.columnType;
 
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
-
         const newFiltersArray = [ ...selectedFilters ].map((element, idx) => {
             if (idx === indexToUpdate) {
                 if (updateProperty === 'column') {
@@ -261,8 +331,8 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             return element;
         });
 
-        if (setStateAction) {
-            setStateAction(newFiltersArray);
+        if (setSelectedFilters) {
+            setSelectedFilters(newFiltersArray);
         }
     };
 
@@ -293,7 +363,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             );
         }
         if (selectedFilter.inputType === FilterColumnTypeEnum.ENUM) {
-            const column = columns.filter((c) => c.columnType === selectedFilter.inputType && selectedFilter.column === c.columnName)[0];
+            const column = filterColumns.filter((c) => c.columnType === selectedFilter.inputType &&
+            selectedFilter.column === c.columnName)[0];
+
             return (
                 <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
                     <InputLabel id="value-select-label" shrink>Value</InputLabel>
@@ -331,9 +403,77 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         );
     };
 
+    const handleOpenSorters = (event: React.MouseEvent<HTMLElement>) => {
+        if (!sortersAnchor) {
+            setFilterAnchor(null);
+        }
+
+        setSortersAnchor(sortersAnchor
+            ? null
+            : event.currentTarget);
+    };
+
+    const addSorter = () => {
+        const availableColumns = sortingColumns.filter((column) => !selectedSorters.some((s) => s.columnName === column));
+        const newSortersArray = [ { ...defaultSorter, availableColumns }, ...selectedSorters.map((sorter) => ({
+            ...sorter,
+            availableColumns: [ ...availableColumns, sorter.columnName ],
+        })) ];
+
+        if (setSelectedSorters) {
+            setSelectedSorters(newSortersArray);
+        }
+    };
+
+    const removeAllSorters = () => {
+        if (searchParams && setSearchParams && withSearchParams) {
+            searchParams.delete('sorting');
+            setSearchParams(searchParams);
+        }
+
+        if (setSelectedSorters) {
+            setSelectedSorters([ defaultSorter ]);
+        }
+    };
+
+    const removeSingleSorter = (idx: number) => {
+        const deletedSorter = selectedSorters[idx];
+        const newSortersArray = [ ...selectedSorters.map((sorter) => ({
+            ...sorter,
+            availableColumns: [ ...sorter.availableColumns, deletedSorter.columnName ],
+        })) ];
+        newSortersArray.splice(idx, 1);
+
+        if (setSelectedSorters) {
+            setSelectedSorters(newSortersArray);
+        }
+
+        if (newSortersArray.length === 1) {
+            if (searchParams && setSearchParams && withSearchParams) {
+                searchParams.delete('sorting');
+                setSearchParams(searchParams);
+            }
+        }
+    };
+
+    const updateSorterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
+        const { value } = target;
+
+        const newSortersArray = [ ...selectedSorters ].map((element, idx) => {
+            if (idx === indexToUpdate) {
+                return { ...element, [updateProperty]: value };
+            }
+            return element;
+        });
+
+        if (setSelectedSorters) {
+            setSelectedSorters(newSortersArray);
+        }
+    };
+
     const renderFilter = (idx: number) => (
         <div style={{ display: 'flex', margin: '5px 0' }} key={`admin-filter-${idx}`}>
-            <CloseIcon className={styles.closeIcon} onClick={() => setAnchor(null)} />
+            <CloseIcon className={styles.closeIcon} onClick={() => setFilterAnchor(null)} />
             { idx !== 0 && (
                 <DeleteIcon color="error" className={styles.removeFilterButton} onClick={() => removeSingleFilter(idx)} />
             )}
@@ -372,39 +512,108 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             {renderInputField(idx)}
         </div>
     );
-    return (
-        <div>
-            <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>
-                { open
-                    ? 'close'
-                    : 'open' }
-                {' '}
-                filters
-                <span style={{ marginLeft: '10px', color: 'black' }}>
-                    (
-                    {selectedFilters.filter((f) => f.value).length}
-                    ) Active
-                </span>
-            </Button>
-            <BasePopup anchor={anchor} open={open}>
-                <div className={styles.administrationFilters}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        { selectedFilters.map((filter, idx) => renderFilter(idx))}
-                    </div>
-                    <div className={styles.buttonsSection}>
-                        <Button
-                          onClick={addFilter}
-                          disabled={selectedFilters.length
-                              ? !selectedFilters[0].value
-                              : false}
-                        >
-                            Add filter
-                        </Button>
-                        <Button onClick={removeAllFilters}>Remove All</Button>
-                    </div>
-                </div>
-            </BasePopup>
+
+    const renderSorter = (idx: number) => (
+        <div className={styles.sortWrapper} key={`a-s-w-${idx}`}>
+            <CloseIcon className={styles.closeIcon} onClick={() => setSortersAnchor(null)} />
+            { idx !== 0 && (
+                <DeleteIcon color="error" className={styles.removeSorterButton} onClick={() => removeSingleSorter(idx)} />
+            )}
+            <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
+                <InputLabel id="column-sorting-label">Sort by</InputLabel>
+                <Select
+                  labelId="column-sorting-label"
+                  value={selectedSorters[idx]?.columnName}
+                  label="Sort By"
+                  onChange={(e) => updateSorterColumnData(idx, e, 'columnName')}
+                  disabled={idx > 0}
+                >
+                    { selectedSorters[idx].availableColumns.map((sortOption) => (
+                        <MenuItem key={`a-s-e-${sortOption}`} value={sortOption}>{sortOption}</MenuItem>)) }
+                </Select>
+            </FormControl>
+            <FormControl sx={{ width: '140px', marginRight: '10px' }} variant="standard">
+                <InputLabel id="column-order-label">Order By</InputLabel>
+                <Select
+                  labelId="column-order-label"
+                  value={selectedSorters[idx]?.orderBy}
+                  label="Order By"
+                  onChange={(e) => updateSorterColumnData(idx, e, 'orderBy')}
+                  disabled={!selectedSorters[idx]?.columnName || idx > 0}
+                >
+                    { orderByOptions.map((orderByOption) => (
+                        <MenuItem key={`s-o-o-${orderByOption.name}`} value={orderByOption.value}>{orderByOption.name}</MenuItem>)) }
+                </Select>
+            </FormControl>
         </div>
+    );
+    return (
+        <>
+            <div>
+                <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>
+                    {filterOpen
+                        ? 'close'
+                        : 'open'}
+                    {' '}
+                    filters
+                    <span style={{ marginLeft: '10px', color: 'black' }}>
+                        (
+                        {selectedFilters.filter((f) => f.value).length}
+                        ) Active
+                    </span>
+                </Button>
+                <BasePopup anchor={filterAnchor} open={filterOpen}>
+                    <div className={styles.administrationFilters}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            {selectedFilters.map((filter, idx) => renderFilter(idx))}
+                        </div>
+                        <div className={styles.buttonsSection}>
+                            <Button
+                              onClick={addFilter}
+                              disabled={selectedFilters.length
+                                  ? !selectedFilters[0].value
+                                  : false}
+                            >
+                                Add filter
+                            </Button>
+                            <Button onClick={removeAllFilters}>Remove All</Button>
+                        </div>
+                    </div>
+                </BasePopup>
+            </div>
+            <div>
+                <Button onClick={handleOpenSorters}>
+                    {openSorters
+                        ? 'close'
+                        : 'open'}
+                    {' '}
+                    sorters
+                    <span style={{ marginLeft: '10px', color: 'black' }}>
+                        (
+                        {selectedSorters.filter((s) => s.columnName).length}
+                        ) Active
+                    </span>
+                </Button>
+                <BasePopup anchor={sortersAnchor} open={openSorters}>
+                    <div className={styles.administrationSorters}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            {selectedSorters.map((sorter, idx) => renderSorter(idx))}
+                        </div>
+                        <div className={styles.buttonsSection}>
+                            <Button
+                              onClick={addSorter}
+                              disabled={selectedSorters.length
+                                  ? !selectedSorters[0].columnName
+                                  : true}
+                            >
+                                Add Sorter
+                            </Button>
+                            <Button onClick={removeAllSorters}>Remove All</Button>
+                        </div>
+                    </div>
+                </BasePopup>
+            </div>
+        </>
     );
 };
 
@@ -414,7 +623,8 @@ const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) 
         if (!filter.column || !filter.operator || !filter.value) {
             return;
         }
-        queryString.push(`${filter.column.toLowerCase()}~${filter.operator.toLowerCase()}~${filter.value.toLowerCase()}`);
+        // eslint-disable-next-line max-len
+        queryString.push(`${filter.column.toLowerCase()}${filterParamsSeparator}${filter.operator.toLowerCase()}${filterParamsSeparator}${filter.value.toLowerCase()}`);
     });
     return queryString.filter((el) => el).join(filterSeparator) ?? '';
 };
@@ -431,7 +641,7 @@ const mapGridColumnsToAdministrationFilterProps =
     };
 });
 
-const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: Array<IFilterColumn>) => {
+const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: Array<IFilterColumn>): IAdministrationFilter[] => {
     if (!urlSearchParams) {
         return [];
     }
@@ -439,9 +649,10 @@ const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: 
     const urlSelectedFilters: Array<IAdministrationFilter> = [];
 
     const filterParams = urlSearchParams.get('filter') ?? '';
-    const urlParams = filterParams.split('&&;').filter((param) => param);
+
+    const urlParams = filterParams.split(filterSeparator).filter((param) => param);
     urlParams.forEach((param) => {
-        const paramChunks = param.split('~').filter((chunk) => chunk);
+        const paramChunks = param.split(filterParamsSeparator).filter((chunk) => chunk);
 
         const columnValue = paramChunks[0];
         const operator = paramChunks[1];
@@ -469,11 +680,181 @@ const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: 
     return urlSelectedFilters;
 };
 
+const mapUrlToSorters = (
+    searchParams: URLSearchParams | undefined,
+    columns:Array<string>,
+    defaultSorter?: string,
+): IAdministrationSorter[] => {
+    if (!searchParams) {
+        return [];
+    }
+    const urlSelectedSorters: IAdministrationSorter[] = [];
+
+    const sorterParams = searchParams.get('sorting') ?? '';
+    const urlParams = sorterParams.split(sorterSeparator).filter((param) => param);
+
+    if (defaultSorter) {
+        const sorterProperty = defaultSorter.split('=')[0];
+        const indexOfSorter = columns.findIndex((x) => x.toLowerCase() === sorterProperty.toLowerCase());
+        if ((!sorterParams || !urlParams.find((x) => x.includes(sorterProperty))) && indexOfSorter >= 0) {
+            urlParams.push(defaultSorter);
+        }
+    }
+
+    urlParams.forEach((param: string) => {
+        const paramChunks = param.split('=').filter((chunk) => chunk);
+
+        const sorterColumn = paramChunks[0];
+        const sorterOrderBy = paramChunks[1];
+
+        const columnName = columns.find((c) => c.toLowerCase() === sorterColumn) || '';
+        const orderBy = sorterOrderBy === 'ASC'
+            ? SortingEnum.ASC
+            : SortingEnum.DESC;
+        const availableColumns = columns.filter((column) => !urlSelectedSorters.some((s) => s.columnName === column));
+
+        const sorter: IAdministrationSorter = {
+            columnName,
+            orderBy,
+            availableColumns: [ ...availableColumns, columnName ],
+        };
+
+        urlSelectedSorters.push(sorter);
+    });
+
+    return urlSelectedSorters;
+};
+
+const addDefaultFilter = (
+    gridColDef: GridColDef[],
+    searchParams:URLSearchParams,
+    filterToAdd: string = 'isdeleted~equals~false',
+): Array<IAdministrationFilter> => {
+    const columns = mapGridColumnsToAdministrationFilterProps(gridColDef);
+
+    const filters = mapUrlToFilters(searchParams, columns);
+    const paramChunks = filterToAdd.split(filterParamsSeparator);
+
+    const columnValue = paramChunks[0];
+    const operator = paramChunks[1];
+    const value = paramChunks[2];
+
+    if (!columns.find((x) => x.columnName.toLowerCase() === columnValue)) {
+        return filters;
+    }
+
+    const column = columns.find((c) => c.columnName.toLowerCase() === columnValue) ||
+    { columnName: '', columnType: FilterColumnTypeEnum.STRING };
+    const availableColumns = columns.filter((c) => !filters.some((f: { column: string }) => f.column === c.columnName));
+    const availableOperators = column?.columnType
+        ? DROPDOWN_OPERATORS[column.columnType]
+        : [];
+
+    const filter = {
+        column: column?.columnName || '',
+        operator,
+        value,
+        availableOperators,
+        availableColumns: [ ...availableColumns, { ...column } ],
+        inputType: column?.columnType || FilterColumnTypeEnum.STRING,
+    };
+
+    const defFilter = {
+        column: '',
+        operator: '',
+        value: '',
+        availableOperators: [],
+        availableColumns: columns,
+        inputType: FilterColumnTypeEnum.STRING,
+    };
+
+    if (!filters.find((x) => x.column.toLowerCase() === columnValue.toLowerCase())) {
+        filters.push(filter);
+    }
+
+    const newFiltersArray = [ { ...defFilter, availableColumns }, ...filters.map((f) => ({
+        ...f,
+        availableColumns: [ ...availableColumns, { columnName: f.column, columnType: f.inputType } ],
+    })) ];
+
+    return newFiltersArray;
+};
+
+const applyDefaultFilterToQueryString = (
+    defaultFilter: string,
+    defaultSorter: string,
+    searchParams? : URLSearchParams,
+    skipDefault: boolean = false,
+    page: number = 1,
+    itemsPerPage: number = DEFAULT_ITEMS_PER_PAGE,
+) => {
+    let filter : string | null = '';
+    let sorting : string | null = '';
+    if (searchParams) {
+        filter = searchParams.get('filter');
+        sorting = searchParams.get('sorting');
+    }
+    filter = applyQueryParam(filterSeparator, filterParamsSeparator, filter, skipDefault, defaultFilter);
+
+    sorting = applyQueryParam(sorterSeparator, sorterParamSeparator, sorting, skipDefault, defaultSorter);
+
+    const queryParams = {
+        page,
+        itemsPerPage,
+        filter,
+        sorting,
+    } as IGetAllAdminParams;
+
+    return queryParams;
+};
+
+const applyQueryParam = (
+    separator: string,
+    paramSeparator: string,
+    param: string | null,
+    skipDefault: boolean,
+    defaultParamValue: string,
+) => {
+    const defaultParamArray = defaultParamValue.split(separator);
+    let valueToReturn = param;
+
+    if (defaultParamValue === '') {
+        return '';
+    }
+
+    if (!param) {
+        if (skipDefault) {
+            valueToReturn = '';
+        } else {
+            valueToReturn = defaultParamValue;
+        }
+    } else {
+        defaultParamArray.forEach((currentValue, idx) => {
+            const prop = currentValue.split(paramSeparator)[0];
+            if (!param?.includes(prop)) {
+                valueToReturn += `${idx > 0 && separator}${currentValue}`;
+            }
+        });
+    }
+
+    return valueToReturn;
+};
+
+const mapGridColumnsToAdministrationSortingProps =
+    (dataColumns: GridColDef[]): string[] => dataColumns.map((column) => column.headerName?.replace(/\s/g, '') ?? '').filter((el) => el);
+
 export {
     type IAdministrationFilter,
+    type IAdministrationSorter,
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
+    mapGridColumnsToAdministrationSortingProps,
     mapFilterParamsToQueryString,
     mapUrlToFilters,
+    mapUrlToSorters,
+    addDefaultFilter,
+    applyDefaultFilterToQueryString,
+    filterSeparator,
+    filterParamsSeparator,
 };
 export default AdministrationFilters;

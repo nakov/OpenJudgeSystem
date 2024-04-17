@@ -5,12 +5,10 @@ import { RiFolderZipFill } from 'react-icons/ri';
 import { Checkbox, FormControl, FormControlLabel, IconButton, Tooltip, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, ITestsUploadModel } from '../../../../common/types';
-import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import testsFilterableColums, { returnTestsNonFilterableColumns } from '../../../../pages/administration-new/tests/testsGridColumns';
 import { useDeleteByProblemMutation, useExportZipQuery, useGetTestsByProblemIdQuery, useImportTestsMutation } from '../../../../redux/services/admin/testsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import downloadFile from '../../../../utils/file-download-utils';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -52,15 +50,7 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
     const [ shouldSkip, setShouldSkip ] = useState<boolean>(true);
     const [ testsToUpload, setTestsToUpload ] = useState<ITestsUploadModel>({ ...defaultStateForUploadTests });
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
-
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: mapFilterParamsToQueryString(selectedFilters),
-        sorting: mapSorterParamsToQueryString(selectedSorters),
-    });
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
 
     const {
         refetch: retakeTests,
@@ -86,17 +76,6 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
         } ] = useImportTestsMutation();
 
     const { refetch: reExportZip, data: zipData, isError: exportZipError } = useExportZipQuery(problemId, { skip: shouldSkip });
-    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
-
-    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filtersQueryParams ?? '' }));
-    }, [ filtersQueryParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortersQueryParams ?? '' }));
-    }, [ sortersQueryParams ]);
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
@@ -311,10 +290,6 @@ const TestsInProblemView = (props: ITestsInProblemsViewProps) => {
               error={error}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
-              selectedFilters={selectedFilters || []}
-              selectedSorters={selectedSorters || []}
-              setSorterStateAction={setSelectedSorters}
-              setFilterStateAction={setSelectedFilters}
               withSearchParams={false}
               modals={[
                   { showModal: openCreateModal, modal: (i) => renderModal(i, false) },
