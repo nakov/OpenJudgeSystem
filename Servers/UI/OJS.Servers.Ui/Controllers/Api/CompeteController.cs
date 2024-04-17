@@ -89,7 +89,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost]
+    [HttpPost("/submit")]
     public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
@@ -100,7 +100,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost]
+    [HttpPost("/submitfile")]
     public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
@@ -114,7 +114,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="id">The submission id to be retested.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost("{id:int}")]
+    [HttpPost("{id:int}/retest")]
     public async Task<IActionResult> Retest(int id)
         => await this.submissionsBusinessService
             .Retest(id)
