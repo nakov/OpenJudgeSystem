@@ -7,7 +7,6 @@ import { Popover } from '@mui/material';
 
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { useAppSelector } from '../../../redux/store';
 import CodeEditor from '../../code-editor/CodeEditor';
 import Diff from '../../diff/Diff';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
@@ -17,6 +16,7 @@ import styles from './SubmissionTestRun.module.scss';
 interface ISubmissionTestRunProps {
     testRun: ITestRunType;
     idx: number;
+    shouldRenderAdminData?: boolean;
 }
 
 export const enum testResultTypes {
@@ -28,11 +28,9 @@ export const enum testResultTypes {
 }
 
 const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
-    const { testRun, idx } = props;
+    const { testRun, idx, shouldRenderAdminData = false } = props;
 
     const { isDarkMode, themeColors, getColorClassName } = useTheme();
-
-    const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
@@ -132,7 +130,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                     )}
                 </div>
                 <div className={styles.testDetailsAndMemoryWrapper}>
-                    { user.canAccessAdministration && (
+                    { shouldRenderAdminData && (
                         <Link
                           target="_blank"
                           to={`/administration-new/tests/${testId}`}

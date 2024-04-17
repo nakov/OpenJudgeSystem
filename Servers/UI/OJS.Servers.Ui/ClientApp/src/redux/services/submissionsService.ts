@@ -10,7 +10,7 @@ import {
     IGetSubmissionsByUserParams,
     IRetestSubmissionUrlParams,
 } from '../../common/url-types';
-import { ISubmissionType } from '../../hooks/submissions/types';
+import { ISubmissionDetailsResponseType } from '../../hooks/submissions/types';
 
 const submissionsService = createApi({
     reducerPath: submissionsServiceName,
@@ -69,7 +69,7 @@ const submissionsService = createApi({
                 query: ({ username, page }) => (
                     { url: `/${defaultPathIdentifier}/Submissions/GetUserSubmissions?username=${username}&page=${page}` }),
             }),
-        getSubmissionDetails: builder.query<ISubmissionType, { id: number }>({
+        getSubmissionDetails: builder.query<ISubmissionDetailsResponseType, { id: number }>({
             query: ({ id }) => (
                 { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
         }),
