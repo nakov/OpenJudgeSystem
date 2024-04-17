@@ -15,7 +15,6 @@ import LogoutPage from '../../../pages/auth/logout/LogoutPage';
 import RegisterPage from '../../../pages/auth/register/RegisterPage';
 import ContestPage from '../../../pages/contest/ContestPage';
 import ContestResultsPage from '../../../pages/contest-results/ContestResultsPage';
-import ContestResultsPageNew from '../../../pages/contest-results/ContestResultsPage';
 import ContestDetailsPage from '../../../pages/contests/contest-details/ContestDetailsPage';
 import ContestsPage from '../../../pages/contests/ContestsPage';
 import HomePage from '../../../pages/home/HomePage';
@@ -75,7 +74,7 @@ const ClientPortal = () => {
         },
         {
             path: 'contests/:contestId/:participationType/results/:resultType',
-            Element: ContestResultsPageNew,
+            Element: ContestResultsPage,
         },
         {
             path: 'Submissions/Retest/:submissionId',
