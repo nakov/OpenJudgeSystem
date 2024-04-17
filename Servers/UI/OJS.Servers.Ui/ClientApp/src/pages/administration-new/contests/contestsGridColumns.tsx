@@ -122,17 +122,20 @@ const contestFilterableColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+        hideable: true,
     },
     {
         field: 'modifiedOn',
         headerName: `${MODIFIED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

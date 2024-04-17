@@ -11,6 +11,7 @@ import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
 import { useDeleteSubmissionMutation } from '../../../redux/services/admin/submissionsAdminService';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const dataColumns: GridColDef[] = [
     {
@@ -114,16 +115,18 @@ const dataColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
         headerName: `${MODIFIED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
         sortable: false,
     },
 ];

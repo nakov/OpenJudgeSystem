@@ -12,8 +12,9 @@ import ProfileSubmissions from '../../components/profile/profile-submissions/Pro
 import { usePageTitles } from '../../hooks/use-page-titles';
 import useTheme from '../../hooks/use-theme';
 import { setProfile } from '../../redux/features/usersSlice';
-import { useGetProfileQuery } from '../../redux/services/usersService';
+import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
+import isNilOrEmpty from '../../utils/check-utils';
 import concatClassNames from '../../utils/class-names';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
@@ -21,7 +22,7 @@ import { setLayout } from '../shared/set-layout';
 import styles from './ProfilePage.module.scss';
 
 const ProfilePage = () => {
-    const { internalUser, isLoggedIn } = useAppSelector((reduxState) => reduxState.authorization);
+    const { internalUser, isLoggedIn, isGetUserInfoCompleted } = useAppSelector((reduxState) => reduxState.authorization);
     const { profile } = useAppSelector((reduxState) => reduxState.users);
     const [ toggleValue, setToggleValue ] = useState<number>(1);
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
@@ -40,11 +41,17 @@ const ProfilePage = () => {
         [ internalUser, username ],
     );
 
-    const {
+    const [ getProfileQuery, {
         data: profileInfo,
-        isError,
         isLoading: isProfileInfoLoading,
-    } = useGetProfileQuery({ username: profileUsername });
+        error: isError,
+    } ] = useLazyGetProfileQuery();
+
+    useEffect(() => {
+        if (isGetUserInfoCompleted && !isNilOrEmpty(profileUsername)) {
+            getProfileQuery({ username: profileUsername });
+        }
+    }, [ getProfileQuery, isGetUserInfoCompleted, profileUsername ]);
 
     useEffect(
         () => {
@@ -82,7 +89,7 @@ const ProfilePage = () => {
     }, [ getColorClassName, isError, themeColors.textColor ]);
 
     return (
-        isProfileInfoLoading
+        isProfileInfoLoading || !isGetUserInfoCompleted
             ? <SpinningLoader />
             : isNil(profile)
                 ? renderError()

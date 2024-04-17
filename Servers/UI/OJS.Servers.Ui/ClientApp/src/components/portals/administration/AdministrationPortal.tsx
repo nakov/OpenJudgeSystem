@@ -371,14 +371,17 @@ const AdministrationPortal = () => {
         {
             path: `${EXAM_GROUPS_PATH}`,
             Element: AdministrationExamGroupsPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${EXAM_GROUPS_PATH}/:id`,
             Element: AdministrationExamGroupPage,
+            visibleOnlyForAdmin: false,
         },
         {
             path: `${SETTINGS_PATH}`,
             Element: AdministrationSettingsPage,
+            visibleOnlyForAdmin: true,
         },
         {
 

@@ -142,6 +142,7 @@ const AdministrationContestsPage = () => {
                   ? Number(contestId)
                   : null}
               isEditMode={isEditMode}
+              skipGettingContest={!isEditMode}
               onSuccess={() => onClose(isEditMode)}
               onDeleteSuccess={() => onClose(isEditMode)}
             />
