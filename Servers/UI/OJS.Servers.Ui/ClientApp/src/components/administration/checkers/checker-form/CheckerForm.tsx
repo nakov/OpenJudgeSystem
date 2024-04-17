@@ -169,8 +169,8 @@ const CheckerForm = (props: ICheckerFormProps) => {
                 </Box>
                 <AdministrationFormButtons
                   isEditMode={isEditMode}
-                  onCreateClick={() => updateChecker(checker)}
-                  onEditClick={() => createChecker(checker)}
+                  onCreateClick={() => createChecker(checker)}
+                  onEditClick={() => updateChecker(checker)}
                 />
             </form>
         </>
