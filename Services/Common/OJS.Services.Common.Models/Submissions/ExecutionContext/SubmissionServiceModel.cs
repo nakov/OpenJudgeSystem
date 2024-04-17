@@ -83,9 +83,19 @@
                     d => d.ExecutionType,
                     opt => opt.MapFrom(s => ExecutionType.TestsExecution))
                 .ForMember(dest => dest.TimeLimit, opt
-                    => opt.MapFrom<TimeLimitResolver>())
+                    => opt.MapFrom(s => s.SubmissionType!.SubmissionTypesInProblems
+                        .Where(x => x.ProblemId == s.ProblemId)
+                        .Any(x => x.TimeLimit.HasValue)
+                        ? s.SubmissionType.SubmissionTypesInProblems
+                            .Where(x => x.ProblemId == s.ProblemId).Select(x => x.TimeLimit).First()
+                        : s.Problem.TimeLimit))
                 .ForMember(dest => dest.MemoryLimit, opt
-                    => opt.MapFrom<MemoryLimitValueResolver>())
+                    => opt.MapFrom(s => s.SubmissionType!.SubmissionTypesInProblems
+                        .Where(x => x.ProblemId == s.ProblemId)
+                        .Any(x => x.MemoryLimit.HasValue)
+                        ? s.SubmissionType.SubmissionTypesInProblems
+                            .Where(x => x.ProblemId == s.ProblemId).Select(x => x.MemoryLimit).First()
+                        : s.Problem.MemoryLimit))
                 .ForMember(
                     d => d.TestsExecutionDetails,
                     opt => opt.MapFrom(s => s.Problem))

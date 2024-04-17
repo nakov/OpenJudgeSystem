@@ -91,8 +91,6 @@
         public async Task<IEnumerable<TServiceModel>> GetAllNonDeletedByProblemId<TServiceModel>(int problemId)
             => await this.GetAllByProblem(problemId)
                 .Where(s => !s.IsDeleted)
-                .Include(s => s.Problem)
-                .ThenInclude(p => p.SubmissionTypesInProblems)
                 .MapCollection<TServiceModel>()
                 .ToListAsync();
 
