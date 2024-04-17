@@ -65,6 +65,31 @@ interface ISubmissionDetailsType extends ISubmissionType {
     totalTests : number;
 }
 
+interface ISubmissionDetailsResponseType {
+    id: number;
+    problem: IProblemType;
+    points: number;
+    content: string;
+    testRuns: ITestRunType[];
+    user: IUserProfileType;
+    userIsInRoleForContest: boolean;
+    submissionType: ISubmissionTypeType;
+    maxUsedTime: number;
+    maxUsedMemory: number;
+    isOfficial: boolean;
+    isCompiledSuccessfully: boolean;
+    isEligibleForRetest: boolean;
+    compilerComment: string | null;
+    isProcessed: boolean;
+    createdOn: Date;
+    modifiedOn: Date;
+    startedExecutionOn: Date;
+    completedExecutionOn: Date;
+    processingComment: string | null;
+    totalTests: number;
+    contestId: number;
+}
+
 interface ISubmissionResults {
     id: number;
     problemId: number;
@@ -149,6 +174,7 @@ export type {
     ISubmissionResults,
     ITestRunDetailsCollapsed,
     ISubmissionResultsDetails,
+    ISubmissionDetailsResponseType,
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
