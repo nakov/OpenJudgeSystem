@@ -11,6 +11,7 @@
 .contestResultsGrid {
     color: colors.$white-color;
     table-layout: auto;
+    min-width: 100%;
     max-width: 1680px;
     overflow-x: auto;
     border-collapse: collapse;

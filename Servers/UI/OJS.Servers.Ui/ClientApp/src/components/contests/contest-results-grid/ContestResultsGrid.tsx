@@ -1,20 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Tooltip } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import { ButtonSize, LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
-import SubmissionGridRow from '../../components/submissions/submission-grid-row/SubmissionGridRow';
-import {
-    IContestResultsParticipationType,
-    IContestResultsType,
-} from '../../hooks/contests/types';
-import { useContestCategories } from '../../hooks/use-contest-categories';
-import useTheme from '../../hooks/use-theme';
-import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
-import isNilOrEmpty from '../../utils/check-utils';
-import concatClassNames from '../../utils/class-names';
+import { IContestResultsParticipationType, IContestResultsType } from '../../../hooks/contests/types';
+import { useContestCategories } from '../../../hooks/use-contest-categories';
+import useTheme from '../../../hooks/use-theme';
+import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
+import isNilOrEmpty from '../../../utils/check-utils';
+import concatClassNames from '../../../utils/class-names';
+import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ContestResultsGrid.module.scss';
 
@@ -117,10 +113,8 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                             <td>{index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {
-                                isNilOrEmpty(participantResult.problemResults)
-                                    ? items?.problems.map((p) => (<td>-</td>))
-                                    : items?.problems
-                                        .map((p) => renderParticipantResult(participantResult, p.id))
+                                items?.problems
+                                    .map((p) => renderParticipantResult(participantResult, p.id))
                             }
                             {
                                 isNilOrEmpty(participantResult.problemResults)
