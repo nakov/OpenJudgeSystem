@@ -89,10 +89,11 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
     }, [ items, internalUser ]);
 
     return (
-        <table className={styles.contestResultsGrid}>
-            <thead>
-                <tr className={headerClassName}>
-                    {
+        <div className={styles.tableContainer}>
+            <table className={styles.contestResultsGrid}>
+                <thead>
+                    <tr className={headerClassName}>
+                        {
                         getColumns(items!).map((column) => {
                             if (column.length > 20) {
                                 return (
@@ -107,10 +108,10 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                             return (<td>{column}</td>);
                         })
                     }
-                </tr>
-            </thead>
-            <tbody>
-                {
+                    </tr>
+                </thead>
+                <tbody>
+                    {
                     !isNil(items) && !isEmpty(items) && items.results.map((participantResult, index) => (
                         <tr key={index} className={rowClassName}>
                             <td>{index + 1}</td>
@@ -129,8 +130,9 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                         </tr>
                     ))
                 }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     );
 };
 
