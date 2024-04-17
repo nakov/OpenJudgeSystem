@@ -4,12 +4,10 @@ import { IconButton, Tooltip } from '@mui/material';
 
 import { ContestVariation } from '../../../../common/contest-types';
 import { IGetAllAdminParams } from '../../../../common/types';
-import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import problemFilterableColums, { returnProblemsNonFilterableColumns } from '../../../../pages/administration-new/problems/problemGridColumns';
 import { useDeleteByContestMutation, useGetContestProblemsQuery } from '../../../../redux/services/admin/problemsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
@@ -29,17 +27,11 @@ interface IProblemsInContestViewProps {
 
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
     const { contestId, contestType, canContestBeCompeted } = props;
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemId, setProblemId ] = useState<number>(-1);
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: mapFilterParamsToQueryString(selectedFilters),
-        sorting: mapSorterParamsToQueryString(selectedSorters),
-    });
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
@@ -66,10 +58,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
             error: deleteAllError,
         } ] = useDeleteByContestMutation();
 
-    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
-
-    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
-
     useEffect(() => {
         getAndSetExceptionMessage([ deleteAllError, getContestError ], setErrorMessages);
         setSuccessMessage(null);
@@ -84,14 +72,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
 
         setSuccessMessage(message);
     }, [ deleteAllData, isSuccesfullyDeletedAll ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
-    }, [ filtersQueryParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
-    }, [ sortersQueryParams ]);
 
     const onEditClick = (id: number) => {
         setOpenEditModal(true);
@@ -245,8 +225,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                         )
 }
                       queryParams={queryParams}
-                      selectedFilters={selectedFilters}
-                      selectedSorters={selectedSorters}
                       setQueryParams={setQueryParams}
                       modals={[
                           { showModal: openEditModal, modal: (i) => renderProblemModal(i, false) },
@@ -266,8 +244,6 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                           },
                       ]}
                       renderActionButtons={renderGridSettings}
-                      setSorterStateAction={setSelectedSorters}
-                      setFilterStateAction={setSelectedFilters}
                       withSearchParams={false}
                       legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
                     />

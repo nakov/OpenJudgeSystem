@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
@@ -11,33 +11,17 @@ import {
     useGetAllAdminExamGroupsQuery,
     useLazyExportExamGroupsToExcelQuery,
 } from '../../../redux/services/admin/examGroupsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
 import examGroupsFilterableColumns, { returnExamGroupsNonFilterableColumns } from './examGroupsGridColumns';
 
 const AdministrationExamGroupsPage = () => {
     const [ searchParams ] = useSearchParams();
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ??
-        '',
-        sorting: searchParams.get('sorting') ?? '',
-    });
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(examGroupsFilterableColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationSortingProps(examGroupsFilterableColumns),
-    ));
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd, searchParams));
 
     const [ openEditExamGroupModal, setOpenEditExamGroupModal ] = useState(false);
     const [ openShowCreateExamGroupModal, setOpenShowCreateExamGroupModal ] = useState<boolean>(false);
@@ -52,14 +36,6 @@ const AdministrationExamGroupsPage = () => {
         setOpenEditExamGroupModal(true);
         setExamGroupId(id);
     };
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: searchParams.get('filter') ?? '',
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
 
     const renderEditExamGroupModal = (index: number) => (
         <AdministrationModal
@@ -104,10 +80,6 @@ const AdministrationExamGroupsPage = () => {
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setSelectedSorters}
-          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: openShowCreateExamGroupModal, modal: (i) => renderCreateExamGroupModal(i) },
               { showModal: openEditExamGroupModal, modal: (i) => renderEditExamGroupModal(i) },

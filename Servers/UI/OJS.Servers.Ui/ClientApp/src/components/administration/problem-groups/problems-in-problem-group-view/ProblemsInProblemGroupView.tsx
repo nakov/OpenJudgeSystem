@@ -31,8 +31,6 @@ const ProblemsInProblemGroupView = (props: IProblemsInProblemGroupViewProps) => 
           notFilterableGridColumnDef={[]}
           data={problemData}
           error={problemDataError}
-          selectedFilters={[]}
-          selectedSorters={[]}
           showFiltersAndSorters={false}
           legendProps={[ { color: '#FFA1A1', message: 'Problem is deleted.' } ]}
         />

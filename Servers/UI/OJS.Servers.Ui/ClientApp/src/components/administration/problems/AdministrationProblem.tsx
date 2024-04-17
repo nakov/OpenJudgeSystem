@@ -22,9 +22,10 @@ const AdministrationProblem = () => {
     const [ problemName, setProblemName ] = useState<string>('');
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ contestId, setContestId ] = useState<number>(0);
+    const [ skipGettingContestActivity, setSkipGettingContestActivity ] = useState<boolean>(true);
 
-    const { data: activityData, error: activityError, isLoading: isGettingActivity, isFetching: isFetchingActivity } =
-    useGetContestActivityQuery(Number(contestId));
+    const { refetch, data: activityData, error: activityError, isLoading: isGettingActivity, isFetching: isFetchingActivity } =
+    useGetContestActivityQuery(Number(contestId), { skip: skipGettingContestActivity });
 
     const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_LISTED_DATA) => {
         setTabName(newValue);
@@ -34,13 +35,22 @@ const AdministrationProblem = () => {
         getAndSetExceptionMessage([ activityError ], setErrorMessages);
     }, [ activityError ]);
 
+    useEffect(() => {
+        if (!skipGettingContestActivity) {
+            refetch();
+        }
+    }, [ contestId, refetch, skipGettingContestActivity ]);
+
     const returnProblemForm = () => (
         <ProblemForm
           problemId={Number(problemId)}
           isEditMode
           contestId={null}
           getName={(name: string) => setProblemName(name)}
-          getContestId={(id: number) => setContestId(id)}
+          getContestId={(id: number) => {
+              setContestId(id);
+              setSkipGettingContestActivity(false);
+          }}
         />
     );
 

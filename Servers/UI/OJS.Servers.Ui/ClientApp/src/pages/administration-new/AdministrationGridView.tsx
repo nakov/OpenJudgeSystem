@@ -13,8 +13,7 @@ import LegendBox from '../../components/administration/common/legend-box/LegendB
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_ROWS_PER_PAGE } from '../../utils/constants';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 
-import AdministrationFilters, { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps } from './administration-filters/AdministrationFilters';
-import AdministrationSorting, { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps } from './administration-sorting/AdministrationSorting';
+import AdministrationFilters, { addDefaultFilter, IAdministrationFilter, IAdministrationSorter, mapGridColumnsToAdministrationFilterProps, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from './administration-filters/AdministrationFilters';
 
 import styles from './AdministrationStyles.module.scss';
 
@@ -28,18 +27,20 @@ interface IAdministrationGridViewProps<T> {
     modals?: Array<{showModal:boolean; modal: (index: number) => ReactNode}>;
     error: ExceptionData[] | FetchBaseQueryError | SerializedError | undefined;
     queryParams?: IGetAllAdminParams;
-    setQueryParams?: (params: IGetAllAdminParams) => void;
-    selectedFilters: Array<IAdministrationFilter>;
-    selectedSorters: Array<IAdministrationSorter>;
-    setFilterStateAction?: Dispatch<SetStateAction<IAdministrationFilter[]>>;
-    setSorterStateAction?: Dispatch<SetStateAction<IAdministrationSorter[]>>;
+    setQueryParams?: Dispatch<SetStateAction<IGetAllAdminParams>>;
     withSearchParams?: boolean;
     legendProps?: Array<{color: string; message:string}>;
     specificRowIdName?: string | null;
    excelMutation?: any;
 
+   defaultFilter?: string;
+
+   defaultSorter?: string;
+
 }
 
+const defaultFilterToAdd = 'isdeleted~equals~false';
+const defaultSorterToAdd = 'id=DESC';
 const AdministrationGridView = <T extends object >(props: IAdministrationGridViewProps<T>) => {
     const {
         filterableGridColumnDef,
@@ -51,17 +52,25 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         error,
         queryParams,
         setQueryParams,
-        selectedFilters,
-        selectedSorters,
-        setFilterStateAction,
-        setSorterStateAction,
         withSearchParams = true,
         legendProps,
         excelMutation,
         specificRowIdName: specifyColumnIdName,
+        defaultFilter = defaultFilterToAdd,
+        defaultSorter = defaultSorterToAdd,
     } = props;
 
     const [ searchParams, setSearchParams ] = useSearchParams();
+
+    // eslint-disable-next-line max-len
+    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(addDefaultFilter(filterableGridColumnDef, searchParams, defaultFilter));
+
+    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
+        searchParams ?? '',
+        mapGridColumnsToAdministrationSortingProps(filterableGridColumnDef),
+        defaultSorter,
+    ));
+
     const getRowClassName = (isDeleted: boolean, isVisible: boolean) => {
         if (isDeleted) {
             return styles.redGridRow;
@@ -70,8 +79,6 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
         }
         return '';
     };
-
-    const [ opened, setOpened ] = useState<string | null>(null);
 
     const renderActions = () => (
         <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }}>
@@ -103,22 +110,13 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                       searchParams={searchParams}
                       setSearchParams={setSearchParams}
                       withSearchParams={withSearchParams}
-                      setStateAction={setFilterStateAction}
+                      setSelectedFilters={setSelectedFilters}
+                      setQueryParams={setQueryParams}
                       selectedFilters={selectedFilters}
-                      columns={filtersColumns}
-                      isSortersOpened={opened === 'sorters'}
-                      setOpenedFilters={setOpened}
-                    />
-
-                    <AdministrationSorting
-                      searchParams={searchParams}
-                      setSearchParams={setSearchParams}
-                      withSearchParams={withSearchParams}
-                      setStateAction={setSorterStateAction}
+                      filterColumns={filtersColumns}
+                      sortingColumns={sortingColumns}
                       selectedSorters={selectedSorters}
-                      columns={sortingColumns}
-                      isFiltersOpened={opened === 'filters'}
-                      setOpenedSorters={setOpened}
+                      setSelectedSorters={setSelectedSorters}
                     />
                 </div>
                 )}
@@ -176,6 +174,11 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
             </div>
         </Slide>
     );
+};
+
+export {
+    defaultFilterToAdd,
+    defaultSorterToAdd,
 };
 
 export default AdministrationGridView;

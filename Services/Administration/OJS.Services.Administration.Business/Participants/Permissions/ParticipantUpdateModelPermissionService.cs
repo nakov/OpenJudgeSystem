@@ -11,26 +11,15 @@ using System.Threading.Tasks;
 
 public class ParticipantUpdateModelPermissionService : IEntityPermissionsService<Participant, ParticipantAdministrationModel>
 {
-    private readonly IParticipantsDataService participantsDataService;
     private readonly IContestsBusinessService contestsBusinessService;
 
     public ParticipantUpdateModelPermissionService(
-        IParticipantsDataService participantsDataService,
-        IContestsBusinessService contestsBusinessService)
-    {
-        this.participantsDataService = participantsDataService;
+        IContestsBusinessService contestsBusinessService) =>
         this.contestsBusinessService = contestsBusinessService;
-    }
 
-    public async Task<bool> HasPermission(UserInfoModel user, ParticipantAdministrationModel value, string operation)
-    {
-        var contestId = await this.participantsDataService.GetByIdQuery(value.Id)
-            .Select(x => x.ContestId)
-            .FirstOrDefaultAsync();
-
-        return await this.contestsBusinessService.UserHasContestPermissions(
-            contestId,
+    public async Task<bool> HasPermission(UserInfoModel user, ParticipantAdministrationModel value, string operation) =>
+        await this.contestsBusinessService.UserHasContestPermissions(
+            value.ContestId,
             user.Id,
             user.IsAdmin);
-    }
 }

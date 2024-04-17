@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 
 import { IGetAllAdminParams } from '../../../../common/types';
-import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import testRunsFilterableColumns from '../../../../pages/administration-new/test-runs/testRunsGridColumns';
 import { useGetTestRunsByTestIdQuery } from '../../../../redux/services/admin/testsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 
 interface ITestRunsInTestViewProps {
@@ -16,31 +13,10 @@ interface ITestRunsInTestViewProps {
 
 const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
     const { testId } = props;
-    const [ searchParams ] = useSearchParams();
 
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
-        sorting: searchParams.get('sorting') ?? '',
-    });
-
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
 
     const { data: testData, error, isLoading } = useGetTestRunsByTestIdQuery({ testId, ...queryParams });
-
-    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
-
-    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, filter: filtersQueryParams ?? '' }));
-    }, [ filtersQueryParams ]);
-
-    useEffect(() => {
-        setQueryParams((prevState) => ({ ...prevState, sorting: sortersQueryParams ?? '' }));
-    }, [ sortersQueryParams ]);
 
     if (isLoading) {
         return (
@@ -56,12 +32,7 @@ const TestRunsInTestView = (props: ITestRunsInTestViewProps) => {
           error={error}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setSelectedSorters}
-          setFilterStateAction={setSelectedFilters}
           withSearchParams={false}
-
         />
     );
 };

@@ -94,17 +94,19 @@ const usersFilterableColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
         headerName: `${MODIFIED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

@@ -253,8 +253,8 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
                     </form>
                     <AdministrationFormButtons
                       isEditMode={isEditMode}
-                      onCreateClick={() => edit()}
-                      onEditClick={() => create()}
+                      onCreateClick={() => create()}
+                      onEditClick={() => edit()}
                       disabled={!isValidForm}
                     />
                 </div>
