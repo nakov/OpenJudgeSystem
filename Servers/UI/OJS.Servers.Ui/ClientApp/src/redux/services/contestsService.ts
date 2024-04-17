@@ -77,7 +77,7 @@ export const contestsService = createApi({
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
             query: ({ content, official, problemId, submissionTypeId }) => ({
-                url: '/compete/submit',
+                url: '/Compete/Submit',
                 method: 'POST',
                 body: { content, official, problemId, submissionTypeId },
             }),

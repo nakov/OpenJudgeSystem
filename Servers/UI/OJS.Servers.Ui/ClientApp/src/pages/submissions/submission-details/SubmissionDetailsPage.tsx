@@ -112,7 +112,7 @@ const SubmissionDetailsPage = () => {
             {' '}
             <Link to={`/contests/${contestId}/practice#${problem?.id}`}>{problem?.name}</Link>
         </div>
-    ), [ solutionId, contestUser?.userName, problem?.name, contestId ]);
+    ), [ solutionId, contestUser?.userName, problem?.name, problem?.id, contestId ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
