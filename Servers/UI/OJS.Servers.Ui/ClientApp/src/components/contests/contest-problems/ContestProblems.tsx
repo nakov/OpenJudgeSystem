@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { IProblemType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
@@ -18,6 +19,8 @@ interface IContestProblemsProps {
 const ContestProblems = (props: IContestProblemsProps) => {
     const { problems, onContestProblemChange, totalParticipantsCount, sumMyPoints = 0, sumTotalPoints } = props;
 
+    const { hash } = useLocation();
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
@@ -26,12 +29,21 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const darkBackgroundClassName = getColorClassName(themeColors.baseColor500);
 
     useEffect(() => {
-        if (problems.length > 0) {
+        if (!problems) {
+            return;
+        }
+
+        const selectedProblem = problems.find((prob) => prob.id === Number(hash.substring(1)));
+        if (selectedProblem) {
+            dispatch(setSelectedContestDetailsProblem({ selectedProblem }));
+        } else {
             dispatch(setSelectedContestDetailsProblem({ selectedProblem: problems[0] }));
         }
-    }, [ problems, problems.length, dispatch ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const onProblemClick = (problem: IProblemType) => {
+        navigate(`#${problem.id}`);
         onContestProblemChange();
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: problem }));
     };
@@ -44,7 +56,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                         <div>Tasks</div>
                         <div>Points</div>
                     </div>
-                    {problems.map((problem) => {
+                    {problems.map((problem, idx) => {
                         const isActive = selectedContestDetailsProblem?.id === problem.id;
                         return (
                             <div
