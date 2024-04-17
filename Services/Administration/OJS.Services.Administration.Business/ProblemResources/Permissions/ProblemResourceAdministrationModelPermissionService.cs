@@ -11,21 +11,21 @@ using System.Threading.Tasks;
 
 public class ProblemResourceAdministrationModelPermissionService : IEntityPermissionsService<ProblemResource, ProblemResourceAdministrationModel>
 {
-    private readonly IProblemResourcesDataService problemResourcesDataService;
+    private readonly IProblemsDataService problemsDataService;
     private readonly IContestsBusinessService contestsBusinessService;
 
     public ProblemResourceAdministrationModelPermissionService(
-        IProblemResourcesDataService problemResourcesDataService,
+        IProblemsDataService problemsDataService,
         IContestsBusinessService contestsBusinessService)
     {
-        this.problemResourcesDataService = problemResourcesDataService;
+        this.problemsDataService = problemsDataService;
         this.contestsBusinessService = contestsBusinessService;
     }
 
     public async Task<bool> HasPermission(UserInfoModel user, ProblemResourceAdministrationModel model, string operation)
     {
-        var contestId = await this.problemResourcesDataService.GetByIdQuery(model.Id)
-            .Select(pg => pg.Problem.ProblemGroup.ContestId)
+        var contestId = await this.problemsDataService.GetByIdQuery(model.ProblemId)
+            .Select(p => p.ProblemGroup.ContestId)
             .FirstOrDefaultAsync();
 
         return await this.contestsBusinessService.UserHasContestPermissions(

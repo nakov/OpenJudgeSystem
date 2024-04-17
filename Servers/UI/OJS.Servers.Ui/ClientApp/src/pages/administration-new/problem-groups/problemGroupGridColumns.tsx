@@ -12,6 +12,7 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteProblemGroupMutation } from '../../../redux/services/admin/problemGroupsAdminService';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const filterableColumns: GridColDef[] = [
@@ -77,17 +78,19 @@ const filterableColumns: GridColDef[] = [
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'modifiedOn',
         headerName: `${MODIFIED_ON}`,
         type: 'date',
-        flex: 0,
+        flex: 1,
         filterable: false,
         sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

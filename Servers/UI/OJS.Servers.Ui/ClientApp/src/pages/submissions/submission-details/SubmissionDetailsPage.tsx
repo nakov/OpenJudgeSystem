@@ -244,7 +244,7 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToAdministrationForContest = () => navigate(`/administration-new/contests/details/${contestId}`);
+        const goToAdministrationForContest = () => navigate(`/administration-new/contests/${contestId}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>
@@ -257,7 +257,6 @@ const SubmissionDetailsPage = () => {
                         <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
                     </>
                 )}
-
             </div>
         );
     }, [ content, contestId, navigate, retestSubmission, solutionId, user.canAccessAdministration ]);
