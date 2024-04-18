@@ -30,11 +30,6 @@ public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, T
     where TRoleClaim : IdentityRoleClaim<TKey>
     where TUserToken : IdentityUserToken<TKey>
 {
-    // This constructor is needed for migration creation during design time.
-    public BaseIdentityDbContext()
-    {
-    }
-
     public BaseIdentityDbContext(DbContextOptions<TDbContext> options)
         : base(options)
     {
