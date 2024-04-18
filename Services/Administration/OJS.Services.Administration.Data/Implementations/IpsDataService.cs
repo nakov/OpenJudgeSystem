@@ -16,8 +16,7 @@ namespace OJS.Services.Administration.Data.Implementations
         }
 
         public Task<Ip?> GetByValue(string value)
-            => this.DbSet
-                .FirstOrDefaultAsync(ip => ip.Value == value);
+            => this.One(ip => ip.Value == value);
 
         public async Task DeleteIps(IEnumerable<IpInContest> ips)
         {

@@ -17,12 +17,16 @@ namespace OJS.Services.Common.Data.Implementations
         where TEntity : class, IEntity
     {
         private readonly OjsDbContext db;
+        private readonly bool ignoreQueryFilters;
 
         public DataService(OjsDbContext db)
             => this.db = db;
 
-        protected DbSet<TEntity> DbSet
-            => this.db.Set<TEntity>();
+        public DataService(OjsDbContext db, bool ignoreQueryFilters)
+        {
+            this.db = db;
+            this.ignoreQueryFilters = ignoreQueryFilters;
+        }
 
         public virtual async Task Add(TEntity entity)
             => await this.db.AddAsync(entity);
@@ -41,7 +45,7 @@ namespace OJS.Services.Common.Data.Implementations
 
         public virtual async Task DeleteById(object id)
         {
-            var entity = await this.DbSet.FindAsync(id);
+            var entity = await this.OneById(id);
             this.Delete(entity!);
         }
 
@@ -49,8 +53,8 @@ namespace OJS.Services.Common.Data.Implementations
             => this.db.Entry(entity).State = EntityState.Detached;
 
         public async Task<int> GetCount()
-            => await this.DbSet.AnyAsync()
-                ? await this.DbSet.CountAsync()
+            => await this.GetQuery().AnyAsync()
+                ? await this.GetQuery().CountAsync()
                 : 0;
 
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
@@ -78,7 +82,8 @@ namespace OJS.Services.Common.Data.Implementations
                 .ToListAsync();
 
         public virtual async Task<TEntity?> OneById(object id)
-            => await this.DbSet.FindAsync(id);
+            => await this.GetByIdQuery(id)
+                .FirstOrDefaultAsync();
 
         public virtual async Task<TResult?> OneByIdTo<TResult>(object id)
            where TResult : class
@@ -118,7 +123,7 @@ namespace OJS.Services.Common.Data.Implementations
         public virtual IQueryable<TEntity> GetByIdQuery(object id)
         {
             var filter = ExpressionBuilder.BuildEqualsFilter<TEntity>(id, nameof(IEntity<object>.Id));
-            return this.DbSet.Where(filter);
+            return this.GetQuery(filter);
         }
 
         public virtual IQueryable<TEntity> GetQuery(
@@ -128,7 +133,12 @@ namespace OJS.Services.Common.Data.Implementations
             int? skip = null,
             int? take = null)
         {
-            var query = this.DbSet.AsQueryable();
+            var query = this.db.Set<TEntity>().AsQueryable();
+
+            if (this.ignoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
 
             if (filter != null)
             {

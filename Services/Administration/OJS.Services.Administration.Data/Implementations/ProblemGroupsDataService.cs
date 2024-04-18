@@ -17,18 +17,17 @@
         }
 
         public ProblemGroup? GetByProblem(int problemId) =>
-            this.DbSet
+            this.GetQuery()
                 .Include(p => p.Contest)
                 .Include(p => p.Problems)
                 .FirstOrDefault(pg => pg.Problems
                     .Any(p => p.Id == problemId));
 
         public IQueryable<ProblemGroup> GetAllWithDeleted() =>
-            this.DbSet.Where(pg => pg.IsDeleted == true);
+            this.GetQuery(pg => pg.IsDeleted == true);
 
         public IQueryable<ProblemGroup> GetAllByContest(int contestId) =>
-            this.DbSet
-                .Where(pg => pg.ContestId == contestId);
+            this.GetQuery(pg => pg.ContestId == contestId);
 
         public IQueryable<ProblemGroup> GetAllByContestId(int contestId)
             => this.GetAllByContest(contestId)

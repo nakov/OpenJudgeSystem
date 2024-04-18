@@ -16,7 +16,7 @@
         }
 
         public Task<UserProfile?> GetByUsername(string username) =>
-            this.DbSet.Where(u => u.UserName == username).FirstOrDefaultAsync();
+            this.GetQuery(u => u.UserName == username).FirstOrDefaultAsync();
 
         public Task<IEnumerable<UserProfile>> GetAllWithDeleted() =>
             this.All();

@@ -17,12 +17,10 @@
         }
 
         public IQueryable<Test> GetByIdQuery(int id)
-            => this.DbSet
-                .Where(t => t.Id == id);
+            => this.GetQuery(t => t.Id == id);
 
         public IQueryable<Test> GetAllByProblem(int problemId)
-            => this.DbSet
-                .Where(t => t.ProblemId == problemId);
+            => this.GetQuery(t => t.ProblemId == problemId);
 
         public IQueryable<Test> GetAllNonTrialByProblem(int problemId)
             => this.GetAllByProblem(problemId)

@@ -20,21 +20,17 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
     }
 
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
-        => this.DbSet
-            .Where(s => s.SubmissionId == submissionId)
+        => this.GetQuery(s => s.SubmissionId == submissionId)
             .FirstOrDefaultAsync();
 
     public IQueryable<SubmissionForProcessing> GetAllPending()
-        => this.DbSet
-            .Where(sfp => !sfp.Processed && !sfp.Processing);
+        => this.GetQuery(sfp => !sfp.Processed && !sfp.Processing);
 
     public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
-        => this.DbSet
-            .Where(sfp => !sfp.Processed);
+        => this.GetQuery(sfp => !sfp.Processed);
 
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
-        => this.DbSet
-            .Where(sfp => !sfp.Processed && sfp.Processing);
+        => this.GetQuery(sfp => !sfp.Processed && sfp.Processing);
 
     public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
     {

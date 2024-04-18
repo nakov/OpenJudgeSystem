@@ -48,10 +48,10 @@ namespace OJS.Services.Administration.Data.Implementations
                 .ToListAsync();
 
         public Task<Contest?> GetByIdWithProblems(int id)
-            => this.DbSet
+            => this.GetByIdQuery(id)
                 .Include(c => c.ProblemGroups)
                     .ThenInclude(pg => pg.Problems)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync();
 
         public Task<Contest?> GetByIdWithParticipants(int id)
             => this.GetByIdQuery(id)
@@ -68,8 +68,7 @@ namespace OJS.Services.Administration.Data.Implementations
                             p.ParticipationEndTime >= DateTime.Now))));
 
         public IQueryable<Contest> GetAllInactive()
-            => this.DbSet
-                .Where(c =>
+            => this.GetQuery(c =>
                     c.StartTime > DateTime.Now ||
                     (c.EndTime < DateTime.Now && c.Type != ContestType.OnlinePracticalExam) ||
                     !c.Participants.Any(p => p.ParticipationEndTime < DateTime.Now));
@@ -79,8 +78,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Where(c => c.StartTime > DateTime.Now);
 
         public IQueryable<Contest> GetAllVisible()
-            => this.DbSet
-                .Where(c => c.IsVisible);
+            => this.GetQuery(c => c.IsVisible);
 
         public IQueryable<Contest> GetAllVisibleByCategory(int categoryId)
             => this.GetAllVisible()
@@ -93,8 +91,7 @@ namespace OJS.Services.Administration.Data.Implementations
                     .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
 
         public IQueryable<Contest> GetAllByLecturer(string? lecturerId)
-            => this.DbSet
-                .Where(c =>
+            => this.GetQuery(c =>
                     c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
 
@@ -107,7 +104,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .Include(c => c.IpsInContests)
                     .ThenInclude(ip => ip.Ip);
 
-        public IQueryable<Contest> GetAllWithDeleted() => this.DbSet.IgnoreQueryFilters();
+        public IQueryable<Contest> GetAllWithDeleted() => this.GetQuery().IgnoreQueryFilters();
 
         public Task<int> GetMaxPointsById(int id)
             => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => true);
@@ -144,14 +141,12 @@ namespace OJS.Services.Administration.Data.Implementations
                     c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
 
         public Task<bool> IsUserParticipantInByContestAndUser(int id, string? userId)
-            => this.DbSet
-                .AnyAsync(c =>
+            => this.Exists(c =>
                     c.Id == id &&
                     c.Participants.Any(p => p.UserId == userId));
 
         public Task<bool> IsUserInExamGroupByContestAndUser(int id, string? userId)
-            => this.DbSet
-                .AnyAsync(c =>
+            => this.Exists(c =>
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
@@ -176,7 +171,6 @@ namespace OJS.Services.Administration.Data.Implementations
         }
 
         private IQueryable<Contest> GetAllVisibleQuery()
-            => this.DbSet
-                .Where(c => c.IsVisible);
+            => this.GetQuery(c => c.IsVisible);
     }
 }

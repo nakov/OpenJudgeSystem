@@ -14,8 +14,7 @@ public class ParticipantsCommonDataService : DataService<Participant>, IParticip
     }
 
     public IQueryable<Participant> GetAllByContest(int contestId)
-        => this.DbSet
-            .Where(p => p.ContestId == contestId);
+        => this.GetQuery(p => p.ContestId == contestId);
 
     public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
         => this.GetAllByContest(contestId)

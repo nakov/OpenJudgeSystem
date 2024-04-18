@@ -13,11 +13,10 @@
         }
 
         public IQueryable<SubmissionType> GetAllByProblem(int problemId)
-            => this.DbSet
-                .Where(st => st.SubmissionTypesInProblems
+            => this.GetQuery(st => st.SubmissionTypesInProblems
                     .Select(stp => stp.ProblemId)
                     .Contains(problemId));
 
-        public IQueryable<SubmissionType> GetAll() => this.DbSet;
+        public IQueryable<SubmissionType> GetAll() => this.GetQuery();
     }
 }

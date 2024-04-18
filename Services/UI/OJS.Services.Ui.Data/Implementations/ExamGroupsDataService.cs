@@ -16,14 +16,12 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public Task<ExamGroup?> GetByExternalIdAndAppId(int? externalId, string appId)
-            => this.DbSet
-                .FirstOrDefaultAsync(eg =>
+            => this.One(eg =>
                     eg.ExternalExamGroupId == externalId &&
                     eg.ExternalAppId == appId);
 
         public Task<int> GetIdByExternalIdAndAppId(int? externalId, string appId)
-            => this.DbSet
-                .Where(eg => eg.ExternalExamGroupId == externalId && eg.ExternalAppId == appId)
+            => this.GetQuery(eg => eg.ExternalExamGroupId == externalId && eg.ExternalAppId == appId)
                 .Select(eg => eg.Id)
                 .FirstOrDefaultAsync();
 
@@ -32,11 +30,8 @@ namespace OJS.Services.Ui.Data.Implementations
                 .Select(eg => eg.ContestId)
                 .FirstOrDefaultAsync();
 
-        public IQueryable<ExamGroup> GetAll() => this.DbSet;
-
         public IQueryable<ExamGroup> GetAllByLecturer(string lecturerId) =>
-            this.GetAll()
-                .Where(eg =>
+            this.GetQuery(eg =>
                     eg.Contest == null ||
                     (eg.Contest.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                      eg.Contest.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId)));
@@ -60,8 +55,7 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public Task RemoveContestByContest(int contestId)
-            => this.DbSet
-                .Where(eg => eg.ContestId == contestId)
+            => this.GetQuery(eg => eg.ContestId == contestId)
                 .UpdateFromQueryAsync(
                     examGroup => new ExamGroup
                     {

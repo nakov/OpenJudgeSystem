@@ -37,8 +37,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetAllByUser(string userId)
-            => this.DbSet
-                .Where(p => p.UserId == userId);
+            => this.GetQuery(p => p.UserId == userId);
 
         public IQueryable<Participant> GetAllOfficialByContest(int contestId)
             => this.participantsCommonData
@@ -131,8 +130,7 @@ namespace OJS.Services.Administration.Data.Implementations
         }
 
         public IQueryable<Participant> GetAllByContest(int contestId)
-            => this.DbSet
-                .Where(p => p.ContestId == contestId);
+            => this.GetQuery(p => p.ContestId == contestId);
 
         public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
             => this.GetAllByContest(contestId)

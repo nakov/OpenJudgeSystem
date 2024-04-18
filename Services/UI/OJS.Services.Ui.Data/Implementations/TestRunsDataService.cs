@@ -14,8 +14,7 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public IQueryable<TestRun> GetAllByTest(int testId) =>
-            this.DbSet
-                .Where(tr => tr.TestId == testId);
+            this.GetQuery(tr => tr.TestId == testId);
 
         public async Task DeleteByProblem(int problemId)
         {

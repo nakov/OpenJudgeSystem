@@ -19,40 +19,37 @@
         }
 
         public Problem? GetWithProblemGroupById(int id) =>
-            this.DbSet
+            this.GetByIdQuery(id)
                 .Include(p => p.ProblemGroup)
-                .FirstOrDefault(p => p.Id == id);
+                .FirstOrDefault();
 
         public Problem? GetWithTestsAndProblemGroupById(int id) =>
-            this.DbSet
+            this.GetByIdQuery(id)
                 .Include(p => p.Tests)
                 .Include(p => p.ProblemGroup)
-                .FirstOrDefault(p => p.Id == id);
+                .FirstOrDefault();
 
         public Problem? GetWithTestsSubmissionTypesAndProblemGroupById(int id) =>
-            this.DbSet
+            this.GetByIdQuery(id)
                 .Include(p => p.Tests)
                 .Include(p => p.ProblemGroup)
                 .Include(p => p.SubmissionTypesInProblems)
                     .ThenInclude(stp => stp.SubmissionType)
-                .FirstOrDefault(p => p.Id == id);
+                .FirstOrDefault();
 
         public Problem? GetWithContestById(int id) =>
-            this.DbSet
+            this.GetByIdQuery(id)
                 .Include(p => p.ProblemGroup.Contest)
-                .FirstOrDefault(p => p.Id == id);
+                .FirstOrDefault();
 
         public IQueryable<Problem> GetAllByContest(int contestId) =>
-            this.DbSet
-                .Where(p => p.ProblemGroup.ContestId == contestId);
+            this.GetQuery(p => p.ProblemGroup.ContestId == contestId);
 
         public IQueryable<Problem> GetAllByProblemGroup(int problemGroupId) =>
-            this.DbSet
-                .Where(p => p.ProblemGroupId == problemGroupId);
+            this.GetQuery(p => p.ProblemGroupId == problemGroupId);
 
         public Task<bool> ExistsById(int id) =>
-            this.DbSet
-                .AnyAsync(p => p.Id == id);
+            this.Exists(p => p.Id == id);
 
         public async Task<double> GetNewOrderByContest(int contestId) =>
             (await this.GetAllByContest(contestId)

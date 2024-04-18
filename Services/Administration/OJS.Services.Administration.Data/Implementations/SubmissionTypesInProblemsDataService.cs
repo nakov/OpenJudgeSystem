@@ -13,6 +13,5 @@ public class SubmissionTypesInProblemsDataService : DataService<SubmissionTypeIn
     }
 
     public IQueryable<SubmissionTypeInProblem> GetAllByProblem(int problemId)
-        => this.DbSet
-            .Where(stp => stp.ProblemId == problemId);
+        => this.GetQuery(stp => stp.ProblemId == problemId);
 }
