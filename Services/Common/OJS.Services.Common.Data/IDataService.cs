@@ -28,8 +28,6 @@ namespace OJS.Services.Common.Data
 
         void DeleteMany(IEnumerable<TEntity> entities);
 
-        Task<int> GetCount();
-
         Task<IEnumerable<TEntity>> All(
             Expression<Func<TEntity, bool>>? filter = null,
             Expression<Func<TEntity, object>>? orderBy = null,

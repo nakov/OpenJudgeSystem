@@ -584,7 +584,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.GetTotalSubmissionsCount();
+        => this.submissionsData.Count();
 
     public async Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
         SubmissionStatus status,

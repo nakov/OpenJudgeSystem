@@ -55,10 +55,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(submissionsPerPage, pageNumber);
 
-    public async Task<int> GetTotalSubmissionsCount()
-        => await this.GetQuery()
-                    .CountAsync();
-
     public Submission? GetBestForParticipantByProblem(int participantId, int problemId) =>
         this.GetAllByProblemAndParticipant(problemId, participantId)
             .Where(s => s.Processed)
