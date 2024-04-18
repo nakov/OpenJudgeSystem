@@ -13,7 +13,6 @@ import styles from './ContestRegister.module.scss';
 const ContestRegister = () => {
     const navigate = useNavigate();
     const { contestId, participationType } = useParams();
-    const [ password, setPassword ] = useState<string | null>('');
     const [ hasAcceptedOnlineModal, setHasAcceptedOnlineModal ] = useState<boolean>(false);
 
     const [
@@ -40,7 +39,7 @@ const ContestRegister = () => {
             return;
         }
         if (!isRegisteredSuccessfully) {
-            registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password });
+            registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password: '' });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ isRegisteredSuccessfully, isLoading ]);
@@ -58,7 +57,7 @@ const ContestRegister = () => {
         if (isRegisteredSuccessfully) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
-    }, [ isLoading, isRegisteredSuccessfully ]);
+    }, [ isLoading, isRegisteredSuccessfully, navigate ]);
 
     const renderContestRegisterBody = useCallback(() => {
         if (shouldConfirmParticipation && !hasAcceptedOnlineModal) {
@@ -67,7 +66,12 @@ const ContestRegister = () => {
                   examName={name!}
                   time={duration!.toString()}
                   problemsCount={numberOfProblems!}
-                  onAccept={() => setHasAcceptedOnlineModal(true)}
+                  onAccept={() => {
+                      setHasAcceptedOnlineModal(true);
+                      if (!requirePassword) {
+                          navigate(`/contests/${id}/${participationType}`);
+                      }
+                  }}
                   onDecline={() => navigate('/contests')}
                 />
             );

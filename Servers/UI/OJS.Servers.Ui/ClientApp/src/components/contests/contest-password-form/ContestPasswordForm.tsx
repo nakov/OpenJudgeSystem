@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import useTheme from '../../../hooks/use-theme';
-import { useSubmitContestPasswordMutation } from '../../../redux/services/contestsService';
+import { useRegisterUserForContestMutation, useSubmitContestPasswordMutation } from '../../../redux/services/contestsService';
 import Form from '../../guidelines/forms/Form';
 import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
@@ -24,13 +24,13 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
     const [ errorMessage, setErrorMessage ] = useState<string>('');
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
 
-    const [ submitPassword ] = useSubmitContestPasswordMutation();
+    const [ registerUserForContest ] = useRegisterUserForContestMutation();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     const onPasswordSubmit = async () => {
         setIsLoading(true);
-        const response = await submitPassword({ contestId: id.toString(), isOfficial, password });
+        const response = await registerUserForContest({ id: Number(id), isOfficial, password });
         setPassword('');
         if ((response as any).error) {
             const { data } = (response as any).error;
