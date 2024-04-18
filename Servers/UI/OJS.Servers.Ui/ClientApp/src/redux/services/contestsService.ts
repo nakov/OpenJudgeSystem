@@ -74,6 +74,7 @@ export const contestsService = createApi({
                 url: `/compete/${id}`,
                 params: { isOfficial }
             }),
+            keepUnusedDataFor: 0,
         }),
         submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
             query: ({ content, official, problemId, submissionTypeId }) => ({
@@ -104,7 +105,7 @@ export const contestsService = createApi({
                 method: 'POST',
                 params: { isOfficial },
                 body: { password }
-            })
+            }),
         }),
     }),
 });

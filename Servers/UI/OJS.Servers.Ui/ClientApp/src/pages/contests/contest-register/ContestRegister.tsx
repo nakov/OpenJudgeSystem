@@ -36,11 +36,14 @@ const ContestRegister = () => {
     } = data || {};
 
     useEffect(() => {
+        if (isLoading) {
+            return;
+        }
         if (!isRegisteredSuccessfully) {
             registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ isRegisteredSuccessfully ]);
+    }, [ isRegisteredSuccessfully, isLoading ]);
 
     useEffect(() => {
         if (!shouldConfirmParticipation) {
@@ -49,7 +52,10 @@ const ContestRegister = () => {
     }, [ shouldConfirmParticipation ]);
 
     useEffect(() => {
-        if (!isLoading && isRegisteredSuccessfully) {
+        if (isLoading) {
+            return;
+        }
+        if (isRegisteredSuccessfully) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
     }, [ isLoading, isRegisteredSuccessfully ]);

@@ -25,7 +25,7 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted, calculateTimeUntil } from '../../../utils/dates';
+import { calculatedTimeFormatted } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
@@ -56,9 +56,9 @@ const ContestSolutionSubmitPage = () => {
     } ] = useSubmitContestSolutionMutation();
 
     const [ submitSolutionFile, {
+        // isSuccess: submitSolutionFileSuccess,
         isError: submitSolutionFileError,
         isLoading: submitSolutionFileIsLoading,
-        // isSuccess: submitSolutionFileSuccess,
     } ] = useSubmitContestSolutionFileMutation();
 
     const [ getContestById ] = useLazyGetContestByIdQuery();
@@ -149,10 +149,10 @@ const ContestSolutionSubmitPage = () => {
 
         const intervalId = setInterval(() => {
             const currentTime = moment();
-            const remainingTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
+            const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
 
-            const formattedTime = calculatedTimeFormatted(moment.duration(remainingTime, 'millisecond'));
-            if (remainingTime > 0) {
+            if (remainingCompeteTime > 0) {
+                const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
                 setRemainingTimeForCompete(null);
@@ -167,7 +167,10 @@ const ContestSolutionSubmitPage = () => {
     // in case of not registered user for compete contest, redirect
     // user to register page in order to keep the flow correct
     useEffect(() => {
-        if (!isRegisteredParticipant && !isActiveParticipant && !isLoading) {
+        if (isLoading) {
+            return;
+        }
+        if (!isRegisteredParticipant && !isActiveParticipant) {
             navigate(`/contests/register/${contestId}/${participationType}`);
         }
     }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, navigate ]);
@@ -471,7 +474,7 @@ const ContestSolutionSubmitPage = () => {
     }
 
     if (isRegisteredParticipant && !isActiveParticipant) {
-        return <div>Contest expired page</div>;
+        return <div>Contest expired!</div>;
     }
 
     return (
