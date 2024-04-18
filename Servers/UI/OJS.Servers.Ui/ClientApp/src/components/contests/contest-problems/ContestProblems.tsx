@@ -56,7 +56,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                         <div>Tasks</div>
                         <div>Points</div>
                     </div>
-                    {problems.map((problem, idx) => {
+                    {problems.map((problem) => {
                         const isActive = selectedContestDetailsProblem?.id === problem.id;
                         return (
                             <div

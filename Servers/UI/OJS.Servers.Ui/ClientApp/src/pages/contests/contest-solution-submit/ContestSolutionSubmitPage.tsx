@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable consistent-return */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { IoDocumentText } from 'react-icons/io5';
@@ -173,7 +174,7 @@ const ContestSolutionSubmitPage = () => {
         if (!isRegisteredParticipant && !isActiveParticipant) {
             navigate(`/contests/register/${contestId}/${participationType}`);
         }
-    }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, navigate ]);
+    }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -233,39 +234,63 @@ const ContestSolutionSubmitPage = () => {
         setAnchorEl(null);
     };
 
-    const onSolutionSubmitCode = () => {
-        submitSolution({
-            content: submissionCode!,
-            official: isCompete,
-            problemId: selectedContestDetailsProblem?.id!,
-            submissionTypeId: selectedSubmissionType?.id!,
-        }).finally(() => {
+    const onSolutionSubmitCode = useCallback(async () => {
+        try {
+            await submitSolution({
+                content: submissionCode!,
+                official: isCompete,
+                problemId: selectedContestDetailsProblem?.id!,
+                submissionTypeId: selectedSubmissionType?.id!,
+            });
             refetch();
-            getSubmissionsData({
+            await getSubmissionsData({
                 id: Number(selectedContestDetailsProblem!.id),
                 page: selectedSubmissionsPage,
                 isOfficial: isCompete,
             });
-        });
-        setSubmissionCode('');
-    };
+            setSubmissionCode('');
+        } catch {
+            setSubmissionCode('');
+        }
+    }, [
+        getSubmissionsData,
+        isCompete,
+        refetch,
+        selectedContestDetailsProblem,
+        selectedSubmissionType?.id,
+        selectedSubmissionsPage,
+        submissionCode,
+        submitSolution,
+    ]);
 
-    const onSolutionSubmitFile = () => {
-        submitSolutionFile({
-            content: uploadedFile!,
-            official: isCompete,
-            problemId: selectedContestDetailsProblem?.id!,
-            submissionTypeId: selectedSubmissionType?.id!,
-        }).finally(() => {
+    const onSolutionSubmitFile = useCallback(async () => {
+        try {
+            await submitSolutionFile({
+                content: uploadedFile!,
+                official: isCompete,
+                problemId: selectedContestDetailsProblem?.id!,
+                submissionTypeId: selectedSubmissionType?.id!,
+            });
             refetch();
-            getSubmissionsData({
+            await getSubmissionsData({
                 id: Number(selectedContestDetailsProblem!.id),
                 page: selectedSubmissionsPage,
                 isOfficial: isCompete,
             });
             setUploadedFile(null);
-        });
-    };
+        } catch {
+            setUploadedFile(null);
+        }
+    }, [
+        getSubmissionsData,
+        isCompete,
+        refetch,
+        selectedContestDetailsProblem,
+        selectedSubmissionType?.id,
+        selectedSubmissionsPage,
+        submitSolutionFile,
+        uploadedFile,
+    ]);
 
     const sumMyPoints = useMemo(() => contest
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.points, 0)
@@ -441,6 +466,8 @@ const ContestSolutionSubmitPage = () => {
             </div>
         );
     }, [
+        allowedSubmissionTypes,
+        submitSolutionFileIsLoading,
         uploadedFile,
         submitSolutionError,
         isSubmitButtonDisabled,
@@ -452,7 +479,6 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionType,
         fileUploadError,
         submitSolutionFileError,
-        allowedSubmissionTypes.length,
         onSolutionSubmitCode,
         onSolutionSubmitFile,
         setSubmissionCode,

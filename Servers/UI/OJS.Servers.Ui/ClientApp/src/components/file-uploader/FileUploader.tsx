@@ -79,7 +79,9 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             <div className={styles.fileUploadContainer}>
                 <Button
                   onClick={handleClick}
-                  type={ButtonType.neutral}
+                  type={isDarkMode
+                      ? ButtonType.lightNeutral
+                      : ButtonType.darkNeutral}
                   size={ButtonSize.medium}
                 >
                     Upload
