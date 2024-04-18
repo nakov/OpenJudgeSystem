@@ -38,6 +38,7 @@ const ContestSolutionSubmitPage = () => {
 
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
+    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>('');
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -133,12 +134,35 @@ const ContestSolutionSubmitPage = () => {
                 setRemainingTime(newRemainingTime);
                 setIsSubmitButtonDisabled(true);
             }
-        }, 1000);
+        });
 
         return () => {
             clearInterval(intervalId);
         };
     }, [ lastSubmissionTime, userSubmissionsTimeLimit ]);
+
+    // managing the proper display of remaining time in compete contest
+    useEffect(() => {
+        if (!endDateTimeForParticipantOrContest) {
+            return;
+        }
+
+        const intervalId = setInterval(() => {
+            const currentTime = moment();
+            const remainingTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
+
+            const formattedTime = calculatedTimeFormatted(moment.duration(remainingTime, 'millisecond'));
+            if (remainingTime > 0) {
+                setRemainingTimeForCompete(formattedTime);
+            } else {
+                setRemainingTimeForCompete(null);
+            }
+        });
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [ endDateTimeForParticipantOrContest, setRemainingTimeForCompete ]);
 
     // in case of not registered user for compete contest, redirect
     // user to register page in order to keep the flow correct
@@ -197,14 +221,6 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         isCompete,
     ]);
-
-    const remainingTimeForParticipationOrContest = useMemo(() => {
-        if (endDateTimeForParticipantOrContest) {
-            const remainingTime = calculateTimeUntil(new Date(endDateTimeForParticipantOrContest));
-            return calculatedTimeFormatted(remainingTime);
-        }
-        return 0;
-    }, [ endDateTimeForParticipantOrContest ]);
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -483,14 +499,12 @@ const ContestSolutionSubmitPage = () => {
                         <div className={styles.problemName}>
                             {selectedContestDetailsProblem?.name}
                         </div>
-                        {
-                            endDateTimeForParticipantOrContest && (
-                                <div>
-                                    Remaining time:
-                                    <b>{remainingTimeForParticipationOrContest}</b>
-                                </div>
-                            )
-                        }
+                        {remainingTimeForCompete && (
+                        <div>
+                            Remaining time:
+                            <b>{remainingTimeForCompete}</b>
+                        </div>
+                        )}
                     </div>
 
                     {renderProblemDescriptions()}
