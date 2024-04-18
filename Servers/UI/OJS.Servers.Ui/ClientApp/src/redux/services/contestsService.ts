@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { IContestStrategyFilter } from '../../common/contest-types';
-import ITreeItemType from '../../common/tree-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
@@ -69,13 +68,6 @@ export const contestsService = createApi({
             IGetContestResultsParams>({
                 query: ({ id, official, full }) => ({
                     url: `/ContestResults/GetResults/${id}?official=${official}&full=${full}`,
-                }),
-            }),
-        getContestCategories: builder.query<
-            ITreeItemType[],
-            null>({
-                query: () => ({
-                    url: '/ContestCategories/GetCategoriesTree',
                 }),
             }),
     }),

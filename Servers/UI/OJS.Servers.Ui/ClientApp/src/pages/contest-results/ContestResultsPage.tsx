@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
@@ -10,8 +9,6 @@ import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { useContestCategories } from '../../hooks/use-contest-categories';
-import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { usePageTitles } from '../../hooks/use-page-titles';
 import { useGetContestResultsQuery } from '../../redux/services/contestsService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -25,11 +22,8 @@ import styles from './ContestResultPage.module.scss';
 const ContestResultsPage = () => {
     const { state: { params } } = useRouteUrlParams();
     const { contestId, participationType: participationUrlType, resultType } = params;
-    const { state: { categoriesFlat, isLoaded }, actions: { load: loadCategories } } = useContestCategories();
-    const { actions: { updateBreadcrumb } } = useCategoriesBreadcrumbs();
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
-    const [ isCategoriesRequestSent, setIsCategoriesRequestSent ] = useState(false);
 
     const participationType = contestParticipationType(official);
 
@@ -52,37 +46,11 @@ const ContestResultsPage = () => {
         [ contestResults ],
     );
 
-    useEffect(() => () => {
-        setIsCategoriesRequestSent(false);
-    }, []);
-
     useEffect(
         () => {
             setPageTitle(contestResultsPageTitle);
         },
-        [ contestResultsPageTitle, setPageTitle, categoriesFlat, loadCategories, contestId ],
-    );
-
-    useEffect(
-        () => {
-            if (isEmpty(categoriesFlat) && !isCategoriesRequestSent) {
-                setIsCategoriesRequestSent(true);
-                (async () => {
-                    await loadCategories();
-                })();
-            }
-        },
-        [ categoriesFlat, isCategoriesRequestSent, loadCategories ],
-    );
-
-    useEffect(
-        () => {
-            if (!isLoading && !isEmpty(categoriesFlat)) {
-                const category = categoriesFlat.find(({ id }) => id.toString() === contestResults?.categoryId.toString());
-                updateBreadcrumb(category, categoriesFlat);
-            }
-        },
-        [ categoriesFlat, contestResults, isLoading, updateBreadcrumb ],
+        [ contestResultsPageTitle, setPageTitle, contestId ],
     );
 
     const renderErrorHeading = useCallback(
@@ -102,7 +70,6 @@ const ContestResultsPage = () => {
     const renderErrorMessage = useCallback(
         () => {
             if (!isNil(contestResultsError)) {
-                // const { detail } = contestResultsError;
                 return renderErrorHeading('Error loading contest results');
             }
 
@@ -113,7 +80,7 @@ const ContestResultsPage = () => {
 
     return (
         isNil(contestResultsError)
-            ? !isLoading && isLoaded
+            ? !isLoading
                 ? (
                     <>
                         <div>
