@@ -67,7 +67,11 @@ export const contestsService = createApi({
             IContestResultsType,
             IGetContestResultsParams>({
                 query: ({ id, official, full }) => ({
-                    url: `/ContestResults/GetResults/${id}?official=${official}&full=${full}`,
+                    url: `/ContestResults/GetResults/${id}`,
+                    params: {
+                        official,
+                        full,
+                    },
                 }),
             }),
     }),
