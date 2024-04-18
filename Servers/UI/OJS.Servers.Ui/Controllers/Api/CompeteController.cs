@@ -125,7 +125,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="id">The id of the problem.</param>
     /// <returns>A model with the best scores for the problem from all participants.</returns>
-    [HttpGet("/results/{id:int}")]
+    [HttpGet("results/{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<ProblemResultResponseModel>), Status200OK)]
     public async Task<IActionResult> GetResultsByProblem(int id)
         => await this.participantScoresBusinessService
