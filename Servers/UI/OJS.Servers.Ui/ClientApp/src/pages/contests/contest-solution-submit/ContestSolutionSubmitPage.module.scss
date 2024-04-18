@@ -112,15 +112,10 @@
 }
 
 .submitSettings {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   justify-content: flex-end;
   margin-top: spacings.$sp-24;
-
-  button {
-    margin-left: spacings.$sp-24;
-    width: 200px;
-  }
 }
 
 .fileUpload {
@@ -156,4 +151,22 @@
 .fileSubmitButton {
   bottom: 35px;
   position: absolute;
+}
+.remainingTimeNadSubmitButtonWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-left: spacings.$sp-24;
+
+  > div {
+    margin-bottom: spacings.$sp-12;
+  }
+  button {
+    width: 200px;
+  }
+
+  .solutionSubmitError {
+    color: colors.$primary-red;
+  }
 }

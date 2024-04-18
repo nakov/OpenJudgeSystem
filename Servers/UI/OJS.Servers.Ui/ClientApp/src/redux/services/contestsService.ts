@@ -82,6 +82,13 @@ export const contestsService = createApi({
                 body: { content, official, problemId, submissionTypeId },
             }),
         }),
+        submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
+            query: ({ content, official, submissionTypeId, problemId }) => ({
+                url: '/Compete/SubmitFileSubmission',
+                method: 'POST',
+                body: { content, official, problemId, submissionTypeId },
+            })
+        }),
         submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({
             query: ({ contestId, isOfficial, password }) => ({
                 url: `/contests/SubmitContestPassword/${contestId}`,
@@ -110,9 +117,9 @@ export const {
     useGetContestByIdQuery,
     useLazyGetContestByIdQuery,
     useLazyGetContestsParticipationsForUserQuery,
-    useLazyGetContestUserParticipationQuery,
     useSubmitContestSolutionMutation,
     useSubmitContestPasswordMutation,
     useRegisterUserForContestMutation,
+    useSubmitContestSolutionFileMutation,
     useGetContestUserParticipationQuery,
 } = contestsService;

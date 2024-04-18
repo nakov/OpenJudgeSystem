@@ -4,6 +4,7 @@ import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { IoDocumentText } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
+import moment from 'moment';
 
 import { ISubmissionTypeType } from '../../../common/types';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
@@ -19,6 +20,7 @@ import { setContestDetails } from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
     useLazyGetContestByIdQuery,
+    useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
@@ -34,6 +36,8 @@ const ContestSolutionSubmitPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const { contestId, participationType } = useParams();
 
+    const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
+    const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -44,7 +48,18 @@ const ContestSolutionSubmitPage = () => {
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
 
-    const [ submitSolution ] = useSubmitContestSolutionMutation();
+    const [ submitSolution, {
+        // isSuccess: submitSolutionSuccess,
+        isError: submitSolutionError,
+        isLoading: submitSolutionIsLoading,
+    } ] = useSubmitContestSolutionMutation();
+
+    const [ submitSolutionFile, {
+        isError: submitSolutionFileError,
+        isLoading: submitSolutionFileIsLoading,
+        // isSuccess: submitSolutionFileSuccess,
+    } ] = useSubmitContestSolutionFileMutation();
+
     const [ getContestById ] = useLazyGetContestByIdQuery();
     const [
         getSubmissionsData, {
@@ -64,6 +79,7 @@ const ContestSolutionSubmitPage = () => {
         data,
         isLoading,
         error,
+        refetch,
     } = useGetContestUserParticipationQuery({ id: Number(contestId!), isOfficial: isCompete });
 
     const {
@@ -97,13 +113,37 @@ const ContestSolutionSubmitPage = () => {
         [ allowedSubmissionTypes ],
     );
 
+    // this effect manages the disabling of the submit button as well as the
+    // displaying of the seconds before the next submission would be enabled
+    useEffect(() => {
+        if (!lastSubmissionTime || !userSubmissionsTimeLimit) {
+            return;
+        }
+
+        const intervalId = setInterval(() => {
+            const currentTime = moment();
+            const elapsedTimeInSeconds = moment.utc(currentTime).diff(moment.utc(lastSubmissionTime), 'seconds');
+            const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
+
+            if (newRemainingTime <= 0) {
+                setIsSubmitButtonDisabled(false);
+                setRemainingTime(0);
+                clearInterval(intervalId);
+            } else {
+                setRemainingTime(newRemainingTime);
+                setIsSubmitButtonDisabled(true);
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [ lastSubmissionTime, userSubmissionsTimeLimit ]);
+
     // in case of not registered user for compete contest, redirect
     // user to register page in order to keep the flow correct
     useEffect(() => {
-        if (isLoading) {
-            return;
-        }
-        if (!isRegisteredParticipant && !isActiveParticipant) {
+        if (!isRegisteredParticipant && !isActiveParticipant && !isLoading) {
             navigate(`/contests/register/${contestId}/${participationType}`);
         }
     }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, navigate ]);
@@ -166,14 +206,6 @@ const ContestSolutionSubmitPage = () => {
         return 0;
     }, [ endDateTimeForParticipantOrContest ]);
 
-    const submitButtonIsAvailable = useMemo(() => {
-        if (lastSubmissionTime && userSubmissionsTimeLimit) {
-            const secondsSinceLastSubmission = calculateTimeUntil(lastSubmissionTime, 'seconds');
-            return userSubmissionsTimeLimit < secondsSinceLastSubmission.seconds();
-        }
-        return true;
-    }, [ lastSubmissionTime, userSubmissionsTimeLimit ]);
-
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -188,18 +220,32 @@ const ContestSolutionSubmitPage = () => {
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
+        }).finally(() => {
+            refetch();
+            getSubmissionsData({
+                id: Number(selectedContestDetailsProblem!.id),
+                page: selectedSubmissionsPage,
+                isOfficial: isCompete,
+            });
         });
         setSubmissionCode('');
     };
 
     const onSolutionSubmitFile = () => {
-        submitSolution({
+        submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
+        }).finally(() => {
+            refetch();
+            getSubmissionsData({
+                id: Number(selectedContestDetailsProblem!.id),
+                page: selectedSubmissionsPage,
+                isOfficial: isCompete,
+            });
+            setUploadedFile(null);
         });
-        setUploadedFile(null);
     };
 
     const sumMyPoints = useMemo(() => contest
@@ -294,7 +340,7 @@ const ContestSolutionSubmitPage = () => {
         textColorClassName,
     ]);
 
-    const renderSubmissionsInput = () => {
+    const renderSubmissionsInput = useCallback(() => {
         const { allowBinaryFilesUpload, allowedFileExtensions } = allowedSubmissionTypes[0] || {};
 
         if (allowBinaryFilesUpload) {
@@ -316,14 +362,26 @@ const ContestSolutionSubmitPage = () => {
                           setUploadedFile(file);
                       }}
                     />
-                    <Button
-                      className={styles.fileSubmitButton}
-                      onClick={onSolutionSubmitFile}
-                      text="Submit"
-                      state={!uploadedFile || fileUploadError || !submitButtonIsAvailable
-                          ? ButtonState.disabled
-                          : ButtonState.enabled}
-                    />
+                    <div className={styles.remainingTimeNadSubmitButtonWrapper}>
+                        {remainingTime > 0 && (
+                            <div>
+                                Remaining time:
+                                {' '}
+                                {remainingTime}
+                            </div>
+                        )}
+                        <Button
+                          className={styles.fileSubmitButton}
+                          onClick={onSolutionSubmitFile}
+                          text="Submit"
+                          state={!uploadedFile || isSubmitButtonDisabled || submitSolutionFileIsLoading
+                              ? ButtonState.disabled
+                              : ButtonState.enabled}
+                        />
+                        {submitSolutionFileError && (
+                            <div className={styles.solutionSubmitError}>Error submitting solution file. Please try again!</div>
+                        )}
+                    </div>
                 </div>
             );
         }
@@ -341,17 +399,48 @@ const ContestSolutionSubmitPage = () => {
                       value={selectedStrategyValue}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
-                    <Button
-                      state={!submitButtonIsAvailable
-                          ? ButtonState.disabled
-                          : ButtonState.enabled}
-                      onClick={onSolutionSubmitCode}
-                      text="Submit"
-                    />
+                    <div className={styles.remainingTimeNadSubmitButtonWrapper}>
+                        {remainingTime > 0 && (
+                            <div>
+                                Remaining time:
+                                {' '}
+                                {remainingTime}
+                            </div>
+                        )}
+                        <Button
+                          state={isSubmitButtonDisabled || submitSolutionIsLoading
+                              ? ButtonState.disabled
+                              : ButtonState.enabled}
+                          onClick={onSolutionSubmitCode}
+                          text="Submit"
+                        />
+                        {submitSolutionError && (
+                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                        )}
+                    </div>
                 </div>
             </div>
         );
-    };
+    }, [
+        uploadedFile,
+        submitSolutionError,
+        isSubmitButtonDisabled,
+        submitSolutionIsLoading,
+        remainingTime,
+        selectedStrategyValue,
+        strategyDropdownItems,
+        submissionCode,
+        selectedSubmissionType,
+        fileUploadError,
+        submitSolutionFileError,
+        allowedSubmissionTypes.length,
+        onSolutionSubmitCode,
+        onSolutionSubmitFile,
+        setSubmissionCode,
+        setUploadedFile,
+        setFileUploadError,
+        onStrategyDropdownItemSelect,
+    ]);
 
     if (isLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;

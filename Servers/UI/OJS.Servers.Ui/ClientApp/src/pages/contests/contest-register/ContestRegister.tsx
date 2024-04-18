@@ -24,11 +24,6 @@ const ContestRegister = () => {
         },
     ] = useRegisterUserForContestMutation();
 
-    useEffect(() => {
-        registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const {
         id,
         name,
@@ -39,6 +34,13 @@ const ContestRegister = () => {
         numberOfProblems,
         isRegisteredSuccessfully,
     } = data || {};
+
+    useEffect(() => {
+        if (!isRegisteredSuccessfully) {
+            registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ isRegisteredSuccessfully ]);
 
     useEffect(() => {
         if (!shouldConfirmParticipation) {
