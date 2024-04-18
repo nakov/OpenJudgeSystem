@@ -7,15 +7,16 @@ import { Popover } from '@mui/material';
 
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { useAppSelector } from '../../../redux/store';
+import CodeEditor from '../../code-editor/CodeEditor';
 import Diff from '../../diff/Diff';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SubmissionTestRun.module.scss';
 
-interface ISubmissionTestRun {
+interface ISubmissionTestRunProps {
     testRun: ITestRunType;
     idx: number;
+    shouldRenderAdminData?: boolean;
 }
 
 export const enum testResultTypes {
@@ -26,12 +27,10 @@ export const enum testResultTypes {
     memoryLimit = 'MemoryLimit'
 }
 
-const SubmissionTestRun = (props: ISubmissionTestRun) => {
-    const { testRun, idx } = props;
+const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
+    const { testRun, idx, shouldRenderAdminData = false } = props;
 
-    const { themeColors, getColorClassName } = useTheme();
-
-    const { internalUser: user } = useAppSelector((state) => state.authorization);
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
@@ -123,75 +122,88 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                           text={testShowInput
                               ? 'HIDE INPUT'
                               : 'SHOW INPUT'}
-                          type={ButtonType.neutral}
+                          type={isDarkMode
+                              ? ButtonType.lightNeutral
+                              : ButtonType.darkNeutral}
                           size={ButtonSize.small}
                         />
                     )}
                 </div>
-                <div className={styles.timeAndMemoryWrapper}>
-                    { user.canAccessAdministration && (
-                        <Link to={`/administration-new/tests/${testId}`} className={`${styles.testRunIdWrapper} ${textColorClassName}`}>
+                <div className={styles.testDetailsAndMemoryWrapper}>
+                    { shouldRenderAdminData && (
+                        <Link
+                          target="_blank"
+                          to={`/administration-new/tests/${testId}`}
+                          className={`${styles.testRunIdWrapper} ${textColorClassName}`}
+                        >
                             Test #
                             {testId}
                         </Link>
                     )}
-                    <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
-                        <BiMemoryCard size={20} color={themeColors.baseColor100} />
-                        <span>
-                            {(memoryUsed / 1000000).toFixed(2)}
-                            {' '}
-                            MB
+                    <div className={styles.timeAndMemoryWrapper}>
+                        <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
+                            <BiMemoryCard size={20} color={themeColors.baseColor100} />
+                            <span>
+                                {(memoryUsed / 1000000).toFixed(2)}
+                                {' '}
+                                MB
+                            </span>
+                            <Popover
+                              open={isMemoryModalOpen}
+                              anchorEl={memoryAnchorEl}
+                              anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'left',
+                              }}
+                              transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'left',
+                              }}
+                              sx={{ pointerEvents: 'none' }}
+                              onClose={() => onPopoverClose('memory')}
+                              disableRestoreFocus
+                            >
+                                <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
+                                    Memory used
+                                </div>
+                            </Popover>
                         </span>
-                        <Popover
-                          open={isMemoryModalOpen}
-                          anchorEl={memoryAnchorEl}
-                          anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'left',
-                          }}
-                          transformOrigin={{
-                              vertical: 'top',
-                              horizontal: 'left',
-                          }}
-                          sx={{ pointerEvents: 'none' }}
-                          onClose={() => onPopoverClose('memory')}
-                          disableRestoreFocus
-                        >
-                            <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
-                                Memory used
-                            </div>
-                        </Popover>
-                    </span>
-                    <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={() => onPopoverClose('time')}>
-                        <FaRegClock size={20} color={themeColors.baseColor100} />
-                        <span>
-                            {timeUsed / 1000}
-                            {' '}
-                            s.
+                        <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={() => onPopoverClose('time')}>
+                            <FaRegClock size={20} color={themeColors.baseColor100} />
+                            <span>
+                                {timeUsed / 1000}
+                                {' '}
+                                s.
+                            </span>
+                            <Popover
+                              open={isTimeModalOpen}
+                              anchorEl={timeAnchorEl}
+                              anchorOrigin={{
+                                  vertical: 'bottom',
+                                  horizontal: 'left',
+                              }}
+                              transformOrigin={{
+                                  vertical: 'top',
+                                  horizontal: 'left',
+                              }}
+                              sx={{ pointerEvents: 'none' }}
+                              onClose={() => onPopoverClose('time')}
+                              disableRestoreFocus
+                            >
+                                <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
+                                    Time required
+                                </div>
+                            </Popover>
                         </span>
-                        <Popover
-                          open={isTimeModalOpen}
-                          anchorEl={timeAnchorEl}
-                          anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'left',
-                          }}
-                          transformOrigin={{
-                              vertical: 'top',
-                              horizontal: 'left',
-                          }}
-                          sx={{ pointerEvents: 'none' }}
-                          onClose={() => onPopoverClose('time')}
-                          disableRestoreFocus
-                        >
-                            <div className={`${styles.timeAndMemoryModal} ${backgroundColorClassName}`}>
-                                Time required
-                            </div>
-                        </Popover>
-                    </span>
+                    </div>
                 </div>
             </div>
-            {testShowInput && (<div className={styles.inputWrapper} style={{ backgroundColor: themeColors.baseColor100 }}>{input}</div>)}
+            {testShowInput && (
+                <>
+                    <div>Test input:</div>
+                    <CodeEditor code={input} readOnly customEditorStyles={{ height: '150px', marginTop: '12px' }} />
+                </>
+            )}
             {expectedOutputFragment && userOutputFragment && (
                 <div className={styles.outputWrapper}>
                     <Diff expectedStr={expectedOutputFragment} actualStr={userOutputFragment} />

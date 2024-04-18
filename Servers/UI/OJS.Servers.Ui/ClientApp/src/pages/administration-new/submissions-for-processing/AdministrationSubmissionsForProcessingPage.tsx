@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
@@ -8,40 +8,16 @@ import { NEW_ADMINISTRATION_PATH, SUBMISSIONS_FOR_PROCESSING_PATH } from '../../
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllSubmissionsQuery, useLazyExportSubmissionsForProcessingToExcelQuery } from '../../../redux/services/admin/submissionsForProcessingAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultSorterToAdd } from '../AdministrationGridView';
 
 import dataColumns from './admin-submissions-for-processing-grid-def';
 
 const AdministrationSubmissionsForProcessingPage = () => {
     const [ searchParams ] = useSearchParams();
-    const [ queryParams, setQueryParams ] =
-        useState<IGetAllAdminParams>({
-            page: 1,
-            itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-            filter: searchParams.get('filter') ?? '',
-            sorting: searchParams.get('sorting') ?? '',
-        });
 
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(dataColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationSortingProps(dataColumns),
-    ));
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: searchParams.get('filter') ?? '',
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd, searchParams));
 
     const {
         data,
@@ -81,10 +57,6 @@ const AdministrationSubmissionsForProcessingPage = () => {
           notFilterableGridColumnDef={nonFilterableColumns}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters}
-          selectedSorters={selectedSorters}
-          setSorterStateAction={setSelectedSorters}
-          setFilterStateAction={setSelectedFilters}
           excelMutation={useLazyExportSubmissionsForProcessingToExcelQuery}
         />
     );

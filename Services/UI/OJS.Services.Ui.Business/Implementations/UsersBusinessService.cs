@@ -53,10 +53,14 @@
 
             bool isLoggedInUserAdminOrProfileOwner = this.IsUserAdminOrProfileOwner(username);
 
-            return await (isLoggedInUserAdminOrProfileOwner
+            var profile = await (isLoggedInUserAdminOrProfileOwner
                 ? this.usersProfileData
                     .GetByUsername<UserProfileServiceModel>(username)
                 : this.GetByUsernameAsShortProfile(username));
+
+            profile!.Id = isLoggedInUserAdminOrProfileOwner ? profile.Id : string.Empty;
+
+            return profile;
         }
 
         public async Task<UserProfileServiceModel?> GetUserProfileById(string userId) =>

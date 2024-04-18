@@ -6,7 +6,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ProblemGroupTypes } from '../../../common/enums';
-import { EDIT } from '../../../common/labels';
+import { CREATED_ON, EDIT, MODIFIED_ON } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
@@ -14,6 +14,7 @@ import DeleteButton from '../../../components/administration/common/delete/Delet
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteProblemMutation } from '../../../redux/services/admin/problemsAdminService';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemFilterableColums: GridColDef[] = [
@@ -116,6 +117,24 @@ const problemFilterableColums: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

@@ -2,8 +2,6 @@ import React from 'react';
 
 import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/submissions/types';
 import { IErrorDataType } from '../hooks/use-http';
-import { IAdministrationFilter } from '../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter } from '../pages/administration-new/administration-sorting/AdministrationSorting';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
@@ -118,6 +116,7 @@ interface IContestsSortAndFilterOptions {
     sortType: SortType;
     sortTypeDirection?: SortTypeDirection;
     page: number;
+    itemsPerPage?: number;
     category?: number | null;
 }
 
@@ -169,6 +168,8 @@ interface IProblemResouceInLinstModel {
     isDeleted: boolean;
     problemId: number;
     problemName: string;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IProblemType {
@@ -271,6 +272,8 @@ interface IIndexContestsType {
     competeMaximumPoints: number;
     practiceMaximumPoints: number;
     userParticipationResult?: IUserParticipationResult;
+    createdOn: Date;
+    modifiedOn: Date | null;
 }
 
 interface IContestModalInfoType {
@@ -294,6 +297,8 @@ interface IIndexProblemsType {
     competeTetstsCount: number;
     isDeleted: boolean;
     contestId: number;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IIndexContestCategoriesType {
@@ -523,44 +528,12 @@ interface IEnumType {
     enumValues?: Array<string>;
 }
 
-interface IFilterReducerActionType {
-    key: string;
-    filters: Array<IAdministrationFilter> | null;
-}
-
-interface ISorterReducerActionType {
-    key: string;
-    sorters: Array<IAdministrationSorter> | null;
-}
-
 interface IFilterColumn {
     columnName: string;
     columnType: FilterColumnTypeEnum;
     enumValues?: Array<string> | null;
 }
 
-interface IAdminSlice {
-    [key: string]: null | {
-        selectedFilters: IAdministrationFilter[] | null;
-        selectedSorters: IAdministrationSorter[] | null;
-    };
-}
-
-interface IRootStore {
-    adminContests: IAdminSlice;
-    adminSubmissions: IAdminSlice;
-    adminProblems: IAdminSlice;
-    adminTests: IAdminSlice;
-    adminProblemGroups: IAdminSlice;
-    adminContestsCategories: IAdminSlice;
-    adminProblemResources: IAdminSlice;
-    adminExamGroups: IAdminSlice;
-    adminUsers: IAdminSlice;
-    adminSubmissionTypes: IAdminSlice;
-    adminCheckers: IAdminSlice;
-    adminParticipants: IAdminSlice;
-    adminRoles: IAdminSlice;
-}
 type ExceptionData = {
     name: string;
     message: string;
@@ -572,6 +545,8 @@ interface IProblemGroupsData {
     isDeleted:boolean;
     orderBy:number;
     type:string;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 interface IProblemSubmissionType{
     id: number;
@@ -635,6 +610,8 @@ interface ICheckerInListModel {
     className: string;
     parameter: string;
     isDeleted: boolean;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface ICheckerAdministrationModel {
@@ -652,6 +629,8 @@ interface IParticipantInListModel {
     contestName: string;
     contestId: number;
     isOfficial: boolean;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IParticipantAdministrationModel {
@@ -687,6 +666,8 @@ interface IUserInListModel {
     city: string;
     dateOfBirth: Date;
     age: number;
+    createdOn: Date;
+    modifiedOn: Date;
 }
 
 interface IUserSettingsAdministrationModel {
@@ -731,6 +712,7 @@ interface ISettingAdministrationModel {
     value: string;
     type: string;
 }
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -767,8 +749,6 @@ export type {
     IFilterColumn,
     ISubmissionsAdminGridViewType,
     ISubmissionForProcessingAdminGridViewType,
-    IAdminSlice,
-    IRootStore,
     IContestCategories,
     ExceptionData,
     IIndexProblemsType,
@@ -793,8 +773,6 @@ export type {
     ISubmissionTypesInListModel,
     ISubmissionTypeAdministrationModel,
     ITestRunInListModel,
-    ISorterReducerActionType,
-    IFilterReducerActionType,
     IProblemGroupDropdownModel,
     ICheckerInListModel,
     ICheckerAdministrationModel,

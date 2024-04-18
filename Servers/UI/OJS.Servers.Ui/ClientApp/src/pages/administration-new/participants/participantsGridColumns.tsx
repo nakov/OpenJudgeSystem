@@ -1,8 +1,10 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import { useDeleteParticipantMutation } from '../../../redux/services/admin/participantsAdminService';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const participantsFilteringColumns: GridColDef[] = [
     {
@@ -49,6 +51,24 @@ const participantsFilteringColumns: GridColDef[] = [
         flex: 2,
         filterable: false,
         sortable: false,
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

@@ -2,13 +2,11 @@ import { useEffect, useState } from 'react';
 import { Autocomplete, FormControl, MenuItem, TextField, Typography } from '@mui/material';
 
 import { IGetAllAdminParams, IUserAutocompleteData } from '../../../../common/types';
-import { IAdministrationFilter, mapFilterParamsToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapSorterParamsToQueryString } from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
 import usersFilterableColumns, { returnUsersNonFilterableColumns } from '../../../../pages/administration-new/users/usersGridColumns';
 import { useAddUserToRoleMutation, useRemoveUserFromRoleMutation } from '../../../../redux/services/admin/rolesAdminService';
 import { useGetUsersAutocompleteQuery, useGetUsersByRoleQuery } from '../../../../redux/services/admin/usersAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import ConfirmDialog from '../../../guidelines/dialog/ConfirmDialog';
@@ -29,9 +27,6 @@ interface IUsersInRoleViewProps {
 
 const UsersInRoleView = (props: IUsersInRoleViewProps) => {
     const { roleId, roleName } = props;
-
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>([]);
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>([]);
 
     const [ errorMessages, setErrorMessages ] = useState <Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState <string | null>(null);
@@ -54,16 +49,8 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
 
     const [ showCreateModal, setShowCreateModal ] = useState<boolean>(false);
 
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: mapFilterParamsToQueryString(selectedFilters),
-        sorting: mapSorterParamsToQueryString(selectedSorters),
-    });
-
-    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
-
-    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd));
 
     const {
         refetch,
@@ -121,14 +108,6 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
 
         setSuccessMessage(message);
     }, [ addData, isSuccessfullyAddedToRole, isSuccessfullyRemoved, removeData ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
-    }, [ filtersQueryParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
-    }, [ sortersQueryParams ]);
 
     useEffect(() => {
         if (isSuccessfullyRemoved || isSuccessfullyAddedToRole) {
@@ -249,11 +228,7 @@ const UsersInRoleView = (props: IUsersInRoleViewProps) => {
                   data={usersData}
                   error={getError}
                   queryParams={queryParams}
-                  selectedFilters={selectedFilters}
-                  selectedSorters={selectedSorters}
                   setQueryParams={setQueryParams}
-                  setSorterStateAction={setSelectedSorters}
-                  setFilterStateAction={setSelectedFilters}
                   withSearchParams={false}
                   renderActionButtons={renderGridSettings}
                   legendProps={[ { color: '#FFA1A1', message: 'User is deleted.' } ]}

@@ -31,6 +31,10 @@ public class ContestInListModel : IMapExplicitly
 
     public int LimitBetweenSubmissions { get; set; }
 
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Contest, ContestInListModel>()
             .ForMember(x => x.Id, opt

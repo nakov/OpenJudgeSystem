@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
+import { CREATED_ON, MODIFIED_ON } from '../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../common/messages';
 import DeleteButton from '../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../components/administration/common/edit/QuickEditButton';
+import { adminFormatDate } from '../../utils/administration/administration-dates';
 
 const checkersFilterableColumns: GridColDef[] = [
     {
@@ -66,6 +68,24 @@ const checkersFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

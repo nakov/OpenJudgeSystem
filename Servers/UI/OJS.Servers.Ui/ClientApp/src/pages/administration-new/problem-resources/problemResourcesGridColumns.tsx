@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { ProblemResourceType } from '../../../common/enums';
-import { PROBLEM_RESOURCE } from '../../../common/labels';
+import { CREATED_ON, MODIFIED_ON, PROBLEM_RESOURCE } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import { NEW_ADMINISTRATION_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
@@ -12,6 +12,7 @@ import DownloadIconButton from '../../../components/administration/common/downlo
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
 import { useDeleteProblemResourceMutation, useDownloadResourceQuery } from '../../../redux/services/admin/problemResourcesAdminService';
+import { adminFormatDate } from '../../../utils/administration/administration-dates';
 import { getStringObjectKeys } from '../../../utils/object-utils';
 
 const problemResourceFilterableColumns: GridColDef[] = [
@@ -98,7 +99,7 @@ const problemResourceFilterableColumns: GridColDef[] = [
         align: 'center',
         headerAlign: 'center',
         renderCell: (params) => (
-            <Link to={`${PROBLEMS_PATH}/${params.row.problemId}`}>
+            <Link to={`/${NEW_ADMINISTRATION_PATH}/${PROBLEMS_PATH}/${params.row.problemId}`}>
                 {params.row.problemName}
             </Link>
         ),
@@ -112,6 +113,24 @@ const problemResourceFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'createdOn',
+        headerName: `${CREATED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
+    },
+    {
+        field: 'modifiedOn',
+        headerName: `${MODIFIED_ON}`,
+        type: 'date',
+        flex: 1,
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
 ];
 

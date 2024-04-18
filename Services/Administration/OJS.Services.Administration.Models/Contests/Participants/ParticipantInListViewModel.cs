@@ -3,6 +3,8 @@
 using AutoMapper;
 using OJS.Data.Models.Participants;
 using SoftUni.AutoMapper.Infrastructure.Models;
+using System;
+
 public class ParticipantInListViewModel : IMapExplicitly
 {
     public int Id { get; set; }
@@ -13,6 +15,10 @@ public class ParticipantInListViewModel : IMapExplicitly
 
     public string? ContestId { get; set; }
     public bool IsOfficial { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ParticipantInListViewModel>()

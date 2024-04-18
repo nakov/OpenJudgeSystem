@@ -38,7 +38,7 @@ const AdministrationContestPage = () => {
     }, [ activityError, error ]);
 
     const renderContestEdit = () => (
-        <ContestEdit contestId={Number(contestId)} currentContest={data} onSuccess={retake} />
+        <ContestEdit contestId={Number(contestId)} currentContest={data} onSuccess={retake} skipGettingContest />
     );
 
     const renderProblemsInContestView = (key:string) => (

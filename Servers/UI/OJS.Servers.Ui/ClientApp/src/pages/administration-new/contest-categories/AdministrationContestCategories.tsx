@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { IGetAllAdminParams } from '../../../common/types';
@@ -8,36 +8,19 @@ import AdministrationModal from '../../../components/administration/common/modal
 import CategoryEdit from '../../../components/administration/contest-categories/CategoryEdit';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { useGetAllAdminContestCategoriesQuery, useLazyExportContestCategoriesToExcelQuery } from '../../../redux/services/admin/contestCategoriesAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
-import { IAdministrationFilter, mapGridColumnsToAdministrationFilterProps, mapUrlToFilters } from '../administration-filters/AdministrationFilters';
-import { IAdministrationSorter, mapGridColumnsToAdministrationSortingProps, mapUrlToSorters } from '../administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../AdministrationGridView';
+import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
+import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 
 import categoriesFilterableColumns, { returnCategoriesNonFilterableColumns } from './contestCategoriesGridColumns';
 
 const AdministrationContestCategoriesPage = () => {
     const [ searchParams ] = useSearchParams();
-    const [ queryParams, setQueryParams ] =
-    useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: searchParams.get('filter') ?? '',
-        sorting: searchParams.get('sorting') ?? '',
-    });
+    // eslint-disable-next-line max-len
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd, searchParams));
 
     const [ openEditContestCategoryModal, setOpenEditContestCategoryModal ] = useState(false);
     const [ openShowCreateContestCategoryModal, setOpenShowCreateContestCategoryModal ] = useState<boolean>(false);
     const [ contestCategoryId, setContestCategoryId ] = useState<number>();
-
-    const [ selectedFilters, setSelectedFilters ] = useState<Array<IAdministrationFilter>>(mapUrlToFilters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationFilterProps(categoriesFilterableColumns),
-    ));
-
-    const [ selectedSorters, setSelectedSorters ] = useState<Array<IAdministrationSorter>>(mapUrlToSorters(
-        searchParams ?? '',
-        mapGridColumnsToAdministrationSortingProps(categoriesFilterableColumns),
-    ));
 
     const {
         refetch: retakeData,
@@ -50,14 +33,6 @@ const AdministrationContestCategoriesPage = () => {
         setOpenEditContestCategoryModal(true);
         setContestCategoryId(id);
     };
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({
-            ...currentParams,
-            filter: searchParams.get('filter') ?? '',
-            sorting: searchParams.get('sorting') ?? '',
-        }));
-    }, [ searchParams ]);
 
     const onCloseModal = (isEditMode: boolean) => {
         if (isEditMode) {
@@ -106,10 +81,6 @@ const AdministrationContestCategoriesPage = () => {
           renderActionButtons={renderGridActions}
           queryParams={queryParams}
           setQueryParams={setQueryParams}
-          selectedFilters={selectedFilters || []}
-          selectedSorters={selectedSorters || []}
-          setSorterStateAction={setSelectedSorters}
-          setFilterStateAction={setSelectedFilters}
           modals={[
               { showModal: openShowCreateContestCategoryModal, modal: (i) => renderCategoryModal(i, false) },
               { showModal: openEditContestCategoryModal, modal: (i) => renderCategoryModal(i, true) },
