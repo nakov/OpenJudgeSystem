@@ -44,6 +44,10 @@ public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMap
                 => opt.Ignore())
             .ForMember(p => p.TotalScoreSnapshotModifiedOn, opt
                 => opt.Ignore())
+            .ForMember(pam => pam.IsDeleted, opt
+                => opt.Ignore())
+            .ForMember(pam => pam.DeletedOn, opt
+                => opt.Ignore())
             .ForMember(p => p.Submissions, opt
                 => opt.Ignore())
             .ForMember(p => p.Scores, opt
