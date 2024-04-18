@@ -4,15 +4,10 @@ using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Infrastructure.Attributes;
-using OJS.Data.Infrastructure.Configurators;
-using OJS.Data.Infrastructure.Enumerations;
 using OJS.Data.Infrastructure.Models;
 
 public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
@@ -35,18 +30,15 @@ public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, T
     where TRoleClaim : IdentityRoleClaim<TKey>
     where TUserToken : IdentityUserToken<TKey>
 {
-    private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
-
     // This constructor is needed for migration creation during design time.
     public BaseIdentityDbContext()
     {
     }
 
-    public BaseIdentityDbContext(
-        DbContextOptions<TDbContext> options,
-        IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache = null)
+    public BaseIdentityDbContext(DbContextOptions<TDbContext> options)
         : base(options)
-        => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
+    {
+    }
 
     public override int SaveChanges()
     {
@@ -66,31 +58,10 @@ public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, T
         return base.SaveChangesAsync(cancellationToken);
     }
 
-    // Called with Reflection
-    [GlobalQueryFilter(GlobalQueryFilterType.DeletableEntity)]
-    public void SetGlobalDeletableEntityQueryFilter<TEntity>(ModelBuilder builder)
-        where TEntity : class, IDeletableEntity
-        => builder.Entity<TEntity>()
-            .HasQueryFilter(x => !x.IsDeleted);
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        this.GetMethodsWithBaseTypesForModelBuilderConfiguration()
-            .Select(x => this.CreateFluentApiConfigurator(x.Key, x.Value))
-            .ForEach(configurator =>
-                builder.Model
-                    .GetEntityTypes()
-                    .ForEach(t => configurator.Configure(this, t.ClrType, builder)));
-
-        base.OnModelCreating(builder);
-    }
-
     private void ApplyAuditInfo()
         => this.ChangeTracker
             .Entries()
-            .Where(e =>
-                e.Entity is IAuditInfoEntity &&
-                e.State is EntityState.Added or EntityState.Modified)
+            .Where(e => e is { Entity: IAuditInfoEntity, State: EntityState.Added or EntityState.Modified })
             .ForEach(entry =>
             {
                 var entity = (IAuditInfoEntity)entry.Entity;
@@ -107,18 +78,14 @@ public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, T
     private void ApplyProcessedOn()
         => this.ChangeTracker
             .Entries()
-            .Where(e =>
-                e.Entity is IProcessedEntity &&
-                e.State is EntityState.Added or EntityState.Modified)
+            .Where(e => e is { Entity: IProcessedEntity, State: EntityState.Added or EntityState.Modified })
             .Select(entry => (IProcessedEntity)entry.Entity)
             .ForEach(entity => entity.ProcessedOn = DateTime.UtcNow);
 
     private void ApplyDeletedOn()
         => this.ChangeTracker
             .Entries()
-            .Where(e =>
-                e.Entity is IDeletableEntity &&
-                (e.State == EntityState.Deleted))
+            .Where(e => e is { Entity: IDeletableEntity, State: EntityState.Deleted })
             .ForEach(entry =>
             {
                 entry.State = EntityState.Modified;
@@ -126,30 +93,4 @@ public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, T
                 entity.DeletedOn = DateTime.UtcNow;
                 entity.IsDeleted = true;
             });
-
-    private IDictionary<MethodInfo, Type> GetMethodsWithBaseTypesForModelBuilderConfiguration()
-        => typeof(TDbContext)
-            .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-            .Where(this.MethodHasFluentApiConfiguration)
-            .ToDictionary(
-                m => m,
-                m => m
-                    .GetGenericMethodDefinition()
-                    .GetGenericArguments()
-                    .SelectMany(i => i.GetGenericParameterConstraints())
-                    .Last());
-
-    private bool MethodHasFluentApiConfiguration(MethodBase method)
-        => method.IsGenericMethod &&
-           method.GetCustomAttributes().OfType<FluentApiConfigurationAttribute>().Any();
-
-    private FluentApiConfigurator CreateFluentApiConfigurator(MethodInfo method, Type entityType)
-        => method.GetCustomAttribute<FluentApiConfigurationAttribute>() is GlobalQueryFilterAttribute
-            globalQueryFilterAttribute
-            ? new GlobalQueryFilterConfigurator(
-                method,
-                entityType,
-                globalQueryFilterAttribute,
-                this.globalQueryFilterTypesCache?.GetAll() ?? Enumerable.Empty<GlobalQueryFilterType>())
-            : new FluentApiConfigurator(method, entityType);
 }

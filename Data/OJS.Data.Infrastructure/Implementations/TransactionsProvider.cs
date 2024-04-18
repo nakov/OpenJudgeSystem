@@ -4,7 +4,7 @@ namespace OJS.Data.Infrastructure.Implementations
     using System;
     using System.Threading.Tasks;
 
-    internal class TransactionsProvider<TDbContext> : ITransactionsProvider
+    public class TransactionsProvider<TDbContext> : ITransactionsProvider
         where TDbContext : DbContext
     {
         public TransactionsProvider(TDbContext db) => this.Db = db;

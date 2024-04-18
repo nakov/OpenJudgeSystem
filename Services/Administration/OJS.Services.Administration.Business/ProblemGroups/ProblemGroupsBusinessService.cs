@@ -130,8 +130,6 @@ namespace OJS.Services.Administration.Business.ProblemGroups
                     .ThenInclude(p => p.Resources)
                 .Include(pr => pr.Problems)
                     .ThenInclude(p => p.Checker)
-                .Include(pr => pr.Problems)
-                    .ThenInclude(p => p.TagsInProblems)
                 .ToListAsync();
 
             await sourceContestProblemGroups
@@ -184,7 +182,6 @@ namespace OJS.Services.Administration.Business.ProblemGroups
                 SolutionSkeleton = problem.SolutionSkeleton,
                 ShowResults = problem.ShowResults,
                 ShowDetailedFeedback = problem.ShowDetailedFeedback,
-                TagsInProblems = problem.TagsInProblems,
             };
 
             await this.problemsData.Add(currentNewProblem);

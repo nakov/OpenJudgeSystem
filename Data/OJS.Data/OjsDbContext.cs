@@ -12,13 +12,10 @@ namespace OJS.Data
     using OJS.Data.Models.Users;
     using OJS.Data.Validation;
     using OJS.Data.Infrastructure;
-    using OJS.Data.Infrastructure.Enumerations;
 
     public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>,
         IDataProtectionKeyContext
     {
-        private readonly IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache;
-
         // Used by AutoCrudAdmin with Activator.CreateInstance for getting Metadata about the context.
         // In OnConfiguring in memory database is used when DbContext is created from
         // the parameterless constructor, as options have to be configured, to not throw exception.
@@ -30,12 +27,6 @@ namespace OJS.Data
             : base(options)
         {
         }
-
-        public OjsDbContext(
-            DbContextOptions<OjsDbContext> options,
-            IGlobalQueryFilterTypesCache globalQueryFilterTypesCache)
-            : base(options, globalQueryFilterTypesCache)
-            => this.globalQueryFilterTypesCache = globalQueryFilterTypesCache;
 
         public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
 
@@ -57,17 +48,11 @@ namespace OJS.Data
 
         public DbSet<ProblemForParticipant> ProblemsForParticipants { get; set; } = null!;
 
-        public DbSet<Event> Events { get; set; } = null!;
-
         public DbSet<Participant> Participants { get; set; } = null!;
 
         public DbSet<ParticipantScore> ParticipantScores { get; set; } = null!;
 
         public DbSet<ContestCategory> ContestCategories { get; set; } = null!;
-
-        public DbSet<ContestQuestion> ContestQuestions { get; set; } = null!;
-
-        public DbSet<ContestQuestionAnswer> ContestQuestionAnswers { get; set; } = null!;
 
         public DbSet<Checker> Checkers { get; set; } = null!;
 
@@ -81,13 +66,9 @@ namespace OJS.Data
 
         public DbSet<SubmissionTypeInProblem> SubmissionTypeProblems { get; set; } = null!;
 
-        public DbSet<SourceCode> SourceCodes { get; set; } = null!;
-
         public DbSet<TestRun> TestRuns { get; set; } = null!;
 
         public DbSet<FeedbackReport> FeedbackReports { get; set; } = null!;
-
-        public DbSet<ParticipantAnswer> ParticipantAnswers { get; set; } = null!;
 
         public DbSet<LecturerInContest> LecturersInContests { get; set; } = null!;
 
@@ -96,10 +77,6 @@ namespace OJS.Data
         public DbSet<Ip> Ips { get; set; } = null!;
 
         public DbSet<AccessLog> AccessLogs { get; set; } = null!;
-
-        public DbSet<Tag> Tags { get; set; } = null!;
-
-        public DbSet<TagInProblem> TagProblems { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
@@ -135,14 +112,6 @@ namespace OJS.Data
                     .IsRequired();
             });
 
-            builder.Entity<Submission>(b =>
-            {
-                b.HasQueryFilter(s =>
-                    s.Problem.IsDeleted == false &&
-                    s.Participant.IsDeleted == false &&
-                    s.Participant.Contest.IsDeleted == false);
-            });
-
             builder.Entity<SubmissionForProcessing>()
                 .HasIndex(s => s.SubmissionId)
                 .IsUnique();
@@ -175,20 +144,21 @@ namespace OJS.Data
             builder.Entity<IpInContest>()
                 .HasKey(x => new { x.ContestId, x.IpId });
 
-            builder.Entity<ParticipantAnswer>()
-                .HasKey(x => new { x.ParticipantId, x.ContestQuestionId });
-
-            builder.Entity<TagInProblem>()
-                .HasKey(x => new { x.TagId, x.ProblemId });
-
             builder.Entity<Contest>(c =>
             {
                 c.Property(cn => cn.AllowParallelSubmissionsInTasks).HasDefaultValue(true);
             });
 
+            // Participant with submissions will not be able to be deleted. Use IsInvalidated instead.
+            builder.Entity<Participant>()
+                .HasMany(x => x.Submissions)
+                .WithOne(x => x.Participant)
+                .HasForeignKey(x => x.ParticipantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             FixMultipleCascadePaths(builder);
 
-            this.TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(builder);
+            AddGlobalQueryFilters(builder);
         }
 
         private static void FixMultipleCascadePaths(ModelBuilder builder)
@@ -210,23 +180,61 @@ namespace OJS.Data
                 .WithOne(x => x.Test)
                 .HasForeignKey(x => x.TestId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<ContestQuestion>()
-                .HasMany(x => x.ParticipantAnswers)
-                .WithOne(x => x.ContestQuestion)
-                .HasForeignKey(x => x.ContestQuestionId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
 
-        // Could be made a generic logic for registering Matching Query filters in BaseDbContext
-        // https://docs.microsoft.com/en-us/ef/core/querying/filters#accessing-entity-with-query-filter-using-required-navigation
-        private void TryRegisterMatchingGlobalQueryFiltersForRequiredDeletableEntities(ModelBuilder builder)
+        // TODO: Add automatic test to validate all IDeletableEntity entities have global query filter for IsDeleted
+        private static void AddGlobalQueryFilters(ModelBuilder builder)
         {
-            if (this.globalQueryFilterTypesCache == null ||
-                !this.globalQueryFilterTypesCache.Contains(GlobalQueryFilterType.DeletableEntity))
-            {
-                return;
-            }
+            builder.Entity<Checker>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<Contest>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<ContestCategory>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<ExamGroup>()
+                .HasQueryFilter(x => (x.Contest == null || !x.Contest.IsDeleted));
+
+            builder.Entity<Participant>()
+                .HasQueryFilter(x => !x.Contest.IsDeleted);
+
+            builder.Entity<ParticipantScore>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<Problem>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<ProblemGroup>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<ProblemResource>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<Submission>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<Test>()
+                .HasQueryFilter(x => !x.Problem.IsDeleted);
+
+            builder.Entity<TestRun>()
+                .HasQueryFilter(x => !x.Submission.IsDeleted);
+
+            builder.Entity<UserProfile>()
+                .HasQueryFilter(x => !x.IsDeleted);
+
+            builder.Entity<AccessLog>()
+                .HasQueryFilter(x => !x.User.IsDeleted);
+
+            builder.Entity<UserInExamGroup>()
+                .HasQueryFilter(x => !x.User.IsDeleted);
+
+            builder.Entity<UserInRole>()
+                .HasQueryFilter(x => !x.User.IsDeleted);
+
+            builder.Entity<FeedbackReport>()
+                .HasQueryFilter(x => !x.IsDeleted);
 
             builder.Entity<IpInContest>()
                 .HasQueryFilter(x => !x.Contest.IsDeleted);
@@ -234,35 +242,14 @@ namespace OJS.Data
             builder.Entity<LecturerInContest>()
                 .HasQueryFilter(x => !x.Contest.IsDeleted);
 
-            builder.Entity<Participant>()
-                .HasQueryFilter(x => !x.Contest.IsDeleted);
-
             builder.Entity<LecturerInContestCategory>()
                 .HasQueryFilter(x => !x.ContestCategory.IsDeleted);
-
-            builder.Entity<ParticipantAnswer>()
-                .HasQueryFilter(x => !x.ContestQuestion.IsDeleted);
-
-            builder.Entity<ParticipantScore>()
-                .HasQueryFilter(x => !x.Problem.IsDeleted);
 
             builder.Entity<ProblemForParticipant>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
 
-            builder.Entity<Test>()
-                .HasQueryFilter(x => !x.Problem.IsDeleted);
-
-            builder.Entity<Submission>()
-                .HasQueryFilter(x => !x.Problem.IsDeleted);
-
             builder.Entity<SubmissionTypeInProblem>()
                 .HasQueryFilter(x => !x.Problem.IsDeleted);
-
-            builder.Entity<TagInProblem>()
-                .HasQueryFilter(x => !x.Problem.IsDeleted);
-
-            builder.Entity<TestRun>()
-                .HasQueryFilter(x => !x.Submission.IsDeleted);
         }
     }
 }

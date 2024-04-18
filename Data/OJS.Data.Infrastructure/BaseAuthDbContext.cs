@@ -22,10 +22,8 @@ public class BaseAuthDbContext<TDbContext, TUser>
     {
     }
 
-    public BaseAuthDbContext(
-        DbContextOptions<TDbContext> options,
-        IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache = null)
-        : base(options, globalQueryFilterTypesCache)
+    public BaseAuthDbContext(DbContextOptions<TDbContext> options)
+        : base(options)
     {
     }
 }
@@ -52,9 +50,8 @@ public class BaseAuthDbContext<TDbContext, TUser, TRole, TUserRole>
     }
 
     public BaseAuthDbContext(
-        DbContextOptions<TDbContext> options,
-        IGlobalQueryFilterTypesCache? globalQueryFilterTypesCache = null)
-        : base(options, globalQueryFilterTypesCache)
+        DbContextOptions<TDbContext> options)
+        : base(options)
     {
     }
 }

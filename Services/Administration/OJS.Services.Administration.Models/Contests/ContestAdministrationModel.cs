@@ -70,8 +70,6 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.Ignore())
             .ForMember(crm => crm.LecturersInContests, opt
                 => opt.Ignore())
-            .ForMember(crm => crm.Questions, opt
-                => opt.Ignore())
             .ForMember(crm => crm.ProblemGroups, opt
                 => opt.Ignore())
             .ForMember(crm => crm.Participants, opt

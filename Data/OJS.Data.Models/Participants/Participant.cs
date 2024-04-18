@@ -7,7 +7,7 @@ namespace OJS.Data.Models.Participants
     using System.Collections.Generic;
     using OJS.Data.Infrastructure.Models;
 
-    public class Participant : DeletableAuditInfoEntity<int>
+    public class Participant : AuditInfoEntity<int>
     {
         public Participant()
         {
@@ -46,8 +46,6 @@ namespace OJS.Data.Models.Participants
 
         public virtual ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
             new HashSet<ProblemForParticipant>();
-
-        public virtual ICollection<ParticipantAnswer> Answers { get; set; } = new HashSet<ParticipantAnswer>();
 
         public override string ToString() => this.UserId;
     }

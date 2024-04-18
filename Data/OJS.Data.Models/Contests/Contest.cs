@@ -88,8 +88,6 @@ namespace OJS.Data.Models.Contests
 
         public virtual ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
 
-        public virtual ICollection<ContestQuestion> Questions { get; set; } = new HashSet<ContestQuestion>();
-
         public virtual ICollection<ProblemGroup> ProblemGroups { get; set; } = new HashSet<ProblemGroup>();
 
         public virtual ICollection<Participant> Participants { get; set; } = new HashSet<Participant>();

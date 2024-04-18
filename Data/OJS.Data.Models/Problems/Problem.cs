@@ -67,8 +67,6 @@ namespace OJS.Data.Models.Problems
 
         public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
 
-        public virtual ICollection<TagInProblem> TagsInProblems { get; set; } = new HashSet<TagInProblem>();
-
         public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
 
         public virtual ICollection<SubmissionTypeInProblem> SubmissionTypesInProblems { get; set; } =
