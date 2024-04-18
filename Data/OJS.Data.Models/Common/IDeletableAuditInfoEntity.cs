@@ -1,4 +1,4 @@
-namespace OJS.Data.Infrastructure.Models
+namespace OJS.Data.Models.Common
 {
     public interface IDeletableAuditInfoEntity : IDeletableEntity, IAuditInfoEntity
     {

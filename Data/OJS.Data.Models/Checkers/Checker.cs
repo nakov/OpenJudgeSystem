@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Checkers
 {
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using System.ComponentModel.DataAnnotations;
     using static OJS.Data.Validation.ConstraintConstants.Checker;
 

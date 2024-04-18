@@ -4,7 +4,7 @@ using OJS.Services.Common.Models.Files;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using SoftUni.Common.Models;
-using OJS.Data.Infrastructure.Models;
+using OJS.Data.Models.Common;
 using SoftUni.Services.Infrastructure;
 using System;
 using System.Linq.Expressions;

@@ -11,18 +11,10 @@ namespace OJS.Data
     using OJS.Data.Models.Tests;
     using OJS.Data.Models.Users;
     using OJS.Data.Validation;
-    using OJS.Data.Infrastructure;
 
     public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>,
         IDataProtectionKeyContext
     {
-        // Used by AutoCrudAdmin with Activator.CreateInstance for getting Metadata about the context.
-        // In OnConfiguring in memory database is used when DbContext is created from
-        // the parameterless constructor, as options have to be configured, to not throw exception.
-        public OjsDbContext()
-        {
-        }
-
         public OjsDbContext(DbContextOptions<OjsDbContext> options)
             : base(options)
         {

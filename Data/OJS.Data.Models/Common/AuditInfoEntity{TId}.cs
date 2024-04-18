@@ -1,8 +1,8 @@
-namespace OJS.Data.Infrastructure.Models
+namespace OJS.Data.Models.Common
 {
     using System;
 
-    public class AuditInfoEntity : IAuditInfoEntity
+    public class AuditInfoEntity<TId> : Entity<TId>, IAuditInfoEntity<TId>
     {
         public DateTime CreatedOn { get; set; }
 

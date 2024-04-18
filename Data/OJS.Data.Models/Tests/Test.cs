@@ -7,7 +7,7 @@ namespace OJS.Data.Models.Tests
     using OJS.Data.Models.Problems;
     using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using OJS.Workers.Common.Extensions;
 
     public class Test : Entity<int>, IOrderableEntity, IMapExplicitly

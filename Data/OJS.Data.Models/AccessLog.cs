@@ -1,7 +1,7 @@
 namespace OJS.Data.Models
 {
     using OJS.Data.Models.Users;
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class AccessLog : AuditInfoEntity<int>
     {

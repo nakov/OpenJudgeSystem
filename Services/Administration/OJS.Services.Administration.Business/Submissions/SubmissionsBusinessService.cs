@@ -20,7 +20,7 @@ namespace OJS.Services.Administration.Business.Submissions
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using OJS.Data.Infrastructure;
+    using OJS.Data;
 
     public class SubmissionsBusinessService : AdministrationOperationService<Submission, int, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
     {

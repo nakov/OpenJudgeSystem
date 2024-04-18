@@ -5,7 +5,7 @@ using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
-using OJS.Data.Infrastructure.Models;
+using OJS.Data.Models.Common;
 
 public class BaseAdministrationModelValidator<TAdministrationModel, TId, TEntity> : BaseValidator<TAdministrationModel>
     where TAdministrationModel : BaseAdministrationModel<TId>

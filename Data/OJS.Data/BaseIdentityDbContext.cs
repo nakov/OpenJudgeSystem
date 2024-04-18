@@ -1,4 +1,4 @@
-namespace OJS.Data.Infrastructure;
+namespace OJS.Data;
 
 using FluentExtensions.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using OJS.Data.Infrastructure.Models;
+using OJS.Data.Models.Common;
 
 public class BaseIdentityDbContext<TDbContext, TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
     : IdentityDbContext<

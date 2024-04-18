@@ -1,6 +1,6 @@
 namespace OJS.Data.Models.Submissions
 {
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class SubmissionForProcessing : AuditInfoEntity<int>
     {

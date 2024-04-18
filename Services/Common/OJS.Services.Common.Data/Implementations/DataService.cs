@@ -6,7 +6,7 @@ namespace OJS.Services.Common.Data.Implementations
     using OJS.Data;
     using OJS.Services.Common.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using System;
     using System.Collections.Generic;
     using System.Linq;

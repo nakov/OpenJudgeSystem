@@ -2,7 +2,7 @@ namespace OJS.Data.Models.Participants
 {
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Submissions;
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class ParticipantScore : Entity<int>
     {

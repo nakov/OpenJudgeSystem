@@ -1,4 +1,4 @@
-namespace OJS.Data.Infrastructure;
+namespace OJS.Data;
 
 using System;
 using System.Threading.Tasks;

@@ -20,7 +20,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.OpenApi.Models;
     using OJS.Common;
     using OJS.Common.Enumerations;
-    using OJS.Data.Infrastructure;
+    using OJS.Data;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
@@ -31,7 +31,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using OJS.Data.Infrastructure.Implementations;
+    using OJS.Data.Implementations;
     using SoftUni.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using System;

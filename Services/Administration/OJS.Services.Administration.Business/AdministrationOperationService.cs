@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business;
 
-using OJS.Data.Infrastructure.Models;
+using OJS.Data.Models.Common;
 using System.Threading.Tasks;
 
 public abstract class AdministrationOperationService<TEntity, TId, TUpdateModel>

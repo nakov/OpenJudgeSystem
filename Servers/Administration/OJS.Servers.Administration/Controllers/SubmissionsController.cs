@@ -17,7 +17,7 @@ using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
-using OJS.Data.Infrastructure;
+using OJS.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

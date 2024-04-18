@@ -7,7 +7,7 @@ namespace OJS.Data.Models.Contests
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using OJS.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
     public class Contest : DeletableAuditInfoEntity<int>, IOrderableEntity

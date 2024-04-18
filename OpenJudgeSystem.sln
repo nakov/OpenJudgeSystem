@@ -104,8 +104,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Worker.Models"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Services.Worker.Business", "Services\Worker\OJS.Services.Worker.Business\OJS.Services.Worker.Business.csproj", "{369BD97D-9875-4461-AA84-F9CA0224D528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OJS.Data.Infrastructure", "Data\OJS.Data.Infrastructure\OJS.Data.Infrastructure.csproj", "{5D4926EF-BFF9-4976-9175-3859FF5628FB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,7 +153,6 @@ Global
 		{E8A95A48-3BAE-4ADA-9643-E783BB1F9FE3} = {6CCF80EC-1721-4447-AC74-234B7519E5C8}
 		{4B984DF2-036A-432A-ACA5-1A403FC8824C} = {AAE8857F-14F9-4894-99CC-1335AA7EC400}
 		{369BD97D-9875-4461-AA84-F9CA0224D528} = {AAE8857F-14F9-4894-99CC-1335AA7EC400}
-		{5D4926EF-BFF9-4976-9175-3859FF5628FB} = {EE89E503-154F-42F5-9B43-8DB820D2338B}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{CDBD0A16-E35C-43F7-A20E-A3878F26384E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -306,9 +303,5 @@ Global
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369BD97D-9875-4461-AA84-F9CA0224D528}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D4926EF-BFF9-4976-9175-3859FF5628FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D4926EF-BFF9-4976-9175-3859FF5628FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D4926EF-BFF9-4976-9175-3859FF5628FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D4926EF-BFF9-4976-9175-3859FF5628FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
