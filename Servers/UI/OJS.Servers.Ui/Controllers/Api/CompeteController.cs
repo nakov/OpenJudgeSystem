@@ -89,7 +89,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost("/submit")]
+    [HttpPost("submit")]
     public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
