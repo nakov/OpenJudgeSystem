@@ -11,9 +11,5 @@
       <ProjectReference Include="..\..\Infrastructure\OJS.Servers.Infrastructure\OJS.Servers.Infrastructure.csproj" />
       <ProjectReference Include="..\OJS.Servers.Administration.Models\OJS.Servers.Administration.Models.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
-    </ItemGroup>
     
 </Project>
