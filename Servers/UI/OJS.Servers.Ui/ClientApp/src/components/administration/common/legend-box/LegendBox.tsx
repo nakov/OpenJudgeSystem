@@ -14,8 +14,7 @@ const LegendBox = (props: ILegendBoxProps) => {
     return (
         <Box className={styles.legendBox}>
             <Tooltip
-              sx={{ background: 'red' }}
-              color="warning"
+              color="info"
               title={(
                   <List sx={{ p: 0 }}>
                       {renders.map((x) => (

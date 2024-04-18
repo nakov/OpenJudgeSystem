@@ -6,12 +6,15 @@ import { SetURLSearchParams } from 'react-router-dom';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum, SortingEnum } from '../../../common/enums';
 import { IEnumType, IFilterColumn, IGetAllAdminParams } from '../../../common/types';
+import { getDateAsLocal } from '../../../utils/administration/administration-dates';
+import concatClassNames from '../../../utils/class-names';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
 
 import styles from './AdministrationFilters.module.scss';
@@ -306,6 +309,9 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
     };
 
+    const handleDateTimePickerChange = (indexToUpdate: number, value: any, updateProperty: string) => {
+        updateFilterColumnData(indexToUpdate, { target: { value } }, updateProperty);
+    };
     const getColumnTypeByName = (columnName: string) => filterColumns.find((column) => column.columnName === columnName)?.columnType;
 
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
@@ -390,16 +396,27 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
             );
         }
         return (
-            <TextField
-              label={selectedFilter.inputType === FilterColumnTypeEnum.DATE
-                  ? ' '
-                  : 'Value'}
-              variant="standard"
-              type={selectedFilter.inputType}
-              value={selectedFilters[idx]?.value}
-              onChange={(e) => updateFilterColumnData(idx, e, 'value')}
-              disabled={!selectedFilters[idx].operator || idx > 0}
-            />
+
+            selectedFilter.inputType === FilterColumnTypeEnum.DATE
+                ? (
+                    <DateTimePicker
+                      orientation="landscape"
+                      label={FilterColumnTypeEnum.DATE}
+                      value={getDateAsLocal(selectedFilters[idx]?.value)}
+                      onChange={(newValue) => handleDateTimePickerChange(idx, newValue, 'value')}
+                      disabled={!selectedFilters[idx].operator || idx > 0}
+                    />
+                )
+                : (
+                    <TextField
+                      label="Value"
+                      variant="standard"
+                      type={selectedFilter.inputType}
+                      value={selectedFilters[idx]?.value}
+                      onChange={(e) => updateFilterColumnData(idx, e, 'value')}
+                      disabled={!selectedFilters[idx].operator || idx > 0}
+                    />
+                )
         );
     };
 
@@ -472,7 +489,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
 
     const renderFilter = (idx: number) => (
-        <div style={{ display: 'flex', margin: '5px 0' }} key={`admin-filter-${idx}`}>
+        <Box style={{ display: 'flex', margin: '5px 0' }} key={`admin-filter-${idx}`}>
             <CloseIcon className={styles.closeIcon} onClick={() => setFilterAnchor(null)} />
             { idx !== 0 && (
                 <DeleteIcon color="error" className={styles.removeFilterButton} onClick={() => removeSingleFilter(idx)} />
@@ -510,11 +527,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                 </Select>
             </FormControl>
             {renderInputField(idx)}
-        </div>
+        </Box>
     );
 
     const renderSorter = (idx: number) => (
-        <div className={styles.sortWrapper} key={`a-s-w-${idx}`}>
+        <Box className={styles.sortWrapper} key={`a-s-w-${idx}`}>
             <CloseIcon className={styles.closeIcon} onClick={() => setSortersAnchor(null)} />
             { idx !== 0 && (
                 <DeleteIcon color="error" className={styles.removeSorterButton} onClick={() => removeSingleSorter(idx)} />
@@ -545,11 +562,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                         <MenuItem key={`s-o-o-${orderByOption.name}`} value={orderByOption.value}>{orderByOption.name}</MenuItem>)) }
                 </Select>
             </FormControl>
-        </div>
+        </Box>
     );
     return (
         <>
-            <div>
+            <Box>
                 <Button onClick={handleOpenClick} style={{ margin: '10px 0' }}>
                     {filterOpen
                         ? 'close'
@@ -563,11 +580,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                     </span>
                 </Button>
                 <BasePopup anchor={filterAnchor} open={filterOpen}>
-                    <div className={styles.administrationFilters}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box className={concatClassNames(styles.administrationFilters, 'box-wrapper')}>
+                        <Box style={{ display: 'flex', flexDirection: 'column' }}>
                             {selectedFilters.map((filter, idx) => renderFilter(idx))}
-                        </div>
-                        <div className={styles.buttonsSection}>
+                        </Box>
+                        <Box className={styles.buttonsSection}>
                             <Button
                               onClick={addFilter}
                               disabled={selectedFilters.length
@@ -577,29 +594,29 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                                 Add filter
                             </Button>
                             <Button onClick={removeAllFilters}>Remove All</Button>
-                        </div>
-                    </div>
+                        </Box>
+                    </Box>
                 </BasePopup>
-            </div>
-            <div>
+            </Box>
+            <Box>
                 <Button onClick={handleOpenSorters}>
                     {openSorters
                         ? 'close'
                         : 'open'}
                     {' '}
                     sorters
-                    <span style={{ marginLeft: '10px', color: 'black' }}>
+                    <Box style={{ marginLeft: '10px', color: 'black' }}>
                         (
                         {selectedSorters.filter((s) => s.columnName).length}
                         ) Active
-                    </span>
+                    </Box>
                 </Button>
                 <BasePopup anchor={sortersAnchor} open={openSorters}>
-                    <div className={styles.administrationSorters}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box className={concatClassNames(styles.administrationSorters, 'box-wrapper')}>
+                        <Box style={{ display: 'flex', flexDirection: 'column' }}>
                             {selectedSorters.map((sorter, idx) => renderSorter(idx))}
-                        </div>
-                        <div className={styles.buttonsSection}>
+                        </Box>
+                        <Box className={styles.buttonsSection}>
                             <Button
                               onClick={addSorter}
                               disabled={selectedSorters.length
@@ -609,10 +626,10 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                                 Add Sorter
                             </Button>
                             <Button onClick={removeAllSorters}>Remove All</Button>
-                        </div>
-                    </div>
+                        </Box>
+                    </Box>
                 </BasePopup>
-            </div>
+            </Box>
         </>
     );
 };

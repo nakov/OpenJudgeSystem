@@ -573,6 +573,7 @@ const ContestEdit = (props:IContestEditProps) => {
                           ? ''
                           : contest.description}
                       minRows={10}
+                      maxRows={10}
                       name="description"
                       onChange={(e) => onChange(e)}
                     />

@@ -120,9 +120,7 @@ const AdministrationGridView = <T extends object >(props: IAdministrationGridVie
                     />
                 </div>
                 )}
-                {legendProps
-                    ? <LegendBox renders={legendProps} />
-                    : <div style={{ ...flexCenterObjectStyles, justifyContent: 'space-between' }} />}
+                <LegendBox renders={legendProps ?? []} />
             </div>
         );
     };
