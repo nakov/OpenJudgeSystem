@@ -10,10 +10,10 @@ import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { useRouteUrlParams } from '../../hooks/common/use-route-url-params';
-import { useCurrentContestResults } from '../../hooks/contests/use-current-contest-results';
 import { useContestCategories } from '../../hooks/use-contest-categories';
 import { useCategoriesBreadcrumbs } from '../../hooks/use-contest-categories-breadcrumb';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import { useGetContestResultsQuery } from '../../redux/services/contestsService';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
 import { getContestDetailsAppUrl } from '../../utils/urls';
@@ -34,13 +34,15 @@ const ContestResultsPage = () => {
     const participationType = contestParticipationType(official);
 
     const {
-        state: {
-            contestResults,
-            contestResultsError,
-            areContestResultsLoaded,
-        },
-        actions: { load },
-    } = useCurrentContestResults();
+        data: contestResults,
+        isLoading,
+        error: contestResultsError,
+    } = useGetContestResultsQuery({
+        id: Number(contestId),
+        official,
+        full,
+    });
+
     const { actions: { setPageTitle } } = usePageTitles();
 
     const contestResultsPageTitle = useMemo(
@@ -75,19 +77,12 @@ const ContestResultsPage = () => {
 
     useEffect(
         () => {
-            if (areContestResultsLoaded && !isEmpty(categoriesFlat)) {
+            if (!isLoading && !isEmpty(categoriesFlat)) {
                 const category = categoriesFlat.find(({ id }) => id.toString() === contestResults?.categoryId.toString());
                 updateBreadcrumb(category, categoriesFlat);
             }
         },
-        [ categoriesFlat, contestResults, areContestResultsLoaded, updateBreadcrumb ],
-    );
-
-    useEffect(
-        () => {
-            load(Number(contestId), official, full);
-        },
-        [ contestId, official, full, load ],
+        [ categoriesFlat, contestResults, isLoading, updateBreadcrumb ],
     );
 
     const renderErrorHeading = useCallback(
@@ -107,8 +102,8 @@ const ContestResultsPage = () => {
     const renderErrorMessage = useCallback(
         () => {
             if (!isNil(contestResultsError)) {
-                const { detail } = contestResultsError;
-                return renderErrorHeading(detail);
+                // const { detail } = contestResultsError;
+                return renderErrorHeading('Error loading contest results');
             }
 
             return null;
@@ -118,7 +113,7 @@ const ContestResultsPage = () => {
 
     return (
         isNil(contestResultsError)
-            ? areContestResultsLoaded && isLoaded
+            ? !isLoading && isLoaded
                 ? (
                     <>
                         <div>

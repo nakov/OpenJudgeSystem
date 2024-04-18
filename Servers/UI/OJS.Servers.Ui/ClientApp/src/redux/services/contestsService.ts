@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { IContestStrategyFilter } from '../../common/contest-types';
+import ITreeItemType from '../../common/tree-types';
 import {
     IContestCategory,
     IContestDetailsResponseType,
@@ -10,7 +11,8 @@ import {
     IIndexContestsType,
     IPagedResultType,
 } from '../../common/types';
-import { IContestDetailsUrlParams } from '../../common/url-types';
+import { IContestDetailsUrlParams, IGetContestResultsParams } from '../../common/url-types';
+import { IContestResultsType } from '../../hooks/contests/types';
 
 // eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
@@ -62,6 +64,20 @@ export const contestsService = createApi({
                     },
                 }),
             }),
+        getContestResults: builder.query<
+            IContestResultsType,
+            IGetContestResultsParams>({
+                query: ({ id, official, full }) => ({
+                    url: `/ContestResults/GetResults/${id}?official=${official}&full=${full}`,
+                }),
+            }),
+        getContestCategories: builder.query<
+            ITreeItemType[],
+            null>({
+                query: () => ({
+                    url: '/ContestCategories/GetCategoriesTree',
+                }),
+            }),
     }),
 });
 
@@ -73,4 +89,5 @@ export const {
     useGetContestByIdQuery,
     useLazyGetContestByIdQuery,
     useLazyGetContestsParticipationsForUserQuery,
+    useGetContestResultsQuery,
 } = contestsService;
