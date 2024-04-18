@@ -71,13 +71,6 @@ export const contestsService = createApi({
                     url: `/ContestResults/GetResults/${id}?official=${official}&full=${full}`,
                 }),
             }),
-        getContestCategories: builder.query<
-            ITreeItemType[],
-            null>({
-                query: () => ({
-                    url: '/ContestCategories/GetCategoriesTree',
-                }),
-            }),
     }),
 });
 
