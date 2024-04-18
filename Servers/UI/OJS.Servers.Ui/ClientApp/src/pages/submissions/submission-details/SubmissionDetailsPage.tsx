@@ -82,6 +82,7 @@ const SubmissionDetailsPage = () => {
         modifiedOn,
         startedExecutionOn,
         completedExecutionOn,
+        userIsInRoleForContest,
     } = data || {};
 
     const handleDownloadFile = useCallback(async () => {
@@ -123,7 +124,7 @@ const SubmissionDetailsPage = () => {
                     <div>
                         {allowBinaryFilesUpload && (
                             <div className={styles.buttonWrapper}>
-                                <Button text="Download binary file" onClick={handleDownloadFile} />
+                                <Button id="download-binary-file" text="Download binary file" onClick={handleDownloadFile} />
                             </div>
                         )}
                         <div className={styles.detailsRow}>
@@ -222,7 +223,13 @@ const SubmissionDetailsPage = () => {
 
         const sortedTestRuns = [ ...testRuns || [] ]?.sort(sortByTrialTest);
 
-        return sortedTestRuns.map((testRun: ITestRunType, idx: number) => <SubmissionTestRun testRun={testRun} idx={idx + 1} />);
+        return sortedTestRuns.map((testRun: ITestRunType, idx: number) => (
+            <SubmissionTestRun
+              testRun={testRun}
+              idx={idx + 1}
+              shouldRenderAdminData={userIsInRoleForContest}
+            />
+        ));
     }, [
         isCompiledSuccessfully,
         isEligibleForRetest,
@@ -233,34 +240,35 @@ const SubmissionDetailsPage = () => {
         solutionId,
         isProcessed,
         textColorClassName,
+        userIsInRoleForContest,
     ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
-            const scrollToElement = document.querySelector('[class*="codeContentWrapper"]');
+            const scrollToElement =
+                document.querySelector('#code-content-wrapper') ||
+                document.querySelector('#download-binary-file');
+
             if (!scrollToElement) { return; }
 
             const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToAdministrationForContest = () => navigate(`/administration-new/contests/details/${contestId}`);
+        const goToAdministrationForContest = () => navigate(`/administration-new/contests/${contestId}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>
-                { content && <Button text="View Code" onClick={onViewCodeClick} /> }
-                { user.canAccessAdministration && (
+                <Button text="View Code" onClick={onViewCodeClick} />
+                { userIsInRoleForContest && (
                     <>
-                        <Button text="Edit" onClick={goToAdministrationForContest} />
-                        <Button text="Delete" onClick={goToAdministrationForContest} />
-                        <Button text="Tests" onClick={goToAdministrationForContest} />
+                        <Button text="OPEN IN ADMINISTRATION" onClick={goToAdministrationForContest} />
                         <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
                     </>
                 )}
-
             </div>
         );
-    }, [ content, contestId, navigate, retestSubmission, solutionId, user.canAccessAdministration ]);
+    }, [ contestId, navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
@@ -297,7 +305,7 @@ const SubmissionDetailsPage = () => {
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
                         {!isEligibleForRetest && content && (
-                            <div className={styles.codeContentWrapper}>
+                            <div className={styles.codeContentWrapper} id="code-content-wrapper">
                                 <div>Source Code</div>
                                 <CodeEditor code={content} readOnly />
                             </div>

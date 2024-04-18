@@ -66,8 +66,6 @@ const ResourcesInProblemView = (props : IResourceInproblemViewProps) => {
           notFilterableGridColumnDef={returnProblemResourceNonFilterableColumns(onEditClick, retakeData)}
           data={resourcesData}
           error={resourcesError}
-          selectedFilters={[]}
-          selectedSorters={[]}
           showFiltersAndSorters={false}
           renderActionButtons={renderGridSettings}
           legendProps={[ { color: '#FFA1A1', message: 'Problem Resource is deleted.' } ]}

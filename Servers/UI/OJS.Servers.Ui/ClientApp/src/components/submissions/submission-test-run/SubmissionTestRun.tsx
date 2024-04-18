@@ -7,15 +7,16 @@ import { Popover } from '@mui/material';
 
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { useAppSelector } from '../../../redux/store';
+import CodeEditor from '../../code-editor/CodeEditor';
 import Diff from '../../diff/Diff';
 import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SubmissionTestRun.module.scss';
 
-interface ISubmissionTestRun {
+interface ISubmissionTestRunProps {
     testRun: ITestRunType;
     idx: number;
+    shouldRenderAdminData?: boolean;
 }
 
 export const enum testResultTypes {
@@ -26,12 +27,10 @@ export const enum testResultTypes {
     memoryLimit = 'MemoryLimit'
 }
 
-const SubmissionTestRun = (props: ISubmissionTestRun) => {
-    const { testRun, idx } = props;
+const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
+    const { testRun, idx, shouldRenderAdminData = false } = props;
 
-    const { themeColors, getColorClassName } = useTheme();
-
-    const { internalUser: user } = useAppSelector((state) => state.authorization);
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
@@ -123,13 +122,15 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
                           text={testShowInput
                               ? 'HIDE INPUT'
                               : 'SHOW INPUT'}
-                          type={ButtonType.neutral}
+                          type={isDarkMode
+                              ? ButtonType.lightNeutral
+                              : ButtonType.darkNeutral}
                           size={ButtonSize.small}
                         />
                     )}
                 </div>
                 <div className={styles.testDetailsAndMemoryWrapper}>
-                    { user.canAccessAdministration && (
+                    { shouldRenderAdminData && (
                         <Link
                           target="_blank"
                           to={`/administration-new/tests/${testId}`}
@@ -200,9 +201,7 @@ const SubmissionTestRun = (props: ISubmissionTestRun) => {
             {testShowInput && (
                 <>
                     <div>Test input:</div>
-                    <div className={styles.inputWrapper} style={{ backgroundColor: themeColors.baseColor100 }}>
-                        {input}
-                    </div>
+                    <CodeEditor code={input} readOnly customEditorStyles={{ height: '150px', marginTop: '12px' }} />
                 </>
             )}
             {expectedOutputFragment && userOutputFragment && (

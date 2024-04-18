@@ -8,7 +8,7 @@
 .submissionsDetailsWrapper {
   @extend %font-family-normal;
 
-  padding: spacings.$sp-16 spacings.$sp-64;
+  padding: spacings.$sp-64;
 
   .submissionTitle {
     font-size: variables.$f-size-30;
