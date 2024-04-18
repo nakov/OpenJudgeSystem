@@ -3,13 +3,12 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
     using System;
     using System.Linq;
     using System.Linq.Expressions;
 
-    public class ProblemGroupsDataService : DataService<ProblemGroup>, IProblemGroupsDataService
+    public class ProblemGroupsDataService : AdministrationDataService<ProblemGroup>, IProblemGroupsDataService
     {
         public ProblemGroupsDataService(OjsDbContext problemGroups)
             : base(problemGroups)

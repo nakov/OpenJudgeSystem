@@ -3,7 +3,6 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using System;
@@ -12,7 +11,7 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
+    public class SubmissionsDataService : AdministrationDataService<Submission>, ISubmissionsDataService
     {
         public SubmissionsDataService(OjsDbContext submissions)
             : base(submissions)

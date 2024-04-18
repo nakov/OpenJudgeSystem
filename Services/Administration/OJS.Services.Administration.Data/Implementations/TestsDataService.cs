@@ -2,14 +2,13 @@
 {
     using OJS.Data;
     using OJS.Data.Models.Tests;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
     using System;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public class TestsDataService : DataService<Test>, ITestsDataService
+    public class TestsDataService : AdministrationDataService<Test>, ITestsDataService
     {
         public TestsDataService(OjsDbContext tests)
             : base(tests)

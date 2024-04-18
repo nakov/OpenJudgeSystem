@@ -2,10 +2,9 @@
 
 using OJS.Data;
 using OJS.Data.Models.Checkers;
-using OJS.Services.Common.Data.Implementations;
 using System.Threading.Tasks;
 
-public class CheckersDataService : DataService<Checker>, ICheckersDataService
+public class CheckersDataService : AdministrationDataService<Checker>, ICheckersDataService
 {
     public CheckersDataService(OjsDbContext db)
         : base(db)

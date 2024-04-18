@@ -12,6 +12,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Implementations;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Configurations;
 using OJS.Services.Common.Validation;
 using System.Linq;
@@ -30,6 +31,7 @@ internal static class ServiceCollectionExtensions
             .AddGridServices()
             .AddValidators()
             .AddWebServer<Program>(configuration)
+            .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
             .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName)
             .AddMessageQueue<Program>(configuration)

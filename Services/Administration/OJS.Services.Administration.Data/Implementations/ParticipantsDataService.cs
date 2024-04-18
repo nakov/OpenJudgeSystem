@@ -6,7 +6,6 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
     using System;
     using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace OJS.Services.Administration.Data.Implementations
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public class ParticipantsDataService : DataService<Participant>, IParticipantsDataService
+    public class ParticipantsDataService : AdministrationDataService<Participant>, IParticipantsDataService
     {
         private readonly IParticipantsCommonDataService participantsCommonData;
 

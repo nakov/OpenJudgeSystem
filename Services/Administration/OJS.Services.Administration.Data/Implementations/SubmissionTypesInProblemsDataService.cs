@@ -2,10 +2,9 @@ namespace OJS.Services.Administration.Data.Implementations;
 
 using OJS.Data;
 using OJS.Data.Models;
-using OJS.Services.Common.Data.Implementations;
 using System.Linq;
 
-public class SubmissionTypesInProblemsDataService : DataService<SubmissionTypeInProblem>, ISubmissionTypesInProblemsDataService
+public class SubmissionTypesInProblemsDataService : AdministrationDataService<SubmissionTypeInProblem>, ISubmissionTypesInProblemsDataService
 {
     public SubmissionTypesInProblemsDataService(OjsDbContext submissionTypesInProblems)
         : base(submissionTypesInProblems)

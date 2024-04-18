@@ -4,14 +4,13 @@
     using OJS.Common;
     using OJS.Data;
     using OJS.Data.Models.Problems;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
     using System;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public class ProblemsDataService : DataService<Problem>, IProblemsDataService
+    public class ProblemsDataService : AdministrationDataService<Problem>, IProblemsDataService
     {
         public ProblemsDataService(OjsDbContext problems)
             : base(problems)

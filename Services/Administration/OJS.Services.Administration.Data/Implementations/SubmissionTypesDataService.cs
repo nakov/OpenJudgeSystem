@@ -2,10 +2,9 @@
 {
     using OJS.Data;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data.Implementations;
     using System.Linq;
 
-    public class SubmissionTypesDataService : DataService<SubmissionType>, ISubmissionTypesDataService
+    public class SubmissionTypesDataService : AdministrationDataService<SubmissionType>, ISubmissionTypesDataService
     {
         public SubmissionTypesDataService(OjsDbContext submissionTypes)
             : base(submissionTypes)

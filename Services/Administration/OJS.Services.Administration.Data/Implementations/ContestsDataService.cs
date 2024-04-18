@@ -11,14 +11,13 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
     using SoftUni.AutoMapper.Infrastructure.Models;
 
-    public class ContestsDataService : DataService<Contest>, IContestsDataService
+    public class ContestsDataService : AdministrationDataService<Contest>, IContestsDataService
     {
         private readonly IDatesService dates;
         private readonly IContestsActivityService activityService;

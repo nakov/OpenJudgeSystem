@@ -17,16 +17,14 @@ namespace OJS.Services.Common.Data.Implementations
         where TEntity : class, IEntity
     {
         private readonly OjsDbContext db;
-        private readonly bool ignoreQueryFilters;
 
         public DataService(OjsDbContext db)
-            => this.db = db;
-
-        public DataService(OjsDbContext db, bool ignoreQueryFilters)
         {
             this.db = db;
-            this.ignoreQueryFilters = ignoreQueryFilters;
+            this.IgnoreQueryFilters = false;
         }
+
+        protected bool IgnoreQueryFilters { get; init; }
 
         public virtual async Task Add(TEntity entity)
             => await this.db.AddAsync(entity);
@@ -135,7 +133,7 @@ namespace OJS.Services.Common.Data.Implementations
         {
             var query = this.db.Set<TEntity>().AsQueryable();
 
-            if (this.ignoreQueryFilters)
+            if (this.IgnoreQueryFilters)
             {
                 query = query.IgnoreQueryFilters();
             }
