@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Tooltip } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IContestResultsParticipationType, IContestResultsType } from '../../../hooks/contests/types';
-import { useContestCategories } from '../../../hooks/use-contest-categories';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../../utils/check-utils';
@@ -19,23 +18,9 @@ interface IContestResultsGridProps {
 }
 
 const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
-    const { state: { categoriesFlat }, actions: { load: loadCategories } } = useContestCategories();
-    const [ isCategoriesRequestSent, setIsCategoriesRequestSent ] = useState(false);
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
 
     const { internalUser } = useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
-
-    useEffect(
-        () => {
-            if (isEmpty(categoriesFlat) && !isCategoriesRequestSent) {
-                setIsCategoriesRequestSent(true);
-                (async () => {
-                    await loadCategories();
-                })();
-            }
-        },
-        [ categoriesFlat, isCategoriesRequestSent, loadCategories ],
-    );
 
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = results.problems?.map((p) => p.name);
