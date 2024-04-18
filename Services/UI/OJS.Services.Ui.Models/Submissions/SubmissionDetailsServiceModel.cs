@@ -24,9 +24,9 @@
 
         public UserProfileServiceModel User { get; set; } = null!;
 
-        public int MaxUsedTime { get; set; }
+        public double MaxUsedTime { get; set; }
 
-        public long MaxUsedMemory { get; set; }
+        public double MaxUsedMemory { get; set; }
 
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; } = null!;
 
@@ -69,11 +69,11 @@
                 .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom(source =>
                     source.TestRuns.Any()
                         ? source.TestRuns.Max(tr => tr.MemoryUsed)
-                        : 0))
+                        : 0.0))
                 .ForMember(d => d.MaxUsedTime, opt => opt.MapFrom(source =>
                     source.TestRuns.Any()
                         ? source.TestRuns.Max(tr => tr.TimeUsed)
-                        : 0))
+                        : 0.0))
                 .ForMember(d => d.Content, opt => opt.MapFrom(s =>
                     s.IsBinaryFile
                         ? null
