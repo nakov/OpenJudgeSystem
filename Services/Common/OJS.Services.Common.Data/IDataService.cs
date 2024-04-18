@@ -1,7 +1,7 @@
 namespace OJS.Services.Common.Data
 {
     using OJS.Services.Common.Models.Users;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
     using SoftUni.Services.Infrastructure;
     using System;
     using System.Collections.Generic;

@@ -1,6 +1,6 @@
 namespace OJS.Data.Models
 {
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
     using System.Collections.Generic;
 
     public class Tag : DeletableAuditInfoEntity<int>

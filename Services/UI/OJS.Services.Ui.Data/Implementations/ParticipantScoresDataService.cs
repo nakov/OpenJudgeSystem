@@ -61,13 +61,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public async Task ResetBySubmission(Submission submission)
         {
-            if (submission.ParticipantId == null)
-            {
-                return;
-            }
-
             var participant = await this.participantsData
-                .GetByIdQuery(submission.ParticipantId.Value)
+                .GetByIdQuery(submission.ParticipantId)
                 .Select(p => new
                 {
                     p.IsOfficial,
@@ -82,7 +77,7 @@ namespace OJS.Services.Ui.Data.Implementations
             }
 
             var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(
-                submission.ParticipantId.Value,
+                submission.ParticipantId,
                 submission.ProblemId,
                 participant.IsOfficial);
 
@@ -128,7 +123,7 @@ namespace OJS.Services.Ui.Data.Implementations
         {
             await this.Add(new ParticipantScore
             {
-                ParticipantId = submission.ParticipantId!.Value,
+                ParticipantId = submission.ParticipantId,
                 ProblemId = submission.ProblemId,
                 SubmissionId = submission.Id,
                 ParticipantName = username,

@@ -1,7 +1,7 @@
 namespace OJS.Data.Models
 {
     using OJS.Common.Enumerations;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
 
     public class Setting : Entity<int>
     {

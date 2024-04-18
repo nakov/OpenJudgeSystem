@@ -1,11 +1,11 @@
 namespace OJS.Data.Models.Submissions
 {
-    using FluentExtensions.Extensions;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Users;
     using System;
     using System.ComponentModel.DataAnnotations.Schema;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
+    using OJS.Workers.Common.Extensions;
 
     public class SourceCode : DeletableAuditInfoEntity<int>
     {

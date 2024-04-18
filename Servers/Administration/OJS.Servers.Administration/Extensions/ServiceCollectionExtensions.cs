@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Extensions;
 
-using AutoCrudAdmin.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +14,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Models.Configurations;
 using OJS.Services.Common.Validation;
-using SoftUni.Data.Infrastructure.Enumerations;
+using OJS.Data.Infrastructure.Enumerations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;

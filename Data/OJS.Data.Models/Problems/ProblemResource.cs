@@ -2,7 +2,7 @@ namespace OJS.Data.Models.Problems
 {
     using System.ComponentModel.DataAnnotations;
     using OJS.Common.Enumerations;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 

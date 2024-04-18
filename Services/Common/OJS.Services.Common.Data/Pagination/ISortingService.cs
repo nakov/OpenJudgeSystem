@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Common.Data.Pagination;
 
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Infrastructure.Models;
 using SoftUni.Services.Infrastructure;
 using System.Linq;
 

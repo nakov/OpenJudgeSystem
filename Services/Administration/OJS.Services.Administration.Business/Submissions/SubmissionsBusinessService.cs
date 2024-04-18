@@ -20,7 +20,7 @@ namespace OJS.Services.Administration.Business.Submissions
     using OJS.Services.Infrastructure.Exceptions;
     using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Data.Infrastructure;
+    using OJS.Data.Infrastructure;
 
     public class SubmissionsBusinessService : AdministrationOperationService<Submission, int, SubmissionAdministrationServiceModel>, ISubmissionsBusinessService
     {
@@ -115,12 +115,7 @@ namespace OJS.Services.Administration.Business.Submissions
                     submission.Points = points;
                     submission.CacheTestRuns();
 
-                    if (!submissionResult.ParticipantId.HasValue)
-                    {
-                        continue;
-                    }
-
-                    var participantId = submissionResult.ParticipantId.Value;
+                    var participantId = submissionResult.ParticipantId;
 
                     if (!topResults.ContainsKey(participantId) || topResults[participantId].Points < points)
                     {
@@ -167,7 +162,7 @@ namespace OJS.Services.Administration.Business.Submissions
         public async Task<ServiceResult> Retest(Submission submission)
         {
             var submissionProblemId = submission.ProblemId;
-            var submissionParticipantId = submission.ParticipantId!.Value;
+            var submissionParticipantId = submission.ParticipantId;
             var submissionServiceModel = submission.Map<SubmissionServiceModel>();
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
@@ -234,7 +229,7 @@ namespace OJS.Services.Administration.Business.Submissions
             }
 
             var submissionProblemId = submission.ProblemId;
-            var submissionParticipantId = submission.ParticipantId!.Value;
+            var submissionParticipantId = submission.ParticipantId;
 
             await this.transactions.ExecuteInTransaction(async () =>
             {
@@ -251,7 +246,7 @@ namespace OJS.Services.Administration.Business.Submissions
                 if (isBestSubmission)
                 {
                     await this.participantScoresBusiness.RecalculateForParticipantByProblem(
-                        submission.ParticipantId.Value,
+                        submission.ParticipantId,
                         submission.ProblemId);
                 }
             });

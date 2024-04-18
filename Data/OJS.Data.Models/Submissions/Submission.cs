@@ -6,19 +6,19 @@ namespace OJS.Data.Models.Submissions
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Text;
-    using FluentExtensions.Extensions;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Tests;
     using OJS.Data.Validation;
     using OJS.Workers.Common.Models;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
+    using OJS.Workers.Common.Extensions;
 
     public class Submission : DeletableAuditInfoEntity<int>
     {
-        public int? ParticipantId { get; set; }
+        public int ParticipantId { get; set; }
 
-        public virtual Participant? Participant { get; set; }
+        public virtual Participant Participant { get; set; } = null!;
 
         public int ProblemId { get; set; }
 

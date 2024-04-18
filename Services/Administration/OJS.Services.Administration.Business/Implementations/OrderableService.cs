@@ -3,7 +3,7 @@ namespace OJS.Services.Administration.Business.Implementations;
 using FluentExtensions.Extensions;
 using System.Linq;
 using OJS.Services.Common.Data;
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Infrastructure.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

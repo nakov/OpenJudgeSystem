@@ -10,7 +10,7 @@ using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Common.Models;
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

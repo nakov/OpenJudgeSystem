@@ -11,8 +11,8 @@ namespace OJS.Data
     using OJS.Data.Models.Tests;
     using OJS.Data.Models.Users;
     using OJS.Data.Validation;
-    using SoftUni.Data.Infrastructure;
-    using SoftUni.Data.Infrastructure.Enumerations;
+    using OJS.Data.Infrastructure;
+    using OJS.Data.Infrastructure.Enumerations;
 
     public class OjsDbContext : BaseAuthDbContext<OjsDbContext, UserProfile, Role, UserInRole>,
         IDataProtectionKeyContext
@@ -133,6 +133,13 @@ namespace OJS.Data
                     .WithOne(x => x.User)
                     .HasForeignKey(x => x.UserId)
                     .IsRequired();
+            });
+
+            builder.Entity<Submission>(b =>
+            {
+                b.HasQueryFilter(s =>
+                    s.Problem.IsDeleted == false &&
+                    s.Participant.Contest.IsDeleted == false);
             });
 
             builder.Entity<SubmissionForProcessing>()

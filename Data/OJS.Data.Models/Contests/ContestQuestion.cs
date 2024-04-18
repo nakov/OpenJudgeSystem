@@ -5,7 +5,7 @@ namespace OJS.Data.Models.Contests
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
     public class ContestQuestion : DeletableAuditInfoEntity<int>

@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business;
 
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Infrastructure.Models;
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 

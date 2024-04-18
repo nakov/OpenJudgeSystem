@@ -2,7 +2,7 @@ namespace OJS.Data.Models.Tests
 {
     using OJS.Data.Models.Submissions;
     using OJS.Workers.Common.Models;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
 
     public class TestRun : Entity<int>
     {

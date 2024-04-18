@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Users;
 
 using Microsoft.AspNetCore.Identity;
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Infrastructure.Models;
 
 public class UserInRole : IdentityUserRole<string>, IEntity
 {

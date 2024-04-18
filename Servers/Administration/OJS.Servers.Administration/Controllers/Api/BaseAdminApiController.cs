@@ -15,7 +15,7 @@ using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Infrastructure.Models;
 using System.Threading.Tasks;
 using static OJS.Services.Administration.Models.AdministrationConstants;
 

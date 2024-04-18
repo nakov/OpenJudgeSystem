@@ -1008,7 +1008,7 @@ namespace OJS.Data.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ParticipantId")
+                    b.Property<int>("ParticipantId")
                         .HasColumnType("int");
 
                     b.Property<int>("Points")
@@ -1728,7 +1728,9 @@ namespace OJS.Data.Migrations
                 {
                     b.HasOne("OJS.Data.Models.Participants.Participant", "Participant")
                         .WithMany("Submissions")
-                        .HasForeignKey("ParticipantId");
+                        .HasForeignKey("ParticipantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("OJS.Data.Models.Problems.Problem", "Problem")
                         .WithMany("Submissions")

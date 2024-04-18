@@ -30,8 +30,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
     using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Data.Infrastructure.Enumerations;
-    using SoftUni.Data.Infrastructure.Extensions;
+    using OJS.Data.Infrastructure.Enumerations;
+    using OJS.Data.Infrastructure.Extensions;
     using SoftUni.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using System;

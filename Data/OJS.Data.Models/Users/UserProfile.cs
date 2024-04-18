@@ -1,7 +1,7 @@
 namespace OJS.Data.Models.Users
 {
     using Microsoft.AspNetCore.Identity;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
