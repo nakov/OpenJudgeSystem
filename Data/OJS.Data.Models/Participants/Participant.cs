@@ -7,7 +7,7 @@ namespace OJS.Data.Models.Participants
     using System.Collections.Generic;
     using OJS.Data.Infrastructure.Models;
 
-    public class Participant : AuditInfoEntity<int>
+    public class Participant : DeletableAuditInfoEntity<int>
     {
         public Participant()
         {

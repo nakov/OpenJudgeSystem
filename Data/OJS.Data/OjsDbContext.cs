@@ -139,6 +139,7 @@ namespace OJS.Data
             {
                 b.HasQueryFilter(s =>
                     s.Problem.IsDeleted == false &&
+                    s.Participant.IsDeleted == false &&
                     s.Participant.Contest.IsDeleted == false);
             });
 
