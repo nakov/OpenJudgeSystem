@@ -100,7 +100,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost("/submitfile")]
+    [HttpPost("submitfilesubmission")]
     public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
