@@ -71,7 +71,7 @@ public class CompeteController : BaseApiController
         try
         {
             return await this.contestsBusiness
-                .RegisterUserForContest(id, model.Password, isOfficial)
+                .RegisterUserForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial)
                 .ToOkResult();
         }
         catch (UnauthorizedAccessException uae)
