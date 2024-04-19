@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable import/group-exports */
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
@@ -18,6 +19,7 @@ import { useAppSelector } from '../../../redux/store';
 import { getDateAsLocal } from '../../../utils/administration/administration-dates';
 import concatClassNames from '../../../utils/class-names';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
+import { defaultFilterToAdd } from '../AdministrationGridView';
 
 import styles from './AdministrationFilters.module.scss';
 
@@ -317,6 +319,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     };
     const getColumnTypeByName = (columnName: string) => filterColumns.find((column) => column.columnName === columnName)?.columnType;
 
+    /**
+ * Updates selected filters when there is a change.
+ * @param {number} dataColumns The index of the filter that must be updated.
+ * @param {any} target The target of the event which value will be taken.
+ * @param {string} updateProperty Property to be updated (property name, operator type or value)
+ */
     const updateFilterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
         const newFiltersArray = [ ...selectedFilters ].map((element, idx) => {
@@ -476,6 +484,12 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
         }
     };
 
+    /**
+ * Updates selected sorters when there is a change.
+ * @param {number} dataColumns The index of the sorter that must be updated.
+ * @param {any} target The target of the event which value will be taken.
+ * @param {string} updateProperty Property to be updated (property name or value)
+ */
     const updateSorterColumnData = (indexToUpdate: number, { target }: any, updateProperty: string) => {
         const { value } = target;
 
@@ -637,17 +651,11 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
     );
 };
 
-const mapFilterParamsToQueryString = (selectedFilters: IAdministrationFilter[]) => {
-    const queryString: string[] = [];
-    selectedFilters.forEach((filter: IAdministrationFilter) => {
-        if (!filter.column || !filter.operator || !filter.value) {
-            return;
-        }
-        // eslint-disable-next-line max-len
-        queryString.push(`${filter.column.toLowerCase()}${filterParamsSeparator}${filter.operator.toLowerCase()}${filterParamsSeparator}${filter.value.toLowerCase()}`);
-    });
-    return queryString.filter((el) => el).join(filterSeparator) ?? '';
-};
+/**
+ * Maps columns from the grid to an array with property name, type and enum values (when there is a column of type 'enum').
+ * @param {GridColDef& IEnumType} dataColumns The grid columns that will be mapped.
+ * @returns {Array<IAdministrationFilter>} Return the grid col definitions mapped to an easy to use object.
+ */
 
 const mapGridColumnsToAdministrationFilterProps =
 (dataColumns: Array<GridColDef& IEnumType>): IFilterColumn[] => dataColumns.map((column) => {
@@ -661,6 +669,12 @@ const mapGridColumnsToAdministrationFilterProps =
     };
 });
 
+/**
+ * Maps the filter parameter from the search bar to Array<IAdministrationFilter> that will later be united with the default filter and will set the initial default filters.
+ * @param {URLSearchParams} searchParams Search params that will be mapped to IAdministrationFilter.
+ * @param {Array<string>} columns The sorting columns as a  Array<IFilterColumn>
+ * @returns {Array<IAdministrationFilter>} Return the filters from the search bar mapped as Array<IAdministrationFilter>
+ */
 const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: Array<IFilterColumn>): IAdministrationFilter[] => {
     if (!urlSearchParams) {
         return [];
@@ -700,6 +714,12 @@ const mapUrlToFilters = (urlSearchParams: URLSearchParams | undefined, columns: 
     return urlSelectedFilters;
 };
 
+/**
+ * Sets the initial Selected Sorters.
+ * @param {URLSearchParams} searchParams Search params that will be mapped to IAdministrationSorter.
+ * @param {Array<string>} columns The sorting columns as a string []
+ * @returns {Array<IAdministrationSorter>} Return the initial selected sorters that will appear in the search bar.
+ */
 const mapUrlToSorters = (
     searchParams: URLSearchParams | undefined,
     columns:Array<string>,
@@ -745,10 +765,18 @@ const mapUrlToSorters = (
     return urlSelectedSorters;
 };
 
+/**
+ * Sets the initial Selected filters.
+ * @param {GridColDef[]} gridColDef All filterable columns for the certain grid.
+ * @param {URLSearchParams} searchParams Search params that will be mapped to IAdministrationFilter.
+ * @param {string} filterToAdd The default filter that must be added.
+ * @returns {Array<IAdministrationFilter>} Return the initial selected filters that will appear in the search bar.
+ */
+
 const addDefaultFilter = (
     gridColDef: GridColDef[],
     searchParams:URLSearchParams,
-    filterToAdd: string = 'isdeleted~equals~false',
+    filterToAdd: string = defaultFilterToAdd,
 ): Array<IAdministrationFilter> => {
     const columns = mapGridColumnsToAdministrationFilterProps(gridColDef);
 
@@ -800,6 +828,16 @@ const addDefaultFilter = (
     return newFiltersArray;
 };
 
+/**
+ * Applies the default filters and sorters to query string when component mounts.
+ * @param {string} defaultFilter The default filter which will be applied.
+ * @param {string} defaultSorter The default sorter which will be applied.
+ * @param {URLSearchParams} searchParams Search parameters which are used to apply also other filters and sorters if present.
+ * @param {boolean} skipDefault Flag which determines if the default filters and sorters must be applied or not.
+ * @param {number} page The page which needs to be applied to the query string.
+ * @param {number} itemsPerPage The quantity of records that must be fetched from the server.
+ * @returns {IGetAllAdminParams}  The parameters for the query string.
+ */
 const applyDefaultFilterToQueryString = (
     defaultFilter: string,
     defaultSorter: string,
@@ -828,6 +866,16 @@ const applyDefaultFilterToQueryString = (
     return queryParams;
 };
 
+/**
+ * Prepares parameter from the search parameters to be applied to query string and adds default value if any.
+ * @param {string} separator The separator used to divide more than one values for parameter.
+ * @param {string} paramSeparator The separator used to divide property operator and value in a single value of a parameter
+ * @param {string} param The search param as string.
+ * @param {boolean} skipDefault Flag which determines if the default filters and sorters must be applied or not.
+ * @param {string} defaultParamValue Default value that must be applied to the parameter.
+ * @returns {string}  Returns the query param as string.
+ */
+
 const applyQueryParam = (
     separator: string,
     paramSeparator: string,
@@ -836,7 +884,7 @@ const applyQueryParam = (
     defaultParamValue: string,
 ) => {
     const defaultParamArray = defaultParamValue.split(separator);
-    let valueToReturn = param;
+    let valueToReturn = param || '';
 
     if (defaultParamValue === '') {
         return '';
@@ -869,7 +917,6 @@ export {
     type IFiltersColumnOperators,
     mapGridColumnsToAdministrationFilterProps,
     mapGridColumnsToAdministrationSortingProps,
-    mapFilterParamsToQueryString,
     mapUrlToFilters,
     mapUrlToSorters,
     addDefaultFilter,
