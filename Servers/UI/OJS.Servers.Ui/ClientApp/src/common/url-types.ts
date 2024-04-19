@@ -173,6 +173,13 @@ interface ISubmitContestSolutionParams {
     submissionTypeId: number;
 }
 
+interface IRegisterUserForContestParams {
+    password: string | null;
+    isOfficial: boolean;
+    id: number;
+    hasConfirmedParticipation: boolean;
+}
+
 export type {
     IUserInfoUrlParams,
     IRegisterForContestUrlParams,
@@ -209,4 +216,5 @@ export type {
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
     IGetSubmissionsByUserParams,
+    IRegisterUserForContestParams,
 };

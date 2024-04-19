@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
@@ -15,9 +16,10 @@ import {
 import { IContestResultsType } from '../../hooks/contests/types';
 import {
     IContestDetailsUrlParams,
+    IGetContestResultsParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
-    IGetContestResultsParams,
+    IRegisterUserForContestParams,
 } from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
@@ -103,7 +105,7 @@ export const contestsService = createApi({
         // this should replace: getContestRegisteredUser
         registerUserForContest: builder.mutation<
             IRegisterUserForContestResponseType,
-            { password: string | null; isOfficial: boolean; id: number, hasConfirmedParticipation: boolean; }>({
+            IRegisterUserForContestParams>({
                 query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
                     url: `/compete/${id}/register`,
                     method: 'POST',
