@@ -25,7 +25,7 @@ import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
 import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SETTINGS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
-import AdministrationThemeProvider from '../../../hooks/use-administration-theme-provider';
+import AdministrationThemeProvider, { getColors } from '../../../hooks/use-administration-theme-provider';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import AdministrationContestCategories from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
@@ -247,10 +247,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     boxSizing: 'border-box',
     ...open && {
         ...openedMixin(theme),
+        '& .MuiDrawer-docked': openedMixin(theme),
         '& .MuiDrawer-paper': openedMixin(theme),
     },
     ...!open && {
         ...closedMixin(theme),
+        '& .MuiDrawer-docked': closedMixin(theme),
         '& .MuiDrawer-paper': closedMixin(theme),
     },
 }));
@@ -259,6 +261,7 @@ const mobileBreak = 1300;
 
 const AdministrationPortal = () => {
     const location = useLocation();
+    const themeMode = useAppSelector((x) => x.theme.administrationMode);
 
     const dispatch = useAppDispatch();
     const user = useAppSelector((x) => x.authorization.internalUser);
@@ -466,17 +469,16 @@ const AdministrationPortal = () => {
     return (
         <AdministrationThemeProvider mode={currentThemeMode}>
             <CssBaseline />
-            <Box sx={{ zIndex: 0 }}>
-                <Box sx={{ display: 'flex', zIndex: 0 }}>
+            <Box>
+                <Box sx={{ display: 'flex' }}>
                     <Drawer
                       variant="permanent"
                       open={open}
-                      sx={{ '& .MuiDrawer-paper': { borderTopRightRadius: '16px', borderBottomRightRadius: '16px' } }}
-                      className={styles.drawer}
                     >
                         {!open
                             ? (
                                 <IconButton
+                                  sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
                                   className={`${styles.arrowRight} ${styles.arrowCommon}`}
                                   color="primary"
                                   onClick={handleDrawerOpen}
@@ -485,7 +487,12 @@ const AdministrationPortal = () => {
                                 </IconButton>
                             )
                             : (
-                                <IconButton className={`${styles.arrow} ${styles.arrowCommon}`} color="primary" onClick={handleDrawerClose}>
+                                <IconButton
+                                  className={`${styles.arrow} ${styles.arrowCommon}`}
+                                  sx={{ backgroundColor: getColors(themeMode).palette.secondary.main }}
+                                  color="primary"
+                                  onClick={handleDrawerClose}
+                                >
                                     <ChevronLeftIcon />
                                 </IconButton>
                             )}
@@ -522,7 +529,7 @@ const AdministrationPortal = () => {
                                 </MenuItem>
                             </Menu>
                         </DrawerHeader>
-                        <List sx={{ overflow: 'hidden' }}>
+                        <List className={styles.list}>
                             <Divider />
                             {administrationItems.map((item) => (user.isAdmin || !item.visibleOnlyForAdmin) && (
                             <Box key={item.path}>

@@ -22,7 +22,7 @@ const LegendBox = (props: ILegendBoxProps) => {
                               <Box className={styles.legendBox}>
                                   <Box className={styles.rowColorBox}>
                                       <Box
-                                        sx={{ backgroundColor: `${x.color} !important` }}
+                                        sx={{ backgroundColor: `${x.color}` }}
                                         className={`${styles.colorBox}`}
                                       />
                                       <p className={styles.colorSeparator}>-</p>

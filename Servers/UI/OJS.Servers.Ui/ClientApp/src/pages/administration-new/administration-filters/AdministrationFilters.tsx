@@ -13,6 +13,8 @@ import debounce from 'lodash/debounce';
 
 import { FilterColumnTypeEnum, SortingEnum } from '../../../common/enums';
 import { IEnumType, IFilterColumn, IGetAllAdminParams } from '../../../common/types';
+import { getColors } from '../../../hooks/use-administration-theme-provider';
+import { useAppSelector } from '../../../redux/store';
 import { getDateAsLocal } from '../../../utils/administration/administration-dates';
 import concatClassNames from '../../../utils/class-names';
 import { DEFAULT_ITEMS_PER_PAGE } from '../../../utils/constants';
@@ -112,6 +114,7 @@ const sorterSeparator = '&';
 const sorterParamSeparator = '=';
 
 const AdministrationFilters = (props: IAdministrationFilterProps) => {
+    const themeMode = useAppSelector((x) => x.theme.administrationMode);
     const {
         filterColumns,
         withSearchParams = true,
@@ -573,7 +576,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                         : 'open'}
                     {' '}
                     filters
-                    <span style={{ marginLeft: '10px', color: 'black' }}>
+                    <span style={{ marginLeft: '10px', color: getColors(themeMode).textColors.primary }}>
                         (
                         {selectedFilters.filter((f) => f.value).length}
                         ) Active
@@ -605,7 +608,7 @@ const AdministrationFilters = (props: IAdministrationFilterProps) => {
                         : 'open'}
                     {' '}
                     sorters
-                    <Box style={{ marginLeft: '10px', color: 'black' }}>
+                    <Box style={{ marginLeft: '10px', color: getColors(themeMode).textColors.primary }}>
                         (
                         {selectedSorters.filter((s) => s.columnName).length}
                         ) Active
