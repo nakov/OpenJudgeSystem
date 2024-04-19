@@ -12,10 +12,12 @@ import {
     IPagedResultType,
     IRegisterUserForContestResponseType,
 } from '../../common/types';
+import { IContestResultsType } from '../../hooks/contests/types';
 import {
     IContestDetailsUrlParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
+    IGetContestResultsParams,
 } from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
@@ -109,6 +111,17 @@ export const contestsService = createApi({
                     body: { password, hasConfirmedParticipation },
                 }),
             }),
+        getContestResults: builder.query<
+            IContestResultsType,
+            IGetContestResultsParams>({
+                query: ({ id, official, full }) => ({
+                    url: `/ContestResults/GetResults/${id}`,
+                    params: {
+                        official,
+                        full,
+                    },
+                }),
+            }),
     }),
 });
 
@@ -124,4 +137,5 @@ export const {
     useRegisterUserForContestMutation,
     useSubmitContestSolutionFileMutation,
     useGetContestUserParticipationQuery,
+    useGetContestResultsQuery,
 } = contestsService;
