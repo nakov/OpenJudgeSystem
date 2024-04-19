@@ -9,11 +9,11 @@ import {
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
-    IPagedResultType, IRegisterForContestResponseType, IRegisterUserForContestResponseType, IStartParticipationResponseType,
+    IPagedResultType,
+    IRegisterUserForContestResponseType,
 } from '../../common/types';
 import {
     IContestDetailsUrlParams,
-    IStartParticipationParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
 } from '../../common/url-types';
@@ -67,12 +67,12 @@ export const contestsService = createApi({
                         strategy,
                     },
                 }),
-            keepUnusedDataFor: 0,
+                keepUnusedDataFor: 0,
             }),
-        getContestUserParticipation: builder.query<ICompeteContestResponseType, { id: number, isOfficial: boolean }>({
+        getContestUserParticipation: builder.query<ICompeteContestResponseType, { id: number; isOfficial: boolean }>({
             query: ({ id, isOfficial }) => ({
                 url: `/compete/${id}`,
-                params: { isOfficial }
+                params: { isOfficial },
             }),
             keepUnusedDataFor: 0,
         }),
@@ -88,7 +88,7 @@ export const contestsService = createApi({
                 url: '/Compete/SubmitFileSubmission',
                 method: 'POST',
                 body: { content, official, problemId, submissionTypeId },
-            })
+            }),
         }),
         submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({
             query: ({ contestId, isOfficial, password }) => ({
@@ -99,14 +99,16 @@ export const contestsService = createApi({
             }),
         }),
         // this should replace: getContestRegisteredUser
-        registerUserForContest: builder.mutation<IRegisterUserForContestResponseType, { password: string | null, isOfficial: boolean, id: number }>({
-            query: ({ password, isOfficial, id }) => ({
-                url: `/compete/${id}/register`,
-                method: 'POST',
-                params: { isOfficial },
-                body: { password }
+        registerUserForContest: builder.mutation<
+            IRegisterUserForContestResponseType,
+            { password: string | null; isOfficial: boolean; id: number }>({
+                query: ({ password, isOfficial, id }) => ({
+                    url: `/compete/${id}/register`,
+                    method: 'POST',
+                    params: { isOfficial },
+                    body: { password },
+                }),
             }),
-        }),
     }),
 });
 
@@ -119,7 +121,6 @@ export const {
     useLazyGetContestByIdQuery,
     useLazyGetContestsParticipationsForUserQuery,
     useSubmitContestSolutionMutation,
-    useSubmitContestPasswordMutation,
     useRegisterUserForContestMutation,
     useSubmitContestSolutionFileMutation,
     useGetContestUserParticipationQuery,

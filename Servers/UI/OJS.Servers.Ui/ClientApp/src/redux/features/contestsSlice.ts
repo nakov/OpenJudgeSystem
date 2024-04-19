@@ -5,7 +5,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import { IContestCategory, IContestDetailsResponseType, IProblemType, IStartParticipationResponseType } from '../../common/types';
+import { IContestCategory, IContestDetailsResponseType, IProblemType } from '../../common/types';
 
 interface IContestState {
     selectedCategory: IContestCategory | null;

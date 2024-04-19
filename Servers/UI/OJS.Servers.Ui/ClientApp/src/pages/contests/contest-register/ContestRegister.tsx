@@ -57,7 +57,7 @@ const ContestRegister = () => {
         if (isRegisteredSuccessfully) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
-    }, [ isLoading, isRegisteredSuccessfully, navigate ]);
+    }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType ]);
 
     const renderContestRegisterBody = useCallback(() => {
         if (shouldConfirmParticipation && !hasAcceptedOnlineModal) {

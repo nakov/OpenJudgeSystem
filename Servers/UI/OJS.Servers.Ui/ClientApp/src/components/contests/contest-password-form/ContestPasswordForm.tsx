@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import useTheme from '../../../hooks/use-theme';
-import { useRegisterUserForContestMutation, useSubmitContestPasswordMutation } from '../../../redux/services/contestsService';
+import { useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
 import Form from '../../guidelines/forms/Form';
 import FormControl, { FormControlType } from '../../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../../guidelines/headings/Heading';
