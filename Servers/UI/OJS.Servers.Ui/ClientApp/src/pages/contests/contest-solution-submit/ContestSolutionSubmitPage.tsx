@@ -206,7 +206,7 @@ const ContestSolutionSubmitPage = () => {
     useEffect(() => {
         if (selectedContestDetailsProblem && isActiveParticipant && isRegisteredParticipant) {
             getSubmissionsData({
-                id: Number(selectedContestDetailsProblem!.id),
+                id: Number(selectedContestDetailsProblem.id),
                 page: selectedSubmissionsPage,
                 isOfficial: isCompete,
             });

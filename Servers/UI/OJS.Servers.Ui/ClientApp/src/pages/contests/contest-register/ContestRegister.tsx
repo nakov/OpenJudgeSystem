@@ -35,19 +35,14 @@ const ContestRegister = () => {
     } = data || {};
 
     useEffect(() => {
-        if (isLoading) {
-            return;
-        }
-        if (!isRegisteredSuccessfully) {
-            registerUserForContest({
-                id: Number(contestId),
-                isOfficial: participationType === 'compete',
-                password: '',
-                hasConfirmedParticipation: hasAcceptedOnlineModal,
-            });
-        }
+        registerUserForContest({
+            id: Number(contestId),
+            isOfficial: participationType === 'compete',
+            password: '',
+            hasConfirmedParticipation: hasAcceptedOnlineModal,
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ isRegisteredSuccessfully, isLoading ]);
+    }, []);
 
     useEffect(() => {
         if (!shouldConfirmParticipation) {
@@ -65,11 +60,11 @@ const ContestRegister = () => {
     }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
 
     const renderContestRegisterBody = useCallback(() => {
-        if (shouldConfirmParticipation && !hasAcceptedOnlineModal) {
+        if (!hasAcceptedOnlineModal) {
             return (
                 <ContestCompeteModal
-                  examName={name!}
-                  time={duration!.toString()}
+                  examName={name || ''}
+                  time={duration?.toString() || '-'}
                   problemsCount={numberOfProblems!}
                   onAccept={async () => {
                       setHasAcceptedOnlineModal(true);
