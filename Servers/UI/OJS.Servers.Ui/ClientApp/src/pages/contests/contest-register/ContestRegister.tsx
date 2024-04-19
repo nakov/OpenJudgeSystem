@@ -35,14 +35,20 @@ const ContestRegister = () => {
     } = data || {};
 
     useEffect(() => {
-        registerUserForContest({
-            id: Number(contestId),
-            isOfficial: participationType === 'compete',
-            password: '',
-            hasConfirmedParticipation: hasAcceptedOnlineModal,
-        });
+        if (isLoading) {
+            return;
+        }
+
+        if (!isRegisteredSuccessfully) {
+            registerUserForContest({
+                id: Number(contestId),
+                isOfficial: participationType === 'compete',
+                password: '',
+                hasConfirmedParticipation: hasAcceptedOnlineModal,
+            });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [ isRegisteredSuccessfully, isLoading ]);
 
     useEffect(() => {
         if (!shouldConfirmParticipation) {
