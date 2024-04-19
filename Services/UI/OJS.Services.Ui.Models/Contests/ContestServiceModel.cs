@@ -57,7 +57,7 @@ public class ContestServiceModel : IMapExplicitly
 
     public IEnumerable<SubmissionTypeServiceModel> AllowedSubmissionTypes { get; set; } = null!;
 
-    public ICollection<ContestProblemServiceModel> Problems { get; set; } = null!;
+    public IEnumerable<ContestProblemServiceModel> Problems { get; set; } = null!;
 
     public ICollection<LecturerInContestServiceModel> LecturersInContests { get; set; } = null!;
 

@@ -147,6 +147,8 @@ namespace OJS.Services.Ui.Business.Implementations
             var contest = this.contestsData
                 .GetByIdQuery(id)
                 .Include(c => c.Category)
+                .Include(c => c.ProblemGroups)
+                    .ThenInclude(pg => pg.Problems)
                 .FirstOrDefault();
 
             var user = this.userProviderService.GetCurrentUser();
@@ -311,6 +313,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ProblemsForParticipants
                     .Select(x => x.Problem)
                     .MapCollection<ContestProblemServiceModel>()
+                    .OrderBy(p => p.OrderBy)
                     .ToList();
             }
 
