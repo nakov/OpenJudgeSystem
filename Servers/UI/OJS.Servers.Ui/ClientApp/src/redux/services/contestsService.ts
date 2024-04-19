@@ -101,12 +101,12 @@ export const contestsService = createApi({
         // this should replace: getContestRegisteredUser
         registerUserForContest: builder.mutation<
             IRegisterUserForContestResponseType,
-            { password: string | null; isOfficial: boolean; id: number }>({
-                query: ({ password, isOfficial, id }) => ({
+            { password: string | null; isOfficial: boolean; id: number, hasConfirmedParticipation: boolean; }>({
+                query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
                     url: `/compete/${id}/register`,
                     method: 'POST',
                     params: { isOfficial },
-                    body: { password },
+                    body: { password, hasConfirmedParticipation },
                 }),
             }),
     }),

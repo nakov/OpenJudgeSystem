@@ -13,10 +13,11 @@ interface IContestPasswordFormProps {
   isOfficial: boolean;
   contestName: string;
   onSuccess: () => void;
+  hasConfirmedParticipation: boolean;
 }
 
 const ContestPasswordForm = (props: IContestPasswordFormProps) => {
-    const { id, isOfficial, contestName, onSuccess } = props;
+    const { id, isOfficial, contestName, onSuccess, hasConfirmedParticipation } = props;
 
     const { themeColors, getColorClassName } = useTheme();
 
@@ -30,7 +31,7 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
 
     const onPasswordSubmit = async () => {
         setIsLoading(true);
-        const response = await registerUserForContest({ id: Number(id), isOfficial, password });
+        const response = await registerUserForContest({ id: Number(id), isOfficial, password, hasConfirmedParticipation });
         setPassword('');
         if ((response as any).error) {
             const { data } = (response as any).error;
