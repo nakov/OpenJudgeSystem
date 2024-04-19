@@ -193,10 +193,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 requiredPasswordIsValid = true;
             }
 
-            bool shouldRequireConfirmParticipationAndHasConfirmed = isOfficial &&
-                                                     contest.IsOnlineExam &&
-                                                     hasConfirmedParticipation.HasValue &&
-                                                     hasConfirmedParticipation.Value;
+            bool shouldRequireConfirmParticipationAndHasConfirmed = registerModel.ShouldConfirmParticipation &&
+                                                                    hasConfirmedParticipation.HasValue &&
+                                                                    hasConfirmedParticipation.Value;
 
             bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
             bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
