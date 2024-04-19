@@ -39,7 +39,12 @@ const ContestRegister = () => {
             return;
         }
         if (!isRegisteredSuccessfully) {
-            registerUserForContest({ id: Number(contestId), isOfficial: participationType === 'compete', password: '' });
+            registerUserForContest({
+                id: Number(contestId),
+                isOfficial: participationType === 'compete',
+                password: '',
+                hasConfirmedParticipation: hasAcceptedOnlineModal,
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ isRegisteredSuccessfully, isLoading ]);
@@ -54,10 +59,10 @@ const ContestRegister = () => {
         if (isLoading) {
             return;
         }
-        if (isRegisteredSuccessfully) {
+        if (isRegisteredSuccessfully && !shouldConfirmParticipation && !requirePassword) {
             navigate(`/contests/${contestId}/${participationType}`);
         }
-    }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType ]);
+    }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
 
     const renderContestRegisterBody = useCallback(() => {
         if (shouldConfirmParticipation && !hasAcceptedOnlineModal) {
@@ -66,9 +71,15 @@ const ContestRegister = () => {
                   examName={name!}
                   time={duration!.toString()}
                   problemsCount={numberOfProblems!}
-                  onAccept={() => {
+                  onAccept={async () => {
                       setHasAcceptedOnlineModal(true);
                       if (!requirePassword) {
+                          await registerUserForContest({
+                              id: Number(contestId),
+                              isOfficial: participationType === 'compete',
+                              password: '',
+                              hasConfirmedParticipation: hasAcceptedOnlineModal,
+                          });
                           navigate(`/contests/${id}/${participationType}`);
                       }
                   }}
@@ -82,6 +93,7 @@ const ContestRegister = () => {
                   id={Number(contestId)}
                   isOfficial={isOfficial!}
                   contestName={name!}
+                  hasConfirmedParticipation={hasAcceptedOnlineModal}
                   onSuccess={() => navigate(`/contests/${id}/${participationType}`)}
                 />
             );
@@ -99,6 +111,7 @@ const ContestRegister = () => {
         participationType,
         requirePassword,
         setHasAcceptedOnlineModal,
+        registerUserForContest,
         navigate,
     ]);
 

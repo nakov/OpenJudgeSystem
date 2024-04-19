@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
@@ -12,10 +13,13 @@ import {
     IPagedResultType,
     IRegisterUserForContestResponseType,
 } from '../../common/types';
+import { IContestResultsType } from '../../hooks/contests/types';
 import {
     IContestDetailsUrlParams,
+    IGetContestResultsParams,
     ISubmitContestPasswordParams,
     ISubmitContestSolutionParams,
+    IRegisterUserForContestParams,
 } from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
@@ -101,12 +105,23 @@ export const contestsService = createApi({
         // this should replace: getContestRegisteredUser
         registerUserForContest: builder.mutation<
             IRegisterUserForContestResponseType,
-            { password: string | null; isOfficial: boolean; id: number }>({
-                query: ({ password, isOfficial, id }) => ({
+            IRegisterUserForContestParams>({
+                query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
                     url: `/compete/${id}/register`,
                     method: 'POST',
                     params: { isOfficial },
-                    body: { password },
+                    body: { password, hasConfirmedParticipation },
+                }),
+            }),
+        getContestResults: builder.query<
+            IContestResultsType,
+            IGetContestResultsParams>({
+                query: ({ id, official, full }) => ({
+                    url: `/ContestResults/GetResults/${id}`,
+                    params: {
+                        official,
+                        full,
+                    },
                 }),
             }),
     }),
@@ -124,4 +139,5 @@ export const {
     useRegisterUserForContestMutation,
     useSubmitContestSolutionFileMutation,
     useGetContestUserParticipationQuery,
+    useGetContestResultsQuery,
 } = contestsService;
