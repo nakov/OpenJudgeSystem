@@ -25,7 +25,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
     const getColumns = useCallback((results: IContestResultsType) => {
         const problemResultColumns = results.problems?.map((p) => p.name);
 
-        return [ 'N' ]
+        return [ '№' ]
             .concat('Participants')
             .concat(problemResultColumns)
             .concat('Total Result');
