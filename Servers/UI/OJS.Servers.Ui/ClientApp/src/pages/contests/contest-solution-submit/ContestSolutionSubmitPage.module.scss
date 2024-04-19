@@ -75,6 +75,14 @@
     .problemName {
       font-size: variables.$f-size-30;
       font-weight: font-weights.$font-weight-bold;
+      display: flex;
+      align-items: center;
+
+      span {
+        font-size: variables.$f-size-16;
+        font-weight: font-weights.$font-weight-light;
+        margin-left: spacings.$sp-12;
+      }
     }
   }
 

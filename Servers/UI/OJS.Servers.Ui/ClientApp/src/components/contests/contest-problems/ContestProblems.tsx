@@ -66,7 +66,10 @@ const ContestProblems = (props: IContestProblemsProps) => {
                               style={{ borderBottom: `1px solid ${themeColors.textColor}` }}
                               onClick={() => onProblemClick(problem)}
                             >
-                                <div>{problem.name}</div>
+                                <div>
+                                    {problem.name}
+                                    {problem.isExcludedFromHomework && <span className={styles.excludedMark}>*</span>}
+                                </div>
                                 <div>
                                     {problem.points || 0}
                                     /

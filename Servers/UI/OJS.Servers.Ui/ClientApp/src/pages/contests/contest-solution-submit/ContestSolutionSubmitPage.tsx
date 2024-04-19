@@ -527,6 +527,8 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.problemNameAndTimeWrapper}>
                         <div className={styles.problemName}>
                             {selectedContestDetailsProblem?.name}
+                            {selectedContestDetailsProblem?.isExcludedFromHomework && (
+                                <span className={textColorClassName}>(not included in final score)</span>)}
                         </div>
                         {remainingTimeForCompete && (
                         <div>
