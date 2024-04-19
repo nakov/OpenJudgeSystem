@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaCheckDouble, FaLayerGroup, FaUserCircle, FaUsers } from 'react-icons/fa';
 import { GiFiles } from 'react-icons/gi';
+import { IoMdCheckbox } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { MdOutlineAirlineStops, MdOutlineRememberMe } from 'react-icons/md';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
@@ -23,7 +24,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import 'dayjs/locale/bg';
 
-import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SETTINGS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
+import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SETTINGS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, SUBMISSIONS_SIMILLARITY, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import AdministrationContestCategories from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
@@ -39,6 +40,7 @@ import AdministrationSubmissionsPage from '../../../pages/administration-new/sub
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
 import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import SubmissionsSimillarity from '../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
 import AdministrationUsersPage from '../../../pages/administration-new/users/AdministrationUsersPage';
 import AdministrationCheckersPage from '../../../pages/checkers/AdministrationCheckersPage';
@@ -158,6 +160,12 @@ const administrationItems = [
         icon: <IoSettingsSharp />,
         path: `${SETTINGS_PATH}`,
         visibleOnlyForAdmin: true,
+    },
+    {
+        name: 'Submissions Simillarity',
+        icon: <IoMdCheckbox />,
+        path: `${SUBMISSIONS_SIMILLARITY}`,
+        visibleOnlyForAdmin: false,
     },
 ];
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -382,6 +390,11 @@ const AdministrationPortal = () => {
             path: `${SETTINGS_PATH}`,
             Element: AdministrationSettingsPage,
             visibleOnlyForAdmin: true,
+        },
+        {
+            path: `${SUBMISSIONS_SIMILLARITY}`,
+            Element: SubmissionsSimillarity,
+            visibleOnlyForAdmin: false,
         },
         {
 

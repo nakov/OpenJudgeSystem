@@ -12,4 +12,8 @@
       <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+    </ItemGroup>
+
 </Project>
