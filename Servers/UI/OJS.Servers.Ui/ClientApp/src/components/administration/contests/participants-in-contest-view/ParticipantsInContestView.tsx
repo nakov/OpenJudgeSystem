@@ -34,7 +34,7 @@ const ParticipantsInContestView = (props: IParticipantsInContestView) => {
         <CreateButton
           showModal={openCreateModal}
           showModalFunc={setOpenCreateModal}
-          styles={{ width: '40px', height: '40px'}}
+          styles={{ width: '40px', height: '40px' }}
         />
     );
 
