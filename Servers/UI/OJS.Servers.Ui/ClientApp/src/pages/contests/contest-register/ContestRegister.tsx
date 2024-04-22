@@ -26,7 +26,6 @@ const ContestRegister = () => {
     const {
         id,
         name,
-        isOfficial,
         requirePassword,
         shouldConfirmParticipation,
         duration,
@@ -104,7 +103,6 @@ const ContestRegister = () => {
         duration,
         numberOfProblems,
         contestId,
-        isOfficial,
         id,
         participationType,
         requirePassword,
