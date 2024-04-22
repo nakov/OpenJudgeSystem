@@ -38,9 +38,11 @@ const AdministrationModal = (props: IAdministrationModalProps) => {
           onClose={(event, reason) => onModalClose(event, reason)}
         >
             <Box className={concatClassNames(styles.wrapper, 'box-wrapper')}>
-                <IconButton className={styles.closeIcon} onClick={(event) => onModalClose(event, ModalReasonsToClose.EscapeKeyDown)}>
-                    <IoMdClose />
-                </IconButton>
+                <Box className={styles.closeIcon}>
+                    <IconButton onClick={(event) => onModalClose(event, ModalReasonsToClose.EscapeKeyDown)}>
+                        <IoMdClose />
+                    </IconButton>
+                </Box>
                 {children}
             </Box>
         </Modal>
