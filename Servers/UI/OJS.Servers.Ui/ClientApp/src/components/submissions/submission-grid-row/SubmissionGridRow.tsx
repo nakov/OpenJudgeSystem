@@ -94,8 +94,6 @@ const SubmissionGridRow = ({
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
 
-    const hasTestRuns = (s: IPublicSubmission) => (s.testRuns && s.testRuns.length > 0) ?? false;
-
     const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
 
     const rowClassName = concatClassNames(
@@ -108,7 +106,7 @@ const SubmissionGridRow = ({
 
     const renderPoints = useCallback(
         () => {
-            if (state === PublicSubmissionState.Processing) {
+            if (state === PublicSubmissionState.Processing || (!processed && !isCompiledSuccessfully)) {
                 return (
                     <>
                         Processing
@@ -116,7 +114,7 @@ const SubmissionGridRow = ({
                 );
             }
 
-            if (!isCompiledSuccessfully) {
+            if (processed && !isCompiledSuccessfully) {
                 return <ErrorResult />;
             }
 
@@ -129,7 +127,7 @@ const SubmissionGridRow = ({
                 </span>
             );
         },
-        [ state, isCompiledSuccessfully, points, maxPoints ],
+        [ state, processed, isCompiledSuccessfully, points, maxPoints ],
     );
 
     const renderUsername = useCallback(
@@ -285,7 +283,7 @@ const SubmissionGridRow = ({
             <td>
                 <div className={styles.executionResultContainer}>
                     {
-                        options.showDetailedResults && hasTestRuns(submission)
+                        options.showDetailedResults
                             ? (
                                 <ExecutionResult
                                   testRuns={testRuns}
@@ -294,7 +292,7 @@ const SubmissionGridRow = ({
                                 />
                             )
                             : null
-                }
+                    }
                     {renderPoints()}
                 </div>
             </td>

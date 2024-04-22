@@ -56,9 +56,11 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
             .ForMember(
                 x => x.State,
                 opt => opt.MapFrom(
-                    y => y.Processed
+                    y => y.Processed && y.IsCompiledSuccessfully
                         ? StateResultForPublicSubmissionsServiceModel.Ready
-                        : StateResultForPublicSubmissionsServiceModel.Queued))
+                        : !y.Processed && !y.IsCompiledSuccessfully
+                            ? StateResultForPublicSubmissionsServiceModel.Processing
+                            : StateResultForPublicSubmissionsServiceModel.Queued))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
