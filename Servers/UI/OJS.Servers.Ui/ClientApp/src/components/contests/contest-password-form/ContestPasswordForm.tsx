@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useParams } from 'react-router';
 
 import useTheme from '../../../hooks/use-theme';
 import { useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
@@ -9,17 +10,16 @@ import Heading, { HeadingType } from '../../guidelines/headings/Heading';
 import styles from './ContestPasswordForm.module.scss';
 
 interface IContestPasswordFormProps {
-  id: number;
-  isOfficial: boolean;
   contestName: string;
   onSuccess: () => void;
   hasConfirmedParticipation: boolean;
 }
 
 const ContestPasswordForm = (props: IContestPasswordFormProps) => {
-    const { id, isOfficial, contestName, onSuccess, hasConfirmedParticipation } = props;
+    const { contestName, onSuccess, hasConfirmedParticipation } = props;
 
     const { themeColors, getColorClassName } = useTheme();
+    const { contestId: id, participationType } = useParams();
 
     const [ password, setPassword ] = useState<string>('');
     const [ errorMessage, setErrorMessage ] = useState<string>('');
@@ -28,6 +28,7 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
     const [ registerUserForContest ] = useRegisterUserForContestMutation();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
+    const isOfficial = participationType === 'compete';
 
     const onPasswordSubmit = async () => {
         setIsLoading(true);
@@ -35,9 +36,7 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
         setPassword('');
         if ((response as any).error) {
             const { data } = (response as any).error;
-            const { detail } = data;
-
-            setErrorMessage(detail);
+            setErrorMessage(data);
         } else {
             onSuccess();
         }

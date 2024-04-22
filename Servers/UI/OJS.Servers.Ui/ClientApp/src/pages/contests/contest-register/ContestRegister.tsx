@@ -48,13 +48,13 @@ const ContestRegister = () => {
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ isRegisteredSuccessfully, isLoading ]);
+    }, []);
 
     useEffect(() => {
-        if (!shouldConfirmParticipation) {
+        if (!shouldConfirmParticipation && data) {
             setHasAcceptedOnlineModal(true);
         }
-    }, [ shouldConfirmParticipation ]);
+    }, [ shouldConfirmParticipation, data ]);
 
     useEffect(() => {
         if (isLoading) {
@@ -91,8 +91,6 @@ const ContestRegister = () => {
         if (requirePassword) {
             return (
                 <ContestPasswordForm
-                  id={Number(contestId)}
-                  isOfficial={isOfficial!}
                   contestName={name!}
                   hasConfirmedParticipation={hasAcceptedOnlineModal}
                   onSuccess={() => navigate(`/contests/${id}/${participationType}`)}
