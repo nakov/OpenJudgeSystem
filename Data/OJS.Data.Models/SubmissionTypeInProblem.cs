@@ -2,7 +2,7 @@ namespace OJS.Data.Models
 {
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Submissions;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class SubmissionTypeInProblem : IEntity
     {

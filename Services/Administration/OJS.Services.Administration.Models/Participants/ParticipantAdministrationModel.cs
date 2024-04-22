@@ -49,8 +49,6 @@ public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMap
             .ForMember(p => p.Scores, opt
                 => opt.Ignore())
             .ForMember(p => p.ProblemsForParticipants, opt
-                => opt.Ignore())
-            .ForMember(p => p.Answers, opt
                 => opt.Ignore());
     }
 }

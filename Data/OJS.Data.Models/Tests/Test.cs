@@ -4,11 +4,11 @@ namespace OJS.Data.Models.Tests
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations.Schema;
     using AutoMapper;
-    using FluentExtensions.Extensions;
     using OJS.Data.Models.Problems;
     using OJS.Workers.ExecutionStrategies.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
+    using OJS.Workers.Common.Extensions;
 
     public class Test : Entity<int>, IOrderableEntity, IMapExplicitly
     {

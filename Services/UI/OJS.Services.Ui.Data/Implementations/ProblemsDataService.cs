@@ -16,8 +16,7 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public IQueryable<Problem> GetAllByContest(int contestId) =>
-            this.DbSet
-                .Where(p => p.ProblemGroup.ContestId == contestId);
+            this.GetQuery(p => p.ProblemGroup.ContestId == contestId);
 
         public Task<Problem?> GetWithProblemGroupById(int problemId)
             => this.GetByIdQuery(problemId)
@@ -25,12 +24,12 @@ namespace OJS.Services.Ui.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public Task<Problem?> GetWithProblemGroupCheckerAndTestsById(int id)
-            => this.DbSet
+            => this.GetByIdQuery(id)
                 .Include(p => p.ProblemGroup)
                 .Include(p => p.Checker)
                 .Include(p => p.Tests)
                 .Include(p => p.SubmissionTypesInProblems)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync();
 
         public async Task<double> GetNewOrderByContest(int contestId) =>
             (await this.GetAllByContest(contestId)
@@ -46,11 +45,9 @@ namespace OJS.Services.Ui.Data.Implementations
                 .FirstOrDefaultAsync())
                 ?.OrderBy + 1 ?? GlobalConstants.ProblemDefaultOrderBy;
         public IQueryable<Problem> GetAllNonDeletedProblems() =>
-            this.DbSet
-                .Where(p => !p.IsDeleted);
+            this.GetQuery(p => !p.IsDeleted);
 
         private IQueryable<Problem> GetAllByProblemGroup(int problemGroupId) =>
-            this.DbSet
-                .Where(p => p.ProblemGroupId == problemGroupId);
+            this.GetQuery(p => p.ProblemGroupId == problemGroupId);
     }
 }

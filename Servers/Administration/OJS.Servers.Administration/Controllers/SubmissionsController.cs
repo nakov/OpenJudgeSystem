@@ -17,7 +17,7 @@ using OJS.Services.Administration.Business.Validation.Factories;
 using OJS.Services.Administration.Business.Validation.Helpers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.Data.Infrastructure;
+using OJS.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -141,7 +141,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
                 .ThenInclude(x => x.Tests)
             .FirstOrDefaultAsync();
 
-        if (submission is null || !submission.ParticipantId.HasValue)
+        if (submission is null)
         {
             this.TempData.AddDangerMessage(GlobalResource.SubmissionCanNotBeProcessed);
 
@@ -200,7 +200,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
     protected override async Task DeleteEntityAndSaveAsync(Submission submission, AdminActionContext actionContext)
     {
         var submissionProblemId = submission.ProblemId;
-        var submissionParticipantId = submission.ParticipantId!.Value;
+        var submissionParticipantId = submission.ParticipantId;
 
         await this.transactions.ExecuteInTransaction(async () =>
         {
@@ -217,7 +217,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
             if (isBestSubmission)
             {
                 await this.participantScoresBusiness.RecalculateForParticipantByProblem(
-                    submission.ParticipantId.Value,
+                    submission.ParticipantId,
                     submission.ProblemId);
             }
         });

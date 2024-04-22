@@ -15,16 +15,14 @@ public class ParticipantsCommonDataService : DataService<Participant>, IParticip
     }
 
     public IQueryable<Participant> GetAllByContest(int contestId)
-        => this.DbSet
-            .Where(p => p.ContestId == contestId);
+        => this.GetQuery(p => p.ContestId == contestId);
 
     public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
         => this.GetAllByContest(contestId)
             .Where(p => p.IsOfficial == isOfficial);
 
     public IQueryable<Participant> GetAllByUserAndContest(string userId, int contestId)
-        => this.DbSet
-            .Where(p => p.UserId == userId && p.ContestId == contestId);
+        => this.GetQuery(p => p.UserId == userId && p.ContestId == contestId);
 
     public IQueryable<Participant> GetAllWithProblemsScoresAndSubmissionsByContestAndIsOfficial(
         int contestId,

@@ -3,7 +3,7 @@ namespace OJS.Data.Models.Problems
     using System.Collections.Generic;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class ProblemGroup : DeletableAuditInfoEntity<int>, IOrderableEntity
     {

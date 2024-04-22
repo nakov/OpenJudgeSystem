@@ -45,10 +45,6 @@ public class ContestServiceModel : IMapExplicitly
 
     public string PracticePassword { private get; set; } = null!;
 
-    public bool HasContestQuestions { get; set; }
-
-    public bool HasPracticeQuestions { get; set; }
-
     public int OfficialParticipants { get; set; }
 
     public int PracticeParticipants { get; set; }
@@ -164,12 +160,6 @@ public class ContestServiceModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Contest, ContestServiceModel>()
-            .ForMember(
-                d => d.HasContestQuestions,
-                opt => opt.MapFrom(s => s.Questions.Any(x => x.AskOfficialParticipants)))
-            .ForMember(
-                d => d.HasPracticeQuestions,
-                opt => opt.MapFrom(s => s.Questions.Any(x => x.AskPracticeParticipants)))
             .ForMember(
                 d => d.OfficialParticipants,
                 opt => opt.MapFrom(s => s.Participants.Count(x => x.IsOfficial)))

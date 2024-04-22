@@ -147,6 +147,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         //UserProfile (owner entity) in the query.
         var submissionDetailsServiceModel = await this.submissionsData
             .GetByIdQuery(submissionId)
+            .AsSplitQuery()
             .AsNoTracking()
             .MapCollection<SubmissionDetailsServiceModel>()
             .FirstOrDefaultAsync();
@@ -288,12 +289,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 submission.Points = points;
                 submission.CacheTestRuns();
 
-                if (!submissionResult.ParticipantId.HasValue)
-                {
-                    continue;
-                }
-
-                var participantId = submissionResult.ParticipantId.Value;
+                var participantId = submissionResult.ParticipantId;
 
                 if (!topResults.ContainsKey(participantId) || topResults[participantId].Points < points)
                 {
@@ -588,7 +584,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     }
 
     public Task<int> GetTotalCount()
-        => this.submissionsData.GetTotalSubmissionsCount();
+        => this.submissionsData.Count();
 
     public async Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
         SubmissionStatus status,
