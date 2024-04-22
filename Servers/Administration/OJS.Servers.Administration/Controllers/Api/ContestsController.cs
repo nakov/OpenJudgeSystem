@@ -109,9 +109,12 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
             return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        this.similarityService.GetSubmissionSimilarities(model);
+        // It seems that the algorithm is not working.
+        // The issue is in the DIffText method of the similarity finder.
+        // For two identical returns empty array and therefore the differencesCount is 0.
 
-        // Return response.
-        return this.Ok();
+        // return this.Ok(this.similarityService.GetSubmissionSimilarities(model));
+
+        return this.BadRequest("The required service is not implemented yet.");
     }
 }

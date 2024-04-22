@@ -1,9 +1,11 @@
 ﻿namespace OJS.Services.Administration.Business.Similarity;
 
 using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Administration.Models.Similarity;
 using SoftUni.Services.Infrastructure;
+using System.Collections.Generic;
 
 public interface ISimilarityService : IService
 {
-    void GetSubmissionSimilarities(SimillarityCheckModel model);
+    IEnumerable<SubmissionSimilarityViewModel> GetSubmissionSimilarities(SimillarityCheckModel model);
 }

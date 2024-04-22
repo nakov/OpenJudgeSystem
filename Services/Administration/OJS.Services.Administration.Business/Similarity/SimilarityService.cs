@@ -27,7 +27,7 @@ public class SimilarityService : ISimilarityService
         this.similarityFinder = similarityFinder;
     }
 
-    public void GetSubmissionSimilarities(SimillarityCheckModel model)
+    public IEnumerable<SubmissionSimilarityViewModel> GetSubmissionSimilarities(SimillarityCheckModel model)
     {
         var participantsSimilarSubmissionGroups =
             this.GetSimilarSubmissions(model)
@@ -112,6 +112,8 @@ public class SimilarityService : ISimilarityService
                 }
             }
         }
+
+        return similarities;
     }
 
     private IQueryable<Submission> GetSimilarSubmissions(SimillarityCheckModel model)
