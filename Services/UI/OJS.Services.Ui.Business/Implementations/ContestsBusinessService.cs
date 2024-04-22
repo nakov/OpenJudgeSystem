@@ -193,17 +193,18 @@ namespace OJS.Services.Ui.Business.Implementations
                 requiredPasswordIsValid = true;
             }
 
+            bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
+            bool shouldNotRequirePasswordAndIsNotOfficial = !registerModel.RequirePassword && !isOfficial;
+            bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
             bool shouldRequireConfirmParticipationAndHasConfirmed = registerModel.ShouldConfirmParticipation &&
                                                                     hasConfirmedParticipation.HasValue &&
                                                                     hasConfirmedParticipation.Value;
 
-            bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
-            bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
-
             if (participant == null && (shouldNotRequirePasswordAndIsNotOnline ||
                                         requiredPasswordIsValidAndIsNotOnline ||
                                         (requiredPasswordIsValid && shouldRequireConfirmParticipationAndHasConfirmed) ||
-                                        (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed)))
+                                        (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed) ||
+                                        shouldNotRequirePasswordAndIsNotOfficial))
             {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
