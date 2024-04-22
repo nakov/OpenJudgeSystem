@@ -38,14 +38,12 @@ const ContestStrategies = () => {
         }
     }, [ selectedId ]);
 
-    const dropdownItems = useMemo(
-        () => {
-            const filteredItems = !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
-                ? (contestStrategies || []).map((el) => ({ id: el.id.toString(), name: el.name }))
-                : selectedCategory?.allowedStrategyTypes.map((el) => ({ id: el.id.toString(), name: el.name }));
+    const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({ id: el.id.toString(), name: el.name });
 
-            return filteredItems;
-        },
+    const dropdownItems = useMemo(
+        () => !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0
+            ? (contestStrategies || []).map(mapDataToDropdownItem)
+            : selectedCategory?.allowedStrategyTypes.map(mapDataToDropdownItem),
         [ contestStrategies, selectedCategory ],
     );
 
