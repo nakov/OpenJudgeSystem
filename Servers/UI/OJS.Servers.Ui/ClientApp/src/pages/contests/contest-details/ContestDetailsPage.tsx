@@ -98,7 +98,7 @@ const ContestDetailsPage = () => {
                 <Link
                   className={`${isCompete
                       ? styles.greenColor
-                      : ''}`}
+                      : styles.blueColor}`}
                   to={getContestsResultsUrl(id!, isCompete
                       ? 'compete'
                       : 'practice', true)}
@@ -106,8 +106,8 @@ const ContestDetailsPage = () => {
                     <i className="fas fa-user" />
                     <div className={`${styles.underlinedBtnText}`}>
                         { isCompete
-                            ? 'compete'
-                            : 'practice'}
+                            ? 'Compete'
+                            : 'Practice'}
                         {' '}
                         results
                         {' '}
