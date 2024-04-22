@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router';
 
+import { ContestParticipationType } from '../../../common/constants';
 import useTheme from '../../../hooks/use-theme';
 import { useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
 import Form from '../../guidelines/forms/Form';
@@ -28,10 +29,11 @@ const ContestPasswordForm = (props: IContestPasswordFormProps) => {
     const [ registerUserForContest ] = useRegisterUserForContestMutation();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const isOfficial = participationType === 'compete';
+    const isOfficial = participationType === ContestParticipationType.Compete;
 
     const onPasswordSubmit = async () => {
         setIsLoading(true);
+        setErrorMessage('');
         const response = await registerUserForContest({ id: Number(id), isOfficial, password, hasConfirmedParticipation });
         setPassword('');
         if ((response as any).error) {

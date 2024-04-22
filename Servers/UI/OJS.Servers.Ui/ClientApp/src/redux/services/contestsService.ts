@@ -102,7 +102,6 @@ export const contestsService = createApi({
                 body: { password },
             }),
         }),
-        // this should replace: getContestRegisteredUser
         registerUserForContest: builder.mutation<
             IRegisterUserForContestResponseType,
             IRegisterUserForContestParams>({

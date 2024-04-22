@@ -242,15 +242,6 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
     return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
 };
 
-// eslint-disable-next-line consistent-return
-const getContestBtnUrlString = (isCompete: boolean, id: number) => {
-    if (isCompete) {
-        return `/contests/${id}/compete`;
-    }
-
-    return `/contests/${id}/practice`;
-};
-
 // Username url utils for decoding/encoding usernames containing '.'
 
 const encodeAsUrlParam = (username: string) => username.replace(/\./g, '~');
@@ -316,5 +307,4 @@ export {
     getSubmissionsUrl,
     encodeAsUrlParam,
     decodeFromUrlParam,
-    getContestBtnUrlString,
 };

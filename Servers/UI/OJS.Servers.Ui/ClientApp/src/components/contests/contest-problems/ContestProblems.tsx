@@ -83,6 +83,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
             <div className={`${styles.problemsInfoSection} ${darkBackgroundClassName}`}>
                 <div className={styles.participantsInfo}>
                     Total participants:
+                    {' '}
                     {totalParticipantsCount}
                 </div>
                 <div className={styles.pointsInfo}>

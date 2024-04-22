@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 
+import { ContestParticipationType } from '../../../common/constants';
 import ContestCompeteModal from '../../../components/contests/contest-compete-modal/ContestCompeteModal';
 import ContestPasswordForm from '../../../components/contests/contest-password-form/ContestPasswordForm';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -41,7 +42,7 @@ const ContestRegister = () => {
         if (!isRegisteredSuccessfully) {
             registerUserForContest({
                 id: Number(contestId),
-                isOfficial: participationType === 'compete',
+                isOfficial: participationType === ContestParticipationType.Compete,
                 password: '',
                 hasConfirmedParticipation: hasAcceptedOnlineModal,
             });
@@ -76,7 +77,7 @@ const ContestRegister = () => {
                       if (!requirePassword) {
                           await registerUserForContest({
                               id: Number(contestId),
-                              isOfficial: participationType === 'compete',
+                              isOfficial: participationType === ContestParticipationType.Compete,
                               password: '',
                               hasConfirmedParticipation: hasAcceptedOnlineModal,
                           });

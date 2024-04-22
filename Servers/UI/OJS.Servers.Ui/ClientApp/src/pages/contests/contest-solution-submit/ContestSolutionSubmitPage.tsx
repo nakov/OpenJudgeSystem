@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
+import { ContestParticipationType } from '../../../common/constants';
 import { ISubmissionTypeType } from '../../../common/types';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -72,7 +73,7 @@ const ContestSolutionSubmitPage = () => {
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
     const isModalOpen = Boolean(anchorEl);
-    const isCompete = participationType === 'compete';
+    const isCompete = participationType === ContestParticipationType.Compete;
 
     const textColorClassName = getColorClassName(themeColors.textColor);
     const lightBackgroundClassName = getColorClassName(themeColors.baseColor100);
