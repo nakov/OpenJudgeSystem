@@ -6,7 +6,7 @@ namespace OJS.Data.Models.Tests
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Data.Models.Problems;
-    using OJS.Workers.ExecutionStrategies.Models;
+    using OJS.Workers.Common.Models;
     using SoftUni.AutoMapper.Infrastructure.Models;
     using SoftUni.Data.Infrastructure.Models;
 
