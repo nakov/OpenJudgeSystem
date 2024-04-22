@@ -101,7 +101,6 @@ const ContestRegister = () => {
         }
         return <div />;
     }, [
-        shouldConfirmParticipation,
         hasAcceptedOnlineModal,
         name,
         duration,
