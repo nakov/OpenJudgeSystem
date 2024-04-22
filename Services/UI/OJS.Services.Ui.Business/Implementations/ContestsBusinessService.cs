@@ -142,7 +142,8 @@ namespace OJS.Services.Ui.Business.Implementations
             return contestDetailsServiceModel;
         }
 
-        public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, string? password, bool isOfficial)
+        public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(
+            int id, string? password, bool? hasConfirmedParticipation, bool isOfficial)
         {
             var contest = this.contestsData
                 .GetByIdQuery(id)
@@ -192,13 +193,24 @@ namespace OJS.Services.Ui.Business.Implementations
                 requiredPasswordIsValid = true;
             }
 
-            if ((!registerModel.RequirePassword && participant == null) || requiredPasswordIsValid)
+            bool shouldRequireConfirmParticipationAndHasConfirmed = registerModel.ShouldConfirmParticipation &&
+                                                                    hasConfirmedParticipation.HasValue &&
+                                                                    hasConfirmedParticipation.Value;
+
+            bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
+            bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
+
+            if (participant == null && (shouldNotRequirePasswordAndIsNotOnline ||
+                                        requiredPasswordIsValidAndIsNotOnline ||
+                                        (requiredPasswordIsValid && shouldRequireConfirmParticipationAndHasConfirmed) ||
+                                        (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed)))
             {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
                 await this.AddNewParticipantToContestIfNotExists(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
                 registerModel.IsRegisteredSuccessfully = true;
                 registerModel.RequirePassword = false;
+                registerModel.ShouldConfirmParticipation = false;
             }
 
             return registerModel;
