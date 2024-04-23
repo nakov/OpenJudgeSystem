@@ -127,7 +127,7 @@ const SubmissionGridRow = ({
                 </span>
             );
         },
-        [ state, processed, isCompiledSuccessfully, points, maxPoints ],
+        [ state, processed, isCompiledSuccessfully, options.showDetailedResults, points, maxPoints ],
     );
 
     const renderUsername = useCallback(
