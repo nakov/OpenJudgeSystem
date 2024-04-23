@@ -12,7 +12,7 @@ const RedirectButton = (props: IRedirectButtonProps) => {
         <Tooltip title={`Go to ${location}`}>
             <Link to={path}>
                 <IconButton>
-                    <MdEditNote color="blue" />
+                    <MdEditNote />
                 </IconButton>
             </Link>
         </Tooltip>
