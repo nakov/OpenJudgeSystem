@@ -66,6 +66,9 @@ const ContestRegister = () => {
     }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
 
     const renderContestRegisterBody = useCallback(() => {
+        if (!isRegisteredSuccessfully && !requirePassword && !shouldConfirmParticipation) {
+            return (<div>You are not registered for this exam!</div>);
+        }
         if (!hasAcceptedOnlineModal) {
             return (
                 <ContestCompeteModal
@@ -107,6 +110,8 @@ const ContestRegister = () => {
         id,
         participationType,
         requirePassword,
+        isRegisteredSuccessfully,
+        shouldConfirmParticipation,
         setHasAcceptedOnlineModal,
         registerUserForContest,
         navigate,
