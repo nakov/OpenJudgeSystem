@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 
 import { SubmissionResultType } from '../../../common/constants';
-import { IPublicSubmission } from '../../../common/types';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
