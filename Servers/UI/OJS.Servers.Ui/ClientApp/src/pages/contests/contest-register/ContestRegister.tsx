@@ -79,7 +79,7 @@ const ContestRegister = () => {
                               id: Number(contestId),
                               isOfficial: participationType === ContestParticipationType.Compete,
                               password: '',
-                              hasConfirmedParticipation: hasAcceptedOnlineModal,
+                              hasConfirmedParticipation: true,
                           });
                           navigate(`/contests/${id}/${participationType}`);
                       }
