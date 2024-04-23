@@ -30,6 +30,7 @@ import usersAdminService from './services/admin/usersAdminService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
+import { searchService } from './services/searchService';
 import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionsService from './services/submissionsService';
 import usersService from './services/usersService';
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
     [submissionsService.reducerPath]: submissionsService.reducer,
     [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
+    [searchService.reducerPath]: searchService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
     [submissionsForProcessingAdminService.reducerPath]: submissionsForProcessingAdminService.reducer,
@@ -92,6 +94,7 @@ const store = configureStore({
         problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
         contestsService.middleware,
+        searchService.middleware,
         homeStatisticsService.middleware,
         problemsAdminService.middleware,
         submissionsAdminService.middleware,

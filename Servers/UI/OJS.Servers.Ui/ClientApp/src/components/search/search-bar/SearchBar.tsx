@@ -32,21 +32,6 @@ const SearchBar = () => {
     const textColorClassName = getColorClassName(themeColors.textColor);
     const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
 
-    useEffect(() => {
-        if ((searchValue || selectedTerms.length === 0) && !location.search) {
-            dispatch(setSearchValue(''));
-            dispatch(setSelectedTerms([]));
-        }
-        /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, []);
-
-    // hide search bar on page change
-    useEffect(() => {
-        if (!location.pathname.includes('/search')) {
-            dispatch(setIsVisible(false));
-        }
-    }, [ location.pathname, dispatch ]);
-
     const composeSearchString = () => {
         const searchStringValue = searchValue
             ? `searchTerm=${searchValue}`
@@ -54,6 +39,26 @@ const SearchBar = () => {
         const selectedTermsStringValue = selectedTerms.map((term) => `&${term}=true`).join('');
         return `?${searchStringValue}${selectedTermsStringValue}`;
     };
+
+    useEffect(() => {
+        const textInputElement = document.getElementById('search-for-text-input');
+        if (textInputElement) {
+            textInputElement.focus();
+        }
+    });
+
+    useEffect(() => {
+        const searchString = composeSearchString();
+        navigate(`/search${searchString}`);
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [ searchValue, selectedTerms ]);
+
+    // hide search bar on page change
+    useEffect(() => {
+        if (!location.pathname.includes('/search')) {
+            dispatch(setIsVisible(false));
+        }
+    }, [ location.pathname, dispatch ]);
 
     const handleSubmit = () => {
         navigate({
@@ -94,6 +99,7 @@ const SearchBar = () => {
               hideFormButton
             >
                 <FormControl
+                  id="search-for-text-input"
                   className={`${styles.searchInput} ${textColorClassName}`}
                   name={FieldNameType.search}
                   type={FormControlType.input}
