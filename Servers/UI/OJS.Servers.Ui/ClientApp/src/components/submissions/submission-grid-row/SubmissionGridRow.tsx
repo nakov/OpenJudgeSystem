@@ -114,7 +114,7 @@ const SubmissionGridRow = ({
                 );
             }
 
-            if (processed && !isCompiledSuccessfully) {
+            if (processed && !isCompiledSuccessfully && !options.showDetailedResults) {
                 return <ErrorResult />;
             }
 
