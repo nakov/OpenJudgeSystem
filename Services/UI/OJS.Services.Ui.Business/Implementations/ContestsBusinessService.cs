@@ -194,7 +194,6 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             if (participant == null &&
-                // Non online contests should require password only
                 (!registerModel.RequirePassword || requiredPasswordIsValid) &&
                 (!registerModel.ShouldConfirmParticipation || hasConfirmedParticipation == true))
             {
