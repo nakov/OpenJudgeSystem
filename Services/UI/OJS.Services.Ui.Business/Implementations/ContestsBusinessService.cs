@@ -194,6 +194,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
+            bool requiredPasswordIsValidAndIsOnlineAndIsNotOfficial = (registerModel.RequirePassword && requiredPasswordIsValid) && contest.IsOnlineExam && !isOfficial;
             bool shouldNotRequirePasswordAndIsOnlineAndIsNotOfficial = !registerModel.RequirePassword && contest.IsOnlineExam && !isOfficial;
             bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
             bool shouldRequireConfirmParticipationAndHasConfirmed = registerModel.ShouldConfirmParticipation &&
@@ -202,14 +203,14 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (participant == null &&
                 // Non online contests should require password only
-                (shouldNotRequirePasswordAndIsNotOnline ||
-                requiredPasswordIsValidAndIsNotOnline ||
+                (shouldNotRequirePasswordAndIsNotOnline || requiredPasswordIsValidAndIsNotOnline ||
+                // To participate in 'practice' mode in an online contest,
+                // one should have input only a valid password if required
+                shouldNotRequirePasswordAndIsOnlineAndIsNotOfficial || requiredPasswordIsValidAndIsOnlineAndIsNotOfficial ||
                 // To participate in 'compete' mode in an online contest,
                 // one should have confirmed participation and input a valid password if required
                 (requiredPasswordIsValid && shouldRequireConfirmParticipationAndHasConfirmed) ||
-                (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed) ||
-                // Online contests should not require participation to be confirmed if in 'practice' mode
-                shouldNotRequirePasswordAndIsOnlineAndIsNotOfficial))
+                (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed)))
             {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
