@@ -26,7 +26,7 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
 
     public Task<int> GetAllUnprocessedCount()
         => this.GetFromSubmissionsForProcessing(
-            this.submissionsForProcessingCommonDataService.GetAllProcessing())
+            this.submissionsForProcessingCommonDataService.GetAllUnprocessed())
             .CountAsync();
 
     private IQueryable<Submission> GetFromSubmissionsForProcessing(
