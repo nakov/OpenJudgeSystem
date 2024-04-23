@@ -60,6 +60,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                         const isActive = selectedContestDetailsProblem?.id === problem.id;
                         return (
                             <div
+                              key={`contest-problem-${problem.id}`}
                               className={`${styles.problem} ${isActive
                                   ? styles.activeProblem
                                   : ''}`}
