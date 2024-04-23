@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
-    using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models;
     using OJS.Services.Common.Data.Implementations;
@@ -14,7 +13,6 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public Task<Ip?> GetByValue(string value)
-            => this.DbSet
-                .FirstOrDefaultAsync(ip => ip.Value == value);
+            => this.One(ip => ip.Value == value);
     }
 }

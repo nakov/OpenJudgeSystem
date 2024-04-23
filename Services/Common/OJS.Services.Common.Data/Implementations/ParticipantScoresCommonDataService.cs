@@ -12,10 +12,6 @@ public class ParticipantScoresCommonDataService : DataService<ParticipantScore>,
     {
     }
 
-    public IQueryable<ParticipantScore> GetAll() =>
-        this.DbSet;
-
     public IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds) =>
-        this.GetAll()
-            .Where(ps => !ps.Problem.IsDeleted && participantIds.Contains(ps.ParticipantId));
+        this.GetQuery(ps => !ps.Problem.IsDeleted && participantIds.Contains(ps.ParticipantId));
 }

@@ -14,8 +14,6 @@ namespace OJS.Services.Ui.Data
 
         Task<int?> GetContestIdById(int id);
 
-        IQueryable<ExamGroup> GetAll();
-
         IQueryable<ExamGroup> GetAllByLecturer(string lecturerId);
 
         IQueryable<UserProfile> GetUsersByIdQuery(int id);

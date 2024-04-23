@@ -23,33 +23,29 @@ namespace OJS.Services.Ui.Data.Implementations
             => this.participantsData = participantsData;
 
         public Task<IEnumerable<ParticipantScore>> GetWithSubmissionsAndTestsByParticipantId(int participantId)
-            => this.DbSet
-                .Where(ps => ps.ParticipantId == participantId)
+            => this.GetQuery(ps => ps.ParticipantId == participantId)
                 .Include(ps => ps.Submission)
                     .ThenInclude(s => s!.TestRuns)
                 .ToEnumerableAsync();
 
         public Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId) =>
-            this.DbSet
-                .FirstOrDefaultAsync(ps =>
+            this.One(ps =>
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
         public Task<IEnumerable<ParticipantScore>> GetByProblemIdAndParticipants(IEnumerable<int> participantIds, int problemId)
-            => this.DbSet
-                .Where(ps => ps.ProblemId == problemId)
+            => this.GetQuery(ps => ps.ProblemId == problemId)
                 .Where(p => participantIds.Contains(p.ParticipantId))
                 .ToEnumerableAsync();
 
         public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
-            this.DbSet
-                .FirstOrDefaultAsync(ps =>
+            this.One(ps =>
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId &&
                     ps.IsOfficial == isOfficial);
 
         public IQueryable<ParticipantScore> GetAll() =>
-            this.DbSet;
+            this.GetQuery();
 
         public IQueryable<ParticipantScore> GetAllByProblem(int problemId) =>
             this.GetAll()
@@ -61,13 +57,8 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public async Task ResetBySubmission(Submission submission)
         {
-            if (submission.ParticipantId == null)
-            {
-                return;
-            }
-
             var participant = await this.participantsData
-                .GetByIdQuery(submission.ParticipantId.Value)
+                .GetByIdQuery(submission.ParticipantId)
                 .Select(p => new
                 {
                     p.IsOfficial,
@@ -82,7 +73,7 @@ namespace OJS.Services.Ui.Data.Implementations
             }
 
             var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(
-                submission.ParticipantId.Value,
+                submission.ParticipantId,
                 submission.ProblemId,
                 participant.IsOfficial);
 
@@ -97,8 +88,7 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public Task DeleteAllByProblem(int problemId) =>
-            this.DbSet
-                .Where(x => x.ProblemId == problemId)
+            this.GetQuery(x => x.ProblemId == problemId)
                 .DeleteFromQueryAsync();
 
         public async Task DeleteForParticipantByProblem(int participantId, int problemId)
@@ -128,7 +118,7 @@ namespace OJS.Services.Ui.Data.Implementations
         {
             await this.Add(new ParticipantScore
             {
-                ParticipantId = submission.ParticipantId!.Value,
+                ParticipantId = submission.ParticipantId,
                 ProblemId = submission.ProblemId,
                 SubmissionId = submission.Id,
                 ParticipantName = username,
@@ -165,8 +155,7 @@ namespace OJS.Services.Ui.Data.Implementations
         }
 
         public Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
-            this.DbSet
-                .Where(ps => submissionIds.Cast<int?>().Contains(ps.SubmissionId))
+            this.GetQuery(ps => submissionIds.Cast<int?>().Contains(ps.SubmissionId))
                 .UpdateFromQueryAsync(
                     ps => new ParticipantScore
                     {
@@ -175,8 +164,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
         public Task<IEnumerable<ParticipationForProblemMaxScoreServiceModel>> GetMaxByProblemIdsAndParticipation(
             IEnumerable<int> problemIds, IEnumerable<int> participantIds)
-            => this.DbSet
-                .Where(ps =>
+            => this.GetQuery(ps =>
                     problemIds.Contains(ps.ProblemId)
                     && participantIds.Contains(ps.ParticipantId))
                 .GroupBy(ps => ps.ProblemId)

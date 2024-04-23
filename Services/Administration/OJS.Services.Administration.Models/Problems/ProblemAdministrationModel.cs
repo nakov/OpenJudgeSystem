@@ -77,8 +77,6 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.Submissions, opt
                  => opt.Ignore())
-             .ForMember(pam => pam.TagsInProblems, opt
-                 => opt.Ignore())
              .ForMember(pam => pam.ParticipantScores, opt
                  => opt.Ignore())
              .ForMember(pam => pam.ProblemsForParticipants, opt

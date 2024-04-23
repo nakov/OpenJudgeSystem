@@ -1,7 +1,7 @@
 namespace OJS.Data.Models
 {
     using OJS.Data.Models.Users;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using System.ComponentModel.DataAnnotations;
 
     public class FeedbackReport : DeletableAuditInfoEntity<int>
