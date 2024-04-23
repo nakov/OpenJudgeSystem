@@ -311,10 +311,10 @@ const ContestSolutionSubmitPage = () => {
         return (
             <div className={styles.problemDescriptionsWrapper}>
                 <div className={styles.problemDescriptions}>
-                    { resources.map((resource: any) => {
+                    { resources.map((resource: any, idx) => {
                         const { link, name: linkName } = resource;
                         return (
-                            <Link target="_blank" to={link}>
+                            <Link key={`resource-problem-${idx}`} target="_blank" to={link}>
                                 <IoDocumentText />
                                 {' '}
                                 {linkName}
