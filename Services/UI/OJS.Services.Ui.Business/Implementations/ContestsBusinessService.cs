@@ -194,17 +194,22 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
-            bool shouldNotRequirePasswordAndIsNotOfficial = !registerModel.RequirePassword && !isOfficial;
+            bool shouldNotRequirePasswordAndIsOnlineAndIsNotOfficial = !registerModel.RequirePassword && contest.IsOnlineExam && !isOfficial;
             bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
             bool shouldRequireConfirmParticipationAndHasConfirmed = registerModel.ShouldConfirmParticipation &&
                                                                     hasConfirmedParticipation.HasValue &&
                                                                     hasConfirmedParticipation.Value;
 
-            if (participant == null && (shouldNotRequirePasswordAndIsNotOnline ||
-                                        requiredPasswordIsValidAndIsNotOnline ||
-                                        (requiredPasswordIsValid && shouldRequireConfirmParticipationAndHasConfirmed) ||
-                                        (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed) ||
-                                        shouldNotRequirePasswordAndIsNotOfficial))
+            if (participant == null &&
+                // Non online contests should require password only
+                (shouldNotRequirePasswordAndIsNotOnline ||
+                requiredPasswordIsValidAndIsNotOnline ||
+                // To participate in 'compete' mode in an online contest,
+                // one should have confirmed participation and input a valid password if required
+                (requiredPasswordIsValid && shouldRequireConfirmParticipationAndHasConfirmed) ||
+                (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed) ||
+                // Online contests should not require participation to be confirmed if in 'practice' mode
+                shouldNotRequirePasswordAndIsOnlineAndIsNotOfficial))
             {
                 var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
