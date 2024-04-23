@@ -4,7 +4,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
+import { CheckboxSearchValues, FilterColumnTypeEnum, PublicSubmissionState } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -57,6 +57,12 @@ interface IRecentSubmissionsReduxState {
     latestSubmissions: IPagedResultType<IPublicSubmission>;
     profileSubmissions: IPagedResultType<IPublicSubmission>;
     currentPage: number;
+}
+
+interface ISearchSliceState {
+    isVisible: boolean;
+    searchValue: string;
+    selectedTerms: Array<CheckboxSearchValues.contests | CheckboxSearchValues.problems | CheckboxSearchValues.users>;
 }
 
 interface IPublicSubmissionProblem {
@@ -808,4 +814,5 @@ export type {
     ISettingAdministrationModel,
     IRegisterUserForContestResponseType,
     ICompeteContestResponseType,
+    ISearchSliceState,
 };
