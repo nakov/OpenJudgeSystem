@@ -80,16 +80,16 @@ const ContestsPage = () => {
     ), []);
 
     const renderContests = useCallback(() => {
+        if (areContestsLoading) {
+            return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
+        }
+
         if (!allContests?.items?.length) {
             return (
                 <Heading type={HeadingType.secondary} className={`${textColorClassName} ${styles.contestHeading}`}>
                     No contests apply for this filter
                 </Heading>
             );
-        }
-
-        if (areContestsLoading) {
-            return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
 
         return (
