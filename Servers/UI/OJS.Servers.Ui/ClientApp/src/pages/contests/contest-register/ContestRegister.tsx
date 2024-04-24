@@ -121,11 +121,11 @@ const ContestRegister = () => {
     const getErrorMessage = (err: FetchBaseQueryError | SerializedError, defaultErrorMessage: string): string => {
         if ('status' in err) {
             return 'error' in err
-                ? err.error
-                : JSON.stringify(err.data);
+                ? err.error.replace(/"/g, '')
+                : JSON.stringify((err.data as any).replace(/"/g, ''));
         }
         if (err.message) {
-            return err.message;
+            return err.message.replace(/"/g, '');
         }
 
         return defaultErrorMessage;
@@ -149,7 +149,7 @@ const ContestRegister = () => {
                     Need help? Contact us at:
                     {' '}
                     {' '}
-                    <Link to="https://softuni.bg/contacts">https://softuni.bg/contacts</Link>
+                    <Link to="https://softuni.bg/contacts">softuni.bg/contacts</Link>
                 </div>
             </div>
         );
