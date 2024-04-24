@@ -137,6 +137,9 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                  .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Checker)
             .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithParticipants(int id)
