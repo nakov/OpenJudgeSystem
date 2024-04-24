@@ -392,7 +392,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
-    public async Task<PagedResult<PublicSubmissionsServiceModel>> GetUserSubmissionsByProblem(
+    public async Task<PagedResult<TServiceModel>> GetUserSubmissionsByProblem<TServiceModel>(
         int problemId,
         bool isOfficial,
         int page)
@@ -415,7 +415,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        return await this.GetUserSubmissions<PublicSubmissionsServiceModel>(problem.Id, participant.Id, page);
+        return await this.GetUserSubmissions<TServiceModel>(problem.Id, participant.Id, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)

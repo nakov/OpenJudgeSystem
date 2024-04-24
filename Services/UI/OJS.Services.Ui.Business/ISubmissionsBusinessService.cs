@@ -38,7 +38,7 @@
 
         Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page);
 
-        Task<PagedResult<PublicSubmissionsServiceModel>> GetUserSubmissionsByProblem(int problemId, bool isOfficial, int page);
+        Task<PagedResult<TServiceModel>> GetUserSubmissionsByProblem<TServiceModel>(int problemId, bool isOfficial, int page);
 
         Task<int> GetTotalCount();
 

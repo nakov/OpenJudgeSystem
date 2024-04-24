@@ -97,14 +97,14 @@ public class SubmissionsController : BaseApiController
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{problemId:int}")]
     [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissionsByProblem(
         int problemId,
         [FromQuery] bool isOfficial,
         [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetUserSubmissionsByProblem(problemId, isOfficial, page)
-            .Map<PagedResultResponse<PublicSubmissionsServiceModel>>()
+            .GetUserSubmissionsByProblem<FullDetailsPublicSubmissionsServiceModel>(problemId, isOfficial, page)
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
     /// <summary>
