@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { PublicSubmissionState } from '../../../common/enums';
 import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
@@ -45,7 +44,6 @@ const SubmissionGridRow = ({
         user,
         result: { points, maxPoints },
         strategyName,
-        state,
         problem: {
             id: problemId,
             name: problemName,
@@ -106,7 +104,7 @@ const SubmissionGridRow = ({
 
     const renderPoints = useCallback(
         () => {
-            if (state === PublicSubmissionState.Processing || (!processed && !isCompiledSuccessfully)) {
+            if (!processed) {
                 return (
                     <>
                         Processing
@@ -127,7 +125,7 @@ const SubmissionGridRow = ({
                 </span>
             );
         },
-        [ state, processed, isCompiledSuccessfully, options.showDetailedResults, points, maxPoints ],
+        [ processed, isCompiledSuccessfully, options.showDetailedResults, points, maxPoints ],
     );
 
     const renderUsername = useCallback(

@@ -78,7 +78,6 @@ interface IPublicSubmission {
     user?: IPublicSubmissionUser;
     problem: IPublicSubmissionProblem;
     result: IPublicSubmissionResult;
-    state: PublicSubmissionState;
     isOfficial: boolean;
     isCompiledSuccessfully: boolean;
     maxMemoryUsed: number;
