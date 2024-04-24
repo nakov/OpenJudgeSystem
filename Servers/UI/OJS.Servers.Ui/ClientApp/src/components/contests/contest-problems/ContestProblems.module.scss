@@ -29,8 +29,8 @@
     cursor: pointer;
     display: flex;
     justify-content: space-between;
-    padding: spacings.$sp-18;
     line-height: 1.2;
+    padding: spacings.$sp-18;
     transition: all 0.1s ease-in-out;
 
     > div {
