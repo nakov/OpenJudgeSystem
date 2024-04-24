@@ -1,20 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ContestParticipationType } from '../../../common/constants';
 import ContestCompeteModal from '../../../components/contests/contest-compete-modal/ContestCompeteModal';
 import ContestPasswordForm from '../../../components/contests/contest-password-form/ContestPasswordForm';
+import Button, { LinkButton } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
+import useTheme from '../../../hooks/use-theme';
 import { useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './ContestRegister.module.scss';
 
 const ContestRegister = () => {
+    const { getColorClassName, themeColors } = useTheme();
     const navigate = useNavigate();
     const { contestId, participationType } = useParams();
     const [ hasAcceptedOnlineModal, setHasAcceptedOnlineModal ] = useState<boolean>(false);
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const [
         registerUserForContest, {
@@ -111,19 +118,40 @@ const ContestRegister = () => {
         registerUserForContest,
         navigate,
     ]);
+    const getErrorMessage = (error: FetchBaseQueryError | SerializedError, defaultErrorMessage: string): string => {
+        if ('status' in error) {
+            return 'error' in error
+                ? error.error
+                : JSON.stringify(error.data);
+        }
+        if (error.message) {
+            return error.message;
+        }
+
+        return defaultErrorMessage;
+    };
 
     if (isLoading) {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
     if (error) {
-        if ('status' in error) {
-            const errorMessage = 'error' in error
-                ? error.error
-                : JSON.stringify(error.data);
-
-            return (<div>{errorMessage}</div>);
-        }
-        return <div>Error fetching user register information! Please try again.</div>;
+        return (
+            <div className={`${textColorClassName} ${styles.regsiterErrorWrapper}`}>
+                <div className={styles.errMessage}>
+                    {getErrorMessage(error, 'Something went wrong fetching data, please try again!')}
+                </div>
+                <div className={styles.buttonsWrapper}>
+                    <LinkButton to="/contests" text="back to contests" />
+                    <Button onClick={() => location.reload()} text="reload page" />
+                </div>
+                <div className={styles.needHelpWrapper}>
+                    Need help? Contact us at:
+                    {' '}
+                    {' '}
+                    <Link to="https://softuni.bg/contacts">https://softuni.bg/contacts</Link>
+                </div>
+            </div>
+        );
     }
     return (
         <div className={styles.contestRegisterWrapper}>
