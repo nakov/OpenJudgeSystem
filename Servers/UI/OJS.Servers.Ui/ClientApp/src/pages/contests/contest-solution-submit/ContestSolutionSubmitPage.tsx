@@ -281,6 +281,7 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
+        setIsSubmitButtonDisabled(true);
         try {
             await submitSolutionFile({
                 content: uploadedFile!,
@@ -307,6 +308,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
+        setIsSubmitButtonDisabled,
     ]);
 
     const sumMyPoints = useMemo(() => contest
