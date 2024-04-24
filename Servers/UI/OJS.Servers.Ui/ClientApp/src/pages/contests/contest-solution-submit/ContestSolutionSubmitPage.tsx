@@ -281,7 +281,6 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
-        setIsSubmitButtonDisabled(true);
         try {
             await submitSolutionFile({
                 content: uploadedFile!,
@@ -452,7 +451,7 @@ const ContestSolutionSubmitPage = () => {
                           setUploadedFile(file);
                       }}
                     />
-                    <div className={styles.remainingTimeNadSubmitButtonWrapper}>
+                    <div className={styles.remainingTimeNadSubmitButtonWrapper} style={{ height: 420 }}>
                         {remainingTime > 0 && (
                             <div>
                                 Remaining time:
@@ -461,15 +460,14 @@ const ContestSolutionSubmitPage = () => {
                             </div>
                         )}
                         <Button
-                          className={styles.fileSubmitButton}
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={!uploadedFile || isSubmitButtonDisabled || submitSolutionFileIsLoading
+                          state={!uploadedFile || fileUploadError || submitSolutionFileIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
                         {submitSolutionFileError && (
-                            <div className={styles.solutionSubmitError}>Error submitting solution file. Please try again!</div>
+                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
                         )}
                     </div>
                 </div>
@@ -504,11 +502,11 @@ const ContestSolutionSubmitPage = () => {
                           onClick={onSolutionSubmitCode}
                           text="Submit"
                         />
-                        {submitSolutionError && (
-                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
-                        )}
                     </div>
                 </div>
+                {submitSolutionError && (
+                    <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                )}
             </div>
         );
     }, [

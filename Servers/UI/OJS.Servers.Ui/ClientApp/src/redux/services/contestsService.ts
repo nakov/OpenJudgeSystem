@@ -103,11 +103,19 @@ export const contestsService = createApi({
             }),
         }),
         submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, submissionTypeId, problemId }) => ({
-                url: '/Compete/SubmitFileSubmission',
-                method: 'POST',
-                body: { content, official, problemId, submissionTypeId },
-            }),
+            query: ({ content, official, submissionTypeId, problemId }) => {
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('official', official ? 'true' : 'false');
+                formData.append('problemId', problemId.toString());
+                formData.append('submissionTypeId', submissionTypeId.toString());
+
+                return {
+                    url: '/Compete/SubmitFileSubmission',
+                    method: 'POST',
+                    body: formData,
+                }
+            },
         }),
         submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({
             query: ({ contestId, isOfficial, password }) => ({

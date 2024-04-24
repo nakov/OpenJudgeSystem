@@ -157,16 +157,11 @@
   }
 }
 
-.fileSubmitButton {
-  bottom: 35px;
-  position: absolute;
-}
-
 .remainingTimeNadSubmitButtonWrapper {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: end;
   margin-left: spacings.$sp-24;
 
   > div {
@@ -176,10 +171,14 @@
   button {
     width: 200px;
   }
+}
 
-  .solutionSubmitError {
-    color: colors.$primary-red;
-  }
+.solutionSubmitError {
+  color: colors.$primary-red;
+  text-align: end;
+  margin-top: spacings.$sp-18;
+  font-size: variables.$f-size-18;
+  font-weight: font-weights.$font-weight-semi-bold;
 }
 
 .problemResourceIndicator {
