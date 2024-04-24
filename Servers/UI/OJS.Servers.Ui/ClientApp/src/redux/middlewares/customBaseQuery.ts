@@ -27,6 +27,7 @@ const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, ap
                 let filename = 'file.zip';
                 if (contentDisposition) {
                     const match = contentDisposition.match(/filename="?(.+?)"?(;|$)/);
+                    console.log(match)
                     if (match) {
                         filename = decodeURIComponent(match[1]);
                     }
