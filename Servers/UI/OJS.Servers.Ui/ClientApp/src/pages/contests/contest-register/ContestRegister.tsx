@@ -116,7 +116,14 @@ const ContestRegister = () => {
         return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
     }
     if (error) {
-        return <div>Error fetching user register information! PLease try again.</div>;
+        if ('status' in error) {
+            const errorMessage = 'error' in error
+                ? error.error
+                : JSON.stringify(error.data);
+
+            return (<div>{errorMessage}</div>);
+        }
+        return <div>Error fetching user register information! Please try again.</div>;
     }
     return (
         <div className={styles.contestRegisterWrapper}>
