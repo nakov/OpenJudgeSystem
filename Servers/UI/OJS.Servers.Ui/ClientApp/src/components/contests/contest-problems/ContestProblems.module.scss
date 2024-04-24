@@ -10,18 +10,21 @@
 
 .problemsWrapper {
   font-size: variables.$f-size-18;
-  height: 600px;
+  height: 630px;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: spacings.$sp-16 spacings.$sp-24;
   transition: all 0.5s ease-in-out;
-  width: 350px;
+  width: 397px;
+
+  .problemsInnerWrapper {
+    padding: 0 spacings.$sp-24;
+  }
 
   .problemsHeader {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    padding: 0 spacings.$sp-12 spacings.$sp-8 spacings.$sp-12;
+    padding: spacings.$sp-16 spacings.$sp-32
   }
 
   .problem {

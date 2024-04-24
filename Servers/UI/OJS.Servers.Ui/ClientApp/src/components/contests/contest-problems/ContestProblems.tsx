@@ -52,33 +52,35 @@ const ContestProblems = (props: IContestProblemsProps) => {
         <div>
             <div className={styles.wrapper}>
                 <div className={`${styles.problemsWrapper} ${backgroundColorClassName}`}>
-                    <div className={styles.problemsHeader} style={{ borderBottom: `1px solid ${themeColors.textColor}` }}>
+                    <div className={`${styles.problemsHeader} ${darkBackgroundClassName}`}>
                         <div>Tasks</div>
                         <div>Points</div>
                     </div>
-                    {problems.map((problem) => {
-                        const isActive = selectedContestDetailsProblem?.id === problem.id;
-                        return (
-                            <div
-                              key={`contest-problem-${problem.id}`}
-                              className={`${styles.problem} ${isActive
-                                  ? styles.activeProblem
-                                  : ''}`}
-                              style={{ borderBottom: `1px solid ${themeColors.textColor}` }}
-                              onClick={() => onProblemClick(problem)}
-                            >
-                                <div>
-                                    {problem.name}
-                                    {problem.isExcludedFromHomework && <span className={styles.excludedMark}>*</span>}
+                    <div className={styles.problemsInnerWrapper}>
+                        {problems.map((problem) => {
+                            const isActive = selectedContestDetailsProblem?.id === problem.id;
+                            return (
+                                <div
+                                  key={`contest-problem-${problem.id}`}
+                                  className={`${styles.problem} ${isActive
+                                      ? styles.activeProblem
+                                      : ''}`}
+                                  style={{ borderBottom: `1px solid ${themeColors.textColor}` }}
+                                  onClick={() => onProblemClick(problem)}
+                                >
+                                    <div>
+                                        {problem.name}
+                                        {problem.isExcludedFromHomework && <span className={styles.excludedMark}>*</span>}
+                                    </div>
+                                    <div>
+                                        {problem.points || 0}
+                                        /
+                                        {problem.maximumPoints}
+                                    </div>
                                 </div>
-                                <div>
-                                    {problem.points || 0}
-                                    /
-                                    {problem.maximumPoints}
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
             <div className={`${styles.problemsInfoSection} ${darkBackgroundClassName}`}>
