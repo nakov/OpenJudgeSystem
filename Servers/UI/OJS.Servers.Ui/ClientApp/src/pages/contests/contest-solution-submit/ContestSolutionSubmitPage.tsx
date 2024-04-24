@@ -366,7 +366,7 @@ const ContestSolutionSubmitPage = () => {
                         <div>
                             <span className={styles.title}>Checker:</span>
                             {' '}
-                            { checkerName}
+                            {checkerName}
                         </div>
                         )}
                     </div>
@@ -508,7 +508,7 @@ const ContestSolutionSubmitPage = () => {
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <div className={styles.title}>{contest?.name}</div>
+                <Link to={`/contests/${contest?.id}`} className={`${styles.title} ${textColorClassName}`}>{contest?.name}</Link>
                 <div
                   className={styles.allResultsLink}
                   onClick={() => navigate(`/contests/${contest?.id}/${participationType}/results/simple`)}
