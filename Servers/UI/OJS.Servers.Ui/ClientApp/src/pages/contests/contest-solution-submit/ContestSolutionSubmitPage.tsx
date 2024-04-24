@@ -250,6 +250,7 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(async () => {
+        setIsSubmitButtonDisabled(true);
         try {
             await submitSolution({
                 content: submissionCode!,
@@ -276,6 +277,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
+        setIsSubmitButtonDisabled,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
