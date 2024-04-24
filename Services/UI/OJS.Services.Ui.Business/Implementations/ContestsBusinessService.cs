@@ -82,7 +82,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
-                id,
                 isLecturerOrAdmin));
             if (!validationResult.IsValid)
             {
@@ -172,11 +171,16 @@ namespace OJS.Services.Ui.Business.Implementations
                     userProfile!.Id,
                     isOfficial);
 
+            var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
+
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, isOfficial);
             registerModel.ParticipantId = participant?.Id;
             registerModel.IsRegisteredSuccessfully = participant != null;
-            registerModel.ShouldConfirmParticipation = contest!.IsOnlineExam && isOfficial && participant == null;
+            registerModel.ShouldConfirmParticipation = contest!.IsOnlineExam &&
+                                                       isOfficial &&
+                                                       participant == null &&
+                                                       !userIsAdminOrLecturerInContest;
 
             bool requiredPasswordIsValid = false;
 
@@ -193,24 +197,15 @@ namespace OJS.Services.Ui.Business.Implementations
                 requiredPasswordIsValid = true;
             }
 
-            bool shouldRequireConfirmParticipationAndHasConfirmed = registerModel.ShouldConfirmParticipation &&
-                                                                    hasConfirmedParticipation.HasValue &&
-                                                                    hasConfirmedParticipation.Value;
-
-            bool shouldNotRequirePasswordAndIsNotOnline = !registerModel.RequirePassword && !contest.IsOnlineExam;
-            bool requiredPasswordIsValidAndIsNotOnline = requiredPasswordIsValid && !contest.IsOnlineExam;
-
-            if (participant == null && (shouldNotRequirePasswordAndIsNotOnline ||
-                                        requiredPasswordIsValidAndIsNotOnline ||
-                                        (requiredPasswordIsValid && shouldRequireConfirmParticipationAndHasConfirmed) ||
-                                        (!registerModel.RequirePassword && shouldRequireConfirmParticipationAndHasConfirmed)))
+            if (participant == null &&
+                (!registerModel.RequirePassword || requiredPasswordIsValid) &&
+                (!registerModel.ShouldConfirmParticipation || hasConfirmedParticipation == true))
             {
-                var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-
-                await this.AddNewParticipantToContestIfNotExists(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
+                participant = await this.AddNewParticipantToContestIfNotExists(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
                 registerModel.IsRegisteredSuccessfully = true;
                 registerModel.RequirePassword = false;
                 registerModel.ShouldConfirmParticipation = false;
+                registerModel.ParticipantId = participant!.Id;
             }
 
             return registerModel;
