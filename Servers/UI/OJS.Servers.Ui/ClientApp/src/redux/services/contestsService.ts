@@ -106,7 +106,9 @@ export const contestsService = createApi({
             query: ({ content, official, submissionTypeId, problemId }) => {
                 const formData = new FormData();
                 formData.append('content', content);
-                formData.append('official', official ? 'true' : 'false');
+                formData.append('official', official
+                    ? 'true'
+                    : 'false');
                 formData.append('problemId', problemId.toString());
                 formData.append('submissionTypeId', submissionTypeId.toString());
 
@@ -114,7 +116,7 @@ export const contestsService = createApi({
                     url: '/Compete/SubmitFileSubmission',
                     method: 'POST',
                     body: formData,
-                }
+                };
             },
         }),
         submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({

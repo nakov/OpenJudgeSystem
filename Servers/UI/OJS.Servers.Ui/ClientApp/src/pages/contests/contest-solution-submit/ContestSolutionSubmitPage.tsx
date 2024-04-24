@@ -307,7 +307,6 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submitSolutionFile,
         uploadedFile,
-        setIsSubmitButtonDisabled,
     ]);
 
     const sumMyPoints = useMemo(() => contest
