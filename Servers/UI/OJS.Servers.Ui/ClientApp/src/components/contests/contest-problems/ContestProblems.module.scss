@@ -4,13 +4,17 @@
 @use 'src/styles/shadows';
 @use 'src/styles/font-weights';
 
-.wrapper {
+.problemsHeader {
+  align-items: center;
   display: flex;
+  justify-content: space-between;
+  font-size: variables.$f-size-18;
+  padding: spacings.$sp-16 spacings.$sp-32;
 }
 
 .problemsWrapper {
   font-size: variables.$f-size-18;
-  height: 630px;
+  height: 582px;
   overflow-x: hidden;
   overflow-y: auto;
   transition: all 0.5s ease-in-out;
@@ -18,13 +22,6 @@
 
   .problemsInnerWrapper {
     padding: 0 spacings.$sp-24;
-  }
-
-  .problemsHeader {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    padding: spacings.$sp-16 spacings.$sp-32
   }
 
   .problem {
