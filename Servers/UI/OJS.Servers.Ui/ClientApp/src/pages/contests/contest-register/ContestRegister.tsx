@@ -118,14 +118,14 @@ const ContestRegister = () => {
         registerUserForContest,
         navigate,
     ]);
-    const getErrorMessage = (error: FetchBaseQueryError | SerializedError, defaultErrorMessage: string): string => {
-        if ('status' in error) {
-            return 'error' in error
-                ? error.error
-                : JSON.stringify(error.data);
+    const getErrorMessage = (err: FetchBaseQueryError | SerializedError, defaultErrorMessage: string): string => {
+        if ('status' in err) {
+            return 'error' in err
+                ? err.error
+                : JSON.stringify(err.data);
         }
-        if (error.message) {
-            return error.message;
+        if (err.message) {
+            return err.message;
         }
 
         return defaultErrorMessage;
@@ -142,6 +142,7 @@ const ContestRegister = () => {
                 </div>
                 <div className={styles.buttonsWrapper}>
                     <LinkButton to="/contests" text="back to contests" />
+                    {/* eslint-disable-next-line no-restricted-globals */}
                     <Button onClick={() => location.reload()} text="reload page" />
                 </div>
                 <div className={styles.needHelpWrapper}>

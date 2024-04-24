@@ -100,7 +100,7 @@
       display: flex;
       margin: spacings.$sp-24 0;
 
-      > a {
+      .resourceElement {
         align-items: center;
         color: colors.$secondary-green;
         cursor: pointer;
@@ -115,6 +115,7 @@
           margin-left: spacings.$sp-48;
         }
       }
+
     }
   }
 }
@@ -178,5 +179,16 @@
 
   .solutionSubmitError {
     color: colors.$primary-red;
+  }
+}
+
+.problemResourceIndicator {
+  .problemResourceDownloadError {
+    margin-top: - spacings.$sp-12;
+    color: colors.$primary-red
+  }
+  .problemResourceLoading {
+    margin-top: - spacings.$sp-12;
+    color: colors.$primary-blue
   }
 }

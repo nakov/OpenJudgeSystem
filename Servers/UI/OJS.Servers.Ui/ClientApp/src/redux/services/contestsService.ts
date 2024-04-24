@@ -32,6 +32,21 @@ export const contestsService = createApi({
             headers.set('Content-Type', 'application/json');
             return headers;
         },
+        responseHandler: async (response: Response) => {
+            const contentType = response.headers.get('Content-Type');
+
+            if (contentType?.includes('application/octet-stream') ||
+                contentType?.includes('application/zip')) {
+                const blob = await response.blob();
+
+                return { blob, fileName: 'file.zip' };
+            }
+            if (response.headers.get('Content-Length')) {
+                return '';
+            }
+
+            return response.json();
+        },
     }),
     endpoints: (builder) => ({
         getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IContestsSortAndFilterOptions>({
@@ -123,6 +138,12 @@ export const contestsService = createApi({
                     },
                 }),
             }),
+        downloadContestProblemResource: builder.query<{ blob: Blob }, { id: number }>({
+            query: ({ id }) => ({
+                url: `/ProblemResources/GetResource/${id}`,
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -139,4 +160,5 @@ export const {
     useSubmitContestSolutionFileMutation,
     useGetContestUserParticipationQuery,
     useGetContestResultsQuery,
+    useLazyDownloadContestProblemResourceQuery,
 } = contestsService;
