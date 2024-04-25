@@ -29,7 +29,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="5.0.0-preview.8.20414.8" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.0" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.25">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>

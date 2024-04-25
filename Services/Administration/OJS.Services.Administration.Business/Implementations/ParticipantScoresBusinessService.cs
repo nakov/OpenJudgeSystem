@@ -49,13 +49,8 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
 
     public async Task SaveForSubmission(Submission submission)
     {
-        if (submission.ParticipantId == null)
-        {
-            return;
-        }
-
         var participant = this.participantsData
-            .GetByIdQuery(submission.ParticipantId.Value)
+            .GetByIdQuery(submission.ParticipantId)
             .Select(p => new
             {
                 p.IsOfficial,
@@ -70,7 +65,7 @@ public class ParticipantScoresBusinessService : IParticipantScoresBusinessServic
         }
 
         var existingScore = await this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
-            submission.ParticipantId.Value,
+            submission.ParticipantId,
             submission.ProblemId,
             participant.IsOfficial);
 

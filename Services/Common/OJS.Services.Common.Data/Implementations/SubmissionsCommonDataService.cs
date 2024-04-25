@@ -33,7 +33,7 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
         IQueryable<SubmissionForProcessing> submissionsForProcessing)
         => submissionsForProcessing
             .Join(
-                this.DbSet,
+                this.GetQuery(),
                 sfp => sfp.SubmissionId,
                 submission => submission.Id,
                 (_, submission) => submission)

@@ -131,7 +131,7 @@ const ContestResultsPage = () => {
                         >
                             {capitalizeFirstLetter(participationType)}
                             {' '}
-                            Results For Contest
+                            Results For
                             {' '}
                             <LinkButton
                               to={getContestDetailsAppUrl(Number(contestId!))}

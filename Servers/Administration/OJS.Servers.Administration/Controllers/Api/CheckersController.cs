@@ -24,5 +24,5 @@ public class CheckersController : BaseAdminApiController<Checker, int, CheckerIn
 
     [HttpGet]
     public IActionResult GetForProblems()
-        => this.Ok(this.checkersDataService.GetAll());
+        => this.Ok(this.checkersDataService.GetQuery());
 }

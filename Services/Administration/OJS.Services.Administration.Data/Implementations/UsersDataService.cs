@@ -3,12 +3,10 @@
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Users;
-    using OJS.Services.Common.Data.Implementations;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
 
-    public class UsersDataService : DataService<UserProfile>, IUsersDataService
+    public class UsersDataService : AdministrationDataService<UserProfile>, IUsersDataService
     {
         public UsersDataService(OjsDbContext users)
             : base(users)
@@ -16,7 +14,7 @@
         }
 
         public Task<UserProfile?> GetByUsername(string username) =>
-            this.DbSet.Where(u => u.UserName == username).FirstOrDefaultAsync();
+            this.GetQuery(u => u.UserName == username).FirstOrDefaultAsync();
 
         public Task<IEnumerable<UserProfile>> GetAllWithDeleted() =>
             this.All();

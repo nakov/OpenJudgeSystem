@@ -1,6 +1,5 @@
 namespace OJS.Servers.Administration.Extensions;
 
-using AutoCrudAdmin.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +12,9 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Implementations;
+using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Configurations;
 using OJS.Services.Common.Validation;
-using SoftUni.Data.Infrastructure.Enumerations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
@@ -32,14 +31,13 @@ internal static class ServiceCollectionExtensions
             .AddGridServices()
             .AddValidators()
             .AddWebServer<Program>(configuration)
+            .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
             .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName)
             .AddMessageQueue<Program>(configuration)
             .ConfigureGlobalDateFormat()
             .ConfigureCorsPolicy(configuration)
-            .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(
-                configuration,
-                Enumerable.Empty<GlobalQueryFilterType>())
+            .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
             .AddMemoryCache()
             .AddDistributedCaching(configuration)
             .AddOptionsWithValidation<ApplicationConfig>()
