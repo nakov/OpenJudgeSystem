@@ -111,7 +111,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
 
         // It seems that the algorithm is not working.
         // The issue is in the DIffText method of the similarity finder.
-        // For two identical returns empty array and therefore the differencesCount is 0.
+        // For two identical submissions returns empty array and therefore the differencesCount is 0.
 
         // return this.Ok(this.similarityService.GetSubmissionSimilarities(model));
 
