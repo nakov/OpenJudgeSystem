@@ -238,6 +238,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         };
     }
 
+    public Task<int> GetAllUnprocessedCount()
+        => this.submissionsCommonData.GetAllUnprocessedCount();
+
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
         var archiveBestSubmissionsLimit = DateTime.Now.AddYears(

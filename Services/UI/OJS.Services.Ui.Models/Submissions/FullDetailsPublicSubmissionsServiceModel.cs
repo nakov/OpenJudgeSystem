@@ -25,8 +25,6 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
 
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
-    public StateResultForPublicSubmissionsServiceModel State { get; set; }
-
     public bool IsCompiledSuccessfully { get; set; }
 
     public bool Processed { get; set; }
@@ -53,12 +51,6 @@ public class FullDetailsPublicSubmissionsServiceModel : IMapExplicitly
                 x => x.Result,
                 opt => opt.MapFrom(
                     y => y))
-            .ForMember(
-                x => x.State,
-                opt => opt.MapFrom(
-                    y => y.Processed
-                        ? StateResultForPublicSubmissionsServiceModel.Ready
-                        : StateResultForPublicSubmissionsServiceModel.Queued))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
