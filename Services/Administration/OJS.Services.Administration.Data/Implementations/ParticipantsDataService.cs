@@ -6,7 +6,6 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
-    using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Models.Users;
     using System;
     using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace OJS.Services.Administration.Data.Implementations
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public class ParticipantsDataService : DataService<Participant>, IParticipantsDataService
+    public class ParticipantsDataService : AdministrationDataService<Participant>, IParticipantsDataService
     {
         private readonly IParticipantsCommonDataService participantsCommonData;
 
@@ -37,8 +36,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetAllByUser(string userId)
-            => this.DbSet
-                .Where(p => p.UserId == userId);
+            => this.GetQuery(p => p.UserId == userId);
 
         public IQueryable<Participant> GetAllOfficialByContest(int contestId)
             => this.participantsCommonData
@@ -131,8 +129,7 @@ namespace OJS.Services.Administration.Data.Implementations
         }
 
         public IQueryable<Participant> GetAllByContest(int contestId)
-            => this.DbSet
-                .Where(p => p.ContestId == contestId);
+            => this.GetQuery(p => p.ContestId == contestId);
 
         public IQueryable<Participant> GetAllByContestAndIsOfficial(int contestId, bool isOfficial)
             => this.GetAllByContest(contestId)

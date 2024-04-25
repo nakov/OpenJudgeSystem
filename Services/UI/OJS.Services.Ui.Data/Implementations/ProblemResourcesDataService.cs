@@ -13,10 +13,10 @@
         }
 
         public IQueryable<ProblemResource> GetByProblemQuery(int problemId) =>
-            this.DbSet
+            this.GetQuery()
                 .Where(pr => pr.ProblemId == problemId);
 
         public void DeleteByProblem(int problemId) =>
-            this.DbSet.RemoveRange(this.DbSet.Where(pr => pr.ProblemId == problemId));
+            this.Delete(pr => pr.ProblemId == problemId);
     }
 }

@@ -7,7 +7,7 @@ namespace OJS.Data.Models.Contests
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using static OJS.Data.Validation.ConstraintConstants.Contest;
 
     public class Contest : DeletableAuditInfoEntity<int>, IOrderableEntity
@@ -87,8 +87,6 @@ namespace OJS.Data.Models.Contests
         public bool AllowParallelSubmissionsInTasks { get; set; }
 
         public virtual ICollection<LecturerInContest> LecturersInContests { get; set; } = new HashSet<LecturerInContest>();
-
-        public virtual ICollection<ContestQuestion> Questions { get; set; } = new HashSet<ContestQuestion>();
 
         public virtual ICollection<ProblemGroup> ProblemGroups { get; set; } = new HashSet<ProblemGroup>();
 

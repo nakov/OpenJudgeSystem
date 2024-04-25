@@ -5,7 +5,7 @@ namespace OJS.Data.Models.Participants
     using OJS.Data.Models.Users;
     using System;
     using System.Collections.Generic;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class Participant : AuditInfoEntity<int>
     {
@@ -46,8 +46,6 @@ namespace OJS.Data.Models.Participants
 
         public virtual ICollection<ProblemForParticipant> ProblemsForParticipants { get; set; } =
             new HashSet<ProblemForParticipant>();
-
-        public virtual ICollection<ParticipantAnswer> Answers { get; set; } = new HashSet<ParticipantAnswer>();
 
         public override string ToString() => this.UserId;
     }
