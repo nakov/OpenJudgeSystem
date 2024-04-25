@@ -47,7 +47,7 @@ public class ContestParticipationValidationService : IContestParticipationValida
             ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !userIsAdminOrLecturerInContest))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
+            return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);
         }
 
         if (userIsAdminOrLecturerInContest)
@@ -59,12 +59,12 @@ public class ContestParticipationValidationService : IContestParticipationValida
 
         if (official && !contestActivityEntity.CanBeCompeted)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
+            return ValidationResult.Invalid(ValidationMessages.Contest.CanBeCompeted);
         }
 
         if (!official && !contestActivityEntity.CanBePracticed)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
+            return ValidationResult.Invalid(ValidationMessages.Contest.CanBePracticed);
         }
 
         if (contest.IsOnlineExam &&

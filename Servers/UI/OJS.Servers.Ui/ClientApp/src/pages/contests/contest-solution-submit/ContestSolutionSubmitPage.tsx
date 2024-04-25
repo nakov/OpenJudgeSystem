@@ -8,19 +8,20 @@ import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { ISubmissionTypeType } from '../../../common/types';
+import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import Dropdown from '../../../components/dropdown/Dropdown';
 import FileUploader from '../../../components/file-uploader/FileUploader';
-import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
+    useLazyDownloadContestProblemResourceQuery,
     useLazyGetContestByIdQuery,
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
@@ -28,6 +29,7 @@ import {
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted } from '../../../utils/dates';
+import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
@@ -50,6 +52,7 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
@@ -71,6 +74,11 @@ const ContestSolutionSubmitPage = () => {
             isLoading: submissionsDataLoading,
         },
     ] = useLazyGetSubmissionResultsByProblemQuery();
+    const [ downloadResourceFile, {
+        data: problemResourceDownloadData,
+        isError: problemResourceDownloadError,
+        isLoading: problemResourceDownloadIsLoading,
+    } ] = useLazyDownloadContestProblemResourceQuery();
 
     const isModalOpen = Boolean(anchorEl);
     const isCompete = participationType === ContestParticipationType.Compete;
@@ -181,6 +189,13 @@ const ContestSolutionSubmitPage = () => {
         setSubmissionCode('');
     }, [ selectedContestDetailsProblem ]);
 
+    useEffect(() => {
+        if (!problemResourceDownloadData) {
+            return;
+        }
+        downloadFile(problemResourceDownloadData.blob, `${selectedContestDetailsProblem?.name}-resources`);
+    }, [ problemResourceDownloadData, selectedContestDetailsProblem?.name ]);
+
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
     useEffect(() => {
@@ -236,6 +251,7 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(async () => {
+        setIsSubmitButtonDisabled(true);
         try {
             await submitSolution({
                 content: submissionCode!,
@@ -262,6 +278,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
+        setIsSubmitButtonDisabled,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -307,71 +324,95 @@ const ContestSolutionSubmitPage = () => {
         }
 
         const { resources } = selectedContestDetailsProblem;
+
         // eslint-disable-next-line consistent-return
         return (
-            <div className={styles.problemDescriptionsWrapper}>
-                <div className={styles.problemDescriptions}>
-                    { resources.map((resource: any, idx) => {
-                        const { link, name: linkName } = resource;
-                        return (
-                            <Link key={`resource-problem-${idx}`} target="_blank" to={link}>
-                                <IoDocumentText />
-                                {' '}
-                                {linkName}
-                            </Link>
-                        );
-                    })}
-                </div>
-                <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
-                    <IoIosInformationCircleOutline />
-                </div>
-                <Popover
-                  open={isModalOpen}
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left',
-                  }}
-                  sx={{ pointerEvents: 'none' }}
-                  onClose={onPopoverClose}
-                  disableRestoreFocus
-                >
-                    <div className={`${styles.popoverContent} ${textColorClassName} ${lightBackgroundClassName}`}>
-                        <div>
-                            <span className={styles.title}>Allowed working time:</span>
-                            {' '}
-                            <span>{timeLimit}</span>
-                            {' '}
-                            sec
-                        </div>
-                        <div>
-                            <span className={styles.title}>Allowed memory:</span>
-                            {' '}
-                            <span>{memoryLimit}</span>
-                            {' '}
-                            MB
-                        </div>
-                        <div>
-                            <span className={styles.title}>Size limit:</span>
-                            {' '}
-                            <span>{fileSizeLimit}</span>
-                            {' '}
-                            KB
-                        </div>
-                        { checkerName && (
-                        <div>
-                            <span className={styles.title}>Checker:</span>
-                            {' '}
-                            { checkerName}
-                        </div>
-                        )}
+            <>
+                <div className={styles.problemDescriptionsWrapper}>
+                    <div className={styles.problemDescriptions}>
+                        { resources.map((resource: IProblemResourceType) => {
+                            const { link, name: linkName, id } = resource;
+                            if (resource.link) {
+                                return (
+                                    <Link key={`resource-problem-${id}`} className={styles.resourceElement} target="_blank" to={link}>
+                                        <IoDocumentText />
+                                        {' '}
+                                        {linkName}
+                                    </Link>
+                                );
+                            }
+
+                            return (
+                                <div
+                                  key={`resource-problem-${id}`}
+                                  className={styles.resourceElement}
+                                  onClick={() => downloadResourceFile({ id })}
+                                >
+                                    <IoDocumentText />
+                                    {linkName}
+                                </div>
+                            );
+                        })}
                     </div>
-                </Popover>
-            </div>
+                    <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
+                        <IoIosInformationCircleOutline />
+                    </div>
+                    <Popover
+                      open={isModalOpen}
+                      anchorEl={anchorEl}
+                      anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'left',
+                      }}
+                      transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'left',
+                      }}
+                      sx={{ pointerEvents: 'none' }}
+                      onClose={onPopoverClose}
+                      disableRestoreFocus
+                    >
+                        <div className={`${styles.popoverContent} ${textColorClassName} ${lightBackgroundClassName}`}>
+                            <div>
+                                <span className={styles.title}>Allowed working time:</span>
+                                {' '}
+                                <span>{timeLimit}</span>
+                                {' '}
+                                sec
+                            </div>
+                            <div>
+                                <span className={styles.title}>Allowed memory:</span>
+                                {' '}
+                                <span>{memoryLimit}</span>
+                                {' '}
+                                MB
+                            </div>
+                            <div>
+                                <span className={styles.title}>Size limit:</span>
+                                {' '}
+                                <span>{fileSizeLimit}</span>
+                                {' '}
+                                KB
+                            </div>
+                            { checkerName && (
+                            <div>
+                                <span className={styles.title}>Checker:</span>
+                                {' '}
+                                {checkerName}
+                            </div>
+                            )}
+                        </div>
+                    </Popover>
+                </div>
+                <div className={styles.problemResourceIndicator}>
+                    { problemResourceDownloadError
+                        ? <div className={styles.problemResourceDownloadError}>Error downloading problem resource. Please try again!</div>
+                        : ''}
+                    { problemResourceDownloadIsLoading
+                        ? <div className={styles.problemResourceLoading}>Downloading resource...</div>
+                        : ''}
+                </div>
+            </>
         );
     }, [
         selectedContestDetailsProblem,
@@ -381,8 +422,11 @@ const ContestSolutionSubmitPage = () => {
         fileSizeLimit,
         memoryLimit,
         timeLimit,
+        problemResourceDownloadIsLoading,
+        problemResourceDownloadError,
         lightBackgroundClassName,
         textColorClassName,
+        downloadResourceFile,
     ]);
 
     const renderSubmissionsInput = useCallback(() => {
@@ -399,7 +443,7 @@ const ContestSolutionSubmitPage = () => {
                     {fileUploadError && <div className={styles.fileUploadError}>{fileUploadError}</div>}
                     <FileUploader
                       file={uploadedFile}
-                      problemId={123}
+                      problemId={selectedContestDetailsProblem?.id}
                       allowedFileExtensions={allowedFileExtensions}
                       onInvalidFileExtension={(e) => setFileUploadError(e.detail)}
                       onFileUpload={(file) => {
@@ -407,7 +451,7 @@ const ContestSolutionSubmitPage = () => {
                           setUploadedFile(file);
                       }}
                     />
-                    <div className={styles.remainingTimeNadSubmitButtonWrapper}>
+                    <div className={styles.remainingTimeNadSubmitButtonWrapper} style={{ height: 420 }}>
                         {remainingTime > 0 && (
                             <div>
                                 Remaining time:
@@ -416,15 +460,14 @@ const ContestSolutionSubmitPage = () => {
                             </div>
                         )}
                         <Button
-                          className={styles.fileSubmitButton}
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={!uploadedFile || isSubmitButtonDisabled || submitSolutionFileIsLoading
+                          state={!uploadedFile || fileUploadError || submitSolutionFileIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
                         {submitSolutionFileError && (
-                            <div className={styles.solutionSubmitError}>Error submitting solution file. Please try again!</div>
+                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
                         )}
                     </div>
                 </div>
@@ -459,11 +502,11 @@ const ContestSolutionSubmitPage = () => {
                           onClick={onSolutionSubmitCode}
                           text="Submit"
                         />
-                        {submitSolutionError && (
-                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
-                        )}
                     </div>
                 </div>
+                {submitSolutionError && (
+                    <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                )}
             </div>
         );
     }, [
@@ -480,6 +523,7 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionType,
         fileUploadError,
         submitSolutionFileError,
+        selectedContestDetailsProblem,
         onSolutionSubmitCode,
         onSolutionSubmitFile,
         setSubmissionCode,
@@ -508,7 +552,7 @@ const ContestSolutionSubmitPage = () => {
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <div className={styles.title}>{contest?.name}</div>
+                <Link to={`/contests/${contest?.id}`} className={`${styles.title} ${textColorClassName}`}>{contest?.name}</Link>
                 <div
                   className={styles.allResultsLink}
                   onClick={() => navigate(`/contests/${contest?.id}/${participationType}/results/simple`)}
@@ -516,6 +560,15 @@ const ContestSolutionSubmitPage = () => {
                     Show all results
                 </div>
             </div>
+            { user.canAccessAdministration && (
+                <div className={styles.administrationButtonWrapper}>
+                    <LinkButton
+                      to={`/administration-new/problems/${selectedContestDetailsProblem?.id}`}
+                      isToExternal
+                      text="Open in administration"
+                    />
+                </div>
+            ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
                   problems={problems || []}
