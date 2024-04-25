@@ -4,7 +4,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
+import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
