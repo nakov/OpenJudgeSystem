@@ -14,7 +14,7 @@ import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import Dropdown from '../../../components/dropdown/Dropdown';
 import FileUploader from '../../../components/file-uploader/FileUploader';
-import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
@@ -52,6 +52,7 @@ const ContestSolutionSubmitPage = () => {
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
+    const { internalUser: user } = useAppSelector((state) => state.authorization);
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
@@ -559,6 +560,15 @@ const ContestSolutionSubmitPage = () => {
                     Show all results
                 </div>
             </div>
+            { user.canAccessAdministration && (
+                <div className={styles.administrationButtonWrapper}>
+                    <LinkButton
+                      to={`/administration-new/problems/${selectedContestDetailsProblem?.id}`}
+                      isToExternal
+                      text="Open in administration"
+                    />
+                </div>
+            ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
                   problems={problems || []}
