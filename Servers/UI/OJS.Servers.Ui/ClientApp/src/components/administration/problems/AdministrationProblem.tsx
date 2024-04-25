@@ -68,9 +68,6 @@ const AdministrationProblem = () => {
         />
     );
 
-    if (isGettingActivity || isFetchingActivity) {
-        return <SpinningLoader />;
-    }
     return (
         <>
             {renderErrorMessagesAlert(errorMessages)}
