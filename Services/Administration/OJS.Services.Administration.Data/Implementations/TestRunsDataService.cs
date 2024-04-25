@@ -4,12 +4,11 @@ using FluentExtensions.Extensions;
 using OJS.Common;
 using OJS.Data;
 using OJS.Data.Models.Tests;
-using OJS.Services.Common.Data.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
+public class TestRunsDataService : AdministrationDataService<TestRun>, ITestRunsDataService
 {
     public TestRunsDataService(OjsDbContext testRuns)
         : base(testRuns)
@@ -17,8 +16,7 @@ public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
     }
 
     public IQueryable<TestRun> GetAllByTest(int testId) =>
-        this.DbSet
-            .Where(tr => tr.TestId == testId);
+        this.GetQuery(tr => tr.TestId == testId);
 
     public async Task DeleteByProblem(int problemId)
     {

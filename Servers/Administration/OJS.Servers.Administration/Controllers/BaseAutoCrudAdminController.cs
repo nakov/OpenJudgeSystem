@@ -8,7 +8,7 @@ using FluentExtensions.Extensions;
 using Microsoft.Extensions.Options;
 using NonFactors.Mvc.Grid;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.Data.Infrastructure.Models;
+using OJS.Data.Models.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;

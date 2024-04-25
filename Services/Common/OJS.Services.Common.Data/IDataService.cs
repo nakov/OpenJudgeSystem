@@ -1,7 +1,7 @@
 namespace OJS.Services.Common.Data
 {
     using OJS.Services.Common.Models.Users;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using SoftUni.Services.Infrastructure;
     using System;
     using System.Collections.Generic;
@@ -27,8 +27,6 @@ namespace OJS.Services.Common.Data
         void Detach(TEntity entity);
 
         void DeleteMany(IEnumerable<TEntity> entities);
-
-        Task<int> GetCount();
 
         Task<IEnumerable<TEntity>> All(
             Expression<Func<TEntity, bool>>? filter = null,

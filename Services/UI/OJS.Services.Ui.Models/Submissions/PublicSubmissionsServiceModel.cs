@@ -9,13 +9,6 @@ using OJS.Data.Models.Users;
 using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
 
-public enum StateResultForPublicSubmissionsServiceModel
-{
-    Ready = 1,
-    Processing = 2,
-    Queued = 3,
-}
-
 public class UserForPublicSubmissionsServiceModel
     : IMapExplicitly
 {
@@ -80,8 +73,6 @@ public class PublicSubmissionsServiceModel : IMapExplicitly
 
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
-    public StateResultForPublicSubmissionsServiceModel State { get; set; }
-
     public bool IsCompiledSuccessfully { get; set; }
 
     public bool Processed { get; set; }
@@ -102,12 +93,6 @@ public class PublicSubmissionsServiceModel : IMapExplicitly
                 x => x.Result,
                 opt => opt.MapFrom(
                     y => y))
-            .ForMember(
-                x => x.State,
-                opt => opt.MapFrom(
-                    y => y.Processed
-                        ? StateResultForPublicSubmissionsServiceModel.Ready
-                        : StateResultForPublicSubmissionsServiceModel.Queued))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(

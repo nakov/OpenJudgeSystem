@@ -1,17 +1,26 @@
+/* eslint-disable simple-import-sort/imports */
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
 import { IContestStrategyFilter } from '../../common/contest-types';
 import {
+    ICompeteContestResponseType,
     IContestCategory,
     IContestDetailsResponseType,
     IContestsSortAndFilterOptions,
     IGetContestParticipationsForUserQueryParams,
     IIndexContestsType,
     IPagedResultType,
+    IRegisterUserForContestResponseType,
 } from '../../common/types';
-import { IContestDetailsUrlParams, IGetContestResultsParams } from '../../common/url-types';
 import { IContestResultsType } from '../../hooks/contests/types';
+import {
+    IContestDetailsUrlParams,
+    IGetContestResultsParams,
+    ISubmitContestPasswordParams,
+    ISubmitContestSolutionParams,
+    IRegisterUserForContestParams,
+} from '../../common/url-types';
 
 // eslint-disable-next-line import/group-exports
 export const contestsService = createApi({
@@ -22,6 +31,21 @@ export const contestsService = createApi({
         prepareHeaders: (headers: any) => {
             headers.set('Content-Type', 'application/json');
             return headers;
+        },
+        responseHandler: async (response: Response) => {
+            const contentType = response.headers.get('Content-Type');
+
+            if (contentType?.includes('application/octet-stream') ||
+                contentType?.includes('application/zip')) {
+                const blob = await response.blob();
+
+                return { blob, fileName: 'file.zip' };
+            }
+            if (response.headers.get('Content-Length')) {
+                return '';
+            }
+
+            return response.json();
         },
     }),
     endpoints: (builder) => ({
@@ -62,6 +86,56 @@ export const contestsService = createApi({
                         strategy,
                     },
                 }),
+                keepUnusedDataFor: 0,
+            }),
+        getContestUserParticipation: builder.query<ICompeteContestResponseType, { id: number; isOfficial: boolean }>({
+            query: ({ id, isOfficial }) => ({
+                url: `/compete/${id}`,
+                params: { isOfficial },
+            }),
+            keepUnusedDataFor: 0,
+        }),
+        submitContestSolution: builder.mutation<void, ISubmitContestSolutionParams>({
+            query: ({ content, official, problemId, submissionTypeId }) => ({
+                url: '/Compete/Submit',
+                method: 'POST',
+                body: { content, official, problemId, submissionTypeId },
+            }),
+        }),
+        submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
+            query: ({ content, official, submissionTypeId, problemId }) => {
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('official', official
+                    ? 'true'
+                    : 'false');
+                formData.append('problemId', problemId.toString());
+                formData.append('submissionTypeId', submissionTypeId.toString());
+
+                return {
+                    url: '/Compete/SubmitFileSubmission',
+                    method: 'POST',
+                    body: formData,
+                };
+            },
+        }),
+        submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({
+            query: ({ contestId, isOfficial, password }) => ({
+                url: `/contests/SubmitContestPassword/${contestId}`,
+                method: 'POST',
+                params: { isOfficial },
+                body: { password },
+            }),
+        }),
+        registerUserForContest: builder.mutation<
+            IRegisterUserForContestResponseType,
+            IRegisterUserForContestParams>({
+                query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
+                    url: `/compete/${id}/register`,
+                    method: 'POST',
+                    params: { isOfficial },
+                    body: { password, hasConfirmedParticipation },
+                }),
             }),
         getContestResults: builder.query<
             IContestResultsType,
@@ -74,6 +148,12 @@ export const contestsService = createApi({
                     },
                 }),
             }),
+        downloadContestProblemResource: builder.query<{ blob: Blob }, { id: number }>({
+            query: ({ id }) => ({
+                url: `/ProblemResources/GetResource/${id}`,
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -85,5 +165,10 @@ export const {
     useGetContestByIdQuery,
     useLazyGetContestByIdQuery,
     useLazyGetContestsParticipationsForUserQuery,
+    useSubmitContestSolutionMutation,
+    useRegisterUserForContestMutation,
+    useSubmitContestSolutionFileMutation,
+    useGetContestUserParticipationQuery,
     useGetContestResultsQuery,
+    useLazyDownloadContestProblemResourceQuery,
 } = contestsService;

@@ -23,10 +23,10 @@ namespace OJS.Services.Ui.Data.Implementations
             this.GetAll()
                 .Where(pg => pg.Id == id);
 
-        public IQueryable<ProblemGroup> GetAll() => this.DbSet;
+        public IQueryable<ProblemGroup> GetAll() => this.GetQuery();
 
         public IQueryable<ProblemGroup> GetAllWithDeleted() =>
-            this.DbSet.IgnoreQueryFilters();
+            this.GetQuery().IgnoreQueryFilters();
 
         public IQueryable<ProblemGroup> GetAllByContest(int contestId) =>
             this.GetAll()

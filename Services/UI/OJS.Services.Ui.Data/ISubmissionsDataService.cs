@@ -21,8 +21,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
         int submissionsPerPage,
         int pageNumber);
 
-    Task<int> GetTotalSubmissionsCount();
-
     Task<int> GetParticipantIdBySubmission(int submissionId);
 
     Task<int> GetProblemIdBySubmission(int submissionId);

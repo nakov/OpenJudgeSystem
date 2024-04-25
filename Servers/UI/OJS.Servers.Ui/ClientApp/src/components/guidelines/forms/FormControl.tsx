@@ -212,7 +212,7 @@ const FormControl = ({
 
             if (type === FormControlType.password) {
                 return (
-                    <>
+                    <div className={styles.inputPasswordWrapper}>
                         <input
                           type={
                             showPassword
@@ -230,11 +230,13 @@ const FormControl = ({
                               ? labelText
                               : undefined}
                         />
-                        {
-                            showPassword
+                        <div className={styles.passwordIconWrapper}>
+                            {showPassword
                                 ? (
                                     <FaEyeSlash
-                                      onClick={() => { setShowPassword(!showPassword); }}
+                                      onClick={() => {
+                                          setShowPassword(!showPassword);
+                                      }}
                                       className={concatClassNames(
                                           styles.passwordIcon,
                                           getColorClassName(themeColors.textColor),
@@ -243,15 +245,17 @@ const FormControl = ({
                                 )
                                 : (
                                     <FaEye
-                                      onClick={() => { setShowPassword(!showPassword); }}
+                                      onClick={() => {
+                                          setShowPassword(!showPassword);
+                                      }}
                                       className={concatClassNames(
                                           styles.passwordIcon,
                                           getColorClassName(themeColors.textColor),
                                       )}
                                     />
-                                )
-                        }
-                    </>
+                                )}
+                        </div>
+                    </div>
                 );
             }
 

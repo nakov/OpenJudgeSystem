@@ -34,16 +34,14 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     }
 
     public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
-        => await this.DbSet
+        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
-            .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 
     public async Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId)
-        => await this.DbSet
-            .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
+        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
             .Include(c => c.Category)
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
@@ -64,8 +62,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .ToListAsync();
 
     public IQueryable<Contest> GetAllNonDeletedContests()
-            => this.DbSet
-                .Where(c => c.IsVisible && !c.IsDeleted);
+        => this.GetQuery(c => c.IsVisible && !c.IsDeleted);
 
     public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
         ContestFiltersServiceModel model)
@@ -115,23 +112,23 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     }
 
     public Task<Contest?> GetByIdWithProblems(int id)
-        => this.DbSet
+        => this.GetByIdQuery(id)
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithCategoryAndProblemsAndSubmissionTypes(int id)
-        => this.DbSet
+        => this.GetByIdQuery(id)
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
             .ThenInclude(pg => pg.Problems)
                 .ThenInclude(p => p.SubmissionTypesInProblems)
                     .ThenInclude(stp => stp.SubmissionType)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id)
-        => this.DbSet
+        => this.GetByIdQuery(id)
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
@@ -140,7 +137,11 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                  .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Checker)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithParticipants(int id)
         => this.GetByIdQuery(id)
@@ -157,8 +158,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                      p.ParticipationEndTime >= DateTime.Now))));
 
     public IQueryable<Contest> GetAllInactive()
-        => this.DbSet
-            .Where(c =>
+        => this.GetQuery(c =>
                 c.StartTime > DateTime.Now ||
                 (c.EndTime < DateTime.Now && c.Type != ContestType.OnlinePracticalExam) ||
                 !c.Participants.Any(p => p.ParticipationEndTime < DateTime.Now));
@@ -174,8 +174,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
 
     public IQueryable<Contest> GetAllByLecturer(string lecturerId)
-        => this.DbSet
-            .Where(c =>
+        => this.GetQuery(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
 
@@ -183,7 +182,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.GetAllByLecturer(lecturerId)
             .Where(c => c.CategoryId == categoryId);
 
-    public IQueryable<Contest> GetAllWithDeleted() => this.DbSet.IgnoreQueryFilters();
+    public IQueryable<Contest> GetAllWithDeleted() => this.GetQuery().IgnoreQueryFilters();
 
     public Task<int> GetMaxPointsById(int id)
         => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => true);
@@ -208,14 +207,12 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
 
     public Task<bool> IsUserParticipantInByContestAndUser(int id, string userId)
-        => this.DbSet
-            .AnyAsync(c =>
+        => this.Exists(c =>
                 c.Id == id &&
                 c.Participants.Any(p => p.UserId == userId));
 
     public Task<bool> IsUserInExamGroupByContestAndUser(int id, string userId)
-        => this.DbSet
-            .AnyAsync(c =>
+        => this.Exists(c =>
                 c.Id == id &&
                 c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
@@ -318,8 +315,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Concat(this.GetAllPracticableQuery());
 
     private IQueryable<Contest> GetAllVisibleQuery()
-        => this.DbSet
-            .Where(c => c.IsVisible);
+        => this.GetQuery(c => c.IsVisible);
 
     private Expression<Func<Contest, bool>> CanBeCompeted()
         => c => c.StartTime <= this.dates.GetUtcNow()

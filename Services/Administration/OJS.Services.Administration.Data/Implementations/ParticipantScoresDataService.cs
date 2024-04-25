@@ -4,13 +4,12 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Data;
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Data.Implementations;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class ParticipantScoresDataService : DataService<ParticipantScore>, IParticipantScoresDataService
+    public class ParticipantScoresDataService : AdministrationDataService<ParticipantScore>, IParticipantScoresDataService
     {
         private readonly IParticipantsDataService participantsData;
 
@@ -21,20 +20,18 @@ namespace OJS.Services.Administration.Data.Implementations
             => this.participantsData = participantsData;
 
         public Task<ParticipantScore?> GetByParticipantIdAndProblemId(int participantId, int problemId) =>
-            this.DbSet
-                .FirstOrDefaultAsync(ps =>
+            this.One(ps =>
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId);
 
         public Task<ParticipantScore?> GetByParticipantIdProblemIdAndIsOfficial(int participantId, int problemId, bool isOfficial) =>
-            this.DbSet
-                .FirstOrDefaultAsync(ps =>
+            this.One(ps =>
                     ps.ParticipantId == participantId &&
                     ps.ProblemId == problemId &&
                     ps.IsOfficial == isOfficial);
 
         public IQueryable<ParticipantScore> GetAll() =>
-            this.DbSet;
+            this.GetQuery();
 
         public IQueryable<ParticipantScore> GetAllByProblem(int problemId) =>
             this.GetAll()
@@ -46,13 +43,8 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task ResetBySubmission(Submission submission)
         {
-            if (submission.ParticipantId == null)
-            {
-                return;
-            }
-
             var participant = await this.participantsData
-                .GetByIdQuery(submission.ParticipantId.Value)
+                .GetByIdQuery(submission.ParticipantId)
                 .Select(p => new
                 {
                     p.IsOfficial,
@@ -67,7 +59,7 @@ namespace OJS.Services.Administration.Data.Implementations
             }
 
             var existingScore = await this.GetByParticipantIdProblemIdAndIsOfficial(
-                submission.ParticipantId.Value,
+                submission.ParticipantId,
                 submission.ProblemId,
                 participant.IsOfficial);
 
@@ -82,8 +74,7 @@ namespace OJS.Services.Administration.Data.Implementations
         }
 
         public Task DeleteAllByProblem(int problemId)
-            => this.DbSet
-                .Where(x => x.ProblemId == problemId)
+            => this.GetQuery(x => x.ProblemId == problemId)
                 .DeleteFromQueryAsync();
 
         public async Task DeleteForParticipantByProblem(int participantId, int problemId)
@@ -113,7 +104,7 @@ namespace OJS.Services.Administration.Data.Implementations
         {
             await this.Add(new ParticipantScore
             {
-                ParticipantId = submission.ParticipantId!.Value,
+                ParticipantId = submission.ParticipantId,
                 ProblemId = submission.ProblemId,
                 SubmissionId = submission.Id,
                 ParticipantName = username,
@@ -151,8 +142,7 @@ namespace OJS.Services.Administration.Data.Implementations
         }
 
         public Task RemoveSubmissionIdsBySubmissionIds(IEnumerable<int> submissionIds) =>
-            this.DbSet
-                .Where(ps => submissionIds.Cast<int?>().Contains(ps.SubmissionId))
+            this.GetQuery(ps => submissionIds.Cast<int?>().Contains(ps.SubmissionId))
                 .UpdateFromQueryAsync(
                     ps => new ParticipantScore
                     {

@@ -4,7 +4,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { FilterColumnTypeEnum, PublicSubmissionState } from './enums';
+import { FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -78,7 +78,6 @@ interface IPublicSubmission {
     user?: IPublicSubmissionUser;
     problem: IPublicSubmissionProblem;
     result: IPublicSubmissionResult;
-    state: PublicSubmissionState;
     isOfficial: boolean;
     isCompiledSuccessfully: boolean;
     maxMemoryUsed: number;
@@ -203,7 +202,7 @@ interface IContestDetailsResponseType {
     id: number;
     name: string;
     description: string;
-    problems: IContestDetailsProblemType[];
+    problems: IProblemType[];
     canViewResults: boolean;
     isOnlineExam: boolean;
     canBeCompeted: boolean;
@@ -276,13 +275,6 @@ interface IIndexContestsType {
     modifiedOn: Date | null;
 }
 
-interface IContestModalInfoType {
-    id: number;
-    name: string;
-    duration: number;
-    numberOfProblems: number;
-}
-
 interface IGetContestsForIndexResponseType {
     activeContests: IIndexContestsType[];
     pastContests: IIndexContestsType[];
@@ -335,6 +327,7 @@ interface IRegisterForContestResponseType {
     duration: number;
     numberOfProblems: number;
     categoryId: number;
+    shouldConfirmParticipation: boolean;
 }
 
 interface IStartParticipationResponseType {
@@ -344,7 +337,33 @@ interface IStartParticipationResponseType {
     lastSubmissionTime: Date;
     endDateTimeForParticipantOrContest: Date | null;
     userSubmissionsTimeLimit: number;
+    shouldEnterPassword: boolean;
     participantsCount: number;
+}
+
+interface IRegisterUserForContestResponseType {
+    id: number;
+    name: string;
+    isOfficial: boolean;
+    requirePassword: boolean;
+    shouldConfirmParticipation: boolean; // if practice this should be false
+    isRegisteredSuccessfully: boolean;
+    duration: number;
+    numberOfProblems: number;
+    categoryId: number;
+}
+
+interface ICompeteContestResponseType {
+    isRegisteredParticipant: boolean; // if user has participant,
+    isActiveParticipant: boolean; // if participant is valid,
+    participantId: number;
+    lastSubmissionTime: Date;
+    contestIsCompete: boolean;
+    userSubmissionsTimeLimit: number;
+    endDateTimeForParticipantOrContest: Date | null;
+    participantsCount: number;
+    contest: IContestType | null;
+    shouldEnterPassword: boolean;
 }
 
 interface IPagedResultType<TItem> {
@@ -733,7 +752,6 @@ export type {
     IUsersState,
     IUserResponseType,
     IUserPermissionsType,
-    IContestModalInfoType,
     IContestDetailsResponseType,
     IContestDetailsProblemType,
     ISubmissionDetailsState,
@@ -787,4 +805,6 @@ export type {
     IContestActivity,
     ISettingInListModel,
     ISettingAdministrationModel,
+    IRegisterUserForContestResponseType,
+    ICompeteContestResponseType,
 };

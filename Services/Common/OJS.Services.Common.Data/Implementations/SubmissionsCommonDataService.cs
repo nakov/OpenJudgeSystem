@@ -1,8 +1,10 @@
 namespace OJS.Services.Common.Data.Implementations;
 
+using Microsoft.EntityFrameworkCore;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class SubmissionsCommonDataService : DataService<Submission>, ISubmissionsCommonDataService
 {
@@ -22,12 +24,18 @@ public class SubmissionsCommonDataService : DataService<Submission>, ISubmission
         => this.GetFromSubmissionsForProcessing(
             this.submissionsForProcessingCommonDataService.GetAllProcessing());
 
+    public Task<int> GetAllUnprocessedCount()
+        => this.GetFromSubmissionsForProcessing(
+            this.submissionsForProcessingCommonDataService.GetAllUnprocessed())
+            .CountAsync();
+
     private IQueryable<Submission> GetFromSubmissionsForProcessing(
         IQueryable<SubmissionForProcessing> submissionsForProcessing)
         => submissionsForProcessing
             .Join(
-                this.DbSet,
+                this.GetQuery(),
                 sfp => sfp.SubmissionId,
                 submission => submission.Id,
-                (_, submission) => submission);
+                (_, submission) => submission)
+            .Where(submission => !submission.IsDeleted);
 }

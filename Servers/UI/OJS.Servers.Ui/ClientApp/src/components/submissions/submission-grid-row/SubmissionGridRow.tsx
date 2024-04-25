@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { PublicSubmissionState } from '../../../common/enums';
 import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
@@ -45,7 +44,6 @@ const SubmissionGridRow = ({
         user,
         result: { points, maxPoints },
         strategyName,
-        state,
         problem: {
             id: problemId,
             name: problemName,
@@ -94,8 +92,6 @@ const SubmissionGridRow = ({
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
 
-    const hasTestRuns = (s: IPublicSubmission) => (s.testRuns && s.testRuns.length > 0) ?? false;
-
     const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
 
     const rowClassName = concatClassNames(
@@ -108,7 +104,7 @@ const SubmissionGridRow = ({
 
     const renderPoints = useCallback(
         () => {
-            if (state === PublicSubmissionState.Processing) {
+            if (!processed) {
                 return (
                     <>
                         Processing
@@ -116,7 +112,7 @@ const SubmissionGridRow = ({
                 );
             }
 
-            if (!isCompiledSuccessfully) {
+            if (processed && !isCompiledSuccessfully && !options.showDetailedResults) {
                 return <ErrorResult />;
             }
 
@@ -129,7 +125,7 @@ const SubmissionGridRow = ({
                 </span>
             );
         },
-        [ state, isCompiledSuccessfully, points, maxPoints ],
+        [ processed, isCompiledSuccessfully, options.showDetailedResults, points, maxPoints ],
     );
 
     const renderUsername = useCallback(
@@ -285,7 +281,7 @@ const SubmissionGridRow = ({
             <td>
                 <div className={styles.executionResultContainer}>
                     {
-                        options.showDetailedResults && hasTestRuns(submission)
+                        options.showDetailedResults
                             ? (
                                 <ExecutionResult
                                   testRuns={testRuns}
@@ -294,7 +290,7 @@ const SubmissionGridRow = ({
                                 />
                             )
                             : null
-                }
+                    }
                     {renderPoints()}
                 </div>
             </td>
