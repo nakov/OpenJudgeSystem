@@ -4,7 +4,6 @@ import { useLocation } from 'react-router';
 import { useGetContestActivityQuery } from '../../../redux/services/admin/contestsAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
-import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 import TabsInView from '../common/tabs/TabsInView';
 
 import ProblemForm from './problem-form/ProblemForm';
@@ -24,7 +23,7 @@ const AdministrationProblem = () => {
     const [ contestId, setContestId ] = useState<number>(0);
     const [ skipGettingContestActivity, setSkipGettingContestActivity ] = useState<boolean>(true);
 
-    const { refetch, data: activityData, error: activityError, isLoading: isGettingActivity, isFetching: isFetchingActivity } =
+    const { refetch, data: activityData, error: activityError } =
     useGetContestActivityQuery(Number(contestId), { skip: skipGettingContestActivity });
 
     const onTabChange = (event: React.SyntheticEvent, newValue: PROBLEM_LISTED_DATA) => {
