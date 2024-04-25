@@ -266,8 +266,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 };
             }
 
-            var contest = await this.contestsData
-                .GetByIdWithProblemsDetailsAndCategories(model.ContestId);
+            var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest,

@@ -140,6 +140,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.Checker)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithParticipants(int id)
