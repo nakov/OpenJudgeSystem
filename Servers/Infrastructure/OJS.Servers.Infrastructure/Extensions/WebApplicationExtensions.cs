@@ -47,7 +47,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             };
 
             app.UseHangfireDashboard(HangfirePath, dashboardOptions);
-            // app.MapHangfireDashboard(dashboardOptions);
 
             return app;
         }
