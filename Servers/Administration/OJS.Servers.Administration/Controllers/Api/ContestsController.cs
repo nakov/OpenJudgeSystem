@@ -10,6 +10,7 @@ using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Contests.GridData;
 using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Contests.Validators;
+using OJS.Services.Administration.Business.Similarity;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Contests.Problems;
@@ -24,12 +25,16 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly ContestAdministrationModelValidator validator;
     private readonly IContestsDataService contestsData;
+    private readonly ISimilarityService similarityService;
+    private readonly ContestSimilarityModelValidator similarityModelValidator;
 
     public ContestsController(
         IContestsBusinessService contestsBusinessService,
         ContestAdministrationModelValidator validator,
         IContestsGridDataService contestGridDataService,
-        IContestsDataService contestsData)
+        IContestsDataService contestsData,
+        ISimilarityService similarityService,
+        ContestSimilarityModelValidator similarityModelValidator)
     : base(
         contestGridDataService,
         contestsBusinessService,
@@ -38,6 +43,8 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         this.contestsBusinessService = contestsBusinessService;
         this.validator = validator;
         this.contestsData = contestsData;
+        this.similarityService = similarityService;
+        this.similarityModelValidator = similarityModelValidator;
     }
 
     [HttpGet]
@@ -87,5 +94,27 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     {
         var file = await this.contestsBusinessService.ExportResults(model);
         return this.File(file.Content!, file.MimeType!, file.FileName);
+    }
+
+    [HttpPost]
+    [ProtectedEntityAction("model", typeof(ContestSimilarityPermissionService))]
+    public async Task<ActionResult> CheckSimilarity(SimillarityCheckModel model)
+    {
+        var validationResult = await this.similarityModelValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
+        }
+
+        // It seems that the algorithm is not working.
+        // The issue is in the DIffText method of the similarity finder.
+        // For two identical submissions returns empty array and therefore the differencesCount is 0.
+
+        // return this.Ok(this.similarityService.GetSubmissionSimilarities(model));
+
+        return this.BadRequest("The required service is not implemented yet.");
     }
 }
