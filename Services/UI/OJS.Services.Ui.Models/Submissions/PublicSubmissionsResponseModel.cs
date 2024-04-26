@@ -20,8 +20,6 @@ public class PublicSubmissionsResponseModel : IMapFrom<PublicSubmissionsServiceM
 
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
-    public StateResultForPublicSubmissionsServiceModel State { get; set; }
-
     public bool IsCompiledSuccessfully { get; set; }
 
     public bool Processed { get; set; }

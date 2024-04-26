@@ -12,16 +12,16 @@ public class ContestDetailsValidationService : IContestDetailsValidationService
         IContestCategoriesBusinessService categoriesService) =>
         this.categoriesService = categoriesService;
 
-    public ValidationResult GetValidationResult((Contest?, int?, bool) item)
+    public ValidationResult GetValidationResult((Contest?, bool) item)
     {
-        var (contest, contestId, isUserAdminOrLecturerInContest) = item;
+        var (contest, isUserAdminOrLecturerInContest) = item;
 
         if (contest == null ||
             contest.IsDeleted ||
             ((!contest.Category!.IsVisible || !contest.IsVisible ||
               this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) && !isUserAdminOrLecturerInContest))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
+            return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);
         }
 
         return ValidationResult.Valid();

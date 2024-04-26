@@ -42,6 +42,7 @@
       align-items: center;
       display: flex;
       justify-content: flex-start;
+      margin-bottom: spacings.$sp-32;
 
       svg {
         cursor: pointer;
@@ -73,10 +74,10 @@
     }
 
     .problemName {
+      align-items: center;
+      display: flex;
       font-size: variables.$f-size-30;
       font-weight: font-weights.$font-weight-bold;
-      display: flex;
-      align-items: center;
 
       span {
         font-size: variables.$f-size-16;
@@ -100,7 +101,7 @@
       display: flex;
       margin: spacings.$sp-24 0;
 
-      > a {
+      .resourceElement {
         align-items: center;
         color: colors.$secondary-green;
         cursor: pointer;
@@ -143,7 +144,7 @@
 .popoverContent {
   @extend %font-family-normal;
 
-  font-size: variables.$f-size-18;
+  font-size: variables.$f-size-14;
   overflow: hidden;
   padding: 0 spacings.$sp-8;
 
@@ -156,16 +157,11 @@
   }
 }
 
-.fileSubmitButton {
-  bottom: 35px;
-  position: absolute;
-}
-
 .remainingTimeNadSubmitButtonWrapper {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: end;
   margin-left: spacings.$sp-24;
 
   > div {
@@ -175,8 +171,28 @@
   button {
     width: 200px;
   }
+}
 
-  .solutionSubmitError {
+.solutionSubmitError {
+  color: colors.$primary-red;
+  text-align: end;
+  margin-top: spacings.$sp-18;
+  font-size: variables.$f-size-18;
+  font-weight: font-weights.$font-weight-semi-bold;
+}
+
+.problemResourceIndicator {
+  .problemResourceDownloadError {
     color: colors.$primary-red;
+    margin-top: - spacings.$sp-12;
   }
+
+  .problemResourceLoading {
+    color: colors.$primary-blue;
+    margin-top: - spacings.$sp-12;
+  }
+}
+
+.administrationButtonWrapper {
+  margin-top: spacings.$sp-32 !important;
 }

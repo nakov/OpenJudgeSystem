@@ -22,8 +22,6 @@ public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPub
 
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
 
-    public StateResultForPublicSubmissionsServiceModel State { get; set; }
-
     public bool IsCompiledSuccessfully { get; set; }
 
     public bool Processed { get; set; }
