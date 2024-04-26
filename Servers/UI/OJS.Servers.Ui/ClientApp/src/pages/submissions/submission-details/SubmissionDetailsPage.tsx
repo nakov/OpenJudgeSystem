@@ -249,13 +249,13 @@ const SubmissionDetailsPage = () => {
                 document.querySelector('#code-content-wrapper') ||
                 document.querySelector('#download-binary-file');
 
-            if (!scrollToElement) { return; }
+            if (!scrollToElement) { return; }u``;
 
             const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToAdministrationForContest = () => navigate(`/administration-new/contests/${contestId}`);
+        const goToAdministrationForContest = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>
