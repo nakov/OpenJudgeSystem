@@ -67,7 +67,7 @@ const SubmissionGridRow = ({
 
     const usernameFromSubmission = isNil(user)
         ? getDecodedUsernameFromProfile()
-        : user?.username;
+        : user;
 
     const participationType = contestParticipationType(isOfficial);
 

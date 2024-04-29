@@ -22,7 +22,6 @@ using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using OJS.Workers.Common.Models;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;

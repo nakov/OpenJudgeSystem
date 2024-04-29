@@ -4,7 +4,6 @@
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
-    using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
     using SoftUni.Common.Models;
     using SoftUni.Services.Infrastructure;
     using System.Linq;

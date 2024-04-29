@@ -13,7 +13,6 @@ using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;

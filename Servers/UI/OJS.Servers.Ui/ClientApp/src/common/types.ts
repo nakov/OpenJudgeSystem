@@ -37,11 +37,6 @@ interface IUsersState {
     profile: IUserProfileType | null;
 }
 
-interface IPublicSubmissionUser {
-    id: string;
-    username: string;
-}
-
 interface ISubmissionDetailsState {
     currentSubmission: ISubmissionDetailsType | null;
     currentSubmissionResults: IPagedResultType<ISubmissionResults>;
@@ -75,7 +70,7 @@ interface IPublicSubmission {
     id: number;
     createdOn: Date;
     strategyName: string;
-    user?: IPublicSubmissionUser;
+    user?: string;
     problem: IPublicSubmissionProblem;
     result: IPublicSubmissionResult;
     isOfficial: boolean;
