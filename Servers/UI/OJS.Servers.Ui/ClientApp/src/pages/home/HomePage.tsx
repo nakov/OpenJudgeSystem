@@ -94,4 +94,4 @@ const HomePage = () => {
     );
 };
 
-export default setLayout(HomePage, true);
+export default setLayout(HomePage);
