@@ -43,6 +43,7 @@
   display: flex;
   font-size: variables.$f-size-18;
   justify-content: space-between;
+  line-height: 1.2;
 
   .title {
     font-size: variables.$f-size-24;
@@ -52,6 +53,7 @@
 
   .languagesWrapper {
     margin: spacings.$sp-24 0;
+    line-height: 1.5;
   }
 
   .allowedLanguages {

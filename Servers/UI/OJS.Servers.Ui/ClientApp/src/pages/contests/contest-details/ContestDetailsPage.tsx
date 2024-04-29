@@ -155,7 +155,7 @@ const ContestDetailsPage = () => {
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>
                     <div dangerouslySetInnerHTML={{
                         __html: description ||
-                          'There is no description for the selected contest.',
+                            'There is no description for the selected contest.',
                     }}
                     />
                     <div className={styles.languagesWrapper}>
@@ -164,18 +164,18 @@ const ContestDetailsPage = () => {
                         {' '}
                         {renderAllowedLanguages()}
                     </div>
+                    <div>
+                        {user.canAccessAdministration && renderAdministrationButtons()}
+                    </div>
+                    <div>
+                        {renderContestActionButton(true)}
+                        {renderContestActionButton(false)}
+                    </div>
                 </div>
                 <div>
                     <div className={styles.title}>Problems</div>
                     <div>{renderProblemsNames()}</div>
                 </div>
-            </div>
-            <div>
-                {user.canAccessAdministration && renderAdministrationButtons()}
-            </div>
-            <div>
-                {renderContestActionButton(true)}
-                {renderContestActionButton(false)}
             </div>
         </div>
     );
