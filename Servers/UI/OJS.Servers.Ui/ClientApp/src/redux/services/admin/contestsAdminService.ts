@@ -5,6 +5,7 @@ import { IContestActivity, IContestAdministration, IContestAutocomplete, IFileMo
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { SimillarityType } from '../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const contestService = createApi({
@@ -90,6 +91,14 @@ export const contestService = createApi({
             query: (id) => ({ url: `/Activity?contestId=${id}` }),
             keepUnusedDataFor: 5,
         }),
+
+        checkSimilarity: builder.mutation<null, {contestIds:Array<number>; similarityCheckType: SimillarityType} >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/CheckSimilarity',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
     }),
 });
 
@@ -105,5 +114,6 @@ export const {
     useLazyExportContestsToExcelQuery,
     useGetContestActivityQuery,
     useLazyGetContestActivityQuery,
+    useCheckSimilarityMutation,
 } = contestService;
 export default contestService;

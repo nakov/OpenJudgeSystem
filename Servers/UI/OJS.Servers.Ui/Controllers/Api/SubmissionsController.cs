@@ -173,8 +173,8 @@ public class SubmissionsController : BaseApiController
     [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> UnprocessedTotalCount()
-        => await this.submissionsForProcessingBusiness
-            .GetUnprocessedTotalCount()
+        => await this.submissionsBusiness
+            .GetAllUnprocessedCount()
             .ToOkResult();
 
     // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.

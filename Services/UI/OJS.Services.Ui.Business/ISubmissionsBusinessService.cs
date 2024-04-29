@@ -48,5 +48,7 @@
             int itemsPerPage = DefaultSubmissionsPerPage);
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
+
+        Task<int> GetAllUnprocessedCount();
     }
 }

@@ -24,6 +24,7 @@ interface IExecutionResultDetailsProps {
 
 const ExecutionResult = ({ testRuns, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
     const { getColorClassName, themeColors } = useTheme();
+
     const renderTestRunIcon = useCallback(
         (testRun: ITestRunType) => {
             switch (toLowerCase(testRun.resultType)) {
@@ -56,19 +57,29 @@ const ExecutionResult = ({ testRuns, isCompiledSuccessfully, isProcessed }: IExe
         getColorClassName(themeColors.textColor),
     );
 
+    const hasTestRuns = useCallback(() => (testRuns && testRuns.length > 0) ?? false, [ testRuns ]);
+
+    const renderResult = useCallback(() => {
+        if (isProcessed && isCompiledSuccessfully && hasTestRuns()) {
+            return (
+                <div className={styles.executionResultInfo}>
+                    <div className={styles.testRunsContainer}>
+                        {renderTestRunIcons(testRuns)}
+                    </div>
+                </div>
+            );
+        }
+
+        if (!isProcessed && !isCompiledSuccessfully) {
+            return null;
+        }
+
+        return (<ErrorResult />);
+    }, [ hasTestRuns, isCompiledSuccessfully, isProcessed, renderTestRunIcons, testRuns ]);
+
     return (
         <div className={listClassName}>
-            { isProcessed && isCompiledSuccessfully
-                ? (
-                    <div className={styles.executionResultInfo}>
-                        <div className={styles.testRunsContainer}>
-                            {renderTestRunIcons(testRuns)}
-                        </div>
-                    </div>
-                )
-                : (
-                    <ErrorResult />
-                )}
+            {renderResult()}
         </div>
     );
 };

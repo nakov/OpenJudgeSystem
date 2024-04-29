@@ -46,8 +46,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 Authorization = new[] { new HangfireAuthorizationFilter() },
             };
 
-            app.UseHangfireDashboard(HangfirePath);
-            app.MapHangfireDashboard(dashboardOptions);
+            app.UseHangfireDashboard(HangfirePath, dashboardOptions);
 
             return app;
         }
