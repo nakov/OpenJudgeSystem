@@ -249,7 +249,7 @@ const SubmissionDetailsPage = () => {
                 document.querySelector('#code-content-wrapper') ||
                 document.querySelector('#download-binary-file');
 
-            if (!scrollToElement) { return; }u``;
+            if (!scrollToElement) { return; }
 
             const yCoordinate = scrollToElement.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
@@ -268,7 +268,7 @@ const SubmissionDetailsPage = () => {
                 )}
             </div>
         );
-    }, [ contestId, navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
+    }, [ navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
