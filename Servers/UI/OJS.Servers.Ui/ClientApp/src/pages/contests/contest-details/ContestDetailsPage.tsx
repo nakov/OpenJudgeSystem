@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
+import { IProblemResourceType } from '../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import {
     getAllContestsUrl,
@@ -17,6 +18,7 @@ import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import ProblemResource from '../contest-solution-submit/ProblemResource';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -68,6 +70,14 @@ const ContestDetailsPage = () => {
         return problems.map((problem) => (
             <div key={`contest-problem-${problem.id}`} className={styles.problemNameItem}>
                 {problem.name}
+                <div className={styles.problemResources}>
+                    { problem.resources.map((resource: IProblemResourceType) => (
+                        <ProblemResource
+                          resource={resource}
+                          problem={problem.name}
+                        />
+                    ))}
+                </div>
             </div>
         ));
     };

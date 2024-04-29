@@ -96,27 +96,6 @@
       color: colors.$primary-blue;
       cursor: pointer;
     }
-
-    .problemDescriptions {
-      display: flex;
-      margin: spacings.$sp-24 0;
-
-      .resourceElement {
-        align-items: center;
-        color: colors.$secondary-green;
-        cursor: pointer;
-        display: flex;
-        text-decoration: underline;
-
-        svg {
-          margin-right: spacings.$sp-4;
-        }
-
-        &:not(:first-child) {
-          margin-left: spacings.$sp-48;
-        }
-      }
-    }
   }
 }
 
@@ -181,18 +160,11 @@
   font-weight: font-weights.$font-weight-semi-bold;
 }
 
-.problemResourceIndicator {
-  .problemResourceDownloadError {
-    color: colors.$primary-red;
-    margin-top: - spacings.$sp-12;
-  }
-
-  .problemResourceLoading {
-    color: colors.$primary-blue;
-    margin-top: - spacings.$sp-12;
-  }
-}
-
 .administrationButtonWrapper {
   margin-top: spacings.$sp-32 !important;
+}
+
+.problemDescriptions {
+  display: flex;
+  margin: spacings.$sp-24 0;
 }
