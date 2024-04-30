@@ -23,6 +23,7 @@ import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './SubmissionsDetailsPage.module.scss';
+import concatClassNames from "../../../utils/class-names";
 
 const SubmissionDetailsPage = () => {
     const navigate = useNavigate();
@@ -279,7 +280,7 @@ const SubmissionDetailsPage = () => {
     }
     if (error || retestError) {
         return (
-            <div>
+            <div className={getColorClassName(themeColors.textColor)}>
                 { retestError
                     ? 'Error retesting solution. Please try again!'
                     : 'Error fetching submission data!' }
