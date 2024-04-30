@@ -127,7 +127,11 @@ export const contestsService = createApi({
                 return {
                     url: '/Compete/SubmitFileSubmission',
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
                     body: formData,
+                    formData: true
                 };
             },
         }),

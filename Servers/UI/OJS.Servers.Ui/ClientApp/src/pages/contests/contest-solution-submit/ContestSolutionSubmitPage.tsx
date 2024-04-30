@@ -454,7 +454,7 @@ const ContestSolutionSubmitPage = () => {
                         <Button
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={!uploadedFile || fileUploadError || submitSolutionFileIsLoading
+                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
