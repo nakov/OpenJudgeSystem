@@ -88,7 +88,7 @@ const ContestRegister = () => {
                               password: '',
                               hasConfirmedParticipation: true,
                           });
-                          navigate(`/contests/${id}/${participationType}`);
+                          navigate(`/contests/${contestId}/${participationType}`);
                       }
                   }}
                   onDecline={() => navigate('/contests')}
@@ -100,7 +100,7 @@ const ContestRegister = () => {
                 <ContestPasswordForm
                   contestName={name!}
                   hasConfirmedParticipation={hasAcceptedOnlineModal}
-                  onSuccess={() => navigate(`/contests/${id}/${participationType}`)}
+                  onSuccess={() => navigate(`/contests/${contestId}/${participationType}`)}
                 />
             );
         }

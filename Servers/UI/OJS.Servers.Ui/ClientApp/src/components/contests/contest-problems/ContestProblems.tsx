@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Popover } from '@mui/material';
 
 import { IProblemType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
@@ -25,8 +26,13 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
 
+    const [ excludedFromHomeworkAnchorElement, setExcludedFromHomeworkAnchorElement ] = useState<HTMLElement | null>(null);
+
     const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
+    const modalBackgroundColorClassName = getColorClassName(themeColors.baseColor100);
     const darkBackgroundClassName = getColorClassName(themeColors.baseColor500);
+
+    const isExcludedFromHomeworkModalOpen = Boolean(excludedFromHomeworkAnchorElement);
 
     useEffect(() => {
         if (!problems) {
@@ -74,7 +80,35 @@ const ContestProblems = (props: IContestProblemsProps) => {
                             >
                                 <div>
                                     {problem.name}
-                                    {problem.isExcludedFromHomework && <span className={styles.excludedMark}>*</span>}
+                                    {problem.isExcludedFromHomework && (
+                                    <div
+                                      style={{ display: 'inline' }}
+                                      onMouseEnter={(e) => setExcludedFromHomeworkAnchorElement(e.currentTarget)}
+                                      onMouseLeave={() => setExcludedFromHomeworkAnchorElement(null)}
+                                    >
+                                        <span className={styles.excludedMark}>*</span>
+                                        {' '}
+                                        <Popover
+                                          open={isExcludedFromHomeworkModalOpen}
+                                          anchorEl={excludedFromHomeworkAnchorElement}
+                                          anchorOrigin={{
+                                              vertical: 'bottom',
+                                              horizontal: 'left',
+                                          }}
+                                          transformOrigin={{
+                                              vertical: 'top',
+                                              horizontal: 'left',
+                                          }}
+                                          sx={{ pointerEvents: 'none' }}
+                                          onClose={() => setExcludedFromHomeworkAnchorElement(null)}
+                                          disableRestoreFocus
+                                        >
+                                            <div className={`${styles.excludedFromHomeworkModal} ${modalBackgroundColorClassName}`}>
+                                                The score received from this problem would not be included in the final results for this contest.
+                                            </div>
+                                        </Popover>
+                                    </div>
+                                    )}
                                 </div>
                                 <div>
                                     {problem.points || 0}

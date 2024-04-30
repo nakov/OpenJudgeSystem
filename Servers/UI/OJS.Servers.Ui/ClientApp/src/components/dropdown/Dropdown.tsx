@@ -5,7 +5,7 @@ import useTheme from '../../hooks/use-theme';
 import styles from './Dropdown.module.scss';
 
 interface IDropdownItem {
-    id: string;
+    id: number;
     name: string;
 }
 
