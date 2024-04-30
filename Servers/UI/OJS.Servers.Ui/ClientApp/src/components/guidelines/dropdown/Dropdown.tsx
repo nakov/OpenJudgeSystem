@@ -1,7 +1,7 @@
 import { MenuItem, Select } from '@mui/material';
 
-import useTheme from '../../hooks/use-theme';
-import isNilOrEmpty from '../../utils/check-utils';
+import useTheme from '../../../hooks/use-theme';
+import isNilOrEmpty from '../../../utils/check-utils';
 
 import styles from './Dropdown.module.scss';
 

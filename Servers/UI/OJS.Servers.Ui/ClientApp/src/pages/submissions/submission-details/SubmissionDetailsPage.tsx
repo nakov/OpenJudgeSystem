@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
+import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import Button from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
@@ -20,10 +21,10 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
+import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
 import styles from './SubmissionsDetailsPage.module.scss';
-import concatClassNames from "../../../utils/class-names";
 
 const SubmissionDetailsPage = () => {
     const navigate = useNavigate();
@@ -278,15 +279,24 @@ const SubmissionDetailsPage = () => {
             </div>
         );
     }
-    if (error || retestError) {
+    if (retestError) {
         return (
             <div className={getColorClassName(themeColors.textColor)}>
-                { retestError
-                    ? 'Error retesting solution. Please try again!'
-                    : 'Error fetching submission data!' }
+                Error retesting solution. Please try again!
             </div>
         );
     }
+
+    if (error) {
+        return (
+            <ErrorWithActionButtons
+              message={getErrorMessage(error)}
+              backToUrl="/submissions"
+              backToText="Back to submissions"
+            />
+        );
+    }
+
     return (
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>
             { retestSuccess && (

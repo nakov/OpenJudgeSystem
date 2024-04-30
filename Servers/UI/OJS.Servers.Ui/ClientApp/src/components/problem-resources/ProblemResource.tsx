@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { IoDocumentText } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 
-import { IProblemResourceType } from '../../../common/types';
-import { useLazyDownloadContestProblemResourceQuery } from '../../../redux/services/contestsService';
-import downloadFile from '../../../utils/file-download-utils';
+import { IProblemResourceType } from '../../common/types';
+import { useLazyDownloadContestProblemResourceQuery } from '../../redux/services/contestsService';
+import downloadFile from '../../utils/file-download-utils';
 
 import styles from './ProblemResource.module.scss';
 

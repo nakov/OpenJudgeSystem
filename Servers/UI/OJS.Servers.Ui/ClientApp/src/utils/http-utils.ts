@@ -1,13 +1,33 @@
+import { SerializedError } from '@reduxjs/toolkit';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios, { ResponseType } from 'axios';
 import isFunction from 'lodash/isFunction';
 
 import { IDictionary, UrlType } from '../common/common-types';
+import { IErrorDataType } from '../hooks/use-http';
 
 const getUrl = <P>(url: UrlType<P>, params?: IDictionary<P> | null) => (
     isFunction(url)
         ? url(params)
         : url
 );
+
+const getErrorMessage = (
+    err: FetchBaseQueryError | SerializedError,
+    defaultErrorMessage = 'Something went wrong fetching data, please try again!',
+): string => {
+    console.log(err);
+    if ('status' in err) {
+        return 'error' in err
+            ? err.error.replace(/"/g, '')
+            : (err.data as IErrorDataType).detail.replace(/"/g, '');
+    }
+    if (err.message) {
+        return err.message.replace(/"/g, '');
+    }
+
+    return defaultErrorMessage;
+};
 
 interface IHttpCallParams {
     url: string;
@@ -55,4 +75,5 @@ const makeHttpCall = async ({
 export {
     getUrl,
     makeHttpCall,
+    getErrorMessage,
 };

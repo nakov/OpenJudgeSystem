@@ -11,10 +11,11 @@ import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
-import Dropdown from '../../../components/dropdown/Dropdown';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
+import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
+import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
@@ -28,8 +29,6 @@ import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/servic
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-
-import ProblemResource from './ProblemResource';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 

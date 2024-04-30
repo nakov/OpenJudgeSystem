@@ -13,12 +13,12 @@ import ContestButton from '../../../components/contests/contest-button/ContestBu
 import Button from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
+import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import ProblemResource from '../contest-solution-submit/ProblemResource';
 
 import styles from './ContestDetailsPage.module.scss';
 
