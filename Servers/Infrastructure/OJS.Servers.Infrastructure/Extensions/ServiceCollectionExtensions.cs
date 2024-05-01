@@ -1,6 +1,5 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
-    using AutoMapper;
     using Hangfire;
     using Hangfire.SqlServer;
     using MassTransit;
@@ -32,8 +31,7 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Infrastructure.HttpClients.Implementations;
     using OJS.Data.Implementations;
     using OJS.Services.Infrastructure.Configurations;
-    using SoftUni.Common.Extensions;
-    using SoftUni.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using System;
     using System.IO;
@@ -45,7 +43,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using System.Threading.Tasks;
     using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.FileExtensions;
-    using static SoftUni.Common.GlobalConstants.Assemblies;
 
     public static class ServiceCollectionExtensions
     {
@@ -315,31 +312,6 @@ namespace OJS.Servers.Infrastructure.Extensions
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             return Task.CompletedTask;
-        }
-
-        private static IServiceCollection AddAutoMapperConfigurations<TProgram>(this IServiceCollection services)
-            => services.AddAutoMapperConfigurations(typeof(TProgram));
-
-        private static IServiceCollection AddAutoMapperConfigurations(this IServiceCollection services, Type programType)
-        {
-            var assemblyPrefix = programType.GetAssemblyPrefix();
-            var modelsRegexPattern = string.Format(ModelsRegexPatternTemplate, assemblyPrefix);
-
-            var mappingAssemblies = programType.Assembly
-                .GetAllReferencedAssembliesWhereFullNameMatchesPatterns(modelsRegexPattern)
-                .ToArray();
-
-            var configuration = new MapperConfiguration(config =>
-            {
-                config.RegisterMappingsFrom(mappingAssemblies);
-            });
-
-            configuration.AssertConfigurationIsValid();
-
-            var mapper = configuration.CreateMapper();
-            services.AddSingleton(mapper);
-
-            return services;
         }
     }
 }

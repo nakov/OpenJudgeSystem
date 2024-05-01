@@ -2,7 +2,7 @@
 {
     using OJS.Services.Common.Models.Contests.Results;
     using OJS.Services.Common.Models.Files;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

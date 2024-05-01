@@ -6,7 +6,7 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface ILecturerContestPrivilegesBusinessService : IService
 {

@@ -1,7 +1,6 @@
 namespace OJS.Services.Infrastructure
 {
     using System.Collections.Generic;
-    using SoftUni.Services.Infrastructure;
 
     public interface IRandomProvider : IService
     {
