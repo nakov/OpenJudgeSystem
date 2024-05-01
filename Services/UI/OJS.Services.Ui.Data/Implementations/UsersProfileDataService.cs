@@ -4,7 +4,7 @@
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Data.Implementations;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
     using System.Linq;
     using System.Threading.Tasks;
 

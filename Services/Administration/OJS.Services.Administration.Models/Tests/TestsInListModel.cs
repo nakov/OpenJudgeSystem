@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Models.Tests;
 
 using OJS.Data.Models.Tests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class TestsInListModel : IMapFrom<Test>
 {

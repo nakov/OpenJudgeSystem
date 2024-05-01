@@ -8,7 +8,7 @@
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;

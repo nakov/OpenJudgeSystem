@@ -2,7 +2,7 @@ namespace OJS.Services.Ui.Models.Contests;
 
 using OJS.Data.Models;
 using AutoMapper;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class LecturerInContestCategoryServiceModel : IMapExplicitly
 {

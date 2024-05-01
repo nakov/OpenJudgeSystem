@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Worker.Business
 {
     using OJS.Workers.Common;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
     using System.Threading.Tasks;
 
     public interface ISubmissionExecutor : IService

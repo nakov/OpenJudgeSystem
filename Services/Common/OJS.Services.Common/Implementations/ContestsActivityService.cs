@@ -1,14 +1,12 @@
 namespace OJS.Services.Common.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Threading.Tasks;
 using System.Linq;
 

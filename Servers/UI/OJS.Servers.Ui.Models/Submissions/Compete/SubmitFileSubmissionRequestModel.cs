@@ -5,7 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using OJS.Common.Extensions;
 using OJS.Services.Ui.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Linq;
 
 public class SubmitFileSubmissionRequestModel : IMapExplicitly

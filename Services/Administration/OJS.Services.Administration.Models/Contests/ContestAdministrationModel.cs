@@ -4,7 +4,7 @@ using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

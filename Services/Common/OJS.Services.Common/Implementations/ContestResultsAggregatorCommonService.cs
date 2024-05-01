@@ -6,7 +6,7 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using X.PagedList;

@@ -2,7 +2,7 @@ namespace OJS.Services.Administration.Business;
 
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Tests;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.IO;
 using System.Threading.Tasks;
 

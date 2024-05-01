@@ -5,7 +5,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
     using OJS.Services.Ui.Models.Search;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
 
     public interface IProblemsBusinessService : IService
     {

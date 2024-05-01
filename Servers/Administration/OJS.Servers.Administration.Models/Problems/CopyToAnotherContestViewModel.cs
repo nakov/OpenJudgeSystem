@@ -4,7 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Contests.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.ComponentModel.DataAnnotations;
 using Resource = OJS.Common.Resources.CopyProblem;
 

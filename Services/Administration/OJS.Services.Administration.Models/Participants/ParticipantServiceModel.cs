@@ -1,7 +1,7 @@
 namespace OJS.Services.Administration.Models.Participants;
 
 using AutoMapper;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Data.Models.Participants;
 
 public class ParticipantServiceModel : IMapExplicitly

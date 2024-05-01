@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Problems;
 
 using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
 
 public class ContestDetailsProblemServiceModel : IMapFrom<Problem>

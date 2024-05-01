@@ -18,7 +18,6 @@ using OJS.Services.Infrastructure;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Workers.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using OJS.Common.Constants;
 using System.Threading.Tasks;
 

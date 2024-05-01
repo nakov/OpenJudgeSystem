@@ -3,7 +3,7 @@
 using OJS.Services.Common.Models.Pagination;
 using System.Collections.Generic;
 using System.Linq;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface IFilteringService : IService
 {

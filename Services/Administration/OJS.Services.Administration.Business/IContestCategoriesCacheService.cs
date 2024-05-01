@@ -1,6 +1,6 @@
 namespace OJS.Services.Administration.Business;
 
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
 
 public interface IContestCategoriesCacheService : IService

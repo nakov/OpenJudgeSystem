@@ -1,7 +1,7 @@
 namespace OJS.Services.Common.Implementations;
 
 using OJS.Services.Common.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Security.Claims;
 
 public class UserProviderService : IUserProviderService
