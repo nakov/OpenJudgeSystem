@@ -93,10 +93,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 .AddDbContext<TDbContext>(options =>
                 {
                     var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
-                    if (!string.IsNullOrWhiteSpace(connectionString))
-                    {
-                        options.UseSqlServer(connectionString);
-                    }
+                    options.UseSqlServer(connectionString);
                 })
                 .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
 
