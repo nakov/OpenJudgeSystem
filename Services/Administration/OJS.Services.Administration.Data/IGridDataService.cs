@@ -3,7 +3,7 @@
 using OJS.Services.Common.Models.Files;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 using OJS.Data.Models.Common;
 using OJS.Services.Infrastructure;
 using System;

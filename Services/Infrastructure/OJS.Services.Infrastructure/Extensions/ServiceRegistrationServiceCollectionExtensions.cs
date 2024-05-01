@@ -2,12 +2,12 @@ namespace OJS.Services.Infrastructure.Extensions;
 
 using FluentExtensions.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using SoftUni.Common.Extensions;
+using OJS.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static SoftUni.Common.GlobalConstants.Assemblies;
+using static OJS.Common.GlobalConstants.Assemblies;
 
 public static class ServiceRegistrationServiceCollectionExtensions
 {

@@ -5,7 +5,7 @@
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
-    using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Models;
     using OJS.Services.Infrastructure;
     using System.Linq;
     using System.Threading.Tasks;

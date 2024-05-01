@@ -3,7 +3,7 @@
 using System;
 using AutoMapper;
 using OJS.Services.Infrastructure.Models.Mapping;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 
 public class SearchServiceModel : IMapExplicitly
 {

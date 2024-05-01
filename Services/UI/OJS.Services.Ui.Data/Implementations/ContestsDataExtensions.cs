@@ -2,8 +2,8 @@ namespace OJS.Services.Ui.Data.Implementations;
 
 using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.Common.Extensions;
-using SoftUni.Common.Models;
+using OJS.Common.Extensions;
+using OJS.Services.Infrastructure.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

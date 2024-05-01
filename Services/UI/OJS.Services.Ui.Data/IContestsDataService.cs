@@ -3,7 +3,7 @@ namespace OJS.Services.Ui.Data
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data;
     using OJS.Services.Ui.Models.Contests;
-    using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;

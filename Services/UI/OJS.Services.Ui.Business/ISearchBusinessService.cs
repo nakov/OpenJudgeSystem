@@ -2,7 +2,7 @@
 
 using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Models.Search;
 
 public interface ISearchBusinessService : IService

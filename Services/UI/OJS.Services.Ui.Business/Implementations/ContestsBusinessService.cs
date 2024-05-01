@@ -16,7 +16,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Submissions;
     using OJS.Services.Infrastructure.Extensions;
-    using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;

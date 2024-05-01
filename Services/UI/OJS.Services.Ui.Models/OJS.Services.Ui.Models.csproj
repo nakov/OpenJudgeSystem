@@ -14,7 +14,6 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-      <PackageReference Include="SoftUni.Common" Version="1.0.6" />
     </ItemGroup>
 
 </Project>

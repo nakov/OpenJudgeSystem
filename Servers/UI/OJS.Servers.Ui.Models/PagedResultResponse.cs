@@ -1,7 +1,7 @@
 namespace OJS.Servers.Ui.Models;
 
 using OJS.Services.Infrastructure.Models.Mapping;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 using System.Collections.Generic;
 
 public class PagedResultResponse<TItem> : IMapFrom<PagedResult<TItem>>

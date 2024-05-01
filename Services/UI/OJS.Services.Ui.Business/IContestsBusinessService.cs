@@ -7,7 +7,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
-    using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Models;
     using OJS.Services.Infrastructure;
 
     public interface IContestsBusinessService : IService
