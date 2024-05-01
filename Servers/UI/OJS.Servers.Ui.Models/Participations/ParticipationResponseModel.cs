@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Models.Participations
 {
     using OJS.Services.Ui.Models.Participations;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
     using System;
 
     public class ParticipationsResponseModel : IMapFrom<ParticipationServiceModel>

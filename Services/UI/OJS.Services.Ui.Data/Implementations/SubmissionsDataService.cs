@@ -6,7 +6,6 @@ using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;
 using SoftUni.Common.Models;
 using System;

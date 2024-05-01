@@ -2,7 +2,7 @@
 {
     using AutoMapper;
     using OJS.Workers.ExecutionStrategies.Models;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
     using System;
     using System.Linq;
 

@@ -9,7 +9,7 @@ using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
 

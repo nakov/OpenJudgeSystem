@@ -1,7 +1,7 @@
 namespace OJS.Services.Ui.Data.Implementations;
 
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;
 using SoftUni.Common.Models;
 using System;

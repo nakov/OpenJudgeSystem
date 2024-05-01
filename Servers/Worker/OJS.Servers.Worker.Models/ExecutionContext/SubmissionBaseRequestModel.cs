@@ -6,7 +6,7 @@
     using OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
     using OJS.Services.Common.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public abstract class SubmissionBaseRequestModel<TSubmissionRequestModel, TExecutionDetails>
         : IMapExplicitly

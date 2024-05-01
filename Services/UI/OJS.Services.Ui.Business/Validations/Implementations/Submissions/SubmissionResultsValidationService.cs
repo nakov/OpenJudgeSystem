@@ -2,6 +2,8 @@
 
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;

@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class TestResultResponseModel : IMapFrom<TestRunServiceModel>
     {

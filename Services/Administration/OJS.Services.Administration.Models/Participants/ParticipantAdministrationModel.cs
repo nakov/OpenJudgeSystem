@@ -3,7 +3,7 @@
 using AutoMapper;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {

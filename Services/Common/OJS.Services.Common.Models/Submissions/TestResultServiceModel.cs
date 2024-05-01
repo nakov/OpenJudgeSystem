@@ -5,7 +5,7 @@
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
     using System;
 
     public class TestResultServiceModel : IMapExplicitly

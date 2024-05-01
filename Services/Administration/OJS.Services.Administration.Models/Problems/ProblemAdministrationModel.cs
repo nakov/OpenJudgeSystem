@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
 

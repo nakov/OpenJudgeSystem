@@ -5,7 +5,7 @@ using FluentExtensions.Extensions;
 using OJS.Services.Common;
 using OJS.Services.Ui.Models.Search;
 using SoftUni.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business.Validations.Implementations.Search;
 

@@ -3,7 +3,7 @@ namespace OJS.Services.Common.Models.Cache;
 using AutoMapper;
 using OJS.Common.Extensions.Strings;
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 

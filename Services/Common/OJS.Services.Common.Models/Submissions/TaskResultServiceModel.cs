@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Common.Models.Submissions;
 
 using AutoMapper;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 using OJS.Workers.ExecutionStrategies.Models;

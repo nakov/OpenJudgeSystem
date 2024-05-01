@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using FluentExtensions.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class SerializedSubmissionExecutionResultServiceModel : IMapExplicitly
 {

@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.4" />
     <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.7" />
   </ItemGroup>
 

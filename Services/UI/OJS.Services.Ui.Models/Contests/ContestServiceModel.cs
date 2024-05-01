@@ -7,7 +7,7 @@ using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ContestServiceModel : IMapExplicitly
 {

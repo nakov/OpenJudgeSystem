@@ -1,6 +1,6 @@
 namespace OJS.Servers.Ui.Models;
 
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using SoftUni.Common.Models;
 using System.Collections.Generic;
 

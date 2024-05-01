@@ -7,6 +7,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.BackgroundJobs;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Data;

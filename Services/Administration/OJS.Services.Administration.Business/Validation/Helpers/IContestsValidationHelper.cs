@@ -5,6 +5,8 @@ using OJS.Services.Common.Models;
 using SoftUni.Services.Infrastructure;
 using System.Threading.Tasks;
 using OJS.Services.Administration.Models.Contests;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 
 public interface IContestsValidationHelper : IService
 {

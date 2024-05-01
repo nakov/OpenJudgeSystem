@@ -2,7 +2,7 @@
 
 using OJS.Data.Models.Submissions;
 using OJS.Workers.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class SubmissionTypeInListModel : IMapFrom<SubmissionType>
 {

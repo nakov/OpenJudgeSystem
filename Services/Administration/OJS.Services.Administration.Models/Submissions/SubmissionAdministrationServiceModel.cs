@@ -6,7 +6,7 @@ using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Administration.Models.SubmissionTypes;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
 public class SubmissionAdministrationServiceModel : BaseAdministrationModel<int>, IMapExplicitly

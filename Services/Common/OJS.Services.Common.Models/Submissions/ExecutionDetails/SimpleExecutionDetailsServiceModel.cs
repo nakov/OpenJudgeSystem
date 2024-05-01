@@ -3,7 +3,7 @@
     using AutoMapper;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Workers.ExecutionStrategies.Models;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class SimpleExecutionDetailsServiceModel
         : BaseExecutionDetailsServiceModel,

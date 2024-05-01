@@ -9,7 +9,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using SoftUni.Common.Extensions;
 using SoftUni.Common.Models;
 using System;

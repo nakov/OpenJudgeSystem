@@ -9,7 +9,6 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
     using FluentExtensions.Extensions;
     using Microsoft.Extensions.Logging;
     using OJS.Common.Extensions;
-    using OJS.Services.Common.Models;
     using static OJS.Common.GlobalConstants.ErrorMessages;
     using static OJS.Common.GlobalConstants.MimeTypes;
 

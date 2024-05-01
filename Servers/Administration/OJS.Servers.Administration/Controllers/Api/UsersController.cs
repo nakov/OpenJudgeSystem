@@ -23,7 +23,7 @@ using OJS.Services.Administration.Models.LecturerInContests;
 using OJS.Services.Administration.Models.Users;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
