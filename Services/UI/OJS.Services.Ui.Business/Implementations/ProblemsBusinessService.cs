@@ -13,8 +13,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Infrastructure.Extensions;
     using X.PagedList;
     using IsolationLevel = System.Transactions.IsolationLevel;
-    using Resource = OJS.Common.Resources.ProblemsBusiness;
-    using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
     public class ProblemsBusinessService : IProblemsBusinessService
     {
