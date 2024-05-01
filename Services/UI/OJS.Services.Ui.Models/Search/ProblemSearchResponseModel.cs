@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ProblemSearchResponseModel : IMapFrom<ProblemSearchServiceModel>
 {

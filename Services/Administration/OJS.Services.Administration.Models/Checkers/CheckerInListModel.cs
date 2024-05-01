@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Models.Checkers;
 
 using OJS.Data.Models.Checkers;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
 public class CheckerInListModel : IMapFrom<Checker>

@@ -3,7 +3,7 @@ namespace OJS.Services.Administration.Models.SubmissionsForProcessing;
 using AutoMapper;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
 public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministrationModel<int>, IMapExplicitly

@@ -2,7 +2,7 @@ namespace OJS.Servers.Ui.Consumers;
 
 using System.Threading.Tasks;
 using MassTransit;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.PubSub.Worker.Models.Submissions;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Services.Ui.Business;

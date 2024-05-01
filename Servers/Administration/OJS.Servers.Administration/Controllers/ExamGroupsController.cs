@@ -13,12 +13,10 @@ using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Resource = OJS.Common.Resources.ExamGroupsController;
 
 public class ExamGroupsController : BaseAutoCrudAdminController<ExamGroup>
 {

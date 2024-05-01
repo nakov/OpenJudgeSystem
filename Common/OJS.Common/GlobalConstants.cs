@@ -29,6 +29,20 @@ namespace OJS.Common
             public const string GlobalShortDatePatternFormat = "dd/MM/yyyy";
         }
 
+        public static class Assemblies
+        {
+            // Models
+            public const string ModelsRegexPatternTemplate = @"^{0}\..+Models,";
+
+            // Services
+            public const string BusinessServicesRegexPatternTemplate = ServicesRegexPatternPrefix + "Business,";
+            public const string DataServicesRegexPatternTemplate = ServicesRegexPatternPrefix + "Data,";
+            public const string CommonServicesRegexPatternTemplate = ServicesRegexPatternPrefix + "Common,";
+            public const string InfrastructureServicesRegexPatternTemplate = ServicesRegexPatternPrefix + "Infrastructure,";
+
+            private const string ServicesRegexPatternPrefix = @"^{0}\.Services\..*\.?";
+        }
+
         public static class Roles
         {
             public const string Administrator = "Administrator";

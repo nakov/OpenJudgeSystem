@@ -1,7 +1,7 @@
 namespace OJS.Services.Administration.Models.Contests.Problems;
 
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ContestCopyProblemsValidationServiceModel : IMapFrom<Contest>
 {

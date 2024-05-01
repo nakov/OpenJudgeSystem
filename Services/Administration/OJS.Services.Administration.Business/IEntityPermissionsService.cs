@@ -2,7 +2,7 @@ namespace OJS.Services.Administration.Business;
 
 using OJS.Services.Common.Models.Users;
 using OJS.Data.Models.Common;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
 
 /// <summary>

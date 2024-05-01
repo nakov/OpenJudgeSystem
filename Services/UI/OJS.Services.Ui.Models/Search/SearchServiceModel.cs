@@ -2,8 +2,8 @@
 
 using System;
 using AutoMapper;
-using SoftUni.AutoMapper.Infrastructure.Models;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
+using OJS.Services.Infrastructure.Models;
 
 public class SearchServiceModel : IMapExplicitly
 {

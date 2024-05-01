@@ -5,7 +5,7 @@ using FluentExtensions.Extensions;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
 public class ProblemForPublicSubmissionsServiceModel

@@ -7,7 +7,7 @@
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
     using System;
     using System.Linq;
 

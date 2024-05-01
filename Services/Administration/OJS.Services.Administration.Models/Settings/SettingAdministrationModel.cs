@@ -4,7 +4,7 @@ using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class SettingAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {

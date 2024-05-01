@@ -2,7 +2,7 @@
 
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Similarity;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Collections.Generic;
 
 public interface ISimilarityService : IService

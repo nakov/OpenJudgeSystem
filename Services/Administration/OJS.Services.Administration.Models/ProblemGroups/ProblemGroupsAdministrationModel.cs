@@ -4,8 +4,8 @@ using AutoMapper;
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ProblemGroupsAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {

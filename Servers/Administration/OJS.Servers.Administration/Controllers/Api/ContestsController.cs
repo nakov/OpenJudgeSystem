@@ -16,7 +16,7 @@ using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Common.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 

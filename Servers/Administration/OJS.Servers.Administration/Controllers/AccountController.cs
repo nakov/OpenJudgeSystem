@@ -4,7 +4,7 @@ namespace OJS.Servers.Administration.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
     using OJS.Data.Models.Users;
-    using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Infrastructure.Configurations;
     using System.Threading.Tasks;
 
     public class AccountController : BaseAdminViewController

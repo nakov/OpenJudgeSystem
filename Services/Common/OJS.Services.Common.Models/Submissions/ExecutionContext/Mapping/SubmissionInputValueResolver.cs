@@ -1,10 +1,10 @@
 ﻿namespace OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
 
 using AutoMapper;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Workers.Common;
 using OJS.Workers.Common.Models;
 using OJS.Workers.ExecutionStrategies.Models;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 public class SubmissionInputValueResolver : IValueResolver<SubmissionServiceModel, IOjsSubmission, object>
 {

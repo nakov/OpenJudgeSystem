@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Models.Roles;
 
 using OJS.Data.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class RoleInListModel : IMapFrom<Role>
 {

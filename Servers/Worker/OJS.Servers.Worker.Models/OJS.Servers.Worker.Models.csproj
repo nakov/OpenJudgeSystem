@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
     <ProjectReference Include="..\..\..\Services\Common\OJS.Services.Common\OJS.Services.Common.csproj" />
     <ProjectReference Include="..\..\..\Services\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />

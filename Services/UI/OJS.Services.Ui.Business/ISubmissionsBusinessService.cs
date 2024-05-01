@@ -4,8 +4,8 @@
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
+    using OJS.Services.Infrastructure.Models;
     using System.Linq;
     using System.Threading.Tasks;
     using static OJS.Services.Common.PaginationConstants.Submissions;

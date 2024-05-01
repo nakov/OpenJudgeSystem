@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
+    using OJS.Services.Infrastructure.Models.Mapping;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;

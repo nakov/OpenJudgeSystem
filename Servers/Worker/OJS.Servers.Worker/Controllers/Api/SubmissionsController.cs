@@ -9,7 +9,7 @@ using OJS.Servers.Worker.Models.ExecutionResult;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Worker.Business;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
 

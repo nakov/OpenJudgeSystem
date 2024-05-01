@@ -4,7 +4,7 @@ namespace OJS.Services.Infrastructure.HttpClients.Implementations
     using System.Net.Http;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Infrastructure.Configurations;
 
     public class SulsPlatformHttpClientService : HttpClientService, ISulsPlatformHttpClientService
     {

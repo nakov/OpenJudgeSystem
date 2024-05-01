@@ -2,7 +2,7 @@
 
 using OJS.Data.Models.Users;
 using AutoMapper;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class UserSearchServiceModel : IMapExplicitly
 {

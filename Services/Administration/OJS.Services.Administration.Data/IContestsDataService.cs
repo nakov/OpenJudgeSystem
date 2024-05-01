@@ -5,7 +5,7 @@ namespace OJS.Services.Administration.Data
     using System.Threading.Tasks;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public interface IContestsDataService : IDataService<Contest>
     {

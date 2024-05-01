@@ -7,7 +7,7 @@
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Tests;
     using OJS.Services.Ui.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class SubmissionFileDetailsServiceModel : IMapExplicitly
     {

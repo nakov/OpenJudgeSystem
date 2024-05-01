@@ -3,6 +3,8 @@ namespace OJS.Services.Administration.Business.Validation.Implementations.ExamGr
 using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
 public class UsersInExamGroupsCreateDeleteValidationService

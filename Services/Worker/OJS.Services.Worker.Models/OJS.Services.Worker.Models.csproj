@@ -10,8 +10,4 @@
     <ProjectReference Include="..\..\Common\OJS.Workers\OJS.Workers.Common\OJS.Workers.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-  </ItemGroup>
-
 </Project>
