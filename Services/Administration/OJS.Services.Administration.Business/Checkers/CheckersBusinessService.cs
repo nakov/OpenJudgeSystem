@@ -5,7 +5,7 @@ using OJS.Data.Models.Checkers;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Checkers;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
 public class CheckersBusinessService : AdministrationOperationService<Checker, int, CheckerAdministrationModel>, ICheckersBusinessService

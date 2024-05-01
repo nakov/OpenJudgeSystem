@@ -1,7 +1,7 @@
 namespace OJS.Servers.Administration.Models.Problems;
 
 using OJS.Services.Common.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class DeleteAllProblemsInContestViewModel : IMapFrom<ContestActivityServiceModel>
 {

@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.Similarity.SimilarityDetector;
 
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface ISimilarityDetectorFactory : IService
 {

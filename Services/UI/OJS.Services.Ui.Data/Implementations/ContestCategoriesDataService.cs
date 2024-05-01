@@ -5,7 +5,6 @@
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Infrastructure.Extensions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;

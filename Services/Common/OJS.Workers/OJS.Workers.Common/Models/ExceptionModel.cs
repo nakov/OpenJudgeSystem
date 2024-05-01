@@ -1,6 +1,6 @@
 ﻿namespace OJS.Workers.Common.Models
 {
-    using FluentExtensions.Extensions;
+    using OJS.Workers.Common.Extensions;
     using System;
 
     public class ExceptionModel

@@ -4,7 +4,7 @@ using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Ui.Data;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

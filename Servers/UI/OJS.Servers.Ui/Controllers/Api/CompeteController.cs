@@ -11,7 +11,7 @@ using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Net;

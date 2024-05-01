@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
 using AutoMapper.Internal;
-using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using OJS.Data.Models.Problems;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 
 public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
 {

@@ -5,12 +5,14 @@ using OJS.Services.Common.Models;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using Resource = OJS.Common.Resources.ContestsControllers;
 using OJS.Common.Enumerations;
 using OJS.Services.Administration.Models.Contests;
 using System;
 using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 
 public class ContestsValidationHelper : IContestsValidationHelper
 {

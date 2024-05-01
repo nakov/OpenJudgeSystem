@@ -4,7 +4,6 @@ namespace OJS.Workers.ExecutionStrategies.Python
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using FluentExtensions.Extensions;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
@@ -69,15 +68,17 @@ namespace OJS.Workers.ExecutionStrategies.Python
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
-            var testResults = await executionContext.Input.Tests
-                .SelectSequential(async test => await this.RunIndividualTest(
+            foreach (var test in executionContext.Input.Tests)
+            {
+                var testResult = await this.RunIndividualTest(
                     codeSavePath,
                     executor,
                     checker,
                     executionContext,
-                    test));
+                    test);
 
-            result.Results.AddRange(testResults);
+                result.Results.Add(testResult);
+            }
 
             return result;
         }

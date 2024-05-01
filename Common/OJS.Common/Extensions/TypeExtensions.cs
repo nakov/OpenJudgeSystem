@@ -2,7 +2,6 @@ namespace OJS.Common.Extensions;
 
 using System;
 using System.Linq;
-using System.Reflection;
 
 public static class TypeExtensions
 {
@@ -54,5 +53,15 @@ public static class TypeExtensions
         return type
             .GetInterfaces()
             .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericInterfaceType);
+    }
+
+    public static string GetAssemblyPrefix(this Type type)
+    {
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type), "Could not load project name. Type is not provided.");
+        }
+
+        return type.Assembly.GetPrefix();
     }
 }

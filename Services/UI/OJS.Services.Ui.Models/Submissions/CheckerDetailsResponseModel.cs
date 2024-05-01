@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
     using OJS.Workers.Common;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class CheckerDetailsResponseModel : IMapFrom<CheckerDetails>
     {

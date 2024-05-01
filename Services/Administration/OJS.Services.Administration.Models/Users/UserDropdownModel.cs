@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Models.Users;
 
 using OJS.Data.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class UserDropdownModel : IMapFrom<UserProfile>
 {

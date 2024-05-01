@@ -13,7 +13,7 @@ namespace OJS.Services.Administration.Business.ProblemGroups
     using System.Threading.Tasks;
     using Resource = OJS.Common.Resources.ProblemGroupsBusiness;
     using SharedResource = OJS.Common.Resources.ContestsGeneral;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.Exceptions;
 
     public class ProblemGroupsBusinessService : AdministrationOperationService<ProblemGroup, int, ProblemGroupsAdministrationModel>, IProblemGroupsBusinessService

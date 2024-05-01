@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Ui.Models.Users
 {
     using OJS.Services.Ui.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class UserProfileResponseModel : IMapFrom<UserProfileServiceModel>
     {

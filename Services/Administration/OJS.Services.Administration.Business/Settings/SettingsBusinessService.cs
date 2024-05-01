@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models;
 using OJS.Services.Administration.Models.Settings;
 using OJS.Services.Common.Data;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
 public class SettingsBusinessService : AdministrationOperationService<Setting, int, SettingAdministrationModel>, ISettingsBusinessService

@@ -2,7 +2,7 @@ namespace OJS.Services.Administration.Models.Contests.Problems;
 
 using AutoMapper;
 using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Linq;
 
 public class ProblemRetestServiceModel : IMapExplicitly

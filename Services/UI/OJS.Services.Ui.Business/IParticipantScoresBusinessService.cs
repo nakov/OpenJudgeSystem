@@ -6,7 +6,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Services.Ui.Models.Participations;
     using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
 
     public interface IParticipantScoresBusinessService : IService
     {

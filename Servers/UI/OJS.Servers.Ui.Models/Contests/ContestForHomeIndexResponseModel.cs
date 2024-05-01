@@ -2,7 +2,7 @@
 {
     using System;
     using OJS.Services.Ui.Models.Contests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class ContestForHomeIndexResponseModel : IMapFrom<ContestForHomeIndexServiceModel>
     {

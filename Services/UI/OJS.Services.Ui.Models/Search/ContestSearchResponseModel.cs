@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
 using System;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ContestSearchResponseModel : IMapFrom<ContestSearchServiceModel>
 {

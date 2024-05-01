@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Common.Models.Cache;
 
 using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class AllowedContestStrategiesServiceModel : IMapFrom<SubmissionType>
 {

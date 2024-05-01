@@ -15,6 +15,7 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Servers.Ui.Models;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Business;
     using static OJS.Common.GlobalConstants.Urls;

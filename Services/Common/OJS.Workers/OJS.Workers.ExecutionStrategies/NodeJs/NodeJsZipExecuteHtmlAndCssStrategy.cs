@@ -1,7 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
-    using FluentExtensions.Extensions;
+    using OJS.Workers.Common.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;

@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Models.ProblemGroups;
 
 using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ProblemGroupDropdownModel : IMapFrom<ProblemGroup>
 {

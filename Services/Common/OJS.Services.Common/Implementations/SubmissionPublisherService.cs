@@ -3,7 +3,7 @@ namespace OJS.Services.Common.Implementations;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.PubSub.Worker.Models.Submissions;
 
 public class SubmissionPublisherService : ISubmissionPublisherService
