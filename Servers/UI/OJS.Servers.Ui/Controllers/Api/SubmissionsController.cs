@@ -176,12 +176,14 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
          => await this.submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
              .Map<PagedResultResponse<PublicSubmissionsResponseModel>>()
              .ToOkResult();
 
+    [HttpGet]
     [Authorize(Roles = AdministratorOrLecturer)]
     [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionsForUserInRole(
