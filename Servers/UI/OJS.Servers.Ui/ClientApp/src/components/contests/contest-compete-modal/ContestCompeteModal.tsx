@@ -32,8 +32,6 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     {' '}
                     {timeToWords(time)}
                     {' '}
-                    hours
-                    {' '}
                 </b>
                 to complete the contest
                 {' '}
