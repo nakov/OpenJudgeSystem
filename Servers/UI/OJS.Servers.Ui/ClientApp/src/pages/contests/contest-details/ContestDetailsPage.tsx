@@ -19,6 +19,7 @@ import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -69,7 +70,7 @@ const ContestDetailsPage = () => {
         }
         return problems.map((problem) => (
             <div key={`contest-problem-${problem.id}`} className={styles.problemNameItem}>
-                {problem.name}
+                <span>{problem.name}</span>
                 <div className={styles.problemResources}>
                     { problem.resources.map((resource: IProblemResourceType) => (
                         <ProblemResource
@@ -181,4 +182,4 @@ const ContestDetailsPage = () => {
     );
 };
 
-export default ContestDetailsPage;
+export default setLayout(ContestDetailsPage);

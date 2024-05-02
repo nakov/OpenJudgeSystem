@@ -29,6 +29,7 @@ import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/servic
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -595,4 +596,4 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default ContestSolutionSubmitPage;
+export default setLayout(ContestSolutionSubmitPage);

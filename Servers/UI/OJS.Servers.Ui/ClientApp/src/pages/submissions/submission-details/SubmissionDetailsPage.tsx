@@ -23,6 +23,7 @@ import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './SubmissionsDetailsPage.module.scss';
 
@@ -329,4 +330,4 @@ const SubmissionDetailsPage = () => {
     );
 };
 
-export default SubmissionDetailsPage;
+export default setLayout(SubmissionDetailsPage);
