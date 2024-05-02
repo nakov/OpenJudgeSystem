@@ -150,6 +150,13 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
 
+        const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
+        if (remainingTimeForParticipantOrContest > 0) {
+            // Positive time means time is past end time for contest or participant
+            setRemainingTimeForCompete(null);
+            return;
+        }
+
         const intervalId = setInterval(() => {
             const currentTime = moment();
             const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
@@ -540,12 +547,18 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
                         </div>
-                        {remainingTimeForCompete && (
-                        <div>
-                            Remaining time:
-                            <b>{remainingTimeForCompete}</b>
-                        </div>
-                        )}
+                        {remainingTimeForCompete
+                            ? (
+                                <div>
+                                    Remaining time:
+                                    <b>{remainingTimeForCompete}</b>
+                                </div>
+                            )
+                            : (
+                                <span className={styles.errorText}>
+                                    Participation time has expired
+                                </span>
+                            )}
                     </div>
                     {renderProblemDescriptions()}
                     {renderSubmissionsInput()}
