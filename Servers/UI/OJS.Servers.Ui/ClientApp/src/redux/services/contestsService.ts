@@ -28,19 +28,27 @@ export const contestsService = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,
         credentials: 'include',
-        prepareHeaders: (headers: any) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
-        },
+        prepareHeaders: (headers) => headers,
         responseHandler: async (response: Response) => {
             const contentType = response.headers.get('Content-Type');
 
             if (contentType?.includes('application/octet-stream') ||
+                contentType?.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
                 contentType?.includes('application/zip')) {
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'file.zip';
+
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename\*?=\s*UTF-8''(.+?)(;|$)/);
+                    if (match) {
+                        filename = decodeURIComponent(match[1]);
+                    }
+                }
                 const blob = await response.blob();
 
-                return { blob, fileName: 'file.zip' };
+                return { blob, fileName: filename };
             }
+
             if (response.headers.get('Content-Length')) {
                 return '';
             }
@@ -48,6 +56,7 @@ export const contestsService = createApi({
             return response.json();
         },
     }),
+    // baseQuery: getCustomBaseQuery('contests'),
     endpoints: (builder) => ({
         getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IContestsSortAndFilterOptions>({
             query: ({ sortType, page, category, strategy }) => ({

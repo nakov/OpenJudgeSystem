@@ -103,6 +103,12 @@ const timeToWords = (time: string) => {
     return description;
 };
 
+const transformSecondsToTimeSpan = (seconds: number) => {
+    const duration = moment.duration(seconds, 'seconds');
+
+    return moment.utc(duration.asMilliseconds()).format('mm:ss');
+};
+
 interface IConvertToTwoDigitValuesParamType {
     days: number;
     hours: number;
@@ -169,4 +175,5 @@ export {
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
     timeToWords,
+    transformSecondsToTimeSpan,
 };

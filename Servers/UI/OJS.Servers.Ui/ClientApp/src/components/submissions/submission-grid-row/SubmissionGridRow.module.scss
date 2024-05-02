@@ -90,6 +90,12 @@
   }
 }
 
+.competeIconModal {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-8 spacings.$sp-18;
+}
+
 .timeAndMemoryContainer {
   align-items: center;
   display: flex;

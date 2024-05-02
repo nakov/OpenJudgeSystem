@@ -160,6 +160,18 @@
   text-align: end;
 }
 
+.problemResourceIndicator {
+  .problemResourceDownloadError {
+    color: colors.$primary-red;
+    margin-top: - spacings.$sp-12;
+  }
+
+  .problemResourceLoading {
+    color: colors.$primary-blue;
+    margin-top: - spacings.$sp-12;
+  }
+}
+
 .administrationButtonWrapper {
   margin-top: spacings.$sp-32 !important;
 }
@@ -171,4 +183,9 @@
 
 .errorText {
   color: colors.$primary-red;
+}
+
+.remainingTimeWrapper {
+  color: colors.$dark-base-color-100;
+  margin-top: spacings.$sp-12;
 }

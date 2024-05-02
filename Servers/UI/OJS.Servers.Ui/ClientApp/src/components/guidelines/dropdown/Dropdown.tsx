@@ -6,7 +6,7 @@ import isNilOrEmpty from '../../../utils/check-utils';
 import styles from './Dropdown.module.scss';
 
 interface IDropdownItem {
-    id: string;
+    id: number;
     name: string;
 }
 
