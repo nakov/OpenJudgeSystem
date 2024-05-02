@@ -16,12 +16,12 @@ const getErrorMessage = (
     err: FetchBaseQueryError | SerializedError,
     defaultErrorMessage = 'Something went wrong fetching data, please try again!',
 ): string => {
-    console.log(err);
     if ('status' in err) {
         return 'error' in err
             ? err.error.replace(/"/g, '')
             : (err.data as IErrorDataType).detail.replace(/"/g, '');
     }
+
     if (err.message) {
         return err.message.replace(/"/g, '');
     }
