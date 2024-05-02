@@ -38,7 +38,7 @@ const ContestStrategies = () => {
         }
     }, [ selectedId ]);
 
-    const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({ id: el.id.toString(), name: el.name });
+    const mapDataToDropdownItem = (el: IContestStrategyFilter) => ({ id: el.id, name: el.name });
 
     const dropdownItems = useMemo(
         () => !selectedCategory || selectedCategory?.allowedStrategyTypes?.length === 0

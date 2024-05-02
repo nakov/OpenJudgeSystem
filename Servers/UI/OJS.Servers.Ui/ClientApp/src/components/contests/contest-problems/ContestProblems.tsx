@@ -104,7 +104,8 @@ const ContestProblems = (props: IContestProblemsProps) => {
                                           disableRestoreFocus
                                         >
                                             <div className={`${styles.excludedFromHomeworkModal} ${modalBackgroundColorClassName}`}>
-                                                The score received from this problem would not be included in the final results for this contest.
+                                                The score received from this problem would not be included
+                                                in the final results for this contest.
                                             </div>
                                         </Popover>
                                     </div>

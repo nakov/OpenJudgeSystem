@@ -38,18 +38,18 @@ export const contestsService = createApi({
             if (contentType?.includes('application/octet-stream') ||
                 contentType?.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
                 contentType?.includes('application/zip')) {
-                    const contentDisposition = response.headers.get('Content-Disposition');
-                    let filename = 'file.zip';
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'file.zip';
 
-                    if(contentDisposition) {
-                        const match = contentDisposition.match(/filename\*?=\s*UTF-8''(.+?)(;|$)/);
-                        if (match) {
-                            filename = decodeURIComponent(match[1]);
-                        }
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename\*?=\s*UTF-8''(.+?)(;|$)/);
+                    if (match) {
+                        filename = decodeURIComponent(match[1]);
                     }
-                    const blob = await response.blob();
+                }
+                const blob = await response.blob();
 
-                    return { blob, fileName: filename };
+                return { blob, fileName: filename };
             }
 
             if (response.headers.get('Content-Length')) {
@@ -131,7 +131,7 @@ export const contestsService = createApi({
                         'Content-Type': 'multipart/form-data',
                     },
                     body: formData,
-                    formData: true
+                    formData: true,
                 };
             },
         }),

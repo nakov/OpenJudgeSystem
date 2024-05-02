@@ -50,6 +50,7 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
+    const [ solutionSubmitPreError, setSolutionSubmitPreError ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -121,7 +122,7 @@ const ContestSolutionSubmitPage = () => {
 
     const strategyDropdownItems = useMemo(
         () => selectedContestDetailsProblem?.allowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
-        [ selectedContestDetailsProblem, selectedContestDetailsProblem?.allowedSubmissionTypes.length ],
+        [ selectedContestDetailsProblem ],
     );
 
     // this effect manages the disabling of the submit button as well as the
@@ -212,10 +213,15 @@ const ContestSolutionSubmitPage = () => {
     // set dropdown data to the first element in the dropdown
     // instead of having the default empty one selected
     useEffect(() => {
+        const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue));
         if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
-            onStrategyDropdownItemSelect(strategyDropdownItems[0]);
+            if (!previousSelectedStrategy) {
+                onStrategyDropdownItemSelect(strategyDropdownItems[0]);
+            } else {
+                onStrategyDropdownItemSelect(previousSelectedStrategy);
+            }
         }
-    }, [ strategyDropdownItems, onStrategyDropdownItemSelect ]);
+    }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
 
     // fetching submissions only when we have selected problem,
     // otherwise the id is NaN and the query is invalid
@@ -251,6 +257,11 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(async () => {
+        setSolutionSubmitPreError(false);
+        if (!submissionCode || submissionCode.length < 3) {
+            setSolutionSubmitPreError(true);
+            return;
+        }
         try {
             await submitSolution({
                 content: submissionCode!,
@@ -277,7 +288,6 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
-        setIsSubmitButtonDisabled,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -503,13 +513,12 @@ const ContestSolutionSubmitPage = () => {
                         )}
                     </div>
                 </div>
-                {submitSolutionError && (
+                {(submitSolutionError || solutionSubmitPreError) && (
                     <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
                 )}
             </div>
         );
     }, [
-        allowedSubmissionTypes,
         submitSolutionFileIsLoading,
         uploadedFile,
         submitSolutionError,
@@ -524,6 +533,7 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFileError,
         selectedContestDetailsProblem,
         onSolutionSubmitCode,
+        solutionSubmitPreError,
         onSolutionSubmitFile,
         setSubmissionCode,
         setUploadedFile,
