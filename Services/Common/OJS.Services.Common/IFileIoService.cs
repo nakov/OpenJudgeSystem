@@ -1,6 +1,6 @@
 namespace OJS.Services.Common;
 
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface IFileIoService : IService
 {

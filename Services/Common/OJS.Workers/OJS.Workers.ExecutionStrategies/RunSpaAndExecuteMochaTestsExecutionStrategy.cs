@@ -1,7 +1,6 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies
 {
-    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,6 +8,7 @@ namespace OJS.Workers.ExecutionStrategies
     using System.Text.RegularExpressions;
     using Ionic.Zip;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -284,16 +284,18 @@ finally:
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
-            result.Results.AddRange(
-                (await executionContext.Input.Tests
-                    .SelectSequential(
-                        async test => await this.RunIndividualTest(
-                            codeSavePath,
-                            executor,
-                            executionContext,
-                            test,
-                            test.Id == executionContext.Input.Tests.Last().Id)))
-                    .SelectMany(resultList => resultList));
+            foreach (var test in executionContext.Input.Tests)
+            {
+                var testResult = await this.RunIndividualTest(
+                    codeSavePath,
+                    executor,
+                    executionContext,
+                    test,
+                    test.Id == executionContext.Input.Tests.Last().Id);
+
+                result.Results.AddRange(testResult);
+            }
+
             return result;
         }
 

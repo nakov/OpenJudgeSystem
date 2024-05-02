@@ -3,7 +3,7 @@
 using OJS.Data.Models.Problems;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ProblemResources;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using OJS.Services.Infrastructure.Exceptions;

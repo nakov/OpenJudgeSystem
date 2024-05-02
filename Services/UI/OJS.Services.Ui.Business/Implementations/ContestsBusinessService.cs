@@ -15,8 +15,8 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;

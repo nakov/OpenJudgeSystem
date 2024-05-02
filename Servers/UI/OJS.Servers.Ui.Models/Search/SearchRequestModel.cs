@@ -2,7 +2,7 @@ namespace OJS.Servers.Ui.Models.Search;
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Models.Search;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class SearchRequestModel : IMapTo<SearchServiceModel>
 {

@@ -7,7 +7,7 @@ using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Roles;
 using OJS.Services.Common.Data;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

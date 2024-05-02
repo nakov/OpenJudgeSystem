@@ -2,7 +2,7 @@ namespace OJS.Services.Ui.Models.Contests;
 
 using AutoMapper;
 using OJS.Data.Models.Participants;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Linq;
 

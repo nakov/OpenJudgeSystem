@@ -2,7 +2,7 @@ namespace OJS.Services.Common;
 
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
 
 public interface IContestsActivityService : IService

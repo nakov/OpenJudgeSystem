@@ -5,7 +5,7 @@ using OJS.Servers.Ui.Models.SubmissionTypes;
 using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Ui.Business.Cache;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;

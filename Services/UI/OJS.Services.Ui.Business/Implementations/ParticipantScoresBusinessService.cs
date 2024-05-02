@@ -14,7 +14,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Models.Participations;
     using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {

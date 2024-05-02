@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
 public class UsersBusinessService : AdministrationOperationService<UserProfile, string, UserAdministrationModel>, IUsersBusinessService

@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using OJS.Services.Common.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class TaskResultResponseModel : IMapFrom<TaskResultServiceModel>
     {

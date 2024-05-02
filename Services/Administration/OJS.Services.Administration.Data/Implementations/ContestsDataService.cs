@@ -14,8 +14,8 @@ namespace OJS.Services.Administration.Data.Implementations
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class ContestsDataService : AdministrationDataService<Contest>, IContestsDataService
     {

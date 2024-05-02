@@ -1,4 +1,4 @@
-namespace OJS.Services.Common.Models.Configurations;
+namespace OJS.Services.Infrastructure.Configurations;
 
 public abstract class BaseConfig
 {

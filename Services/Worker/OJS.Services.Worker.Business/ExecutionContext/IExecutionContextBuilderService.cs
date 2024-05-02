@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Worker.Business.ExecutionContext;
 
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Workers.Common;
 

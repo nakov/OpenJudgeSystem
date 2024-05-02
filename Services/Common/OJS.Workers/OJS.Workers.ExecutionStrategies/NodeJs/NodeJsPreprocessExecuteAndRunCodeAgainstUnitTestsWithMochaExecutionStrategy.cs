@@ -1,7 +1,6 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
-    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,6 +8,7 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;

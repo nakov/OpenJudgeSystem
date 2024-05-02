@@ -1,7 +1,7 @@
 namespace OJS.Services.Infrastructure.Extensions;
 
-using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Models;
 using System.Threading.Tasks;
 
 public static class ValidationResultExtensions

@@ -1,16 +1,27 @@
-﻿namespace OJS.Services.Infrastructure.Models;
+namespace OJS.Services.Infrastructure.Models;
 
 public class ValidationResult
 {
-    public bool IsValid { get; set; } = false;
+    protected ValidationResult()
+    {
+    }
 
-    public virtual string Message { get; set; } = null!;
+    public bool IsValid { get; set; }
 
-    public string? PropertyName { get; set; } = null!;
+    public virtual string Message { get; set; } = string.Empty;
+
+    public string? PropertyName { get; set; }
 
     public static ValidationResult Valid()
-        => new() { IsValid = true };
+        => new()
+        {
+            IsValid = true,
+        };
 
     public static ValidationResult Invalid(string message, string? propertyName = null)
-        => new() { Message = message, PropertyName = propertyName };
+        => new()
+        {
+            Message = message,
+            PropertyName = propertyName,
+        };
 }

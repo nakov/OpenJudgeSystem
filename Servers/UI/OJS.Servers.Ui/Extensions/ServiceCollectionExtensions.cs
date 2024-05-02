@@ -9,7 +9,7 @@ namespace OJS.Servers.Ui.Extensions
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Extensions;
-    using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Infrastructure.Configurations;
     using static OJS.Common.GlobalConstants;
     using ApplicationConfig = OJS.Services.Ui.Models.ApplicationConfig;
 
