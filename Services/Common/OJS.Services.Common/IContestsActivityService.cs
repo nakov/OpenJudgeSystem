@@ -15,6 +15,8 @@ public interface IContestsActivityService : IService
 
     bool CanBePracticed(IContestForActivityServiceModel contest);
 
+    bool CanUserSubmit(IContestForActivityServiceModel contest);
+
     Task<bool> IsContestActive(IContestForActivityServiceModel contest);
 
     Task<bool> IsContestActive(int contestId);

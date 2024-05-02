@@ -444,6 +444,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser,
                 model.Official)!);
 
+        if (!contestValidationResult.IsValid)
+        {
+            throw new BusinessServiceException(contestValidationResult.Message);
+        }
+
         var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
             participant!.Id,
             participant.Contest.LimitBetweenSubmissions);
@@ -458,7 +463,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             (problem,
                 currentUser,
                 participant,
-                contestValidationResult,
                 userSubmissionTimeLimit,
                 hasUserNotProcessedSubmissionForProblem,
                 hasUserNotProcessedSubmissionForContest,

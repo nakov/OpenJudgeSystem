@@ -55,13 +55,19 @@ public class ContestsActivityService : IContestsActivityService
             Id = contest!.Id,
             Name = contest.Name,
             CanBeCompeted = this.CanUserCompete(contest),
-            CanBePracticed = this.CanBePracticed(contest),
         };
 
     // Method is firstly checking if the Contest can be competed based in it's StartTime and EndTime
     // If this check returns false we have to check if the current user is a participant with remaining time
     // in an online contest
     public bool CanUserCompete(IContestForActivityServiceModel contest)
+        => this.CanBeCompeted(contest) ||
+           (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
+
+    // Method is firstly checking if the Contest can be competed based in it's StartTime and EndTime
+    // If this check returns false we have to check if the current user is a participant with remaining time
+    // in an online contest
+    public bool CanUserSubmit(IContestForActivityServiceModel contest)
         => (this.CanBeCompeted(contest) && !contest.IsOnline) ||
            (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
 
