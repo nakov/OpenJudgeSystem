@@ -408,6 +408,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantServiceModel>();
 
+        var isUserAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(problem.ProblemGroup.ContestId);
+
         var validationResult =
             this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
 
@@ -416,7 +419,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        return await this.GetUserSubmissions<TServiceModel>(problem.Id, participant.Id, page);
+        return await this.GetUserSubmissions<TServiceModel>(problem.Id, participant.Id, isUserAdminOrLecturerInContest, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -583,7 +586,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             return new PagedResult<SubmissionResultsServiceModel>();
         }
 
-        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
+        // TODO: Fix userisadminorlecturer = false
+        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, false, page);
     }
 
     public Task<int> GetTotalCount()
@@ -712,10 +716,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private async Task<PagedResult<TServiceModel>> GetUserSubmissions<TServiceModel>(
         int problemId,
         int participantId,
+        bool userIsAdminOrLecturerInContest,
         int page)
     {
         var userSubmissions = this.submissionsData
             .GetAllByProblemAndParticipant(problemId, participantId);
+
+        if (userIsAdminOrLecturerInContest)
+        {
+            userSubmissions = userSubmissions.Include(s => s.TestRuns);
+        }
 
         return await userSubmissions
             .MapCollection<TServiceModel>()

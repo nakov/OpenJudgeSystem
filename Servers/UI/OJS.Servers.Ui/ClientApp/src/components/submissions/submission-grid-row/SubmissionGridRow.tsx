@@ -102,32 +102,6 @@ const SubmissionGridRow = ({
         getColorClassName(themeColors.textColor),
     );
 
-    const renderPoints = useCallback(
-        () => {
-            if (!processed) {
-                return (
-                    <>
-                        Processing
-                    </>
-                );
-            }
-
-            if (processed && !isCompiledSuccessfully && !options.showDetailedResults) {
-                return <ErrorResult />;
-            }
-
-            return (
-                <span>
-                    {points}
-                    {' '}
-                    /
-                    {maxPoints}
-                </span>
-            );
-        },
-        [ processed, isCompiledSuccessfully, options.showDetailedResults, points, maxPoints ],
-    );
-
     const renderUsername = useCallback(
         () => (
             <LinkButton
@@ -280,18 +254,14 @@ const SubmissionGridRow = ({
             }
             <td>
                 <div className={styles.executionResultContainer}>
-                    {
-                        options.showDetailedResults
-                            ? (
-                                <ExecutionResult
-                                  testRuns={testRuns}
-                                  isCompiledSuccessfully={isCompiledSuccessfully}
-                                  isProcessed={processed}
-                                />
-                            )
-                            : null
-                    }
-                    {renderPoints()}
+                    <ExecutionResult
+                      points={points}
+                      maxPoints={maxPoints}
+                      testRuns={testRuns}
+                      isCompiledSuccessfully={isCompiledSuccessfully}
+                      isProcessed={processed}
+                      showDetailedResults={options.showDetailedResults}
+                    />
                 </div>
             </td>
             {
