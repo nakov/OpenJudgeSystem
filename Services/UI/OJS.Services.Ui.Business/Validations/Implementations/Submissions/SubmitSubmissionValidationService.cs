@@ -2,8 +2,10 @@
 
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
+using OJS.Services.Common;
+using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
-using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Submissions;
@@ -13,15 +15,21 @@ using System.Text;
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+    private readonly IContestsActivityService activityService;
 
-    public SubmitSubmissionValidationService(ILecturersInContestsBusinessService lecturersInContestsBusinessService)
-        => this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+    public SubmitSubmissionValidationService(
+        ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+        IContestsActivityService activityService)
+    {
+        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+        this.activityService = activityService;
+    }
 
     public ValidationResult GetValidationResult(
-        (Problem?, UserInfoModel, Participant?, ValidationResult, int, bool, bool, SubmitSubmissionServiceModel)
+        (Problem?, Participant?, int, bool, bool, SubmitSubmissionServiceModel)
             validationInput)
     {
-        var (problem, user, participant, contestValidationResult,
+        var (problem, participant,
                 userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem,
                 hasUserNotProcessedSubmissionForContest, submitSubmissionServiceModel) =
             validationInput;
@@ -32,6 +40,20 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         var problemId = problem.Id.ToString();
+
+        var isAdminOrLecturer = this.lecturersInContestsBusinessService
+            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
+            .GetAwaiter()
+            .GetResult();
+
+        if (participant != null &&
+            !isAdminOrLecturer &&
+            !this.activityService.CanUserSubmit(participant.Contest.Map<ContestForActivityServiceModel>()))
+        {
+            return ValidationResult.Invalid(
+                ValidationMessages.Submission.UserCannotSubmit,
+                problemId);
+        }
 
         if (participant != null &&
             !participant.Contest.AllowParallelSubmissionsInTasks &&
@@ -48,20 +70,10 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionEmpty, problemId);
         }
 
-        if (participant == null && !user.IsAdminOrLecturer && submitSubmissionServiceModel.Official)
+        if (participant == null && !isAdminOrLecturer && submitSubmissionServiceModel.Official)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam, problemId);
         }
-
-        if (!contestValidationResult.IsValid)
-        {
-            return contestValidationResult;
-        }
-
-        var isAdminOrLecturer = this.lecturersInContestsBusinessService
-            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
-            .GetAwaiter()
-            .GetResult();
 
         if (submitSubmissionServiceModel.Official &&
             participant!.Contest.IsOnlineExam &&

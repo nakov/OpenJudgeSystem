@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
+import { IProblemResourceType } from '../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import {
     getAllContestsUrl,
@@ -12,11 +13,13 @@ import ContestButton from '../../../components/contests/contest-button/ContestBu
 import Button from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
+import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -67,7 +70,15 @@ const ContestDetailsPage = () => {
         }
         return problems.map((problem) => (
             <div key={`contest-problem-${problem.id}`} className={styles.problemNameItem}>
-                {problem.name}
+                <span>{problem.name}</span>
+                <div className={styles.problemResources}>
+                    { problem.resources.map((resource: IProblemResourceType) => (
+                        <ProblemResource
+                          resource={resource}
+                          problem={problem.name}
+                        />
+                    ))}
+                </div>
             </div>
         ));
     };
@@ -145,7 +156,7 @@ const ContestDetailsPage = () => {
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>
                     <div dangerouslySetInnerHTML={{
                         __html: description ||
-                          'There is no description for the selected contest.',
+                            'There is no description for the selected contest.',
                     }}
                     />
                     <div className={styles.languagesWrapper}>
@@ -154,21 +165,21 @@ const ContestDetailsPage = () => {
                         {' '}
                         {renderAllowedLanguages()}
                     </div>
+                    <div>
+                        {user.canAccessAdministration && renderAdministrationButtons()}
+                    </div>
+                    <div>
+                        {renderContestActionButton(true)}
+                        {renderContestActionButton(false)}
+                    </div>
                 </div>
                 <div>
                     <div className={styles.title}>Problems</div>
                     <div>{renderProblemsNames()}</div>
                 </div>
             </div>
-            <div>
-                {user.canAccessAdministration && renderAdministrationButtons()}
-            </div>
-            <div>
-                {renderContestActionButton(true)}
-                {renderContestActionButton(false)}
-            </div>
         </div>
     );
 };
 
-export default ContestDetailsPage;
+export default setLayout(ContestDetailsPage);

@@ -23,7 +23,6 @@ import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../.
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
 import { ISubmissionsGridOptions } from '../submissions-grid/SubmissionsGrid';
 
@@ -73,7 +72,7 @@ const SubmissionGridRow = ({
 
     const usernameFromSubmission = isNil(user)
         ? getDecodedUsernameFromProfile()
-        : user?.username;
+        : user;
 
     const participationType = contestParticipationType(isOfficial);
 
@@ -110,32 +109,6 @@ const SubmissionGridRow = ({
             ? styles.darkRow
             : styles.lightRow,
         getColorClassName(themeColors.textColor),
-    );
-
-    const renderPoints = useCallback(
-        () => {
-            if (!processed) {
-                return (
-                    <>
-                        Processing
-                    </>
-                );
-            }
-
-            if (processed && !isCompiledSuccessfully && !options.showDetailedResults) {
-                return <ErrorResult />;
-            }
-
-            return (
-                <span>
-                    {points}
-                    {' '}
-                    /
-                    {maxPoints}
-                </span>
-            );
-        },
-        [ processed, isCompiledSuccessfully, options.showDetailedResults, points, maxPoints ],
     );
 
     const renderUsername = useCallback(
@@ -309,18 +282,14 @@ const SubmissionGridRow = ({
             }
             <td>
                 <div className={styles.executionResultContainer}>
-                    {
-                        options.showDetailedResults
-                            ? (
-                                <ExecutionResult
-                                  testRuns={testRuns}
-                                  isCompiledSuccessfully={isCompiledSuccessfully}
-                                  isProcessed={processed}
-                                />
-                            )
-                            : null
-                    }
-                    { isCompiledSuccessfully && renderPoints() }
+                    <ExecutionResult
+                      points={points}
+                      maxPoints={maxPoints}
+                      testRuns={testRuns}
+                      isCompiledSuccessfully={isCompiledSuccessfully}
+                      isProcessed={processed}
+                      showDetailedResults={options.showDetailedResults}
+                    />
                 </div>
             </td>
             {

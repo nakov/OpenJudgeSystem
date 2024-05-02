@@ -1,6 +1,5 @@
 namespace OJS.Services.Ui.Models.Submissions;
 
-using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ public class FullDetailsPublicSubmissionsResponseModel : IMapFrom<FullDetailsPub
 
     public bool IsOfficial { get; set; }
 
-    public UserForPublicSubmissionsServiceModel User { get; set; } = null!;
+    public string User { get; set; } = null!;
 
     public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
