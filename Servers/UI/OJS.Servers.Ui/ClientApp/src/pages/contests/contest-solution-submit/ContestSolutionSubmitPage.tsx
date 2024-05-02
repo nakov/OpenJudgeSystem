@@ -28,7 +28,7 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted } from '../../../utils/dates';
+import { calculatedTimeFormatted, transformSecondsToTimeSpan } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
@@ -50,6 +50,7 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
+    const [ solutionSubmitPreError, setSolutionSubmitPreError ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -120,8 +121,8 @@ const ContestSolutionSubmitPage = () => {
     }, [ allowedSubmissionTypes ]);
 
     const strategyDropdownItems = useMemo(
-        () => allowedSubmissionTypes?.map((item: any) => ({ id: item.id, name: item.name })),
-        [ allowedSubmissionTypes ],
+        () => selectedContestDetailsProblem?.allowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
+        [ selectedContestDetailsProblem ],
     );
 
     // this effect manages the disabling of the submit button as well as the
@@ -212,10 +213,15 @@ const ContestSolutionSubmitPage = () => {
     // set dropdown data to the first element in the dropdown
     // instead of having the default empty one selected
     useEffect(() => {
-        if (strategyDropdownItems?.length > 0) {
-            onStrategyDropdownItemSelect(strategyDropdownItems[0]);
+        const previousSelectedStrategy = strategyDropdownItems?.find((strat) => strat.id === Number(selectedStrategyValue));
+        if (strategyDropdownItems?.length && strategyDropdownItems?.length > 0) {
+            if (!previousSelectedStrategy) {
+                onStrategyDropdownItemSelect(strategyDropdownItems[0]);
+            } else {
+                onStrategyDropdownItemSelect(previousSelectedStrategy);
+            }
         }
-    }, [ strategyDropdownItems, onStrategyDropdownItemSelect ]);
+    }, [ strategyDropdownItems, onStrategyDropdownItemSelect, selectedStrategyValue ]);
 
     // fetching submissions only when we have selected problem,
     // otherwise the id is NaN and the query is invalid
@@ -251,7 +257,11 @@ const ContestSolutionSubmitPage = () => {
     };
 
     const onSolutionSubmitCode = useCallback(async () => {
-        setIsSubmitButtonDisabled(true);
+        setSolutionSubmitPreError(false);
+        if (!submissionCode || submissionCode.length < 3) {
+            setSolutionSubmitPreError(true);
+            return;
+        }
         try {
             await submitSolution({
                 content: submissionCode!,
@@ -278,7 +288,6 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
-        setIsSubmitButtonDisabled,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
@@ -430,7 +439,7 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const renderSubmissionsInput = useCallback(() => {
-        const { allowBinaryFilesUpload, allowedFileExtensions } = allowedSubmissionTypes[0] || {};
+        const { allowBinaryFilesUpload, allowedFileExtensions } = selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
 
         if (allowBinaryFilesUpload) {
             return (
@@ -438,13 +447,13 @@ const ContestSolutionSubmitPage = () => {
                     <div>
                         <span>Allowed extensions:</span>
                         {' '}
-                        {allowedFileExtensions.join(', ')}
+                        {(allowedFileExtensions || []).join(', ')}
                     </div>
                     {fileUploadError && <div className={styles.fileUploadError}>{fileUploadError}</div>}
                     <FileUploader
                       file={uploadedFile}
                       problemId={selectedContestDetailsProblem?.id}
-                      allowedFileExtensions={allowedFileExtensions}
+                      allowedFileExtensions={(allowedFileExtensions || [])}
                       onInvalidFileExtension={(e) => setFileUploadError(e.detail)}
                       onFileUpload={(file) => {
                           setFileUploadError('');
@@ -452,20 +461,20 @@ const ContestSolutionSubmitPage = () => {
                       }}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper} style={{ height: 420 }}>
-                        {remainingTime > 0 && (
-                            <div>
-                                Remaining time:
-                                {' '}
-                                {remainingTime}
-                            </div>
-                        )}
                         <Button
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={!uploadedFile || fileUploadError || submitSolutionFileIsLoading
+                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
+                        {remainingTime > 0 && (
+                            <div className={styles.remainingTimeWrapper}>
+                                {transformSecondsToTimeSpan(remainingTime)}
+                                {' '}
+                                until next submit
+                            </div>
+                        )}
                         {submitSolutionFileError && (
                             <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
                         )}
@@ -483,18 +492,11 @@ const ContestSolutionSubmitPage = () => {
                 />
                 <div className={styles.submitSettings}>
                     <Dropdown
-                      dropdownItems={strategyDropdownItems}
+                      dropdownItems={strategyDropdownItems || []}
                       value={selectedStrategyValue}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
-                        {remainingTime > 0 && (
-                            <div>
-                                Remaining time:
-                                {' '}
-                                {remainingTime}
-                            </div>
-                        )}
                         <Button
                           state={isSubmitButtonDisabled || submitSolutionIsLoading
                               ? ButtonState.disabled
@@ -502,15 +504,21 @@ const ContestSolutionSubmitPage = () => {
                           onClick={onSolutionSubmitCode}
                           text="Submit"
                         />
+                        {remainingTime > 0 && (
+                            <div className={styles.remainingTimeWrapper}>
+                                {transformSecondsToTimeSpan(remainingTime)}
+                                {' '}
+                                until next submit
+                            </div>
+                        )}
                     </div>
                 </div>
-                {submitSolutionError && (
+                {(submitSolutionError || solutionSubmitPreError) && (
                     <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
                 )}
             </div>
         );
     }, [
-        allowedSubmissionTypes,
         submitSolutionFileIsLoading,
         uploadedFile,
         submitSolutionError,
@@ -525,6 +533,7 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFileError,
         selectedContestDetailsProblem,
         onSolutionSubmitCode,
+        solutionSubmitPreError,
         onSolutionSubmitFile,
         setSubmissionCode,
         setUploadedFile,

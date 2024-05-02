@@ -78,6 +78,12 @@ const secondsToFullTime = (duration: number) => {
     return { days, hours, minutes, seconds };
 };
 
+const transformSecondsToTimeSpan = (seconds: number) => {
+    const duration = moment.duration(seconds, 'seconds');
+
+    return moment.utc(duration.asMilliseconds()).format('mm:ss');
+};
+
 interface IConvertToTwoDigitValuesParamType {
     days: number;
     hours: number;
@@ -142,4 +148,5 @@ export {
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
+    transformSecondsToTimeSpan,
 };

@@ -32,7 +32,6 @@ const ContestRegister = () => {
     ] = useRegisterUserForContestMutation();
 
     const {
-        id,
         name,
         requirePassword,
         shouldConfirmParticipation,
@@ -88,7 +87,7 @@ const ContestRegister = () => {
                               password: '',
                               hasConfirmedParticipation: true,
                           });
-                          navigate(`/contests/${id}/${participationType}`);
+                          navigate(`/contests/${contestId}/${participationType}`);
                       }
                   }}
                   onDecline={() => navigate('/contests')}
@@ -100,7 +99,7 @@ const ContestRegister = () => {
                 <ContestPasswordForm
                   contestName={name!}
                   hasConfirmedParticipation={hasAcceptedOnlineModal}
-                  onSuccess={() => navigate(`/contests/${id}/${participationType}`)}
+                  onSuccess={() => navigate(`/contests/${contestId}/${participationType}`)}
                 />
             );
         }
@@ -111,7 +110,6 @@ const ContestRegister = () => {
         duration,
         numberOfProblems,
         contestId,
-        id,
         participationType,
         requirePassword,
         setHasAcceptedOnlineModal,
@@ -120,8 +118,8 @@ const ContestRegister = () => {
     ]);
     const getErrorMessage = (err: FetchBaseQueryError | SerializedError, defaultErrorMessage: string): string => {
         if ('status' in err) {
-            return 'error' in err
-                ? err.error.replace(/"/g, '')
+            return 'data' in err
+                ? (err as any).data.replace(/"/g, '')
                 : JSON.stringify((err.data as any).replace(/"/g, ''));
         }
         if (err.message) {

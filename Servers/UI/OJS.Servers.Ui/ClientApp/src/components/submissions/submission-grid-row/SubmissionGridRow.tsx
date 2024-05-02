@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
@@ -65,6 +66,11 @@ const SubmissionGridRow = ({
         useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
 
+    const [ competeIconAnchorElement, setCompeteIconAnchorElement ] = useState<HTMLElement | null>(null);
+    const isCompeteIconModalOpen = Boolean(competeIconAnchorElement);
+
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
+
     const usernameFromSubmission = isNil(user)
         ? getDecodedUsernameFromProfile()
         : user?.username;
@@ -91,6 +97,10 @@ const SubmissionGridRow = ({
         },
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
+
+    const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setCompeteIconAnchorElement(event.currentTarget);
+    };
 
     const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
 
@@ -235,8 +245,27 @@ const SubmissionGridRow = ({
                 options.showCompeteMarker
                     ? isOfficial
                         ? (
-                            <td>
+                            <td onMouseEnter={(e) => onPopoverOpen(e)} onMouseLeave={() => setCompeteIconAnchorElement(null)}>
                                 <FaFlagCheckered className={styles.competeIcon} />
+                                <Popover
+                                  open={isCompeteIconModalOpen}
+                                  anchorEl={competeIconAnchorElement}
+                                  anchorOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'center',
+                                  }}
+                                  transformOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'left',
+                                  }}
+                                  sx={{ pointerEvents: 'none' }}
+                                  onClose={() => setCompeteIconAnchorElement(null)}
+                                  disableRestoreFocus
+                                >
+                                    <div className={`${styles.competeIconModal} ${backgroundColorClassName}`}>
+                                        This submission was done in compete mode.
+                                    </div>
+                                </Popover>
                             </td>
                         )
                         : <td />
@@ -291,7 +320,7 @@ const SubmissionGridRow = ({
                             )
                             : null
                     }
-                    {renderPoints()}
+                    { isCompiledSuccessfully && renderPoints() }
                 </div>
             </td>
             {
