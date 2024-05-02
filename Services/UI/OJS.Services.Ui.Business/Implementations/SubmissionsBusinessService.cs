@@ -461,7 +461,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
 
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
             (problem,
-                currentUser,
                 participant,
                 userSubmissionTimeLimit,
                 hasUserNotProcessedSubmissionForProblem,

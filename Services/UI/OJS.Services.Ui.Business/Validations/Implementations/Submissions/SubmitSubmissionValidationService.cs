@@ -26,10 +26,10 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
     }
 
     public ValidationResult GetValidationResult(
-        (Problem?, UserInfoModel, Participant?, int, bool, bool, SubmitSubmissionServiceModel)
+        (Problem?, Participant?, int, bool, bool, SubmitSubmissionServiceModel)
             validationInput)
     {
-        var (problem, user, participant,
+        var (problem, participant,
                 userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem,
                 hasUserNotProcessedSubmissionForContest, submitSubmissionServiceModel) =
             validationInput;
