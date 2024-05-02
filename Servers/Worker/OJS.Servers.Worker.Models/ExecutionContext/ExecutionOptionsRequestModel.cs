@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionContext
 {
     using OJS.Services.Common.Models.Submissions.ExecutionContext;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class ExecutionOptionsRequestModel : IMapTo<ExecutionOptionsServiceModel>
     {

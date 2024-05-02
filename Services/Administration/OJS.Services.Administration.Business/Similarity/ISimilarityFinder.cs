@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.Similarity;
 
 using OJS.Services.Administration.Models.Similarity;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface ISimilarityFinder : IService
 {

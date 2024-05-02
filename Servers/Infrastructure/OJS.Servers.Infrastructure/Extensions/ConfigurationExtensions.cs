@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
-using OJS.Services.Common.Models.Configurations;
+using OJS.Services.Infrastructure.Configurations;
 
 public static class ConfigurationExtensions
 {

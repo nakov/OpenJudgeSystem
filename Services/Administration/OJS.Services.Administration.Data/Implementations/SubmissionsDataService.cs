@@ -4,7 +4,7 @@
     using OJS.Data;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
     using System;
     using System.Collections.Generic;
     using System.Linq;

@@ -3,7 +3,7 @@ namespace OJS.PubSub.Worker.Models.Submissions;
 using AutoMapper;
 using OJS.Services.Common.Models.Submissions;
 using OJS.Workers.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ProcessedSubmissionPubSubModel : IMapExplicitly
 {

@@ -1,5 +1,6 @@
-﻿namespace OJS.Services.Common.Models
+﻿namespace OJS.Services.Infrastructure
 {
+    using OJS.Services.Infrastructure.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;

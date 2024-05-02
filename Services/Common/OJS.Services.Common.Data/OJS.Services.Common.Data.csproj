@@ -8,10 +8,10 @@
       <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
       <ProjectReference Include="..\..\..\Data\OJS.Data\OJS.Data.csproj" />
       <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+      <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.4" />
       <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.0" />
     </ItemGroup>
 

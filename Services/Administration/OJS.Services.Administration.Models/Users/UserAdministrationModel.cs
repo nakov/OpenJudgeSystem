@@ -4,7 +4,7 @@ using AutoMapper;
 using OJS.Data.Models.Users;
 using OJS.Services.Administration.Models.Roles;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Collections.Generic;
 using System.Linq;
 

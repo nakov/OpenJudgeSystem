@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Participants;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.Participants;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 

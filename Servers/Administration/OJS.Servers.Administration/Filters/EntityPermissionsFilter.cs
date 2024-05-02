@@ -8,7 +8,7 @@ using OJS.Servers.Administration.Attributes;
 using OJS.Servers.Administration.Controllers.Api;
 using OJS.Services.Administration.Business;
 using OJS.Services.Common.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Data.Models.Common;
 using System;
 using System.Linq;

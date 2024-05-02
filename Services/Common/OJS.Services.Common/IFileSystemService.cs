@@ -1,7 +1,7 @@
 namespace OJS.Services.Common;
 
 using Microsoft.AspNetCore.Http;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface IFileSystemService : IService
 {

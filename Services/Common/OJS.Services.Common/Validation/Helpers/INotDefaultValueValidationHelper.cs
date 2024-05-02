@@ -1,7 +1,7 @@
 namespace OJS.Services.Common.Validation.Helpers;
 
-using OJS.Services.Common.Models;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 
 public interface INotDefaultValueValidationHelper : IService
 {

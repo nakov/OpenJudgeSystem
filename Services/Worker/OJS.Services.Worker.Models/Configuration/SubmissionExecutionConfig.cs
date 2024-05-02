@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Worker.Models.Configuration
 {
-    using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Infrastructure.Configurations;
 
     public class SubmissionExecutionConfig : BaseConfig
     {

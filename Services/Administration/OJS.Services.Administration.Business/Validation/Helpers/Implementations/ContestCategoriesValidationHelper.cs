@@ -3,6 +3,8 @@ namespace OJS.Services.Administration.Business.Validation.Helpers.Implementation
 using OJS.Common;
 using OJS.Services.Administration.Data;
 using OJS.Services.Common.Models;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 using System.Threading.Tasks;
 using AdminResource = OJS.Common.Resources.AdministrationGeneral;
 

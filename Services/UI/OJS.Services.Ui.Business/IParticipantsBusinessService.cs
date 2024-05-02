@@ -6,7 +6,7 @@ namespace OJS.Services.Ui.Business
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Participants;
     using OJS.Services.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
 
     public interface IParticipantsBusinessService : IService
     {

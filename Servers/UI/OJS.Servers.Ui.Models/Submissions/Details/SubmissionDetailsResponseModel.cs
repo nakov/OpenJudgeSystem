@@ -5,7 +5,7 @@
     using OJS.Servers.Ui.Models.Submissions.Profile;
     using OJS.Servers.Ui.Models.Users;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class SubmissionDetailsResponseModel : IMapFrom<SubmissionDetailsServiceModel>
     {

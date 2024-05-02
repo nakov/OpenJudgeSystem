@@ -3,7 +3,7 @@
 using System;
 using AutoMapper;
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Services.Common.Models.Contests;
 public class ProblemContestSearchServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
 {

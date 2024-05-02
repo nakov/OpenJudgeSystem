@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentExtensions.Extensions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 
 public class ProblemResourcesBusinessService : IProblemResourcesBusinessService
 {

@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Linq;
 
 public class ContestResultsModel : IMapExplicitly

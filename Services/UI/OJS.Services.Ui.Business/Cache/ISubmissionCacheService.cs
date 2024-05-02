@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Business.Cache;
 
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
 using OJS.Services.Infrastructure.Constants;
 
