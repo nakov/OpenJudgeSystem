@@ -157,13 +157,12 @@ input::file-selector-button {
 
   .passwordIconWrapper {
     position: absolute;
-    top: 17px;
     right: 10px;
+    top: 17px;
 
     .passwordIcon {
-      font-size: 18px;
       cursor: pointer;
+      font-size: 18px;
     }
   }
 }
-

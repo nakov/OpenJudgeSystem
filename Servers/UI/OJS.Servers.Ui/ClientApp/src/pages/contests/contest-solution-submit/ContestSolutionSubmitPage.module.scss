@@ -154,10 +154,10 @@
 
 .solutionSubmitError {
   color: colors.$primary-red;
-  text-align: end;
-  margin-top: spacings.$sp-18;
   font-size: variables.$f-size-18;
   font-weight: font-weights.$font-weight-semi-bold;
+  margin-top: spacings.$sp-18;
+  text-align: end;
 }
 
 .administrationButtonWrapper {

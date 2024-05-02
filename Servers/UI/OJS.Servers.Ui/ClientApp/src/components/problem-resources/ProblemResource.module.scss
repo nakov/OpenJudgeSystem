@@ -2,29 +2,29 @@
 @use 'src/styles/spacings';
 
 .resourceElement {
-    align-items: center;
-    color: colors.$secondary-green;
-    cursor: pointer;
-    display: flex;
-    text-decoration: underline;
+  align-items: center;
+  color: colors.$secondary-green;
+  cursor: pointer;
+  display: flex;
+  text-decoration: underline;
 
-    svg {
-        margin-right: spacings.$sp-4;
-    }
+  svg {
+    margin-right: spacings.$sp-4;
+  }
 
-    &:not(:first-child) {
-        margin-left: spacings.$sp-48;
-    }
+  &:not(:first-child) {
+    margin-left: spacings.$sp-48;
+  }
 }
 
 .problemResourceIndicator {
-    .problemResourceDownloadError {
-        color: colors.$primary-red;
-        margin-top: - spacings.$sp-12;
-    }
+  .problemResourceDownloadError {
+    color: colors.$primary-red;
+    margin-top: - spacings.$sp-12;
+  }
 
-    .problemResourceLoading {
-        color: colors.$primary-blue;
-        margin-top: - spacings.$sp-12;
-    }
+  .problemResourceLoading {
+    color: colors.$primary-blue;
+    margin-top: - spacings.$sp-12;
+  }
 }

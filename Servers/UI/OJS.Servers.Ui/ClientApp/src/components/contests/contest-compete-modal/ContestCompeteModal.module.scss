@@ -8,36 +8,32 @@
 .modalWrapper {
   @extend %font-family-normal;
 
-  font-size: variables.$f-size-18;
-  width: 80%;
   align-self: center;
+  font-size: variables.$f-size-18;
   margin-top: spacings.$sp-64;
+  width: 80%;
 
   .modalTitle {
-    padding: spacings.$sp-24 spacings.$sp-18;
     background-color: colors.$primary-blue;
     border-top-left-radius: border-radiuses.$br-14;
     border-top-right-radius: border-radiuses.$br-14;
+    padding: spacings.$sp-24 spacings.$sp-18;
   }
 
   .modalBody {
-    line-height: 1.2;
-    padding: spacings.$sp-18;
     border-bottom-left-radius: border-radiuses.$br-14;
     border-bottom-right-radius: border-radiuses.$br-14;
+    line-height: 1.2;
+    padding: spacings.$sp-18;
 
     div {
       margin: spacings.$sp-24 0;
     }
-    
-    .importantText {
-      color: colors.$primary-blue;
-    }
   }
 
   .buttonsWrapper {
-    display: flex;
     align-self: center;
+    display: flex;
     justify-content: center;
     margin-top: spacings.$sp-32 !important;
 
@@ -46,9 +42,9 @@
     }
 
     .declineBtn {
-      font-size: variables.$f-size-12;
       background-color: transparent;
       border: 2px solid colors.$white-color;
+      font-size: variables.$f-size-12;
     }
   }
 

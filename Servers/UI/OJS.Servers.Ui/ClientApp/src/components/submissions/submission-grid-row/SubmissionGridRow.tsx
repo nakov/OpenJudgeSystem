@@ -22,7 +22,6 @@ import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../.
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
 import { ISubmissionsGridOptions } from '../submissions-grid/SubmissionsGrid';
 

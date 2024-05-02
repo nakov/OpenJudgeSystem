@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import { SerializedError } from '@reduxjs/toolkit';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 import { ContestParticipationType } from '../../../common/constants';
 import ContestCompeteModal from '../../../components/contests/contest-compete-modal/ContestCompeteModal';

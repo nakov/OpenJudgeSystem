@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import logo from '../../assets/softuni-logo-horizontal-white.svg';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
@@ -6,26 +6,7 @@ import GithubIcon from '../../components/guidelines/icons/GitHubIcon';
 
 import styles from './FooterNavigation.module.scss';
 
-interface IFooterLinkType {
-    text: string;
-    url: string;
-}
-
 const FooterNavigation = () => {
-    const learnLinks = useMemo(() => Array.from<IFooterLinkType>([
-        {
-            text: 'Professional Programs',
-            url: 'https://learn.softuni.org/catalog#program',
-        },
-        {
-            text: 'Courses',
-            url: 'https://learn.softuni.org/catalog#opencourse',
-        },
-        {
-            text: 'Open Lessons',
-            url: 'https://learn.softuni.org/catalog#openlesson',
-        } ]), []);
-
     const renderSystemInfoAndLinksSection = useCallback(() => (
         <div className={styles.systemInfoAndLinksContainer}>
             <span className={styles.systemInfo}>
