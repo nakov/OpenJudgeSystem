@@ -21,12 +21,17 @@
   }
 
   .modalBody {
+    line-height: 1.2;
     padding: spacings.$sp-18;
     border-bottom-left-radius: border-radiuses.$br-14;
     border-bottom-right-radius: border-radiuses.$br-14;
 
     div {
       margin: spacings.$sp-24 0;
+    }
+    
+    .importantText {
+      color: colors.$primary-blue;
     }
   }
 

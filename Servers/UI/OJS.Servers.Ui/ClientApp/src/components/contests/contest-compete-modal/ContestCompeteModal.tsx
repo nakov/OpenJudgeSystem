@@ -1,4 +1,6 @@
 import useTheme from '../../../hooks/use-theme';
+import concatClassNames from '../../../utils/class-names';
+import { timeToWords } from '../../../utils/dates';
 import Button from '../../guidelines/buttons/Button';
 import ContestButton from '../contest-button/ContestButton';
 
@@ -18,7 +20,7 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
     const { themeColors, getColorClassName } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
-    const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
+    const modalBodyClassName = concatClassNames(getColorClassName(themeColors.baseColor100), styles.modalBody);
 
     return (
         <div className={`${styles.modalWrapper} ${textColorClassName}`}>
@@ -28,7 +30,7 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     {' '}
                     you will have
                     {' '}
-                    {time}
+                    {timeToWords(time)}
                     {' '}
                     hours
                     {' '}
@@ -37,12 +39,12 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                 {' '}
                 {examName}
             </div>
-            <div className={`${styles.modalBody} ${backgroundColorClassName}`}>
+            <div className={modalBodyClassName}>
                 <div>Your time will start counting down when you press the &apos;Compete&apos; button.</div>
                 <div>
                     In the case of unexpected problems (turning off your computer, exiting the page/system, internet connection failure),
                     {' '}
-                    <b>the time lost will not be restored.</b>
+                    <b>the time lost will not be restored. </b>
                     When time runs out, you will not be able to compete in this competition again.
                 </div>
                 <div>

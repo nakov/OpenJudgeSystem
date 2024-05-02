@@ -78,6 +78,31 @@ const secondsToFullTime = (duration: number) => {
     return { days, hours, minutes, seconds };
 };
 
+const timeToWords = (time: string) => {
+    // Split the time string into hours, minutes, and seconds
+    const parts = time.split(':');
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+
+    // Create the time description in words
+    let description = '';
+    if (hours > 0) {
+        description += hours + (hours === 1
+            ? ' hour'
+            : ' hours');
+    }
+    if (minutes > 0) {
+        if (description.length > 0) {
+            description += ' and ';
+        }
+        description += minutes + (minutes === 1
+            ? ' minute'
+            : ' minutes');
+    }
+
+    return description;
+};
+
 interface IConvertToTwoDigitValuesParamType {
     days: number;
     hours: number;
@@ -125,6 +150,7 @@ export default {
     getCurrentTimeInUtc: getCurrentTimeInUTC,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
+    timeToWords,
 };
 
 export {
@@ -142,4 +168,5 @@ export {
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
+    timeToWords,
 };
