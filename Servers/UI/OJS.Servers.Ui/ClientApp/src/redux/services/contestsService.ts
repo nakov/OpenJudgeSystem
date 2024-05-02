@@ -28,10 +28,7 @@ export const contestsService = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,
         credentials: 'include',
-        prepareHeaders: (headers: any) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
-        },
+        prepareHeaders: (headers) => headers,
         responseHandler: async (response: Response) => {
             const contentType = response.headers.get('Content-Type');
 
@@ -127,11 +124,7 @@ export const contestsService = createApi({
                 return {
                     url: '/Compete/SubmitFileSubmission',
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
                     body: formData,
-                    formData: true,
                 };
             },
         }),
