@@ -116,7 +116,7 @@ const ContestsPage = () => {
     if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
     return (
-        <div style={{ padding: '20px 40px' }}>
+        <div>
             <ContestBreadcrumbs />
             <div className={styles.contestsContainer}>
                 <ContestCetegories />
@@ -136,4 +136,4 @@ const ContestsPage = () => {
     );
 };
 
-export default setLayout(ContestsPage, true);
+export default setLayout(ContestsPage);
