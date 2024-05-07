@@ -117,6 +117,10 @@ const ContestRegister = () => {
     }
 
     if (error) {
+        if ((error as any).status === 401) {
+            navigate('/login');
+            return;
+        }
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
