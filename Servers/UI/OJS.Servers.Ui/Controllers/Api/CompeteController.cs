@@ -58,6 +58,29 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="id">Contest id.</param>
     /// <param name="isOfficial">Compete/practice.</param>
+    /// <returns>Success status code.</returns>
+    /// <returns>401 for invalid password.</returns>
+    /// <returns>403 if user cannot compete contest.</returns>
+    [HttpGet("{id:int}/register")]
+    public async Task<IActionResult> Register(int id, [FromQuery] bool isOfficial)
+    {
+        try
+        {
+            return await this.contestsBusiness
+                .RegisterUserForContest(id, isOfficial)
+                .ToOkResult();
+        }
+        catch (BusinessServiceException be)
+        {
+            return this.StatusCode((int)HttpStatusCode.Forbidden, be.Message);
+        }
+    }
+
+    /// <summary>
+    /// Registers user for contest. If a password is submitted it gets validated. This endpoint creates a participant.
+    /// </summary>
+    /// <param name="id">Contest id.</param>
+    /// <param name="isOfficial">Compete/practice.</param>
     /// <param name="model">Contains contest password.</param>
     /// <returns>Success status code.</returns>
     /// <returns>401 for invalid password.</returns>
@@ -70,9 +93,10 @@ public class CompeteController : BaseApiController
     {
         try
         {
-            return await this.contestsBusiness
-                .RegisterUserForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial)
-                .ToOkResult();
+            var isValidRegistration = await this.contestsBusiness
+                .ValidateUserRegistrationForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial);
+
+            return this.Ok(new { IsRegisteredSuccessFully = isValidRegistration });
         }
         catch (UnauthorizedAccessException uae)
         {
