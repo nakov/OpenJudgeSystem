@@ -54,6 +54,7 @@ public class ContestsActivityService : IContestsActivityService
         {
             Id = contest!.Id,
             Name = contest.Name,
+            CanBePracticed = this.CanBePracticed(contest),
             CanBeCompeted = this.CanUserCompete(contest),
         };
 

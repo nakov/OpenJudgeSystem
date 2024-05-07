@@ -33,6 +33,8 @@ import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
+const EXPIRED = 'expired';
+
 const ContestSolutionSubmitPage = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -155,7 +157,7 @@ const ContestSolutionSubmitPage = () => {
         const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
-            setRemainingTimeForCompete(null);
+            setRemainingTimeForCompete(EXPIRED);
             return;
         }
 
@@ -557,18 +559,24 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
                         </div>
-                        {remainingTimeForCompete
+                        { remainingTimeForCompete === EXPIRED
                             ? (
-                                <div>
-                                    Remaining time:
-                                    <b>{remainingTimeForCompete}</b>
-                                </div>
-                            )
-                            : (
                                 <span className={styles.errorText}>
                                     Participation time has expired
                                 </span>
-                            )}
+                            )
+                            : !remainingTimeForCompete
+                                ? (
+                                    <div>
+                                        <b>No expire time</b>
+                                    </div>
+                                )
+                                : (
+                                    <div>
+                                        Remaining time:
+                                        <b>{remainingTimeForCompete}</b>
+                                    </div>
+                                )}
                     </div>
                     {renderProblemDescriptions()}
                     {renderSubmissionsInput()}
