@@ -41,7 +41,8 @@ const ContestSolutionSubmitPage = () => {
 
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
-    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>('');
+    const [ contestTimeHasExpired, setContestTimeHasExpired ] = useState<boolean>(false);
+    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<number | null>();
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -156,6 +157,7 @@ const ContestSolutionSubmitPage = () => {
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
             setRemainingTimeForCompete(null);
+            setContestTimeHasExpired(true);
             return;
         }
 
@@ -164,9 +166,9 @@ const ContestSolutionSubmitPage = () => {
             const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
 
             if (remainingCompeteTime > 0) {
-                const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
-                setRemainingTimeForCompete(formattedTime);
+                setRemainingTimeForCompete(remainingCompeteTime);
             } else {
+                setContestTimeHasExpired(true);
                 setRemainingTimeForCompete(null);
             }
         });
@@ -334,6 +336,7 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.problemDescriptions}>
                     { resources.map((resource: IProblemResourceType) => (
                         <ProblemResource
+                          key={resource.id}
                           resource={resource}
                           problem={selectedContestDetailsProblem.name}
                         />
@@ -401,6 +404,29 @@ const ContestSolutionSubmitPage = () => {
         lightBackgroundClassName,
         textColorClassName,
     ]);
+
+    const renderRemainingTimeForContest = useCallback(() => {
+        const formattedTime = calculatedTimeFormatted(moment.duration(remainingTimeForCompete, 'millisecond'));
+
+        if (remainingTimeForCompete) {
+            return (
+                <div className={Number(remainingTimeForCompete) <= 1800000
+                    ? styles.errorText
+                    : ''}
+                >
+                    Remaining time:
+                    <b>
+                        {formattedTime}
+                    </b>
+                </div>
+            );
+        }
+        return (
+            <span className={styles.errorText}>
+                Participation time has expired
+            </span>
+        );
+    }, [ remainingTimeForCompete ]);
 
     const renderSubmissionsInput = useCallback(() => {
         const { allowBinaryFilesUpload, allowedFileExtensions } = selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
@@ -517,8 +543,12 @@ const ContestSolutionSubmitPage = () => {
         );
     }
 
-    if (isRegisteredParticipant && !isActiveParticipant) {
-        return <div>Contest expired!</div>;
+    if ((isRegisteredParticipant && !isActiveParticipant) || contestTimeHasExpired) {
+        return (
+            <div className={`${getColorClassName(themeColors.textColor)} ${styles.expiredContestText}`}>
+                The contest you are trying to access timer has expired!
+            </div>
+        );
     }
 
     return (
@@ -557,18 +587,7 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
                         </div>
-                        {remainingTimeForCompete
-                            ? (
-                                <div>
-                                    Remaining time:
-                                    <b>{remainingTimeForCompete}</b>
-                                </div>
-                            )
-                            : (
-                                <span className={styles.errorText}>
-                                    Participation time has expired
-                                </span>
-                            )}
+                        {renderRemainingTimeForContest()}
                     </div>
                     {renderProblemDescriptions()}
                     {renderSubmissionsInput()}
