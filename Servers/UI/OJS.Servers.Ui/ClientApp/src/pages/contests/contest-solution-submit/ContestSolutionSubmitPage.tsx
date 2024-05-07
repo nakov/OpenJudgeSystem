@@ -454,7 +454,7 @@ const ContestSolutionSubmitPage = () => {
                         <Button
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading
+                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading || contestTimeHasExpired
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
@@ -488,7 +488,7 @@ const ContestSolutionSubmitPage = () => {
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button
-                          state={isSubmitButtonDisabled || submitSolutionIsLoading
+                          state={isSubmitButtonDisabled || submitSolutionIsLoading || contestTimeHasExpired
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                           onClick={onSolutionSubmitCode}
