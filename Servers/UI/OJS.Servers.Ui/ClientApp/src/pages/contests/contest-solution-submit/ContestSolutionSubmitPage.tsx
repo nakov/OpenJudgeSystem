@@ -421,6 +421,9 @@ const ContestSolutionSubmitPage = () => {
                 </div>
             );
         }
+        if (remainingTimeForCompete === undefined) {
+            return <div />;
+        }
         return (
             <span className={styles.errorText}>
                 Participation time has expired
