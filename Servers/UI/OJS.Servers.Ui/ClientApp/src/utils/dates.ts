@@ -118,11 +118,11 @@ const transformDaysHoursMinutesTextToMinutes = (durationString: string) => {
     components.forEach((component) => {
         const [ value, unit ] = component.split(' ');
         if (unit === 'd') {
-            days = parseInt(value);
+            days = parseInt(value, 10);
         } else if (unit === 'h') {
-            hours = parseInt(value);
+            hours = parseInt(value, 10);
         } else if (unit === 'm') {
-            minutes = parseInt(value);
+            minutes = parseInt(value, 10);
         }
     });
 
