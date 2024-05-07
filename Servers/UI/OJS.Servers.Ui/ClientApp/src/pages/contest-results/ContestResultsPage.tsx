@@ -11,10 +11,12 @@ import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { usePageTitles } from '../../hooks/use-page-titles';
+import useTheme from '../../hooks/use-theme';
 import { setContestCategories, setContestDetails } from '../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery, useGetContestResultsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
+import concatClassNames from '../../utils/class-names';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
 import { getContestDetailsAppUrl } from '../../utils/urls';
@@ -25,6 +27,7 @@ import styles from './ContestResultPage.module.scss';
 
 const ContestResultsPage = () => {
     const params = useParams();
+    const { getColorClassName, themeColors } = useTheme();
     const { contestId, participationType: participationUrlType, resultType } = params;
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
@@ -94,7 +97,7 @@ const ContestResultsPage = () => {
 
     const renderErrorHeading = useCallback(
         (message: string) => (
-            <div className={styles.headingResults}>
+            <div className={concatClassNames(getColorClassName(themeColors.textColor), styles.headingResults)}>
                 <Heading
                   type={HeadingType.primary}
                   className={styles.contestResultsHeading}
@@ -103,7 +106,7 @@ const ContestResultsPage = () => {
                 </Heading>
             </div>
         ),
-        [],
+        [ getColorClassName, themeColors.textColor ],
     );
 
     const renderErrorMessage = useCallback(

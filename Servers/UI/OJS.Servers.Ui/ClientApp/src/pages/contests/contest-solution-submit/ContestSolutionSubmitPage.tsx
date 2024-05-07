@@ -2,7 +2,6 @@
 /* eslint-disable consistent-return */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
-import { IoDocumentText } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
 import moment from 'moment';
@@ -12,16 +11,16 @@ import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
-import Dropdown from '../../../components/dropdown/Dropdown';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
+import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
+import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
-    useLazyDownloadContestProblemResourceQuery,
     useLazyGetContestByIdQuery,
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
@@ -29,8 +28,8 @@ import {
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted, transformSecondsToTimeSpan } from '../../../utils/dates';
-import downloadFile from '../../../utils/file-download-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -75,11 +74,6 @@ const ContestSolutionSubmitPage = () => {
             isLoading: submissionsDataLoading,
         },
     ] = useLazyGetSubmissionResultsByProblemQuery();
-    const [ downloadResourceFile, {
-        data: problemResourceDownloadData,
-        isError: problemResourceDownloadError,
-        isLoading: problemResourceDownloadIsLoading,
-    } ] = useLazyDownloadContestProblemResourceQuery();
 
     const isModalOpen = Boolean(anchorEl);
     const isCompete = participationType === ContestParticipationType.Compete;
@@ -158,6 +152,13 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
 
+        const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
+        if (remainingTimeForParticipantOrContest > 0) {
+            // Positive time means time is past end time for contest or participant
+            setRemainingTimeForCompete(null);
+            return;
+        }
+
         const intervalId = setInterval(() => {
             const currentTime = moment();
             const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
@@ -189,13 +190,6 @@ const ContestSolutionSubmitPage = () => {
     useEffect(() => {
         setSubmissionCode('');
     }, [ selectedContestDetailsProblem ]);
-
-    useEffect(() => {
-        if (!problemResourceDownloadData) {
-            return;
-        }
-        downloadFile(problemResourceDownloadData.blob, `${selectedContestDetailsProblem?.name}-resources`);
-    }, [ problemResourceDownloadData, selectedContestDetailsProblem?.name ]);
 
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
@@ -336,92 +330,65 @@ const ContestSolutionSubmitPage = () => {
 
         // eslint-disable-next-line consistent-return
         return (
-            <>
-                <div className={styles.problemDescriptionsWrapper}>
-                    <div className={styles.problemDescriptions}>
-                        { resources.map((resource: IProblemResourceType) => {
-                            const { link, name: linkName, id } = resource;
-                            if (resource.link) {
-                                return (
-                                    <Link key={`resource-problem-${id}`} className={styles.resourceElement} target="_blank" to={link}>
-                                        <IoDocumentText />
-                                        {' '}
-                                        {linkName}
-                                    </Link>
-                                );
-                            }
-
-                            return (
-                                <div
-                                  key={`resource-problem-${id}`}
-                                  className={styles.resourceElement}
-                                  onClick={() => downloadResourceFile({ id })}
-                                >
-                                    <IoDocumentText />
-                                    {linkName}
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
-                        <IoIosInformationCircleOutline />
-                    </div>
-                    <Popover
-                      open={isModalOpen}
-                      anchorEl={anchorEl}
-                      anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                      }}
-                      transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'left',
-                      }}
-                      sx={{ pointerEvents: 'none' }}
-                      onClose={onPopoverClose}
-                      disableRestoreFocus
-                    >
-                        <div className={`${styles.popoverContent} ${textColorClassName} ${lightBackgroundClassName}`}>
-                            <div>
-                                <span className={styles.title}>Allowed working time:</span>
-                                {' '}
-                                <span>{timeLimit}</span>
-                                {' '}
-                                sec
-                            </div>
-                            <div>
-                                <span className={styles.title}>Allowed memory:</span>
-                                {' '}
-                                <span>{memoryLimit}</span>
-                                {' '}
-                                MB
-                            </div>
-                            <div>
-                                <span className={styles.title}>Size limit:</span>
-                                {' '}
-                                <span>{fileSizeLimit}</span>
-                                {' '}
-                                KB
-                            </div>
-                            { checkerName && (
+            <div className={styles.problemDescriptionsWrapper}>
+                <div className={styles.problemDescriptions}>
+                    { resources.map((resource: IProblemResourceType) => (
+                        <ProblemResource
+                          resource={resource}
+                          problem={selectedContestDetailsProblem.name}
+                        />
+                    ))}
+                </div>
+                <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
+                    <IoIosInformationCircleOutline />
+                </div>
+                <Popover
+                  open={isModalOpen}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                  }}
+                  sx={{ pointerEvents: 'none' }}
+                  onClose={onPopoverClose}
+                  disableRestoreFocus
+                >
+                    <div className={`${styles.popoverContent} ${textColorClassName} ${lightBackgroundClassName}`}>
+                        <div>
+                            <span className={styles.title}>Allowed working time:</span>
+                            {' '}
+                            <span>{timeLimit}</span>
+                            {' '}
+                            sec
+                        </div>
+                        <div>
+                            <span className={styles.title}>Allowed memory:</span>
+                            {' '}
+                            <span>{memoryLimit}</span>
+                            {' '}
+                            MB
+                        </div>
+                        <div>
+                            <span className={styles.title}>Size limit:</span>
+                            {' '}
+                            <span>{fileSizeLimit}</span>
+                            {' '}
+                            KB
+                        </div>
+                        { checkerName && (
                             <div>
                                 <span className={styles.title}>Checker:</span>
                                 {' '}
                                 {checkerName}
                             </div>
-                            )}
-                        </div>
-                    </Popover>
-                </div>
-                <div className={styles.problemResourceIndicator}>
-                    { problemResourceDownloadError
-                        ? <div className={styles.problemResourceDownloadError}>Error downloading problem resource. Please try again!</div>
-                        : ''}
-                    { problemResourceDownloadIsLoading
-                        ? <div className={styles.problemResourceLoading}>Downloading resource...</div>
-                        : ''}
-                </div>
-            </>
+                        )}
+                    </div>
+                </Popover>
+            </div>
         );
     }, [
         selectedContestDetailsProblem,
@@ -431,11 +398,8 @@ const ContestSolutionSubmitPage = () => {
         fileSizeLimit,
         memoryLimit,
         timeLimit,
-        problemResourceDownloadIsLoading,
-        problemResourceDownloadError,
         lightBackgroundClassName,
         textColorClassName,
-        downloadResourceFile,
     ]);
 
     const renderSubmissionsInput = useCallback(() => {
@@ -593,14 +557,19 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
                         </div>
-                        {remainingTimeForCompete && (
-                        <div>
-                            Remaining time:
-                            <b>{remainingTimeForCompete}</b>
-                        </div>
-                        )}
+                        {remainingTimeForCompete
+                            ? (
+                                <div>
+                                    Remaining time:
+                                    <b>{remainingTimeForCompete}</b>
+                                </div>
+                            )
+                            : (
+                                <span className={styles.errorText}>
+                                    Participation time has expired
+                                </span>
+                            )}
                     </div>
-
                     {renderProblemDescriptions()}
                     {renderSubmissionsInput()}
                 </div>
@@ -636,4 +605,4 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default ContestSolutionSubmitPage;
+export default setLayout(ContestSolutionSubmitPage);

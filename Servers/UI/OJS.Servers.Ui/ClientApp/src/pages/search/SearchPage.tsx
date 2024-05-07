@@ -147,4 +147,4 @@ const SearchPage = () => {
         renderPage()
     );
 };
-export default setLayout(SearchPage, true);
+export default setLayout(SearchPage);

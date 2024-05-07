@@ -4,15 +4,15 @@
 @use 'src/styles/shadows';
 
 .closeIcon {
+  background-color: transparent;
+  display: flex;
+  height: auto;
+  justify-content: flex-end;
+  left: 95%;
   position: sticky;
   top: 0;
-  left: 95%;
-  z-index: 9999999;
   width: 100%;
-  height: auto;
-  background-color: transparent; 
-  display: flex;
-  justify-content: flex-end;
+  z-index: 9999999;
 }
 
 .wrapper {

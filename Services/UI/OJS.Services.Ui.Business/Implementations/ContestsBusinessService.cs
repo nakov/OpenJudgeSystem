@@ -83,6 +83,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var validationResult = this.contestDetailsValidationService.GetValidationResult((
                 contest,
                 isLecturerOrAdmin));
+
             if (!validationResult.IsValid)
             {
                 throw new BusinessServiceException(validationResult.Message);

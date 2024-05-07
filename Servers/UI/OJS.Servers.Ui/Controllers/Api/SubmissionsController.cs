@@ -9,11 +9,10 @@ using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
-using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -177,12 +176,14 @@ public class SubmissionsController : BaseApiController
             .ToOkResult();
 
     // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
          => await this.submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
              .Map<PagedResultResponse<PublicSubmissionsResponseModel>>()
              .ToOkResult();
 
+    [HttpGet]
     [Authorize(Roles = AdministratorOrLecturer)]
     [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionsForUserInRole(

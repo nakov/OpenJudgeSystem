@@ -6,7 +6,7 @@ import { IContestStrategyFilter } from '../../../common/contest-types';
 import { setContestStrategy } from '../../../redux/features/contestsSlice';
 import { useGetContestStrategiesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import Dropdown from '../../dropdown/Dropdown';
+import Dropdown from '../../guidelines/dropdown/Dropdown';
 
 import styles from './ContestStrategies.module.scss';
 
@@ -63,7 +63,12 @@ const ContestStrategies = () => {
     return (
         <div className={styles.selectWrapper}>
             { selectedStrategy && <IoMdClose onClick={removeSelectedStrategy} />}
-            <Dropdown dropdownItems={dropdownItems || []} value={selectValue} handleDropdownItemClick={handleStrategySelect} />
+            <Dropdown
+              dropdownItems={dropdownItems || []}
+              value={selectValue}
+              placeholder="Select strategy"
+              handleDropdownItemClick={handleStrategySelect}
+            />
         </div>
     );
 };

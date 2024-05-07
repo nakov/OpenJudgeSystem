@@ -8,32 +8,3 @@
   display: flex;
   justify-content: center;
 }
-
-.regsiterErrorWrapper {
-  align-items: center;
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-  font-size: variables.$f-size-20;
-  justify-content: center;
-  margin-top: spacings.$sp-24;
-
-  .errMessage {
-    color: colors.$primary-red;
-    font-size: variables.$f-size-24;
-    font-weight: font-weights.$font-weight-semi-bold;
-  }
-
-  .needHelpWrapper {
-    a {
-      color: colors.$primary-blue;
-    }
-  }
-
-  .buttonsWrapper {
-    display: flex;
-    justify-content: space-evenly;
-    margin: spacings.$sp-32;
-    width: 100%;
-  }
-}

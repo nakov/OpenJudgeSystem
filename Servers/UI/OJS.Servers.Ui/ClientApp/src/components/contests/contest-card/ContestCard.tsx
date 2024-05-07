@@ -188,11 +188,11 @@ const ContestCard = (props: IContestCardProps) => {
             </div>
             <div className={styles.contestBtnsWrapper}>
                 <div className={styles.buttonAndPointsLabelWrapper}>
-                    { shouldShowPoints && renderPointsText(false)}
+                    { shouldShowPoints && renderPointsText(true)}
                     {renderContestButton(true)}
                 </div>
                 <div className={styles.buttonAndPointsLabelWrapper}>
-                    { shouldShowPoints && renderPointsText(true)}
+                    { shouldShowPoints && renderPointsText(false)}
                     {renderContestButton(false)}
                 </div>
             </div>

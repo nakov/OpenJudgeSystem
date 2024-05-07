@@ -164,7 +164,7 @@ const RecentSubmissions = () => {
     );
 
     return (
-        <>
+        <div className={styles.recentSubmissionsWrapper}>
             {
                 !user.canAccessAdministration && (
                     <Heading
@@ -198,7 +198,7 @@ const RecentSubmissions = () => {
                   showParticipantUsername: true,
               }}
             />
-        </>
+        </div>
     );
 };
 

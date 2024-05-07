@@ -31,6 +31,8 @@ public static class ValidationMessages
 
         public const string NotMadeByUser = "You can only view your own submissions.";
 
+        public const string UserCannotSubmit = "You cannot submit solutions in this contest.";
+
         public const string SubmissionTypeNotFound = "Wrong submission type.";
 
         public const string BinaryFilesNotAllowed = "This submission type does not allow sending binary files.";
