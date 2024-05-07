@@ -27,7 +27,7 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted, transformSecondsToTimeSpan } from '../../../utils/dates';
+import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
@@ -42,7 +42,7 @@ const ContestSolutionSubmitPage = () => {
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
     const [ contestTimeHasExpired, setContestTimeHasExpired ] = useState<boolean>(false);
-    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<number | null>();
+    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -166,7 +166,8 @@ const ContestSolutionSubmitPage = () => {
             const remainingCompeteTime = Math.abs(moment.utc(currentTime).diff(moment.utc(endDateTimeForParticipantOrContest)));
 
             if (remainingCompeteTime > 0) {
-                setRemainingTimeForCompete(remainingCompeteTime);
+                const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
+                setRemainingTimeForCompete(formattedTime);
             } else {
                 setContestTimeHasExpired(true);
                 setRemainingTimeForCompete(null);
@@ -406,17 +407,16 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const renderRemainingTimeForContest = useCallback(() => {
-        const formattedTime = calculatedTimeFormatted(moment.duration(remainingTimeForCompete, 'millisecond'));
-
         if (remainingTimeForCompete) {
+            const leftMinutes = transformDaysHoursMinutesTextToMinutes(remainingTimeForCompete);
             return (
-                <div className={Number(remainingTimeForCompete) <= 1800000
+                <div className={leftMinutes <= 30
                     ? styles.errorText
                     : ''}
                 >
                     Remaining time:
                     <b>
-                        {formattedTime}
+                        {remainingTimeForCompete}
                     </b>
                 </div>
             );

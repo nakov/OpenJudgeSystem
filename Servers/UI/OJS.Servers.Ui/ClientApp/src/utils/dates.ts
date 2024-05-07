@@ -1,6 +1,13 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import moment, { Duration, unitOfTime } from 'moment';
 
+interface IConvertToTwoDigitValuesParamType {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+}
+
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/YYYY';
 const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
@@ -103,18 +110,30 @@ const timeToWords = (time: string) => {
     return description;
 };
 
+const transformDaysHoursMinutesTextToMinutes = (durationString: string) => {
+    const components = durationString.split(', ');
+
+    let days = 0; let hours = 0; let minutes = 0;
+
+    components.forEach((component) => {
+        const [ value, unit ] = component.split(' ');
+        if (unit === 'd') {
+            days = parseInt(value);
+        } else if (unit === 'h') {
+            hours = parseInt(value);
+        } else if (unit === 'm') {
+            minutes = parseInt(value);
+        }
+    });
+
+    return days * 24 * 60 + hours * 60 + minutes;
+};
+
 const transformSecondsToTimeSpan = (seconds: number) => {
     const duration = moment.duration(seconds, 'seconds');
 
     return moment.utc(duration.asMilliseconds()).format('mm:ss');
 };
-
-interface IConvertToTwoDigitValuesParamType {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-}
 
 const convertToTwoDigitValues = ({
     days: daysValue,
@@ -145,20 +164,6 @@ const convertToTwoDigitValues = ({
     };
 };
 
-export default {
-    formatDate,
-    preciseFormatDate,
-    secondsToFullTime,
-    calculateTimeUntil,
-    calculateTimeBetweenTwoDates,
-    convertToSecondsRemaining,
-    convertToTwoDigitValues,
-    getCurrentTimeInUtc: getCurrentTimeInUTC,
-    convertTimeIntervalToHoursMinutesAndSeconds,
-    calculatedTimeFormatted,
-    timeToWords,
-};
-
 export {
     defaultDateTimeFormat,
     defaultDateTimeFormatPreciseTime,
@@ -176,4 +181,5 @@ export {
     calculatedTimeFormatted,
     timeToWords,
     transformSecondsToTimeSpan,
+    transformDaysHoursMinutesTextToMinutes,
 };
