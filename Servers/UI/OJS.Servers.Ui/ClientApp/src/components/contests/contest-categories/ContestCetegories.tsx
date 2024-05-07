@@ -64,13 +64,22 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             return;
         }
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
-        searchParams.set('page', '1');
-        searchParams.set('category', id.toString());
-        searchParams.delete('strategy');
+        // click is on already selected category
+        if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
+            searchParams.delete('category');
+
+            dispatch(setContestCategory(null));
+            dispatch(setContestStrategy(null));
+        } else {
+            searchParams.set('page', '1');
+            searchParams.set('category', id.toString());
+            searchParams.delete('strategy');
+
+            dispatch(setContestCategory(selectedContestCategory));
+            dispatch(setContestStrategy(null));
+        }
 
         setSearchParams(searchParams);
-        dispatch(setContestCategory(selectedContestCategory));
-        dispatch(setContestStrategy(null));
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {
