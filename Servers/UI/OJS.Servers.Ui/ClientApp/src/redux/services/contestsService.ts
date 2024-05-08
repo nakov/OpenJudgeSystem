@@ -147,13 +147,13 @@ export const contestsService = createApi({
             }),
         getRegisteredUserForContest: builder.query<
             IRegisterUserForContestResponseType,
-            { id: number, isOfficial: boolean }>({
-           query: ({ id, isOfficial }) => ({
-               url: `/compete/${id}/register`,
-               params: { isOfficial }
-           }),
-           keepUnusedDataFor: 2
-        }),
+            { id: number; isOfficial: boolean }>({
+                query: ({ id, isOfficial }) => ({
+                    url: `/compete/${id}/register`,
+                    params: { isOfficial },
+                }),
+                keepUnusedDataFor: 2,
+            }),
         getContestResults: builder.query<
             IContestResultsType,
             IGetContestResultsParams>({
