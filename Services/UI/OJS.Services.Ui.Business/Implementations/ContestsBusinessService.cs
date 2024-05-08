@@ -142,13 +142,11 @@ namespace OJS.Services.Ui.Business.Implementations
             return contestDetailsServiceModel;
         }
 
-        public async Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool isOfficial)
+        public async Task<RegisterUserForContestServiceModel> GetContestRegistrationDetails(int id, bool isOfficial)
         {
             var contest = this.contestsData
                 .GetByIdQuery(id)
                 .Include(c => c.Category)
-                .Include(c => c.ProblemGroups)
-                    .ThenInclude(pg => pg.Problems)
                 .FirstOrDefault();
 
             var user = this.userProviderService.GetCurrentUser();

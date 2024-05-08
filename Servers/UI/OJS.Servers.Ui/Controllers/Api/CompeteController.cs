@@ -54,12 +54,13 @@ public class CompeteController : BaseApiController
             .ToOkResult();
 
     /// <summary>
-    /// Registers user for contest. If a password is submitted it gets validated. This endpoint creates a participant.
+    /// This endpoint retrieves registration details for a specified contest and user.
+    /// It considers whether the contest is an official entry and includes various checks and conditions
+    /// based on the user's status and contest rules.
     /// </summary>
     /// <param name="id">Contest id.</param>
     /// <param name="isOfficial">Compete/practice.</param>
     /// <returns>Success status code.</returns>
-    /// <returns>401 for invalid password.</returns>
     /// <returns>403 if user cannot compete contest.</returns>
     [HttpGet("{id:int}/register")]
     public async Task<IActionResult> Register(int id, [FromQuery] bool isOfficial)
@@ -67,7 +68,7 @@ public class CompeteController : BaseApiController
         try
         {
             return await this.contestsBusiness
-                .RegisterUserForContest(id, isOfficial)
+                .GetContestRegistrationDetails(id, isOfficial)
                 .ToOkResult();
         }
         catch (BusinessServiceException be)
