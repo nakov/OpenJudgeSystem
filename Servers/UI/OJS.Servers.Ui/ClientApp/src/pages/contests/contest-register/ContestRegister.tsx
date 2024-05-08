@@ -44,6 +44,12 @@ const ContestRegister = () => {
         }
     }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
 
+    useEffect(() => {
+        if (!shouldConfirmParticipation && data) {
+            setHasAcceptedOnlineModal(true);
+        }
+    }, [ shouldConfirmParticipation, data ]);
+
     const renderContestRegisterBody = useCallback(() => {
         if (!hasAcceptedOnlineModal) {
             return (
