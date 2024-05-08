@@ -156,7 +156,6 @@ const ContestSolutionSubmitPage = () => {
         const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
-            setRemainingTimeForCompete(null);
             setContestTimeHasExpired(true);
             return;
         }
@@ -517,6 +516,7 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionError,
         isSubmitButtonDisabled,
         submitSolutionIsLoading,
+        contestTimeHasExpired,
         remainingTime,
         selectedStrategyValue,
         strategyDropdownItems,

@@ -339,6 +339,7 @@ namespace OJS.Services.Ui.Business.Implementations
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
                     contest!.LimitBetweenSubmissions);
+            participationModel.EndDateTimeForParticipantOrContest = GetParticipationEndTime(participant);
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -477,6 +478,18 @@ namespace OJS.Services.Ui.Business.Implementations
 
             await this.contestsData.DeleteById(id);
             await this.contestsData.SaveChanges();
+        }
+
+        private static DateTime? GetParticipationEndTime(Participant participant)
+        {
+            if (participant.IsOfficial)
+            {
+                return participant.ParticipationEndTime.HasValue
+                    ? participant.ParticipationEndTime
+                    : participant.Contest.EndTime;
+            }
+
+            return participant.Contest.PracticeEndTime;
         }
 
         private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
