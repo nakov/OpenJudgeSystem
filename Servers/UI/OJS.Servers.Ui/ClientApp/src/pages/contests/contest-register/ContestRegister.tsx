@@ -7,7 +7,7 @@ import ContestCompeteModal from '../../../components/contests/contest-compete-mo
 import ContestPasswordForm from '../../../components/contests/contest-password-form/ContestPasswordForm';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
-import { useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
+import { useGetRegisteredUserForContestQuery, useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 
@@ -18,13 +18,13 @@ const ContestRegister = () => {
     const { contestId, participationType } = useParams();
     const [ hasAcceptedOnlineModal, setHasAcceptedOnlineModal ] = useState<boolean>(false);
 
-    const [
-        registerUserForContest, {
-            data,
-            isLoading,
-            error,
-        },
-    ] = useRegisterUserForContestMutation();
+    const {
+        data,
+        isLoading,
+        error,
+    } = useGetRegisteredUserForContestQuery({ id: Number(contestId), isOfficial: participationType === 'compete' });
+
+    const [ registerUserForContest, { isError, error: registerError } ] = useRegisterUserForContestMutation();
 
     const {
         name,
@@ -34,28 +34,6 @@ const ContestRegister = () => {
         numberOfProblems,
         isRegisteredSuccessfully,
     } = data || {};
-
-    useEffect(() => {
-        if (isLoading) {
-            return;
-        }
-
-        if (!isRegisteredSuccessfully) {
-            registerUserForContest({
-                id: Number(contestId),
-                isOfficial: participationType === ContestParticipationType.Compete,
-                password: '',
-                hasConfirmedParticipation: hasAcceptedOnlineModal,
-            });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        if (!shouldConfirmParticipation && data) {
-            setHasAcceptedOnlineModal(true);
-        }
-    }, [ shouldConfirmParticipation, data ]);
 
     useEffect(() => {
         if (isLoading) {
@@ -128,6 +106,16 @@ const ContestRegister = () => {
                 />
             );
         }
+    }
+
+    if (isError && registerError) {
+        return (
+            <ErrorWithActionButtons
+              message={getErrorMessage(registerError)}
+              backToUrl="/contests"
+              backToText="Back to contests"
+            />
+        );
     }
 
     return (

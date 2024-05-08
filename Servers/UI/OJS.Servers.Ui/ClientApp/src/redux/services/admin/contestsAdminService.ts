@@ -113,7 +113,6 @@ export const {
     useGetContestAutocompleteQuery,
     useLazyExportContestsToExcelQuery,
     useGetContestActivityQuery,
-    useLazyGetContestActivityQuery,
     useCheckSimilarityMutation,
 } = contestService;
 export default contestService;

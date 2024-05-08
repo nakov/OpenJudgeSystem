@@ -136,7 +136,7 @@ export const contestsService = createApi({
             }),
         }),
         registerUserForContest: builder.mutation<
-            IRegisterUserForContestResponseType,
+            { isRegisteredSuccessfully: boolean },
             IRegisterUserForContestParams>({
                 query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
                     url: `/compete/${id}/register`,
@@ -145,6 +145,15 @@ export const contestsService = createApi({
                     body: { password, hasConfirmedParticipation },
                 }),
             }),
+        getRegisteredUserForContest: builder.query<
+            IRegisterUserForContestResponseType,
+            { id: number, isOfficial: boolean }>({
+           query: ({ id, isOfficial }) => ({
+               url: `/compete/${id}/register`,
+               params: { isOfficial }
+           }),
+           keepUnusedDataFor: 2
+        }),
         getContestResults: builder.query<
             IContestResultsType,
             IGetContestResultsParams>({
@@ -179,4 +188,5 @@ export const {
     useGetContestUserParticipationQuery,
     useGetContestResultsQuery,
     useLazyDownloadContestProblemResourceQuery,
+    useGetRegisteredUserForContestQuery,
 } = contestsService;
