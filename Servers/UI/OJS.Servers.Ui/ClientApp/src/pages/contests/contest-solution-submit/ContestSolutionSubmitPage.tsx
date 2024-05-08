@@ -185,7 +185,7 @@ const ContestSolutionSubmitPage = () => {
         if (isLoading) {
             return;
         }
-        if (!isRegisteredParticipant && !isActiveParticipant) {
+        if (!isRegisteredParticipant || !isActiveParticipant) {
             navigate(`/contests/register/${contestId}/${participationType}`);
         }
     }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
