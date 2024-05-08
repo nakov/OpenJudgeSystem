@@ -420,9 +420,16 @@ const ContestSolutionSubmitPage = () => {
                 </div>
             );
         }
-        if (remainingTimeForCompete === undefined) {
-            return <div />;
+
+        // Contests without ending time
+        if (!remainingTimeForCompete) {
+            return (
+                <div>
+                    <b>No expire time</b>
+                </div>
+            );
         }
+
         return (
             <span className={styles.errorText}>
                 Participation time has expired
