@@ -119,15 +119,15 @@ const ContestRegister = () => {
     if (error) {
         if ((error as any).status === 401) {
             navigate('/login');
-            return;
+        } else {
+            return (
+                <ErrorWithActionButtons
+                  message={getErrorMessage(error)}
+                  backToUrl="/contests"
+                  backToText="Back to contests"
+                />
+            );
         }
-        return (
-            <ErrorWithActionButtons
-              message={getErrorMessage(error)}
-              backToUrl="/contests"
-              backToText="Back to contests"
-            />
-        );
     }
 
     return (

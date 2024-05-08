@@ -156,7 +156,7 @@ export const contestsService = createApi({
                     },
                 }),
             }),
-        downloadContestProblemResource: builder.query<{ blob: Blob, fileName: string }, { id: number }>({
+        downloadContestProblemResource: builder.query<{ blob: Blob; fileName: string }, { id: number }>({
             query: ({ id }) => ({
                 url: `/ProblemResources/GetResource/${id}`,
             }),
