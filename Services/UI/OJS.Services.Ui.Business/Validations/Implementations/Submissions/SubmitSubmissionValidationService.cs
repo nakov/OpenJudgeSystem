@@ -39,6 +39,16 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Problem.NotFound);
         }
 
+        if (participant == null)
+        {
+            return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
+        }
+
+        if (participant.IsInvalidated)
+        {
+            return ValidationResult.Invalid(ValidationMessages.Participant.ParticipantIsInvalidated);
+        }
+
         var problemId = problem.Id.ToString();
 
         var isAdminOrLecturer = this.lecturersInContestsBusinessService
@@ -68,11 +78,6 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0))
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionEmpty, problemId);
-        }
-
-        if (participant == null && !isAdminOrLecturer && submitSubmissionServiceModel.Official)
-        {
-            return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForExam, problemId);
         }
 
         if (submitSubmissionServiceModel.Official &&
