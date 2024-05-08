@@ -33,7 +33,6 @@ export const contestsService = createApi({
             const contentType = response.headers.get('Content-Type');
 
             if (contentType?.includes('application/octet-stream') ||
-                contentType?.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
                 contentType?.includes('application/zip')) {
                 const contentDisposition = response.headers.get('Content-Disposition');
                 let filename = 'file.zip';
@@ -157,7 +156,7 @@ export const contestsService = createApi({
                     },
                 }),
             }),
-        downloadContestProblemResource: builder.query<{ blob: Blob }, { id: number }>({
+        downloadContestProblemResource: builder.query<{ blob: Blob, fileName: string }, { id: number }>({
             query: ({ id }) => ({
                 url: `/ProblemResources/GetResource/${id}`,
             }),

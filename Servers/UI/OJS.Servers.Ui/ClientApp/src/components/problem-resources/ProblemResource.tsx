@@ -27,7 +27,7 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
             return;
         }
 
-        downloadFile(problemResourceDownloadData.blob, `${problem}-resources`);
+        downloadFile(problemResourceDownloadData.blob, problemResourceDownloadData.fileName);
     }, [ problem, problemResourceDownloadData ]);
 
     return (

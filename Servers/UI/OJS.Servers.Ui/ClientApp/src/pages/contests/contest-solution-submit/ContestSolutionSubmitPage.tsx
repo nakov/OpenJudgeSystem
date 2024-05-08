@@ -11,6 +11,7 @@ import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
+import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
@@ -555,9 +556,11 @@ const ContestSolutionSubmitPage = () => {
 
     if ((isRegisteredParticipant && !isActiveParticipant) || contestTimeHasExpired) {
         return (
-            <div className={`${getColorClassName(themeColors.textColor)} ${styles.expiredContestText}`}>
-                The contest you are trying to access timer has expired!
-            </div>
+            <ErrorWithActionButtons
+              message="Access to this contest has expired!"
+              backToText="Back to contests"
+              backToUrl="/contests"
+            />
         );
     }
 
