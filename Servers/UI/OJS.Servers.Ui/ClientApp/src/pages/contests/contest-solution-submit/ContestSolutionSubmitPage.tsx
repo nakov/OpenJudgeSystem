@@ -576,7 +576,7 @@ const ContestSolutionSubmitPage = () => {
             { user.canAccessAdministration && (
                 <div className={styles.administrationButtonWrapper}>
                     <LinkButton
-                      to={`/administration-new/problems/${selectedContestDetailsProblem?.id}`}
+                      to={`/administration-new/contests/${contestId}`}
                       isToExternal
                       text="Open in administration"
                     />
