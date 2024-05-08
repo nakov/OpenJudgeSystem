@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { SubmissionResultType } from '../../../common/constants';
+import { TestRunResultType } from '../../../common/constants';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
@@ -38,11 +38,12 @@ const ExecutionResult = ({
     const renderTestRunIcon = useCallback(
         (testRun: ITestRunType) => {
             switch (toLowerCase(testRun.resultType)) {
-            case SubmissionResultType.CorrectAnswer: return <TickIcon key={testRun.id} />;
-            case SubmissionResultType.WrongAnswer: return <WrongAnswerIcon key={testRun.id} />;
-            case SubmissionResultType.MemoryLimit: return <MemoryIcon key={testRun.id} />;
-            case SubmissionResultType.TimeLimit: return <TimeLimitIcon key={testRun.id} />;
-            case SubmissionResultType.RunTimeError: return <RuntimeErrorIcon key={testRun.id} />;
+            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
+            case TestRunResultType.CorrectAnswer.toLowerCase(): return <TickIcon key={testRun.id} />;
+            case TestRunResultType.WrongAnswer.toLowerCase(): return <WrongAnswerIcon key={testRun.id} />;
+            case TestRunResultType.MemoryLimit.toLowerCase(): return <MemoryIcon key={testRun.id} />;
+            case TestRunResultType.TimeLimit.toLowerCase(): return <TimeLimitIcon key={testRun.id} />;
+            case TestRunResultType.RunTimeError.toLowerCase(): return <RuntimeErrorIcon key={testRun.id} />;
             default: return (
                 <div>
                     <ErrorIcon />

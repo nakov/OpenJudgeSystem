@@ -3,9 +3,10 @@ import { FaCheck, FaRegClock } from 'react-icons/fa';
 import { GoPrimitiveDot } from 'react-icons/go';
 import { IoCloseSharp } from 'react-icons/io5';
 
+import { TestRunResultType } from '../../../common/constants';
+import { getTestResultColorId } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { testResultTypes } from '../submission-test-run/SubmissionTestRun';
 
 import styles from './SubmissionTestRuns.module.scss';
 
@@ -22,27 +23,18 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
     const renderTestRunDetails = (testRun: ITestRunType, idx: number) => {
         const { resultType } = testRun;
 
-        const getTestColorByResultType = (resType: string) => {
-            if (resType === testResultTypes.wrongAnswer) {
-                return '#fc4c50';
-            }
-            if (resType === testResultTypes.correctAnswer) {
-                return '#23be5e';
-            }
-            return '#fec112';
-        };
-
         const getIconByResultType = (resType: string, color: string) => {
-            if (resType === testResultTypes.wrongAnswer) {
+            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
+            if (resType.toLowerCase() === TestRunResultType.WrongAnswer.toLowerCase()) {
                 return <IoCloseSharp size={20} color={color} />;
             }
-            if (resType === testResultTypes.correctAnswer) {
+            if (resType.toLowerCase() === TestRunResultType.CorrectAnswer.toLowerCase()) {
                 return <FaCheck size={20} color={color} />;
             }
-            if (resType === testResultTypes.timeLimit) {
+            if (resType.toLowerCase() === TestRunResultType.TimeLimit.toLowerCase()) {
                 return <FaRegClock size={20} color={color} />;
             }
-            if (resType === testResultTypes.memoryLimit) {
+            if (resType.toLowerCase() === TestRunResultType.MemoryLimit.toLowerCase()) {
                 return <BiMemoryCard size={20} color={color} />;
             }
 
@@ -57,7 +49,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const color = getTestColorByResultType(resultType);
+        const color = getTestResultColorId(resultType);
 
         return (
             <div
