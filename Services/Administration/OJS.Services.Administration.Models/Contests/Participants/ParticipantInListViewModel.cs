@@ -14,7 +14,10 @@ public class ParticipantInListViewModel : IMapExplicitly
     public string? ContestName { get; set; }
 
     public string? ContestId { get; set; }
+
     public bool IsOfficial { get; set; }
+
+    public bool IsInvalidated { get; set; }
 
     public DateTime CreatedOn { get; set; }
 

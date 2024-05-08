@@ -174,7 +174,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, isOfficial);
             registerModel.ParticipantId = participant?.Id;
-            registerModel.IsRegisteredSuccessfully = participant != null;
+            registerModel.IsRegisteredSuccessfully = participant != null && !participant.IsInvalidated;
             registerModel.ShouldConfirmParticipation = ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
 
             return registerModel;
@@ -233,11 +233,11 @@ namespace OJS.Services.Ui.Business.Implementations
                 requiredPasswordIsValid = true;
             }
 
-            if (participant == null &&
+            if ((participant == null || participant.IsInvalidated) &&
                 (!shouldRequirePassword || requiredPasswordIsValid) &&
                 (!shouldConfirmParticipation || hasConfirmedParticipation == true))
             {
-                await this.AddNewParticipantToContestIfNotExists(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
+                await this.AddNewParticipantToContestIfNotExistsOrResetExistingToValid(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
 
                 return true;
             }
@@ -318,7 +318,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participationModel = participant!.Map<ContestParticipationServiceModel>();
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
-            participationModel.IsActiveParticipant = true;
+            participationModel.IsActiveParticipant = !participant.IsInvalidated;
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
@@ -520,7 +520,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private static bool ShouldConfirmParticipation(Participant? participant, bool official, bool contestIsOnlineExam, bool userIsAdminOrLecturerInContest)
             => contestIsOnlineExam &&
                official &&
-               participant == null &&
+               (participant == null || participant.IsInvalidated) &&
                !userIsAdminOrLecturerInContest;
 
         private static bool GetIsPasswordValid(Contest contest, string? password, bool isOfficial)
@@ -596,7 +596,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return model;
         }
 
-        private async Task<Participant?> AddNewParticipantToContestIfNotExists(
+        private async Task<Participant?> AddNewParticipantToContestIfNotExistsOrResetExistingToValid(
             Contest contest,
             bool official,
             string userId,
@@ -605,6 +605,13 @@ namespace OJS.Services.Ui.Business.Implementations
             var participant = await this.participantsData.GetByContestByUserAndByIsOfficial(contest.Id, userId, official);
             if (participant != null)
             {
+                if (participant.IsInvalidated)
+                {
+                    participant.IsInvalidated = false;
+                    this.participantsData.Update(participant);
+                    await this.participantsData.SaveChanges();
+                }
+
                 return participant;
             }
 
