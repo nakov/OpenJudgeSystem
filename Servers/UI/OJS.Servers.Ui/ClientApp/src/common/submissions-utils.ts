@@ -3,10 +3,13 @@ import { TestRunResultType } from './constants';
 const getTestResultColorId = (resultType: string) => {
     switch (resultType.toLowerCase()) {
     case TestRunResultType.CorrectAnswer.toLowerCase():
+        // primary-green
         return '#23be5e';
     case TestRunResultType.WrongAnswer.toLowerCase():
+        // primary-red
         return '#fc4c50';
     default:
+        // warning
         return '#fec112';
     }
 };
