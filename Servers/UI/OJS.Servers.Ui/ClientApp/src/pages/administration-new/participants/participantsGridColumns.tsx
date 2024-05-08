@@ -53,6 +53,17 @@ const participantsFilteringColumns: GridColDef[] = [
         sortable: false,
     },
     {
+        field: 'isInvalidated',
+        headerName: 'Is Invalidated',
+        headerAlign: 'center',
+        width: 10,
+        align: 'center',
+        type: 'boolean',
+        flex: 2,
+        filterable: false,
+        sortable: false,
+    },
+    {
         field: 'createdOn',
         headerName: `${CREATED_ON}`,
         type: 'date',

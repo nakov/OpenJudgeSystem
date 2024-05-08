@@ -17,6 +17,8 @@ public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMap
 
     public bool IsOfficial { get; set; }
 
+    public bool IsInvalidated { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<Participant, ParticipantAdministrationModel>()
