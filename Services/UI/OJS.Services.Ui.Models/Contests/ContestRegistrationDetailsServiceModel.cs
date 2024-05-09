@@ -7,7 +7,7 @@ using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Linq;
 
-public class RegisterUserForContestServiceModel : IMapExplicitly
+public class ContestRegistrationDetailsServiceModel : IMapExplicitly
 {
     public int Id { get; set; }
 
@@ -30,7 +30,7 @@ public class RegisterUserForContestServiceModel : IMapExplicitly
     public int? CategoryId { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<Contest, RegisterUserForContestServiceModel>()
+        => configuration.CreateMap<Contest, ContestRegistrationDetailsServiceModel>()
             .ForMember(
                 d => d.NumberOfProblems,
                 opt => opt.MapFrom(src => src.ProblemGroups.Count(pg => pg.Problems.Count > 0)))

@@ -95,7 +95,7 @@ public class CompeteController : BaseApiController
         try
         {
             var isValidRegistration = await this.contestsBusiness
-                .ValidateUserRegistrationForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial);
+                .RegisterUserForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial);
 
             return this.Ok(new { IsRegisteredSuccessFully = isValidRegistration });
         }

@@ -142,7 +142,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return contestDetailsServiceModel;
         }
 
-        public async Task<RegisterUserForContestServiceModel> GetContestRegistrationDetails(int id, bool isOfficial)
+        public async Task<ContestRegistrationDetailsServiceModel> GetContestRegistrationDetails(int id, bool isOfficial)
         {
             var contest = this.contestsData
                 .GetByIdQuery(id)
@@ -170,7 +170,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
-            var registerModel = contest!.Map<RegisterUserForContestServiceModel>();
+            var registerModel = contest!.Map<ContestRegistrationDetailsServiceModel>();
             registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, isOfficial);
             registerModel.ParticipantId = participant?.Id;
             registerModel.IsRegisteredSuccessfully = participant != null && !participant.IsInvalidated;
@@ -179,7 +179,7 @@ namespace OJS.Services.Ui.Business.Implementations
             return registerModel;
         }
 
-        public async Task<bool> ValidateUserRegistrationForContest(
+        public async Task<bool> RegisterUserForContest(
             int id,
             string? password,
             bool? hasConfirmedParticipation,
@@ -235,9 +235,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 (!shouldRequirePassword || requiredPasswordIsValid) &&
                 (!shouldConfirmParticipation || hasConfirmedParticipation == true))
             {
-                await this.AddNewParticipantToContestIfNotExistsOrResetExistingToValid(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
-
-                return true;
+                participant = await this.AddNewParticipantToContestIfNotExistsOrResetExistingToValid(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
             }
 
             return participant != null;
@@ -282,16 +280,15 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var user = this.userProviderService.GetCurrentUser();
 
-            var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id!);
-
             var participant = await this.participantsData
                 .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                     model.ContestId,
-                    userProfile!.Id,
+                    user!.Id,
                     model.IsOfficial);
 
             if (participant == null)
             {
+                // Participant must be registered in previous steps
                 return new ContestParticipationServiceModel
                 {
                     IsActiveParticipant = false, IsRegisteredParticipant = false, Contest = null,
@@ -613,14 +610,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 }
 
                 return participant;
-            }
-
-            if (contest.IsOnlineExam &&
-                official &&
-                !isUserAdminOrLecturerInContest &&
-                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
-            {
-                throw new BusinessServiceException(ValidationMessages.Participant.NotRegisteredForExam);
             }
 
             return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
