@@ -471,7 +471,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .SubmissionType;
 
         SubmissionServiceModel submissionServiceModel;
-        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
             // Submission is just uploaded and should not be processed
@@ -489,6 +489,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
+        // Should be disposed explicitly (not with using keyword), otherwise the next operation will fail with
+        // "The current TransactionScope is already complete"
+        scope.Dispose();
 
         await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
     }
