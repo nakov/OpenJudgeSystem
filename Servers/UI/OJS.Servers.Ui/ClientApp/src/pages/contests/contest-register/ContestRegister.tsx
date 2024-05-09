@@ -44,6 +44,30 @@ const ContestRegister = () => {
         }
     }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
 
+    // register user automatically if no password or modal confirmation is required
+    useEffect(() => {
+        if (isLoading || !data) {
+            return;
+        }
+        if (!requirePassword && !shouldConfirmParticipation && !isRegisteredSuccessfully) {
+            registerUserForContest({
+                id: Number(contestId),
+                isOfficial: participationType === 'compete',
+                password: '',
+                hasConfirmedParticipation: true,
+            });
+        }
+    }, [
+        isLoading,
+        data,
+        requirePassword,
+        shouldConfirmParticipation,
+        isRegisteredSuccessfully,
+        contestId,
+        participationType,
+        registerUserForContest,
+    ]);
+
     useEffect(() => {
         if (!shouldConfirmParticipation && data) {
             setHasAcceptedOnlineModal(true);

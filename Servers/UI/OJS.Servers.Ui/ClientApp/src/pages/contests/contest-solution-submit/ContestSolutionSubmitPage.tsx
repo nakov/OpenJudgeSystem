@@ -86,6 +86,7 @@ const ContestSolutionSubmitPage = () => {
     const {
         data,
         isLoading,
+        isError,
         error,
         refetch,
     } = useGetContestUserParticipationQuery({ id: Number(contestId!), isOfficial: isCompete });
@@ -185,10 +186,10 @@ const ContestSolutionSubmitPage = () => {
         if (isLoading) {
             return;
         }
-        if (!isRegisteredParticipant && !isActiveParticipant) {
+        if ((!isRegisteredParticipant && !isActiveParticipant) && !isError) {
             navigate(`/contests/register/${contestId}/${participationType}`);
         }
-    }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -557,7 +558,7 @@ const ContestSolutionSubmitPage = () => {
     if ((isRegisteredParticipant && !isActiveParticipant) || contestTimeHasExpired) {
         return (
             <ErrorWithActionButtons
-              message="Access to this contest has expired."
+              message="Access to this contest has expired!"
               backToText="Back to contests"
               backToUrl="/contests"
             />
