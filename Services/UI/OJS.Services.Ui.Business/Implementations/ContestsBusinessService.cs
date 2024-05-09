@@ -150,7 +150,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .FirstOrDefault();
 
             var user = this.userProviderService.GetCurrentUser();
-            var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest,
@@ -166,7 +165,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participant = await this.participantsData
                 .GetByContestByUserAndByIsOfficial(
                     id,
-                    userProfile!.Id,
+                    user!.Id,
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
@@ -194,7 +193,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 .FirstOrDefault();
 
             var user = this.userProviderService.GetCurrentUser();
-            var userProfile = await this.usersBusinessService.GetUserProfileById(user.Id);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
                 contest,
@@ -210,7 +208,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participant = await this.participantsData
                 .GetByContestByUserAndByIsOfficial(
                     id,
-                    userProfile!.Id,
+                    user!.Id,
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
