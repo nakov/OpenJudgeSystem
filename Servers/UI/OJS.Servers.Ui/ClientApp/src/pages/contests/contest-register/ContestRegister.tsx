@@ -50,11 +50,15 @@ const ContestRegister = () => {
             return;
         }
         if (!requirePassword && !shouldConfirmParticipation && !isRegisteredSuccessfully) {
+            // eslint-disable-next-line promise/catch-or-return
             registerUserForContest({
                 id: Number(contestId),
                 isOfficial: participationType === 'compete',
                 password: '',
                 hasConfirmedParticipation: true,
+                // eslint-disable-next-line promise/prefer-await-to-then,promise/always-return
+            }).then(() => {
+                navigate(`/contests/${contestId}/${participationType}`);
             });
         }
     }, [
@@ -66,6 +70,7 @@ const ContestRegister = () => {
         contestId,
         participationType,
         registerUserForContest,
+        navigate,
     ]);
 
     useEffect(() => {
