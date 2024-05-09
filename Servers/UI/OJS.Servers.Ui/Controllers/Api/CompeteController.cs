@@ -46,7 +46,7 @@ public class CompeteController : BaseApiController
     [ProducesResponseType(typeof(ContestParticipationServiceModel), Status200OK)]
     public async Task<IActionResult> Index(int id, [FromQuery] bool isOfficial)
         => await this.contestsBusiness
-            .StartContestParticipation(new StartContestParticipationServiceModel
+            .GetParticipationDetails(new StartContestParticipationServiceModel
             {
                 ContestId = id,
                 IsOfficial = isOfficial,

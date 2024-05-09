@@ -1,5 +1,11 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using X.PagedList;
     using FluentExtensions.Extensions;
     using Microsoft.EntityFrameworkCore;
     using OJS.Common;
@@ -9,20 +15,15 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Exceptions;
+    using OJS.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Models;
     using OJS.Services.Ui.Business.Cache;
+    using OJS.Services.Ui.Business.Extensions;
     using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Submissions;
-    using OJS.Services.Infrastructure.Extensions;
-    using OJS.Services.Infrastructure.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using X.PagedList;
     using static OJS.Services.Common.PaginationConstants.Contests;
 
     public class ContestsBusinessService : IContestsBusinessService
@@ -275,7 +276,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
         }
 
-        public async Task<ContestParticipationServiceModel> StartContestParticipation(
+        public async Task<ContestParticipationServiceModel> GetParticipationDetails(
             StartContestParticipationServiceModel model)
         {
             var user = this.userProviderService.GetCurrentUser();
@@ -314,10 +315,8 @@ namespace OJS.Services.Ui.Business.Implementations
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
-            var participationEndTime = GetParticipationEndTime(participant);
-            participationModel.EndDateTimeForParticipantOrContest = participationEndTime;
-            participationModel.IsActiveParticipant = !participant.IsInvalidated &&
-                                                     (participationEndTime == null || participationEndTime > DateTime.UtcNow);
+            participationModel.EndDateTimeForParticipantOrContest = participant.GetParticipationEndTime();
+            participationModel.IsActiveParticipant = this.participantsBusiness.IsActiveParticipant(participant);
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
@@ -473,18 +472,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             await this.contestsData.DeleteById(id);
             await this.contestsData.SaveChanges();
-        }
-
-        private static DateTime? GetParticipationEndTime(Participant participant)
-        {
-            if (participant.IsOfficial)
-            {
-                return participant.ParticipationEndTime.HasValue
-                    ? participant.ParticipationEndTime
-                    : participant.Contest.EndTime;
-            }
-
-            return participant.Contest.PracticeEndTime;
         }
 
         private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(

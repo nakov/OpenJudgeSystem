@@ -24,7 +24,7 @@ namespace OJS.Services.Ui.Business
 
         Task<ContestDetailsServiceModel> GetContestDetails(int id);
 
-        Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model);
+        Task<ContestParticipationServiceModel> GetParticipationDetails(StartContestParticipationServiceModel model);
 
         Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex();
 

@@ -438,34 +438,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id!,
                 model.Official);
 
-        var contestValidationResult = this.contestParticipationValidationService.GetValidationResult(
-            (participant?.Contest,
-                participant?.ContestId,
-                currentUser,
-                model.Official)!);
-
-        if (!contestValidationResult.IsValid)
-        {
-            throw new BusinessServiceException(contestValidationResult.Message);
-        }
-
-        var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
-            participant!.Id,
-            participant.Contest.LimitBetweenSubmissions);
-
-        var hasUserNotProcessedSubmissionForProblem =
-            this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
-
-        var hasUserNotProcessedSubmissionForContest =
-            this.submissionsData.HasUserNotProcessedSubmissionForContest(participant.ContestId, currentUser.Id!);
-
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
-            (problem,
-                participant,
-                userSubmissionTimeLimit,
-                hasUserNotProcessedSubmissionForProblem,
-                hasUserNotProcessedSubmissionForContest,
-                model));
+            (problem, participant, model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -484,7 +458,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             newSubmission.Content = model.ByteContent!;
         }
 
-        newSubmission.ParticipantId = participant.Id;
+        newSubmission.ParticipantId = participant!.Id;
         newSubmission.IpAddress = "model.UserHostAddress";
         newSubmission.IsPublic = ((participant.IsOfficial && participant.Contest.ContestPassword == null) ||
                                   (!participant.IsOfficial && participant.Contest.PracticePassword == null)) &&
@@ -515,10 +489,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
-        scope.Dispose();
 
-        await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(submissionServiceModel);
+        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)

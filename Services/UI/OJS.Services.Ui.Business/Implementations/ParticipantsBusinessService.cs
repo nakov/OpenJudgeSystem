@@ -1,19 +1,20 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using OJS.Services.Ui.Data;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Infrastructure;
+using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models;
-using OJS.Common.Extensions;
-using SharedResource = OJS.Common.Resources.ContestsGeneral;
+using OJS.Services.Infrastructure;
+using OJS.Services.Ui.Business.Extensions;
+using OJS.Services.Ui.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
+using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {
@@ -158,6 +159,16 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
                 .ToTask()
             : Task.FromResult(0);
+
+    public bool IsActiveParticipant(Participant participant)
+    {
+        var startTime = participant.GetParticipationStartTime();
+        var participationEndTime = participant.GetParticipationEndTime();
+
+        return !participant.IsInvalidated &&
+               startTime != null &&
+               (participationEndTime == null || participationEndTime > this.datesService.GetUtcNow());
+    }
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {

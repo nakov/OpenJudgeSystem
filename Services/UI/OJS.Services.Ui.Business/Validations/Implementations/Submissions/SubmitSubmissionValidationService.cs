@@ -1,39 +1,37 @@
 ﻿namespace OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 
+using System.Linq;
+using System.Text;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common;
-using OJS.Services.Common.Models.Contests;
-using OJS.Services.Common.Models.Users;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
+using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Submissions;
-using System;
-using System.Linq;
-using System.Text;
 
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
-    private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+    private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
+    private readonly IParticipantsBusinessService participantsBusiness;
+    private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsActivityService activityService;
 
     public SubmitSubmissionValidationService(
-        ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+        ILecturersInContestsBusinessService lecturersInContestsBusiness,
+        IParticipantsBusinessService participantsBusiness,
+        ISubmissionsDataService submissionsData,
         IContestsActivityService activityService)
     {
-        this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+        this.lecturersInContestsBusiness = lecturersInContestsBusiness;
+        this.participantsBusiness = participantsBusiness;
         this.activityService = activityService;
+        this.submissionsData = submissionsData;
     }
 
-    public ValidationResult GetValidationResult(
-        (Problem?, Participant?, int, bool, bool, SubmitSubmissionServiceModel)
-            validationInput)
+    public ValidationResult GetValidationResult((Problem?, Participant?, SubmitSubmissionServiceModel) validationInput)
     {
-        var (problem, participant,
-                userSubmissionTimeLimit, hasUserNotProcessedSubmissionForProblem,
-                hasUserNotProcessedSubmissionForContest, submitSubmissionServiceModel) =
-            validationInput;
+        var (problem, participant, submitSubmissionServiceModel) = validationInput;
 
         if (problem == null)
         {
@@ -50,102 +48,99 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipantIsInvalidated);
         }
 
-        var participationEndTime = participant.IsOfficial
-            ? participant.ParticipationEndTime.HasValue
-                ? participant.ParticipationEndTime
-                : participant.Contest.EndTime
-            : participant.Contest.PracticeEndTime;
-
-        if (participationEndTime != null && participationEndTime < DateTime.UtcNow)
+        if (!this.participantsBusiness.IsActiveParticipant(participant))
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationTimeEnded);
         }
 
-        var problemId = problem.Id.ToString();
+        var problemIdToString = problem.Id.ToString();
 
-        var isAdminOrLecturer = this.lecturersInContestsBusinessService
-            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
-            .GetAwaiter()
-            .GetResult();
+        var userHasUnprocessedSubmissionForProblem =
+            this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, participant.UserId);
 
-        if (participant != null &&
-            !participant.Contest.AllowParallelSubmissionsInTasks &&
-            hasUserNotProcessedSubmissionForContest)
+        var userHasUnprocessedSubmissionForContest =
+            this.submissionsData.HasUserNotProcessedSubmissionForContest(participant.ContestId, participant.UserId);
+
+        if (userHasUnprocessedSubmissionForProblem)
+        {
+            return ValidationResult.Invalid(
+                ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem,
+                problemIdToString);
+        }
+
+        if (!participant!.Contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
-                problemId);
+                problemIdToString);
         }
 
         if (string.IsNullOrWhiteSpace(submitSubmissionServiceModel.StringContent) &&
             (submitSubmissionServiceModel.ByteContent == null || submitSubmissionServiceModel.ByteContent.Length == 0))
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionEmpty, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionEmpty, problemIdToString);
         }
+
+        var isAdminOrLecturer = this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
+            .GetAwaiter()
+            .GetResult();
 
         if (submitSubmissionServiceModel.Official &&
             participant!.Contest.IsOnlineExam &&
             !isAdminOrLecturer &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
-            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Problem.ProblemNotAssignedToUser, problemIdToString);
         }
 
-        var submissionType =
-            problem.SubmissionTypesInProblems.FirstOrDefault(st =>
+        var submissionType = problem.SubmissionTypesInProblems.FirstOrDefault(st =>
                 st.SubmissionTypeId == submitSubmissionServiceModel.SubmissionTypeId);
 
         if (submissionType == null)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTypeNotFound, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTypeNotFound, problemIdToString);
         }
 
-        var isFileUpload = submitSubmissionServiceModel.StringContent == null ||
-                           submitSubmissionServiceModel.ByteContent != null;
+        var isFileUpload = submitSubmissionServiceModel.StringContent == null || submitSubmissionServiceModel.ByteContent != null;
 
-        if (isFileUpload && !submissionType.SubmissionType.AllowedFileExtensions!.Contains(
-                submitSubmissionServiceModel.FileExtension!))
+        if (isFileUpload && !submissionType.SubmissionType.AllowedFileExtensions!.Contains(submitSubmissionServiceModel.FileExtension!))
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.InvalidExtension, problemIdToString);
         }
 
         if (isFileUpload && !submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.BinaryFilesNotAllowed, problemIdToString);
         }
 
         if (!isFileUpload && submissionType.SubmissionType.AllowBinaryFilesUpload)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed, problemId);
-        }
-
-        if (hasUserNotProcessedSubmissionForProblem)
-        {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.UserHasNotProcessedSubmissionForProblem,
-                problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.TextUploadNotAllowed, problemIdToString);
         }
 
         if (submitSubmissionServiceModel.ByteContent != null &&
             problem.SourceCodeSizeLimit < submitSubmissionServiceModel.ByteContent.Length)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionFileTooBig, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionFileTooBig, problemIdToString);
         }
 
         if (submitSubmissionServiceModel.StringContent != null &&
             problem.SourceCodeSizeLimit < Encoding.UTF8.GetBytes(submitSubmissionServiceModel.StringContent).Length)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooLong, problemIdToString);
         }
 
         if (!isFileUpload && submitSubmissionServiceModel.StringContent!.Length < 5)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemIdToString);
         }
+
+        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(participant!.Id, participant.Contest.LimitBetweenSubmissions);
 
         if (userSubmissionTimeLimit != 0)
         {
-            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionWasSentTooSoon, problemId);
+            return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionWasSentTooSoon, problemIdToString);
         }
 
         return ValidationResult.Valid();
