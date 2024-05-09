@@ -198,7 +198,7 @@ const ContestSolutionSubmitPage = () => {
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
     useEffect(() => {
-        if (!contestDetails) {
+        if (!contestDetails || contestDetails.id !== Number(contestId)) {
             const fetchAndSetContestDetails = async () => {
                 const { data: contestDetailsData } = await getContestById({ id: Number(contestId) });
                 dispatch(setContestDetails({ contest: contestDetailsData ?? null }));

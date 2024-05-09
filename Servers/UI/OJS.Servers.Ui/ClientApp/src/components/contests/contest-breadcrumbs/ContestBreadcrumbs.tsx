@@ -3,7 +3,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import { useEffect } from 'react';
-import { useParams } from 'react-router';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
@@ -22,7 +21,6 @@ import styles from './ContestBreadcrumbs.module.scss';
 const ContestBreadcrumbs = () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const { contestId } = useParams();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
@@ -45,20 +43,22 @@ const ContestBreadcrumbs = () => {
 
     // set selected category when loading from specific url and no data is present beforehand
     useEffect(() => {
-        // contestId should be part of the check only when
-        // on contests page, otherwise causes endless recursion
-        if (pathname.includes('/contest')
-            ? contestId
-            : breadcrumbItems.length === 0 && contestDetails) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            const selectedCategory = findContestCategoryByIdRecursive(contestCategories, contestDetails?.categoryId!);
-            if (selectedCategory) {
-                const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);
+        // contests page have directly category id in the url
+        // if we make request for it, we go into recursion
+        const selectedCategoryId = pathname.split('/').filter((el) => el).length === 1
+            ? searchParams.get('category')
+            : contestDetails?.categoryId;
 
-                dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
-            }
+        if (!selectedCategoryId) {
+            return;
         }
-    }, [ contestCategories, breadcrumbItems.length, contestDetails, pathname, contestId, dispatch ]);
+        const selectedCategory = findContestCategoryByIdRecursive(contestCategories, Number(selectedCategoryId));
+        if (selectedCategory) {
+            const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);
+
+            dispatch(updateContestCategoryBreadcrumbItem({ elements: selectedCategoryBreadcrumbItems }));
+        }
+    }, [ contestCategories, breadcrumbItems.length, contestDetails, pathname, searchParams, dispatch ]);
 
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean) => (
         <Link
@@ -88,7 +88,7 @@ const ContestBreadcrumbs = () => {
     }
 
     if (breadcrumbItems.length === 0) {
-        return null;
+        return <div />;
     }
 
     return (

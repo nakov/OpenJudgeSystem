@@ -228,6 +228,7 @@ const SubmissionDetailsPage = () => {
 
         return sortedTestRuns.map((testRun: ITestRunType, idx: number) => (
             <SubmissionTestRun
+              key={`t-r-${testRun.testId}`}
               testRun={testRun}
               idx={idx + 1}
               shouldRenderAdminData={userIsInRoleForContest}
