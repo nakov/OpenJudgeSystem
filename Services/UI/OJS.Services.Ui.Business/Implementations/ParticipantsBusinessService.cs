@@ -7,7 +7,6 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure;
-using OJS.Services.Ui.Business.Extensions;
 using OJS.Services.Ui.Data;
 using System;
 using System.Collections.Generic;
@@ -22,20 +21,17 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
     private readonly IDatesService datesService;
-    private readonly IParticipantScoresDataService scoresDataService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         ISubmissionsDataService submissionsData,
         IContestsDataService contestsData,
-        IDatesService datesService,
-        IParticipantScoresDataService scoresDataService)
+        IDatesService datesService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
         this.datesService = datesService;
-        this.scoresDataService = scoresDataService;
     }
 
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
@@ -159,16 +155,6 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 .GetUserSubmissionTimeLimit(participantId, contestLimitBetweenSubmissions)
                 .ToTask()
             : Task.FromResult(0);
-
-    public bool IsActiveParticipant(Participant participant)
-    {
-        var startTime = participant.GetParticipationStartTime();
-        var participationEndTime = participant.GetParticipationEndTime();
-
-        return !participant.IsInvalidated &&
-               startTime != null &&
-               (participationEndTime == null || participationEndTime > this.datesService.GetUtcNow());
-    }
 
     private static void AssignRandomProblemsToParticipant(Participant participant, Contest contest)
     {

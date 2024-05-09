@@ -81,6 +81,8 @@ public static class ValidationMessages
 
         public const string ParticipationTimeEnded = "Participation time for this contest has expired.";
 
+        public const string ParticipationNotActive = "Participation for this contest is not active.";
+
         public const string NoPrivilegesForContestResults = "You don't have privileges to view contest's full results.";
     }
 }

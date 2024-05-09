@@ -35,7 +35,5 @@ namespace OJS.Services.Ui.Business
             DateTime participationStartTimeRangeEnd);
 
         Task<int> GetParticipantLimitBetweenSubmissions(int participantId, int contestLimitBetweenSubmissions);
-
-        bool IsActiveParticipant(Participant participant);
     }
 }

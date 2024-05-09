@@ -5,6 +5,8 @@ using System.Text;
 using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Services.Common;
+using OJS.Services.Common.Models.Contests;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Data;
@@ -13,18 +15,15 @@ using OJS.Services.Ui.Models.Submissions;
 public class SubmitSubmissionValidationService : ISubmitSubmissionValidationService
 {
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
-    private readonly IParticipantsBusinessService participantsBusiness;
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsActivityService activityService;
 
     public SubmitSubmissionValidationService(
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
-        IParticipantsBusinessService participantsBusiness,
         ISubmissionsDataService submissionsData,
         IContestsActivityService activityService)
     {
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
-        this.participantsBusiness = participantsBusiness;
         this.activityService = activityService;
         this.submissionsData = submissionsData;
     }
@@ -43,14 +42,21 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
 
-        if (participant.IsInvalidated)
+        var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
+
+        if (participantActivity.IsInvalidated)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipantIsInvalidated);
         }
 
-        if (!this.participantsBusiness.IsActiveParticipant(participant))
+        if (!participantActivity.HasParticipationTimeLeft)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationTimeEnded);
+        }
+
+        if (!participantActivity.IsActive)
+        {
+            return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationNotActive);
         }
 
         var problemIdToString = problem.Id.ToString();
@@ -68,7 +74,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
                 problemIdToString);
         }
 
-        if (!participant!.Contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
+        if (!participant.Contest.AllowParallelSubmissionsInTasks && userHasUnprocessedSubmissionForContest)
         {
             return ValidationResult.Invalid(
                 ValidationMessages.Submission.UserHasNotProcessedSubmissionForContest,
@@ -82,12 +88,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         }
 
         var isAdminOrLecturer = this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
+            .IsCurrentUserAdminOrLecturerInContest(participant.Contest.Id)
             .GetAwaiter()
             .GetResult();
 
         if (submitSubmissionServiceModel.Official &&
-            participant!.Contest.IsOnlineExam &&
+            participant.Contest.IsOnlineExam &&
             !isAdminOrLecturer &&
             participant.ProblemsForParticipants.All(p => p.ProblemId != problem.Id))
         {
@@ -136,7 +142,7 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionTooShort, problemIdToString);
         }
 
-        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(participant!.Id, participant.Contest.LimitBetweenSubmissions);
+        var userSubmissionTimeLimit = this.submissionsData.GetUserSubmissionTimeLimit(participant.Id, participant.Contest.LimitBetweenSubmissions);
 
         if (userSubmissionTimeLimit != 0)
         {

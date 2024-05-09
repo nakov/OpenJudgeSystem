@@ -317,8 +317,9 @@ namespace OJS.Services.Ui.Business.Implementations
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
-            participationModel.EndDateTimeForParticipantOrContest = participant.GetParticipationEndTime();
-            participationModel.IsActiveParticipant = this.participantsBusiness.IsActiveParticipant(participant);
+            var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
+            participationModel.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
+            participationModel.IsActiveParticipant = participantActivity.IsActive;
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
