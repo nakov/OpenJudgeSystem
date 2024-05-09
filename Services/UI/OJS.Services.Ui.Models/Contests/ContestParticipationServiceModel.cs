@@ -18,8 +18,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public DateTime? LastSubmissionTime { get; set; }
 
-    public bool ContestIsCompete { get; set; }
-
     public int? UserSubmissionsTimeLimit { get; set; }
 
     public DateTime? EndDateTimeForParticipantOrContest { get; set; }

@@ -318,7 +318,11 @@ namespace OJS.Services.Ui.Business.Implementations
             var participationModel = participant!.Map<ContestParticipationServiceModel>();
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
-            participationModel.IsActiveParticipant = !participant.IsInvalidated;
+
+            var participationEndTime = GetParticipationEndTime(participant);
+            participationModel.EndDateTimeForParticipantOrContest = participationEndTime;
+            participationModel.IsActiveParticipant = !participant.IsInvalidated &&
+                                                     (participationEndTime == null || participationEndTime > DateTime.UtcNow);
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
@@ -333,11 +337,9 @@ namespace OJS.Services.Ui.Business.Implementations
                 .DistinctBy(st => st.Id);
 
             participationModel.ParticipantId = participant!.Id;
-            participationModel.ContestIsCompete = model.IsOfficial;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
                     contest!.LimitBetweenSubmissions);
-            participationModel.EndDateTimeForParticipantOrContest = GetParticipationEndTime(participant);
 
             var participantsList = new List<int> { participant.Id, };
 

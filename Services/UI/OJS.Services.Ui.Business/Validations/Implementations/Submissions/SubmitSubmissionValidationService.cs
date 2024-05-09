@@ -9,6 +9,7 @@ using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Contests;
 using OJS.Services.Ui.Models.Submissions;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -49,21 +50,23 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipantIsInvalidated);
         }
 
+        var participationEndTime = participant.IsOfficial
+            ? participant.ParticipationEndTime.HasValue
+                ? participant.ParticipationEndTime
+                : participant.Contest.EndTime
+            : participant.Contest.PracticeEndTime;
+
+        if (participationEndTime != null && participationEndTime < DateTime.UtcNow)
+        {
+            return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationTimeEnded);
+        }
+
         var problemId = problem.Id.ToString();
 
         var isAdminOrLecturer = this.lecturersInContestsBusinessService
             .IsCurrentUserAdminOrLecturerInContest(participant?.Contest.Id)
             .GetAwaiter()
             .GetResult();
-
-        if (participant != null &&
-            !isAdminOrLecturer &&
-            !this.activityService.CanUserSubmit(participant.Contest.Map<ContestForActivityServiceModel>()))
-        {
-            return ValidationResult.Invalid(
-                ValidationMessages.Submission.UserCannotSubmit,
-                problemId);
-        }
 
         if (participant != null &&
             !participant.Contest.AllowParallelSubmissionsInTasks &&

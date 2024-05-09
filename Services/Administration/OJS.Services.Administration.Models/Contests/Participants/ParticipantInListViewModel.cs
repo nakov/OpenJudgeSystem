@@ -23,6 +23,10 @@ public class ParticipantInListViewModel : IMapExplicitly
 
     public DateTime? ModifiedOn { get; set; }
 
+    public DateTime? ParticipationStartTime { get; set; }
+
+    public DateTime? ParticipationEndTime { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ParticipantInListViewModel>()
             .ForMember(cvp => cvp.Id, opt
