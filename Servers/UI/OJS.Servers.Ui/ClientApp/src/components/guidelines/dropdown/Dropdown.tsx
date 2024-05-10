@@ -24,12 +24,13 @@ const Dropdown = (props: IDropdownProps) => {
         isDisabled = false,
     } = props;
 
-    const { getColorClassName, themeColors } = useTheme();
+    const { getColorClassName, themeColors, isDarkMode } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     return (
         <Select
+          sx={{ '.MuiSvgIcon-root ': { fill: themeColors.textColor } }}
           className={`${styles.dropdown} ${textColorClassName}`}
           value={value}
           autoWidth
