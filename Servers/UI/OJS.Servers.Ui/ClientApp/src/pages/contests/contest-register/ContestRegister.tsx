@@ -22,7 +22,7 @@ const ContestRegister = () => {
         data,
         isLoading,
         error,
-    } = useGetRegisteredUserForContestQuery({ id: Number(contestId), isOfficial: participationType === 'compete' });
+    } = useGetRegisteredUserForContestQuery({ id: Number(contestId), isOfficial: participationType === ContestParticipationType.Compete });
 
     const [ registerUserForContest, { isError, error: registerError } ] = useRegisterUserForContestMutation();
 
@@ -53,7 +53,7 @@ const ContestRegister = () => {
             // eslint-disable-next-line promise/catch-or-return
             registerUserForContest({
                 id: Number(contestId),
-                isOfficial: participationType === 'compete',
+                isOfficial: participationType === ContestParticipationType.Compete,
                 password: '',
                 hasConfirmedParticipation: true,
                 // eslint-disable-next-line promise/prefer-await-to-then,promise/always-return

@@ -95,7 +95,7 @@ const ClientPortal = () => {
             Element: ContestSolutionSubmitPage,
         },
         {
-            path: '/contest/:contestId/:participationType/results/:resultType',
+            path: '/contests/:contestId/:participationType/results/:resultType',
             Element: ContestResultsPage,
         },
         {

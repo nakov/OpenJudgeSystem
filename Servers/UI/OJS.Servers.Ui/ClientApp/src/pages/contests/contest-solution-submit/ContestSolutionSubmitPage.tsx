@@ -291,22 +291,18 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
-        try {
-            await submitSolutionFile({
-                content: uploadedFile!,
-                official: isCompete,
-                problemId: selectedContestDetailsProblem?.id!,
-                submissionTypeId: selectedSubmissionType?.id!,
-            });
-            refetch();
-            await getSubmissionsData({
-                id: Number(selectedContestDetailsProblem!.id),
-                page: selectedSubmissionsPage,
-                isOfficial: isCompete,
-            });
-        } catch {
-            // no need to handle error here since it's handled in rtk error of POST request
-        }
+        await submitSolutionFile({
+            content: uploadedFile!,
+            official: isCompete,
+            problemId: selectedContestDetailsProblem?.id!,
+            submissionTypeId: selectedSubmissionType?.id!,
+        });
+        refetch();
+        await getSubmissionsData({
+            id: Number(selectedContestDetailsProblem!.id),
+            page: selectedSubmissionsPage,
+            isOfficial: isCompete,
+        });
     }, [
         getSubmissionsData,
         isCompete,
