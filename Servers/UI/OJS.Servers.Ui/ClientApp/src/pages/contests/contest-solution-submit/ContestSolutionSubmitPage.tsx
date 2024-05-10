@@ -480,7 +480,7 @@ const ContestSolutionSubmitPage = () => {
                         )}
                         {submitSolutionFileHasError && (
                             <div className={styles.solutionSubmitError}>
-                                {(submitSolutionFileError as any).details || 'Error submitting solution. Please try again!'}
+                                {(submitSolutionFileError as any).data.detail || 'Error submitting solution. Please try again!'}
                             </div>
                         )}
                     </div>
@@ -520,7 +520,7 @@ const ContestSolutionSubmitPage = () => {
                 </div>
                 {(submitSolutionHasError || solutionSubmitPreError) && (
                     <div className={styles.solutionSubmitError}>
-                        {(submitSolutionError as any).details || 'Error submitting solution. Please try again!'}
+                        {(submitSolutionError as any).data.detail || 'Error submitting solution. Please try again!'}
                     </div>
                 )}
             </div>
