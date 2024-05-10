@@ -30,6 +30,7 @@ using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
+using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
@@ -209,30 +210,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [HttpGet]
     public async Task<IActionResult> DeleteAll(int? contestId)
     {
-        if (!contestId.HasValue)
-        {
-            this.TempData.AddDangerMessage(GlobalResource.InvalidContest);
-            return this.RedirectToAction("Index", "Problems");
-        }
-
-        var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
-
-        var validationModel = new ContestDeleteProblemsValidationServiceModel
-        {
-            Id = contestId.Value, IsActive = await this.contestsActivity.IsContestActive(contestId.Value),
-        };
-
-        this.contestDeleteProblemsValidation
-            .GetValidationResult(validationModel)
-            .VerifyResult();
-
-        await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(validationModel.Id)
-            .VerifyResult();
-
-        var modelResult = contest.Map<DeleteAllProblemsInContestViewModel>();
-
-        return this.View(modelResult);
+        await Task.CompletedTask;
+        return this.NotFound("Deprecated. Use the new administration");
     }
 
     [HttpPost]

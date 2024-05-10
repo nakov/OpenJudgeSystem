@@ -35,32 +35,57 @@ public class ContestsActivityService : IContestsActivityService
         this.userProvider = userProvider;
     }
 
-    public async Task<IContestActivityServiceModel> GetContestActivity(int id)
-        => (await this.GetContestActivities(new[] { id })).Single();
-
     public async Task<IEnumerable<IContestActivityServiceModel>> GetContestActivities(IEnumerable<int> contestIds)
     {
-        var contests = await this.contestsData.AllTo<ContestForActivityServiceModel>(c => contestIds.Contains(c.Id));
+        var user = this.userProvider.GetCurrentUser();
+        var contests = await this.contestsData.AllTo<ContestForActivityServiceModel>(c => contestIds.Contains(c.Id))
+            .ToListAsync();
+        var participants = await this.participantsCommonData
+            .AllTo<ParticipantForActivityServiceModel>(p => p.UserId == user.Id && contestIds.Contains(p.ContestId))
+            .ToListAsync();
 
-        return contests
-            .Select(contest => new ContestActivityServiceModel
+        var contestActivities = new List<IContestActivityServiceModel>();
+
+        foreach (var contest in contests)
+        {
+            var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
+            var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && !p.IsOfficial);
+
+            var canBeCompeted = this.CanBeCompeted(contest, officialParticipant);
+            var canBePracticed = this.CanBePracticed(contest, practiceParticipant);
+
+            var contestActivity = new ContestActivityServiceModel
             {
                 Id = contest.Id,
                 Name = contest.Name,
-                CanBeCompeted = this.CanUserCompete(contest),
-                CanBePracticed = this.CanBePracticed(contest),
-            })
-            .ToList();
+                CanBeCompeted = canBeCompeted,
+                CanBePracticed = canBePracticed,
+            };
+
+            contestActivities.Add(contestActivity);
+        }
+
+        return contestActivities;
     }
 
-    public IContestActivityServiceModel GetContestActivity(IContestForActivityServiceModel contest)
-        => new ContestActivityServiceModel
+    public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
+    {
+        var user = this.userProvider.GetCurrentUser();
+        var participants = await this.participantsCommonData
+            .AllTo<ParticipantForActivityServiceModel>(p => p.UserId == user.Id && p.ContestId == contest.Id)
+            .ToListAsync();
+
+        var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
+        var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
+
+        return new ContestActivityServiceModel
         {
             Id = contest.Id,
             Name = contest.Name,
-            CanBePracticed = this.CanBePracticed(contest),
-            CanBeCompeted = this.CanUserCompete(contest),
+            CanBeCompeted = this.CanBeCompeted(contest, officialParticipant),
+            CanBePracticed = this.CanBePracticed(contest, practiceParticipant),
         };
+    }
 
     public ParticipantActivityServiceModel GetParticipantActivity(ParticipantForActivityServiceModel participant)
     {
@@ -81,13 +106,6 @@ public class ContestsActivityService : IContestsActivityService
             endTime);
     }
 
-    // Usage: assign value to the CanBeCompeted/Practiced properties in the different Contest models sent to the UI
-    // method must be called on model/collection after retrieving it from the db
-    // and before sending it to the UI as response
-    public Task SetCanBeCompetedAndPracticed<T>(T contestModel)
-        where T : class, ICanBeCompetedAndPracticed =>
-        this.SetCanBeCompetedAndPracticed(new List<T> { contestModel });
-
     public async Task SetCanBeCompetedAndPracticed<T>(ICollection<T> contestModels)
         where T : class, ICanBeCompetedAndPracticed
     {
@@ -102,7 +120,7 @@ public class ContestsActivityService : IContestsActivityService
     }
 
     public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)
-        => this.CanBeCompeted(contest) ||
+        => this.CanBeCompeted(contest, null) ||
            (contest.IsOnline &&
                 await this.participantsCommonData
                     .GetAllByContestAndIsOfficial(contest.Id, true)
@@ -121,42 +139,28 @@ public class ContestsActivityService : IContestsActivityService
         return await this.IsContestActive(contest!);
     }
 
-    private bool IsActiveParticipantInOnlineContest(int contestId)
-    {
-        var currentUser = this.userProvider.GetCurrentUser();
-        var participants = this.participantsCommonData.GetAllByUserAndContest(currentUser.Id, contestId);
-        var currentTimeInUtc = this.dates.GetUtcNow();
-
-        return participants.Any(p =>
-            p.ParticipationEndTime.HasValue &&
-            p.ParticipationEndTime.Value >= currentTimeInUtc);
-    }
-
-    // Method is firstly checking if the Contest can be competed based in it's StartTime and EndTime
-    // If this check returns false we have to check if the current user is a participant with remaining time
-    // in an online contest
-    private bool CanUserCompete(IContestForActivityServiceModel contest)
-        => this.CanBeCompeted(contest) ||
-           (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
-
-    private bool CanBeCompeted(IContestForActivityServiceModel contest)
+    private bool CanBeCompeted(IContestForActivityServiceModel contest, ParticipantForActivityServiceModel? participant)
     {
         if (!contest.IsVisible || contest.IsDeleted)
         {
             return false;
         }
 
-        return this.TimeRangeAllowsParticipation(contest.StartTime, contest.EndTime);
+        return participant != null
+            ? this.GetParticipantActivity(participant).IsActive
+            : this.TimeRangeAllowsParticipation(contest.StartTime, contest.EndTime);
     }
 
-    private bool CanBePracticed(IContestForActivityServiceModel contest)
+    private bool CanBePracticed(IContestForActivityServiceModel contest, ParticipantForActivityServiceModel? participant)
     {
         if (!contest.IsVisible || contest.IsDeleted)
         {
             return false;
         }
 
-        return this.TimeRangeAllowsParticipation(contest.PracticeStartTime, contest.PracticeEndTime);
+        return participant != null
+            ? this.GetParticipantActivity(participant).IsActive
+            : this.TimeRangeAllowsParticipation(contest.PracticeStartTime, contest.PracticeEndTime);
     }
 
     /// <summary>

@@ -30,7 +30,9 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
     public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel)
     {
         var contestActivityEntity = this.activityService
-            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
+            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>())
+            .GetAwaiter()
+            .GetResult();
 
         var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
         contestResults.Id = contestResultsModel.Contest.Id;

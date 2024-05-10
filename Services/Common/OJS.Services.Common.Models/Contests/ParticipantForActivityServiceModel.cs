@@ -10,6 +10,8 @@ public class ParticipantForActivityServiceModel : IMapFrom<Participant>
 
     public bool IsOfficial { get; set; }
 
+    public int ContestId { get; set; }
+
     public DateTime? ParticipationStartTime { get; set; }
 
     public DateTime? ParticipationEndTime { get; set; }

@@ -89,7 +89,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 throw new BusinessServiceException(validationResult.Message);
             }
 
-            var contestActivityEntity = this.activityService
+            var contestActivityEntity = await this.activityService
                 .GetContestActivity(contest!.Map<ContestForActivityServiceModel>());
 
             var participant = await this.participantsData
@@ -100,9 +100,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
 
-            // set CanBeCompeted and CanBePracticed properties in contest
-            await this.activityService.SetCanBeCompetedAndPracticed(contestDetailsServiceModel);
-
+            contestDetailsServiceModel.CanBeCompeted = contestActivityEntity.CanBeCompeted;
+            contestDetailsServiceModel.CanBePracticed = contestActivityEntity.CanBePracticed;
             contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerOrAdmin;
 
             if (!isLecturerOrAdmin && participant != null && contestActivityEntity.CanBeCompeted)

@@ -56,7 +56,9 @@ public class ContestParticipationValidationService : IContestParticipationValida
             return ValidationResult.Valid();
         }
 
-        var contestActivityEntity = this.activityService.GetContestActivity(contest.Map<ContestForActivityServiceModel>());
+        var contestActivityEntity = this.activityService.GetContestActivity(contest.Map<ContestForActivityServiceModel>())
+            .GetAwaiter()
+            .GetResult();
 
         if (official && !contestActivityEntity.CanBeCompeted)
         {
