@@ -136,7 +136,7 @@ public class ProblemGroupsController : BaseAutoCrudAdminController<ProblemGroup>
         var validationModel = new ProblemGroupCreateValidationServiceModel
         {
             ContestIsActive = await this.contestsActivity.IsContestActive(contest!),
-            ContestIsOnline = contest!.IsOnline,
+            ContestIsOnline = contest!.Type == ContestType.OnlinePracticalExam,
         };
 
         this.problemGroupsCreateValidation

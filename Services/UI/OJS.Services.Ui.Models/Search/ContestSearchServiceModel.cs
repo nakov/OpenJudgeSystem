@@ -3,14 +3,21 @@
 using System;
 using OJS.Services.Infrastructure.Models.Mapping;
 using AutoMapper;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 
-public class ContestSearchServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
+public class ContestSearchServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
 {
     public int Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
+
+    public ContestType Type { get; set; }
+
+    public bool IsVisible { get; set; }
+
+    public bool IsDeleted { get; set; }
 
     public DateTime? StartTime { get; set; }
 

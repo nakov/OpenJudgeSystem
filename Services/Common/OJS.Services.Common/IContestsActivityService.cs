@@ -16,5 +16,5 @@ public interface IContestsActivityService : IService
     Task<bool> IsContestActive(int contestId);
 
     Task SetCanBeCompetedAndPracticed<T>(ICollection<T> contestModels)
-        where T : class, ICanBeCompetedAndPracticed;
+        where T : class, ICanBeCompetedAndPracticed, IContestForActivityServiceModel;
 }

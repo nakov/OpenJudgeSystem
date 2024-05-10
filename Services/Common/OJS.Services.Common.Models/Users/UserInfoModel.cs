@@ -15,6 +15,8 @@ public class UserInfoModel : IMapExplicitly
 
     public bool IsAdminOrLecturer => this.IsAdmin || this.IsLecturer;
 
+    public bool IsAuthenticated => this.Id != null!;
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<ClaimsPrincipal, UserInfoModel>()
