@@ -304,9 +304,8 @@ const ContestSolutionSubmitPage = () => {
                 page: selectedSubmissionsPage,
                 isOfficial: isCompete,
             });
-            setUploadedFile(null);
         } catch {
-            setUploadedFile(null);
+            // no need to handle error here since it's handled in rtk error of POST request
         }
     }, [
         getSubmissionsData,
