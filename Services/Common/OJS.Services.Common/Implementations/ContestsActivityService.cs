@@ -176,16 +176,10 @@ public class ContestsActivityService : IContestsActivityService
         IEnumerable<int> contestIds)
     {
         var user = this.userProvider.GetCurrentUser();
-        var userParticipants = new List<ParticipantForActivityServiceModel>();
-        if (user.IsAuthenticated)
-        {
-            userParticipants = await this.participantsCommonData
-                .AllTo<ParticipantForActivityServiceModel>(
-                    p => p.UserId == user.Id &&
-                         contestIds.Contains(p.ContestId))
-                .ToListAsync();
-        }
-
-        return userParticipants;
+        return user.IsAuthenticated
+            ? await this.participantsCommonData
+                .AllTo<ParticipantForActivityServiceModel>(p => p.UserId == user.Id && contestIds.Contains(p.ContestId))
+                .ToListAsync()
+            : new List<ParticipantForActivityServiceModel>();
     }
 }
