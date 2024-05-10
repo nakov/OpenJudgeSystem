@@ -435,7 +435,6 @@ finally:
                         ResultType = TestRunResultType.WrongAnswer,
                         CheckerDetails = new CheckerDetails
                         {
-                            ExpectedOutputFragment = t.Output,
                             UserOutputFragment = receivedOutput,
                         },
                     })
