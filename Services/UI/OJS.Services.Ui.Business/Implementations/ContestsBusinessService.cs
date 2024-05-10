@@ -319,7 +319,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
             participationModel.EndDateTimeForParticipantOrContest = participantActivity.ParticipationEndTime;
-            participationModel.IsActiveParticipant = participantActivity.IsActive;
+            participationModel.IsActiveParticipant = participantActivity.IsActive || userIsAdminOrLecturerInContest;
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData

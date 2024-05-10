@@ -42,6 +42,11 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.NotRegisteredForContest);
         }
 
+        var isAdminOrLecturer = this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(participant.Contest.Id)
+            .GetAwaiter()
+            .GetResult();
+
         var participantActivity = this.activityService.GetParticipantActivity(participant.Map<ParticipantForActivityServiceModel>());
 
         if (participantActivity.IsInvalidated)
@@ -49,12 +54,12 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipantIsInvalidated);
         }
 
-        if (!participantActivity.HasParticipationTimeLeft)
+        if (!participantActivity.HasParticipationTimeLeft && !isAdminOrLecturer)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationTimeEnded);
         }
 
-        if (!participantActivity.IsActive)
+        if (!participantActivity.IsActive && !isAdminOrLecturer)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ParticipationNotActive);
         }
@@ -86,11 +91,6 @@ public class SubmitSubmissionValidationService : ISubmitSubmissionValidationServ
         {
             return ValidationResult.Invalid(ValidationMessages.Submission.SubmissionEmpty, problemIdToString);
         }
-
-        var isAdminOrLecturer = this.lecturersInContestsBusiness
-            .IsCurrentUserAdminOrLecturerInContest(participant.Contest.Id)
-            .GetAwaiter()
-            .GetResult();
 
         if (submitSubmissionServiceModel.Official &&
             participant.Contest.IsOnlineExam &&
