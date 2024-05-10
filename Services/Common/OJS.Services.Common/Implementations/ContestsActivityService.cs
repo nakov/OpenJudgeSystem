@@ -39,47 +39,12 @@ public class ContestsActivityService : IContestsActivityService
     public async Task<IEnumerable<IContestActivityServiceModel>> GetContestActivities(
         ICollection<IContestForActivityServiceModel> contests)
     {
-        var contestActivities = new List<IContestActivityServiceModel>();
         var participants = await this.GetCurrentUserParticipantsForContests(contests.Select(c => c.Id));
-
-        foreach (var contest in contests)
-        {
-            var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
-            var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && !p.IsOfficial);
-            var canBeCompeted = this.CanBeCompeted(contest, officialParticipant);
-            var canBePracticed = this.CanBePracticed(contest, practiceParticipant);
-
-            var contestActivity = new ContestActivityServiceModel
-            {
-                Id = contest.Id,
-                Name = contest.Name,
-                CanBeCompeted = canBeCompeted,
-                CanBePracticed = canBePracticed,
-            };
-
-            contestActivities.Add(contestActivity);
-        }
-
-        return contestActivities;
+        return contests.Select(contest => this.GetContestActivity(contest, participants));
     }
 
     public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
-    {
-        var participants = await this.GetCurrentUserParticipantsForContests(new[] { contest.Id });
-
-        var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
-        var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
-        var canBeCompeted = this.CanBeCompeted(contest, officialParticipant);
-        var canBePracticed = this.CanBePracticed(contest, practiceParticipant);
-
-        return new ContestActivityServiceModel
-        {
-            Id = contest.Id,
-            Name = contest.Name,
-            CanBeCompeted = canBeCompeted,
-            CanBePracticed = canBePracticed,
-        };
-    }
+        => this.GetContestActivity(contest, await this.GetCurrentUserParticipantsForContests(new[] { contest.Id }));
 
     public ParticipantActivityServiceModel GetParticipantActivity(ParticipantForActivityServiceModel participant)
     {
@@ -181,5 +146,23 @@ public class ContestsActivityService : IContestsActivityService
                 .AllTo<ParticipantForActivityServiceModel>(p => p.UserId == user.Id && contestIds.Contains(p.ContestId))
                 .ToListAsync()
             : new List<ParticipantForActivityServiceModel>();
+    }
+
+    private IContestActivityServiceModel GetContestActivity(
+        IContestForActivityServiceModel contest,
+        IReadOnlyCollection<ParticipantForActivityServiceModel> participants)
+    {
+        var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
+        var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && !p.IsOfficial);
+        var canBeCompeted = this.CanBeCompeted(contest, officialParticipant);
+        var canBePracticed = this.CanBePracticed(contest, practiceParticipant);
+
+        return new ContestActivityServiceModel
+        {
+            Id = contest.Id,
+            Name = contest.Name,
+            CanBeCompeted = canBeCompeted,
+            CanBePracticed = canBePracticed,
+        };
     }
 }
