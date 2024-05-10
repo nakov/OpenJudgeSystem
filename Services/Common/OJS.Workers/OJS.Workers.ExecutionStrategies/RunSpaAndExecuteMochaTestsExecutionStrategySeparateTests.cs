@@ -427,19 +427,18 @@ finally:
             JsonExecutionResult mochaResult = JsonExecutionResult.Parse(PreproccessReceivedExecutionOutput(receivedOutput));
             if (mochaResult.TotalTests == 0)
             {
-                return new List<TestResult>
-                {
-                    new TestResult
+                return tests
+                    .Select(t => new TestResult
                     {
-                        Id = 0,
-                        IsTrialTest = false,
+                        Id = t.Id,
+                        IsTrialTest = t.IsTrialTest,
                         ResultType = TestRunResultType.WrongAnswer,
                         CheckerDetails = new CheckerDetails
                         {
                             UserOutputFragment = receivedOutput,
                         },
-                    },
-                };
+                    })
+                    .ToList();
             }
 
             var titlesToTestsMapping = MapTitlesToTestId(
