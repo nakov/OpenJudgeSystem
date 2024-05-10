@@ -9,13 +9,13 @@ public class UserInfoModel : IMapExplicitly
 {
     public string Id { get; set; } = null!;
 
+    public bool IsAuthenticated => this.Id != null!;
+
     public bool IsAdmin { get; set; }
 
     public bool IsLecturer { get; set; }
 
     public bool IsAdminOrLecturer => this.IsAdmin || this.IsLecturer;
-
-    public bool IsAuthenticated => this.Id != null!;
 
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
