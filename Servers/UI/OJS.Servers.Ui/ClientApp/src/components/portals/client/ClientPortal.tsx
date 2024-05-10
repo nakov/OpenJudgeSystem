@@ -38,7 +38,6 @@ const ClientPortal = () => {
         {
             path: '/login',
             Element: LoginPage,
-            title: 'Login',
         },
         {
             path: '/register',
@@ -55,12 +54,6 @@ const ClientPortal = () => {
         {
             path: '/submissions',
             Element: SubmissionsPage,
-            title: 'Submissions',
-        },
-        {
-            title: '/contests',
-            path: 'contests',
-            Element: ContestsPage,
         },
         // Profile routes
         {
@@ -90,11 +83,11 @@ const ClientPortal = () => {
             Element: ContestRegister,
         },
         {
-            path: '/contest/problems/:contestId',
+            path: '/contests/problems/:contestId',
             Element: ContestProblemsPage,
         },
         {
-            path: '/contest/edit/:contestId',
+            path: '/contests/edit/:contestId',
             Element: ContestEditPage,
         },
         {
@@ -104,6 +97,10 @@ const ClientPortal = () => {
         {
             path: '/contests/:contestId/:participationType/results/:resultType',
             Element: ContestResultsPage,
+        },
+        {
+            path: '/contests',
+            Element: ContestsPage,
         },
         // Catch-All Route
         {

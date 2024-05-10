@@ -126,6 +126,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
     {
+        if (limitBetweenSubmissions <= 0)
+        {
+            return 0;
+        }
+
         var lastSubmission = this.GetLastSubmitForParticipant(participantId);
 
         if (lastSubmission != null)

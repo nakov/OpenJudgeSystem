@@ -46,12 +46,36 @@ public class CompeteController : BaseApiController
     [ProducesResponseType(typeof(ContestParticipationServiceModel), Status200OK)]
     public async Task<IActionResult> Index(int id, [FromQuery] bool isOfficial)
         => await this.contestsBusiness
-            .StartContestParticipation(new StartContestParticipationServiceModel
+            .GetParticipationDetails(new StartContestParticipationServiceModel
             {
                 ContestId = id,
                 IsOfficial = isOfficial,
             })
             .ToOkResult();
+
+    /// <summary>
+    /// This endpoint retrieves registration details for a specified contest and user.
+    /// It considers whether the contest is an official entry and includes various checks and conditions
+    /// based on the user's status and contest rules.
+    /// </summary>
+    /// <param name="id">Contest id.</param>
+    /// <param name="isOfficial">Compete/practice.</param>
+    /// <returns>Success status code.</returns>
+    /// <returns>403 if user cannot compete contest.</returns>
+    [HttpGet("{id:int}/register")]
+    public async Task<IActionResult> Register(int id, [FromQuery] bool isOfficial)
+    {
+        try
+        {
+            return await this.contestsBusiness
+                .GetContestRegistrationDetails(id, isOfficial)
+                .ToOkResult();
+        }
+        catch (BusinessServiceException be)
+        {
+            return this.StatusCode((int)HttpStatusCode.Forbidden, be.Message);
+        }
+    }
 
     /// <summary>
     /// Registers user for contest. If a password is submitted it gets validated. This endpoint creates a participant.
@@ -70,9 +94,10 @@ public class CompeteController : BaseApiController
     {
         try
         {
-            return await this.contestsBusiness
-                .RegisterUserForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial)
-                .ToOkResult();
+            var isValidRegistration = await this.contestsBusiness
+                .RegisterUserForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial);
+
+            return this.Ok(new { IsRegisteredSuccessFully = isValidRegistration });
         }
         catch (UnauthorizedAccessException uae)
         {

@@ -4,6 +4,7 @@ using AutoMapper;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Models.Mapping;
+using System;
 
 public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -16,6 +17,12 @@ public class ParticipantAdministrationModel : BaseAdministrationModel<int>, IMap
     public string? UserName { get; set; }
 
     public bool IsOfficial { get; set; }
+
+    public bool IsInvalidated { get; set; }
+
+    public DateTime? ParticipationStartTime { get; set; }
+
+    public DateTime? ParticipationEndTime { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
     {

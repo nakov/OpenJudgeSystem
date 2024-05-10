@@ -1,19 +1,19 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using OJS.Services.Ui.Data;
 using Microsoft.EntityFrameworkCore;
-using OJS.Services.Infrastructure;
+using OJS.Common.Extensions;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models;
-using OJS.Common.Extensions;
-using SharedResource = OJS.Common.Resources.ContestsGeneral;
+using OJS.Services.Infrastructure;
+using OJS.Services.Ui.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Resource = OJS.Common.Resources.ParticipantsBusiness;
+using SharedResource = OJS.Common.Resources.ContestsGeneral;
 
 public class ParticipantsBusinessService : IParticipantsBusinessService
 {
@@ -21,20 +21,17 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
     private readonly ISubmissionsDataService submissionsData;
     private readonly IContestsDataService contestsData;
     private readonly IDatesService datesService;
-    private readonly IParticipantScoresDataService scoresDataService;
 
     public ParticipantsBusinessService(
         IParticipantsDataService participantsData,
         ISubmissionsDataService submissionsData,
         IContestsDataService contestsData,
-        IDatesService datesService,
-        IParticipantScoresDataService scoresDataService)
+        IDatesService datesService)
     {
         this.participantsData = participantsData;
         this.contestsData = contestsData;
         this.submissionsData = submissionsData;
         this.datesService = datesService;
-        this.scoresDataService = scoresDataService;
     }
 
     public async Task<Participant> CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
