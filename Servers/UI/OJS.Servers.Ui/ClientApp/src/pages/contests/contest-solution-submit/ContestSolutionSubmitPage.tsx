@@ -462,11 +462,16 @@ const ContestSolutionSubmitPage = () => {
                           setUploadedFile(file);
                       }}
                     />
-                    <div className={styles.remainingTimeNadSubmitButtonWrapper} style={{ height: 420 }}>
+                    <div className={styles.remainingTimeNadSubmitButtonWrapper}>
+                        <Dropdown
+                          dropdownItems={strategyDropdownItems || []}
+                          value={selectedStrategyValue}
+                          handleDropdownItemClick={onStrategyDropdownItemSelect}
+                        />
                         <Button
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading || contestTimeHasExpired
+                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading || contestTimeHasExpired || fileUploadError
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
