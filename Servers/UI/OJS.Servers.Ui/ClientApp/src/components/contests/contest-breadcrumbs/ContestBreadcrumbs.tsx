@@ -88,10 +88,18 @@ const ContestBreadcrumbs = () => {
     }
 
     return (
-        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName} ${breadcrumbItems.length === 0
-            ? styles.emptyWrapper
-            : ''}`}
-        >
+        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
+            <Link to="/" className={`${styles.item} ${styles.staticItem}`}>Home</Link>
+            {' / '}
+            <Link
+              to="/contests"
+              className={`${styles.item} ${styles.staticItem} ${breadcrumbItems.length === 0
+                  ? textColorClassName
+                  : ''}`}
+            >
+                Contests
+            </Link>
+            {breadcrumbItems?.length > 0 && ' / '}
             {/* eslint-disable-next-line max-len */}
             {breadcrumbItems?.map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
         </div>
