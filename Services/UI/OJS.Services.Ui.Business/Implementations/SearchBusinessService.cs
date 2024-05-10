@@ -1,13 +1,13 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
 using System.Threading.Tasks;
-using FluentExtensions.Extensions;
 using OJS.Services.Common;
 using OJS.Services.Ui.Models.Search;
 using OJS.Services.Infrastructure.Models;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business.Validations.Implementations.Search;
+using System.Linq;
 
 public class SearchBusinessService : ISearchBusinessService
 {
@@ -51,7 +51,7 @@ public class SearchBusinessService : ISearchBusinessService
         var modelResult = model.Map<PagedResult<ContestSearchServiceModel>>();
         modelResult.Items = contestSearchListingModel.Contests;
 
-        modelResult.Items.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+        await this.activityService.SetCanBeCompetedAndPracticed(modelResult.Items.ToList());
 
         return modelResult;
     }
@@ -74,14 +74,8 @@ public class SearchBusinessService : ISearchBusinessService
         var modelResult = model.Map<PagedResult<ProblemSearchServiceModel>>();
         modelResult.Items = problemsSearchListingModel.Problems;
 
-        problemsSearchListingModel.Problems
-            .ForEach(p =>
-            {
-                if (p.Contest != null)
-                {
-                     this.activityService.SetCanBeCompetedAndPracticed(p.Contest);
-                }
-            });
+        var contests = problemsSearchListingModel.Problems.Select(p => p.Contest).ToList();
+        await this.activityService.SetCanBeCompetedAndPracticed(contests);
 
         return modelResult;
     }

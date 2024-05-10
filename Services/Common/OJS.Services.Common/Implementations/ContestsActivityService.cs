@@ -1,5 +1,6 @@
 namespace OJS.Services.Common.Implementations;
 
+using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Data;
@@ -8,6 +9,7 @@ using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -34,20 +36,21 @@ public class ContestsActivityService : IContestsActivityService
     }
 
     public async Task<IContestActivityServiceModel> GetContestActivity(int id)
+        => (await this.GetContestActivities(new[] { id })).Single();
+
+    public async Task<IEnumerable<IContestActivityServiceModel>> GetContestActivities(IEnumerable<int> contestIds)
     {
-        var contest = await this.contestsData.OneByIdTo<ContestForActivityServiceModel>(id);
+        var contests = await this.contestsData.AllTo<ContestForActivityServiceModel>(c => contestIds.Contains(c.Id));
 
-        this.notDefaultValueValidationHelper
-            .ValidateValueIsNotDefault(contest, nameof(contest))
-            .VerifyResult();
-
-        return new ContestActivityServiceModel
-        {
-            Id = contest!.Id,
-            Name = contest.Name,
-            CanBeCompeted = this.CanUserCompete(contest),
-            CanBePracticed = this.CanBePracticed(contest),
-        };
+        return contests
+            .Select(contest => new ContestActivityServiceModel
+            {
+                Id = contest.Id,
+                Name = contest.Name,
+                CanBeCompeted = this.CanUserCompete(contest),
+                CanBePracticed = this.CanBePracticed(contest),
+            })
+            .ToList();
     }
 
     public IContestActivityServiceModel GetContestActivity(IContestForActivityServiceModel contest)
@@ -81,12 +84,21 @@ public class ContestsActivityService : IContestsActivityService
     // Usage: assign value to the CanBeCompeted/Practiced properties in the different Contest models sent to the UI
     // method must be called on model/collection after retrieving it from the db
     // and before sending it to the UI as response
-    public void SetCanBeCompetedAndPracticed<T>(T contestModel)
-        where T : ICanBeCompetedAndPracticed
+    public Task SetCanBeCompetedAndPracticed<T>(T contestModel)
+        where T : class, ICanBeCompetedAndPracticed =>
+        this.SetCanBeCompetedAndPracticed(new List<T> { contestModel });
+
+    public async Task SetCanBeCompetedAndPracticed<T>(ICollection<T> contestModels)
+        where T : class, ICanBeCompetedAndPracticed
     {
-        var contestActivity = this.GetContestActivity(contestModel.Id).GetAwaiter().GetResult();
-        contestModel.CanBeCompeted = contestActivity.CanBeCompeted;
-        contestModel.CanBePracticed = contestActivity.CanBePracticed;
+        var contestActivities = await this.GetContestActivities(contestModels.Select(c => c.Id)).ToListAsync();
+
+        foreach (var contestModel in contestModels)
+        {
+            var contestActivity = contestActivities.Single(c => c.Id == contestModel.Id);
+            contestModel.CanBeCompeted = contestActivity.CanBeCompeted;
+            contestModel.CanBePracticed = contestActivity.CanBePracticed;
+        }
     }
 
     public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)

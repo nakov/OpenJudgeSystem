@@ -18,7 +18,6 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.Models;
     using OJS.Services.Ui.Business.Cache;
-    using OJS.Services.Ui.Business.Extensions;
     using OJS.Services.Ui.Business.Validations.Implementations.Contests;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Contests;
@@ -102,7 +101,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var contestDetailsServiceModel = contest!.Map<ContestDetailsServiceModel>();
 
             // set CanBeCompeted and CanBePracticed properties in contest
-            this.activityService.SetCanBeCompetedAndPracticed(contestDetailsServiceModel);
+            await this.activityService.SetCanBeCompetedAndPracticed(contestDetailsServiceModel);
 
             contestDetailsServiceModel.IsAdminOrLecturerInContest = isLecturerOrAdmin;
 
@@ -447,12 +446,12 @@ namespace OJS.Services.Ui.Business.Implementations
             var active = await this.GetAllCompetable()
                 .ToListAsync();
             //set CanBeCompeted and CanBePracticed properties in each active contest
-            active.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+            await this.activityService.SetCanBeCompetedAndPracticed(active);
 
             var past = await this.GetAllPastContests()
                 .ToListAsync();
             //set CanBeCompeted and CanBePracticed properties in each active contest
-            past.ForEach(c => this.activityService.SetCanBeCompetedAndPracticed(c));
+            await this.activityService.SetCanBeCompetedAndPracticed(past);
 
             return new ContestsForHomeIndexServiceModel { ActiveContests = active, PastContests = past, };
         }
@@ -539,9 +538,10 @@ namespace OJS.Services.Ui.Business.Implementations
                         .ToImmutableArray(),
                     pagedContests.PageNumber);
 
+            await this.activityService.SetCanBeCompetedAndPracticed(pagedContests.Items.ToList());
+
             pagedContests.Items.ForEach(c =>
             {
-                this.activityService.SetCanBeCompetedAndPracticed(c);
                 c.CompeteResults = participantsCount[c.Id].Official;
                 c.PracticeResults = participantsCount[c.Id].Practice;
 

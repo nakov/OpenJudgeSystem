@@ -5,7 +5,6 @@ using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 public interface IContestForActivityServiceModel : IMapFrom<Contest>
 {

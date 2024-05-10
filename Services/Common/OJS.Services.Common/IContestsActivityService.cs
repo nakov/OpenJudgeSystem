@@ -2,6 +2,7 @@ namespace OJS.Services.Common;
 
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public interface IContestsActivityService : IService
@@ -16,6 +17,9 @@ public interface IContestsActivityService : IService
 
     Task<bool> IsContestActive(int contestId);
 
-    void SetCanBeCompetedAndPracticed<T>(T contestModel)
-        where T : ICanBeCompetedAndPracticed;
+    Task SetCanBeCompetedAndPracticed<T>(T contestModel)
+        where T : class, ICanBeCompetedAndPracticed;
+
+    Task SetCanBeCompetedAndPracticed<T>(ICollection<T> contestModels)
+        where T : class, ICanBeCompetedAndPracticed;
 }
