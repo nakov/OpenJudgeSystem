@@ -13,6 +13,7 @@ interface IDropdownProps {
     dropdownItems: Array<IDropdownItem>;
     value: string;
     handleDropdownItemClick?: (arg?: any) => any;
+    placeholder?: string;
     isDisabled?: boolean;
 }
 
@@ -22,6 +23,7 @@ const Dropdown = (props: IDropdownProps) => {
         value,
         handleDropdownItemClick,
         isDisabled = false,
+        placeholder = 'Select element',
     } = props;
 
     const { getColorClassName, themeColors } = useTheme();
@@ -39,7 +41,7 @@ const Dropdown = (props: IDropdownProps) => {
           MenuProps={{ MenuListProps: { disablePadding: true } }}
         >
             <MenuItem key="dropdown-default-item" value="" disabled>
-                Select element
+                {placeholder}
             </MenuItem>
             {dropdownItems.map((item: IDropdownItem) => (
                 <MenuItem
