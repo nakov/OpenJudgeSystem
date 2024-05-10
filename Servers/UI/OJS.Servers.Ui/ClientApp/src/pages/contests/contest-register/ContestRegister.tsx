@@ -40,7 +40,7 @@ const ContestRegister = () => {
             return;
         }
         if (isRegisteredSuccessfully && !shouldConfirmParticipation && !requirePassword) {
-            navigate(`/contests/${contestId}/${participationType}`);
+            navigate(`/contests/${contestId}/${participationType}`, { replace: true });
         }
     }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
 

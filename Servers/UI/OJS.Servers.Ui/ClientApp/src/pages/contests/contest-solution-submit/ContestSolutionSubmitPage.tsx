@@ -189,7 +189,7 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
         if ((!isRegisteredParticipant && !isActiveParticipant) && !isError) {
-            navigate(`/contests/register/${contestId}/${participationType}`);
+            navigate(`/contests/register/${contestId}/${participationType}`, { replace: true });
         }
     }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
 
