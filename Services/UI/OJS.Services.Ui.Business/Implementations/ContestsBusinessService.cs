@@ -406,7 +406,6 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var pagedContests =
                 await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
-            var contestIds = pagedContests.Items.Select(c => c.Id).ToList();
 
             return await this.PrepareActivityAndResults(pagedContests);
         }
