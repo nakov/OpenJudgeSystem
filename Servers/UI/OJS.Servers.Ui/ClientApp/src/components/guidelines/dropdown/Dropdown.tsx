@@ -1,7 +1,6 @@
 import { MenuItem, Select } from '@mui/material';
 
 import useTheme from '../../../hooks/use-theme';
-import isNilOrEmpty from '../../../utils/check-utils';
 
 import styles from './Dropdown.module.scss';
 
@@ -13,7 +12,6 @@ interface IDropdownItem {
 interface IDropdownProps {
     dropdownItems: Array<IDropdownItem>;
     value: string;
-    placeholder?: string;
     handleDropdownItemClick?: (arg?: any) => any;
     isDisabled?: boolean;
 }
@@ -22,7 +20,6 @@ const Dropdown = (props: IDropdownProps) => {
     const {
         dropdownItems,
         value,
-        placeholder,
         handleDropdownItemClick,
         isDisabled = false,
     } = props;
@@ -38,13 +35,10 @@ const Dropdown = (props: IDropdownProps) => {
           autoWidth
           displayEmpty
           disabled={isDisabled}
+          MenuProps={{ MenuListProps: { disablePadding: true } }}
         >
             <MenuItem key="dropdown-default-item" value="" disabled>
-                {
-                    isNilOrEmpty(placeholder)
-                        ? 'Select element'
-                        : placeholder
-                }
+                Select element
             </MenuItem>
             {dropdownItems.map((item: IDropdownItem) => (
                 <MenuItem

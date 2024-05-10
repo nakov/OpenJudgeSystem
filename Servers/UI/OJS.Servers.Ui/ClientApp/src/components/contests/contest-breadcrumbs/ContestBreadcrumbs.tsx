@@ -87,14 +87,13 @@ const ContestBreadcrumbs = () => {
         return <div className={getColorClassName(themeColors.textColor)}>Loading breadcrumbs...</div>;
     }
 
-    if (breadcrumbItems.length === 0) {
-        return <div />;
-    }
-
     return (
-        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
-            {breadcrumbItems
-                .map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
+        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName} ${breadcrumbItems.length === 0
+            ? styles.emptyWrapper
+            : ''}`}
+        >
+            {/* eslint-disable-next-line max-len */}
+            {breadcrumbItems?.map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
         </div>
     );
 };
