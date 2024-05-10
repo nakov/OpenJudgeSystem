@@ -58,13 +58,15 @@ const ContestSolutionSubmitPage = () => {
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
-        isError: submitSolutionError,
+        error: submitSolutionError,
+        isError: submitSolutionHasError,
         isLoading: submitSolutionIsLoading,
     } ] = useSubmitContestSolutionMutation();
 
     const [ submitSolutionFile, {
         // isSuccess: submitSolutionFileSuccess,
-        isError: submitSolutionFileError,
+        error: submitSolutionFileError,
+        isError: submitSolutionFileHasError,
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
@@ -476,8 +478,10 @@ const ContestSolutionSubmitPage = () => {
                                 until next submit
                             </div>
                         )}
-                        {submitSolutionFileError && (
-                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                        {submitSolutionFileHasError && (
+                            <div className={styles.solutionSubmitError}>
+                                {(submitSolutionFileError as any).details || 'Error submitting solution. Please try again!'}
+                            </div>
                         )}
                     </div>
                 </div>
@@ -514,15 +518,17 @@ const ContestSolutionSubmitPage = () => {
                         )}
                     </div>
                 </div>
-                {(submitSolutionError || solutionSubmitPreError) && (
-                    <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                {(submitSolutionHasError || solutionSubmitPreError) && (
+                    <div className={styles.solutionSubmitError}>
+                        {(submitSolutionError as any).details || 'Error submitting solution. Please try again!'}
+                    </div>
                 )}
             </div>
         );
     }, [
         submitSolutionFileIsLoading,
         uploadedFile,
-        submitSolutionError,
+        submitSolutionHasError,
         isSubmitButtonDisabled,
         submitSolutionIsLoading,
         contestTimeHasExpired,
@@ -535,6 +541,8 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFileError,
         selectedContestDetailsProblem,
         onSolutionSubmitCode,
+        submitSolutionError,
+        submitSolutionFileHasError,
         solutionSubmitPreError,
         onSolutionSubmitFile,
         setSubmissionCode,

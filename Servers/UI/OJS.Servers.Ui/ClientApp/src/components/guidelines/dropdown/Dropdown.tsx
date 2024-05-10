@@ -24,7 +24,7 @@ const Dropdown = (props: IDropdownProps) => {
         isDisabled = false,
     } = props;
 
-    const { getColorClassName, themeColors, isDarkMode } = useTheme();
+    const { getColorClassName, themeColors } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
