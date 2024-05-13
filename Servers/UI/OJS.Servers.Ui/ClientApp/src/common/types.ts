@@ -4,7 +4,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { CheckboxSearchValues, FilterColumnTypeEnum, PublicSubmissionState } from './enums';
+import { CheckboxSearchValues, FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -35,11 +35,6 @@ interface IUserProfileType {
 
 interface IUsersState {
     profile: IUserProfileType | null;
-}
-
-interface IPublicSubmissionUser {
-    id: string;
-    username: string;
 }
 
 interface ISubmissionDetailsState {
@@ -81,10 +76,9 @@ interface IPublicSubmission {
     id: number;
     createdOn: Date;
     strategyName: string;
-    user?: IPublicSubmissionUser;
+    user?: string;
     problem: IPublicSubmissionProblem;
     result: IPublicSubmissionResult;
-    state: PublicSubmissionState;
     isOfficial: boolean;
     isCompiledSuccessfully: boolean;
     maxMemoryUsed: number;

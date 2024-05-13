@@ -8,13 +8,14 @@ using OJS.Common.Enumerations;
 using OJS.Common.Exceptions;
 using OJS.Data;
 using OJS.Data.Models.Users;
+using OJS.Servers.Administration.Middleware;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Models.Configurations;
 using OJS.Services.Common.Validation;
+using OJS.Services.Infrastructure.Configurations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
@@ -32,6 +33,7 @@ internal static class ServiceCollectionExtensions
             .AddValidators()
             .AddWebServer<Program>(configuration)
             .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
+            .AddTransient<AdministrationExceptionMiddleware>()
             .AddHttpContextServices()
             .AddHangfireServer(configuration, AppName)
             .AddMessageQueue<Program>(configuration)

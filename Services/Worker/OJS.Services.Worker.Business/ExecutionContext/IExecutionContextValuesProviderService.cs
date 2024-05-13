@@ -1,6 +1,6 @@
 ﻿namespace OJS.Services.Worker.Business.ExecutionContext;
 
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using OJS.Workers.Common.Models;
 
 public interface IExecutionContextValuesProviderService : IService

@@ -2,7 +2,7 @@ namespace OJS.Services.Administration.Business.Validation.Factories;
 
 using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -7,14 +7,12 @@ using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
-using OJS.Servers.Ui.Models.Submissions.Profile;
 using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -97,14 +95,14 @@ public class SubmissionsController : BaseApiController
     /// <returns>A collection of submissions for a specific problem.</returns>
     [HttpGet("{problemId:int}")]
     [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissionsByProblem(
         int problemId,
         [FromQuery] bool isOfficial,
         [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetUserSubmissionsByProblem(problemId, isOfficial, page)
-            .Map<PagedResultResponse<PublicSubmissionsServiceModel>>()
+            .GetUserSubmissionsByProblem<FullDetailsPublicSubmissionsServiceModel>(problemId, isOfficial, page)
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -173,17 +171,19 @@ public class SubmissionsController : BaseApiController
     [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> UnprocessedTotalCount()
-        => await this.submissionsForProcessingBusiness
-            .GetUnprocessedTotalCount()
+        => await this.submissionsBusiness
+            .GetAllUnprocessedCount()
             .ToOkResult();
 
     // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
+    [HttpGet]
     [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
          => await this.submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
              .Map<PagedResultResponse<PublicSubmissionsResponseModel>>()
              .ToOkResult();
 
+    [HttpGet]
     [Authorize(Roles = AdministratorOrLecturer)]
     [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissionsForUserInRole(

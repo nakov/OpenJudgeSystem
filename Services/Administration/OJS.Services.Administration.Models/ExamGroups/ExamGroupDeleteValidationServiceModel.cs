@@ -2,7 +2,7 @@ namespace OJS.Services.Administration.Models.ExamGroups;
 
 using AutoMapper;
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ExamGroupDeleteValidationServiceModel : IMapFrom<ExamGroup>
 {

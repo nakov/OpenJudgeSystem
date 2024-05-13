@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class SubmissionTypeServiceModel : IMapExplicitly
     {

@@ -9,9 +9,9 @@ using OJS.Services.Common;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Common.Extensions;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Common.Extensions;
+using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,6 +125,10 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .ThenInclude(pg => pg.Problems)
                 .ThenInclude(p => p.SubmissionTypesInProblems)
                     .ThenInclude(stp => stp.SubmissionType)
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Resources)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id)
@@ -137,6 +141,10 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                  .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Checker)
+            .AsSplitQuery()
             .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithParticipants(int id)

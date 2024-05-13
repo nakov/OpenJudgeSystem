@@ -3,7 +3,7 @@
 using AutoMapper;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Linq;
 
@@ -49,7 +49,7 @@ public class ProblemInListModel : IMapExplicitly
             .ForMember(x => x.PracticeTestsCount, opt
                 => opt.MapFrom(p => p.Tests.Count(test => test.IsTrialTest)))
             .ForMember(x => x.CompeteTestsCount, opt
-                => opt.MapFrom(p => p.Tests.Count(test => test.IsOpenTest)))
+                => opt.MapFrom(p => p.Tests.Count(test => !test.IsTrialTest)))
             .ForMember(x => x.MaximumPoints, opt
                 => opt.MapFrom(p => p.MaximumPoints))
             .ForMember(x => x.IsDeleted, opt

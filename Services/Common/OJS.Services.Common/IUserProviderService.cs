@@ -1,7 +1,7 @@
 namespace OJS.Services.Common;
 
 using OJS.Services.Common.Models.Users;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface IUserProviderService : IScopedService
 {

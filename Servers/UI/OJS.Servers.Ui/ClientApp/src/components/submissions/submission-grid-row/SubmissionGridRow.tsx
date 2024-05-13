@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { contestParticipationType } from '../../../common/contest-helpers';
-import { PublicSubmissionState } from '../../../common/enums';
 import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
@@ -23,7 +23,6 @@ import { Button, ButtonSize, ButtonType, LinkButton, LinkButtonType } from '../.
 import IconSize from '../../guidelines/icons/common/icon-sizes';
 import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import ErrorResult from '../execution-result/ErrorResult';
 import ExecutionResult from '../execution-result/ExecutionResult';
 import { ISubmissionsGridOptions } from '../submissions-grid/SubmissionsGrid';
 
@@ -45,7 +44,6 @@ const SubmissionGridRow = ({
         user,
         result: { points, maxPoints },
         strategyName,
-        state,
         problem: {
             id: problemId,
             name: problemName,
@@ -67,9 +65,14 @@ const SubmissionGridRow = ({
         useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
 
+    const [ competeIconAnchorElement, setCompeteIconAnchorElement ] = useState<HTMLElement | null>(null);
+    const isCompeteIconModalOpen = Boolean(competeIconAnchorElement);
+
+    const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
+
     const usernameFromSubmission = isNil(user)
         ? getDecodedUsernameFromProfile()
-        : user?.username;
+        : user;
 
     const participationType = contestParticipationType(isOfficial);
 
@@ -94,7 +97,9 @@ const SubmissionGridRow = ({
         [ contestId, participationType, problemId, initiateRedirectionToProblem ],
     );
 
-    const hasTestRuns = (s: IPublicSubmission) => (s.testRuns && s.testRuns.length > 0) ?? false;
+    const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setCompeteIconAnchorElement(event.currentTarget);
+    };
 
     const hasTimeAndMemoryUsed = (s: IPublicSubmission) => (!isNil(s.maxMemoryUsed) && !isNil(s.maxTimeUsed)) ?? false;
 
@@ -104,32 +109,6 @@ const SubmissionGridRow = ({
             ? styles.darkRow
             : styles.lightRow,
         getColorClassName(themeColors.textColor),
-    );
-
-    const renderPoints = useCallback(
-        () => {
-            if (state === PublicSubmissionState.Processing) {
-                return (
-                    <>
-                        Processing
-                    </>
-                );
-            }
-
-            if (!isCompiledSuccessfully) {
-                return <ErrorResult />;
-            }
-
-            return (
-                <span>
-                    {points}
-                    {' '}
-                    /
-                    {maxPoints}
-                </span>
-            );
-        },
-        [ state, isCompiledSuccessfully, points, maxPoints ],
     );
 
     const renderUsername = useCallback(
@@ -239,8 +218,27 @@ const SubmissionGridRow = ({
                 options.showCompeteMarker
                     ? isOfficial
                         ? (
-                            <td>
+                            <td onMouseEnter={(e) => onPopoverOpen(e)} onMouseLeave={() => setCompeteIconAnchorElement(null)}>
                                 <FaFlagCheckered className={styles.competeIcon} />
+                                <Popover
+                                  open={isCompeteIconModalOpen}
+                                  anchorEl={competeIconAnchorElement}
+                                  anchorOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'center',
+                                  }}
+                                  transformOrigin={{
+                                      vertical: 'top',
+                                      horizontal: 'left',
+                                  }}
+                                  sx={{ pointerEvents: 'none' }}
+                                  onClose={() => setCompeteIconAnchorElement(null)}
+                                  disableRestoreFocus
+                                >
+                                    <div className={`${styles.competeIconModal} ${backgroundColorClassName}`}>
+                                        This submission was done in compete mode.
+                                    </div>
+                                </Popover>
                             </td>
                         )
                         : <td />
@@ -284,18 +282,14 @@ const SubmissionGridRow = ({
             }
             <td>
                 <div className={styles.executionResultContainer}>
-                    {
-                        options.showDetailedResults && hasTestRuns(submission)
-                            ? (
-                                <ExecutionResult
-                                  testRuns={testRuns}
-                                  isCompiledSuccessfully={isCompiledSuccessfully}
-                                  isProcessed={processed}
-                                />
-                            )
-                            : null
-                }
-                    {renderPoints()}
+                    <ExecutionResult
+                      points={points}
+                      maxPoints={maxPoints}
+                      testRuns={testRuns}
+                      isCompiledSuccessfully={isCompiledSuccessfully}
+                      isProcessed={processed}
+                      showDetailedResults={options.showDetailedResults}
+                    />
                 </div>
             </td>
             {

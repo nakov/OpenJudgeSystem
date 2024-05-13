@@ -2,7 +2,7 @@ namespace OJS.Services.Common.Models.Users;
 
 using AutoMapper;
 using OJS.Common.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System.Security.Claims;
 
 public class UserInfoModel : IMapExplicitly

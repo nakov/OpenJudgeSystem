@@ -4,7 +4,7 @@ namespace OJS.Services.Ui.Models.Contests
     using AutoMapper;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models.Contests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class ContestForHomeIndexServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
     {

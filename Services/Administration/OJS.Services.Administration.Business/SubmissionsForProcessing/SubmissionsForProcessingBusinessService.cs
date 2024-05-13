@@ -8,7 +8,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 
 public class SubmissionsForProcessingBusinessService :

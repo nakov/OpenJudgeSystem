@@ -9,7 +9,7 @@ using OJS.Services.Common.Models.Files;
 using OJS.Services.Common.Models.Pagination;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 using OJS.Data.Models.Common;
 using System;
 using System.Collections.Generic;
@@ -132,7 +132,7 @@ public class GridDataService<TEntity>
 
     private async Task<PagedResult<TModel>> GetPagedResultFromQuery<TModel>(PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query)
         => await this.ApplyFiltersAndSorters<TModel>(paginationRequestModel, query)
-            .ToPagedResult(paginationRequestModel.Page, paginationRequestModel.ItemsPerPage);
+            .ToPagedResultAsync(paginationRequestModel.ItemsPerPage, paginationRequestModel.Page);
 
     private async Task<ICollection<TModel>> GetNonPagedResultFromQuery<TModel>(
         PaginationRequestModel paginationRequestModel, IQueryable<TEntity> query) =>

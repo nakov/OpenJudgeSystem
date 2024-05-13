@@ -8,7 +8,7 @@ using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models.Users;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 

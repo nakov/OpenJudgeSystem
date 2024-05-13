@@ -152,8 +152,17 @@ input::file-selector-button {
   margin-right: 10px;
 }
 
-.passwordIcon {
-  font-size: 18px;
-  transform: translateX(1400%) translateY(-190%) scale(1);
-  cursor: pointer;
+.inputPasswordWrapper {
+  position: relative;
+
+  .passwordIconWrapper {
+    position: absolute;
+    right: 10px;
+    top: 17px;
+
+    .passwordIcon {
+      cursor: pointer;
+      font-size: 18px;
+    }
+  }
 }

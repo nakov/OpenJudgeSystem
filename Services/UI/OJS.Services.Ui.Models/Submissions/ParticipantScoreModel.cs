@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
     using OJS.Data.Models.Participants;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class ParticipantScoreModel : IMapFrom<ParticipantScore>
     {

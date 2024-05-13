@@ -164,25 +164,26 @@ const RecentSubmissions = () => {
     );
 
     return (
-        <>
-            <Heading
-              type={HeadingType.primary}
-              className={user.isAdmin
-                  ? styles.headingBorder
-                  : ''}
-            >
-                Latest
-                {' '}
-                {latestSubmissions.items?.length}
-                {' '}
-                submissions out of
-                {' '}
-                {isNil(latestSubmissions.totalItemsCount)
-                    ? '...'
-                    : latestSubmissions.totalItemsCount }
-                {' '}
-                total
-            </Heading>
+        <div className={styles.recentSubmissionsWrapper}>
+            {
+                !user.canAccessAdministration && (
+                    <Heading
+                      type={HeadingType.primary}
+                    >
+                        Latest
+                        {' '}
+                        {latestSubmissions.items?.length}
+                        {' '}
+                        submissions out of
+                        {' '}
+                        {isNil(latestSubmissions.totalItemsCount)
+                            ? '...'
+                            : latestSubmissions.totalItemsCount }
+                        {' '}
+                        total
+                    </Heading>
+                )
+            }
             {renderSubmissionsStateAdminToggle()}
             <SubmissionsGrid
               className={styles.recentSubmissionsGrid}
@@ -197,7 +198,7 @@ const RecentSubmissions = () => {
                   showParticipantUsername: true,
               }}
             />
-        </>
+        </div>
     );
 };
 

@@ -25,14 +25,13 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Implementations;
-    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
     using OJS.Data.Implementations;
-    using SoftUni.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Configurations;
+    using OJS.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using System;
     using System.IO;

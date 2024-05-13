@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Participants;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ProblemResultServiceModel : IMapExplicitly
 {

@@ -6,9 +6,7 @@ using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Common.Extensions;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,6 +126,11 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
 
     public int GetUserSubmissionTimeLimit(int participantId, int limitBetweenSubmissions)
     {
+        if (limitBetweenSubmissions <= 0)
+        {
+            return 0;
+        }
+
         var lastSubmission = this.GetLastSubmitForParticipant(participantId);
 
         if (lastSubmission != null)

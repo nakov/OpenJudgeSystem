@@ -4,7 +4,7 @@ using OJS.Services.Common.Data.Pagination.Enums;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Common.Models.Pagination;
 using System.Collections.Generic;
 

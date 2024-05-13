@@ -4,13 +4,13 @@ public static class ValidationMessages
 {
     public static class Contest
     {
-        public const string NotFound = "{0} - Contest not found.";
+        public const string NotFound = "Contest not found.";
 
         public const string IsExpired = "{0} - Contest is expired.";
 
-        public const string CanBeCompeted = "{0} - Contest can't be competed.";
+        public const string CanBeCompeted = "Contest can't be competed.";
 
-        public const string CanBePracticed = "{0} - Contest can't be practiced.";
+        public const string CanBePracticed = "Contest can't be practiced.";
     }
 
     public static class User
@@ -30,6 +30,8 @@ public static class ValidationMessages
         public const string NotFound = "Submission not found.";
 
         public const string NotMadeByUser = "You can only view your own submissions.";
+
+        public const string UserCannotSubmit = "You cannot submit solutions in this contest.";
 
         public const string SubmissionTypeNotFound = "Wrong submission type.";
 
@@ -71,7 +73,15 @@ public static class ValidationMessages
 
     public static class Participant
     {
+        public const string NotRegisteredForContest = "You are not registered for this contest.";
+
         public const string NotRegisteredForExam = "You are not registered for this exam.";
+
+        public const string ParticipantIsInvalidated = "Participation for this contest is invalidated.";
+
+        public const string ParticipationTimeEnded = "Participation time for this contest has expired.";
+
+        public const string ParticipationNotActive = "Participation for this contest is not active.";
 
         public const string NoPrivilegesForContestResults = "You don't have privileges to view contest's full results.";
     }

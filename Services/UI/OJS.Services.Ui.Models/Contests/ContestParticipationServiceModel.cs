@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Participants;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Linq;
 
@@ -18,8 +18,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public DateTime? LastSubmissionTime { get; set; }
 
-    public bool ContestIsCompete { get; set; }
-
     public int? UserSubmissionsTimeLimit { get; set; }
 
     public DateTime? EndDateTimeForParticipantOrContest { get; set; }
@@ -32,13 +30,6 @@ public class ContestParticipationServiceModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
             .ForMember(d => d.Contest, opt => opt.MapFrom(s => s.Contest))
-            .ForMember(d => d.EndDateTimeForParticipantOrContest, opt => opt.MapFrom(s =>
-                s.ParticipationEndTime.HasValue
-                ? s.ParticipationEndTime
-                : s.Contest.EndTime.HasValue && s.Contest.EndTime >= DateTime.UtcNow
-                    ? s.Contest.EndTime
-                    : s.Contest.PracticeEndTime.HasValue
-                        ? s.Contest.PracticeEndTime
-                        : null))
+            .ForMember(d => d.EndDateTimeForParticipantOrContest, opt => opt.Ignore())
             .ForAllOtherMembers(opt => opt.Ignore());
 }

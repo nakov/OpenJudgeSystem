@@ -11,10 +11,11 @@ using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.BackgroundJobs;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.HttpClients;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -227,7 +228,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
 
             examGroup.UsersInExamGroups.Add(new UserInExamGroup
             {
-                UserId = user.Id,
+                User = user,
                 ExamGroupId = examGroup.Id,
             });
 

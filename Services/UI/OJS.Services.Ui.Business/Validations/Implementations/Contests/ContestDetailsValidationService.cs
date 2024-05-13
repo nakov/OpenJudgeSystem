@@ -3,6 +3,8 @@
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 
 public class ContestDetailsValidationService : IContestDetailsValidationService
 {
@@ -12,16 +14,16 @@ public class ContestDetailsValidationService : IContestDetailsValidationService
         IContestCategoriesBusinessService categoriesService) =>
         this.categoriesService = categoriesService;
 
-    public ValidationResult GetValidationResult((Contest?, int?, bool) item)
+    public ValidationResult GetValidationResult((Contest?, bool) item)
     {
-        var (contest, contestId, isUserAdminOrLecturerInContest) = item;
+        var (contest, isUserAdminOrLecturerInContest) = item;
 
         if (contest == null ||
             contest.IsDeleted ||
             ((!contest.Category!.IsVisible || !contest.IsVisible ||
               this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) && !isUserAdminOrLecturerInContest))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
+            return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);
         }
 
         return ValidationResult.Valid();

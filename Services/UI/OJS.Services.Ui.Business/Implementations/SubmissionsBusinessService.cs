@@ -22,11 +22,9 @@ using OJS.Services.Ui.Business.Validations.Implementations.Submissions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Ui.Models.Submissions.PublicSubmissions;
 using OJS.Workers.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Common.Extensions;
-using SoftUni.Common.Models;
+using OJS.Common.Extensions;
+using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -238,6 +236,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         };
     }
 
+    public Task<int> GetAllUnprocessedCount()
+        => this.submissionsCommonData.GetAllUnprocessedCount();
+
     public Task<IQueryable<Submission>> GetAllForArchiving()
     {
         var archiveBestSubmissionsLimit = DateTime.Now.AddYears(
@@ -392,7 +393,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .ToPagedResultAsync(DefaultSubmissionsPerPage, page);
     }
 
-    public async Task<PagedResult<PublicSubmissionsServiceModel>> GetUserSubmissionsByProblem(
+    public async Task<PagedResult<TServiceModel>> GetUserSubmissionsByProblem<TServiceModel>(
         int problemId,
         bool isOfficial,
         int page)
@@ -407,6 +408,9 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 .GetByContestByUserAndByIsOfficial(problem.ProblemGroup.ContestId, user.Id!, isOfficial)
                 .Map<ParticipantServiceModel>();
 
+        var isUserAdminOrLecturerInContest = await this.lecturersInContestsBusiness
+            .IsCurrentUserAdminOrLecturerInContest(problem.ProblemGroup.ContestId);
+
         var validationResult =
             this.submissionResultsValidationService.GetValidationResult((user, problem, participant, isOfficial));
 
@@ -415,7 +419,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(validationResult.Message);
         }
 
-        return await this.GetUserSubmissions<PublicSubmissionsServiceModel>(problem.Id, participant.Id, page);
+        return await this.GetUserSubmissions<TServiceModel>(problem.Id, participant.Id, isUserAdminOrLecturerInContest, page);
     }
 
     public async Task Submit(SubmitSubmissionServiceModel model)
@@ -434,31 +438,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 currentUser.Id!,
                 model.Official);
 
-        var contestValidationResult = this.contestParticipationValidationService.GetValidationResult(
-            (participant?.Contest,
-                participant?.ContestId,
-                currentUser,
-                model.Official)!);
-
-        var userSubmissionTimeLimit = await this.participantsBusinessService.GetParticipantLimitBetweenSubmissions(
-            participant!.Id,
-            participant.Contest.LimitBetweenSubmissions);
-
-        var hasUserNotProcessedSubmissionForProblem =
-            this.submissionsData.HasUserNotProcessedSubmissionForProblem(problem.Id, currentUser.Id!);
-
-        var hasUserNotProcessedSubmissionForContest =
-            this.submissionsData.HasUserNotProcessedSubmissionForContest(participant.ContestId, currentUser.Id!);
-
         var submitSubmissionValidationServiceResult = this.submitSubmissionValidationService.GetValidationResult(
-            (problem,
-                currentUser,
-                participant,
-                contestValidationResult,
-                userSubmissionTimeLimit,
-                hasUserNotProcessedSubmissionForProblem,
-                hasUserNotProcessedSubmissionForContest,
-                model));
+            (problem, participant, model));
 
         if (!submitSubmissionValidationServiceResult.IsValid)
         {
@@ -477,7 +458,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             newSubmission.Content = model.ByteContent!;
         }
 
-        newSubmission.ParticipantId = participant.Id;
+        newSubmission.ParticipantId = participant!.Id;
         newSubmission.IpAddress = "model.UserHostAddress";
         newSubmission.IsPublic = ((participant.IsOfficial && participant.Contest.ContestPassword == null) ||
                                   (!participant.IsOfficial && participant.Contest.PracticePassword == null)) &&
@@ -490,7 +471,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .SubmissionType;
 
         SubmissionServiceModel submissionServiceModel;
-        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
             // Submission is just uploaded and should not be processed
@@ -508,10 +489,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.SaveChanges();
 
         scope.Complete();
+        // Should be disposed explicitly (not with using keyword), otherwise the next operation will fail with
+        // "The current TransactionScope is already complete"
         scope.Dispose();
 
-        await this.submissionsCommonBusinessService
-            .PublishSubmissionForProcessing(submissionServiceModel);
+        await this.submissionsCommonBusinessService.PublishSubmissionForProcessing(submissionServiceModel);
     }
 
     public async Task ProcessExecutionResult(SubmissionExecutionResult submissionExecutionResult)
@@ -582,7 +564,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             return new PagedResult<SubmissionResultsServiceModel>();
         }
 
-        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, page);
+        // TODO: Fix userisadminorlecturer = false
+        return await this.GetUserSubmissions<SubmissionResultsServiceModel>(problemId, participantId, false, page);
     }
 
     public Task<int> GetTotalCount()
@@ -711,10 +694,16 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private async Task<PagedResult<TServiceModel>> GetUserSubmissions<TServiceModel>(
         int problemId,
         int participantId,
+        bool userIsAdminOrLecturerInContest,
         int page)
     {
         var userSubmissions = this.submissionsData
             .GetAllByProblemAndParticipant(problemId, participantId);
+
+        if (userIsAdminOrLecturerInContest)
+        {
+            userSubmissions = userSubmissions.Include(s => s.TestRuns);
+        }
 
         return await userSubmissions
             .MapCollection<TServiceModel>()

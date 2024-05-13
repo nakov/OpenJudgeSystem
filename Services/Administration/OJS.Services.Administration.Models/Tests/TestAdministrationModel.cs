@@ -3,7 +3,7 @@
 using AutoMapper;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -69,8 +69,8 @@ public class TestAdministrationModel : BaseAdministrationModel<int>, IMapExplici
 
     private static string? MapTestType(bool isTrialTest, bool isOpenTest) =>
         isOpenTest
-            ? TestTypeEnum.Compete.ToString()
+            ? TestTypeEnum.Open.ToString()
             : isTrialTest
-                ? TestTypeEnum.Practice.ToString()
+                ? TestTypeEnum.Trial.ToString()
                 : TestTypeEnum.Standard.ToString();
 }

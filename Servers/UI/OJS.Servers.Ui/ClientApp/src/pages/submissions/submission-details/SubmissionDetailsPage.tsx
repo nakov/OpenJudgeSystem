@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
+import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import Button from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
@@ -20,7 +21,9 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
+import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { setLayout } from '../../shared/set-layout';
 
 import styles from './SubmissionsDetailsPage.module.scss';
 
@@ -225,6 +228,7 @@ const SubmissionDetailsPage = () => {
 
         return sortedTestRuns.map((testRun: ITestRunType, idx: number) => (
             <SubmissionTestRun
+              key={`t-r-${testRun.testId}`}
               testRun={testRun}
               idx={idx + 1}
               shouldRenderAdminData={userIsInRoleForContest}
@@ -255,7 +259,7 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToAdministrationForContest = () => navigate(`/administration-new/contests/${contestId}`);
+        const goToAdministrationForContest = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>
@@ -268,7 +272,7 @@ const SubmissionDetailsPage = () => {
                 )}
             </div>
         );
-    }, [ contestId, navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
+    }, [ navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
@@ -277,15 +281,24 @@ const SubmissionDetailsPage = () => {
             </div>
         );
     }
-    if (error || retestError) {
+    if (retestError) {
         return (
-            <div>
-                { retestError
-                    ? 'Error retesting solution. Please try again!'
-                    : 'Error fetching submission data!' }
+            <div className={getColorClassName(themeColors.textColor)}>
+                Error retesting solution. Please try again!
             </div>
         );
     }
+
+    if (error) {
+        return (
+            <ErrorWithActionButtons
+              message={getErrorMessage(error)}
+              backToUrl="/submissions"
+              backToText="Back to submissions"
+            />
+        );
+    }
+
     return (
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>
             { retestSuccess && (
@@ -318,4 +331,4 @@ const SubmissionDetailsPage = () => {
     );
 };
 
-export default SubmissionDetailsPage;
+export default setLayout(SubmissionDetailsPage);

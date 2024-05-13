@@ -1,14 +1,13 @@
 namespace OJS.Services.Common.Implementations;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation.Helpers;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using System;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -54,18 +53,30 @@ public class ContestsActivityService : IContestsActivityService
     public IContestActivityServiceModel GetContestActivity(IContestForActivityServiceModel contest)
         => new ContestActivityServiceModel
         {
-            Id = contest!.Id,
+            Id = contest.Id,
             Name = contest.Name,
-            CanBeCompeted = this.CanUserCompete(contest),
             CanBePracticed = this.CanBePracticed(contest),
+            CanBeCompeted = this.CanUserCompete(contest),
         };
 
-    // Method is firstly checking if the Contest can be competed based in it's StartTime and EndTime
-    // If this check returns false we have to check if the current user is a participant with remaining time
-    // in an online contest
-    public bool CanUserCompete(IContestForActivityServiceModel contest)
-        => this.CanBeCompeted(contest) ||
-           (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
+    public ParticipantActivityServiceModel GetParticipantActivity(ParticipantForActivityServiceModel participant)
+    {
+        var startTime = participant.IsOfficial
+            ? participant.ParticipationStartTime ?? participant.ContestStartTime
+            : participant.ContestPracticeStartTime;
+
+        var endTime = participant.IsOfficial
+            ? participant.ParticipationEndTime ?? participant.ContestEndTime
+            : participant.ContestPracticeEndTime;
+
+        var hasParticipationTimeLeft = this.TimeRangeAllowsParticipation(startTime, endTime);
+
+        return new ParticipantActivityServiceModel(
+            hasParticipationTimeLeft,
+            participant.IsInvalidated,
+            startTime,
+            endTime);
+    }
 
     // Usage: assign value to the CanBeCompeted/Practiced properties in the different Contest models sent to the UI
     // method must be called on model/collection after retrieving it from the db
@@ -76,30 +87,6 @@ public class ContestsActivityService : IContestsActivityService
         var contestActivity = this.GetContestActivity(contestModel.Id).GetAwaiter().GetResult();
         contestModel.CanBeCompeted = contestActivity.CanBeCompeted;
         contestModel.CanBePracticed = contestActivity.CanBePracticed;
-    }
-
-    public bool CanBePracticed(IContestForActivityServiceModel contest)
-    {
-        if (!contest.IsVisible || contest.IsDeleted)
-        {
-            return false;
-        }
-
-        var currentTimeInUtc = this.dates.GetUtcNow();
-
-        if (!contest.PracticeStartTime.HasValue)
-        {
-            // Cannot be practiced
-            return false;
-        }
-
-        if (!contest.PracticeEndTime.HasValue)
-        {
-            // Practice forever
-            return contest.PracticeStartTime <= currentTimeInUtc;
-        }
-
-        return contest.PracticeStartTime <= currentTimeInUtc && currentTimeInUtc <= contest.PracticeEndTime;
     }
 
     public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)
@@ -133,6 +120,13 @@ public class ContestsActivityService : IContestsActivityService
             p.ParticipationEndTime.Value >= currentTimeInUtc);
     }
 
+    // Method is firstly checking if the Contest can be competed based in it's StartTime and EndTime
+    // If this check returns false we have to check if the current user is a participant with remaining time
+    // in an online contest
+    private bool CanUserCompete(IContestForActivityServiceModel contest)
+        => this.CanBeCompeted(contest) ||
+           (contest.IsOnline && this.IsActiveParticipantInOnlineContest(contest.Id));
+
     private bool CanBeCompeted(IContestForActivityServiceModel contest)
     {
         if (!contest.IsVisible || contest.IsDeleted)
@@ -140,20 +134,30 @@ public class ContestsActivityService : IContestsActivityService
             return false;
         }
 
-        if (!contest.StartTime.HasValue)
+        return this.TimeRangeAllowsParticipation(contest.StartTime, contest.EndTime);
+    }
+
+    private bool CanBePracticed(IContestForActivityServiceModel contest)
+    {
+        if (!contest.IsVisible || contest.IsDeleted)
         {
-            // Cannot be competed
             return false;
         }
 
-        var currentTimeInUtc = this.dates.GetUtcNow();
+        return this.TimeRangeAllowsParticipation(contest.PracticeStartTime, contest.PracticeEndTime);
+    }
 
-        if (!contest.EndTime.HasValue)
-        {
-            // Compete forever
-            return contest.StartTime <= currentTimeInUtc;
-        }
-
-        return contest.StartTime <= currentTimeInUtc && currentTimeInUtc <= contest.EndTime;
+    /// <summary>
+    /// Checks if the given time range is valid for participation, compared to the current time in UTC.
+    /// If start time is not set, participation is not possible.
+    /// If end time is not set, but has start time, participation is allowed forever.
+    /// </summary>
+    /// <param name="startTime">Start time.</param>
+    /// <param name="endTime">End time.</param>
+    /// <returns>True if the time range is valid, otherwise false.</returns>
+    private bool TimeRangeAllowsParticipation(DateTime? startTime, DateTime? endTime)
+    {
+        var utcNow = this.dates.GetUtcNow();
+        return startTime <= utcNow && (endTime == null || utcNow <= endTime);
     }
 }

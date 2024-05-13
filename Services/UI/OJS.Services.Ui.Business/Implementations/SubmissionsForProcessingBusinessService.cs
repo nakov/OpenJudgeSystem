@@ -13,5 +13,7 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
         => this.submissionsForProcessingData = submissionsForProcessingData;
 
     public Task<int> GetUnprocessedTotalCount()
-        => this.submissionsForProcessingData.GetAllUnprocessed().CountAsync();
+        => this.submissionsForProcessingData
+            .GetAllUnprocessed()
+            .CountAsync();
 }

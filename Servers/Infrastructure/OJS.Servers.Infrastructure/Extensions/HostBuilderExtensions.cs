@@ -2,7 +2,7 @@ namespace OJS.Servers.Infrastructure.Extensions;
 
 using Microsoft.Extensions.Hosting;
 using OJS.Common.Extensions;
-using OJS.Services.Common.Models.Configurations;
+using OJS.Services.Infrastructure.Configurations;
 using Serilog;
 using Serilog.Events;
 using System.IO;

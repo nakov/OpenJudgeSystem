@@ -8,7 +8,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Options;
     using OJS.Common.Extensions.Strings;
-    using OJS.Services.Common.Models.Configurations;
+    using OJS.Services.Infrastructure.Configurations;
     using OJS.Services.Infrastructure.Constants;
     using OJS.Services.Infrastructure.Emails;
     using StackExchange.Redis;

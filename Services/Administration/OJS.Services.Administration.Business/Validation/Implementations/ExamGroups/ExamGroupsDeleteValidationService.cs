@@ -4,7 +4,9 @@ using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Validation.Helpers;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Models;
 using Resource = OJS.Common.Resources.ExamGroupsController;
 
 public class ExamGroupsDeleteValidationService : IValidationService<ExamGroupDeleteValidationServiceModel>

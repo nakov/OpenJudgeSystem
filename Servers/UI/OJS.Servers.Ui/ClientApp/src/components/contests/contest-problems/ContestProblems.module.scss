@@ -1,27 +1,28 @@
 @use 'src/styles/variables';
+@use 'src/styles/fonts';
 @use 'src/styles/spacings';
 @use 'src/styles/colors';
 @use 'src/styles/shadows';
 @use 'src/styles/font-weights';
 
-.wrapper {
+.problemsHeader {
+  align-items: center;
   display: flex;
+  font-size: variables.$f-size-18;
+  justify-content: space-between;
+  padding: spacings.$sp-16 spacings.$sp-32;
 }
 
 .problemsWrapper {
   font-size: variables.$f-size-18;
-  height: 600px;
+  height: 582px;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: spacings.$sp-16 spacings.$sp-24;
   transition: all 0.5s ease-in-out;
-  width: 350px;
+  width: 397px;
 
-  .problemsHeader {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 spacings.$sp-12 spacings.$sp-8 spacings.$sp-12;
+  .problemsInnerWrapper {
+    padding: 0 spacings.$sp-24;
   }
 
   .problem {
@@ -29,6 +30,7 @@
     cursor: pointer;
     display: flex;
     justify-content: space-between;
+    line-height: 1.2;
     padding: spacings.$sp-18;
     transition: all 0.1s ease-in-out;
 
@@ -46,13 +48,13 @@
 }
 
 .problemsInfoSection {
+  align-items: center;
   box-shadow: shadows.$dp-shadow-4;
+  display: flex;
   font-weight: font-weights.$font-weight-semi-bold;
+  justify-content: space-between;
   padding: spacings.$sp-12 spacings.$sp-24;
   width: 350px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
   .participantsInfo {
     color: colors.$primary-blue;
@@ -64,6 +66,13 @@
 }
 
 .excludedMark {
-  margin-left: spacings.$sp-8;
   color: colors.$warning-color;
+  margin-left: spacings.$sp-8;
 }
+
+.excludedFromHomeworkModal {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-8 spacings.$sp-18;
+}
+

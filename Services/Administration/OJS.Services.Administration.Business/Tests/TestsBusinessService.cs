@@ -12,7 +12,7 @@ using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Files;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -255,11 +255,11 @@ public class TestsBusinessService : AdministrationOperationService<Test, int, Te
         Enum.TryParse<TestTypeEnum>(model.Type, out var testType);
         switch (testType)
         {
-            case TestTypeEnum.Practice:
+            case TestTypeEnum.Trial:
                 entity.IsTrialTest = true;
                 entity.IsOpenTest = false;
                 break;
-            case TestTypeEnum.Compete:
+            case TestTypeEnum.Open:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
                 break;

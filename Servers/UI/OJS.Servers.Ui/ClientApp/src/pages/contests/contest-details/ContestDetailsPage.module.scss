@@ -7,8 +7,6 @@
 .contestDetailsWrapper {
   @extend %font-family-normal;
 
-  padding: spacings.$sp-64;
-
   .heading {
     @extend %font-family-normal;
 
@@ -26,7 +24,12 @@
   }
 
   .problemNameItem {
-    margin: spacings.$sp-4 0;
+    font-size: variables.$f-size-18;
+    line-height: 1.8;
+  }
+
+  .problemResources {
+    line-height: 1.5;
   }
 
   .adminBtn {
@@ -38,6 +41,7 @@
   display: flex;
   font-size: variables.$f-size-18;
   justify-content: space-between;
+  line-height: 1.2;
 
   .title {
     font-size: variables.$f-size-24;
@@ -46,6 +50,7 @@
   }
 
   .languagesWrapper {
+    line-height: 1.5;
     margin: spacings.$sp-24 0;
   }
 

@@ -28,11 +28,34 @@ export const contestsService = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,
         credentials: 'include',
-        prepareHeaders: (headers: any) => {
-            headers.set('Content-Type', 'application/json');
-            return headers;
+        prepareHeaders: (headers) => headers,
+        responseHandler: async (response: Response) => {
+            const contentType = response.headers.get('Content-Type');
+
+            if (contentType?.includes('application/octet-stream') ||
+                contentType?.includes('application/zip')) {
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'file.zip';
+
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename\*?=\s*UTF-8''(.+?)(;|$)/);
+                    if (match) {
+                        filename = decodeURIComponent(match[1]);
+                    }
+                }
+                const blob = await response.blob();
+
+                return { blob, fileName: filename };
+            }
+
+            if (response.headers.get('Content-Length')) {
+                return '';
+            }
+
+            return response.json();
         },
     }),
+    // baseQuery: getCustomBaseQuery('contests'),
     endpoints: (builder) => ({
         getAllContests: builder.query<IPagedResultType<IIndexContestsType>, IContestsSortAndFilterOptions>({
             query: ({ sortType, page, category, strategy }) => ({
@@ -88,11 +111,21 @@ export const contestsService = createApi({
             }),
         }),
         submitContestSolutionFile: builder.mutation<void, ISubmitContestSolutionParams>({
-            query: ({ content, official, submissionTypeId, problemId }) => ({
-                url: '/Compete/SubmitFileSubmission',
-                method: 'POST',
-                body: { content, official, problemId, submissionTypeId },
-            }),
+            query: ({ content, official, submissionTypeId, problemId }) => {
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('official', official
+                    ? 'true'
+                    : 'false');
+                formData.append('problemId', problemId.toString());
+                formData.append('submissionTypeId', submissionTypeId.toString());
+
+                return {
+                    url: '/Compete/SubmitFileSubmission',
+                    method: 'POST',
+                    body: formData,
+                };
+            },
         }),
         submitContestPassword: builder.mutation<void, ISubmitContestPasswordParams>({
             query: ({ contestId, isOfficial, password }) => ({
@@ -103,7 +136,7 @@ export const contestsService = createApi({
             }),
         }),
         registerUserForContest: builder.mutation<
-            IRegisterUserForContestResponseType,
+            { isRegisteredSuccessfully: boolean },
             IRegisterUserForContestParams>({
                 query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
                     url: `/compete/${id}/register`,
@@ -111,6 +144,15 @@ export const contestsService = createApi({
                     params: { isOfficial },
                     body: { password, hasConfirmedParticipation },
                 }),
+            }),
+        getRegisteredUserForContest: builder.query<
+            IRegisterUserForContestResponseType,
+            { id: number; isOfficial: boolean }>({
+                query: ({ id, isOfficial }) => ({
+                    url: `/compete/${id}/register`,
+                    params: { isOfficial },
+                }),
+                keepUnusedDataFor: 2,
             }),
         getContestResults: builder.query<
             IContestResultsType,
@@ -123,6 +165,12 @@ export const contestsService = createApi({
                     },
                 }),
             }),
+        downloadContestProblemResource: builder.query<{ blob: Blob; fileName: string }, { id: number }>({
+            query: ({ id }) => ({
+                url: `/ProblemResources/GetResource/${id}`,
+            }),
+            keepUnusedDataFor: 0,
+        }),
     }),
 });
 
@@ -139,4 +187,6 @@ export const {
     useSubmitContestSolutionFileMutation,
     useGetContestUserParticipationQuery,
     useGetContestResultsQuery,
+    useLazyDownloadContestProblemResourceQuery,
+    useGetRegisteredUserForContestQuery,
 } = contestsService;

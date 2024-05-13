@@ -5,7 +5,7 @@ using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.SubmissionTypes;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

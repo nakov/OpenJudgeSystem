@@ -1,34 +1,12 @@
-namespace OJS.Services.Ui.Models.Submissions.PublicSubmissions;
+namespace OJS.Services.Ui.Models.Submissions;
 
 using AutoMapper;
 using FluentExtensions.Extensions;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
-using OJS.Data.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
-
-public enum StateResultForPublicSubmissionsServiceModel
-{
-    Ready = 1,
-    Processing = 2,
-    Queued = 3,
-}
-
-public class UserForPublicSubmissionsServiceModel
-    : IMapExplicitly
-{
-    public string Id { get; set; } = null!;
-
-    public object Username { get; set; } = null!;
-
-    public void RegisterMappings(IProfileExpression configuration)
-        => configuration.CreateMap<UserProfile, UserForPublicSubmissionsServiceModel>()
-            .ForMember(
-                x => x.Username,
-                opt => opt.MapFrom(y => y.UserName));
-}
 
 public class ProblemForPublicSubmissionsServiceModel
     : IMapExplicitly
@@ -74,13 +52,11 @@ public class PublicSubmissionsServiceModel : IMapExplicitly
 
     public bool IsOfficial { get; set; }
 
-    public UserForPublicSubmissionsServiceModel User { get; set; } = null!;
+    public string User { get; set; } = null!;
 
     public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
     public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
-
-    public StateResultForPublicSubmissionsServiceModel State { get; set; }
 
     public bool IsCompiledSuccessfully { get; set; }
 
@@ -97,17 +73,11 @@ public class PublicSubmissionsServiceModel : IMapExplicitly
             .ForMember(
                 x => x.User,
                 opt => opt.MapFrom(
-                    y => y.Participant!.User))
+                    y => y.Participant!.User.UserName))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(
                     y => y))
-            .ForMember(
-                x => x.State,
-                opt => opt.MapFrom(
-                    y => y.Processed
-                        ? StateResultForPublicSubmissionsServiceModel.Ready
-                        : StateResultForPublicSubmissionsServiceModel.Queued))
             .ForMember(
                 x => x.Result,
                 opt => opt.MapFrom(

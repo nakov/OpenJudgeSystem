@@ -1,8 +1,7 @@
 namespace OJS.Services.Common;
 
-using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
 
 public interface IContestsActivityService : IService
@@ -11,9 +10,7 @@ public interface IContestsActivityService : IService
 
     IContestActivityServiceModel GetContestActivity(IContestForActivityServiceModel contest);
 
-    bool CanUserCompete(IContestForActivityServiceModel contest);
-
-    bool CanBePracticed(IContestForActivityServiceModel contest);
+    ParticipantActivityServiceModel GetParticipantActivity(ParticipantForActivityServiceModel participant);
 
     Task<bool> IsContestActive(IContestForActivityServiceModel contest);
 

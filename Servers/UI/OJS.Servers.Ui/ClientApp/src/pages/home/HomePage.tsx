@@ -53,6 +53,9 @@ const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
     const { themeColors, getColorClassName } = useTheme();
 
+    const
+        { Keys: { YOUTUBE_VIDEO_ID } } = window;
+
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     const renderHomeStatisticIcons = useCallback(() => {
@@ -86,7 +89,13 @@ const HomePage = () => {
             <ContestCetegories isRenderedOnHomePage />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
-                <iframe style={{ border: `3px solid ${themeColors.textColor}` }} title="home-video" width={700} height={320} src="https://www.youtube.com/watch?v=zyhYnE4Fnmk&ab_channel=SoftwareUniversity%28SoftUni%29" />
+                <iframe
+                  style={{ border: `3px solid ${themeColors.textColor}` }}
+                  title="home-video"
+                  width={700}
+                  height={320}
+                  src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`}
+                />
                 <hr />
                 {renderHomeStatisticIcons()}
             </div>
@@ -94,4 +103,4 @@ const HomePage = () => {
     );
 };
 
-export default setLayout(HomePage, true);
+export default setLayout(HomePage);

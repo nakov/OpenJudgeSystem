@@ -1,8 +1,8 @@
 namespace OJS.Servers.Infrastructure.Extensions
 {
+    using AutoMapper;
     using Hangfire;
     using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -10,8 +10,8 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Common;
     using OJS.Servers.Infrastructure.Filters;
     using OJS.Servers.Infrastructure.Middleware;
-    using OJS.Services.Common.Models.Configurations;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure;
+    using OJS.Services.Infrastructure.Configurations;
     using static OJS.Common.GlobalConstants.Urls;
 
     public static class WebApplicationExtensions
@@ -46,8 +46,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                 Authorization = new[] { new HangfireAuthorizationFilter() },
             };
 
-            app.UseHangfireDashboard(HangfirePath);
-            app.MapHangfireDashboard(dashboardOptions);
+            app.UseHangfireDashboard(HangfirePath, dashboardOptions);
 
             return app;
         }
@@ -101,6 +100,17 @@ namespace OJS.Servers.Infrastructure.Extensions
             var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
             dbContext.Database.Migrate();
+
+            return app;
+        }
+
+        public static IApplicationBuilder UseAutoMapper(this IApplicationBuilder app)
+        {
+            var services = app.ApplicationServices;
+
+            var mapper = services.GetRequiredService<IMapper>();
+
+            AutoMapperSingleton.Init(mapper);
 
             return app;
         }

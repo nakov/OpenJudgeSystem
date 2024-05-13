@@ -4,7 +4,7 @@ using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using OJS.Data.Models.Users;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Common;
 
 public class UserAuthInfoServiceModel : IMapExplicitly

@@ -17,13 +17,24 @@ import ErrorResult from './ErrorResult';
 import styles from './ExecutionResult.module.scss';
 
 interface IExecutionResultDetailsProps {
+    points: number;
+    maxPoints: number;
     testRuns: ITestRunType[];
     isCompiledSuccessfully: boolean;
     isProcessed: boolean;
+    showDetailedResults: boolean;
 }
 
-const ExecutionResult = ({ testRuns, isCompiledSuccessfully, isProcessed }: IExecutionResultDetailsProps) => {
+const ExecutionResult = ({
+    points,
+    maxPoints,
+    testRuns,
+    isCompiledSuccessfully,
+    isProcessed,
+    showDetailedResults,
+}: IExecutionResultDetailsProps) => {
     const { getColorClassName, themeColors } = useTheme();
+
     const renderTestRunIcon = useCallback(
         (testRun: ITestRunType) => {
             switch (toLowerCase(testRun.resultType)) {
@@ -56,19 +67,39 @@ const ExecutionResult = ({ testRuns, isCompiledSuccessfully, isProcessed }: IExe
         getColorClassName(themeColors.textColor),
     );
 
-    return (
-        <div className={listClassName}>
-            { isProcessed && isCompiledSuccessfully
-                ? (
-                    <div className={styles.executionResultInfo}>
+    const hasTestRuns = useCallback(() => (testRuns && testRuns.length > 0) ?? false, [ testRuns ]);
+
+    const renderResult = useCallback(() => {
+        if (isProcessed && !isCompiledSuccessfully) {
+            return (<ErrorResult />);
+        }
+
+        if (!isProcessed && !isCompiledSuccessfully) {
+            return <span>Processing</span>;
+        }
+
+        return (
+            <div className={styles.executionResultInfo}>
+                {
+                    showDetailedResults && hasTestRuns() && (
                         <div className={styles.testRunsContainer}>
                             {renderTestRunIcons(testRuns)}
                         </div>
-                    </div>
-                )
-                : (
-                    <ErrorResult />
-                )}
+                    )
+                }
+                <span>
+                    {points}
+                    {' '}
+                    /
+                    {maxPoints}
+                </span>
+            </div>
+        );
+    }, [ hasTestRuns, isCompiledSuccessfully, isProcessed, maxPoints, points, renderTestRunIcons, showDetailedResults, testRuns ]);
+
+    return (
+        <div className={listClassName}>
+            {renderResult()}
         </div>
     );
 };

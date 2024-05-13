@@ -1,6 +1,13 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
 import moment, { Duration, unitOfTime } from 'moment';
 
+interface IConvertToTwoDigitValuesParamType {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+}
+
 const defaultDateTimeFormat = 'HH:MM, DD/MMM/YYYY';
 const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
@@ -78,12 +85,55 @@ const secondsToFullTime = (duration: number) => {
     return { days, hours, minutes, seconds };
 };
 
-interface IConvertToTwoDigitValuesParamType {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-}
+const timeToWords = (time: string) => {
+    // Split the time string into hours, minutes, and seconds
+    const parts = time.split(':');
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+
+    // Create the time description in words
+    let description = '';
+    if (hours > 0) {
+        description += hours + (hours === 1
+            ? ' hour'
+            : ' hours');
+    }
+    if (minutes > 0) {
+        if (description.length > 0) {
+            description += ' and ';
+        }
+        description += minutes + (minutes === 1
+            ? ' minute'
+            : ' minutes');
+    }
+
+    return description;
+};
+
+const transformDaysHoursMinutesTextToMinutes = (durationString: string) => {
+    const components = durationString.split(', ');
+
+    let days = 0; let hours = 0; let minutes = 0;
+
+    components.forEach((component) => {
+        const [ value, unit ] = component.split(' ');
+        if (unit === 'd') {
+            days = parseInt(value, 10);
+        } else if (unit === 'h') {
+            hours = parseInt(value, 10);
+        } else if (unit === 'm') {
+            minutes = parseInt(value, 10);
+        }
+    });
+
+    return days * 24 * 60 + hours * 60 + minutes;
+};
+
+const transformSecondsToTimeSpan = (seconds: number) => {
+    const duration = moment.duration(seconds, 'seconds');
+
+    return moment.utc(duration.asMilliseconds()).format('mm:ss');
+};
 
 const convertToTwoDigitValues = ({
     days: daysValue,
@@ -114,19 +164,6 @@ const convertToTwoDigitValues = ({
     };
 };
 
-export default {
-    formatDate,
-    preciseFormatDate,
-    secondsToFullTime,
-    calculateTimeUntil,
-    calculateTimeBetweenTwoDates,
-    convertToSecondsRemaining,
-    convertToTwoDigitValues,
-    getCurrentTimeInUtc: getCurrentTimeInUTC,
-    convertTimeIntervalToHoursMinutesAndSeconds,
-    calculatedTimeFormatted,
-};
-
 export {
     defaultDateTimeFormat,
     defaultDateTimeFormatPreciseTime,
@@ -142,4 +179,7 @@ export {
     calculateTimeBetweenTwoDates,
     convertTimeIntervalToHoursMinutesAndSeconds,
     calculatedTimeFormatted,
+    timeToWords,
+    transformSecondsToTimeSpan,
+    transformDaysHoursMinutesTextToMinutes,
 };

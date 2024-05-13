@@ -4,6 +4,8 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation.Helpers;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 
 public class ContestResultsValidationService : IContestResultsValidationService
 {

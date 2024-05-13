@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using FluentExtensions.Extensions;
 
 public class ProblemSubmissionType : IMapExplicitly

@@ -3,7 +3,7 @@ namespace OJS.Servers.Worker.Consumers;
 using MassTransit;
 using OJS.Services.Common;
 using OJS.Services.Worker.Business;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Threading.Tasks;
 using OJS.PubSub.Worker.Models.Submissions;

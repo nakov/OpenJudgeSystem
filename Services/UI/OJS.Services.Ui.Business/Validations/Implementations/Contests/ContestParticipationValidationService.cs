@@ -7,7 +7,8 @@ using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Data;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Models;
 
 public class ContestParticipationValidationService : IContestParticipationValidationService
 {
@@ -47,7 +48,7 @@ public class ContestParticipationValidationService : IContestParticipationValida
             ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !userIsAdminOrLecturerInContest))
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.NotFound, contestId));
+            return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);
         }
 
         if (userIsAdminOrLecturerInContest)
@@ -59,12 +60,12 @@ public class ContestParticipationValidationService : IContestParticipationValida
 
         if (official && !contestActivityEntity.CanBeCompeted)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBeCompeted, contest.Name));
+            return ValidationResult.Invalid(ValidationMessages.Contest.CanBeCompeted);
         }
 
         if (!official && !contestActivityEntity.CanBePracticed)
         {
-            return ValidationResult.Invalid(string.Format(ValidationMessages.Contest.CanBePracticed, contest.Name));
+            return ValidationResult.Invalid(ValidationMessages.Contest.CanBePracticed);
         }
 
         if (contest.IsOnlineExam &&

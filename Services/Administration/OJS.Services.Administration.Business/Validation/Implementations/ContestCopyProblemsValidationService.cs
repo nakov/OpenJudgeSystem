@@ -4,6 +4,8 @@ using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Common.Models;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Validation.Helpers;
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 
 public class ContestCopyProblemsValidationService : IValidationService<ContestCopyProblemsValidationServiceModel>
 {

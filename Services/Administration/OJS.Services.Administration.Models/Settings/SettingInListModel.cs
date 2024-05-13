@@ -1,7 +1,8 @@
 ﻿namespace OJS.Services.Administration.Models.Settings;
 
+using OJS.Common.Enumerations;
 using OJS.Data.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class SettingInListModel : IMapFrom<Setting>
 {
@@ -11,5 +12,5 @@ public class SettingInListModel : IMapFrom<Setting>
 
     public string? Value { get; set; }
 
-    public string? Type { get; set; }
+    public SettingType Type { get; set; }
 }

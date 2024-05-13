@@ -5,7 +5,7 @@
     using OJS.Data.Models.Users;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Ui.Models.Users;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
 
     public interface IUsersBusinessService : IService
     {

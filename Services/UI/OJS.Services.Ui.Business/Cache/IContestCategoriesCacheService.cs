@@ -2,7 +2,7 @@ namespace OJS.Services.Ui.Business.Cache;
 
 using OJS.Services.Common.Models.Cache;
 using OJS.Services.Infrastructure.Constants;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
