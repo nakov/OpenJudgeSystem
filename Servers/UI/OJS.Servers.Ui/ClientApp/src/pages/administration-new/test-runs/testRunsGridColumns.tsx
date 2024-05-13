@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { SubmissionResultType } from '../../../common/constants';
+import { TestRunResultType } from '../../../common/constants';
 import { IEnumType } from '../../../common/types';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import ErrorIcon from '../../../components/guidelines/icons/ErrorIcon';
@@ -76,14 +76,15 @@ const testRunsFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        enumValues: getStringObjectKeys(SubmissionResultType),
+        enumValues: getStringObjectKeys(TestRunResultType),
         renderCell: (params: GridRenderCellParams) => {
             switch (params.row.resultType.toString().toLowerCase()) {
-            case SubmissionResultType.CorrectAnswer: return <TickIcon size={IconSize.Large} />;
-            case SubmissionResultType.WrongAnswer: return <WrongAnswerIcon size={IconSize.Large} />;
-            case SubmissionResultType.MemoryLimit: return <MemoryIcon size={IconSize.Large} />;
-            case SubmissionResultType.TimeLimit: return <TimeLimitIcon size={IconSize.Large} />;
-            case SubmissionResultType.RunTimeError: return <RuntimeErrorIcon size={IconSize.Large} />;
+            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
+            case TestRunResultType.CorrectAnswer: return <TickIcon size={IconSize.Large} />;
+            case TestRunResultType.WrongAnswer: return <WrongAnswerIcon size={IconSize.Large} />;
+            case TestRunResultType.MemoryLimit: return <MemoryIcon size={IconSize.Large} />;
+            case TestRunResultType.TimeLimit: return <TimeLimitIcon size={IconSize.Large} />;
+            case TestRunResultType.RunTimeError: return <RuntimeErrorIcon size={IconSize.Large} />;
             default: return (
                 <ErrorIcon size={IconSize.Large} />
             );

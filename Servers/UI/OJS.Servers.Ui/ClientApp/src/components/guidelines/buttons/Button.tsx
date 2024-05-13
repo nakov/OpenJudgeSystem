@@ -4,6 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import useTheme from '../../../hooks/use-theme';
+import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -134,7 +135,7 @@ const Button = ({
         : '';
 
     const buttonClassName =
-        isEmpty(internalClassName)
+        isNilOrEmpty(internalClassName)
             ? concatClassNames(
                 styles.btn,
                 typeClassName,

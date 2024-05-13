@@ -58,6 +58,26 @@
   }
 }
 
+.problemDetailsWrapper {
+  display: flex;
+  justify-content: space-between;
+  margin: spacings.$sp-24 0;
+}
+
+.adminButtonsAndResourcesWrapper {
+  align-items: center;
+  display: flex;
+}
+
+.adminButtonsContainer {
+  display: flex;
+  gap: spacings.$sp-12;
+}
+
+.problemResources {
+  display: flex;
+}
+
 .selectedProblemWrapper {
   margin-left: spacings.$sp-24;
   width: 90%;
@@ -87,7 +107,7 @@
     }
   }
 
-  .problemDescriptionsWrapper {
+  .problemParametersWrapper {
     align-items: center;
     display: flex;
     justify-content: space-between;
@@ -162,11 +182,6 @@
 
 .administrationButtonWrapper {
   margin-top: spacings.$sp-32 !important;
-}
-
-.problemDescriptions {
-  display: flex;
-  margin: spacings.$sp-24 0;
 }
 
 .errorText {

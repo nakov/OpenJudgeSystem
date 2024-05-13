@@ -24,26 +24,19 @@
     .testDetailsAndMemoryWrapper {
       align-items: center;
       display: flex;
+      gap: spacings.$sp-12;
 
       .testRunIdWrapper {
-        color: #868686ff;
+        color: colors.$secondary-green;
+        cursor: pointer;
         font-size: variables.$f-size-14;
         margin-left: spacings.$sp-12;
         text-decoration: underline;
-
-        &:visited {
-          color: #868686ff;
-        }
       }
 
       .timeAndMemoryWrapper {
         display: flex;
-        justify-content: space-between;
-        width: 200px;
-
-        span:first-child {
-          margin-right: spacings.$sp-16;
-        }
+        width: 300px;
 
         span {
           align-items: center;
@@ -72,4 +65,9 @@
   @extend %font-family-normal;
 
   padding: spacings.$sp-8;
+}
+
+.runtimeExecutionComment {
+  color: colors.$warning-color;
+  margin-top: spacings.$sp-12;
 }

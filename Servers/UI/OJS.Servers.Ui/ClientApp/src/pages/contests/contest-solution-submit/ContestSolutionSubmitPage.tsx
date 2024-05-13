@@ -13,7 +13,13 @@ import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
-import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
+import Button, {
+    ButtonSize,
+    ButtonState,
+    ButtonType,
+    LinkButton,
+    LinkButtonType,
+} from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
@@ -322,25 +328,65 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const renderProblemDescriptions = useCallback(() => {
+    const goToSubmissionAdministration = () => navigate(`
+    /administration-new/problems?filter=id~equals~${
+        selectedContestDetailsProblem!.id
+}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
+
+    const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${
+        selectedContestDetailsProblem!.id
+    }`);
+
+    const renderProblemAdminButtons = useCallback(
+        () => contest && contest.userIsAdminOrLecturerInContest && (
+        <div className={styles.adminButtonsContainer}>
+            <Button
+              type={ButtonType.secondary}
+              size={ButtonSize.small}
+              onClick={goToSubmissionAdministration}
+            >
+                Problem
+            </Button>
+            <Button
+              type={ButtonType.secondary}
+              size={ButtonSize.small}
+              onClick={goToTestsAdministration}
+            >
+                Tests
+            </Button>
+        </div>
+        ),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [ contest ],
+    );
+
+    const renderProblemResources = useCallback(() => {
         if (!selectedContestDetailsProblem) {
             return;
         }
 
         const { resources } = selectedContestDetailsProblem;
 
+        return (
+            <div className={styles.problemResources}>
+                {resources.map((resource: IProblemResourceType) => (
+                    <ProblemResource
+                      resource={resource}
+                      problem={selectedContestDetailsProblem.name}
+                    />
+                ))}
+            </div>
+        );
+    }, [ selectedContestDetailsProblem ]);
+
+    const renderProblemResourcesAndParameters = useCallback(() => {
+        if (!selectedContestDetailsProblem) {
+            return;
+        }
+
         // eslint-disable-next-line consistent-return
         return (
-            <div className={styles.problemDescriptionsWrapper}>
-                <div className={styles.problemDescriptions}>
-                    { resources.map((resource: IProblemResourceType) => (
-                        <ProblemResource
-                          key={resource.id}
-                          resource={resource}
-                          problem={selectedContestDetailsProblem.name}
-                        />
-                    ))}
-                </div>
+            <div className={styles.problemParametersWrapper}>
                 <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
                     <IoIosInformationCircleOutline />
                 </div>
@@ -381,7 +427,7 @@ const ContestSolutionSubmitPage = () => {
                             {' '}
                             KB
                         </div>
-                        { checkerName && (
+                        {checkerName && (
                             <div>
                                 <span className={styles.title}>Checker:</span>
                                 {' '}
@@ -393,16 +439,8 @@ const ContestSolutionSubmitPage = () => {
             </div>
         );
     }, [
-        selectedContestDetailsProblem,
-        anchorEl,
-        isModalOpen,
-        checkerName,
-        fileSizeLimit,
-        memoryLimit,
-        timeLimit,
-        lightBackgroundClassName,
-        textColorClassName,
-    ]);
+        selectedContestDetailsProblem, isModalOpen, anchorEl, textColorClassName,
+        lightBackgroundClassName, timeLimit, memoryLimit, fileSizeLimit, checkerName ]);
 
     const renderRemainingTimeForContest = useCallback(() => {
         if (remainingTimeForCompete) {
@@ -437,7 +475,10 @@ const ContestSolutionSubmitPage = () => {
     }, [ remainingTimeForCompete ]);
 
     const renderSubmissionsInput = useCallback(() => {
-        const { allowBinaryFilesUpload, allowedFileExtensions } = selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
+        const {
+            allowBinaryFilesUpload,
+            allowedFileExtensions,
+        } = selectedContestDetailsProblem?.allowedSubmissionTypes[0] || {};
 
         if (allowBinaryFilesUpload) {
             return (
@@ -588,9 +629,11 @@ const ContestSolutionSubmitPage = () => {
             { user.canAccessAdministration && (
                 <div className={styles.administrationButtonWrapper}>
                     <LinkButton
+                      size={ButtonSize.small}
+                      type={LinkButtonType.secondary}
                       to={`/administration-new/contests/${contestId}`}
                       isToExternal
-                      text="Open in administration"
+                      text="Contest"
                     />
                 </div>
             ) }
@@ -611,7 +654,13 @@ const ContestSolutionSubmitPage = () => {
                         </div>
                         {renderRemainingTimeForContest()}
                     </div>
-                    {renderProblemDescriptions()}
+                    <div className={styles.problemDetailsWrapper}>
+                        <div className={styles.adminButtonsAndResourcesWrapper}>
+                            {renderProblemAdminButtons()}
+                            {renderProblemResources()}
+                        </div>
+                        {renderProblemResourcesAndParameters()}
+                    </div>
                     {renderSubmissionsInput()}
                 </div>
             </div>

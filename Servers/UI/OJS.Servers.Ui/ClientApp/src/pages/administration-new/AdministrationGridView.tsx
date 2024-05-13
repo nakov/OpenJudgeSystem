@@ -19,7 +19,6 @@ import AdministrationFilters, { addDefaultFilter, IAdministrationFilter, IAdmini
 import styles from './AdministrationStyles.module.scss';
 
 interface IAdministrationGridViewProps<T> {
-
     filterableGridColumnDef: Array<GridColDef>;
     notFilterableGridColumnDef: Array<GridColDef>;
     data: IPagedResultType<T> | undefined;
@@ -35,7 +34,6 @@ interface IAdministrationGridViewProps<T> {
     excelMutation?: any;
     defaultFilter?: string;
     defaultSorter?: string;
-
 }
 
 const defaultFilterToAdd = 'isdeleted~equals~false';
