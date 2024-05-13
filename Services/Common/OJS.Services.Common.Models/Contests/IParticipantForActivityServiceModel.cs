@@ -1,10 +1,8 @@
 namespace OJS.Services.Common.Models.Contests;
 
-using OJS.Data.Models.Participants;
-using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
-public class ParticipantForActivityServiceModel : IMapFrom<Participant>, IParticipantForActivityServiceModel
+public interface IParticipantForActivityServiceModel
 {
     public bool IsInvalidated { get; set; }
 

@@ -6,7 +6,6 @@ using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.ProblemGroups;
-using OJS.Services.Administration.Business.ProblemGroups.Permissions;
 using OJS.Services.Administration.Business.Problems;
 using OJS.Services.Administration.Business.Problems.GridData;
 using OJS.Services.Administration.Business.Problems.Permissions;
@@ -91,15 +90,14 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
     [ProtectedEntityAction(typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> DeleteAll([FromRoute] int contestId)
     {
-        var contest = await this.contestsActivityService.GetContestActivity(contestId);
-        if (await this.contestsActivityService.IsContestActive(contest.Id))
+        if (await this.contestsActivityService.IsContestActive(contestId))
         {
             return this.UnprocessableEntity("Unable to delete problems for active contest.");
         }
 
-        await this.problemsBusinessService.DeleteByContest(contest.Id);
+        await this.problemsBusinessService.DeleteByContest(contestId);
 
-        return this.Ok($"Problems for {contest.Name} were successfully deleted.");
+        return this.Ok("Problems for contest were successfully deleted.");
     }
 
     [HttpPost]
@@ -125,7 +123,7 @@ public class ProblemsController : BaseAdminApiController<Problem, int, ProblemIn
             await this.problemsDataService
                 .GetQueryForUser(
                     this.User.Map<UserInfoModel>(),
-                    contest => contest.Name!.Contains(searchString ?? string.Empty))
+                    contest => contest.Name.Contains(searchString ?? string.Empty))
                 .MapCollection<ProblemDropdownModel>()
                 .Take(20)
                 .ToListAsync();

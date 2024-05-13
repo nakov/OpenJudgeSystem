@@ -1,17 +1,24 @@
 namespace OJS.Services.Ui.Models.Contests;
 
 using AutoMapper;
+using OJS.Common.Enumerations;
 using System.Linq;
 using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
-public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
+public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
 {
     public int Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
+
+    public ContestType Type { get; set; }
+
+    public bool IsVisible { get; set; }
+
+    public bool IsDeleted { get; set; }
 
     public DateTime? StartTime { get; set; }
 
