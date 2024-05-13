@@ -36,17 +36,10 @@ public class ContestsActivityService : IContestsActivityService
         this.userProvider = userProvider;
     }
 
-    public async Task<IEnumerable<IContestActivityServiceModel>> GetContestActivities(
-        ICollection<IContestForActivityServiceModel> contests)
-    {
-        var participants = await this.GetCurrentUserParticipantsForContests(contests.Select(c => c.Id));
-        return contests.Select(contest => this.GetContestActivity(contest, participants));
-    }
-
     public async Task<IContestActivityServiceModel> GetContestActivity(IContestForActivityServiceModel contest)
         => this.GetContestActivity(contest, await this.GetCurrentUserParticipantsForContests(new[] { contest.Id }));
 
-    public ParticipantActivityServiceModel GetParticipantActivity(ParticipantForActivityServiceModel participant)
+    public ParticipantActivityServiceModel GetParticipantActivity(IParticipantForActivityServiceModel participant)
     {
         var startTime = participant.IsOfficial
             ? participant.ParticipationStartTime ?? participant.ContestStartTime
@@ -79,6 +72,22 @@ public class ContestsActivityService : IContestsActivityService
         }
     }
 
+    public void SetCanBeCompetedAndPracticed<T>(
+        IReadOnlyCollection<T> contestModels,
+        IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
+        where T : class, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
+    {
+        var contests = contestModels.Cast<IContestForActivityServiceModel>().ToList();
+        var contestActivities = this.GetContestActivities(contests, participants).ToList();
+
+        foreach (var contestModel in contestModels)
+        {
+            var contestActivity = contestActivities.Single(c => c.Id == (contestModel as IContestForActivityServiceModel).Id);
+            contestModel.CanBeCompeted = contestActivity.CanBeCompeted;
+            contestModel.CanBePracticed = contestActivity.CanBePracticed;
+        }
+    }
+
     public async Task<bool> IsContestActive(IContestForActivityServiceModel contest)
         => this.CanBeCompeted(contest, null) ||
            (contest.Type == ContestType.OnlinePracticalExam &&
@@ -99,7 +108,19 @@ public class ContestsActivityService : IContestsActivityService
         return await this.IsContestActive(contest!);
     }
 
-    private bool CanBeCompeted(IContestForActivityServiceModel contest, ParticipantForActivityServiceModel? participant)
+    private async Task<IEnumerable<IContestActivityServiceModel>> GetContestActivities(
+        ICollection<IContestForActivityServiceModel> contests)
+    {
+        var participants = await this.GetCurrentUserParticipantsForContests(contests.Select(c => c.Id));
+        return contests.Select(contest => this.GetContestActivity(contest, participants));
+    }
+
+    private IEnumerable<IContestActivityServiceModel> GetContestActivities(
+        IEnumerable<IContestForActivityServiceModel> contests,
+        IReadOnlyCollection<IParticipantForActivityServiceModel> participants) =>
+        contests.Select(contest => this.GetContestActivity(contest, participants));
+
+    private bool CanBeCompeted(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
         if (!contest.IsVisible || contest.IsDeleted)
         {
@@ -111,7 +132,7 @@ public class ContestsActivityService : IContestsActivityService
             : this.TimeRangeAllowsParticipation(contest.StartTime, contest.EndTime);
     }
 
-    private bool CanBePracticed(IContestForActivityServiceModel contest, ParticipantForActivityServiceModel? participant)
+    private bool CanBePracticed(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
         if (!contest.IsVisible || contest.IsDeleted)
         {
@@ -150,7 +171,7 @@ public class ContestsActivityService : IContestsActivityService
 
     private IContestActivityServiceModel GetContestActivity(
         IContestForActivityServiceModel contest,
-        IReadOnlyCollection<ParticipantForActivityServiceModel> participants)
+        IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
     {
         var officialParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && p.IsOfficial);
         var practiceParticipant = participants.SingleOrDefault(p => p.ContestId == contest.Id && !p.IsOfficial);

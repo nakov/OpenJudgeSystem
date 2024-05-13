@@ -35,7 +35,6 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly IParticipantsBusinessService participantsBusiness;
         private readonly IContestCategoriesCacheService contestCategoriesCache;
         private readonly IParticipantScoresDataService participantScoresData;
-        private readonly IUsersBusinessService usersBusinessService;
         private readonly IUserProviderService userProviderService;
         private readonly IContestParticipationValidationService contestParticipationValidationService;
         private readonly IContestParticipantsCacheService contestParticipantsCacheService;
@@ -49,7 +48,6 @@ namespace OJS.Services.Ui.Business.Implementations
             IExamGroupsDataService examGroupsData,
             IParticipantsDataService participantsData,
             IParticipantScoresDataService participantScoresData,
-            IUsersBusinessService usersBusinessService,
             IUserProviderService userProviderService,
             IParticipantsBusinessService participantsBusiness,
             IContestCategoriesCacheService contestCategoriesCache,
@@ -64,7 +62,6 @@ namespace OJS.Services.Ui.Business.Implementations
             this.examGroupsData = examGroupsData;
             this.participantsData = participantsData;
             this.participantScoresData = participantScoresData;
-            this.usersBusinessService = usersBusinessService;
             this.userProviderService = userProviderService;
             this.participantsBusiness = participantsBusiness;
             this.contestCategoriesCache = contestCategoriesCache;
@@ -112,7 +109,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || isLecturerOrAdmin;
             var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerOrAdmin;
-            var canShowProblemsForAnonymous = user.Id != null || !contestActivityEntity.CanBeCompeted;
+            var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
             if ((!canShowProblemsInPractice && !canShowProblemsInCompete) || !canShowProblemsForAnonymous)
             {
@@ -166,7 +163,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participant = await this.participantsData
                 .GetByContestByUserAndByIsOfficial(
                     id,
-                    user!.Id,
+                    user.Id,
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
@@ -209,7 +206,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participant = await this.participantsData
                 .GetByContestByUserAndByIsOfficial(
                     id,
-                    user!.Id,
+                    user.Id,
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
@@ -222,7 +219,7 @@ namespace OJS.Services.Ui.Business.Implementations
             // Validate password if present
             if (password != null && !password.IsNullOrEmpty() && shouldRequirePassword)
             {
-                var isPasswordValid = GetIsPasswordValid(contest!, password, isOfficial);
+                var isPasswordValid = GetIsPasswordValid(contest, password, isOfficial);
 
                 if (!isPasswordValid)
                 {
@@ -236,7 +233,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 (!shouldRequirePassword || requiredPasswordIsValid) &&
                 (!shouldConfirmParticipation || hasConfirmedParticipation == true))
             {
-                participant = await this.AddNewParticipantToContestIfNotExistsOrResetExistingToValid(contest!, isOfficial, user.Id, userIsAdminOrLecturerInContest);
+                participant = await this.AddNewParticipantToContestIfNotExistsOrResetExistingToValid(contest, isOfficial, user.Id, userIsAdminOrLecturerInContest);
             }
 
             return participant != null;
@@ -284,7 +281,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var participant = await this.participantsData
                 .GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(
                     model.ContestId,
-                    user!.Id,
+                    user.Id,
                     model.IsOfficial);
 
             if (participant == null)
@@ -311,7 +308,7 @@ namespace OJS.Services.Ui.Business.Implementations
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
-            var participationModel = participant!.Map<ContestParticipationServiceModel>();
+            var participationModel = participant.Map<ContestParticipationServiceModel>();
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
@@ -331,10 +328,10 @@ namespace OJS.Services.Ui.Business.Implementations
                 .AllowedSubmissionTypes
                 .DistinctBy(st => st.Id);
 
-            participationModel.ParticipantId = participant!.Id;
+            participationModel.ParticipantId = participant.Id;
             participationModel.UserSubmissionsTimeLimit = await this.participantsBusiness.GetParticipantLimitBetweenSubmissions(
                     participant.Id,
-                    contest!.LimitBetweenSubmissions);
+                    contest.LimitBetweenSubmissions);
 
             var participantsList = new List<int> { participant.Id, };
 
@@ -407,7 +404,16 @@ namespace OJS.Services.Ui.Business.Implementations
             var pagedContests =
                 await this.contestsData.GetAllAsPageByFiltersAndSorting<ContestForListingServiceModel>(model);
 
-            return await this.PrepareActivityAndResults(pagedContests);
+            var participantResultsByContest = new Dictionary<int, List<ParticipantResultServiceModel>>();
+            var user = this.userProviderService.GetCurrentUser();
+            if (user.IsAuthenticated)
+            {
+                var userParticipants = this.participantsData
+                    .GetAllByUsernameAndContests(user.Username ?? string.Empty, pagedContests.Items.Select(c => c.Id));
+                participantResultsByContest = await MapParticipationResultsToContestsInPage(pagedContests, userParticipants);
+            }
+
+            return await this.PrepareActivityAndResults(pagedContests, participantResultsByContest);
         }
 
         public async Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
@@ -421,12 +427,10 @@ namespace OJS.Services.Ui.Business.Implementations
                     this.contestsData.GetLatestForParticipantByUsername(username),
                     sortAndFilterModel);
 
-            Dictionary<int, List<ParticipantResultServiceModel>>? participantResultsByContest = null;
-
+            var participantResultsByContest = new Dictionary<int, List<ParticipantResultServiceModel>>();
             var loggedInUser = this.userProviderService.GetCurrentUser();
-            var loggedInUserProfile = await this.usersBusinessService.GetUserProfileById(loggedInUser.Id);
 
-            if (!loggedInUserProfile.IsNull() && (loggedInUserProfile!.UserName == username || loggedInUser.IsAdmin))
+            if (loggedInUser.IsAuthenticated && (loggedInUser.Username == username || loggedInUser.IsAdmin))
             {
                 // Lecturers should not see points
                 var userParticipants = this.participantsData
@@ -526,7 +530,7 @@ namespace OJS.Services.Ui.Business.Implementations
         /// <returns>A paged collection of contests.</returns>
         private async Task<PagedResult<ContestForListingServiceModel>> PrepareActivityAndResults(
             PagedResult<ContestForListingServiceModel> pagedContests,
-            Dictionary<int, List<ParticipantResultServiceModel>>? participantResultsByContest = null)
+            Dictionary<int, List<ParticipantResultServiceModel>> participantResultsByContest)
         {
             var participantsCount = await this.contestParticipantsCacheService
                 .GetParticipantsCount(
@@ -536,16 +540,23 @@ namespace OJS.Services.Ui.Business.Implementations
                         .ToImmutableArray(),
                     pagedContests.PageNumber);
 
-            await this.activityService.SetCanBeCompetedAndPracticed(pagedContests.Items.ToList());
+            this.activityService.SetCanBeCompetedAndPracticed(
+                pagedContests.Items.ToList(),
+                participantResultsByContest.Values.SelectMany(x => x).ToList());
 
             pagedContests.Items.ForEach(c =>
             {
                 c.CompeteResults = participantsCount[c.Id].Official;
                 c.PracticeResults = participantsCount[c.Id].Practice;
 
-                if (participantResultsByContest != null)
+                if (participantResultsByContest.Any())
                 {
-                    var participants = participantResultsByContest[c.Id];
+                    var participants = participantResultsByContest.GetValueOrDefault(c.Id);
+                    if (participants == null)
+                    {
+                        return;
+                    }
+
                     var competePoints = participants.Where(p => p.IsOfficial).Select(p => p.Points).SingleOrDefault();
                     var practicePoints = participants.Where(p => !p.IsOfficial).Select(p => p.Points).SingleOrDefault();
 
@@ -605,27 +616,6 @@ namespace OJS.Services.Ui.Business.Implementations
                 userId,
                 official,
                 isUserAdminOrLecturerInContest);
-        }
-
-        private async Task<Participant> AddNewParticipantToContest(
-            Contest contest,
-            bool official,
-            string userId,
-            bool isUserAdminOrLecturer)
-        {
-            if (contest.IsExam &&
-                official &&
-                !isUserAdminOrLecturer &&
-                !await this.contestsData.IsUserInExamGroupByContestAndUser(contest.Id, userId))
-            {
-                throw new BusinessServiceException("You are not registered for this exam!");
-            }
-
-            return await this.participantsBusiness.CreateNewByContestByUserByIsOfficialAndIsAdminOrLecturer(
-                contest,
-                userId,
-                official,
-                isUserAdminOrLecturer);
         }
     }
 }
