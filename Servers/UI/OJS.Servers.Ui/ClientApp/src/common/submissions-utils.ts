@@ -5,12 +5,12 @@ const getTestResultColorId = (resultType: string) => {
     case TestRunResultType.CorrectAnswer.toLowerCase():
         // primary-green
         return '#23be5e';
-    case TestRunResultType.WrongAnswer.toLowerCase():
-        // primary-red
-        return '#fc4c50';
-    default:
+    case TestRunResultType.TimeLimit.toLowerCase() || TestRunResultType.MemoryLimit.toLowerCase():
         // warning
         return '#fec112';
+    default:
+        // primary-red
+        return '#fc4c50';
     }
 };
 
