@@ -138,6 +138,10 @@
   }
 }
 
+.deleteButton {
+  background-color: colors.$primary-red !important;
+}
+
 .succesfulRetestWrapper {
   align-self: center;
   background-color: colors.$primary-green;

@@ -114,7 +114,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="id">The submission id to be retested.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost("{id:int}/retest")]
+    [HttpPost("retest/{id:int}")]
     public async Task<IActionResult> Retest(int id)
         => await this.submissionsBusinessService
             .Retest(id)

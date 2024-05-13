@@ -258,14 +258,17 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToAdministrationForContest = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
+        const goToSubmissionAdministration = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
+
+        const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${problem!.id}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>
                 <Button text="View Code" onClick={onViewCodeClick} />
                 { userIsInRoleForContest && (
                     <>
-                        <Button text="OPEN IN ADMINISTRATION" onClick={goToAdministrationForContest} />
+                        <Button text="Open In Administration" onClick={goToSubmissionAdministration} />
+                        <Button text="Tests" onClick={goToTestsAdministration} />
                         <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
                     </>
                 )}
