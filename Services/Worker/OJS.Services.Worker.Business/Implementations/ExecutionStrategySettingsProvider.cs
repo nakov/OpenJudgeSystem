@@ -38,7 +38,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.MsBuildBaseMemoryUsedInBytes)
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck => new
+            ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck or
+            ExecutionStrategyType.NodeJsV20PreprocessExecuteAndCheck => new
                 NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds * 2,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
@@ -77,7 +78,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.settings.PythonExecutablePath)
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha => new
+            ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha or
+            ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunUnitTestsWithMocha => new
                 NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,
@@ -142,7 +144,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                     this.GetNodeResourcePath(executionStrategyType, this.settings.HandlebarsModulePath))
 
                 as TSettings,
-            ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy => new
+            ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy or
+            ExecutionStrategyType.NodeJsV20ZipExecuteHtmlAndCssStrategy => new
                 NodeJsZipExecuteHtmlAndCssStrategySettings(
                     this.settings.NodeJsBaseTimeUsedInMilliseconds,
                     this.settings.NodeJsBaseMemoryUsedInBytes,

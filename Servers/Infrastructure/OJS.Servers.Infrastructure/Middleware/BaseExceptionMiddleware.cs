@@ -3,8 +3,11 @@
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using OJS.Servers.Infrastructure.Extensions;
     using OJS.Services.Infrastructure.Exceptions;
+    using OJS.Workers.Common.Extensions;
     using System;
     using System.Net;
     using System.Reflection;
@@ -13,7 +16,7 @@
     public abstract class BaseExceptionMiddleware
     {
         private const string StatusCodePropertyName = "StatusCode";
-        private const string ExceptionAdditionalData = "Data";
+        private const string ExceptionAdditionalData = "data";
 
         public RequestDelegate Get =>
             async httpContext =>
@@ -22,8 +25,21 @@
                 var exception = errorFeature
                     ?.Error ?? new Exception($"Cannot get exception from {nameof(IExceptionHandlerFeature)}");
 
+                exception.AddErrorCode();
+                var errorCode = exception.GetErrorCode();
                 var instanceId = Guid.NewGuid();
-                var problemDetails = new ProblemDetails { Instance = instanceId.ToString() };
+
+                var logger = httpContext.RequestServices.GetRequiredService<ILogger<BaseExceptionMiddleware>>();
+                logger.LogError(exception, "An error with code: {ErrorCode} and ID: {InstanceId} occurred", errorCode, instanceId);
+
+                var problemDetails = new ProblemDetails
+                {
+                    Instance = instanceId.ToString(),
+                    Extensions =
+                    {
+                        [nameof(errorCode)] = errorCode,
+                    },
+                };
 
                 switch (exception)
                 {

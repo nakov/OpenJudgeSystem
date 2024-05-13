@@ -64,13 +64,36 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             return;
         }
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
-        searchParams.set('page', '1');
-        searchParams.set('category', id.toString());
-        searchParams.delete('strategy');
+        if (!selectedContestCategory) {
+            return;
+        }
+        const parents = findParentNames(contestCategories, selectedContestCategory?.id);
+        // click is on already selected category
+        if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
+            if (parents && parents?.length > 1) {
+                const selectedParentCategory = parents[parents.length - 2];
+                searchParams.set('category', selectedParentCategory.id.toString());
+                searchParams.delete('strategy');
+
+                const contestElementInFormat = findContestCategoryByIdRecursive(contestCategories, selectedParentCategory.id);
+                dispatch(setContestCategory(contestElementInFormat));
+                dispatch(setContestStrategy(null));
+            } else {
+                searchParams.delete('category');
+
+                dispatch(setContestCategory(null));
+                dispatch(setContestStrategy(null));
+            }
+        } else {
+            searchParams.set('page', '1');
+            searchParams.set('category', id.toString());
+            searchParams.delete('strategy');
+
+            dispatch(setContestCategory(selectedContestCategory));
+            dispatch(setContestStrategy(null));
+        }
 
         setSearchParams(searchParams);
-        dispatch(setContestCategory(selectedContestCategory));
-        dispatch(setContestStrategy(null));
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {

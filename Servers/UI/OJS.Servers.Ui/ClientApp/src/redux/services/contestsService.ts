@@ -33,7 +33,6 @@ export const contestsService = createApi({
             const contentType = response.headers.get('Content-Type');
 
             if (contentType?.includes('application/octet-stream') ||
-                contentType?.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
                 contentType?.includes('application/zip')) {
                 const contentDisposition = response.headers.get('Content-Disposition');
                 let filename = 'file.zip';
@@ -137,7 +136,7 @@ export const contestsService = createApi({
             }),
         }),
         registerUserForContest: builder.mutation<
-            IRegisterUserForContestResponseType,
+            { isRegisteredSuccessfully: boolean },
             IRegisterUserForContestParams>({
                 query: ({ password, isOfficial, id, hasConfirmedParticipation }) => ({
                     url: `/compete/${id}/register`,
@@ -145,6 +144,15 @@ export const contestsService = createApi({
                     params: { isOfficial },
                     body: { password, hasConfirmedParticipation },
                 }),
+            }),
+        getRegisteredUserForContest: builder.query<
+            IRegisterUserForContestResponseType,
+            { id: number; isOfficial: boolean }>({
+                query: ({ id, isOfficial }) => ({
+                    url: `/compete/${id}/register`,
+                    params: { isOfficial },
+                }),
+                keepUnusedDataFor: 2,
             }),
         getContestResults: builder.query<
             IContestResultsType,
@@ -157,7 +165,7 @@ export const contestsService = createApi({
                     },
                 }),
             }),
-        downloadContestProblemResource: builder.query<{ blob: Blob }, { id: number }>({
+        downloadContestProblemResource: builder.query<{ blob: Blob; fileName: string }, { id: number }>({
             query: ({ id }) => ({
                 url: `/ProblemResources/GetResource/${id}`,
             }),
@@ -180,4 +188,5 @@ export const {
     useGetContestUserParticipationQuery,
     useGetContestResultsQuery,
     useLazyDownloadContestProblemResourceQuery,
+    useGetRegisteredUserForContestQuery,
 } = contestsService;

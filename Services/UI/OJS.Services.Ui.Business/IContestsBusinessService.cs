@@ -12,13 +12,19 @@ namespace OJS.Services.Ui.Business
 
     public interface IContestsBusinessService : IService
     {
-        Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, string? password, bool? hasConfirmedParticipation, bool isOfficial);
+        Task<ContestRegistrationDetailsServiceModel> GetContestRegistrationDetails(int id, bool isOfficial);
+
+        Task<bool> RegisterUserForContest(
+            int id,
+            string? password,
+            bool? hasConfirmedParticipation,
+            bool isOfficial);
 
         Task ValidateContestPassword(int id, bool official, string password);
 
         Task<ContestDetailsServiceModel> GetContestDetails(int id);
 
-        Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model);
+        Task<ContestParticipationServiceModel> GetParticipationDetails(StartContestParticipationServiceModel model);
 
         Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex();
 

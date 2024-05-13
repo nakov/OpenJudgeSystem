@@ -73,7 +73,15 @@ public static class ValidationMessages
 
     public static class Participant
     {
+        public const string NotRegisteredForContest = "You are not registered for this contest.";
+
         public const string NotRegisteredForExam = "You are not registered for this exam.";
+
+        public const string ParticipantIsInvalidated = "Participation for this contest is invalidated.";
+
+        public const string ParticipationTimeEnded = "Participation time for this contest has expired.";
+
+        public const string ParticipationNotActive = "Participation for this contest is not active.";
 
         public const string NoPrivilegesForContestResults = "You don't have privileges to view contest's full results.";
     }

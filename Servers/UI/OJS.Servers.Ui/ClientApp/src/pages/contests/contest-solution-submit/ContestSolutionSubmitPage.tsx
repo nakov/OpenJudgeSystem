@@ -11,6 +11,7 @@ import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
+import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import Button, {
     ButtonSize,
@@ -33,7 +34,7 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted, transformSecondsToTimeSpan } from '../../../utils/dates';
+import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
@@ -47,7 +48,8 @@ const ContestSolutionSubmitPage = () => {
 
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
-    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>('');
+    const [ contestTimeHasExpired, setContestTimeHasExpired ] = useState<boolean>(false);
+    const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
     const [ submissionCode, setSubmissionCode ] = useState<string>();
@@ -62,13 +64,15 @@ const ContestSolutionSubmitPage = () => {
 
     const [ submitSolution, {
         // isSuccess: submitSolutionSuccess,
-        isError: submitSolutionError,
+        error: submitSolutionError,
+        isError: submitSolutionHasError,
         isLoading: submitSolutionIsLoading,
     } ] = useSubmitContestSolutionMutation();
 
     const [ submitSolutionFile, {
         // isSuccess: submitSolutionFileSuccess,
-        isError: submitSolutionFileError,
+        error: submitSolutionFileError,
+        isError: submitSolutionFileHasError,
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
@@ -90,6 +94,7 @@ const ContestSolutionSubmitPage = () => {
     const {
         data,
         isLoading,
+        isError,
         error,
         refetch,
     } = useGetContestUserParticipationQuery({ id: Number(contestId!), isOfficial: isCompete });
@@ -161,7 +166,7 @@ const ContestSolutionSubmitPage = () => {
         const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
-            setRemainingTimeForCompete(null);
+            setContestTimeHasExpired(true);
             return;
         }
 
@@ -173,6 +178,7 @@ const ContestSolutionSubmitPage = () => {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
+                setContestTimeHasExpired(true);
                 setRemainingTimeForCompete(null);
             }
         });
@@ -188,10 +194,10 @@ const ContestSolutionSubmitPage = () => {
         if (isLoading) {
             return;
         }
-        if (!isRegisteredParticipant && !isActiveParticipant) {
-            navigate(`/contests/register/${contestId}/${participationType}`);
+        if ((!isRegisteredParticipant && !isActiveParticipant) && !isError) {
+            navigate(`/contests/register/${contestId}/${participationType}`, { replace: true });
         }
-    }, [ isLoading, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -200,7 +206,7 @@ const ContestSolutionSubmitPage = () => {
     // in case of loading by url we need to have contest details set in state,
     // in order for breadcrumbs to load and work properly
     useEffect(() => {
-        if (!contestDetails) {
+        if (!contestDetails || contestDetails.id !== Number(contestId)) {
             const fetchAndSetContestDetails = async () => {
                 const { data: contestDetailsData } = await getContestById({ id: Number(contestId) });
                 dispatch(setContestDetails({ contest: contestDetailsData ?? null }));
@@ -291,23 +297,18 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
-        try {
-            await submitSolutionFile({
-                content: uploadedFile!,
-                official: isCompete,
-                problemId: selectedContestDetailsProblem?.id!,
-                submissionTypeId: selectedSubmissionType?.id!,
-            });
-            refetch();
-            await getSubmissionsData({
-                id: Number(selectedContestDetailsProblem!.id),
-                page: selectedSubmissionsPage,
-                isOfficial: isCompete,
-            });
-            setUploadedFile(null);
-        } catch {
-            setUploadedFile(null);
-        }
+        await submitSolutionFile({
+            content: uploadedFile!,
+            official: isCompete,
+            problemId: selectedContestDetailsProblem?.id!,
+            submissionTypeId: selectedSubmissionType?.id!,
+        });
+        refetch();
+        await getSubmissionsData({
+            id: Number(selectedContestDetailsProblem!.id),
+            page: selectedSubmissionsPage,
+            isOfficial: isCompete,
+        });
     }, [
         getSubmissionsData,
         isCompete,
@@ -441,6 +442,38 @@ const ContestSolutionSubmitPage = () => {
         selectedContestDetailsProblem, isModalOpen, anchorEl, textColorClassName,
         lightBackgroundClassName, timeLimit, memoryLimit, fileSizeLimit, checkerName ]);
 
+    const renderRemainingTimeForContest = useCallback(() => {
+        if (remainingTimeForCompete) {
+            const leftMinutes = transformDaysHoursMinutesTextToMinutes(remainingTimeForCompete);
+            return (
+                <div className={leftMinutes <= 30
+                    ? styles.errorText
+                    : ''}
+                >
+                    Remaining time:
+                    <b>
+                        {remainingTimeForCompete}
+                    </b>
+                </div>
+            );
+        }
+
+        // Contests without ending time
+        if (!remainingTimeForCompete) {
+            return (
+                <div>
+                    <b>No expire time</b>
+                </div>
+            );
+        }
+
+        return (
+            <span className={styles.errorText}>
+                Participation time has expired
+            </span>
+        );
+    }, [ remainingTimeForCompete ]);
+
     const renderSubmissionsInput = useCallback(() => {
         const {
             allowBinaryFilesUpload,
@@ -466,11 +499,16 @@ const ContestSolutionSubmitPage = () => {
                           setUploadedFile(file);
                       }}
                     />
-                    <div className={styles.remainingTimeNadSubmitButtonWrapper} style={{ height: 420 }}>
+                    <div className={styles.remainingTimeNadSubmitButtonWrapper}>
+                        <Dropdown
+                          dropdownItems={strategyDropdownItems || []}
+                          value={selectedStrategyValue}
+                          handleDropdownItemClick={onStrategyDropdownItemSelect}
+                        />
                         <Button
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading
+                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading || contestTimeHasExpired || fileUploadError
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
@@ -481,8 +519,10 @@ const ContestSolutionSubmitPage = () => {
                                 until next submit
                             </div>
                         )}
-                        {submitSolutionFileError && (
-                            <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                        {submitSolutionFileHasError && (
+                            <div className={styles.solutionSubmitError}>
+                                {(submitSolutionFileError as any).data.detail || 'Error submitting solution. Please try again!'}
+                            </div>
                         )}
                     </div>
                 </div>
@@ -504,7 +544,7 @@ const ContestSolutionSubmitPage = () => {
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button
-                          state={isSubmitButtonDisabled || submitSolutionIsLoading
+                          state={isSubmitButtonDisabled || submitSolutionIsLoading || contestTimeHasExpired
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                           onClick={onSolutionSubmitCode}
@@ -519,17 +559,20 @@ const ContestSolutionSubmitPage = () => {
                         )}
                     </div>
                 </div>
-                {(submitSolutionError || solutionSubmitPreError) && (
-                    <div className={styles.solutionSubmitError}>Error submitting solution. Please try again!</div>
+                {(submitSolutionHasError || solutionSubmitPreError) && (
+                    <div className={styles.solutionSubmitError}>
+                        {(submitSolutionError as any).data.detail || 'Error submitting solution. Please try again!'}
+                    </div>
                 )}
             </div>
         );
     }, [
         submitSolutionFileIsLoading,
         uploadedFile,
-        submitSolutionError,
+        submitSolutionHasError,
         isSubmitButtonDisabled,
         submitSolutionIsLoading,
+        contestTimeHasExpired,
         remainingTime,
         selectedStrategyValue,
         strategyDropdownItems,
@@ -539,6 +582,8 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionFileError,
         selectedContestDetailsProblem,
         onSolutionSubmitCode,
+        submitSolutionError,
+        submitSolutionFileHasError,
         solutionSubmitPreError,
         onSolutionSubmitFile,
         setSubmissionCode,
@@ -559,8 +604,14 @@ const ContestSolutionSubmitPage = () => {
         );
     }
 
-    if (isRegisteredParticipant && !isActiveParticipant) {
-        return <div>Contest expired!</div>;
+    if ((isRegisteredParticipant && !isActiveParticipant) || contestTimeHasExpired) {
+        return (
+            <ErrorWithActionButtons
+              message="Access to this contest has expired!"
+              backToText="Back to contests"
+              backToUrl="/contests"
+            />
+        );
     }
 
     return (
@@ -578,9 +629,9 @@ const ContestSolutionSubmitPage = () => {
             { user.canAccessAdministration && (
                 <div className={styles.administrationButtonWrapper}>
                     <LinkButton
-                      to={`/administration-new/problems/${selectedContestDetailsProblem?.id}`}
                       size={ButtonSize.small}
                       type={LinkButtonType.secondary}
+                      to={`/administration-new/contests/${contestId}`}
                       isToExternal
                       text="Contest"
                     />
@@ -601,18 +652,7 @@ const ContestSolutionSubmitPage = () => {
                             {selectedContestDetailsProblem?.isExcludedFromHomework && (
                                 <span className={textColorClassName}>(not included in final score)</span>)}
                         </div>
-                        {remainingTimeForCompete
-                            ? (
-                                <div>
-                                    Remaining time:
-                                    <b>{remainingTimeForCompete}</b>
-                                </div>
-                            )
-                            : (
-                                <span className={styles.errorText}>
-                                    Participation time has expired
-                                </span>
-                            )}
+                        {renderRemainingTimeForContest()}
                     </div>
                     <div className={styles.problemDetailsWrapper}>
                         <div className={styles.adminButtonsAndResourcesWrapper}>

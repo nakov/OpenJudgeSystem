@@ -27,24 +27,28 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
             return;
         }
 
-        downloadFile(problemResourceDownloadData.blob, `${problem}-resources`);
+        downloadFile(problemResourceDownloadData.blob, problemResourceDownloadData.fileName);
     }, [ problem, problemResourceDownloadData ]);
 
     return (
         <>
-            <div className={styles.problemResourceIndicator}>
-                {problemResourceDownloadError
-                    ? (
-                        <div className={styles.problemResourceDownloadError}>
-                            Error downloading problem resource. Please try
-                            again!
-                        </div>
-                    )
-                    : ''}
-                {problemResourceDownloadIsLoading
-                    ? <div className={styles.problemResourceLoading}>Downloading resource...</div>
-                    : ''}
-            </div>
+            {problemResourceDownloadError || problemResourceDownloadIsLoading
+                ? (
+                    <div className={styles.problemResourceIndicator}>
+                        {problemResourceDownloadError
+                            ? (
+                                <div className={styles.problemResourceDownloadError}>
+                                    Error downloading problem resource. Please try
+                                    again!
+                                </div>
+                            )
+                            : ''}
+                        {problemResourceDownloadIsLoading
+                            ? <div className={styles.problemResourceLoading}>Downloading resource...</div>
+                            : ''}
+                    </div>
+                )
+                : null}
             {
                 resource.link
                     ? (

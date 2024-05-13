@@ -10,6 +10,6 @@ using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Models.Submissions;
 
 public interface ISubmitSubmissionValidationService : IValidationService
-   <(Problem?, Participant?, int, bool, bool, SubmitSubmissionServiceModel)>
+   <(Problem?, Participant?, SubmitSubmissionServiceModel)>
 {
 }
