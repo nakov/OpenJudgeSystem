@@ -119,10 +119,10 @@ const ContestCard = (props: IContestCardProps) => {
         );
     };
 
-    const renderPointsText = (pointsReceived: number | null, totalPoints: number) => pointsReceived != null && (
-    <span className={styles.points}>
-        {`${pointsReceived} / ${totalPoints}`}
-    </span>
+    const renderPointsText = (totalPoints: number, pointsReceived?: number) => !isNil(pointsReceived) && (
+        <span className={styles.points}>
+            {`${pointsReceived} / ${totalPoints}`}
+        </span>
     );
 
     const renderContestButton = (isCompete: boolean) => {
@@ -176,11 +176,11 @@ const ContestCard = (props: IContestCardProps) => {
             </div>
             <div className={styles.contestBtnsWrapper}>
                 <div className={styles.buttonAndPointsLabelWrapper}>
-                    { shouldShowPoints && renderPointsText(userParticipationResult?.competePoints ?? null, competeMaximumPoints)}
+                    { shouldShowPoints && renderPointsText(competeMaximumPoints, userParticipationResult?.competePoints)}
                     {renderContestButton(true)}
                 </div>
                 <div className={styles.buttonAndPointsLabelWrapper}>
-                    { shouldShowPoints && renderPointsText(userParticipationResult?.practicePoints ?? null, practiceMaximumPoints)}
+                    { shouldShowPoints && renderPointsText(practiceMaximumPoints, userParticipationResult?.practicePoints)}
                     {renderContestButton(false)}
                 </div>
             </div>
