@@ -2,10 +2,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { defaultPathIdentifier } from '../../common/constants';
-import { IContestType, IPagedResultType, IProblemType, IUserType } from '../../common/types';
+import { IIndexContestsType, IPagedResultType, IProblemSearchType, IUserType } from '../../common/types';
 
 interface IGetSearchQueryParams {
     searchTerm: string;
+    page: number;
 }
 
 export const searchService = createApi({
@@ -19,17 +20,17 @@ export const searchService = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getContestsSearch: builder.query<IPagedResultType<IContestType>, IGetSearchQueryParams>({
-            query: ({ searchTerm }) => (
-                { url: `/Search/GetContestsSearchResults`, params: { searchTerm } }),
+        getContestsSearch: builder.query<IPagedResultType<IIndexContestsType>, IGetSearchQueryParams>({
+            query: ({ searchTerm, page }) => (
+                { url: `/Search/GetContestsSearchResults`, params: { searchTerm, page } }),
         }),
-        getProblemsSearch: builder.query<IPagedResultType<IProblemType>, IGetSearchQueryParams>({
-            query: ({ searchTerm }) => (
-                { url: `/Search/GetProblemsSearchResults`, params: { searchTerm } }),
+        getProblemsSearch: builder.query<IPagedResultType<IProblemSearchType>, IGetSearchQueryParams>({
+            query: ({ searchTerm, page }) => (
+                { url: `/Search/GetProblemsSearchResults`, params: { searchTerm, page } }),
         }),
         getUsersSearch: builder.query<IPagedResultType<IUserType>, IGetSearchQueryParams>({
-            query: ({ searchTerm }) => (
-                { url: `/Search/GetUsersSearchResults`, params: { searchTerm } }),
+            query: ({ searchTerm, page }) => (
+                { url: `/Search/GetUsersSearchResults`, params: { searchTerm, page } }),
         }),
     }),
 });

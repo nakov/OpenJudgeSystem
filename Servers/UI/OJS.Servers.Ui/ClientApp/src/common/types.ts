@@ -188,6 +188,13 @@ interface IProblemType {
     allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
+interface IProblemSearchType {
+    id: number;
+    name: string;
+    orderBy: number;
+    contest: IContestType;
+}
+
 interface IContestDetailsProblemType {
     name: string;
     orderBy: number;
@@ -733,6 +740,11 @@ interface ISettingAdministrationModel {
     type: string;
 }
 
+interface IUSerSearchCardProps {
+    id: string;
+    name: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -809,4 +821,6 @@ export type {
     IRegisterUserForContestResponseType,
     ICompeteContestResponseType,
     ISearchSliceState,
+    IUSerSearchCardProps,
+    IProblemSearchType,
 };
