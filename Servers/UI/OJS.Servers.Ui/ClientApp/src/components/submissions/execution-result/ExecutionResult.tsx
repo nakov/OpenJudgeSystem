@@ -1,18 +1,11 @@
 import React, { useCallback } from 'react';
 
-import { SubmissionResultType } from '../../../common/constants';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
-import { toLowerCase } from '../../../utils/string-utils';
-import ErrorIcon from '../../guidelines/icons/ErrorIcon';
-import MemoryIcon from '../../guidelines/icons/MemoryIcon';
-import RuntimeErrorIcon from '../../guidelines/icons/RuntimeErrorIcon';
-import TickIcon from '../../guidelines/icons/TickIcon';
-import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
 import ErrorResult from './ErrorResult';
+import TestRunIcon from './TestRunIcon';
 
 import styles from './ExecutionResult.module.scss';
 
@@ -35,31 +28,9 @@ const ExecutionResult = ({
 }: IExecutionResultDetailsProps) => {
     const { getColorClassName, themeColors } = useTheme();
 
-    const renderTestRunIcon = useCallback(
-        (testRun: ITestRunType) => {
-            switch (toLowerCase(testRun.resultType)) {
-            case SubmissionResultType.CorrectAnswer: return <TickIcon key={testRun.id} />;
-            case SubmissionResultType.WrongAnswer: return <WrongAnswerIcon key={testRun.id} />;
-            case SubmissionResultType.MemoryLimit: return <MemoryIcon key={testRun.id} />;
-            case SubmissionResultType.TimeLimit: return <TimeLimitIcon key={testRun.id} />;
-            case SubmissionResultType.RunTimeError: return <RuntimeErrorIcon key={testRun.id} />;
-            default: return (
-                <div>
-                    <ErrorIcon />
-                    <span className={styles.compileAndUnknownError}>
-                        {' '}
-                        Something went wrong...
-                    </span>
-                </div>
-            );
-            }
-        },
-        [],
-    );
-
     const renderTestRunIcons = useCallback(
-        (runs: ITestRunType[]) => runs.map((testRun) => renderTestRunIcon(testRun)),
-        [ renderTestRunIcon ],
+        (runs: ITestRunType[]) => runs.map((testRun) => <TestRunIcon testRun={testRun} />),
+        [],
     );
 
     const listClassName = concatClassNames(

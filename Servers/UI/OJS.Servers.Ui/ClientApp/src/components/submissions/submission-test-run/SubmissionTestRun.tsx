@@ -1,10 +1,12 @@
 /* eslint-disable import/exports-last */
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Popover } from '@mui/material';
 
+import { TestRunResultType } from '../../../common/constants';
+import { getResultTypeText, getTestResultColorId } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -19,18 +21,11 @@ interface ISubmissionTestRunProps {
     shouldRenderAdminData?: boolean;
 }
 
-export const enum testResultTypes {
-    correctAnswer = 'CorrectAnswer',
-    wrongAnswer = 'WrongAnswer',
-    runTimeError = 'RunTimeError',
-    timeLimit = 'TimeLimit',
-    memoryLimit = 'MemoryLimit'
-}
-
 const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
     const { testRun, idx, shouldRenderAdminData = false } = props;
 
     const { isDarkMode, themeColors, getColorClassName } = useTheme();
+    const navigate = useNavigate();
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
@@ -70,37 +65,11 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
         }
     };
 
-    const textIdColor = useMemo(() => {
-        if (resultType === testResultTypes.wrongAnswer) {
-            return '#fc4c50';
-        } if (resultType === testResultTypes.correctAnswer) {
-            return '#23be5e';
-        }
-        return '#fec112';
-    }, [ resultType ]);
-
     const onShowHideInputButtonClick = () => {
         setTestShowInput(!testShowInput);
     };
 
-    const formatTestResultType = (resType: string) => {
-        if (resType === testResultTypes.correctAnswer) {
-            return 'Correct Answer';
-        }
-        if (resType === testResultTypes.wrongAnswer) {
-            return 'Wrong Answer';
-        }
-        if (resType === testResultTypes.memoryLimit) {
-            return 'Memory Limit';
-        }
-        if (resType === testResultTypes.timeLimit) {
-            return 'Time Limit';
-        }
-        if (resType === testResultTypes.runTimeError) {
-            return 'Run Time Error';
-        }
-        return '';
-    };
+    const isCorrectAnswer = resultType.toLowerCase() === TestRunResultType.CorrectAnswer.toLowerCase();
 
     return (
         <div
@@ -110,12 +79,14 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
         >
             <div className={styles.testRunTitleWrapper}>
                 <div className={styles.testNameButtonWrapper}>
-                    <div style={{ color: textIdColor }}>
+                    <div style={{ color: getTestResultColorId(resultType) }}>
                         { isTrialTest && 'Zero '}
                         Test #
                         { idx }
-                        { resultType !== testResultTypes.correctAnswer && ` (${formatTestResultType(resultType)})` }
+                        { !isCorrectAnswer && ` (${getResultTypeText(resultType)})` }
                     </div>
+                </div>
+                <div className={styles.testDetailsAndMemoryWrapper}>
                     { showInput && (
                         <Button
                           onClick={() => onShowHideInputButtonClick()}
@@ -128,20 +99,24 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                           size={ButtonSize.small}
                         />
                     )}
-                </div>
-                <div className={styles.testDetailsAndMemoryWrapper}>
                     { shouldRenderAdminData && (
-                        <Link
-                          target="_blank"
-                          to={`/administration-new/tests/${testId}`}
-                          className={`${styles.testRunIdWrapper} ${textColorClassName}`}
+                        <div
+                          className={`${styles.testRunIdWrapper}`}
+                          onClick={() => navigate(`/administration-new/tests/${testId}`)}
                         >
                             Test #
                             {testId}
-                        </Link>
+                        </div>
                     )}
                     <div className={styles.timeAndMemoryWrapper}>
-                        <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
+                        <span style={{ color: themeColors.baseColor100 }}>
+                            Run #
+                            {testRun.id}
+                        </span>
+                        <span
+                          onMouseEnter={(e) => onPopoverOpen('memory', e)}
+                          onMouseLeave={() => onPopoverClose('memory')}
+                        >
                             <BiMemoryCard size={20} color={themeColors.baseColor100} />
                             <span>
                                 {(memoryUsed / 1000000).toFixed(2)}
@@ -168,7 +143,10 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                                 </div>
                             </Popover>
                         </span>
-                        <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={() => onPopoverClose('time')}>
+                        <span
+                          onMouseEnter={(e) => onPopoverOpen('time', e)}
+                          onMouseLeave={() => onPopoverClose('time')}
+                        >
                             <FaRegClock size={20} color={themeColors.baseColor100} />
                             <span>
                                 {timeUsed / 1000}
@@ -204,11 +182,16 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                     <CodeEditor code={input} readOnly customEditorStyles={{ height: '150px', marginTop: '12px' }} />
                 </>
             )}
-            {expectedOutputFragment && userOutputFragment && (
+            {(expectedOutputFragment || userOutputFragment) && (
                 <div className={styles.outputWrapper}>
                     <Diff expectedStr={expectedOutputFragment} actualStr={userOutputFragment} />
                 </div>
             )}
+            {
+                testRun.resultType.toLowerCase() === TestRunResultType.RunTimeError.toLowerCase() && testRun.executionComment && (
+                    <div className={styles.runtimeExecutionComment}>{testRun.executionComment}</div>
+                )
+            }
         </div>
     );
 };

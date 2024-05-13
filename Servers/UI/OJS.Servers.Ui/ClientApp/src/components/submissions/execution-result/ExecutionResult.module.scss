@@ -1,10 +1,6 @@
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 
-.compileAndUnknownError {
-  font-size: variables.$f-size-16;
-}
-
 .executionResultInfo {
   display: flex;
   flex-direction: row;

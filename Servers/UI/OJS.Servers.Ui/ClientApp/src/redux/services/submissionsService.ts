@@ -81,7 +81,10 @@ const submissionsService = createApi({
             void,
             IRetestSubmissionUrlParams>({
                 query: ({ id }) => (
-                    { url: `/${defaultPathIdentifier}/Compete/Retest/${id}`, method: 'POST' }),
+                    {
+                        url: `/${defaultPathIdentifier}/Compete/Retest/${id}`,
+                        method: 'POST',
+                    }),
             }),
     }),
 });

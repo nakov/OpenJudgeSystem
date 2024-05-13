@@ -76,7 +76,6 @@ const testsFilterableColums: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
-        hideable: true,
         valueFormatter: (params) => params.value.toString(),
     },
 ];

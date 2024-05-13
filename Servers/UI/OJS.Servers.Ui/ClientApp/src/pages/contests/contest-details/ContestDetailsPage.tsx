@@ -10,7 +10,7 @@ import {
 } from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
-import Button from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonType } from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
@@ -85,9 +85,15 @@ const ContestDetailsPage = () => {
 
     const renderAdministrationButtons = () => (
         <div>
-            <Button onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}>Edit</Button>
+            <Button
+              onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}
+              type={ButtonType.secondary}
+            >
+                Edit
+            </Button>
             <Button
               className={styles.adminBtn}
+              type={ButtonType.secondary}
               onClick={() => navigate(getContestsResultsUrl(id!, 'compete', true))}
             >
                 Full Results
