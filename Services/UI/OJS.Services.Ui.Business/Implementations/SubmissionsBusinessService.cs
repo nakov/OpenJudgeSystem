@@ -157,6 +157,11 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             throw new BusinessServiceException(ValidationMessages.Submission.NotFound);
         }
 
+        submissionDetailsServiceModel.TestRuns = submissionDetailsServiceModel
+            .TestRuns
+            .OrderBy(tr => !tr.IsTrialTest)
+            .ThenBy(tr => tr.OrderBy);
+
         var userIsAdminOrLecturerInContest =
             await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
 
