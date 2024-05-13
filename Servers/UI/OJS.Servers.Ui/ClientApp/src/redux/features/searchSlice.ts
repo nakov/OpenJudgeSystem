@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CheckboxSearchValues } from '../../common/enums';
 import { ISearchSliceState } from '../../common/types';
@@ -27,17 +28,7 @@ export const searchSlice = createSlice({
         },
         setSelectedTermsDefaultValue: (state: ISearchSliceState) => {
             state.selectedTerms = initialState.selectedTerms;
-        }
-        // addSelectedTerm: (state: ISearchSliceState, action: PayloadAction<CheckboxSearchValues.contests | CheckboxSearchValues.problems | CheckboxSearchValues.users>) => {
-        //     state.selectedTerms.push(action.payload);
-        // },
-        // removeSelectedTerm: (state: ISearchSliceState, action: PayloadAction<CheckboxSearchValues.contests | CheckboxSearchValues.problems | CheckboxSearchValues.users>) => {
-        //     const indexOfElement = state.selectedTerms.indexOf(action.payload);
-        //
-        //     if (indexOfElement !== -1) {
-        //         state.selectedTerms.splice(indexOfElement, 1);
-        //     }
-        // }
+        },
     },
 });
 
@@ -45,7 +36,6 @@ export const {
     setIsVisible,
     setSearchValue,
     setSelectedTerms,
-    setSelectedTermsDefaultValue,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

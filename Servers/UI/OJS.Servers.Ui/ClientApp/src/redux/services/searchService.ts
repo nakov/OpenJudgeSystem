@@ -22,15 +22,15 @@ export const searchService = createApi({
     endpoints: (builder) => ({
         getContestsSearch: builder.query<IPagedResultType<IIndexContestsType>, IGetSearchQueryParams>({
             query: ({ searchTerm, page }) => (
-                { url: `/Search/GetContestsSearchResults`, params: { searchTerm, page } }),
+                { url: '/Search/GetContestsSearchResults', params: { searchTerm, page } }),
         }),
         getProblemsSearch: builder.query<IPagedResultType<IProblemSearchType>, IGetSearchQueryParams>({
             query: ({ searchTerm, page }) => (
-                { url: `/Search/GetProblemsSearchResults`, params: { searchTerm, page } }),
+                { url: '/Search/GetProblemsSearchResults', params: { searchTerm, page } }),
         }),
         getUsersSearch: builder.query<IPagedResultType<IUserType>, IGetSearchQueryParams>({
             query: ({ searchTerm, page }) => (
-                { url: `/Search/GetUsersSearchResults`, params: { searchTerm, page } }),
+                { url: '/Search/GetUsersSearchResults', params: { searchTerm, page } }),
         }),
     }),
 });
