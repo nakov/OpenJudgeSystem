@@ -1,9 +1,3 @@
-import { BiMemoryCard } from 'react-icons/bi';
-import { FaCheck, FaRegClock } from 'react-icons/fa';
-import { GoPrimitiveDot } from 'react-icons/go';
-import { IoCloseSharp } from 'react-icons/io5';
-
-import { TestRunResultType } from '../../../common/constants';
 import { getTestResultColorId } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';

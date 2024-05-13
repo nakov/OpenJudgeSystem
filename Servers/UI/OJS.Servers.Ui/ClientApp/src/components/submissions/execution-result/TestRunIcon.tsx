@@ -4,7 +4,6 @@ import { TestRunResultType } from '../../../common/constants';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import { toLowerCase } from '../../../utils/string-utils';
 import ErrorIcon from '../../guidelines/icons/ErrorIcon';
-import MemoryIcon from '../../guidelines/icons/MemoryIcon';
 import MemoryLimitIcon from '../../guidelines/icons/MemoryLimitIcon';
 import RuntimeErrorIcon from '../../guidelines/icons/RuntimeErrorIcon';
 import TickIcon from '../../guidelines/icons/TickIcon';

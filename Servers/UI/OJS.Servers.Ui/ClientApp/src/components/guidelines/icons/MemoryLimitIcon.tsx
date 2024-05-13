@@ -1,4 +1,4 @@
-import { BiMemoryCard, BiTime } from 'react-icons/bi';
+import { BiMemoryCard } from 'react-icons/bi';
 
 import concatClassNames from '../../../utils/class-names';
 
