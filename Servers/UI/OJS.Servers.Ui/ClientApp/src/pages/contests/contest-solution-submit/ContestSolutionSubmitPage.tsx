@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Popover from '@mui/material/Popover';
+import isNil from 'lodash/isNil';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -337,7 +338,7 @@ const ContestSolutionSubmitPage = () => {
     }`);
 
     const renderProblemAdminButtons = useCallback(
-        () => contest!.userIsAdminOrLecturerInContest && (
+        () => contest && contest.userIsAdminOrLecturerInContest && (
         <div className={styles.adminButtonsContainer}>
             <Button
               type={ButtonType.secondary}
