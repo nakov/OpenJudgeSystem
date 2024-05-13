@@ -119,16 +119,6 @@
         }
       }
 
-      .strategyWrapper {
-        display: flex;
-        justify-content: flex-end;
-
-        span {
-          border-radius: border-radiuses.$br-6;
-          padding: spacings.$sp-12;
-        }
-      }
-
       .buttonWrapper {
         display: flex;
         justify-content: flex-start;
@@ -136,10 +126,6 @@
       }
     }
   }
-}
-
-.deleteButton {
-  background-color: colors.$primary-red !important;
 }
 
 .succesfulRetestWrapper {

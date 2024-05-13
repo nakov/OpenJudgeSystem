@@ -167,7 +167,16 @@ const SubmissionDetailsPage = () => {
                     (<div className={styles.solutionDownloadFileErrorWrapper}>{downloadSolutionErrorMessage}</div>)}
             </>
         );
-    }, [ user.canAccessAdministration, submissionType, createdOn, downloadSolutionErrorMessage, handleDownloadFile, completedExecutionOn, modifiedOn, startedExecutionOn ]);
+    }, [
+        user.canAccessAdministration,
+        submissionType,
+        createdOn,
+        downloadSolutionErrorMessage,
+        handleDownloadFile,
+        completedExecutionOn,
+        modifiedOn,
+        startedExecutionOn,
+    ]);
 
     const renderSolutionTestDetails = useCallback(() => {
         if (!isProcessed) {
@@ -276,7 +285,7 @@ const SubmissionDetailsPage = () => {
                 )}
             </div>
         );
-    }, [ navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
+    }, [ problem, navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
@@ -285,6 +294,7 @@ const SubmissionDetailsPage = () => {
             </div>
         );
     }
+
     if (retestError) {
         return (
             <div className={getColorClassName(themeColors.textColor)}>

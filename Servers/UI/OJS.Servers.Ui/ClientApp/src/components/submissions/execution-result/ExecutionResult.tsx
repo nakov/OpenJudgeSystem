@@ -1,16 +1,8 @@
 import React, { useCallback } from 'react';
 
-import { TestRunResultType } from '../../../common/constants';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import concatClassNames from '../../../utils/class-names';
-import { toLowerCase } from '../../../utils/string-utils';
-import ErrorIcon from '../../guidelines/icons/ErrorIcon';
-import MemoryIcon from '../../guidelines/icons/MemoryIcon';
-import RuntimeErrorIcon from '../../guidelines/icons/RuntimeErrorIcon';
-import TickIcon from '../../guidelines/icons/TickIcon';
-import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
-import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
 import ErrorResult from './ErrorResult';
 import TestRunIcon from './TestRunIcon';
@@ -35,29 +27,6 @@ const ExecutionResult = ({
     showDetailedResults,
 }: IExecutionResultDetailsProps) => {
     const { getColorClassName, themeColors } = useTheme();
-
-    const renderTestRunIcon = useCallback(
-        (testRun: ITestRunType) => {
-            switch (toLowerCase(testRun.resultType)) {
-            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
-            case TestRunResultType.CorrectAnswer.toLowerCase(): return <TickIcon key={testRun.id} />;
-            case TestRunResultType.WrongAnswer.toLowerCase(): return <WrongAnswerIcon key={testRun.id} />;
-            case TestRunResultType.MemoryLimit.toLowerCase(): return <MemoryIcon key={testRun.id} />;
-            case TestRunResultType.TimeLimit.toLowerCase(): return <TimeLimitIcon key={testRun.id} />;
-            case TestRunResultType.RunTimeError.toLowerCase(): return <RuntimeErrorIcon key={testRun.id} />;
-            default: return (
-                <div>
-                    <ErrorIcon />
-                    <span className={styles.compileAndUnknownError}>
-                        {' '}
-                        Something went wrong...
-                    </span>
-                </div>
-            );
-            }
-        },
-        [],
-    );
 
     const renderTestRunIcons = useCallback(
         (runs: ITestRunType[]) => runs.map((testRun) => <TestRunIcon testRun={testRun} />),
