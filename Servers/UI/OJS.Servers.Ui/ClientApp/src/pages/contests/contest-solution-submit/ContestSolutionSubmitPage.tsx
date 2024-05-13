@@ -12,7 +12,12 @@ import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import FileUploader from '../../../components/file-uploader/FileUploader';
-import Button, { ButtonState, LinkButton } from '../../../components/guidelines/buttons/Button';
+import Button, {
+    ButtonSize,
+    ButtonState,
+    LinkButton,
+    LinkButtonType,
+} from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
@@ -537,6 +542,8 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.administrationButtonWrapper}>
                     <LinkButton
                       to={`/administration-new/problems/${selectedContestDetailsProblem?.id}`}
+                      size={ButtonSize.small}
+                      type={LinkButtonType.secondary}
                       isToExternal
                       text="Open in administration"
                     />

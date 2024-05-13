@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Popover } from '@mui/material';
 
 import { TestRunResultType } from '../../../common/constants';
@@ -25,6 +25,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
     const { testRun, idx, shouldRenderAdminData = false } = props;
 
     const { isDarkMode, themeColors, getColorClassName } = useTheme();
+    const navigate = useNavigate();
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
@@ -84,6 +85,8 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                         { idx }
                         { !isCorrectAnswer && ` (${getResultTypeText(resultType)})` }
                     </div>
+                </div>
+                <div className={styles.testDetailsAndMemoryWrapper}>
                     { showInput && (
                         <Button
                           onClick={() => onShowHideInputButtonClick()}
@@ -96,20 +99,24 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                           size={ButtonSize.small}
                         />
                     )}
-                </div>
-                <div className={styles.testDetailsAndMemoryWrapper}>
                     { shouldRenderAdminData && (
-                        <Link
-                          target="_blank"
-                          to={`/administration-new/tests/${testId}`}
+                        <div
                           className={`${styles.testRunIdWrapper}`}
+                          onClick={() => navigate(`/administration-new/tests/${testId}`)}
                         >
                             Test #
                             {testId}
-                        </Link>
+                        </div>
                     )}
                     <div className={styles.timeAndMemoryWrapper}>
-                        <span onMouseEnter={(e) => onPopoverOpen('memory', e)} onMouseLeave={() => onPopoverClose('memory')}>
+                        <span style={{ color: themeColors.baseColor100 }}>
+                            Run #
+                            {testRun.id}
+                        </span>
+                        <span
+                          onMouseEnter={(e) => onPopoverOpen('memory', e)}
+                          onMouseLeave={() => onPopoverClose('memory')}
+                        >
                             <BiMemoryCard size={20} color={themeColors.baseColor100} />
                             <span>
                                 {(memoryUsed / 1000000).toFixed(2)}
@@ -136,7 +143,10 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                                 </div>
                             </Popover>
                         </span>
-                        <span onMouseEnter={(e) => onPopoverOpen('time', e)} onMouseLeave={() => onPopoverClose('time')}>
+                        <span
+                          onMouseEnter={(e) => onPopoverOpen('time', e)}
+                          onMouseLeave={() => onPopoverClose('time')}
+                        >
                             <FaRegClock size={20} color={themeColors.baseColor100} />
                             <span>
                                 {timeUsed / 1000}

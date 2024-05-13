@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
-import Button from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonType } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
@@ -127,9 +127,17 @@ const SubmissionDetailsPage = () => {
                     <div>
                         {allowBinaryFilesUpload && (
                             <div className={styles.buttonWrapper}>
-                                <Button id="download-binary-file" text="Download binary file" onClick={handleDownloadFile} />
+                                <Button
+                                  id="download-submission"
+                                  text="Download solution"
+                                  onClick={handleDownloadFile}
+                                />
                             </div>
                         )}
+                        <div className={styles.detailsRow}>
+                            <span>Strategy: </span>
+                            {submissionType?.name}
+                        </div>
                         <div className={styles.detailsRow}>
                             <span>
                                 Submitted on:
@@ -137,50 +145,29 @@ const SubmissionDetailsPage = () => {
                             <span>{preciseFormatDate(createdOn!)}</span>
                         </div>
 
-                        { user.canAccessAdministration && (
+                        {user.canAccessAdministration && (
                             <>
                                 <div className={styles.detailsRow}>
                                     <span>Modified on:</span>
-                                    { modifiedOn && <span>{preciseFormatDate(modifiedOn)}</span> }
+                                    {modifiedOn && <span>{preciseFormatDate(modifiedOn)}</span>}
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Started Execution on:</span>
-                                    { startedExecutionOn && <span>{preciseFormatDate(startedExecutionOn)}</span> }
+                                    {startedExecutionOn && <span>{preciseFormatDate(startedExecutionOn)}</span>}
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Completed Execution on:</span>
-                                    { completedExecutionOn && <span>{preciseFormatDate(completedExecutionOn)}</span> }
+                                    {completedExecutionOn && <span>{preciseFormatDate(completedExecutionOn)}</span>}
                                 </div>
                             </>
                         )}
-                    </div>
-                    <div>
-                        <div className={styles.strategyWrapper}>
-                            <span style={{
-                                border: `2px solid ${themeColors.baseColor100}`,
-                                color: `${themeColors.baseColor100}`,
-                            }}
-                            >
-                                {submissionType?.name}
-                            </span>
-                        </div>
                     </div>
                 </div>
                 {downloadSolutionErrorMessage &&
                     (<div className={styles.solutionDownloadFileErrorWrapper}>{downloadSolutionErrorMessage}</div>)}
             </>
         );
-    }, [
-        user.canAccessAdministration,
-        submissionType,
-        createdOn,
-        downloadSolutionErrorMessage,
-        handleDownloadFile,
-        completedExecutionOn,
-        modifiedOn,
-        startedExecutionOn,
-        themeColors.baseColor100,
-    ]);
+    }, [ user.canAccessAdministration, submissionType, createdOn, downloadSolutionErrorMessage, handleDownloadFile, completedExecutionOn, modifiedOn, startedExecutionOn ]);
 
     const renderSolutionTestDetails = useCallback(() => {
         if (!isProcessed) {
@@ -250,7 +237,7 @@ const SubmissionDetailsPage = () => {
         const onViewCodeClick = () => {
             const scrollToElement =
                 document.querySelector('#code-content-wrapper') ||
-                document.querySelector('#download-binary-file');
+                document.querySelector('#download-submission');
 
             if (!scrollToElement) { return; }
 
@@ -264,12 +251,27 @@ const SubmissionDetailsPage = () => {
 
         return (
             <div className={styles.adminButtonsWrapper}>
-                <Button text="View Code" onClick={onViewCodeClick} />
+                <Button text="View Code" type={ButtonType.secondary} size={ButtonSize.small} onClick={onViewCodeClick} />
                 { userIsInRoleForContest && (
                     <>
-                        <Button text="Open In Administration" onClick={goToSubmissionAdministration} />
-                        <Button text="Tests" onClick={goToTestsAdministration} />
-                        <Button text="Retest" onClick={() => retestSubmission({ id: solutionId! })} />
+                        <Button
+                          text="Open In Administration"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                          onClick={goToSubmissionAdministration}
+                        />
+                        <Button
+                          text="Tests"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                          onClick={goToTestsAdministration}
+                        />
+                        <Button
+                          text="Retest"
+                          size={ButtonSize.small}
+                          type={ButtonType.secondary}
+                          onClick={() => retestSubmission({ id: solutionId! })}
+                        />
                     </>
                 )}
             </div>

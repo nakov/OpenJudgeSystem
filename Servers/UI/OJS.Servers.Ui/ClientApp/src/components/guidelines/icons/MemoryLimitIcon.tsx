@@ -5,11 +5,11 @@ import concatClassNames from '../../../utils/class-names';
 import IconSize from './common/icon-sizes';
 import Icon, { IIconProps } from './Icon';
 
-import styles from './TimeLimitIcon.module.scss';
+import styles from './MemoryLimitIcon.module.scss';
 
 type IInProgressIconProps = IIconProps
 
-const TimeLimitIcon = ({
+const MemoryLimitIcon = ({
     className = '',
     size = IconSize.Medium,
     helperText = '',
@@ -22,4 +22,4 @@ const TimeLimitIcon = ({
     />
 );
 
-export default TimeLimitIcon;
+export default MemoryLimitIcon;

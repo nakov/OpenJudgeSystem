@@ -1,0 +1,6 @@
+@use 'src/styles/colors';
+
+.icon {
+  gap: 5px;
+  color: colors.$icon-yellow;
+}

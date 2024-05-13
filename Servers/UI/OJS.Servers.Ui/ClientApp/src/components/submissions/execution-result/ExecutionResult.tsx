@@ -13,6 +13,7 @@ import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
 import ErrorResult from './ErrorResult';
+import TestRunIcon from './TestRunIcon';
 
 import styles from './ExecutionResult.module.scss';
 
@@ -59,8 +60,8 @@ const ExecutionResult = ({
     );
 
     const renderTestRunIcons = useCallback(
-        (runs: ITestRunType[]) => runs.map((testRun) => renderTestRunIcon(testRun)),
-        [ renderTestRunIcon ],
+        (runs: ITestRunType[]) => runs.map((testRun) => <TestRunIcon testRun={testRun} />),
+        [],
     );
 
     const listClassName = concatClassNames(

@@ -24,6 +24,7 @@
     .testDetailsAndMemoryWrapper {
       align-items: center;
       display: flex;
+      gap: spacings.$sp-12;
 
       .testRunIdWrapper {        
         font-size: variables.$f-size-14;
@@ -35,12 +36,7 @@
 
       .timeAndMemoryWrapper {
         display: flex;
-        justify-content: space-between;
-        width: 200px;
-
-        span:first-child {
-          margin-right: spacings.$sp-16;
-        }
+        width: 300px;
 
         span {
           align-items: center;
