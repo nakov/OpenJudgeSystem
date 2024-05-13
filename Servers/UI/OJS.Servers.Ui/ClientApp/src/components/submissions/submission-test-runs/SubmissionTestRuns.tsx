@@ -7,6 +7,7 @@ import { TestRunResultType } from '../../../common/constants';
 import { getTestResultColorId } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
+import TestRunIcon from '../execution-result/TestRunIcon';
 
 import styles from './SubmissionTestRuns.module.scss';
 
@@ -22,24 +23,6 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
     const renderTestRunDetails = (testRun: ITestRunType, idx: number) => {
         const { resultType } = testRun;
-
-        const getIconByResultType = (resType: string, color: string) => {
-            // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
-            if (resType.toLowerCase() === TestRunResultType.WrongAnswer.toLowerCase()) {
-                return <IoCloseSharp size={20} color={color} />;
-            }
-            if (resType.toLowerCase() === TestRunResultType.CorrectAnswer.toLowerCase()) {
-                return <FaCheck size={20} color={color} />;
-            }
-            if (resType.toLowerCase() === TestRunResultType.TimeLimit.toLowerCase()) {
-                return <FaRegClock size={20} color={color} />;
-            }
-            if (resType.toLowerCase() === TestRunResultType.MemoryLimit.toLowerCase()) {
-                return <BiMemoryCard size={20} color={color} />;
-            }
-
-            return <GoPrimitiveDot size={20} color={color} />;
-        };
 
         const onTestRunClick = () => {
             const scrollToElement = document.querySelector(`#test-run-${testRun.id}`);
@@ -63,7 +46,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
                     {idx}
                     .
                 </span>
-                {getIconByResultType(resultType, color)}
+                <TestRunIcon testRun={testRun} />
             </div>
         );
     };
