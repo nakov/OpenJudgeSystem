@@ -4,7 +4,6 @@ import isNil from 'lodash/isNil';
 
 import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
-import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
