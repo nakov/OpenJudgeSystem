@@ -66,6 +66,7 @@ const ContestStrategies = () => {
             <Dropdown
               dropdownItems={dropdownItems || []}
               value={selectValue}
+              placeholder="Select strategy"
               handleDropdownItemClick={handleStrategySelect}
             />
         </div>
