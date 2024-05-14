@@ -388,7 +388,7 @@ const ContestSolutionSubmitPage = () => {
         return (
             <div className={styles.problemParametersWrapper}>
                 <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
-                    <IoIosInformationCircleOutline />
+                    <IoIosInformationCircleOutline size={20} />
                 </div>
                 <Popover
                   open={isModalOpen}
