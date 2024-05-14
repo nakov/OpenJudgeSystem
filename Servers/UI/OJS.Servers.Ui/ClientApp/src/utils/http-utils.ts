@@ -28,6 +28,9 @@ const getErrorMessage = (
     if (err.message) {
         return err.message.replace(/"/g, '');
     }
+    if ((err as any).detail) {
+        return (err as any).detail.replace(/"/g, '');
+    }
 
     return defaultErrorMessage;
 };
