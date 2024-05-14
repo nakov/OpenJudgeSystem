@@ -502,6 +502,7 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
+                          placeholder="Select strategy"
                           value={selectedStrategyValue}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
                         />
@@ -539,6 +540,7 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
+                      placeholder="Select strategy"
                       value={selectedStrategyValue}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
