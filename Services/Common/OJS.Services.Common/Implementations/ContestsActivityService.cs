@@ -73,12 +73,11 @@ public class ContestsActivityService : IContestsActivityService
     }
 
     public void SetCanBeCompetedAndPracticed<T>(
-        IReadOnlyCollection<T> contestModels,
+        ICollection<T> contestModels,
         IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
         where T : class, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
     {
-        var contests = contestModels.Cast<IContestForActivityServiceModel>().ToList();
-        var contestActivities = this.GetContestActivities(contests, participants).ToList();
+        var contestActivities = this.GetContestActivities(contestModels, participants).ToList();
 
         foreach (var contestModel in contestModels)
         {
@@ -117,8 +116,8 @@ public class ContestsActivityService : IContestsActivityService
 
     private IEnumerable<IContestActivityServiceModel> GetContestActivities(
         IEnumerable<IContestForActivityServiceModel> contests,
-        IReadOnlyCollection<IParticipantForActivityServiceModel> participants) =>
-        contests.Select(contest => this.GetContestActivity(contest, participants));
+        IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
+        => contests.Select(contest => this.GetContestActivity(contest, participants));
 
     private bool CanBeCompeted(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
