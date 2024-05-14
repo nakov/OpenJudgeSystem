@@ -1,165 +1,68 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
-import ShortcutIcon from '@mui/icons-material/Shortcut';
-import { IconButton } from '@mui/material';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { useState } from 'react';
 
-import { IGetAllAdminParams, IRootStore } from '../../../../common/types';
+import { IGetAllAdminParams } from '../../../../common/types';
 import {
-    mapFilterParamsToQueryString,
+    applyDefaultFilterToQueryString,
 } from '../../../../pages/administration-new/administration-filters/AdministrationFilters';
-import {
-    mapSorterParamsToQueryString,
-} from '../../../../pages/administration-new/administration-sorting/AdministrationSorting';
-import AdministrationGridView from '../../../../pages/administration-new/AdministrationGridView';
-import { setAdminContestsFilters, setAdminContestsSorters } from '../../../../redux/features/admin/contestsAdminSlice';
+import AdministrationGridView, { defaultSorterToAdd } from '../../../../pages/administration-new/AdministrationGridView';
+import participantsFilteringColumns, { returnparticipantsNonFilterableColumns } from '../../../../pages/administration-new/participants/participantsGridColumns';
 import { useGetByContestIdQuery } from '../../../../redux/services/admin/participantsAdminService';
-import { DEFAULT_ITEMS_PER_PAGE } from '../../../../utils/constants';
+import CreateButton from '../../common/create/CreateButton';
+import AdministrationModal from '../../common/modals/administration-modal/AdministrationModal';
+import ParticipantForm from '../../participants/form/ParticipantForm';
 
 interface IParticipantsInContestView {
     contestId: number;
+    contestName: string;
 }
 
 const ParticipantsInContestView = (props: IParticipantsInContestView) => {
-    const { contestId } = props;
-    const filtersAndSortersLocation = `contest-details-participants-${contestId}`;
+    const { contestId, contestName } = props;
 
-    const selectedFilters =
-        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedFilters) ?? [ ];
-    const selectedSorters =
-        useSelector((state: IRootStore) => state.adminContests[filtersAndSortersLocation]?.selectedSorters) ?? [ ];
-    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>({
-        page: 1,
-        itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
-        filter: mapFilterParamsToQueryString(selectedFilters),
-        sorting: mapSorterParamsToQueryString(selectedSorters),
-    });
-    const { data, error } = useGetByContestIdQuery({ contestId: Number(contestId), ...queryParams });
+    const [ openCreateModal, setOpenCreateModal ] = useState<boolean>(false);
 
-    const filtersQueryParams = mapFilterParamsToQueryString(selectedFilters);
+    const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString('', defaultSorterToAdd));
 
-    const sortersQueryParams = mapSorterParamsToQueryString(selectedSorters);
+    const { refetch, data, error } = useGetByContestIdQuery({ contestId: Number(contestId), ...queryParams });
 
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, filter: filtersQueryParams }));
-    }, [ filtersQueryParams ]);
-
-    useEffect(() => {
-        setQueryParams((currentParams) => ({ ...currentParams, sorting: sortersQueryParams }));
-    }, [ sortersQueryParams ]);
-
-    const onEditClick = (id: number) => {
-        // setOpenModal(true);
-        // setContestId(id);
-        console.log(id);
+    const onModalClose = () => {
+        setOpenCreateModal(false);
+        refetch();
     };
 
-    const dataColumns: GridColDef[] = [
-        {
-            field: 'id',
-            headerName: 'Id',
-            width: 10,
-            align: 'center',
-            headerAlign: 'center',
-            type: 'number',
-            filterable: false,
-            sortable: false,
-            flex: 0.5,
-            valueFormatter: (params) => params.value.toString(),
-        },
-        {
-            field: 'userName',
-            headerName: 'UserName',
-            width: 10,
-            headerAlign: 'center',
-            align: 'center',
-            type: 'string',
-            filterable: false,
-            flex: 2,
-            sortable: false,
-        },
-        {
-            field: 'contest',
-            headerName: 'Contest',
-            width: 10,
-            headerAlign: 'center',
-            align: 'center',
-            type: 'string',
-            flex: 2,
-            filterable: false,
-            sortable: false,
-        },
-        {
-            field: 'isOfficial',
-            headerName: 'Is Official',
-            headerAlign: 'center',
-            width: 10,
-            align: 'center',
-            type: 'boolean',
-            flex: 2,
-            filterable: false,
-            sortable: false,
-        },
-    ];
-
-    const notFilterableGridColumns: GridColDef[] = [
-        {
-            field: 'showModal',
-            headerName: 'Quick Details',
-            width: 100,
-            headerAlign: 'center',
-            align: 'center',
-            filterable: false,
-            sortable: false,
-            flex: 2,
-            renderCell: (params: GridRenderCellParams) => (
-                <IconButton onClick={() => onEditClick(params.row.id)}>
-                    <EditIcon />
-                </IconButton>
-            ),
-        },
-
-        {
-            field: 'showDetails',
-            headerName: 'Details',
-            width: 100,
-            align: 'center',
-            headerAlign: 'center',
-            flex: 1,
-            filterable: false,
-            sortable: false,
-            renderCell: (params: GridRenderCellParams) => (
-                <Link to={`/administration/participants/${params.row.id}`}>
-                    <ShortcutIcon />
-                </Link>
-            ),
-        },
-    ];
-
-    // TODO when implement participants fill here the required actions
     const renderActions = () => (
-        <div />
+        <CreateButton
+          showModal={openCreateModal}
+          showModalFunc={setOpenCreateModal}
+          styles={{ width: '40px', height: '40px' }}
+        />
     );
+
+    const renderParticipantModal = (index: number) => (
+        <AdministrationModal
+          key={index}
+          index={index}
+          open={openCreateModal}
+          onClose={() => onModalClose()}
+        >
+            <ParticipantForm contestId={contestId} contestName={contestName} />
+        </AdministrationModal>
+    );
+
     return (
         <div style={{ marginTop: '2rem' }}>
             <AdministrationGridView
               data={data}
               error={error}
-              filterableGridColumnDef={dataColumns}
-              notFilterableGridColumnDef={notFilterableGridColumns}
-              location={filtersAndSortersLocation}
+              filterableGridColumnDef={participantsFilteringColumns}
+              notFilterableGridColumnDef={returnparticipantsNonFilterableColumns(refetch)}
               queryParams={queryParams}
               renderActionButtons={renderActions}
-              selectedFilters={selectedFilters}
-              selectedSorters={selectedSorters}
-              setFilterStateAction={setAdminContestsFilters}
-              setSorterStateAction={setAdminContestsSorters}
-              modals={[]}
+              modals={[
+                  { showModal: openCreateModal, modal: (i) => renderParticipantModal(i) },
+              ]}
               setQueryParams={setQueryParams}
               withSearchParams={false}
-              legendProps={[ { color: '#FFA1A1', message: 'Participant is deleted.' } ]}
             />
         </div>
     );

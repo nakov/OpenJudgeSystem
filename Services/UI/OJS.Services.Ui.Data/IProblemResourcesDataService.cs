@@ -3,7 +3,7 @@
     using System.Linq;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
 
     public interface IProblemResourcesDataService : IDataService<ProblemResource>, IService
     {

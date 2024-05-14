@@ -112,11 +112,12 @@ const SubmissionsList = ({
                         </div>
                     </div>
                     <ExecutionResult
+                      points={points}
+                      maxPoints={maximumPoints}
                       testRuns={submission.testRuns}
-                      maxMemoryUsed={submission.maxMemoryUsed}
-                      maxTimeUsed={submission.maxTimeUsed}
                       isCompiledSuccessfully={submission.isCompiledSuccessfully}
                       isProcessed={isProcessed}
+                      showDetailedResults={false}
                     />
                 </div>
             );

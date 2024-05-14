@@ -2,10 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using AutoMapper;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
-    using OJS.Workers.ExecutionStrategies.Models;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Workers.Common.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class TestsExecutionDetailsRequestModel : IMapTo<TestsExecutionDetailsServiceModel>
     {

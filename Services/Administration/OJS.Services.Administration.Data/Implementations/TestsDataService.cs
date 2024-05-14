@@ -1,25 +1,25 @@
 ﻿namespace OJS.Services.Administration.Data.Implementations
 {
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Tests;
-    using OJS.Services.Common.Data.Implementations;
+    using OJS.Services.Common.Models.Users;
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
 
-    public class TestsDataService : DataService<Test>, ITestsDataService
+    public class TestsDataService : AdministrationDataService<Test>, ITestsDataService
     {
-        public TestsDataService(DbContext tests)
+        public TestsDataService(OjsDbContext tests)
             : base(tests)
         {
         }
 
         public IQueryable<Test> GetByIdQuery(int id)
-            => this.DbSet
-                .Where(t => t.Id == id);
+            => this.GetQuery(t => t.Id == id);
 
         public IQueryable<Test> GetAllByProblem(int problemId)
-            => this.DbSet
-                .Where(t => t.ProblemId == problemId);
+            => this.GetQuery(t => t.ProblemId == problemId);
 
         public IQueryable<Test> GetAllNonTrialByProblem(int problemId)
             => this.GetAllByProblem(problemId)
@@ -30,5 +30,10 @@
             this.Delete(t => t.ProblemId == problemId);
             await this.SaveChanges();
         }
+
+        protected override Expression<Func<Test, bool>> GetUserFilter(UserInfoModel user)
+            => test => user.IsAdmin ||
+                          test.Problem.ProblemGroup.Contest.Category!.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id) ||
+                          test.Problem.ProblemGroup.Contest.LecturersInContests.Any(l => l.LecturerId == user.Id);
     }
 }

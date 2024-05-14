@@ -1,11 +1,12 @@
 ﻿namespace OJS.Services.Administration.Models.Contests;
 
 using AutoMapper;
+using OJS.Common.Enumerations;
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Common.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.ComponentModel.DataAnnotations;
-using OJS.Common.Enumerations;
 using System.Linq;
 
 public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
@@ -45,8 +46,6 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public bool AllowParallelSubmissionsInTasks { get; set; }
 
-    public bool AutoChangeTestsFeedbackVisibility { get; set; }
-
     public double OrderBy { get; set; }
 
     public bool IsOnlineExam => this.Type == ContestType.OnlinePracticalExam.ToString();
@@ -58,6 +57,8 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
         configuration.CreateMap<Contest, ContestAdministrationModel>()
             .ForMember(crm => crm.CategoryName, opt
                 => opt.MapFrom(c => c.Category!.Name))
+            .ForMember(crm => crm.OperationType, opt
+                => opt.Ignore())
             .ForMember(crm => crm.AllowedIps, opt
                 => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
 
@@ -68,8 +69,6 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
             .ForMember(crm => crm.Category, opt
                 => opt.Ignore())
             .ForMember(crm => crm.LecturersInContests, opt
-                => opt.Ignore())
-            .ForMember(crm => crm.Questions, opt
                 => opt.Ignore())
             .ForMember(crm => crm.ProblemGroups, opt
                 => opt.Ignore())
@@ -84,6 +83,8 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
             .ForMember(crm => crm.CreatedOn, opt
                 => opt.Ignore())
             .ForMember(crm => crm.ModifiedOn, opt
-                => opt.Ignore());
+                => opt.Ignore())
+            .ForMember(crm => crm.AutoChangeTestsFeedbackVisibility, opt
+            => opt.Ignore());
     }
 }

@@ -1,14 +1,15 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
+using OJS.Services.Infrastructure.Extensions;
 using System.Threading.Tasks;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class ContestsController : BaseApiController
@@ -17,19 +18,6 @@ public class ContestsController : BaseApiController
 
     public ContestsController(IContestsBusinessService contestsBusinessService)
         => this.contestsBusinessService = contestsBusinessService;
-
-    /// <summary>
-    /// Validates if user can participate in contest with or without password.
-    /// </summary>
-    /// <param name="id">ID of the contest.</param>
-    /// <param name="official">Practice or compete mode of the contest.</param>
-    /// <returns>Model containing information about the id and name of the contest and if it requires password to enter.</returns>
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(RegisterUserForContestServiceModel), Status200OK)]
-    public async Task<IActionResult> Register(int id, [FromQuery] bool official)
-        => await this.contestsBusinessService
-            .RegisterUserForContest(id, official)
-            .ToOkResult();
 
     /// <summary>
     /// Gets details of the current contest.
@@ -94,6 +82,23 @@ public class ContestsController : BaseApiController
     public async Task<IActionResult> GetAll([FromQuery] ContestFiltersRequestModel? model)
         => await this.contestsBusinessService
             .GetAllByFiltersAndSorting(model?.Map<ContestFiltersServiceModel>())
+            .Map<PagedResultResponse<ContestForListingResponseModel>>()
+            .ToOkResult();
+
+    /// <summary>
+    /// Gets all user contest participations.
+    /// </summary>
+    /// <param name="username">The username of the user.</param>
+    /// <param name="model">The filters by which the contests should be filtered and page options.</param>
+    /// <returns>A collection of contest participations.</returns>
+    [HttpGet]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PagedResultResponse<ContestForListingResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetParticipatedByUser(
+        [FromQuery] string username,
+        [FromQuery] ContestFiltersRequestModel? model)
+        => await this.contestsBusinessService
+            .GetParticipatedByUserByFiltersAndSorting(username, model?.Map<ContestFiltersServiceModel>())
             .Map<PagedResultResponse<ContestForListingResponseModel>>()
             .ToOkResult();
 }

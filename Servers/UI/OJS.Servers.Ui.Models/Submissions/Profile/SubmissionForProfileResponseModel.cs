@@ -1,10 +1,10 @@
 ﻿namespace OJS.Servers.Ui.Models.Submissions.Profile
 {
+    using OJS.Services.Infrastructure.Models.Mapping;
+    using OJS.Services.Ui.Models.Submissions;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
 
     public class SubmissionForProfileResponseModel : IMapFrom<SubmissionForProfileServiceModel>
     {
@@ -19,8 +19,6 @@
         public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
         public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
-
-        public StateResultForPublicSubmissionsServiceModel State { get; set; }
 
         public bool IsCompiledSuccessfully { get; set; }
 

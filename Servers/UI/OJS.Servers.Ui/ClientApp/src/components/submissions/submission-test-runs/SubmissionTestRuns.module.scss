@@ -1,0 +1,30 @@
+@use 'src/styles/spacings';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+
+.submissionsTestRunsWrapper {
+  align-items: center;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  font-size: variables.$f-size-18;
+  justify-content: center;
+  margin-right: spacings.$sp-24;
+  padding: spacings.$sp-8;
+
+  .submissionTestRun {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    padding: spacings.$sp-16 spacings.$sp-8;
+
+    svg {
+      margin-left: spacings.$sp-8;
+    }
+  }
+
+  .trialTest {
+    border-bottom: 2px solid colors.$grey-color;
+  }
+}

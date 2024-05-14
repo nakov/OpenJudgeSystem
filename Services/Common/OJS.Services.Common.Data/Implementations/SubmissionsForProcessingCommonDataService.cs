@@ -1,39 +1,36 @@
 namespace OJS.Services.Common.Data.Implementations;
 
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using OJS.Data.Models.Submissions;
 using FluentExtensions.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Helpers;
+using OJS.Data;
+using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models.Submissions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Transactions;
 
 public class SubmissionsForProcessingCommonDataService : DataService<SubmissionForProcessing>, ISubmissionsForProcessingCommonDataService
 {
-    public SubmissionsForProcessingCommonDataService(DbContext submissionsForProcessing)
+    public SubmissionsForProcessingCommonDataService(OjsDbContext submissionsForProcessing)
         : base(submissionsForProcessing)
     {
     }
 
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
-        => this.DbSet
-            .Where(s => s.SubmissionId == submissionId)
+        => this.GetQuery(s => s.SubmissionId == submissionId)
             .FirstOrDefaultAsync();
 
     public IQueryable<SubmissionForProcessing> GetAllPending()
-        => this.DbSet
-            .Where(sfp => !sfp.Processed && !sfp.Processing);
+        => this.GetQuery(sfp => !sfp.Processed && !sfp.Processing);
 
     public IQueryable<SubmissionForProcessing> GetAllUnprocessed()
-        => this.DbSet
-            .Where(sfp => !sfp.Processed);
+        => this.GetQuery(sfp => !sfp.Processed);
 
     public IQueryable<SubmissionForProcessing> GetAllProcessing()
-        => this.DbSet
-            .Where(sfp => !sfp.Processed && sfp.Processing);
+        => this.GetQuery(sfp => !sfp.Processed && sfp.Processing);
 
     public async Task<SubmissionForProcessing> Add(int submissionId, string serializedExecutionDetails)
     {

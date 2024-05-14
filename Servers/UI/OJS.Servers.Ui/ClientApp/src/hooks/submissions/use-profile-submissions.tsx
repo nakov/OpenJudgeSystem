@@ -5,17 +5,17 @@ import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IKeyValuePair } from '../../common/common-types';
-import { IPage, IPagedResultType, ISubmissionResponseModel } from '../../common/types';
+import { IPage, IPagedResultType, IPublicSubmission } from '../../common/types';
 import {
     IGetUserSubmissionsForProfileByContestUrlParams,
-    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
     IUserInfoUrlParams,
 } from '../../common/url-types';
 import { IHaveChildrenProps } from '../../components/common/Props';
 import { IAuthorizationReduxState } from '../../redux/features/authorizationSlice';
 import isNilOrEmpty from '../../utils/check-utils';
 import {
-    decodeUsernameFromUrlParam,
+    decodeFromUrlParam,
     getAllParticipationsForUserUrl,
     getSubmissionsForProfileByContestUrl,
     getSubmissionsForProfileUrl,
@@ -27,10 +27,10 @@ import { IParticipationType } from '../use-participations';
 interface IProfileSubmissionsContext {
     state: {
         usernameForProfile : string;
-        userSubmissions: ISubmissionResponseModel[];
+        userSubmissions: IPublicSubmission[];
         userSubmissionsLoading: boolean;
         userSubmissionsByContestLoading: boolean;
-        userByContestSubmissions: ISubmissionResponseModel[];
+        userByContestSubmissions: IPublicSubmission[];
         userSubmissionUrlParams?: IPage;
         submissionsByContestParams?: IGetUserSubmissionsForProfileByContestUrlParams;
         menuItems: IKeyValuePair<string>[];
@@ -46,8 +46,8 @@ interface IProfileSubmissionsContext {
 const defaultState = {
     state: {
         usernameForProfile: '',
-        userSubmissions: [] as ISubmissionResponseModel[],
-        userByContestSubmissions: [] as ISubmissionResponseModel[],
+        userSubmissions: [] as IPublicSubmission[],
+        userByContestSubmissions: [] as IPublicSubmission[],
         submissionsByContestParams: { username: '', page: 1, contestId: '' },
         menuItems: [] as IKeyValuePair<string>[],
     },
@@ -60,15 +60,15 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     const [ selectMenuItems, setSelectMenuItems ] = useState<IKeyValuePair<string>[]>(defaultState.state.menuItems);
     const [ userSubmissions,
         setUserSubmissions,
-    ] = useState<ISubmissionResponseModel[]>(defaultState.state.userSubmissions);
+    ] = useState<IPublicSubmission[]>(defaultState.state.userSubmissions);
     const [
         userByContestSubmissions,
         setUserByContestSubmissions,
-    ] = useState<ISubmissionResponseModel[]>(defaultState.state.userByContestSubmissions);
+    ] = useState<IPublicSubmission[]>(defaultState.state.userByContestSubmissions);
     const [
         userSubmissionsForProfileUrlParams,
         setUserSubmissionsForProfileUrlParams,
-    ] = useState<IGetUserSubmissionsForProfileUrlParams | null>(null);
+    ] = useState<IGetUserSubmissionsUrlParams | null>(null);
     const [
         submissionsByContestIdParams,
         setSubmissionsByContestIdParams,
@@ -88,8 +88,8 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         get: getUserSubmissions,
         data: userSubmissionsData,
     } = useHttp<
-        IGetUserSubmissionsForProfileUrlParams,
-        IPagedResultType<ISubmissionResponseModel>>({
+        IGetUserSubmissionsUrlParams,
+        IPagedResultType<IPublicSubmission>>({
             url: getSubmissionsForProfileUrl,
             parameters: userSubmissionsForProfileUrlParams,
         });
@@ -100,7 +100,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
         data: userByContestSubmissionsData,
     } = useHttp<
         IGetUserSubmissionsForProfileByContestUrlParams,
-        IPagedResultType<ISubmissionResponseModel>>({
+        IPagedResultType<IPublicSubmission>>({
             url: getSubmissionsForProfileByContestUrl,
             parameters: submissionsByContestIdParams,
         });
@@ -121,7 +121,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
     );
 
     const getDecodedUsernameFromProfile = useCallback(
-        () => decodeUsernameFromUrlParam(usernameForProfile),
+        () => decodeFromUrlParam(usernameForProfile),
         [ usernameForProfile ],
     );
 
@@ -140,10 +140,10 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
 
     const processSubmissionsQueryResult = useCallback(
         (
-            queryResult: IPagedResultType<ISubmissionResponseModel>,
-            handleSetData: (submissions: ISubmissionResponseModel[]) => void,
+            queryResult: IPagedResultType<IPublicSubmission>,
+            handleSetData: (submissions: IPublicSubmission[]) => void,
         ) => {
-            const newSubmissionsData = queryResult.items as ISubmissionResponseModel[];
+            const newSubmissionsData = queryResult.items as IPublicSubmission[];
             const {
                 pageNumber,
                 itemsPerPage,
@@ -186,7 +186,7 @@ const ProfileSubmissionsProvider = ({ children }: IProfileSubmissionsProviderPro
             const pathSegments = pathname.split('/').filter(Boolean);
 
             if (pathSegments.length > 1) {
-                const decodedUsername = decodeUsernameFromUrlParam(pathSegments[1]);
+                const decodedUsername = decodeFromUrlParam(pathSegments[1]);
                 setParticipationsForProfileUrlParam({ username: decodedUsername });
                 return;
             }

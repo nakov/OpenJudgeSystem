@@ -7,7 +7,7 @@
 @use 'src/styles/font-weights';
 
 .header {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   align-items: center;
   background-color: colors.$primary-blue;
@@ -21,6 +21,8 @@
   z-index: 3;
 
   > div {
+    align-items: center;
+    display: flex;
     margin-left: spacings.$sp-64;
   }
 

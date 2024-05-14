@@ -1,10 +1,12 @@
 namespace OJS.Services.Administration.Models.SubmissionsForProcessing;
 
-using System;
+using AutoMapper;
 using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Common.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
+using System;
 
-public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministrationModel<int>, IMapFrom<SubmissionForProcessing>
+public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministrationModel<int>, IMapExplicitly
 {
     public int SubmissionId { get; set; }
 
@@ -21,4 +23,9 @@ public class SubmissionsForProcessingAdministrationServiceModel : BaseAdministra
     public DateTime CreatedOn { get; set; }
 
     public DateTime? ModifiedOn { get; set; }
+
+    public void RegisterMappings(IProfileExpression configuration)
+        => configuration.CreateMap<SubmissionForProcessing, SubmissionsForProcessingAdministrationServiceModel>()
+            .ForMember(sfpam => sfpam.OperationType, opt
+                => opt.Ignore());
 }

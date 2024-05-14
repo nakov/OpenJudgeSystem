@@ -1,33 +1,29 @@
 ﻿namespace OJS.Servers.Administration.Controllers.Api;
 
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Participants;
 using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Participants;
+using OJS.Services.Administration.Business.Participants.GridData;
 using OJS.Services.Administration.Business.Participants.Validators;
 using OJS.Services.Administration.Models.Contests.Participants;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Common.Models.Pagination;
 using System.Threading.Tasks;
-using OJS.Services.Administration.Data;
-using OJS.Services.Administration.Models.Validation;
 
-public class ParticipantsController : BaseAdminApiController<Participant, int, ContestViewParticipantsModel, ParticipantAdministrationModel>
+public class ParticipantsController : BaseAdminApiController<Participant, int, ParticipantInListViewModel, ParticipantAdministrationModel>
 {
-    private readonly IGridDataService<Participant> participantsGridDataService;
+    private readonly IParticipantsGridDataService participantsGridDataService;
 
     public ParticipantsController(
-        IGridDataService<Participant> participantsGridDataService,
+        IParticipantsGridDataService participantsGridDataService,
         IParticipantsBusinessService participantsBusinessService,
-        ParticipantsAdministrationModelValidator validator,
-        IValidator<BaseDeleteValidationModel<int>> deleteValidator)
+        ParticipantAdministrationModelValidator validator)
         : base(
             participantsGridDataService,
             participantsBusinessService,
-            validator,
-            deleteValidator)
+            validator)
         => this.participantsGridDataService = participantsGridDataService;
 
     [HttpGet("{contestId:int}")]
@@ -41,6 +37,6 @@ public class ParticipantsController : BaseAdminApiController<Participant, int, C
 
         return this.Ok(
             await this.participantsGridDataService
-                .GetAll<ContestViewParticipantsModel>(model, participant => participant.ContestId == contestId));
+                .GetAll<ParticipantInListViewModel>(model, participant => participant.ContestId == contestId));
     }
 }

@@ -5,10 +5,10 @@
 @use 'src/styles/font-weights';
 
 .homePageWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   display: flex;
-  padding: spacings.$sp-32 0 spacings.$sp-64 0;
+  padding: 66px 0 spacings.$sp-64 0;
 
   .homePageHeader {
     color: colors.$primary-blue;

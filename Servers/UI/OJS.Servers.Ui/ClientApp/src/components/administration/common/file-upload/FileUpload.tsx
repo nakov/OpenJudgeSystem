@@ -12,6 +12,8 @@ interface IFileUploadProps {
     showDownloadButton: boolean;
     uploadButtonName?: string;
     onClearSelectionClicked: Function;
+    buttonLabel?: string;
+    disableClearButton: boolean;
 }
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -25,7 +27,16 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 const FileUpload = (props: IFileUploadProps) => {
-    const { handleFileUpload, propName, setSkipDownload, showDownloadButton, uploadButtonName, onClearSelectionClicked } = props;
+    const {
+        handleFileUpload,
+        propName,
+        setSkipDownload,
+        showDownloadButton,
+        uploadButtonName,
+        onClearSelectionClicked,
+        disableClearButton,
+        buttonLabel = 'Upload',
+    } = props;
     return (
         <FormGroup
           sx={{
@@ -34,14 +45,19 @@ const FileUpload = (props: IFileUploadProps) => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'flex-start',
-              margin: '1rem',
+              margin: '1rem 0',
           }}
         >
             <FormControl sx={{ margin: '1rem' }}>
                 <Tooltip title={CLEAR_SELECTION}>
-                    <IconButton onClick={() => onClearSelectionClicked(propName)}>
-                        <MdOutlineRemoveCircle color="red" />
-                    </IconButton>
+                    <span>
+                        <IconButton onClick={() => onClearSelectionClicked(propName)} disabled={disableClearButton}>
+                            <MdOutlineRemoveCircle color={disableClearButton
+                                ? 'grey'
+                                : 'red'}
+                            />
+                        </IconButton>
+                    </span>
                 </Tooltip>
             </FormControl>
             <FormControl sx={{ margin: '1rem' }}>
@@ -52,7 +68,7 @@ const FileUpload = (props: IFileUploadProps) => {
                   startIcon={<FaFileUpload />}
                   onChange={(e) => handleFileUpload(e, propName)}
                 >
-                    Additional Files
+                    {buttonLabel}
                     <VisuallyHiddenInput type="file" />
                 </Button>
                 <Typography variant="caption">

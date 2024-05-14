@@ -10,8 +10,4 @@
       <ProjectReference Include="..\OJS.Services.Ui.Models\OJS.Services.Ui.Models.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="SoftUni.Common" Version="1.0.6" />
-    </ItemGroup>
-
 </Project>

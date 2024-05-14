@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 
-import ContestCetegories from '../../components/contests/contest-categories/ContestCetegories';
+import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
 import IconSize from '../../components/guidelines/icons/common/icon-sizes';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -51,14 +51,19 @@ const HOME_STATISTICS = [
 
 const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
-    const { themeColors } = useTheme();
+    const { themeColors, getColorClassName } = useTheme();
+
+    const
+        { Keys: { YOUTUBE_VIDEO_ID } } = window;
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
 
     const renderHomeStatisticIcons = useCallback(() => {
         if (isLoading) {
             return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
         if (error) {
-            return <div>Error fetching statistics data. Please try again!</div>;
+            return <div className={textColorClassName}>Error fetching statistics data. Please try again!</div>;
         }
         return (
             <div className={styles.gridWrapper}>
@@ -77,14 +82,20 @@ const HomePage = () => {
                 </div>
             </div>
         );
-    }, [ data, error, isLoading ]);
+    }, [ data, error, isLoading, textColorClassName ]);
 
     return (
         <div className={styles.homePageWrapper}>
             <ContestCetegories isRenderedOnHomePage />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
-                <iframe style={{ border: `3px solid ${themeColors.textColor}` }} title="home-video" width={700} height={320} src="https://www.youtube.com/watch?v=zyhYnE4Fnmk&ab_channel=SoftwareUniversity%28SoftUni%29" />
+                <iframe
+                  style={{ border: `3px solid ${themeColors.textColor}` }}
+                  title="home-video"
+                  width={700}
+                  height={320}
+                  src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`}
+                />
                 <hr />
                 {renderHomeStatisticIcons()}
             </div>
@@ -92,4 +103,4 @@ const HomePage = () => {
     );
 };
 
-export default setLayout(HomePage, true);
+export default setLayout(HomePage);

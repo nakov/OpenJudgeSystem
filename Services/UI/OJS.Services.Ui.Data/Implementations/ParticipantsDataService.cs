@@ -22,7 +22,8 @@ namespace OJS.Services.Ui.Data.Implementations
             int contestId,
             string userId,
             bool isOfficial)
-            => this.GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
+            => this
+                .GetAllByContestByUserAndIsOfficial(contestId, userId, isOfficial)
                 .FirstOrDefaultAsync();
 
         public Task<Participant?> GetWithContestAndSubmissionDetailsByContestByUserAndIsOfficial(int contestId, string userId, bool isOfficial)
@@ -44,19 +45,17 @@ namespace OJS.Services.Ui.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public IQueryable<Participant> GetAllByUser(string? userId)
-            => this.DbSet
-                .Where(p => p.UserId == userId);
+            => this.GetQuery(p => p.UserId == userId);
 
-        public IQueryable<Participant> GetAllWithContestAndProblemsByUsername(string username)
-            => this.DbSet
-                .Where(p => p.User.UserName == username)
-                .Include(p => p.Contest)
-                    .ThenInclude(c => c.ProblemGroups)
-                        .ThenInclude(pg => pg.Problems);
+        public IQueryable<Participant> GetAllByUsername(string username)
+            => this.GetQuery(p => p.User.UserName == username);
+
+        public IQueryable<Participant> GetAllByUsernameAndContests(string username, IEnumerable<int> contestIds)
+            => this.GetQuery(p => p.User.UserName == username)
+                .Where(p => contestIds.Contains(p.ContestId));
 
         public IQueryable<Participant> GetAllByContest(int contestId)
-            => this.DbSet
-                .Where(p => p.ContestId == contestId);
+            => this.GetQuery(p => p.ContestId == contestId);
 
         public IQueryable<Participant> GetAllOfficialByContest(int contestId)
             => this.GetAllByContest(contestId)
@@ -94,9 +93,8 @@ namespace OJS.Services.Ui.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public async Task<IDictionary<int, int>> GetParticipantsCountInContests(IEnumerable<int> contestIds, bool isOfficial)
-            => await this.DbSet
+            => await this.GetQuery(p => contestIds.Contains(p.ContestId) && p.IsOfficial == isOfficial)
                 .AsNoTracking()
-                .Where(p => contestIds.Contains(p.ContestId) && p.IsOfficial == isOfficial)
                 .GroupBy(p => p.ContestId)
                 .Select(g => new { ContestId = g.Key, ParticipantsCount = g.Count() })
                 .ToDictionaryAsync(p => p.ContestId, p => p.ParticipantsCount);
@@ -131,7 +129,8 @@ namespace OJS.Services.Ui.Data.Implementations
             int contestId,
             string userId,
             bool isOfficial)
-            => this.GetAllByContestAndUser(contestId, userId)
+            => this
+                .GetAllByContestAndUser(contestId, userId)
                 .Where(p => p.IsOfficial == isOfficial);
     }
 }

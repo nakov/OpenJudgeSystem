@@ -1,17 +1,13 @@
 namespace OJS.Services.Common.Models.Contests;
 
-using AutoMapper;
 using OJS.Common.Enumerations;
-using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
-public interface IContestForActivityServiceModel : IMapFrom<Contest>
+public interface IContestForActivityServiceModel
 {
     int Id { get; set; }
 
-    string? Name { get; set; }
+    string Name { get; set; }
 
     ContestType Type { get; set; }
 
@@ -26,7 +22,4 @@ public interface IContestForActivityServiceModel : IMapFrom<Contest>
     DateTime? PracticeStartTime { get; set; }
 
     DateTime? PracticeEndTime { get; set; }
-
-    [IgnoreMap]
-    bool IsOnline { get; }
 }

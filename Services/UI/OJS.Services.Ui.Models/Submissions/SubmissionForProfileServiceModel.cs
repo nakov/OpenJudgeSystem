@@ -1,12 +1,12 @@
 ﻿namespace OJS.Services.Ui.Models.Submissions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using AutoMapper;
     using FluentExtensions.Extensions;
     using OJS.Data.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class SubmissionForProfileServiceModel : IMapExplicitly
     {
@@ -21,8 +21,6 @@
         public ProblemForPublicSubmissionsServiceModel Problem { get; set; } = null!;
 
         public ResultForPublicSubmissionsServiceModel Result { get; set; } = null!;
-
-        public StateResultForPublicSubmissionsServiceModel State { get; set; }
 
         public int PageNumber { get; set; }
 
@@ -50,12 +48,6 @@
                     x => x.Result,
                     opt => opt.MapFrom(
                         y => y))
-                .ForMember(
-                    x => x.State,
-                    opt => opt.MapFrom(
-                        y => y.Processed
-                            ? StateResultForPublicSubmissionsServiceModel.Ready
-                            : StateResultForPublicSubmissionsServiceModel.Queued))
                 .ForMember(
                     x => x.Result,
                     opt => opt.MapFrom(

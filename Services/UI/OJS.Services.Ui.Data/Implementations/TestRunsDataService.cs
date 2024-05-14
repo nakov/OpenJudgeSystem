@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
-    using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Tests;
     using OJS.Services.Common.Data.Implementations;
     using System.Linq;
@@ -8,14 +8,13 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class TestRunsDataService : DataService<TestRun>, ITestRunsDataService
     {
-        public TestRunsDataService(DbContext testRuns)
+        public TestRunsDataService(OjsDbContext testRuns)
             : base(testRuns)
         {
         }
 
         public IQueryable<TestRun> GetAllByTest(int testId) =>
-            this.DbSet
-                .Where(tr => tr.TestId == testId);
+            this.GetQuery(tr => tr.TestId == testId);
 
         public async Task DeleteByProblem(int problemId)
         {

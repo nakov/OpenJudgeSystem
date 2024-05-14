@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using FluentExtensions.Extensions;
 
 public class ProblemSubmissionType : IMapExplicitly
@@ -12,6 +12,10 @@ public class ProblemSubmissionType : IMapExplicitly
     public string? Name { get; set; }
 
     public string? SolutionSkeleton { get; set; }
+
+    public int? TimeLimit { get; set; }
+
+    public int? MemoryLimit { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<SubmissionTypeInProblem, ProblemSubmissionType>()

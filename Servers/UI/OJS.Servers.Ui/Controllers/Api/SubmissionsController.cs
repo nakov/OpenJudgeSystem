@@ -7,31 +7,35 @@ using OJS.Servers.Infrastructure.Controllers;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Submissions.Details;
-using OJS.Servers.Ui.Models.Submissions.Profile;
+using OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Business.Cache;
 using OJS.Services.Ui.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 using static OJS.Common.GlobalConstants.Roles;
+using static OJS.Services.Common.PaginationConstants.Submissions;
 
 public class SubmissionsController : BaseApiController
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
     private readonly ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness;
     private readonly ISubmissionCacheService submissionCache;
+    private readonly IUserProviderService userProviderService;
 
     public SubmissionsController(
         ISubmissionsBusinessService submissionsBusiness,
         ISubmissionsForProcessingBusinessService submissionsForProcessingBusiness,
-        ISubmissionCacheService submissionCache)
+        ISubmissionCacheService submissionCache,
+        IUserProviderService userProviderService)
     {
         this.submissionsBusiness = submissionsBusiness;
         this.submissionsForProcessingBusiness = submissionsForProcessingBusiness;
         this.submissionCache = submissionCache;
+        this.userProviderService = userProviderService;
     }
 
     /// <summary>
@@ -39,13 +43,17 @@ public class SubmissionsController : BaseApiController
     /// </summary>
     /// <param name="username">Username of the profile's owner.</param>
     /// <param name="page">The current page number.</param>
+    /// <param name="itemsPerPage">Items count per page in paged result.</param>
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<SubmissionForProfileResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetForProfile([FromQuery] string username, [FromQuery]int page)
+    [ProducesResponseType(typeof(IEnumerable<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissions(
+        [FromQuery] string username,
+        [FromQuery] int page,
+        [FromQuery] int itemsPerPage = DefaultSubmissionResultsPerPage)
         => await this.submissionsBusiness
-            .GetForProfileByUser(username, page)
-            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
+            .GetByUsername<FullDetailsPublicSubmissionsServiceModel>(username, page, itemsPerPage)
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -57,11 +65,11 @@ public class SubmissionsController : BaseApiController
     /// <returns>A page with submissions containing information about their score and user.</returns>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForProfileResponseModel>), Status200OK)]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetUserSubmissionsForProfileByContest([FromQuery] string username, [FromQuery] int page, [FromQuery] int contestId)
         => await this.submissionsBusiness
             .GetForProfileByUserAndContest(username, page, contestId)
-            .Map<PagedResultResponse<SubmissionForProfileResponseModel>>()
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -81,19 +89,20 @@ public class SubmissionsController : BaseApiController
     /// <summary>
     /// Gets a subset of submissions by specific problem.
     /// </summary>
-    /// <param name="id">The id of the problem.</param>
+    /// <param name="problemId">The id of the problem.</param>
     /// <param name="isOfficial">Should the submissions be only from compete mode.</param>
     /// <param name="page">Current submissions page.</param>
     /// <returns>A collection of submissions for a specific problem.</returns>
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionResultsResponseModel>), Status200OK)]
-    public async Task<IActionResult> GetSubmissionResultsByProblem(
-        int id,
+    [HttpGet("{problemId:int}")]
+    [Authorize]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetUserSubmissionsByProblem(
+        int problemId,
         [FromQuery] bool isOfficial,
         [FromQuery] int page)
         => await this.submissionsBusiness
-            .GetSubmissionResultsByProblem(id, isOfficial, page)
-            .Map<PagedResultResponse<SubmissionResultsResponseModel>>()
+            .GetUserSubmissionsByProblem<FullDetailsPublicSubmissionsServiceModel>(problemId, isOfficial, page)
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsServiceModel>>()
             .ToOkResult();
 
     /// <summary>
@@ -162,14 +171,29 @@ public class SubmissionsController : BaseApiController
     [Authorize(Roles = Administrator)]
     [ProducesResponseType(typeof(int), Status200OK)]
     public async Task<IActionResult> UnprocessedTotalCount()
-        => await this.submissionsForProcessingBusiness
-            .GetUnprocessedTotalCount()
+        => await this.submissionsBusiness
+            .GetAllUnprocessedCount()
             .ToOkResult();
 
     // Unify (Public, GetProcessingSubmissions, GetPendingSubmissions) endpoints for Submissions into single one.
-    [ProducesResponseType(typeof(PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>), Status200OK)]
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResultResponse<PublicSubmissionsResponseModel>), Status200OK)]
     public async Task<IActionResult> GetSubmissions([FromQuery] SubmissionStatus status, [FromQuery] int page)
-         => await this.submissionsBusiness.GetSubmissions(status, page)
-             .Map<PagedResultResponse<SubmissionForPublicSubmissionsResponseModel>>()
+         => await this.submissionsBusiness.GetSubmissions<PublicSubmissionsServiceModel>(status, page)
+             .Map<PagedResultResponse<PublicSubmissionsResponseModel>>()
              .ToOkResult();
+
+    [HttpGet]
+    [Authorize(Roles = AdministratorOrLecturer)]
+    [ProducesResponseType(typeof(PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>), Status200OK)]
+    public async Task<IActionResult> GetSubmissionsForUserInRole(
+        [FromQuery] SubmissionStatus status,
+        [FromQuery] int page,
+        int itemsPerPage = DefaultSubmissionResultsPerPage)
+        => await this.submissionsBusiness.GetSubmissions<FullDetailsPublicSubmissionsServiceModel>(
+                status,
+                page,
+                itemsPerPage)
+            .Map<PagedResultResponse<FullDetailsPublicSubmissionsResponseModel>>()
+            .ToOkResult();
 }

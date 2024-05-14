@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Exceptions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using OJS.Data.Models.Contests;
 using System.Threading.Tasks;
@@ -54,7 +54,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         var contestCategory = await this.categoriesDataService.GetByIdQuery(model.Id).FirstOrDefaultAsync();
         contestCategory.MapFrom(model);
 
-        if (model.ParentId == 0)
+        if (model.ParentId == null || model.ParentId == 0)
         {
             contestCategory!.ParentId = null;
             contestCategory!.Parent = null;

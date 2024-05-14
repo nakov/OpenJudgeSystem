@@ -6,7 +6,5 @@ using System.Linq;
 
 public interface IParticipantScoresCommonDataService
 {
-    IQueryable<ParticipantScore> GetAll();
-
     IQueryable<ParticipantScore> GetAllByParticipants(IEnumerable<int> participantIds);
 }

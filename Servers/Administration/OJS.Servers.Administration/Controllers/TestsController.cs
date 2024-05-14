@@ -6,7 +6,6 @@ using AutoCrudAdmin.Models;
 using AutoCrudAdmin.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OJS.Common.Extensions;
 using OJS.Common.Helpers;
@@ -14,7 +13,6 @@ using OJS.Common.Utils;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Tests;
 using OJS.Servers.Administration.Extensions;
-using OJS.Servers.Administration.Models.Tests;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Extensions;
 using OJS.Services.Administration.Business.Problems;
@@ -26,8 +24,6 @@ using OJS.Services.Administration.Models.Tests;
 using OJS.Services.Common;
 using OJS.Services.Common.Models;
 using OJS.Services.Infrastructure.Extensions;
-using OJS.Workers.Common.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -291,9 +287,9 @@ public class TestsController : BaseAutoCrudAdminController<Test>
             Type = typeof(TestTypeEnum),
             Options = EnumUtils.GetValuesFrom<TestTypeEnum>().Cast<object>(),
             Value = entity.IsOpenTest
-                ? TestTypeEnum.Compete
+                ? TestTypeEnum.Open
                 : entity.IsTrialTest
-                    ? TestTypeEnum.Practice
+                    ? TestTypeEnum.Trial
                     : TestTypeEnum.Standard,
         };
 
@@ -369,11 +365,11 @@ public class TestsController : BaseAutoCrudAdminController<Test>
         Enum.TryParse<TestTypeEnum>(actionContext.GetFormValue(AdditionalFormFields.Type), out var testType);
         switch (testType)
         {
-            case TestTypeEnum.Practice:
+            case TestTypeEnum.Trial:
                 entity.IsTrialTest = true;
                 entity.IsOpenTest = false;
                 break;
-            case TestTypeEnum.Compete:
+            case TestTypeEnum.Open:
                 entity.IsTrialTest = false;
                 entity.IsOpenTest = true;
                 break;

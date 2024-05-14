@@ -1,12 +1,14 @@
 namespace OJS.Data.Models
 {
-    using System.ComponentModel.DataAnnotations;
+    using OJS.Common.Enumerations;
+    using OJS.Data.Models.Common;
 
-    public class Setting
+    public class Setting : Entity<int>
     {
-        [Key]
         public string Name { get; set; } = string.Empty;
 
         public string Value { get; set; } = string.Empty;
+
+        public SettingType Type { get; set; }
     }
 }

@@ -7,18 +7,24 @@ namespace OJS.Services.Ui.Business
     using OJS.Services.Common.Models.Contests;
     using OJS.Services.Ui.Models.Contests;
     using OJS.Services.Ui.Models.Search;
-    using SoftUni.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure.Models;
+    using OJS.Services.Infrastructure;
 
     public interface IContestsBusinessService : IService
     {
-        Task<RegisterUserForContestServiceModel> RegisterUserForContest(int id, bool official);
+        Task<ContestRegistrationDetailsServiceModel> GetContestRegistrationDetails(int id, bool isOfficial);
+
+        Task<bool> RegisterUserForContest(
+            int id,
+            string? password,
+            bool? hasConfirmedParticipation,
+            bool isOfficial);
 
         Task ValidateContestPassword(int id, bool official, string password);
 
         Task<ContestDetailsServiceModel> GetContestDetails(int id);
 
-        Task<ContestParticipationServiceModel> StartContestParticipation(StartContestParticipationServiceModel model);
+        Task<ContestParticipationServiceModel> GetParticipationDetails(StartContestParticipationServiceModel model);
 
         Task<ContestsForHomeIndexServiceModel> GetAllForHomeIndex();
 
@@ -33,6 +39,10 @@ namespace OJS.Services.Ui.Business
         Task<bool> IsContestIpValidByContestAndIp(int contestId, string ip);
 
         Task DeleteById(int id);
+
+        Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
+            string username,
+            ContestFiltersServiceModel? sortAndFilterModel);
 
         Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(ContestFiltersServiceModel? model);
     }

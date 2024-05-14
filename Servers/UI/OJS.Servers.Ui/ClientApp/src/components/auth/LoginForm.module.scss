@@ -1,16 +1,43 @@
 @use 'src/styles/colors';
+@use 'src/styles/spacings';
+@use 'src/styles/fonts';
+@use 'src/styles/border-radiuses';
+
+.loginFormContentContainer {
+  align-content: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: spacings.$sp-64;
+}
 
 .loginForm {
+  @extend %font-family-normal;
+
   align-content: center;
-  border-radius: 8px;
+  border-radius: border-radiuses.$br-4;
   box-shadow: colors.$box-shadow-color;
-  color: colors.$text-dark-gray-color;
-  font-family: Lato, serif;
+  display: flex;
+  flex-direction: column;
   margin: 20px auto;
-  max-width: 768px;
-  padding: 3vw;
+  padding: spacings.$sp-48;
   text-align: center;
-  width: 27vw;
+  width: 400px;
+
+  .logo {
+    align-self: center;
+    width: fit-content;
+  }
+
+  h2 {
+    align-self: center;
+    border-bottom: 3px solid colors.$primary-blue;
+    padding: 0;
+  }
+}
+
+.darkLoginForm {
+  background-color: colors.$dark-base-color-200;
 }
 
 .loginFormHeader {
@@ -32,13 +59,12 @@
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
-  margin-top: 10px;
+  margin: spacings.$sp-16 0;
   width: 100%;
 }
 
 .registerHeader {
-  margin-top: 10px;
+  margin-top: 50px;
   text-align: center;
 }
 

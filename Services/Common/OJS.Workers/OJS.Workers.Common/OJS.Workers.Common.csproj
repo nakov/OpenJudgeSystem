@@ -8,12 +8,10 @@
 
     <ItemGroup>
       <PackageReference Include="DotNetZip" Version="1.16.0" />
-      <PackageReference Include="Core.Fluent.Extensions" Version="1.0.1" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-      <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV TZ=Etc/UTC
 ENV LANG=en_US.UTF-8
@@ -21,22 +21,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     locale-gen && \
     rm -rf /var/lib/apt/lists/*
 
-# Setup for installing Node.js 12 (LTS)
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-
-# Setup for installing .NET Core SDK
-RUN curl -o packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb
+# Install node.js 12 and 20 via nvm
+RUN curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash && \
+    export NVM_DIR="$HOME/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+    nvm install 12.22.12 && \
+    nvm install 20.12.0 && \
+    nvm alias default 20.12.0 && \
+    nvm use default
 
 # Install supported languages and frameworks
 RUN apt-get update && apt-get install -y \
       dotnet-sdk-6.0 \
-      dotnet-sdk-3.1 \
-      dotnet-sdk-5.0 \
       openjdk-11-jdk \
-      nodejs \
-      python3.8 \
+      openjdk-21-jdk \
+      python3.9 \
       python3-pip \
       golang-go \
       libgtk-3-0 \
@@ -52,6 +51,14 @@ RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /
       containerd.io && \
     rm -rf /var/lib/apt/lists/*
 
+# Install Maven
+ENV MAVEN_VERSION 3.9.1
+WORKDIR /judge-resources
+RUN curl -O https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    tar -xzvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+    ln -s /judge-resources/apache-maven-$MAVEN_VERSION/bin/mvn /usr/bin/mvn
+
 # Java setup
 WORKDIR /tmp/java
 COPY ./java/gradlew ./gradlew
@@ -60,20 +67,15 @@ COPY ./java/gradle ./gradle
 RUN ./gradlew
 
 COPY ./java/build.gradle ./build.gradle
-RUN ./gradlew getDeps
+RUN ./gradlew getDeps11
+RUN ./gradlew getDeps21
 
 # JS and JS SPA
-COPY ./js /judge-resources/js
 WORKDIR /judge-resources/js
-RUN npm install
-
-COPY ./js-run-spa-in-docker-and-execute-mocha-tests /judge-resources/js-run-spa-in-docker-and-execute-mocha-tests
-WORKDIR /judge-resources/js-run-spa-in-docker-and-execute-mocha-tests
-RUN npm install && \
-    bash /judge-resources/js/chromium-scripts/update-and-run.sh
-
-ENV JAVA_LIBS_DIR=/judge-resources/javaLibs/
-ENV JS_NODE_MODULES_DIR=/judge-resources/js/node_modules
+COPY ./js .
+RUN chmod +x ./setup_node.sh ./chromium-scripts/update-and-run.sh && \
+    ./setup_node.sh && \
+    ./chromium-scripts/update-and-run.sh
 
 # Python 11 with Django support
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -105,7 +107,18 @@ RUN curl https://pyenv.run | bash && \
 # Install Python packages from requirements.txt
 COPY ./python/requirements.txt /tmp/
 
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
 RUN $PYENV_ROOT/versions/3.11.5/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+
+WORKDIR /judge-resources/java/java-spring-and-hibernate
+COPY ./java-spring-and-hibernate .
+RUN mvn dependency:go-offline
+# Needed 2 versions of this package, one in the strategy pom.xml, other one is istalled here
+# Otherwise maven resolves only 1 dependency
+# TODO: Fix this
+RUN mvn dependency:get -DgroupId=org.codehaus.plexus -DartifactId=plexus-utils -Dversion=3.0.10
+RUN mvn clean install
 
 # Go
 ENV GO111MODULE=off

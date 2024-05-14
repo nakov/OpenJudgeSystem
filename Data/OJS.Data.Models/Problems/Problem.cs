@@ -7,7 +7,7 @@ namespace OJS.Data.Models.Problems
     using OJS.Data.Models.Participants;
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Tests;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
     using static OJS.Data.Validation.ConstraintConstants.Problem;
 
     public class Problem : DeletableAuditInfoEntity<int>, IOrderableEntity
@@ -52,6 +52,7 @@ namespace OJS.Data.Models.Problems
         /// Gets or sets Problem specific dependencies that will be compiled and executed with the user code
         /// such as Solution skeletons, mocks or data and text files.
         /// </summary>
+        // Deprecated
         public byte[]? AdditionalFiles { get; set; }
 
         [DefaultValue(true)]
@@ -65,8 +66,6 @@ namespace OJS.Data.Models.Problems
         public virtual ICollection<ProblemResource> Resources { get; set; } = new HashSet<ProblemResource>();
 
         public virtual ICollection<Submission> Submissions { get; set; } = new HashSet<Submission>();
-
-        public virtual ICollection<TagInProblem> TagsInProblems { get; set; } = new HashSet<TagInProblem>();
 
         public virtual ICollection<ParticipantScore> ParticipantScores { get; set; } = new HashSet<ParticipantScore>();
 

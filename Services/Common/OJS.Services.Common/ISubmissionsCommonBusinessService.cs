@@ -3,7 +3,7 @@ namespace OJS.Services.Common;
 using OJS.Services.Common.Models.Submissions.ExecutionContext;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SoftUni.Services.Infrastructure;
+using OJS.Services.Infrastructure;
 
 public interface ISubmissionsCommonBusinessService : IService
 {

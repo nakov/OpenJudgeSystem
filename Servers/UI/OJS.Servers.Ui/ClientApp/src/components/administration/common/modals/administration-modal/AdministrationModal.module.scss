@@ -1,0 +1,32 @@
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/shadows';
+
+.closeIcon {
+  background-color: transparent;
+  display: flex;
+  height: auto;
+  justify-content: flex-end;
+  left: 95%;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 9999999;
+}
+
+.wrapper {
+  @extend %font-family-normal;
+
+  background-color: colors.$white-color;
+  border-radius: variables.$f-size-12;
+  box-shadow: shadows.$dp-shadow-4;
+  height: 90%;
+  left: 50%;
+  overflow: auto;
+  padding: variables.$f-size-18;
+  position: relative;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+}

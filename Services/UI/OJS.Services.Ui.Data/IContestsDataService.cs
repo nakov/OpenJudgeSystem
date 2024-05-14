@@ -3,13 +3,17 @@ namespace OJS.Services.Ui.Data
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Data;
     using OJS.Services.Ui.Models.Contests;
-    using SoftUni.Common.Models;
+    using OJS.Services.Infrastructure.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
     public interface IContestsDataService : IDataService<Contest>
     {
+        public Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
+            IQueryable<Contest> contests,
+            ContestFiltersServiceModel model);
+
         Task<IEnumerable<TServiceModel>> GetAllCompetable<TServiceModel>();
 
         Task<IEnumerable<TServiceModel>> GetAllPracticable<TServiceModel>();
@@ -29,6 +33,8 @@ namespace OJS.Services.Ui.Data
         IQueryable<Contest> GetAllNonDeletedContests();
 
         Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
+
+        IQueryable<Contest> GetLatestForParticipantByUsername(string username);
 
         Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId);
 

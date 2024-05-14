@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Problems;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ProblemSearchServiceModel : IMapExplicitly
 {
@@ -12,7 +12,7 @@ public class ProblemSearchServiceModel : IMapExplicitly
 
     public double OrderBy { get; set; }
 
-    public ProblemContestSearchServiceModel? Contest { get; set; }
+    public ProblemContestSearchServiceModel Contest { get; set; } = null!;
 
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Problem, ProblemSearchServiceModel>()

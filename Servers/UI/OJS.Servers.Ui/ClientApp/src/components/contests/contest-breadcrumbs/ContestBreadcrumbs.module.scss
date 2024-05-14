@@ -5,18 +5,22 @@
 @use 'src/styles/colors';
 
 .breadcrumbsWrapper {
-  @extend %font-family-roboto;
+  @extend %font-family-normal;
 
   align-items: center;
   cursor: pointer;
   display: flex;
   font-size: variables.$f-size-18;
   justify-content: flex-start;
-  padding: spacings.$sp-4 spacings.$sp-8;
+  padding: spacings.$sp-8 spacings.$sp-8;
   width: 99%;
 
   .item {
     color: colors.$primary-blue;
     margin-left: spacings.$sp-4;
   }
+}
+
+.staticItem {
+  margin-right: spacings.$sp-4;
 }

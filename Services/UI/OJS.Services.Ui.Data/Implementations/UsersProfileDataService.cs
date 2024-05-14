@@ -1,13 +1,12 @@
 ﻿namespace OJS.Services.Ui.Data.Implementations
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using OJS.Data;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Ui.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class UsersProfileDataService : DataService<UserProfile>, IUsersProfileDataService
     {
@@ -17,8 +16,7 @@
         }
 
         public IQueryable<UserProfile> GetAll()
-            => this.DbSet
-                .Where(u => !u.IsDeleted);
+            => this.GetQuery(u => !u.IsDeleted);
 
         public async Task<TServiceModel> AddOrUpdate<TServiceModel>(UserProfile user)
         {
@@ -55,8 +53,7 @@
                 .Map<TServiceModel?>();
 
         public IQueryable<UserProfile> GetByUsername(string? username)
-            => this.DbSet
-                .Include(up => up.UserSettings)
-                .Where(u => u.UserName == username);
+            => this.GetQuery(u => u.UserName == username)
+                .Include(up => up.UserSettings);
     }
 }

@@ -6,7 +6,7 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Models.Contests.Results;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using X.PagedList;
@@ -30,9 +30,12 @@ public class ContestResultsAggregatorCommonService : IContestResultsAggregatorCo
     public ContestResultsViewModel GetContestResults(ContestResultsModel contestResultsModel)
     {
         var contestActivityEntity = this.activityService
-            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>());
+            .GetContestActivity(contestResultsModel.Contest.Map<ContestForActivityServiceModel>())
+            .GetAwaiter()
+            .GetResult();
 
         var contestResults = contestResultsModel.Map<ContestResultsViewModel>();
+        contestResults.Id = contestResultsModel.Contest.Id;
 
         contestResults.ContestCanBeCompeted = contestActivityEntity.CanBeCompeted;
         contestResults.ContestCanBePracticed = contestActivityEntity.CanBePracticed;

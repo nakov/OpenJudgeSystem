@@ -1,29 +1,30 @@
 namespace OJS.Services.Administration.Data.Implementations
 {
+    using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
+    using OJS.Data.Models.Contests;
+    using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure.Extensions;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using OJS.Data.Models.Contests;
-    using OJS.Services.Common.Data.Implementations;
-    using OJS.Services.Infrastructure.Extensions;
 
-    public class ContestCategoriesDataService : DataService<ContestCategory>, IContestCategoriesDataService
+    public class ContestCategoriesDataService : AdministrationDataService<ContestCategory>, IContestCategoriesDataService
     {
-        private readonly DbContext dbContext;
+        private readonly OjsDbContext dbContext;
 
-        public ContestCategoriesDataService(DbContext db)
+        public ContestCategoriesDataService(OjsDbContext db)
             : base(db) =>
             this.dbContext = db;
 
         public Task<IEnumerable<ContestCategory>> GetContestCategoriesByParentId(int? parentId)
-            => this.DbSet
-                 .Where(cc => cc.ParentId == parentId)
+            => this.GetQuery(cc => cc.ParentId == parentId)
                  .ToEnumerableAsync();
 
         public Task<IEnumerable<ContestCategory>> GetContestCategoriesWithoutParent()
-            => this.DbSet
-                .Where(cc => !cc.ParentId.HasValue)
+            => this.GetQuery(cc => !cc.ParentId.HasValue)
                 .ToEnumerableAsync();
 
         public async Task<bool> UserHasContestCategoryPermissions(int categoryId, string? userId, bool isAdmin)
@@ -33,8 +34,7 @@ namespace OJS.Services.Administration.Data.Implementations
                    x.LecturersInContestCategories.Any(y => y.LecturerId == userId)));
 
         public IQueryable<ContestCategory> GetAllVisible()
-            => this.DbSet
-                .Where(cc => cc.IsVisible);
+            => this.GetQuery(cc => cc.IsVisible);
 
         public IQueryable<ContestCategory> GetAllVisibleByLecturer(string? lecturerId)
             => this.GetAllVisible()
@@ -52,8 +52,7 @@ namespace OJS.Services.Administration.Data.Implementations
                 .FirstOrDefaultAsync();
 
         public Task<string?> GetNameById(int id)
-            => this.DbSet
-                .Where(cc => cc.Id == id)
+            => this.GetQuery(cc => cc.Id == id)
                 .Select(cc => cc.Name)
                 .FirstOrDefaultAsync();
 
@@ -71,5 +70,9 @@ namespace OJS.Services.Administration.Data.Implementations
                 this.LoadChildrenRecursively(child);
             }
         }
+
+        protected override Expression<Func<ContestCategory, bool>> GetUserFilter(UserInfoModel user)
+            => category => user.IsAdmin ||
+                           category.LecturersInContestCategories.Any(cc => cc.LecturerId == user.Id);
     }
 }

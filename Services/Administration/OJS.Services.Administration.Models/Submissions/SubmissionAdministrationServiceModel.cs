@@ -1,12 +1,13 @@
 namespace OJS.Services.Administration.Models.Submissions;
 
-using System;
 using AutoMapper;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Models.Participants;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Administration.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Common.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
+using System;
 
 public class SubmissionAdministrationServiceModel : BaseAdministrationModel<int>, IMapExplicitly
 {
@@ -46,6 +47,8 @@ public class SubmissionAdministrationServiceModel : BaseAdministrationModel<int>
         => configuration.CreateMap<Submission, SubmissionAdministrationServiceModel>()
             .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
                 s.Content))
+            .ForMember(crm => crm.OperationType, opt
+                => opt.Ignore())
             .ForMember(d => d.Content, opt => opt.MapFrom(s =>
                 s.IsBinaryFile
                     ? null

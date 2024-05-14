@@ -2,19 +2,24 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OJS.Servers.Infrastructure.Controllers;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Problems;
 using OJS.Servers.Ui.Models.Submissions.Compete;
+using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
-using OJS.Servers.Infrastructure.Extensions;
-using OJS.Servers.Infrastructure.Controllers;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 [Authorize]
+[Route("api/[controller]")]
 public class CompeteController : BaseApiController
 {
     private readonly IContestsBusinessService contestsBusiness;
@@ -35,25 +40,81 @@ public class CompeteController : BaseApiController
     /// Starts a contest for the user. Creates participant and starts time counter.
     /// </summary>
     /// <param name="id">The id of the contest.</param>
-    /// <param name="official">Is the contest compete or practice.</param>
+    /// <param name="isOfficial">Is the contest compete or practice.</param>
     /// <returns>The new participant.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ContestParticipationServiceModel), Status200OK)]
-    public async Task<IActionResult> Index(int id, [FromQuery] bool official)
+    public async Task<IActionResult> Index(int id, [FromQuery] bool isOfficial)
         => await this.contestsBusiness
-            .StartContestParticipation(new StartContestParticipationServiceModel
+            .GetParticipationDetails(new StartContestParticipationServiceModel
             {
                 ContestId = id,
-                IsOfficial = official,
+                IsOfficial = isOfficial,
             })
             .ToOkResult();
+
+    /// <summary>
+    /// This endpoint retrieves registration details for a specified contest and user.
+    /// It considers whether the contest is an official entry and includes various checks and conditions
+    /// based on the user's status and contest rules.
+    /// </summary>
+    /// <param name="id">Contest id.</param>
+    /// <param name="isOfficial">Compete/practice.</param>
+    /// <returns>Success status code.</returns>
+    /// <returns>403 if user cannot compete contest.</returns>
+    [HttpGet("{id:int}/register")]
+    public async Task<IActionResult> Register(int id, [FromQuery] bool isOfficial)
+    {
+        try
+        {
+            return await this.contestsBusiness
+                .GetContestRegistrationDetails(id, isOfficial)
+                .ToOkResult();
+        }
+        catch (BusinessServiceException be)
+        {
+            return this.StatusCode((int)HttpStatusCode.Forbidden, be.Message);
+        }
+    }
+
+    /// <summary>
+    /// Registers user for contest. If a password is submitted it gets validated. This endpoint creates a participant.
+    /// </summary>
+    /// <param name="id">Contest id.</param>
+    /// <param name="isOfficial">Compete/practice.</param>
+    /// <param name="model">Contains contest password.</param>
+    /// <returns>Success status code.</returns>
+    /// <returns>401 for invalid password.</returns>
+    /// <returns>403 if user cannot compete contest.</returns>
+    [HttpPost("{id:int}/register")]
+    public async Task<IActionResult> Register(
+        int id,
+        [FromQuery] bool isOfficial,
+        [FromBody] ContestRegisterRequestModel model)
+    {
+        try
+        {
+            var isValidRegistration = await this.contestsBusiness
+                .RegisterUserForContest(id, model.Password, model.HasConfirmedParticipation, isOfficial);
+
+            return this.Ok(new { IsRegisteredSuccessFully = isValidRegistration });
+        }
+        catch (UnauthorizedAccessException uae)
+        {
+            return this.Unauthorized(uae.Message);
+        }
+        catch (BusinessServiceException be)
+        {
+            return this.StatusCode((int)HttpStatusCode.Forbidden, be.Message);
+        }
+    }
 
     /// <summary>
     /// Submits user's code for evaluation.
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost]
+    [HttpPost("submit")]
     public async Task<IActionResult> Submit([FromBody] SubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
@@ -64,7 +125,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="model">The submission model containing the code and execution context.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost]
+    [HttpPost("submitfilesubmission")]
     public async Task<IActionResult> SubmitFileSubmission([FromForm] SubmitFileSubmissionRequestModel model)
         => await this.submissionsBusinessService
             .Submit(model.Map<SubmitSubmissionServiceModel>())
@@ -78,7 +139,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="id">The submission id to be retested.</param>
     /// <returns>Success status code.</returns>
-    [HttpPost("{id:int}")]
+    [HttpPost("retest/{id:int}")]
     public async Task<IActionResult> Retest(int id)
         => await this.submissionsBusinessService
             .Retest(id)
@@ -89,7 +150,7 @@ public class CompeteController : BaseApiController
     /// </summary>
     /// <param name="id">The id of the problem.</param>
     /// <returns>A model with the best scores for the problem from all participants.</returns>
-    [HttpGet("{id:int}")]
+    [HttpGet("results/{id:int}")]
     [ProducesResponseType(typeof(IEnumerable<ProblemResultResponseModel>), Status200OK)]
     public async Task<IActionResult> GetResultsByProblem(int id)
         => await this.participantScoresBusinessService

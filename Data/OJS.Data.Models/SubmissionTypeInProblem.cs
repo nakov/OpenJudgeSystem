@@ -2,7 +2,7 @@ namespace OJS.Data.Models
 {
     using OJS.Data.Models.Problems;
     using OJS.Data.Models.Submissions;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Data.Models.Common;
 
     public class SubmissionTypeInProblem : IEntity
     {
@@ -18,5 +18,9 @@ namespace OJS.Data.Models
         /// Gets or sets a predefined skeleton for the task and strategy.
         /// </summary>
         public byte[] SolutionSkeleton { get; set; } = default!;
+
+        public int? TimeLimit { get; set; }
+
+        public int? MemoryLimit { get; set; }
     }
 }

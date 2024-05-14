@@ -1,7 +1,6 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
-    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,11 +8,14 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
     using System.Text.RegularExpressions;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
     using static OJS.Workers.Common.Constants;
+    using static OJS.Workers.ExecutionStrategies.NodeJs.NodeJsConstants;
 
     public class NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy<TSettings> :
         NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy<TSettings>
@@ -25,43 +27,6 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
             IExecutionStrategySettingsProvider settingsProvider)
             : base(type, processExecutorFactory, settingsProvider)
             => this.Random = new Random();
-
-        protected override string JsCodePreevaulationCode => @"
-chai.use(sinonChai);
-let bgCoderConsole = {};
-before(function(done)
-{
-    jsdom.env({
-        html: '',
-        done: function(errors, window) {
-            global.window = window;
-            global.document = window.document;
-            global.$ = jq(window);
-            global.handlebars = handlebars;
-            Object.getOwnPropertyNames(window)
-                .filter(function(prop) {
-                return prop.toLowerCase().indexOf('html') >= 0;
-            }).forEach(function(prop) {
-                global[prop] = window[prop];
-            });
-
-            Object.keys(console)
-                .forEach(function (prop) {
-                    bgCoderConsole[prop] = console[prop];
-                    console[prop] = new Function('');
-                });
-
-            done();
-        }
-    });
-});
-
-after(function() {
-    Object.keys(bgCoderConsole)
-        .forEach(function (prop) {
-            console[prop] = bgCoderConsole[prop];
-        });
-});";
 
         protected override string JsCodeEvaluation => @"
         " + TestsPlaceholder;
@@ -178,7 +143,7 @@ describe('Test {i} ', function(){{
                             "<minTestCount>(\\d+)</minTestCount>").Groups[1].Value);
                     if (numberOfUserTests < minTestCount)
                     {
-                        message = $"Insufficient amount of tests, you have to have atleast {minTestCount} tests!";
+                        message = $"Insufficient amount of tests, you have to have at least {minTestCount} tests!";
                     }
 
                     testResult = CheckAndGetTestResult(
@@ -233,7 +198,7 @@ describe('Test {i} ', function(){{
 
             var processedCode =
                 template.Replace(RequiredModules, this.JsCodeRequiredModules)
-                    .Replace(PreevaluationPlaceholder, this.JsCodePreevaulationCode)
+                    .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                     .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                     .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)
                     .Replace(NodeDisablePlaceholder, this.JsNodeDisableCode)

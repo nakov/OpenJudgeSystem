@@ -1,13 +1,14 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
-    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
 
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
+    using OJS.Workers.ExecutionStrategies.Helpers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -16,13 +17,10 @@
     public class NodeJsPreprocessExecuteAndCheckExecutionStrategy<TSettings> : BaseInterpretedCodeExecutionStrategy<TSettings>
         where TSettings : NodeJsPreprocessExecuteAndCheckExecutionStrategySettings
     {
-        protected const string UserInputPlaceholder = "#userInput#";
         protected const string RequiredModules = "#requiredModule#";
         protected const string PreevaluationPlaceholder = "#preevaluationCode#";
         protected const string PostevaluationPlaceholder = "#postevaluationCode#";
         protected const string EvaluationPlaceholder = "#evaluationCode#";
-        protected const string NodeDisablePlaceholder = "#nodeDisableCode";
-        protected const string AdapterFunctionPlaceholder = "#adapterFunctionCode#";
 
         private const string DefaultAdapterFunctionCode = "(input, code) => code(input);";
 
@@ -136,13 +134,6 @@ delete msg;
 
 process.exit = function () {};";
 
-        protected virtual string JsCodePreevaulationCode => @"
-let content = '';
-let code = {
-    run: " + UserInputPlaceholder + @"
-};
-let adapterFunction = " + AdapterFunctionPlaceholder;
-
         protected virtual string JsCodeEvaluation => @"
 process.stdin.resume();
 process.stdin.on('data', function(buf) { content += buf.toString(); });
@@ -241,7 +232,7 @@ process.stdin.on('end', function() {
 
             var processedCode = template
                 .Replace(RequiredModules, this.JsCodeRequiredModules)
-                .Replace(PreevaluationPlaceholder, this.JsCodePreevaulationCode)
+                .Replace(PreevaluationPlaceholder, JsCodePreEvaluationCodeProvider.GetPreEvaluationCode(this.Type))
                 .Replace(EvaluationPlaceholder, this.JsCodeEvaluation)
                 .Replace(PostevaluationPlaceholder, this.JsCodePostevaulationCode)
                 .Replace(NodeDisablePlaceholder, this.JsNodeDisableCode)

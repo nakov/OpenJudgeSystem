@@ -20,22 +20,20 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.OpenApi.Models;
     using OJS.Common;
     using OJS.Common.Enumerations;
+    using OJS.Data;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Implementations;
-    using OJS.Services.Common.Models.Configurations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Infrastructure.HttpClients.Implementations;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Data.Infrastructure.Enumerations;
-    using SoftUni.Data.Infrastructure.Extensions;
-    using SoftUni.Services.Infrastructure.Extensions;
+    using OJS.Data.Implementations;
+    using OJS.Services.Infrastructure.Configurations;
+    using OJS.Services.Infrastructure.Extensions;
     using StackExchange.Redis;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -79,20 +77,10 @@ namespace OJS.Servers.Infrastructure.Extensions
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="configuration">The configuration.</param>
-        /// <param name="globalQueryFilterTypes">
-        /// The global query filter types to add to the context.
-        /// <br/> If null, adds all default global query filters,
-        /// whereas if explicitly providing an empty collection, will not add any global query filters to the context.
-        /// </param>
-        /// <remarks>
-        /// <see cref="globalQueryFilterTypes"/> can be null, in which case all default global query filters are added. (i.e DeletableEntityFilter)
-        /// <br/><see cref="globalQueryFilterTypes"/> can be explicitly empty, in which case no global query filters are added.
-        /// </remarks>
         public static IServiceCollection AddIdentityDatabase<TDbContext, TIdentityUser, TIdentityRole,
             TIdentityUserRole>(
             this IServiceCollection services,
-            IConfiguration configuration,
-            IEnumerable<GlobalQueryFilterType>? globalQueryFilterTypes = null)
+            IConfiguration configuration)
             where TDbContext : DbContext, IDataProtectionKeyContext
             where TIdentityUser : IdentityUser
             where TIdentityRole : IdentityRole
@@ -104,9 +92,7 @@ namespace OJS.Servers.Infrastructure.Extensions
                     var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
                     options.UseSqlServer(connectionString);
                 })
-                .AddScoped<DbContext, TDbContext>()
-                .AddGlobalQueryFilterTypes(globalQueryFilterTypes)
-                .AddTransactionsProvider<TDbContext>();
+                .AddTransient<ITransactionsProvider, TransactionsProvider<TDbContext>>();
 
             services
                 .AddIdentity<TIdentityUser, TIdentityRole>()

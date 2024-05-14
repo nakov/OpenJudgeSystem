@@ -1,19 +1,20 @@
 namespace OJS.Servers.Administration.Controllers;
 
+using ClosedXML.Excel;
+using Microsoft.AspNetCore.Mvc;
+using OJS.Common;
+using OJS.Common.Enumerations;
+using OJS.Services.Administration.Business.Contests;
+using OJS.Services.Administration.Business.Validation.Helpers;
+using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Common;
+using OJS.Services.Common.Models.Contests.Results;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ClosedXML.Excel;
-using OJS.Common;
-using OJS.Servers.Administration.Models.Contests;
-using OJS.Services.Administration.Business.Contests;
-using OJS.Services.Administration.Business.Validation.Helpers;
-using OJS.Services.Infrastructure.Extensions;
-using OJS.Services.Administration.Data;
-using OJS.Services.Common.Models.Contests.Results;
-using OJS.Services.Infrastructure.Exceptions;
 using Resource = OJS.Common.Resources.ContestsGeneral;
 
 public class ResultsController : BaseAdminViewController

@@ -2,15 +2,22 @@ namespace OJS.Services.Ui.Models.Contests
 {
     using System;
     using AutoMapper;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models.Contests;
     using OJS.Services.Common.Models.Contests;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
-    public class ContestForHomeIndexServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed
+    public class ContestForHomeIndexServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
     {
         public int Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
+
+        public ContestType Type { get; set; }
+
+        public bool IsVisible { get; set; }
+
+        public bool IsDeleted { get; set; }
 
         public DateTime? StartTime { get; set; }
 

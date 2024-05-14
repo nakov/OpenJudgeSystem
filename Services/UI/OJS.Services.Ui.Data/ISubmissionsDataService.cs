@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Models;
 
 public interface ISubmissionsDataService : IDataService<Submission>
 {
@@ -20,8 +20,6 @@ public interface ISubmissionsDataService : IDataService<Submission>
         IEnumerable<int?> userParticipantsIds,
         int submissionsPerPage,
         int pageNumber);
-
-    Task<int> GetTotalSubmissionsCount();
 
     Task<int> GetParticipantIdBySubmission(int submissionId);
 

@@ -4,7 +4,7 @@
 
 body,
 #root {
-  @extend %font-family-montserrat-medium;
+  @extend %font-family-normal;
 
   display: flex;
   flex-direction: column;
@@ -53,13 +53,32 @@ form {
 }
 
 a:link {
-  color: inherit;
   text-decoration: none;
 
   &:visited {
-    color: inherit;
     text-decoration: none;
   }
 }
 
 /* stylelint-enable */
+
+/* width */
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: colors.$primary-dark-grey-color;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: colors.$color-btn-disabled;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: colors.$primary-blue;
+}

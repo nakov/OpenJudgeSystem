@@ -18,7 +18,6 @@ using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
 using OJS.Servers.Administration.Extensions;
 using OJS.Servers.Administration.Models.Problems;
-using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.Contests;
 using OJS.Services.Administration.Business.Extensions;
@@ -31,10 +30,10 @@ using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Problems;
 using OJS.Services.Common;
+using OJS.Services.Common.Models.Contests;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Exceptions;
 using OJS.Services.Infrastructure.Extensions;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -211,30 +210,8 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
     [HttpGet]
     public async Task<IActionResult> DeleteAll(int? contestId)
     {
-        if (!contestId.HasValue)
-        {
-            this.TempData.AddDangerMessage(GlobalResource.InvalidContest);
-            return this.RedirectToAction("Index", "Problems");
-        }
-
-        var contest = await this.contestsActivity.GetContestActivity(contestId.Value);
-
-        var validationModel = new ContestDeleteProblemsValidationServiceModel
-        {
-            Id = contestId.Value, IsActive = await this.contestsActivity.IsContestActive(contestId.Value),
-        };
-
-        this.contestDeleteProblemsValidation
-            .GetValidationResult(validationModel)
-            .VerifyResult();
-
-        await this.contestsValidationHelper
-            .ValidatePermissionsOfCurrentUser(validationModel.Id)
-            .VerifyResult();
-
-        var modelResult = contest.Map<DeleteAllProblemsInContestViewModel>();
-
-        return this.View(modelResult);
+        await Task.CompletedTask;
+        return this.NotFound("Deprecated. Use the new administration");
     }
 
     [HttpPost]
@@ -541,7 +518,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             .ValidatePermissionsOfCurrentUser(contestId)
             .VerifyResult();
 
-        await TryAddAdditionalFiles(entity, actionContext);
         AddSubmissionTypes(entity, actionContext);
     }
 
@@ -654,18 +630,6 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
 
     private static int GetContestId(IDictionary<string, string> entityDict, Problem? problem)
         => entityDict.GetEntityIdOrDefault<Contest>() ?? problem?.ProblemGroup?.ContestId ?? default;
-
-    private static async Task TryAddAdditionalFiles(Problem problem, AdminActionContext actionContext)
-    {
-        var additionalFiles = actionContext.GetFormFile(AdditionalFormFields.AdditionalFiles);
-
-        if (additionalFiles == null)
-        {
-            return;
-        }
-
-        problem.AdditionalFiles = await additionalFiles.ToByteArray();
-    }
 
     private static void AddSubmissionTypes(Problem problem, AdminActionContext actionContext)
     {

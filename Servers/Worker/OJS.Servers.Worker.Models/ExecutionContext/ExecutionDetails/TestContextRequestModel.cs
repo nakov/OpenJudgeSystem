@@ -1,8 +1,8 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionContext.ExecutionDetails;
 
 using AutoMapper;
-using OJS.Workers.ExecutionStrategies.Models;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Workers.Common.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class TestContextRequestModel : IMapExplicitly
 {

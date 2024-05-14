@@ -1,11 +1,11 @@
-/* eslint-disable max-len */
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IContestAdministration, IContestAutocomplete, IGetAllAdminParams,
+import { IContestActivity, IContestAdministration, IContestAutocomplete, IFileModel, IGetAllAdminParams,
     IIndexContestsType,
     IPagedResultType } from '../../../common/types';
 import { IContestDetailsUrlParams } from '../../../common/url-types';
-import { CREATE_ENDPOINT, DELETE_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
+import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
+import { SimillarityType } from '../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const contestService = createApi({
@@ -22,13 +22,83 @@ export const contestService = createApi({
                     sorting,
                 },
             }),
+            keepUnusedDataFor: 3,
+        }),
+
+        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({
+            query: ({ id }) => ({ url: `/${GET_ENDPOINT}/${id}` }),
             keepUnusedDataFor: 10,
         }),
-        getContestById: builder.query<IContestAdministration, IContestDetailsUrlParams>({ query: ({ id }) => ({ url: `/${GET_ENDPOINT}/${id}` }), keepUnusedDataFor: 10 }),
+
         deleteContest: builder.mutation<string, number >({ query: (id) => ({ url: `/${DELETE_ENDPOINT}/${id}`, method: 'DELETE' }) }),
-        updateContest: builder.mutation<string, IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: `/${UPDATE_ENDPOINT}`, method: 'PATCH', body: contestAdministrationModel }) }),
-        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({ query: ({ ...contestAdministrationModel }) => ({ url: `/${CREATE_ENDPOINT}`, method: 'POST', body: contestAdministrationModel }) }),
-        getCopyAll: builder.query<Array<IContestAutocomplete>, string>({ query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }), keepUnusedDataFor: 10 }),
+
+        updateContest: builder.mutation<string, IContestAdministration >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: `/${UPDATE_ENDPOINT}`,
+                method: 'PATCH',
+                body: contestAdministrationModel,
+            }),
+        }),
+
+        createContest: builder.mutation<string, IContestDetailsUrlParams & IContestAdministration >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: `/${CREATE_ENDPOINT}`,
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
+
+        getContestAutocomplete: builder.query<Array<IContestAutocomplete>, string>({
+            query: (queryString) => ({ url: `/GetAllForProblem?searchString=${encodeURIComponent(queryString)}` }),
+            keepUnusedDataFor: 10,
+        }),
+
+        downloadResults: builder.mutation<{ blob: Blob; filename: string }, {id:number; type:number} >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/Export',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
+
+        downloadSubmissions: builder.mutation<{ blob: Blob; filename: string },
+        {
+            contestId: number;
+            contestExportResultType:number;
+            submissionExportType:number;
+        }>({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/DownloadSubmissions',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
+
+        exportContestsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
+        }),
+
+        getContestActivity: builder.query<IContestActivity, number>({
+            query: (id) => ({ url: `/Activity?contestId=${id}` }),
+            keepUnusedDataFor: 5,
+        }),
+
+        checkSimilarity: builder.mutation<null, {contestIds:Array<number>; similarityCheckType: SimillarityType} >({
+            query: ({ ...contestAdministrationModel }) => ({
+                url: '/CheckSimilarity',
+                method: 'POST',
+                body: contestAdministrationModel,
+            }),
+        }),
     }),
 });
 
@@ -38,6 +108,11 @@ export const {
     useDeleteContestMutation,
     useUpdateContestMutation,
     useCreateContestMutation,
-    useGetCopyAllQuery,
+    useDownloadResultsMutation,
+    useDownloadSubmissionsMutation,
+    useGetContestAutocompleteQuery,
+    useLazyExportContestsToExcelQuery,
+    useGetContestActivityQuery,
+    useCheckSimilarityMutation,
 } = contestService;
 export default contestService;

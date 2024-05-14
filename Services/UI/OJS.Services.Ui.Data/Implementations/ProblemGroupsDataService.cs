@@ -1,6 +1,7 @@
 namespace OJS.Services.Ui.Data.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Data;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data.Implementations;
     using System.Linq;
@@ -8,7 +9,7 @@ namespace OJS.Services.Ui.Data.Implementations
 
     public class ProblemGroupsDataService : DataService<ProblemGroup>, IProblemGroupsDataService
     {
-        public ProblemGroupsDataService(DbContext db)
+        public ProblemGroupsDataService(OjsDbContext db)
             : base(db)
         {
         }
@@ -22,10 +23,10 @@ namespace OJS.Services.Ui.Data.Implementations
             this.GetAll()
                 .Where(pg => pg.Id == id);
 
-        public IQueryable<ProblemGroup> GetAll() => this.DbSet;
+        public IQueryable<ProblemGroup> GetAll() => this.GetQuery();
 
         public IQueryable<ProblemGroup> GetAllWithDeleted() =>
-            this.DbSet.IgnoreQueryFilters();
+            this.GetQuery().IgnoreQueryFilters();
 
         public IQueryable<ProblemGroup> GetAllByContest(int contestId) =>
             this.GetAll()

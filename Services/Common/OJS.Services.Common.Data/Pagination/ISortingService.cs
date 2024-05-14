@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Common.Data.Pagination;
 
-using SoftUni.Data.Infrastructure.Models;
-using SoftUni.Services.Infrastructure;
+using OJS.Data.Models.Common;
+using OJS.Services.Infrastructure;
 using System.Linq;
 
 public interface ISortingService : IService

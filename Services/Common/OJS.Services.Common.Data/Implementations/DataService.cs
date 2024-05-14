@@ -3,9 +3,10 @@ namespace OJS.Services.Common.Data.Implementations
     using Microsoft.EntityFrameworkCore;
     using OJS.Common.Extensions;
     using OJS.Common.Utils;
+    using OJS.Data;
     using OJS.Services.Common.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
-    using SoftUni.Data.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Extensions;
+    using OJS.Data.Models.Common;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -15,13 +16,15 @@ namespace OJS.Services.Common.Data.Implementations
     public class DataService<TEntity> : IDataService<TEntity>
         where TEntity : class, IEntity
     {
-        private readonly DbContext db;
+        private readonly OjsDbContext db;
 
-        public DataService(DbContext db)
-            => this.db = db;
+        public DataService(OjsDbContext db)
+        {
+            this.db = db;
+            this.IgnoreQueryFilters = false;
+        }
 
-        protected DbSet<TEntity> DbSet
-            => this.db.Set<TEntity>();
+        protected bool IgnoreQueryFilters { get; init; }
 
         public virtual async Task Add(TEntity entity)
             => await this.db.AddAsync(entity);
@@ -40,17 +43,12 @@ namespace OJS.Services.Common.Data.Implementations
 
         public virtual async Task DeleteById(object id)
         {
-            var entity = await this.DbSet.FindAsync(id);
+            var entity = await this.OneById(id);
             this.Delete(entity!);
         }
 
         public void Detach(TEntity entity)
             => this.db.Entry(entity).State = EntityState.Detached;
-
-        public async Task<int> GetCount()
-            => await this.DbSet.AnyAsync()
-                ? await this.DbSet.CountAsync()
-                : 0;
 
         public virtual void DeleteMany(IEnumerable<TEntity> entities)
             => this.db.RemoveRange(entities);
@@ -77,7 +75,8 @@ namespace OJS.Services.Common.Data.Implementations
                 .ToListAsync();
 
         public virtual async Task<TEntity?> OneById(object id)
-            => await this.DbSet.FindAsync(id);
+            => await this.GetByIdQuery(id)
+                .FirstOrDefaultAsync();
 
         public virtual async Task<TResult?> OneByIdTo<TResult>(object id)
            where TResult : class
@@ -117,7 +116,7 @@ namespace OJS.Services.Common.Data.Implementations
         public virtual IQueryable<TEntity> GetByIdQuery(object id)
         {
             var filter = ExpressionBuilder.BuildEqualsFilter<TEntity>(id, nameof(IEntity<object>.Id));
-            return this.DbSet.Where(filter);
+            return this.GetQuery(filter);
         }
 
         public virtual IQueryable<TEntity> GetQuery(
@@ -127,7 +126,12 @@ namespace OJS.Services.Common.Data.Implementations
             int? skip = null,
             int? take = null)
         {
-            var query = this.DbSet.AsQueryable();
+            var query = this.db.Set<TEntity>().AsQueryable();
+
+            if (this.IgnoreQueryFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
 
             if (filter != null)
             {

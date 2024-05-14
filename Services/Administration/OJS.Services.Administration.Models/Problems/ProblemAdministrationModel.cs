@@ -1,15 +1,14 @@
 ﻿namespace OJS.Services.Administration.Models.Problems;
 
-using SoftUni.AutoMapper.Infrastructure.Models;
 using AutoMapper;
-using System.Collections.Generic;
-using OJS.Data.Models.Problems;
-using OJS.Common.Enumerations;
-using System;
-using OJS.Common.Extensions;
 using Microsoft.AspNetCore.Http;
+using OJS.Common.Enumerations;
+using OJS.Data.Models.Problems;
+using OJS.Services.Common.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
+using System;
+using System.Collections.Generic;
 
-using System.IO;
 public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExplicitly
 {
     public string? Name { get; set; }
@@ -26,10 +25,13 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public int CheckerId { get; set; }
 
-    public string? ProblemGroupId { get; set; }
+    public int ProblemGroupId { get; set; }
 
     public int ContestId { get; set; }
 
+    public ContestType ContestType { get; set; }
+
+    public double ProblemGroupOrderBy { get; set; }
     public int MemoryLimit { get; set; }
 
     public int TimeLimit { get; set; }
@@ -38,11 +40,7 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public ICollection<ProblemSubmissionType> SubmissionTypes { get; set; } = new List<ProblemSubmissionType>();
 
-    public IFormFile? AdditionalFiles { get; set; }
-
     public IFormFile? Tests { get; set; }
-
-    public bool HasAdditionalFiles { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
     {
@@ -51,14 +49,16 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                 => opt.MapFrom(p => p.ProblemGroup.ContestId))
             .ForMember(pam => pam.SubmissionTypes, opt
                 => opt.MapFrom(p => p.SubmissionTypesInProblems))
-             .ForMember(pam => pam.AdditionalFiles, opt
-                => opt.Ignore())
+             .ForMember(p => p.OperationType, opt
+                 => opt.Ignore())
              .ForMember(pam => pam.Tests, opt
                  => opt.Ignore())
             .ForMember(pam => pam.ProblemGroupType, opt
                 => opt.MapFrom(p => Enum.GetName(typeof(ProblemGroupType), p.ProblemGroup.Type ?? OJS.Common.Enumerations.ProblemGroupType.None)))
-             .ForMember(pam => pam.HasAdditionalFiles, opt
-                 => opt.MapFrom(p => p.AdditionalFiles != null));
+             .ForMember(pam => pam.ProblemGroupOrderBy, opt
+                 => opt.MapFrom(p => p.ProblemGroup.OrderBy))
+             .ForMember(pam => pam.ContestType, opt
+             => opt.MapFrom(p => p.ProblemGroup.Contest.Type));
 
          configuration.CreateMap<ProblemAdministrationModel, Problem>()
              .ForMember(pam => pam.SubmissionTypesInProblems, opt
@@ -69,17 +69,13 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
                  => opt.Ignore())
              .ForMember(pam => pam.SolutionSkeleton, opt
                  => opt.Ignore())
-             .ForMember(pam => pam.AdditionalFiles, opt
-                 => opt.MapFrom(pam => pam.AdditionalFiles == null
-                     ? null
-                     : pam.AdditionalFiles.GetBytes()))
+             .ForMember(p => p.AdditionalFiles, opt
+                 => opt.Ignore())
              .ForMember(p => p.Tests, opt
                  => opt.Ignore())
              .ForMember(pam => pam.Resources, opt
                  => opt.Ignore())
              .ForMember(pam => pam.Submissions, opt
-                 => opt.Ignore())
-             .ForMember(pam => pam.TagsInProblems, opt
                  => opt.Ignore())
              .ForMember(pam => pam.ParticipantScores, opt
                  => opt.Ignore())
@@ -92,6 +88,8 @@ public class ProblemAdministrationModel : BaseAdministrationModel<int>, IMapExpl
              .ForMember(pam => pam.CreatedOn, opt
                  => opt.Ignore())
              .ForMember(pam => pam.ModifiedOn, opt
-                 => opt.Ignore());
+                 => opt.Ignore())
+             .ForMember(pam => pam.AdditionalFiles, opt
+             => opt.Ignore());
     }
 }

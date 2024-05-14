@@ -1,7 +1,6 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies
 {
-    using FluentExtensions.Extensions;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -9,6 +8,7 @@ namespace OJS.Workers.ExecutionStrategies
     using System.Text.RegularExpressions;
     using Ionic.Zip;
     using OJS.Workers.Common;
+    using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -191,12 +191,18 @@ try:
 
     # need to get container by name from docker again, so we can get info about the dynamically assigned port
     current_container = executor.get_container_by_name(name)
-    first_element = list(current_container.ports)[0]
-
-    # get container host port
-    host_port = current_container.ports[first_element][0]['HostPort']
-
-    print(f'Container port: {{host_port}};Container name: {{name}};')
+    if current_container.ports and list(current_container.ports):
+        first_element = list(current_container.ports)[0]
+        if current_container.ports[first_element]:
+            # get container host port
+            host_port = current_container.ports[first_element][0]['HostPort']
+            print(f'Container port: {{host_port}};Container name: {{name}};')
+        else:
+            print(""No ports assigned to the container."")
+            print(""Container logs:"", current_container.logs().decode('utf-8'))
+    else:
+        print(""No port information available."")
+        print(""Container logs:"", current_container.logs().decode('utf-8'))
 except Exception as e:
     print(e)
     executor.stop()
@@ -278,16 +284,18 @@ finally:
             IExecutionContext<TestsInputModel> executionContext,
             IExecutionResult<TestResult> result)
         {
-            result.Results.AddRange(
-                (await executionContext.Input.Tests
-                    .SelectSequential(
-                        async test => await this.RunIndividualTest(
-                            codeSavePath,
-                            executor,
-                            executionContext,
-                            test,
-                            test.Id == executionContext.Input.Tests.Last().Id)))
-                    .SelectMany(resultList => resultList));
+            foreach (var test in executionContext.Input.Tests)
+            {
+                var testResult = await this.RunIndividualTest(
+                    codeSavePath,
+                    executor,
+                    executionContext,
+                    test,
+                    test.Id == executionContext.Input.Tests.Last().Id);
+
+                result.Results.AddRange(testResult);
+            }
+
             return result;
         }
 
@@ -426,7 +434,10 @@ finally:
         }
 
         private void SaveNginxFile()
-            => FileHelpers.SaveStringToFile(NginxFileContent, this.NginxConfFileFullPath);
+        {
+            var nginxCorrectedContent = NginxFileContent.Replace("{{", "{").Replace("}}", "}");
+            FileHelpers.SaveStringToFile(nginxCorrectedContent, this.NginxConfFileFullPath);
+        }
 
         private void SaveTestsToFiles(IEnumerable<TestContext> tests)
         {

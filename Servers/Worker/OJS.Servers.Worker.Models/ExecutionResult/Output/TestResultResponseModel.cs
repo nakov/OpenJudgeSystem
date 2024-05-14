@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionResult.Output;
 
 using AutoMapper;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Services.Common.Models.Submissions;
 
 public class TestResultResponseModel : IMapExplicitly

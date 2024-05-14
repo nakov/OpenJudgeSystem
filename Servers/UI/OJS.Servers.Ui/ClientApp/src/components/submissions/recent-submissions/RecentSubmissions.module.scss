@@ -1,0 +1,10 @@
+@use 'src/styles/colors';
+@use 'src/styles/spacings';
+
+.recentSubmissionsWrapper {
+  margin-top: spacings.$sp-32;
+}
+
+.recentSubmissionsGrid {
+  margin-top: spacings.$sp-18;
+}

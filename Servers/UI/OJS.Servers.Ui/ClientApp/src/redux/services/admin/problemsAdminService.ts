@@ -1,8 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-import { IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration } from '../../../common/types';
+import { IFileModel, IGetAllAdminParams, IIndexProblemsType, IPagedResultType, IProblemAdministration, IProblemResouceInLinstModel, ITestsDropdownData } from '../../../common/types';
 import { IGetByContestId, IProblemUrlById } from '../../../common/url-types';
-import { CREATE_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls';
+import { CREATE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
 
 export const problemsAdminService = createApi({
@@ -21,15 +21,22 @@ export const problemsAdminService = createApi({
             }),
             keepUnusedDataFor: 10,
         }),
-        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({ query: ({ id }) => ({ url: `/Get/${id}` }) }),
+
+        getProblemById: builder.query<IProblemAdministration, IProblemUrlById>({
+            query: ({ id }) => ({ url: `/Get/${id}` }),
+            keepUnusedDataFor: 0,
+        }),
+
         deleteProblem: builder.mutation<string, number>({ query: (id) => ({ url: `/Delete/${id}`, method: 'DELETE' }) }),
+
         updateProblem: builder.mutation({
-            query: (problem) => ({
+            query: (problem: FormData) => ({
                 url: `/${UPDATE_ENDPOINT}`,
                 method: 'PATCH',
                 body: problem,
             }),
         }),
+
         createProblem: builder.mutation({
             query: (problem: FormData) => ({
                 url: `/${CREATE_ENDPOINT}`,
@@ -37,6 +44,7 @@ export const problemsAdminService = createApi({
                 body: problem,
             }),
         }),
+
         getContestProblems: builder.query<IPagedResultType<IIndexProblemsType>, IGetByContestId>({
             query: ({ contestId, filter, page, itemsPerPage, sorting }) => ({
                 url: `/GetByContestId/${contestId}`,
@@ -48,6 +56,7 @@ export const problemsAdminService = createApi({
                 },
             }),
         }),
+
         retestById: builder.mutation({
             query: (problem) => ({
                 url: '/Retest',
@@ -55,22 +64,51 @@ export const problemsAdminService = createApi({
                 body: problem,
             }),
         }),
+
         deleteByContest: builder.mutation({
             query: (contestId) => ({
-                url: `/Delete/${contestId}`,
+                url: `/DeleteAll/${contestId}`,
                 method: 'DELETE',
             }),
         }),
+
         copyAll: builder.mutation<string, { sourceContestId: number; destinationContestId: number }>({
             query: ({ sourceContestId, destinationContestId }) => ({
-                url: 'copyAll',
+                url: 'CopyAll',
                 method: 'POST',
                 body: { sourceContestId, destinationContestId },
             }),
         }),
-        downloadAdditionalFiles: builder.query<{ blob: Blob; filename: string }, number>({
-            query: (problemId) => ({ url: `DownloadAdditionalFiles/${problemId}` }),
+
+        copy: builder.mutation<string, {destinationContestId:number; problemId: number; problemGroupId: number | undefined} >({
+            query: ({ destinationContestId, problemId, problemGroupId }) => ({
+                url: 'Copy',
+                method: 'POST',
+                body: { destinationContestId, problemId, problemGroupId },
+            }),
+        }),
+
+        getResources: builder.query<IPagedResultType<IProblemResouceInLinstModel>, number>({
+            query: (problemId) => ({ url: `GetResources/${problemId}` }),
             keepUnusedDataFor: 5,
+        }),
+
+        getAllByName: builder.query<Array<ITestsDropdownData>, string>({
+            query: (queryString) => ({ url: `/GetAllByName?searchString=${encodeURIComponent(queryString)}` }),
+            keepUnusedDataFor: 10,
+        }),
+
+        exportProblemsToExcel: builder.query<IFileModel, IGetAllAdminParams>({
+            query: ({ filter, page, itemsPerPage, sorting }) => ({
+                url: `/${EXCEL_RESULTS_ENDPOINT}`,
+                params: {
+                    filter,
+                    page,
+                    itemsPerPage,
+                    sorting,
+                },
+            }),
+            keepUnusedDataFor: 0,
         }),
     }),
 });
@@ -85,7 +123,10 @@ export const {
     useDeleteByContestMutation,
     useCopyAllMutation,
     useCreateProblemMutation,
-    useDownloadAdditionalFilesQuery,
+    useCopyMutation,
+    useGetResourcesQuery,
+    useGetAllByNameQuery,
+    useLazyExportProblemsToExcelQuery,
 
 } = problemsAdminService;
 export default problemsAdminService;

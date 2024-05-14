@@ -8,6 +8,9 @@ namespace OJS.Common.Extensions
         public static string? GetId(this ClaimsPrincipal? principal)
             => principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        public static string? GetUsername(this ClaimsPrincipal? principal)
+            => principal?.FindFirstValue(ClaimTypes.Name);
+
         public static bool IsAuthenticated(this IPrincipal principal)
             => principal.Identity?.IsAuthenticated ?? false;
 

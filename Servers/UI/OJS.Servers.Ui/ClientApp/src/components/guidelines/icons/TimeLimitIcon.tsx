@@ -15,7 +15,7 @@ const TimeLimitIcon = ({
     helperText = '',
 }: IInProgressIconProps) => (
     <Icon
-      className={concatClassNames(styles.timeLimitIcon, className)}
+      className={concatClassNames(styles.icon, className)}
       Component={BiTime}
       size={size}
       helperText={helperText}

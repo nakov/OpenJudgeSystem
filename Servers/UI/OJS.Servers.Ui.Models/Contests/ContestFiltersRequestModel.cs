@@ -3,7 +3,7 @@ namespace OJS.Servers.Ui.Models.Contests;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Services.Ui.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +26,8 @@ public class ContestFiltersRequestModel : IMapExplicitly
 
     public string SortType { get; set; } = null!;
 
+    public string? SortTypeDirection { get; set; } = null!;
+
     public void RegisterMappings(IProfileExpression configuration)
         => configuration
             .CreateMap<ContestFiltersRequestModel, ContestFiltersServiceModel>()
@@ -38,5 +40,9 @@ public class ContestFiltersRequestModel : IMapExplicitly
             .ForMember(
                 m => m.SortType,
                 opt => opt.MapFrom(
-                    src => Enum.Parse<ContestSortType>(src.SortType)));
+                    src => Enum.Parse<ContestSortType>(src.SortType)))
+            .ForMember(
+                m => m.SortTypeDirection,
+                opt => opt.MapFrom(
+                    src => Enum.Parse<ContestSortTypeDirection>(src.SortTypeDirection!)));
 }

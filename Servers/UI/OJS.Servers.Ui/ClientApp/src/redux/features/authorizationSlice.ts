@@ -10,7 +10,7 @@ export interface IAuthorizationReduxState {
     internalUser: IUserType;
     defaultLoginErrorMessage: string;
     isLoggedIn: boolean;
-
+    isGetUserInfoCompleted: boolean;
 }
 
 const initialState: IAuthorizationReduxState = {
@@ -22,10 +22,10 @@ const initialState: IAuthorizationReduxState = {
         isInRole: false,
         isAdmin: false,
         canAccessAdministration: false,
-    },
+    } as IUserType,
     defaultLoginErrorMessage: 'Invalid username or password',
     isLoggedIn: false,
-
+    isGetUserInfoCompleted: false,
 };
 
 export const authorizationSlice = createSlice({
@@ -34,6 +34,9 @@ export const authorizationSlice = createSlice({
     reducers: {
         setInternalUser: (state, action) => {
             state.internalUser = action.payload;
+        },
+        setIsGetUserInfoCompleted: (state, action) => {
+            state.isGetUserInfoCompleted = action.payload;
         },
         setIsLoggedIn: (state, action: PayloadAction<boolean>) => {
             state.isLoggedIn = action.payload;
@@ -47,7 +50,12 @@ export const authorizationSlice = createSlice({
     },
 });
 
-export const { setInternalUser, setIsLoggedIn, resetInInternalUser } = authorizationSlice.actions;
+export const {
+    setInternalUser,
+    setIsLoggedIn,
+    setIsGetUserInfoCompleted,
+    resetInInternalUser,
+} = authorizationSlice.actions;
 
 export const authorizationSliceName = authorizationSlice.name;
 

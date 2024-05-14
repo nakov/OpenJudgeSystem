@@ -24,7 +24,7 @@ import {
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsUrlParams,
     IGetUserSubmissionsForProfileByContestUrlParams,
-    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
     IRetestSubmissionUrlParams,
     IStartContestParticipationUrlParams,
     ISubmitContestPasswordUrlParams,
@@ -88,7 +88,7 @@ ${administrationBaseUrl}/Problems/Delete?PK=${id}`;
 
 const getUserProfileInfoUrlByUsername = (username: string) => `/profile/${username}`;
 const getProfileInfoUrl = ({ username } : IUserInfoUrlParams) => `${baseApiUrl}/Users/GetProfileInfo?username=${username}`;
-const getSubmissionsForProfileUrl = ({ username, page } : IGetUserSubmissionsForProfileUrlParams) => {
+const getSubmissionsForProfileUrl = ({ username, page } : IGetUserSubmissionsUrlParams) => {
     const usernameQuery = `username=${username}`;
     const pageQuery = `page=${page}`;
 
@@ -244,8 +244,8 @@ const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchRes
 
 // Username url utils for decoding/encoding usernames containing '.'
 
-const encodeUsernameAsUrlParam = (username: string) => username.replace(/\./g, '~');
-const decodeUsernameFromUrlParam = (username: string) => username.replace(/~/g, '.');
+const encodeAsUrlParam = (username: string) => username.replace(/\./g, '~');
+const decodeFromUrlParam = (username: string) => username.replace(/~/g, '.');
 
 export {
     getLoginSubmitUrl,
@@ -305,6 +305,6 @@ export {
     getAdministrationTestEditUrl,
     getAdministrationTestEditInternalUrl,
     getSubmissionsUrl,
-    encodeUsernameAsUrlParam,
-    decodeUsernameFromUrlParam,
+    encodeAsUrlParam,
+    decodeFromUrlParam,
 };

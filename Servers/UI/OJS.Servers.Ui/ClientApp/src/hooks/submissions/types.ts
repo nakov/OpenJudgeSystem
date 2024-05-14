@@ -1,5 +1,4 @@
-import { ISubmissionTypeType } from '../../common/types';
-import { IUserProfileType } from '../use-users';
+import { ISubmissionTypeType, IUserProfileType } from '../../common/types';
 
 interface IProblemType {
     id: number;
@@ -19,6 +18,10 @@ interface ITestRunType {
     expectedOutputFragment: string;
     userOutputFragment: string;
     orderBy: number;
+    input: string;
+    isTrialTest: boolean;
+    showInput: boolean;
+    testId: number;
 }
 
 interface ISubmissionType {
@@ -42,6 +45,9 @@ interface ISubmissionType {
     processingComment: string;
     completedExecutionOn?: Date;
     contestId:number;
+    memoryLimit: number;
+    user: IUserProfileType;
+    isEligibleForRetest: boolean;
 }
 
 interface ITestRunDetailsType extends ITestRunType {
@@ -57,6 +63,31 @@ interface ISubmissionDetailsType extends ISubmissionType {
     userIsInRoleForContest: boolean;
     isEligibleForRetest: boolean;
     totalTests : number;
+}
+
+interface ISubmissionDetailsResponseType {
+    id: number;
+    problem: IProblemType;
+    points: number;
+    content: string;
+    testRuns: ITestRunType[];
+    user: IUserProfileType;
+    userIsInRoleForContest: boolean;
+    submissionType: ISubmissionTypeType;
+    maxUsedTime: number;
+    maxUsedMemory: number;
+    isOfficial: boolean;
+    isCompiledSuccessfully: boolean;
+    isEligibleForRetest: boolean;
+    compilerComment: string | null;
+    isProcessed: boolean;
+    createdOn: Date;
+    modifiedOn: Date;
+    startedExecutionOn: Date;
+    completedExecutionOn: Date;
+    processingComment: string | null;
+    totalTests: number;
+    contestId: number;
 }
 
 interface ISubmissionResults {
@@ -117,6 +148,23 @@ interface IUserAuthData {
     userName: string;
 }
 
+interface ITestRun {
+    id: number;
+    timeUsed: number;
+    memoryUsed: number;
+    submissionId: number;
+    executionComment: string;
+    checkerComment: string;
+    resultType: string;
+    expectedOutputFragment: string;
+    userOutputFragment: string;
+    isTrialTest: boolean;
+    input: string;
+    orderBy: number;
+    showInput: boolean;
+    testId: number;
+}
+
 export type {
     IProblemType,
     ITestRunType,
@@ -126,7 +174,9 @@ export type {
     ISubmissionResults,
     ITestRunDetailsCollapsed,
     ISubmissionResultsDetails,
+    ISubmissionDetailsResponseType,
     IUserAuthData,
     ITestCaseRun,
     IUserRole,
+    ITestRun,
 };

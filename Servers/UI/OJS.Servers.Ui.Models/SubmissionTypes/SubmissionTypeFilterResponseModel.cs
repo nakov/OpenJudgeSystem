@@ -1,7 +1,7 @@
 namespace OJS.Servers.Ui.Models.SubmissionTypes;
 
 using OJS.Services.Ui.Models.SubmissionTypes;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class SubmissionTypeFilterResponseModel : IMapFrom<SubmissionTypeFilterServiceModel>
 {

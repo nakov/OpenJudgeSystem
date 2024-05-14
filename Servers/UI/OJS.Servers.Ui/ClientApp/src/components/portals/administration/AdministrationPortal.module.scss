@@ -1,15 +1,6 @@
 @use 'src/styles/colors';
 
-.adminHeaderWrapper {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  width: 100%;
-}
-
 .adminHeaderLink {
-  color: colors.$white-color;
   font-family: Roboto, Helvetica, Arial, sans-serif;
   text-decoration: none;
   text-transform: uppercase;
@@ -22,16 +13,11 @@
 }
 
 .activeAdminNavLink {
-  color: #42abf8 !important;
-}
-
-.locationTitle {
-  font-family: montserrat, sans-serif;
-  font-size: 20px;
+  color: #2196f3 !important;
 }
 
 .arrowCommon {
-  background-color: colors.$white-color !important;
+  // background-color: colors.$white-color !important;
   box-shadow: 6px 0 7px -4px rgb(22 0 0 / 75%);
   height: 35px;
   margin: 0;
@@ -52,14 +38,44 @@
 }
 
 .selectedSection {
-  background-color: #2196F3 !important;
-  color: white !important;
+  background-color: #2196f3 !important;
+  color: colors.$white-color !important;
 }
 
-.appBar {
-  background-color: #2196F3 !important;
+.list {
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .listItemIcon {
   color: inherit !important;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.1rem;
+  max-width: 100%;
+  min-height: 90vh;
+  padding: 1rem;
+}
+
+.drawerHeader {
+  align-items: flex-start;
+  color: inherit !important;
+  display: 'flex';
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.profileIcon {
+  color: #2196f3 !important;
+  height: 3rem;
+  width: 3rem;
+}
+
+.userName {
+  font-size: 14px;
 }

@@ -4,7 +4,7 @@
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Problems;
     using OJS.Services.Ui.Models.SubmissionTypes;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -93,6 +93,9 @@
                 .ForMember(
                     d => d.OrderBy,
                     opt => opt.MapFrom(s => (int)s.OrderBy))
+                .ForMember(
+                    d => d.Resources,
+                    opt => opt.MapFrom(s => s.Resources.OrderBy(x => x.OrderBy)))
                 .ForMember(
                     d => d.TimeLimit,
                     opt => opt.MapFrom(s => (double)s.TimeLimit));

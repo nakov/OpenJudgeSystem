@@ -1,0 +1,77 @@
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/colors';
+@use 'src/styles/shadows';
+@use 'src/styles/font-weights';
+
+.problemsHeader {
+  align-items: center;
+  display: flex;
+  font-size: variables.$f-size-18;
+  justify-content: space-between;
+  padding: spacings.$sp-16 spacings.$sp-32;
+}
+
+.problemsWrapper {
+  font-size: variables.$f-size-18;
+  height: 582px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: all 0.5s ease-in-out;
+  width: 397px;
+
+  .problemsInnerWrapper {
+    padding: 0 spacings.$sp-24;
+  }
+
+  .problem {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    line-height: 1.2;
+    padding: spacings.$sp-18;
+    transition: all 0.1s ease-in-out;
+
+    > div {
+      &:nth-child(2) {
+        margin-left: spacings.$sp-24;
+      }
+    }
+  }
+
+  .activeProblem {
+    color: colors.$primary-blue !important;
+    font-weight: font-weights.$font-weight-bold;
+  }
+}
+
+.problemsInfoSection {
+  align-items: center;
+  box-shadow: shadows.$dp-shadow-4;
+  display: flex;
+  font-weight: font-weights.$font-weight-semi-bold;
+  justify-content: space-between;
+  padding: spacings.$sp-12 spacings.$sp-24;
+  width: 350px;
+
+  .participantsInfo {
+    color: colors.$primary-blue;
+  }
+
+  .pointsInfo {
+    color: colors.$primary-green;
+  }
+}
+
+.excludedMark {
+  color: colors.$warning-color;
+  margin-left: spacings.$sp-8;
+}
+
+.excludedFromHomeworkModal {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-8 spacings.$sp-18;
+}

@@ -1,0 +1,20 @@
+@use 'src/styles/spacings';
+@use 'src/styles/variables';
+@use 'src/styles/fonts';
+
+.submissionsAndParticipationsToggle {
+  display: flex;
+  flex-direction: row;
+  gap: spacings.$sp-24;
+  margin-bottom: spacings.$sp-24;
+
+  .toggleBtn {
+    border-radius: 4px;
+    font-size: variables.$f-size-18;
+    width: 300px;
+  }
+}
+
+.errorText {
+  @extend %font-family-normal;
+}

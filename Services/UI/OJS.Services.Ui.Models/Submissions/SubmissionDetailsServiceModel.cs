@@ -7,7 +7,7 @@
     using OJS.Data.Models.Submissions;
     using OJS.Data.Models.Tests;
     using OJS.Services.Ui.Models.Users;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
 
     public class SubmissionDetailsServiceModel : IMapExplicitly
     {
@@ -40,7 +40,7 @@
 
         public bool UserIsInRoleForContest { get; set; }
 
-        public string CompilerComment { get; set; } = null!;
+        public string? CompilerComment { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
@@ -54,17 +54,18 @@
 
         public string? ProcessingComment { get; set; }
 
-        public int TotalTests { get; set; }
+        public int TotalTests => this.Tests.Count();
 
         public DateTime? CompletedExecutionOn { get; set; }
 
         public int ContestId { get; set; }
+
         public IEnumerable<Test> Tests { get; set; } =
             Enumerable.Empty<Test>();
 
         public void RegisterMappings(IProfileExpression configuration)
             => configuration.CreateMap<Submission, SubmissionDetailsServiceModel>()
-                .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant!.User))
+                .ForMember(s => s.User, opt => opt.MapFrom(s => s.Participant.User))
                 .ForMember(d => d.MaxUsedMemory, opt => opt.MapFrom(source =>
                     source.TestRuns.Any()
                         ? source.TestRuns.Max(tr => tr.MemoryUsed)
@@ -77,23 +78,12 @@
                     s.IsBinaryFile
                         ? null
                         : s.ContentAsString))
-                .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s =>
-                    s.Participant!.IsOfficial))
-                .ForMember(d => d.ByteContent, opt => opt.MapFrom(s =>
-                    s.Content))
+                .ForMember(d => d.IsOfficial, opt => opt.MapFrom(s => s.Participant.IsOfficial))
+                .ForMember(d => d.ByteContent, opt => opt.MapFrom(s => s.Content))
                 .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
-                .ForMember(d => d.TotalTests, opt => opt.MapFrom(s =>
-                    s.Problem != null
-                        ? s.Problem.Tests.Count
-                        : 0))
-                .ForMember(d => d.Tests, opt => opt.MapFrom(s =>
-                    s.Problem != null
-                        ? s.Problem.Tests.ToList()
-                        : new List<Test>()))
-                .ForMember(d => d.ContestId, opt => opt.MapFrom(s =>
-                    s.Problem != null
-                        ? s.Problem.ProblemGroup.ContestId
-                        : 0))
+                .ForMember(d => d.Tests, opt => opt.MapFrom(s => s.Problem.Tests))
+                .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.ContestId))
+                .ForMember(d => d.TotalTests, opt => opt.Ignore())
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
                 .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore());
     }

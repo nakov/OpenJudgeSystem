@@ -1,6 +1,6 @@
 namespace OJS.Services.Ui.Business
 {
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

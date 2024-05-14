@@ -2,8 +2,9 @@ namespace OJS.Data.Models
 {
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
+    using OJS.Data.Models.Common;
 
-    public class UserInExamGroup
+    public class UserInExamGroup : IEntity
     {
         public string UserId { get; set; } = string.Empty;
 

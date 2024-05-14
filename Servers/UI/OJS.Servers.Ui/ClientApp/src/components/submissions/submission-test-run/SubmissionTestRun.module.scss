@@ -1,0 +1,73 @@
+@use 'src/styles/fonts';
+@use 'src/styles/spacings';
+@use 'src/styles/colors';
+@use 'src/styles/variables';
+
+.testRunWrapper {
+  margin: spacings.$sp-18 0;
+  padding: spacings.$sp-12 spacings.$sp-24;
+
+  .testRunTitleWrapper {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+
+    .testNameButtonWrapper {
+      align-items: center;
+      display: flex;
+    }
+
+    button {
+      margin-left: spacings.$sp-32;
+    }
+
+    .testDetailsAndMemoryWrapper {
+      align-items: center;
+      display: flex;
+      gap: spacings.$sp-12;
+
+      .testRunIdWrapper {
+        color: colors.$secondary-green;
+        cursor: pointer;
+        font-size: variables.$f-size-14;
+        margin-left: spacings.$sp-12;
+        text-decoration: underline;
+      }
+
+      .timeAndMemoryWrapper {
+        display: flex;
+        width: 300px;
+
+        span {
+          align-items: center;
+          cursor: pointer;
+          display: flex;
+
+          span {
+            align-items: center;
+            display: flex;
+          }
+        }
+
+        svg:first-child {
+          margin: 0 spacings.$sp-8;
+        }
+      }
+    }
+  }
+
+  .outputWrapper {
+    margin-top: spacings.$sp-12;
+  }
+}
+
+.timeAndMemoryModal {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-8;
+}
+
+.runtimeExecutionComment {
+  color: colors.$primary-red;
+  margin-top: spacings.$sp-12;
+}

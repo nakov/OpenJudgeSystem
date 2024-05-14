@@ -2,8 +2,9 @@ namespace OJS.Servers.Infrastructure.Extensions;
 
 using Microsoft.Extensions.Hosting;
 using OJS.Common.Extensions;
-using OJS.Services.Common.Models.Configurations;
+using OJS.Services.Infrastructure.Configurations;
 using Serilog;
+using Serilog.Events;
 using System.IO;
 
 public static class HostBuilderExtensions
@@ -15,7 +16,9 @@ public static class HostBuilderExtensions
                 .GetSectionValueWithValidation<ApplicationConfig, string>(
                     nameof(ApplicationConfig.LoggerFilesFolderPath));
 
-            var filePath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName(), "log.txt");
+            var projectLogsDirectoryPath = Path.Combine(loggerFilePath, typeof(TStartup).GetProjectName());
+            var filePath = Path.Combine(projectLogsDirectoryPath, "log.txt");
+            var errorFilePath = Path.Combine(projectLogsDirectoryPath, "error.txt");
 
             configuration
                 .ReadFrom
@@ -29,6 +32,14 @@ public static class HostBuilderExtensions
                     filePath,
                     rollingInterval: RollingInterval.Day,
                     rollOnFileSizeLimit: true,
-                    retainedFileCountLimit: null);
+                    retainedFileCountLimit: null)
+                .WriteTo
+                .Logger(l => l.Filter.ByIncludingOnly(e => e.Level is LogEventLevel.Error or LogEventLevel.Fatal)
+                    .WriteTo
+                    .File(
+                        errorFilePath,
+                        rollingInterval: RollingInterval.Day,
+                        rollOnFileSizeLimit: true,
+                        retainedFileCountLimit: null));
         });
 }

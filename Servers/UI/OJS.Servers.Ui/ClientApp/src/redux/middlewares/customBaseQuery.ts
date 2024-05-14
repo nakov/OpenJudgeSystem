@@ -1,7 +1,7 @@
 import { BaseQueryApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 import { defaultPathIdentifier } from '../../common/constants';
-import { SOMETHING_WENT_WRONG_MESSAGE, UNEXPECTED_ERROR_MESSAGE } from '../../common/messages';
+import { SOMETHING_WENT_WRONG_MESSAGE, UNAUTHORIZED_MESSAGE, UNEXPECTED_ERROR_MESSAGE } from '../../common/messages';
 import { ExceptionData } from '../../common/types';
 
 type ExtraOptionsType = object
@@ -11,14 +11,18 @@ type ResultError = {
 
 const errorStatusCodes = [ 400, 401, 403, 422, 500 ];
 const succesfullStatusCodes = [ 200, 204 ];
-const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
+const getCustomBaseQuery = (baseQueryName: string) => async (args: FetchArgs, api: BaseQueryApi, extraOptions:ExtraOptionsType) => {
     const baseQuery = fetchBaseQuery({
         credentials: 'include',
-        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/${baseUrl}`,
+        // TODO: Make this usable by UI
+        baseUrl: `${import.meta.env.VITE_ADMINISTRATION_URL}/${defaultPathIdentifier}/${baseQueryName}`,
         prepareHeaders: (headers) => headers,
         responseHandler: async (response: Response) => {
             const contentType = response.headers.get('Content-Type');
-            if (contentType?.includes('application/octet-stream')) {
+
+            if (contentType?.includes('application/octet-stream') ||
+            contentType?.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+            contentType?.includes('application/zip')) {
                 const contentDisposition = response.headers.get('Content-Disposition');
                 let filename = 'file.zip';
                 if (contentDisposition) {
@@ -28,6 +32,7 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
                     }
                 }
                 const blob = await response.blob();
+
                 return { blob, filename };
             }
 
@@ -53,7 +58,11 @@ const getCustomBaseQuery = (baseUrl:string) => async (args: FetchArgs, api: Base
                 }
             });
         } catch {
-            data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
+            if (Number(response.status) === 401 || Number(response.status) === 403) {
+                data = [ { message: UNAUTHORIZED_MESSAGE, name: '' } ] as Array<ExceptionData>;
+            } else {
+                data = [ { message: SOMETHING_WENT_WRONG_MESSAGE, name: '' } ] as Array<ExceptionData>;
+            }
         }
         return { error: data };
     }

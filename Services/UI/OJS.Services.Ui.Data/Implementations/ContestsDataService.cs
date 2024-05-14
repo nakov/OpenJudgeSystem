@@ -9,9 +9,9 @@ using OJS.Services.Common;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Extensions;
-using SoftUni.Common.Extensions;
-using SoftUni.Common.Models;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Common.Extensions;
+using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,16 +34,14 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     }
 
     public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
-        => await this.DbSet
+        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
-            .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
 
     public async Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId)
-        => await this.DbSet
-            .Where(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
+        => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == problemId)))
             .Include(c => c.Category)
             .MapCollection<TServiceModel>()
             .FirstOrDefaultAsync();
@@ -64,8 +62,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .ToListAsync();
 
     public IQueryable<Contest> GetAllNonDeletedContests()
-            => this.DbSet
-                .Where(c => c.IsVisible && !c.IsDeleted);
+        => this.GetQuery(c => c.IsVisible && !c.IsDeleted);
 
     public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
         ContestFiltersServiceModel model)
@@ -75,6 +72,33 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             : this.GetAllVisibleQuery()
                 .Include(c => c.Category);
 
+        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
+    }
+
+    public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSortingAndParticipants<TServiceModel>(
+        ContestFiltersServiceModel model,
+        string username)
+    {
+        var contests = model.CategoryIds.Any()
+            ? this.GetAllVisibleByCategories(model.CategoryIds)
+            : this.GetAllVisibleQuery()
+                .Include(c => c.Category);
+
+        return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
+    }
+
+    public IQueryable<Contest> GetLatestForParticipantByUsername(string username)
+        => this.GetQuery(c => c.Participants
+                .Any(p => p.User.UserName == username))
+            .OrderByDescending(c => c.Participants
+                .Where(p => p.User.UserName == username)
+                .Max(p => p.CreatedOn));
+
+    public async Task<PagedResult<TServiceModel>> ApplyFiltersSortAndPagination<TServiceModel>(
+        IQueryable<Contest> contests,
+        ContestFiltersServiceModel model)
+    {
+        // TODO: Remove filter by status (not used anumorE)
         contests = this.FilterByStatus(contests, model.Statuses.ToList());
         contests = Sort(contests, model.SortType, model.CategoryIds.Count());
 
@@ -84,29 +108,31 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .Where(ContainsSubmissionTypeIds(model.SubmissionTypeIds));
         }
 
-        return await contests
-            .MapCollection<TServiceModel>()
-            .ToPagedResultAsync(model.ItemsPerPage, model.PageNumber);
+        return await contests.Paginate<TServiceModel>(model.ItemsPerPage, model.PageNumber);
     }
 
     public Task<Contest?> GetByIdWithProblems(int id)
-        => this.DbSet
+        => this.GetByIdQuery(id)
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithCategoryAndProblemsAndSubmissionTypes(int id)
-        => this.DbSet
+        => this.GetByIdQuery(id)
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
             .ThenInclude(pg => pg.Problems)
                 .ThenInclude(p => p.SubmissionTypesInProblems)
                     .ThenInclude(stp => stp.SubmissionType)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Resources)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id)
-        => this.DbSet
+        => this.GetByIdQuery(id)
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
@@ -115,7 +141,11 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                  .ThenInclude(pg => pg.Problems)
                     .ThenInclude(p => p.SubmissionTypesInProblems)
                         .ThenInclude(sp => sp.SubmissionType)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+                    .ThenInclude(p => p.Checker)
+            .AsSplitQuery()
+            .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithParticipants(int id)
         => this.GetByIdQuery(id)
@@ -132,8 +162,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                      p.ParticipationEndTime >= DateTime.Now))));
 
     public IQueryable<Contest> GetAllInactive()
-        => this.DbSet
-            .Where(c =>
+        => this.GetQuery(c =>
                 c.StartTime > DateTime.Now ||
                 (c.EndTime < DateTime.Now && c.Type != ContestType.OnlinePracticalExam) ||
                 !c.Participants.Any(p => p.ParticipationEndTime < DateTime.Now));
@@ -149,8 +178,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
 
     public IQueryable<Contest> GetAllByLecturer(string lecturerId)
-        => this.DbSet
-            .Where(c =>
+        => this.GetQuery(c =>
                 c.LecturersInContests.Any(l => l.LecturerId == lecturerId) ||
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == lecturerId));
 
@@ -158,7 +186,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         => this.GetAllByLecturer(lecturerId)
             .Where(c => c.CategoryId == categoryId);
 
-    public IQueryable<Contest> GetAllWithDeleted() => this.DbSet.IgnoreQueryFilters();
+    public IQueryable<Contest> GetAllWithDeleted() => this.GetQuery().IgnoreQueryFilters();
 
     public Task<int> GetMaxPointsById(int id)
         => this.GetMaxPointsByIdAndProblemGroupsFilter(id, pg => true);
@@ -183,24 +211,22 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 c.Category!.LecturersInContestCategories.Any(l => l.LecturerId == userId));
 
     public Task<bool> IsUserParticipantInByContestAndUser(int id, string userId)
-        => this.DbSet
-            .AnyAsync(c =>
+        => this.Exists(c =>
                 c.Id == id &&
                 c.Participants.Any(p => p.UserId == userId));
 
     public Task<bool> IsUserInExamGroupByContestAndUser(int id, string userId)
-        => this.DbSet
-            .AnyAsync(c =>
+        => this.Exists(c =>
                 c.Id == id &&
                 c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
-    // After removing the sorting menu for the user, we are using OrderBy as default sorting value
-    //Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
     private static IQueryable<Contest> Sort(
         IQueryable<Contest> contests,
         ContestSortType? sorting,
         int categoriesCount)
     {
+        // After removing the sorting menu for the user, we are using OrderBy as default sorting value
+        // Logic for Name, StartDate and EndDate is not used anymore therefore it is commented out
         // if (sorting == ContestSortType.StartDate)
         // {
         //     return contests
@@ -226,7 +252,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         // }
 
         // By checking the number of categories we can determine if the contest is a parent or a child contest
-        //based on this we display the contests differently
+        // based on this we display the contests differently
         // 0 categories - main contest page displays the contest which have the LEAST time left
         // 1 category - child contest and we order the by the order by property of the category
         // > 1 categories - we first order them by the Contest.Category's OrderBy and then by the Contest's OrderBy
@@ -235,22 +261,17 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
         {
             switch (categoriesCount)
             {
+                // No category chosen - contests are ordered by most recent activity
                 case 0:
-                    return contests
-                        .OrderBy(c => c.EndTime.HasValue && c.EndTime.Value < DateTime.UtcNow ? 2 :
-                            c.EndTime.HasValue ? 1 : 3)
-                        .ThenBy(c => c.EndTime);
+                    return contests.OrderByActivity();
 
+                // Inner most category
                 case 1:
-                    return contests
-                            .OrderBy(c => c.OrderBy)
-                            .ThenByDescending(c => c.EndTime)
-                            .ThenByDescending(c => c.PracticeEndTime);
+                    return contests.OrderByOrderBy();
+
+                // Has child categories
                 default:
-                    return contests
-                        .OrderBy(c => c.Category == null ? int.MaxValue : c.Category.OrderBy)
-                        .ThenBy(c => c.OrderBy)
-                        .ThenByDescending(c => c.EndTime);
+                    return contests.OrderByCategoryAndContestOrderBy();
             }
         }
 
@@ -298,8 +319,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Concat(this.GetAllPracticableQuery());
 
     private IQueryable<Contest> GetAllVisibleQuery()
-        => this.DbSet
-            .Where(c => c.IsVisible);
+        => this.GetQuery(c => c.IsVisible);
 
     private Expression<Func<Contest, bool>> CanBeCompeted()
         => c => c.StartTime <= this.dates.GetUtcNow()

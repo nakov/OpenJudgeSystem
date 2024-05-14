@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business;
 
-using SoftUni.Data.Infrastructure.Models;
-using SoftUni.Services.Infrastructure;
+using OJS.Data.Models.Common;
+using OJS.Services.Infrastructure;
 using System.Threading.Tasks;
 
 public interface IAdministrationOperationService<TEntity, in TId, TUpdateModel> : IService

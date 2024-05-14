@@ -1,11 +1,13 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
+    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
     using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
+    using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.BackgroundJobs;
     using OJS.Services.Infrastructure.HttpClients;
     using OJS.Services.Ui.Data;
@@ -51,7 +53,8 @@ namespace OJS.Services.Ui.Business.Implementations
             if (externalUserIds.Any())
             {
                 this.backgroundJobs.AddFireAndForgetJob<IExamGroupsBusinessService>(
-                    x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds));
+                    x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds),
+                    ApplicationName.Ui.ToString().ToLower());
             }
         }
 
@@ -72,7 +75,8 @@ namespace OJS.Services.Ui.Business.Implementations
             if (externalUsernames.Any())
             {
                 this.backgroundJobs.AddFireAndForgetJob<IExamGroupsBusinessService>(
-                    x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames));
+                    x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames),
+                    ApplicationName.Ui.ToString().ToLower());
             }
         }
 

@@ -1,13 +1,15 @@
 ﻿namespace OJS.Services.Common.Models.Submissions.ExecutionContext
 {
-    using System;
     using AutoMapper;
     using OJS.Data.Models.Submissions;
+    using OJS.Services.Common.Models.Mappings;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
-    using SoftUni.AutoMapper.Infrastructure.Models;
+    using OJS.Services.Infrastructure.Models.Mapping;
+    using System;
+    using System.Linq;
 
     public class SubmissionServiceModel : IMapExplicitly
     {
@@ -80,12 +82,20 @@
                 .ForMember(
                     d => d.ExecutionType,
                     opt => opt.MapFrom(s => ExecutionType.TestsExecution))
-                .ForMember(
-                    d => d.TimeLimit,
-                    opt => opt.MapFrom(s => s.Problem!.TimeLimit))
-                .ForMember(
-                    d => d.MemoryLimit,
-                    opt => opt.MapFrom(s => s.Problem!.MemoryLimit))
+                .ForMember(dest => dest.TimeLimit, opt
+                    => opt.MapFrom(s => s.SubmissionType!.SubmissionTypesInProblems
+                        .Where(x => x.ProblemId == s.ProblemId)
+                        .Any(x => x.TimeLimit.HasValue)
+                        ? s.SubmissionType.SubmissionTypesInProblems
+                            .Where(x => x.ProblemId == s.ProblemId).Select(x => x.TimeLimit).First()
+                        : s.Problem.TimeLimit))
+                .ForMember(dest => dest.MemoryLimit, opt
+                    => opt.MapFrom(s => s.SubmissionType!.SubmissionTypesInProblems
+                        .Where(x => x.ProblemId == s.ProblemId)
+                        .Any(x => x.MemoryLimit.HasValue)
+                        ? s.SubmissionType.SubmissionTypesInProblems
+                            .Where(x => x.ProblemId == s.ProblemId).Select(x => x.MemoryLimit).First()
+                        : s.Problem.MemoryLimit))
                 .ForMember(
                     d => d.TestsExecutionDetails,
                     opt => opt.MapFrom(s => s.Problem))

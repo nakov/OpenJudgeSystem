@@ -1,7 +1,7 @@
 namespace OJS.Servers.Ui.Models.Contests;
 
 using OJS.Services.Ui.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 
 public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceModel>
@@ -29,4 +29,10 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
     public int CompeteResults { get; set; }
 
     public int PracticeResults { get; set; }
+
+    public int CompeteMaximumPoints { get; set; }
+
+    public int PracticeMaximumPoints { get; set; }
+
+    public ContestParticipantResultResponseModel? UserParticipationResult { get; set; }
 }

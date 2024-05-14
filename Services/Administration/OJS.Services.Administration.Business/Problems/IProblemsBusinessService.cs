@@ -3,7 +3,7 @@ namespace OJS.Services.Administration.Business.Problems
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Models.Problems;
     using OJS.Services.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
     using System.Threading.Tasks;
 
     public interface IProblemsBusinessService : IAdministrationOperationService<Problem, int, ProblemAdministrationModel>
@@ -17,7 +17,5 @@ namespace OJS.Services.Administration.Business.Problems
         Task<bool> UserHasProblemPermissions(int problemId, string? userId, bool isUserAdmin);
 
         Task ReevaluateProblemsOrder(int contestId, Problem problem);
-
-        Task<AdditionalFilesDownloadModel?> GetAdditionalFiles(int problemId);
     }
 }

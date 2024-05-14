@@ -29,11 +29,11 @@ public class StatisticsPreviewBusinessService : IStatisticsPreviewBusinessServic
     public async Task<HomeStatisticsServiceModel> GetForHome()
         => new()
         {
-            ContestsCount = await this.contestsData.GetCount(),
-            UsersCount = await this.usersProfileData.GetCount(),
-            ProblemsCount = await this.problemsData.GetCount(),
-            SubmissionsCount = await this.submissionsData.GetTotalSubmissionsCount(),
-            StrategiesCount = await this.submissionTypesData.GetCount(),
+            ContestsCount = await this.contestsData.Count(),
+            UsersCount = await this.usersProfileData.Count(),
+            ProblemsCount = await this.problemsData.Count(),
+            SubmissionsCount = await this.submissionsData.Count(),
+            StrategiesCount = await this.submissionTypesData.Count(),
             SubmissionsPerDayCount = await this.submissionsData.GetSubmissionsPerDayCount(),
         };
 }

@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import { SubmissionStatus } from '../hooks/submissions/use-public-submissions';
-
 import { IFilter, ISort } from './contest-types';
+import { SubmissionStatus } from './enums';
 import { IGetAllAdminParams } from './types';
 
 interface IUserInfoUrlParams {
@@ -12,8 +11,36 @@ interface IContestDetailsUrlParams {
     id: number;
 }
 
+interface IExamGroupUrlParams {
+    id: number;
+}
+
+interface IUserUrlParams {
+    id: number;
+}
+
 interface IGetByContestId extends IGetAllAdminParams {
     contestId: number;
+}
+
+interface IGetByRoleId extends IGetAllAdminParams {
+    roleId: string;
+}
+
+interface IGetByUserId extends IGetAllAdminParams {
+    userId: string;
+}
+
+interface IGetByProblemId extends IGetAllAdminParams {
+    problemId: number;
+}
+
+interface IGetByTestId extends IGetAllAdminParams {
+    testId: number;
+}
+
+interface IGetByExamGroupId extends IGetAllAdminParams {
+    examGroupId: number;
 }
 
 interface IGetContestByProblemUrlParams {
@@ -33,6 +60,17 @@ interface IContestCategoriesUrlParams {
 interface IRegisterForContestUrlParams {
     id: number;
     isOfficial: boolean;
+}
+
+interface IStartParticipationParams {
+    id: string;
+    isOfficial: boolean;
+}
+
+interface ISubmitContestPasswordParams {
+    contestId: string;
+    isOfficial: boolean;
+    password: string;
 }
 
 interface IStartContestParticipationUrlParams {
@@ -62,7 +100,13 @@ interface IGetSubmissionsUrlParams {
     page: number;
 }
 
-interface IGetUserSubmissionsForProfileUrlParams {
+interface IGetSubmissionsByUserParams {
+    id: number;
+    page: number;
+    isOfficial: boolean;
+}
+
+interface IGetUserSubmissionsUrlParams {
     username: string;
     page: number;
 }
@@ -122,6 +166,20 @@ interface IGetSearchResultsParams {
     searchCategory: string;
 }
 
+interface ISubmitContestSolutionParams {
+    content: string | File;
+    official: boolean;
+    problemId: number;
+    submissionTypeId: number;
+}
+
+interface IRegisterUserForContestParams {
+    password: string | null;
+    isOfficial: boolean;
+    id: number;
+    hasConfirmedParticipation: boolean;
+}
+
 export type {
     IUserInfoUrlParams,
     IRegisterForContestUrlParams,
@@ -141,10 +199,22 @@ export type {
     IRetestSubmissionUrlParams,
     IGetSearchResultsUrlParams,
     IGetContestByProblemUrlParams,
-    IGetUserSubmissionsForProfileUrlParams,
+    IGetUserSubmissionsUrlParams,
+    IGetByExamGroupId,
     IDownloadSubmissionFileUrlParams,
     IContestProblemsUrlParams,
     IContestEditUrlParams,
     IGetByContestId,
     IProblemUrlById,
+    IGetByProblemId,
+    IExamGroupUrlParams,
+    IUserUrlParams,
+    IGetByTestId,
+    IGetByRoleId,
+    IGetByUserId,
+    IStartParticipationParams,
+    ISubmitContestPasswordParams,
+    ISubmitContestSolutionParams,
+    IGetSubmissionsByUserParams,
+    IRegisterUserForContestParams,
 };

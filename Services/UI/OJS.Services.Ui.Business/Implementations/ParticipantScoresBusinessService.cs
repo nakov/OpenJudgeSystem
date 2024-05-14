@@ -14,7 +14,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Services.Ui.Models.Participations;
     using OJS.Services.Ui.Models.Problems;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.AutoMapper.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.Extensions;
 
     public class ParticipantScoresBusinessService : IParticipantScoresBusinessService
     {
@@ -63,13 +63,8 @@ namespace OJS.Services.Ui.Business.Implementations
 
         public async Task SaveForSubmission(Submission submission)
         {
-            if (submission.ParticipantId == null)
-            {
-                return;
-            }
-
             var participant = this.participantsData
-                .GetByIdQuery(submission.ParticipantId.Value)
+                .GetByIdQuery(submission.ParticipantId)
                 .Select(p => new { p.IsOfficial, p.User.UserName, Participant = p })
                 .FirstOrDefault();
 
@@ -79,7 +74,7 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var existingScore = await this.participantScoresData.GetByParticipantIdProblemIdAndIsOfficial(
-                submission.ParticipantId.Value,
+                submission.ParticipantId,
                 submission.ProblemId,
                 participant.IsOfficial);
 

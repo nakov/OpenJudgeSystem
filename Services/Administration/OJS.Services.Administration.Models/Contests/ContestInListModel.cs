@@ -1,7 +1,7 @@
 ﻿namespace OJS.Services.Administration.Models.Contests;
 
 using OJS.Data.Models.Contests;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using AutoMapper;
 
@@ -14,8 +14,6 @@ public class ContestInListModel : IMapExplicitly
     public string? Name { get; set; }
 
     public bool AllowParallelSubmissionsInTasks { get; set; }
-
-    public bool AutoChangeTestsFeedbackVisibility { get; set; }
 
     public int? CategoryId { get; set; }
 
@@ -33,6 +31,10 @@ public class ContestInListModel : IMapExplicitly
 
     public int LimitBetweenSubmissions { get; set; }
 
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Contest, ContestInListModel>()
             .ForMember(x => x.Id, opt
@@ -41,8 +43,6 @@ public class ContestInListModel : IMapExplicitly
                 => opt.MapFrom(c => c.Category!.Name))
             .ForMember(x => x.AllowParallelSubmissionsInTasks, opt
                 => opt.MapFrom(c => c.AllowParallelSubmissionsInTasks))
-            .ForMember(x => x.AutoChangeTestsFeedbackVisibility, opt
-                => opt.MapFrom(c => c.AutoChangeTestsFeedbackVisibility))
             .ForMember(x => x.CategoryId, opt
                 => opt.MapFrom(c => c.CategoryId))
             .ForMember(x => x.StartTime, opt

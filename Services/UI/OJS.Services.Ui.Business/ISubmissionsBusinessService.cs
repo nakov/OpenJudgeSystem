@@ -1,14 +1,14 @@
 ﻿namespace OJS.Services.Ui.Business
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using OJS.Common.Enumerations;
     using OJS.Data.Models.Submissions;
     using OJS.Services.Common.Models.Submissions;
     using OJS.Services.Ui.Models.Submissions;
-    using SoftUni.Common.Models;
-    using SoftUni.Services.Infrastructure;
+    using OJS.Services.Infrastructure;
+    using OJS.Services.Infrastructure.Models;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using static OJS.Services.Common.PaginationConstants.Submissions;
 
     public interface ISubmissionsBusinessService : IService
     {
@@ -24,7 +24,10 @@
 
         Task RecalculatePointsByProblem(int problemId);
 
-        Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUser(string? username, int page);
+        Task<PagedResult<TServiceModel>> GetByUsername<TServiceModel>(
+            string? username,
+            int page,
+            int itemsInPage = DefaultSubmissionsPerPage);
 
         Task<PagedResult<SubmissionForProfileServiceModel>> GetForProfileByUserAndContest(string? username, int page, int contestId);
 
@@ -34,12 +37,17 @@
 
         Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page);
 
-        Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResultsByProblem(int problemId, bool isOfficial, int page);
+        Task<PagedResult<TServiceModel>> GetUserSubmissionsByProblem<TServiceModel>(int problemId, bool isOfficial, int page);
 
         Task<int> GetTotalCount();
 
-        Task<PagedResult<SubmissionForPublicSubmissionsServiceModel>> GetSubmissions(SubmissionStatus status, int page);
+        Task<PagedResult<TServiceModel>> GetSubmissions<TServiceModel>(
+            SubmissionStatus status,
+            int page,
+            int itemsPerPage = DefaultSubmissionsPerPage);
 
         SubmissionFileDownloadServiceModel GetSubmissionFile(int submissionId);
+
+        Task<int> GetAllUnprocessedCount();
     }
 }

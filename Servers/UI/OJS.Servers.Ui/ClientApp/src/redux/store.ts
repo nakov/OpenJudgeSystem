@@ -4,50 +4,48 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // features
-import { contestCategoriesAdminSlice } from './features/admin/contestCategoriesAdminSlice';
-import { contestsAdminSlice } from './features/admin/contestsAdminSlice';
-import { problemGroupsAdminSlice } from './features/admin/problemGroupsSlice';
-import { problemsAdminSlice } from './features/admin/problemsAdminSlice';
-import { submissionsAdminSlice } from './features/admin/submissionsAdminSlice';
-import { submissionsForProcessingAdminSlice } from './features/admin/submissionsForProcessingAdminSlice';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
-import { submissionDetailsSlice } from './features/submissionDetailsSlice';
+import { submissionsSlice } from './features/submissionsSlice';
 import { themeSlice } from './features/themeSlice';
+import { usersSlice } from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
 import contestCategoriesAdminService from './services/admin/contestCategoriesAdminService';
-// services
+// admin services
 import contestsAdminService from './services/admin/contestsAdminService';
+import examGroupsService from './services/admin/examGroupsAdminService';
 import participantsAdminService from './services/admin/participantsAdminService';
 import problemGroupsAdminService from './services/admin/problemGroupsAdminService';
+import { problemResourcesAdminService } from './services/admin/problemResourcesAdminService';
 // services
 import problemsAdminService from './services/admin/problemsAdminService';
+import rolesAdminService from './services/admin/rolesAdminService';
+import settingsAdminService from './services/admin/settingsAdminService';
 import submissionsAdminService from './services/admin/submissionsAdminService';
 import submissionsForProcessingAdminService from './services/admin/submissionsForProcessingAdminService';
 import submissionTypesAdminService from './services/admin/submissionTypesAdminService';
+import testsAdminService from './services/admin/testsAdminService';
+import usersAdminService from './services/admin/usersAdminService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
 import { homeStatisticsService } from './services/homeStatisticsService';
-import submissionDetailsService from './services/submissionDetailsService';
+import submissionsService from './services/submissionsService';
+import usersService from './services/usersService';
 
 const rootReducer = combineReducers({
     // reducers
-    [submissionDetailsSlice.name]: submissionDetailsSlice.reducer,
-    [authorizationSlice.name]: authorizationSlice.reducer,
-    [contestsAdminSlice.name]: contestsAdminSlice.reducer,
-    [submissionsAdminSlice.name]: submissionsAdminSlice.reducer,
-    [submissionsForProcessingAdminSlice.name]: submissionsForProcessingAdminSlice.reducer,
-    [problemsAdminSlice.name]: problemsAdminSlice.reducer,
-    [problemGroupsAdminSlice.name]: problemGroupsAdminSlice.reducer,
-    [contestCategoriesAdminSlice.name]: contestCategoriesAdminSlice.reducer,
     [themeSlice.name]: themeSlice.reducer,
+    [authorizationSlice.name]: authorizationSlice.reducer,
+    [usersSlice.name]: usersSlice.reducer,
+    [submissionsSlice.name]: submissionsSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
 
     // services
-    [submissionDetailsService.reducerPath]: submissionDetailsService.reducer,
-    [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [authorizationService.reducerPath]: authorizationService.reducer,
+    [usersService.reducerPath]: usersService.reducer,
+    [submissionsService.reducerPath]: submissionsService.reducer,
+    [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
@@ -58,6 +56,12 @@ const rootReducer = combineReducers({
     [submissionTypesAdminService.reducerPath]: submissionTypesAdminService.reducer,
     [problemGroupsAdminService.reducerPath]: problemGroupsAdminService.reducer,
     [checkerAdminService.reducerPath]: checkerAdminService.reducer,
+    [testsAdminService.reducerPath]: testsAdminService.reducer,
+    [problemResourcesAdminService.reducerPath]: problemResourcesAdminService.reducer,
+    [usersAdminService.reducerPath]: usersAdminService.reducer,
+    [rolesAdminService.reducerPath]: rolesAdminService.reducer,
+    [examGroupsService.reducerPath]: examGroupsService.reducer,
+    [settingsAdminService.reducerPath]: settingsAdminService.reducer,
 });
 
 const persistConfig = (reducersToPersist: string[]) => ({
@@ -69,11 +73,8 @@ const persistConfig = (reducersToPersist: string[]) => ({
 // list reducers with data to be persisted here
 const reducersToPersist = [
     themeSlice.name,
-    contestsAdminSlice.name,
     authorizationSlice.name,
-    problemsAdminSlice.name,
-    problemGroupsAdminSlice.name,
-    contestCategoriesAdminSlice.name,
+    contestSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -81,12 +82,13 @@ const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]
 const store = configureStore({
     reducer: persistRootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }).concat([
-        submissionDetailsService.middleware,
+        authorizationService.middleware,
+        usersService.middleware,
+        submissionsService.middleware,
         contestsAdminService.middleware,
         participantsAdminService.middleware,
         problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
-        authorizationService.middleware,
         contestsService.middleware,
         homeStatisticsService.middleware,
         problemsAdminService.middleware,
@@ -94,6 +96,12 @@ const store = configureStore({
         submissionsForProcessingAdminService.middleware,
         submissionTypesAdminService.middleware,
         checkerAdminService.middleware,
+        testsAdminService.middleware,
+        problemResourcesAdminService.middleware,
+        usersAdminService.middleware,
+        rolesAdminService.middleware,
+        examGroupsService.middleware,
+        settingsAdminService.middleware,
     ]),
 });
 

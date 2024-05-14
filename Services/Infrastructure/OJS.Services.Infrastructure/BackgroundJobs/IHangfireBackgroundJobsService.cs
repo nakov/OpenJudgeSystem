@@ -1,12 +1,11 @@
 namespace OJS.Services.Infrastructure.BackgroundJobs
 {
-    using SoftUni.Services.Infrastructure;
     using System;
     using System.Linq.Expressions;
 
     public interface IHangfireBackgroundJobsService : IService
     {
-        object AddFireAndForgetJob<T>(Expression<Action<T>> methodCall);
+        object AddFireAndForgetJob<T>(Expression<Action<T>> methodCall, string queueName);
 
         /// <summary>
         /// A method that adds or updates a recurring job.

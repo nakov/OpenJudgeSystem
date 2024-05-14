@@ -15,11 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SoftUni.AutoMapper.Infrastructure" Version="1.0.4" />
-    <PackageReference Include="SoftUni.Services.Infrastructure" Version="1.0.7" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Microsoft.Extensions.Options">
       <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.13\Microsoft.Extensions.Options.dll</HintPath>
     </Reference>

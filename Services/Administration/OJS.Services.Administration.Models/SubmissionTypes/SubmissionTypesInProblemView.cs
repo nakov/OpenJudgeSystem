@@ -2,7 +2,7 @@
 
 using AutoMapper;
 using OJS.Data.Models.Submissions;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 public class SubmissionTypesInProblemView : IMapExplicitly
 {
     public int Id { get; set; }

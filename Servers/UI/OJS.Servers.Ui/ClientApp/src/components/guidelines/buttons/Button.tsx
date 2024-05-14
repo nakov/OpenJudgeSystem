@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
+import useTheme from '../../../hooks/use-theme';
+import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
 import generateId from '../../../utils/id-generator';
 import { IHaveOptionalChildrenProps, IHaveOptionalClassName } from '../../common/Props';
@@ -21,6 +23,8 @@ enum ButtonType {
     submit = 5,
     toggled = 6,
     untoggled = 7,
+    darkNeutral = 8,
+    lightNeutral = 9,
 }
 enum LinkButtonType {
     primary = 1,
@@ -64,6 +68,8 @@ const classNameToButonType = {
     [ButtonType.image]: styles.image,
     [ButtonType.toggled]: styles.toggled,
     [ButtonType.untoggled]: styles.untoggled,
+    [ButtonType.darkNeutral]: styles.darkNeutral,
+    [ButtonType.lightNeutral]: styles.lightNeutral,
 };
 
 const classNameToLinkButonType = {
@@ -79,6 +85,9 @@ const sizeToClassName = {
     [ButtonSize.large]: styles.large,
     [ButtonSize.none]: styles.none,
 };
+
+const themingButtonsClassNames:{ [key in ButtonType]?: string[] } =
+    { [ButtonType.secondary]: [ styles.lightSecondary, styles.darkSecondary ] };
 
 const validateOnlyChildrenOrText = (text: string | null, children: ReactNode | null) => {
     if (!isNil(text) && !isNil(children)) {
@@ -103,10 +112,15 @@ const Button = ({
     style,
 }: IButtonProps) => {
     validateOnlyChildrenOrText(text, children);
+    const { isDarkMode } = useTheme();
 
     const { [type]: typeClassName } = classNameToButonType;
 
     const { [size]: sizeClassName } = sizeToClassName;
+
+    const themingClassName = themingButtonsClassNames[type]?.at(isDarkMode
+        ? 1
+        : 0);
 
     const stateClassName = state === ButtonState.disabled
         ? styles.disabled
@@ -121,15 +135,16 @@ const Button = ({
         : '';
 
     const buttonClassName =
-        isEmpty(internalClassName)
+        isNilOrEmpty(internalClassName)
             ? concatClassNames(
                 styles.btn,
                 typeClassName,
                 sizeClassName,
                 stateClassName,
                 wideClassName,
-                className,
                 competeClassName,
+                themingClassName,
+                className,
             )
             : internalClassName;
 

@@ -1,7 +1,7 @@
 ﻿namespace OJS.Servers.Worker.Models.ExecutionResult.Output;
 
 using OJS.Workers.Common;
-using SoftUni.AutoMapper.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
 
 public class CheckerDetailsResponseModel
     : IMapFrom<CheckerDetails>

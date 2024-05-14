@@ -19,13 +19,15 @@ const { All: DEFAULT_STATUS_FILTER_TYPE } = ContestStatus;
 const { Sort: DEFAULT_SORT_FILTER_TYPE } = FilterType;
 const { OrderBy: DEFAULT_SORT_TYPE } = SortType;
 
+const LECTURER = 'Lecturer';
 const defaultPathIdentifier = 'api';
-enum SubmissionResultType {
-    CorrectAnswer = 'correctanswer',
-    WrongAnswer = 'wronganswer',
-    TimeLimit = 'timelimit',
-    MemoryLimit = 'memorylimit',
-    RunTimeError = 'runtimeerror',
+
+enum TestRunResultType {
+    CorrectAnswer = 'CorrectAnswer',
+    WrongAnswer = 'WrongAnswer',
+    TimeLimit = 'TimeLimit',
+    MemoryLimit = 'MemoryLimit',
+    RunTimeError = 'RunTimeError',
 }
 
 enum ContestParticipationType {
@@ -49,7 +51,7 @@ export {
     DEFAULT_STATUS_FILTER_TYPE,
     DEFAULT_SORT_FILTER_TYPE,
     DEFAULT_SORT_TYPE,
-    SubmissionResultType,
+    TestRunResultType,
     ContestParticipationType,
     ContestResultType,
     FileType,
@@ -64,4 +66,5 @@ export {
     UsernameFormatErrorMessage,
     EmptyPasswordErrorMessage,
     PasswordLengthErrorMessage,
+    LECTURER,
 };

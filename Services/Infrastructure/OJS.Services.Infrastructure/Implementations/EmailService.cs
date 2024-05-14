@@ -8,9 +8,9 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using OJS.Services.Common.Models.Configurations;
 using OJS.Services.Infrastructure.Emails;
 using FluentExtensions.Extensions;
+using OJS.Services.Infrastructure.Configurations;
 
 public class EmailService : IEmailService, IDisposable
 {

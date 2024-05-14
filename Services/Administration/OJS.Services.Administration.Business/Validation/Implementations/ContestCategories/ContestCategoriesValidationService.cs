@@ -3,7 +3,8 @@
 using OJS.Services.Administration.Models.Contests.Categories;
 using OJS.Services.Common.Validation;
 using OJS.Services.Common.Models;
-
+using OJS.Services.Infrastructure;
+using OJS.Services.Infrastructure.Models;
 using GlobalResource = OJS.Common.Resources.ContestCategoriesController;
 
 public class ContestCategoriesValidationService : IValidationService<ContestCategoriesValidationServiceModel>
