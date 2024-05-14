@@ -5,7 +5,7 @@ using OJS.Services.Infrastructure.Models.Mapping;
 
 public class ContestParticipantResultResponseModel : IMapFrom<ContestParticipantResultServiceModel>
 {
-    public int CompetePoints { get; set; }
+    public int? CompetePoints { get; set; }
 
-    public int PracticePoints { get; set; }
+    public int? PracticePoints { get; set; }
 }
