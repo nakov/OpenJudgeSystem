@@ -67,7 +67,7 @@ const SubmissionsGrid = ({
                         getColorClassName(themeColors.textColor),
                     )}
                     >
-                        No submissions found.
+                        No submissions yet.
                     </div>
                 );
             }

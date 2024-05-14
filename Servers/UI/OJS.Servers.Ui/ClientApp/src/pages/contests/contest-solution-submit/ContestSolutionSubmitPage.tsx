@@ -666,7 +666,7 @@ const ContestSolutionSubmitPage = () => {
             </div>
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
-                    <span>Submissions</span>
+                    <span className={styles.title}>Submissions</span>
                     <IoMdRefresh onClick={() => getSubmissionsData({
                         id: Number(selectedContestDetailsProblem!.id),
                         page: selectedSubmissionsPage,
