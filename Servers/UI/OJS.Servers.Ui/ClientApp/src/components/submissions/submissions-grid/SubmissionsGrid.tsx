@@ -1,9 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import { IPagedResultType, IPublicSubmission } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
+import isNilOrEmpty from '../../../utils/check-utils';
 import concatClassNames from '../../../utils/class-names';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { IHaveOptionalClassName } from '../../common/Props';
@@ -115,10 +116,15 @@ const SubmissionsGrid = ({
         [ isDataLoaded, submissions, className, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
 
+    useEffect(() => {
+        console.log(submissions);
+        console.log(isEmpty(submissions));
+    }, [ submissions ]);
+
     return (
         <>
             {renderSubmissionsGrid()}
-            {!isEmpty(submissions) && submissions?.pagesCount !== 0 && (
+            {submissions && !isEmpty(submissions.items) && submissions?.pagesCount !== 0 && (
                 <PaginationControls
                   count={submissions.pagesCount}
                   page={submissions.pageNumber}

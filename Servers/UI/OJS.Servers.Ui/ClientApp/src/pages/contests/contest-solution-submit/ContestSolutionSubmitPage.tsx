@@ -667,11 +667,13 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
                     <span className={styles.title}>Submissions</span>
-                    <IoMdRefresh onClick={() => getSubmissionsData({
-                        id: Number(selectedContestDetailsProblem!.id),
-                        page: selectedSubmissionsPage,
-                        isOfficial: isCompete,
-                    })}
+                    <IoMdRefresh
+                      size={30}
+                      onClick={() => getSubmissionsData({
+                          id: Number(selectedContestDetailsProblem!.id),
+                          page: selectedSubmissionsPage,
+                          isOfficial: isCompete,
+                      })}
                     />
                 </div>
                 { submissionsError
