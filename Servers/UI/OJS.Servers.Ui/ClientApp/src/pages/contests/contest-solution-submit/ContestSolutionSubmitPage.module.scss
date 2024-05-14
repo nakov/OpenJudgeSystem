@@ -51,7 +51,6 @@
     }
 
     > div {
-      font-size: variables.$f-size-30;
       font-weight: font-weights.$font-weight-semi-bold;
       margin-bottom: spacings.$sp-16;
     }
@@ -72,6 +71,7 @@
 .adminButtonsContainer {
   display: flex;
   gap: spacings.$sp-12;
+  margin-right: spacings.$sp-12;
 }
 
 .problemResources {

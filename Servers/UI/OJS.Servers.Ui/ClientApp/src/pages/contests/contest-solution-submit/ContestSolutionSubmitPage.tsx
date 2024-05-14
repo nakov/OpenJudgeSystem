@@ -328,10 +328,9 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`
-    /administration-new/problems?filter=id~equals~${
+    const goToSubmissionAdministration = () => navigate(`/administration-new/problems?filter=id~equals~${
         selectedContestDetailsProblem!.id
-}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
+    }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
 
     const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${
         selectedContestDetailsProblem!.id
@@ -388,7 +387,7 @@ const ContestSolutionSubmitPage = () => {
         return (
             <div className={styles.problemParametersWrapper}>
                 <div onMouseEnter={onPopoverOpen} onMouseLeave={onPopoverClose}>
-                    <IoIosInformationCircleOutline />
+                    <IoIosInformationCircleOutline size={20} />
                 </div>
                 <Popover
                   open={isModalOpen}
@@ -502,6 +501,7 @@ const ContestSolutionSubmitPage = () => {
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Dropdown
                           dropdownItems={strategyDropdownItems || []}
+                          placeholder="Select strategy"
                           value={selectedStrategyValue}
                           handleDropdownItemClick={onStrategyDropdownItemSelect}
                         />
@@ -539,6 +539,7 @@ const ContestSolutionSubmitPage = () => {
                 <div className={styles.submitSettings}>
                     <Dropdown
                       dropdownItems={strategyDropdownItems || []}
+                      placeholder="Select strategy"
                       value={selectedStrategyValue}
                       handleDropdownItemClick={onStrategyDropdownItemSelect}
                     />
@@ -666,12 +667,14 @@ const ContestSolutionSubmitPage = () => {
             </div>
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
-                    <span>Submissions</span>
-                    <IoMdRefresh onClick={() => getSubmissionsData({
-                        id: Number(selectedContestDetailsProblem!.id),
-                        page: selectedSubmissionsPage,
-                        isOfficial: isCompete,
-                    })}
+                    <span className={styles.title}>Submissions</span>
+                    <IoMdRefresh
+                      size={30}
+                      onClick={() => getSubmissionsData({
+                          id: Number(selectedContestDetailsProblem!.id),
+                          page: selectedSubmissionsPage,
+                          isOfficial: isCompete,
+                      })}
                     />
                 </div>
                 { submissionsError

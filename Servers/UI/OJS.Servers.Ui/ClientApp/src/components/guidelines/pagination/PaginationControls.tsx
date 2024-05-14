@@ -1,3 +1,4 @@
+import makeStyles from '@material-ui/core/styles/makeStyles';
 import Pagination from '@mui/material/Pagination';
 
 import { PAGE_BOUNDARY_COUNT, PAGE_SIBLING_COUNT } from '../../../common/constants';
@@ -20,6 +21,14 @@ const PaginationControls = ({
 } : IPaginationControlsProps) => {
     const paginationClassNames = concatClassNames(styles.paginationControlsMenu, className);
 
+    const useStyles = makeStyles(() => ({
+        ul: {
+            // This sets the background color of the selected page button
+            '& .MuiPaginationItem-root.Mui-selected': { backgroundColor: '#44a9f8' },
+        },
+    }));
+    const classes = useStyles();
+
     return (
         <Pagination
           count={count}
@@ -28,6 +37,7 @@ const PaginationControls = ({
           onChange={(ev, value) => onChange(value)}
           page={page}
           className={paginationClassNames}
+          classes={{ ul: classes.ul }}
           showFirstButton
           showLastButton
         />
