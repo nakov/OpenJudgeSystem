@@ -328,10 +328,9 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`
-    /administration-new/problems?filter=id~equals~${
+    const goToSubmissionAdministration = () => navigate(`/administration-new/problems?filter=id~equals~${
         selectedContestDetailsProblem!.id
-}%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
+    }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
 
     const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${
         selectedContestDetailsProblem!.id
