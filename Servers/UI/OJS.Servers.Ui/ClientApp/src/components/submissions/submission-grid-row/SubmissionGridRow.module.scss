@@ -9,8 +9,6 @@
 
 .row {
   @extend %font-family-normal;
-
-  height: 100%;
 }
 
 .lightRow {
@@ -69,8 +67,8 @@
 
 .executionResultContainer {
   display: flex;
-  flex-direction: row;
-  gap: spacings.$sp-18;
+  justify-content: center;
+  align-items: center;
 }
 
 .maxTimeUsed,
@@ -97,10 +95,18 @@
 }
 
 .timeAndMemoryContainer {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
-  flex-direction: row;
   gap: spacings.$sp-12;
+  justify-content: space-evenly;
+}
+
+.strategyWrapper {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  text-align: center;
+
+  span {
+    margin-left: spacings.$sp-12;
+  }
 }

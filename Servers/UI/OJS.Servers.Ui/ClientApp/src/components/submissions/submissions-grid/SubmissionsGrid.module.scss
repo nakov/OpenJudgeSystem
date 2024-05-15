@@ -21,10 +21,10 @@
 
   td {
     overflow: hidden;
-    padding: spacings.$sp-16;
-    text-align: left;
+    height: 65px;
     text-overflow: ellipsis;
     vertical-align: middle;
+    text-align: center;
 
     .tdRight {
       text-align: right;
