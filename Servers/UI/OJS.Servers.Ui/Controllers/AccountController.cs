@@ -13,7 +13,6 @@ namespace OJS.Servers.Ui.Controllers
     using OJS.Data.Models.Users;
     using OJS.Servers.Infrastructure.Controllers;
     using OJS.Servers.Ui.Models;
-    using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.HttpClients;
@@ -21,8 +20,7 @@ namespace OJS.Servers.Ui.Controllers
     using static OJS.Common.GlobalConstants.Urls;
 
     [Authorize]
-    [Route("api/[controller]/[action]")]
-    public class AccountController : BaseViewController
+    public class AccountController : BaseApiController
     {
         private readonly IUsersBusinessService usersBusinessService;
         private readonly SignInManager<UserProfile> signInManager;

@@ -30,15 +30,6 @@ namespace OJS.Servers.Infrastructure.Extensions
             return app;
         }
 
-        public static WebApplication MapDefaultRoutes(this WebApplication app)
-        {
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
-            return app;
-        }
-
         public static WebApplication UseAndMapHangfireDashboard(this WebApplication app)
         {
             var dashboardOptions = new DashboardOptions

@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api;
+﻿namespace OJS.Servers.Ui.Controllers;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +8,10 @@ using OJS.Servers.Ui.Models;
 using OJS.Servers.Ui.Models.Problems;
 using OJS.Servers.Ui.Models.Submissions.Compete;
 using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Business;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Submissions;
-using OJS.Services.Infrastructure.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Net;

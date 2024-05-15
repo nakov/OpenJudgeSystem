@@ -13,9 +13,7 @@ namespace OJS.Servers.Ui.Extensions
             string apiVersion)
         {
             app.UseCorsPolicy();
-            app
-                .UseDefaults()
-                .MapDefaultRoutes();
+            app.UseDefaults();
 
             app.MigrateDatabase<OjsDbContext>();
 
@@ -26,13 +24,7 @@ namespace OJS.Servers.Ui.Extensions
 
             //Added here, because if it is added in the end immediately after the 200 response (Healthy) the FE redirects to 404 page.
             app.UseHealthMonitoring();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    "default",
-                    "{controller=Home}/{action=Index}");
-            });
+            app.MapControllers();
 
             return app;
         }
