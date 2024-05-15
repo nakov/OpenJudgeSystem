@@ -24,7 +24,8 @@
     height: 65px;
     text-overflow: ellipsis;
     vertical-align: middle;
-    text-align: center;
+    text-align: left;
+    padding-left: spacings.$sp-12;
 
     .tdRight {
       text-align: right;

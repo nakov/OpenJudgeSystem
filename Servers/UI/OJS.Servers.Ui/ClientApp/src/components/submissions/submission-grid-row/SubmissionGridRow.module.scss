@@ -67,7 +67,7 @@
 
 .executionResultContainer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -95,16 +95,16 @@
 }
 
 .timeAndMemoryContainer {
-  align-items: flex-start;
+  align-items: center;
   display: flex;
   gap: spacings.$sp-12;
-  justify-content: space-evenly;
+  justify-content: flex-start;
 }
 
 .strategyWrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
   span {
     margin-left: spacings.$sp-12;
