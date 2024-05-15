@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 public interface ISubmissionsCommonBusinessService : IService
 {
-    SubmissionServiceModel BuildSubmissionForProcessing(Submission newSubmission,
+    SubmissionServiceModel BuildSubmissionForProcessing(
+        Submission submission,
         Problem problem,
         SubmissionType submissionType);
-
-    SubmissionServiceModel BuildSubmissionForProcessing(Submission existingSubmission);
 
     Task PublishSubmissionForProcessing(SubmissionServiceModel submission);
 

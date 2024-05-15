@@ -489,7 +489,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(newSubmission);
         await this.submissionsData.SaveChanges();
 
-        submissionServiceModel = this.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
+        submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(newSubmission, problem, submissionType);
         await this.submissionsForProcessingData.Add(newSubmission.Id, submissionServiceModel.ToSerializedDetails());
         await this.submissionsData.SaveChanges();
 
@@ -649,28 +649,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         {
             submission.ProcessingComment = $"Exception in CacheTestRuns: {ex.Message}";
         }
-    }
-
-    private SubmissionServiceModel BuildSubmissionForProcessing(
-        Submission submission,
-        Problem problem,
-        SubmissionType submissionType)
-    {
-        // We detach the existing entity, in order to avoid tracking exception on Update.
-        this.submissionsData.Detach(submission);
-
-        // Needed to map execution details
-        submission.Problem = problem;
-        submission.SubmissionType = submissionType;
-
-        var serviceModel = submission.Map<SubmissionServiceModel>();
-
-        serviceModel.TestsExecutionDetails!.TaskSkeleton = problem.SubmissionTypesInProblems
-            .Where(x => x.SubmissionTypeId == submission.SubmissionTypeId)
-            .Select(x => x.SolutionSkeleton)
-            .FirstOrDefault();
-
-        return serviceModel;
     }
 
     private async Task AddNewDefaultProcessedSubmission(Submission submission)
