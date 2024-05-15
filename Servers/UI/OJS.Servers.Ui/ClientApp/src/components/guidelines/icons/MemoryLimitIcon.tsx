@@ -1,4 +1,4 @@
-import { BiTime } from 'react-icons/bi';
+import { BiMemoryCard } from 'react-icons/bi';
 
 import concatClassNames from '../../../utils/class-names';
 
@@ -16,7 +16,7 @@ const MemoryLimitIcon = ({
 }: IInProgressIconProps) => (
     <Icon
       className={concatClassNames(styles.icon, className)}
-      Component={BiTime}
+      Component={BiMemoryCard}
       size={size}
       helperText={helperText}
     />

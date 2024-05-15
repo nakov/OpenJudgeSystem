@@ -1,14 +1,14 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api;
+﻿namespace OJS.Servers.Ui.Controllers;
 
-using OJS.Services.Infrastructure.Extensions;
-using OJS.Servers.Ui.Models.Search;
-using OJS.Servers.Ui.Models;
-using OJS.Services.Ui.Business;
-using OJS.Servers.Infrastructure.Extensions;
-using OJS.Services.Ui.Models.Search;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Servers.Ui.Models;
+using OJS.Servers.Ui.Models.Search;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Business;
+using OJS.Services.Ui.Models.Search;
+using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SearchController : BaseApiController

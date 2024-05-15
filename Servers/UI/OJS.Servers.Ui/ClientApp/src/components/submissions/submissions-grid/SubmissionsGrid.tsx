@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -67,7 +67,7 @@ const SubmissionsGrid = ({
                         getColorClassName(themeColors.textColor),
                     )}
                     >
-                        No submissions found.
+                        No submissions yet.
                     </div>
                 );
             }
@@ -115,10 +115,15 @@ const SubmissionsGrid = ({
         [ isDataLoaded, submissions, className, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
 
+    useEffect(() => {
+        console.log(submissions);
+        console.log(isEmpty(submissions));
+    }, [ submissions ]);
+
     return (
         <>
             {renderSubmissionsGrid()}
-            {!isEmpty(submissions) && submissions?.pagesCount !== 0 && (
+            {submissions && !isEmpty(submissions.items) && submissions?.pagesCount !== 0 && (
                 <PaginationControls
                   count={submissions.pagesCount}
                   page={submissions.pageNumber}
