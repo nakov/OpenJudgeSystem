@@ -45,7 +45,7 @@
                 // Ignoring as TaskSkeleton should be mapped based on selected submission type
                 .ForMember(
                     d => d.TaskSkeleton,
-                    opt => opt.Ignore())
+                    opt => opt.MapFrom(s => s.SolutionSkeleton))
                 .ForMember(
                     d => d.TaskSkeletonAsString,
                     opt => opt.Ignore())
