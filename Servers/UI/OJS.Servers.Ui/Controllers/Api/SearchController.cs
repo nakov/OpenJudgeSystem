@@ -1,14 +1,15 @@
 ﻿namespace OJS.Servers.Ui.Controllers.Api;
 
-using OJS.Services.Infrastructure.Extensions;
-using OJS.Servers.Ui.Models.Search;
-using OJS.Servers.Ui.Models;
-using OJS.Services.Ui.Business;
-using OJS.Servers.Infrastructure.Extensions;
-using OJS.Services.Ui.Models.Search;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OJS.Servers.Infrastructure.Controllers;
+using OJS.Servers.Infrastructure.Extensions;
+using OJS.Servers.Ui.Models;
+using OJS.Servers.Ui.Models.Contests;
+using OJS.Servers.Ui.Models.Search;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Ui.Business;
+using OJS.Services.Ui.Models.Search;
+using System.Threading.Tasks;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 public class SearchController : BaseApiController
@@ -24,11 +25,11 @@ public class SearchController : BaseApiController
     /// <param name="model">The required search criteria from the user and pagination options.</param>
     /// <returns>A collections of contests based on the search results.</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(ContestSearchResponseModel), Status200OK)]
+    [ProducesResponseType(typeof(ContestForListingResponseModel), Status200OK)]
     public async Task<IActionResult> GetContestsSearchResults([FromQuery] SearchRequestModel model)
         => await this.searchBusinessService
             .GetContestSearchResults(model.Map<SearchServiceModel>())
-            .Map<PagedResultResponse<ContestSearchResponseModel>>()
+            .Map<PagedResultResponse<ContestForListingResponseModel>>()
             .ToOkResult();
 
     /// <summary>

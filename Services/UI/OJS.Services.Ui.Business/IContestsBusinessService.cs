@@ -45,5 +45,12 @@ namespace OJS.Services.Ui.Business
             ContestFiltersServiceModel? sortAndFilterModel);
 
         Task<PagedResult<ContestForListingServiceModel>> GetAllByFiltersAndSorting(ContestFiltersServiceModel? model);
+
+        Task<PagedResult<ContestForListingServiceModel>> PrepareActivityAndResults(
+            PagedResult<ContestForListingServiceModel> pagedContests,
+            Dictionary<int, List<ParticipantResultServiceModel>> participantResultsByContest);
+
+        Task<Dictionary<int, List<ParticipantResultServiceModel>>> GetUserParticipantResultsForContestInPage(
+            ICollection<int> contestIds);
     }
 }
