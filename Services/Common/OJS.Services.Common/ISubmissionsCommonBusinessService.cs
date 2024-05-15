@@ -14,6 +14,8 @@ public interface ISubmissionsCommonBusinessService : IService
         Problem problem,
         SubmissionType submissionType);
 
+    SubmissionServiceModel BuildSubmissionForProcessing(Submission submission);
+
     Task PublishSubmissionForProcessing(SubmissionServiceModel submission);
 
     Task PublishSubmissionsForProcessing(IEnumerable<SubmissionServiceModel> submissions);

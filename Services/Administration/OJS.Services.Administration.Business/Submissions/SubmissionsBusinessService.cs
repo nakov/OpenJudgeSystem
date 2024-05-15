@@ -163,10 +163,7 @@ namespace OJS.Services.Administration.Business.Submissions
         {
             var submissionProblemId = submission.ProblemId;
             var submissionParticipantId = submission.ParticipantId;
-            var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(
-                submission,
-                submission.Problem,
-                submission.SubmissionType!);
+            var submissionServiceModel = this.submissionsCommonBusinessService.BuildSubmissionForProcessing(submission);
 
             var result = await this.transactions.ExecuteInTransaction(async () =>
             {

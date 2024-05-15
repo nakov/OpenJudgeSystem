@@ -52,6 +52,9 @@ public class SubmissionsCommonBusinessService : ISubmissionsCommonBusinessServic
             return serviceModel;
         }
 
+    public SubmissionServiceModel BuildSubmissionForProcessing(Submission submission)
+        => this.BuildSubmissionForProcessing(submission, submission.Problem, submission.SubmissionType!);
+
     public async Task PublishSubmissionForProcessing(SubmissionServiceModel submission)
     {
         try
