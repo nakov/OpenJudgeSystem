@@ -7,6 +7,7 @@ import { IIndexContestsType, IPagedResultType, IProblemSearchType, IUserType } f
 interface IGetSearchQueryParams {
     searchTerm: string;
     page: number;
+    itemsPerPage: number;
 }
 
 export const searchService = createApi({
@@ -21,16 +22,16 @@ export const searchService = createApi({
     }),
     endpoints: (builder) => ({
         getContestsSearch: builder.query<IPagedResultType<IIndexContestsType>, IGetSearchQueryParams>({
-            query: ({ searchTerm, page }) => (
-                { url: '/Search/GetContestsSearchResults', params: { searchTerm, page } }),
+            query: ({ searchTerm, page, itemsPerPage }) => (
+                { url: '/Search/GetContestsSearchResults', params: { searchTerm, page, itemsPerPage } }),
         }),
         getProblemsSearch: builder.query<IPagedResultType<IProblemSearchType>, IGetSearchQueryParams>({
-            query: ({ searchTerm, page }) => (
-                { url: '/Search/GetProblemsSearchResults', params: { searchTerm, page } }),
+            query: ({ searchTerm, page, itemsPerPage }) => (
+                { url: '/Search/GetProblemsSearchResults', params: { searchTerm, page, itemsPerPage } }),
         }),
         getUsersSearch: builder.query<IPagedResultType<IUserType>, IGetSearchQueryParams>({
-            query: ({ searchTerm, page }) => (
-                { url: '/Search/GetUsersSearchResults', params: { searchTerm, page } }),
+            query: ({ searchTerm, page, itemsPerPage }) => (
+                { url: '/Search/GetUsersSearchResults', params: { searchTerm, page, itemsPerPage } }),
         }),
     }),
 });

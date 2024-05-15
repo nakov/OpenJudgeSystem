@@ -17,12 +17,13 @@ import SpinningLoader from '../../components/guidelines/spinning-loader/Spinning
 import ProblemSearchCard from '../../components/search/profile-search-card/ProblemSearchCard';
 import UserSearchCard from '../../components/search/user-search-card/UserSearchCard';
 import useTheme from '../../hooks/use-theme';
+import { setSearchValue } from '../../redux/features/searchSlice';
 import {
     useLazyGetContestsSearchQuery,
     useLazyGetProblemsSearchQuery,
     useLazyGetUsersSearchQuery,
 } from '../../redux/services/searchService';
-import { useAppSelector } from '../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 
 import styles from './SearchPage.module.scss';
 
@@ -32,7 +33,10 @@ enum SearchTypeEnums {
     USERS = 'Users',
 }
 
+const ITEMS_PER_SEARCH = 5;
+
 const SearchPage = () => {
+    const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { getColorClassName, themeColors } = useTheme();
     const { searchValue, selectedTerms } = useAppSelector((state) => state.search);
@@ -80,19 +84,27 @@ const SearchPage = () => {
         return Number(searchParams.get('usersPage'));
     }, [ searchParams ]);
 
+    useEffect(() => {
+        const searchTerm = searchParams.get('searchTerm');
+        if (searchTerm) {
+            dispatch(dispatch(setSearchValue(searchTerm)));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // initiate the search
     useEffect(() => {
         if (searchValue.length < 3 || selectedTerms.length === 0) {
             return;
         }
         if (selectedTerms.includes(CheckboxSearchValues.problems)) {
-            getProblemsSearch({ searchTerm: searchValue, page: selectedProblemsPage });
+            getProblemsSearch({ searchTerm: searchValue, page: selectedProblemsPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
         if (selectedTerms.includes(CheckboxSearchValues.contests)) {
-            getContestsSearch({ searchTerm: searchValue, page: selectedContestsPage });
+            getContestsSearch({ searchTerm: searchValue, page: selectedContestsPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
         if (selectedTerms.includes(CheckboxSearchValues.users)) {
-            getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage });
+            getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
     }, [
         searchValue,

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { IProblemSearchType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
@@ -20,7 +21,7 @@ const ProblemSearchCard = (props: IProblemSearchCardProps) => {
     return (
         <div className={`${styles.problemsSearchCardWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
             <div>
-                <div>{name}</div>
+                <Link to={`/contests/${contest.id}/practice#${id}`} className={`${styles.problemName} ${textColorClassName}`}>{name}</Link>
                 <div className={styles.contestName}>{contest.name}</div>
             </div>
             <div className={styles.buttonsWrapper}>

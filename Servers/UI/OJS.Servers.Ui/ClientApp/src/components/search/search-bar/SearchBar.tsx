@@ -48,6 +48,9 @@ const SearchBar = () => {
     });
 
     useEffect(() => {
+        if (!isVisible) {
+            return;
+        }
         const searchString = composeSearchString();
         navigate(`/search${searchString}`);
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
