@@ -1,4 +1,4 @@
-﻿namespace OJS.Servers.Ui.Controllers.Api;
+﻿namespace OJS.Servers.Ui.Controllers;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
