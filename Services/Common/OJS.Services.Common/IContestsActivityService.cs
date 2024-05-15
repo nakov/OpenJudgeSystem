@@ -19,7 +19,7 @@ public interface IContestsActivityService : IService
         where T : class, ICanBeCompetedAndPracticed, IContestForActivityServiceModel;
 
     void SetCanBeCompetedAndPracticed<T>(
-        IReadOnlyCollection<T> contestModels,
+        ICollection<T> contestModels,
         IReadOnlyCollection<IParticipantForActivityServiceModel> participants)
         where T : class, ICanBeCompetedAndPracticed, IContestForActivityServiceModel;
 }

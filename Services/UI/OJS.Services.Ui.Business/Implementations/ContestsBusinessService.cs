@@ -530,13 +530,13 @@ namespace OJS.Services.Ui.Business.Implementations
                         return;
                     }
 
-                    var competePoints = participants.Where(p => p.IsOfficial).Select(p => p.Points).SingleOrDefault();
-                    var practicePoints = participants.Where(p => !p.IsOfficial).Select(p => p.Points).SingleOrDefault();
+                    var competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
+                    var practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
 
                     c.UserParticipationResult = new ContestParticipantResultServiceModel
                     {
-                        CompetePoints = competePoints,
-                        PracticePoints = practicePoints,
+                        CompetePoints = competeParticipant?.Points,
+                        PracticePoints = practiceParticipant?.Points,
                     };
                 }
             });

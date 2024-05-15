@@ -21,10 +21,11 @@ internal static class WebApplicationExtensions
         app.MigrateDatabase<OjsDbContext>();
 
         app.UseHealthMonitoring();
+        app.MapControllers();
 
         return app
             // .UseAutoCrudAdmin()
-            .MapDefaultRoutes()
+            // .MapDefaultRoutes()
             .UseAndMapHangfireDashboard();
     }
 
