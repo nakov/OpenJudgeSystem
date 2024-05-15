@@ -51,24 +51,14 @@
   justify-content: start;
 }
 
-.fromContainer {
-  display: flex;
-  flex-direction: column;
-
-  .username {
-    margin-top: spacings.$sp-4;
-    max-width: 12vw;
-  }
-}
-
 .competeIcon {
   margin: 0 spacings.$sp-12;
 }
 
 .executionResultContainer {
+  align-items: center;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
 }
 
 .maxTimeUsed,
@@ -102,8 +92,8 @@
 }
 
 .strategyWrapper {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: flex-start;
 
   span {

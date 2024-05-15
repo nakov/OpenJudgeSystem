@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable consistent-return */
+/* eslint-disable promise/prefer-await-to-then */
+/* eslint-disable promise/always-return */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -266,8 +268,8 @@ const ContestSolutionSubmitPage = () => {
             official: isCompete,
             problemId: selectedContestDetailsProblem?.id!,
             submissionTypeId: selectedSubmissionType?.id!,
-        }).then((data) => {
-            if (!(data as any).error) {
+        }).then((d) => {
+            if (!(d as any).error) {
                 refetch();
                 getSubmissionsData({
                     id: Number(selectedContestDetailsProblem!.id),
@@ -275,7 +277,7 @@ const ContestSolutionSubmitPage = () => {
                     isOfficial: isCompete,
                 });
             }
-        });
+        }).catch(() => {});
     }, [
         getSubmissionsData,
         isCompete,
@@ -285,7 +287,6 @@ const ContestSolutionSubmitPage = () => {
         selectedSubmissionsPage,
         submissionCode,
         submitSolution,
-        submitSolutionError,
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {

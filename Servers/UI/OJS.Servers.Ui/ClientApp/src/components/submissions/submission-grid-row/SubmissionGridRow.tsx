@@ -210,7 +210,7 @@ const SubmissionGridRow = ({
                 {
                     options.showParticipantUsername
                         ? (
-                            <span className={styles.username}>
+                            <span>
                                 {renderUsername()}
                             </span>
                         )
