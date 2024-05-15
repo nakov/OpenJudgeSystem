@@ -119,7 +119,11 @@ public class SearchBusinessService : ISearchBusinessService
     private static void NormalizeSearchModel(SearchServiceModel model)
     {
         model.SearchTerm = model.SearchTerm?.Trim();
-        model.ItemsPerPage = DefaultItemsPerPage;
+
+        if (model.ItemsPerPage <= 0)
+        {
+            model.ItemsPerPage = DefaultItemsPerPage;
+        }
     }
 
     private async Task PopulateSelectedConditionValues(
