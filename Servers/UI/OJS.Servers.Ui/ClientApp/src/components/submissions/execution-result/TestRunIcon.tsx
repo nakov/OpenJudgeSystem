@@ -12,7 +12,7 @@ import TickIcon from '../../guidelines/icons/TickIcon';
 import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
-import styles from '../submission-grid-row/SubmissionGridRow.module.scss';
+import styles from './TestRunIcon.module.scss';
 
 interface ITestRunIconProps {
     testRun: ITestRunType;
