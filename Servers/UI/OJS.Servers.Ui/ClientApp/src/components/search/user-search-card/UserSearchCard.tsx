@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { IUSerSearchCardProps } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
+import { encodeAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../utils/urls';
 
 import styles from './UserSearchCard.module.scss';
 
@@ -17,7 +18,7 @@ const UserSearchCard = (props: IUserSearchCardProps) => {
 
     return (
         <Link
-          to="/users"
+          to={getUserProfileInfoUrlByUsername(encodeAsUrlParam(user.name))}
           className={`${styles.userSearchCardWrapper} ${textColorClassName}`}
           style={{ borderColor: themeColors.textColor }}
         >
