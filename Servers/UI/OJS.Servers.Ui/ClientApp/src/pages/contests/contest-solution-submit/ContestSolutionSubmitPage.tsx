@@ -363,6 +363,7 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.problemResources}>
                 {resources.map((resource: IProblemResourceType) => (
                     <ProblemResource
+                      key={`resource-${resource.id}`}
                       resource={resource}
                       problem={selectedContestDetailsProblem.name}
                     />
