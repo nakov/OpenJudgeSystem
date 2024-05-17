@@ -80,6 +80,7 @@ const reducersToPersist = [
     themeSlice.name,
     authorizationSlice.name,
     contestSlice.name,
+    searchSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);

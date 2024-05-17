@@ -8,10 +8,7 @@ import useTheme from '../../../hooks/use-theme';
 import { setIsVisible, setSearchValue, setSelectedTerms } from '../../../redux/features/searchSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Form from '../../guidelines/forms/Form';
-import FormControl, {
-    FormControlType,
-    IFormControlOnChangeValueType,
-} from '../../guidelines/forms/FormControl';
+import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../../guidelines/forms/FormControl';
 
 import styles from './SearchBar.module.scss';
 
@@ -113,7 +110,6 @@ const SearchBar = () => {
                 />
                 {/* eslint-disable-next-line max-len */}
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
-                <i className={`fas fa-search ${styles.searchIcon} ${textColorClassName}`} onClick={handleSubmit} />
                 <div className={styles.checkboxContainer}>
                     {CHECKBOXES.map((checkbox) => (
                         <div key={`search-bar-checkbox-${checkbox}`} className={styles.checkboxWrapper}>
@@ -122,7 +118,7 @@ const SearchBar = () => {
                               name={FieldNameType.checkbox}
                               type={FormControlType.checkbox}
                               value={checkbox}
-                              checked={selectedTerms.includes(CheckboxSearchValues.contests)}
+                              checked={selectedTerms.includes(checkbox)}
                               onClick={handleSearchCheckboxClick}
                             />
                             <span className={`${styles.checkboxText} ${textColorClassName}`}>

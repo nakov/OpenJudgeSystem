@@ -63,6 +63,10 @@ const SearchPage = () => {
         },
     ] = useLazyGetUsersSearchQuery();
 
+    const shouldIncludeContests = searchParams.get('Contests');
+    const shouldIncludeProblems = searchParams.get('Problems');
+    const shouldIncludeUsers = searchParams.get('Users');
+
     const selectedContestsPage = useMemo(() => {
         if (!searchParams.get('contestsPage')) {
             return 1;
@@ -205,9 +209,12 @@ const SearchPage = () => {
                             {searchValue}
                             &quot;
                         </div>
-                        {renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, contestsSearchLoading, contestsSearchError)}
-                        {renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, problemsSearchLoading, problemsSearchError)}
-                        {renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, usersSearchLoading, usersSearchError)}
+                        {shouldIncludeContests &&
+                            renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, contestsSearchLoading, contestsSearchError)}
+                        {shouldIncludeProblems &&
+                            renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, problemsSearchLoading, problemsSearchError)}
+                        {shouldIncludeUsers &&
+                            renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, usersSearchLoading, usersSearchError)}
                     </>
                 )}
         </div>
