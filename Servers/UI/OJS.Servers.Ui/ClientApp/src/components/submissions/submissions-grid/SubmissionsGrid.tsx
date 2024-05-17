@@ -115,11 +115,6 @@ const SubmissionsGrid = ({
         [ isDataLoaded, submissions, className, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
 
-    useEffect(() => {
-        console.log(submissions);
-        console.log(isEmpty(submissions));
-    }, [ submissions ]);
-
     return (
         <>
             {renderSubmissionsGrid()}
