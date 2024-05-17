@@ -30,6 +30,7 @@ const SubmissionTestRuns = (props: ISubmissionTestRunsProps) => {
 
         return (
             <div
+              key={`s-t-r-${testRun.id}`}
               className={`${styles.submissionTestRun} ${testRun.isTrialTest
                   ? styles.trialTest
                   : ''}`}
