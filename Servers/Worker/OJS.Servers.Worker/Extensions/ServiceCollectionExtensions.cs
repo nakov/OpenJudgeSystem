@@ -27,6 +27,8 @@ internal static class ServiceCollectionExtensions
             services.AddMessageQueue<Program>(configuration);
         }
 
+        services.AddHealthChecks();
+
         services
             .AddLogging()
             .AddOptionsWithValidation<ApplicationConfig>()
