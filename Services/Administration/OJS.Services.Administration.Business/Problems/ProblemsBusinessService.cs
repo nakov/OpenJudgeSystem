@@ -265,9 +265,7 @@ namespace OJS.Services.Administration.Business.Problems
                 {
                     ProblemId = problem.Id,
                     SubmissionTypeId = x.Id,
-                    SolutionSkeleton = x.SolutionSkeleton != null
-                        ? x.SolutionSkeleton.ToString().Compress()
-                        : Array.Empty<byte>(),
+                    SolutionSkeleton = x.SolutionSkeleton?.ToString().Compress(),
                     TimeLimit = x.TimeLimit,
                     MemoryLimit = x.MemoryLimit,
                 });
