@@ -7,3 +7,5 @@ cd ./js-run-spa-in-docker-and-execute-mocha-tests && npm install
 
 cd ../../v12 && nvm use 12.22.12 && npm install
 cd ./js-run-spa-in-docker-and-execute-mocha-tests && npm install
+
+ln -sf "$(which node)" /usr/bin/node

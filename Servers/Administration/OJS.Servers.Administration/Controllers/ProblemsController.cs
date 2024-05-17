@@ -639,9 +639,7 @@ public class ProblemsController : BaseAutoCrudAdminController<Problem>
             {
                 ProblemId = problem.Id,
                 SubmissionTypeId = int.Parse(x.Value!.ToString()!),
-                SolutionSkeleton = x.Expand != null
-                    ? x.Expand!.Value!.ToString()!.Compress()
-                    : Array.Empty<byte>(),
+                SolutionSkeleton = x.Expand?.Value!.ToString()!.Compress(),
             });
 
         problem.SubmissionTypesInProblems = new HashSet<SubmissionTypeInProblem>(newSubmissionTypes);
