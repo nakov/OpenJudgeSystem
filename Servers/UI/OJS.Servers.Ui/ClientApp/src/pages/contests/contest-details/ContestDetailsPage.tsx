@@ -22,6 +22,7 @@ import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
+import LegacyInfoMessage from "../../../components/guidelines/legacy-info-message/LegacyInfoMessage";
 
 const ContestDetailsPage = () => {
     const dispatch = useAppDispatch();
@@ -157,6 +158,7 @@ const ContestDetailsPage = () => {
         <div className={`${styles.contestDetailsWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
+            <LegacyInfoMessage />
             <div className={styles.descriptionBoxWrapper}>
                 <div>
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>

@@ -1,9 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import isNil from 'lodash/isNil';
 
-import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import {useLazyGetUserSubmissionsQuery} from '../../../redux/services/submissionsService';
+import {useAppDispatch, useAppSelector} from '../../../redux/store';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
+import LegacyInfoMessage from "../../guidelines/legacy-info-message/LegacyInfoMessage";
+
+import styles from './ProfileSubmissions.module.scss';
+import {Link} from "react-router-dom";
+import {ButtonSize, LinkButton, LinkButtonType} from "../../guidelines/buttons/Button";
+import {encodeAsUrlParam, getUserProfileInfoUrlByUsername} from "../../../utils/urls";
 
 interface IProfileSubmissionsProps {
     userIsProfileOwner: boolean;
@@ -60,20 +66,26 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         if (!shouldRender) {
             return null;
         }
+        
+        
 
         return (
-            <SubmissionsGrid
-              isDataLoaded={!areSubmissionsLoading}
-              submissions={userSubmissions!}
-              handlePageChange={(page: number) => setUserSubmissionsPage(page)}
-              options={{
-                  showTaskDetails: true,
-                  showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
-                  showCompeteMarker: false,
-                  showSubmissionTypeInfo: false,
-                  showParticipantUsername: false,
-              }}
-            />
+            <>
+                <LegacyInfoMessage />
+                <SubmissionsGrid
+                    isDataLoaded={!areSubmissionsLoading}
+                    submissions={userSubmissions!}
+                  handlePageChange={(page: number) => setUserSubmissionsPage(page)}
+                  className={styles.profileSubmissionsGrid}
+                  options={{
+                      showTaskDetails: true,
+                      showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
+                      showCompeteMarker: false,
+                      showSubmissionTypeInfo: false,
+                      showParticipantUsername: false,
+                  }}
+                />
+        </>
         );
     }, [
         areSubmissionsLoading,

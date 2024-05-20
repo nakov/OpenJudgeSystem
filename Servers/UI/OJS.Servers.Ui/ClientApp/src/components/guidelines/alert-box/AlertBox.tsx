@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {ReactNode, useCallback, useEffect, useMemo, useState} from 'react';
 import isNil from 'lodash/isNil';
 
 import concatClassNames from '../../../utils/class-names';
@@ -20,7 +20,7 @@ const alertBoxTypeToDefaultClassName = {
 };
 
 interface IAlertBoxProps extends IHaveOptionalClassName {
-    message: string;
+    message: string | ReactNode;
     type: AlertBoxType;
     delay?: number;
     isClosable?: boolean;
