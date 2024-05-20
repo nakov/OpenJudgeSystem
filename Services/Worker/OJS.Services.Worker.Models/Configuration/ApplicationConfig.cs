@@ -6,4 +6,6 @@ public class ApplicationConfig : Infrastructure.Configurations.ApplicationConfig
 {
     [Range(1, int.MaxValue)]
     public int SubmissionsProcessorIdentifierNumber { get; set; }
+
+    public bool UseMessageQueue { get; set; }
 }

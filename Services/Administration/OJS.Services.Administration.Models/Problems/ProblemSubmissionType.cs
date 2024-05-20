@@ -24,5 +24,5 @@ public class ProblemSubmissionType : IMapExplicitly
             .ForMember(pam => pam.Name, opt
                 => opt.MapFrom(p => p.SubmissionType.Name))
             .ForMember(pam => pam.SolutionSkeleton, opt
-                => opt.MapFrom(p => p.SolutionSkeleton.Decompress().ToString()));
+                => opt.MapFrom(p => p.SolutionSkeleton != null ? p.SolutionSkeleton.Decompress().ToString() : null));
 }
