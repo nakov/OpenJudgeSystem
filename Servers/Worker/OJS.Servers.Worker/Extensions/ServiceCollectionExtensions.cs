@@ -1,9 +1,7 @@
 ﻿namespace OJS.Servers.Worker.Extensions;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OJS.Data;
 using OJS.Servers.Infrastructure.Extensions;
 using OJS.Services.Worker.Business.Implementations;
 using OJS.Services.Worker.Models.Configuration;
@@ -16,16 +14,26 @@ internal static class ServiceCollectionExtensions
     public static void ConfigureServices(
         this IServiceCollection services,
         IConfiguration configuration)
-        => services
+    {
+        services
             .AddWebServer<Program>(configuration)
             .AddHttpContextServices()
             .AddSingleton<ICompilerFactory, CompilerFactory>()
             .AddSingleton<IExecutionStrategySettingsProvider, ExecutionStrategySettingsProvider>()
-            .AddMemoryCache()
-            .AddMessageQueue<Program>(configuration)
+            .AddMemoryCache();
+
+        if (configuration.GetSectionValueWithValidation<ApplicationConfig, bool>(nameof(ApplicationConfig.UseMessageQueue)))
+        {
+            services.AddMessageQueue<Program>(configuration);
+        }
+
+        services.AddHealthChecks();
+
+        services
             .AddLogging()
             .AddOptionsWithValidation<ApplicationConfig>()
             .AddOptionsWithValidation<SubmissionExecutionConfig>()
             .AddOptionsWithValidation<OjsWorkersConfig>()
             .AddControllers();
+    }
 }

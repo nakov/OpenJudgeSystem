@@ -5,7 +5,8 @@ const getTestResultColorId = (resultType: string) => {
     case TestRunResultType.CorrectAnswer.toLowerCase():
         // primary-green
         return '#23be5e';
-    case TestRunResultType.TimeLimit.toLowerCase() || TestRunResultType.MemoryLimit.toLowerCase():
+    case TestRunResultType.TimeLimit.toLowerCase():
+    case TestRunResultType.MemoryLimit.toLowerCase():
         // warning
         return '#fec112';
     default:
