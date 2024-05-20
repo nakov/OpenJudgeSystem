@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { TypedUseSelectorHook, useDispatch as useReduxDispatch, useSelector as useReduxSelector } from 'react-redux';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
@@ -7,6 +8,7 @@ import storage from 'redux-persist/lib/storage';
 import { authorizationSlice } from './features/authorizationSlice';
 import { contestSlice } from './features/contestsSlice';
 import { submissionsSlice } from './features/submissionsSlice';
+import { searchSlice } from './features/searchSlice';
 import { themeSlice } from './features/themeSlice';
 import { usersSlice } from './features/usersSlice';
 import checkerAdminService from './services/admin/checkersAdminService';
@@ -29,6 +31,7 @@ import usersAdminService from './services/admin/usersAdminService';
 // features
 import authorizationService from './services/authorizationService';
 import { contestsService } from './services/contestsService';
+import { searchService } from './services/searchService';
 import { homeStatisticsService } from './services/homeStatisticsService';
 import submissionsService from './services/submissionsService';
 import usersService from './services/usersService';
@@ -40,6 +43,7 @@ const rootReducer = combineReducers({
     [usersSlice.name]: usersSlice.reducer,
     [submissionsSlice.name]: submissionsSlice.reducer,
     [contestSlice.name]: contestSlice.reducer,
+    [searchSlice.name]: searchSlice.reducer,
 
     // services
     [authorizationService.reducerPath]: authorizationService.reducer,
@@ -47,6 +51,7 @@ const rootReducer = combineReducers({
     [submissionsService.reducerPath]: submissionsService.reducer,
     [homeStatisticsService.reducerPath]: homeStatisticsService.reducer,
     [contestsService.reducerPath]: contestsService.reducer,
+    [searchService.reducerPath]: searchService.reducer,
     [contestsAdminService.reducerPath]: contestsAdminService.reducer,
     [submissionsAdminService.reducerPath]: submissionsAdminService.reducer,
     [submissionsForProcessingAdminService.reducerPath]: submissionsForProcessingAdminService.reducer,
@@ -75,6 +80,7 @@ const reducersToPersist = [
     themeSlice.name,
     authorizationSlice.name,
     contestSlice.name,
+    searchSlice.name,
 ];
 
 const persistRootReducer = persistReducer(persistConfig([ ...reducersToPersist ]), rootReducer);
@@ -90,6 +96,7 @@ const store = configureStore({
         problemGroupsAdminService.middleware,
         contestCategoriesAdminService.middleware,
         contestsService.middleware,
+        searchService.middleware,
         homeStatisticsService.middleware,
         problemsAdminService.middleware,
         submissionsAdminService.middleware,

@@ -1,0 +1,37 @@
+@use 'src/styles/spacings';
+@use 'src/styles/border-radiuses';
+@use 'src/styles/shadows';
+@use 'src/styles/variables';
+@use 'src/styles/font-weights';
+
+.problemsSearchCardWrapper {
+  border-radius: border-radiuses.$br-6;
+  box-shadow: shadows.$dp-shadow-4;
+  display: flex;
+  justify-content: space-between;
+  margin: spacings.$sp-12 0;
+  padding: spacings.$sp-12 spacings.$sp-16;
+
+  .problemName {
+    font-size: variables.$f-size-18;
+    font-weight: font-weights.$font-weight-regular;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .contestName {
+    font-size: variables.$f-size-12;
+    margin: spacings.$sp-4 0;
+  }
+
+  .buttonsWrapper {
+    display: flex;
+    flex-direction: column;
+
+    button:nth-child(2) {
+      margin-top: spacings.$sp-8;
+    }
+  }
+}
