@@ -58,25 +58,41 @@ const HomePage = () => {
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
+    const mapStatisticsNumber = (value: number) => {
+        if (value > 1000000) {
+            return `${(value / 1000000 ).toFixed(1)} M`;
+        }
+
+        if (value > 1000) {
+            return `${(value / 1000).toFixed(1)} K`;
+        }
+
+        return value.toString();
+    };
+
     const renderHomeStatisticIcons = useCallback(() => {
+        
         if (isLoading) {
             return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
         if (error) {
             return <div className={textColorClassName}>Error fetching statistics data. Please try again!</div>;
         }
+        
         return (
             <div className={styles.gridWrapper}>
                 <div className={styles.homeStatistics}>
                     {HOME_STATISTICS.map((el, idx) => {
                         const { iconType, title, dataKey } = el;
                         // eslint-disable-next-line prefer-destructuring
-                        const count = Number(data[dataKey]) > 1000
-                            ? `${(Number(data[dataKey]) / 1000).toFixed(1)} K`
-                            : data[dataKey];
                         return (
                             // eslint-disable-next-line react/no-array-index-key
-                            <HomePageStatistic key={`home-page-statistic-item-${idx}`} title={title} iconType={iconType} count={count} />
+                            <HomePageStatistic 
+                                key={`home-page-statistic-item-${idx}`} 
+                                title={title} 
+                                iconType={iconType} 
+                                count={mapStatisticsNumber(Number(data[dataKey]))} 
+                            />
                         );
                     })}
                 </div>
