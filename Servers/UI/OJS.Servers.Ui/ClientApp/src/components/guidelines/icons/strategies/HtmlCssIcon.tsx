@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
-import { GrHtml5 } from 'react-icons/gr';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
 import Icon, { IIconProps } from '../Icon';
 
 import styles from './StrategyIcon.module.scss';
+import { FaHtml5 } from 'react-icons/fa';
 
 type IHtmlCssIconProps = IIconProps
 
@@ -18,7 +18,7 @@ const HtmlCssIcon = ({
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={GrHtml5}
+      Component={FaHtml5}
     />
 );
 
