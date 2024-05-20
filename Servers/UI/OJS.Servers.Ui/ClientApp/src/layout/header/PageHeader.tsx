@@ -109,16 +109,16 @@ const PageHeader = () => {
                     )}
                     { isLoggedIn
                         ? (
-                            <div className={styles.burgerNavButtons}>
+                            <>
                                 <Link to="/profile" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>My Profile</Link>
                                 <Link to="/logout" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Logout</Link>
-                            </div>
+                            </>
                         )
                         : (
-                            <div className={styles.burgerNavButtons}>
+                            <>
                                 <Link to="/register" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Register</Link>
                                 <Link to="/login" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Login</Link>
-                            </div>
+                            </>
                         )}
                 </div>
             );
