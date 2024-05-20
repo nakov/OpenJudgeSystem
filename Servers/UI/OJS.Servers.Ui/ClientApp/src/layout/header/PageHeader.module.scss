@@ -46,6 +46,10 @@
   }
 }
 
+.burgerMenu {
+  display: none;
+}
+
 .searchIcon {
   align-self: center;
   background-color: colors.$primary-blue;
@@ -64,6 +68,65 @@
   box-shadow: shadows.$dp-shadow-4;
   height: 40px;
   position: absolute;
-  right: 30px;
-  top: 22px;
+  right: 20px;
+  top: 17px;
+}
+
+.profileNavButton{
+  height: 40px;
+  width: 40px;
+}
+
+.burgerMenuItems {
+  @extend %font-family-normal;
+  font-size: variables.$f-size-18;
+  font-weight: font-weights.$font-weight-medium;
+  display: none;
+  position: absolute;
+  top: 78px;
+  border-top: 2px solid #d0d0d0;
+  transition: all .2s ease-in-out;
+  .burgerItemWrapper {
+    display: block;
+    background-color: colors.$primary-blue;
+    padding: spacings.$sp-18;
+    width: 100vw;
+    color: colors.$white-color;
+
+    &:hover {
+      background-color: colors.$white-color;
+      color: colors.$primary-blue;
+    }
+
+    transition: .2s ease-in-out;
+  }
+
+  .burgerNavButtons {
+    // margin-top: spacings.$sp-16;
+  }
+}
+
+.burgerMenuItemsOpened {
+  display: block !important;
+  margin-left: 0 !important;
+  opacity: 1;
+}
+
+.burgerMenuItemsClosed {
+  opacity: 0;
+}
+
+@media only screen and (max-width: 920px) {
+  .navButtons {
+    display: none;
+  }
+  .burgerMenu {
+    display: block;
+    margin-right: -35px;
+
+    svg {
+      color: colors.$white-color;
+      cursor: pointer;
+    }
+  }
 }
