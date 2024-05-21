@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -114,11 +114,6 @@ const SubmissionsGrid = ({
         },
         [ isDataLoaded, submissions, className, headerClassName, options, getColorClassName, themeColors.textColor ],
     );
-
-    useEffect(() => {
-        console.log(submissions);
-        console.log(isEmpty(submissions));
-    }, [ submissions ]);
 
     return (
         <>

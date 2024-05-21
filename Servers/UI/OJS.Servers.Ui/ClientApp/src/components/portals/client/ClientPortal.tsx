@@ -5,7 +5,6 @@ import MuiUiThemeProvider from '../../../hooks/use-mui-ui-theme';
 import useTheme from '../../../hooks/use-theme';
 import PageFooter from '../../../layout/footer/PageFooter';
 import PageHeader from '../../../layout/header/PageHeader';
-import SearchBar from '../../../layout/search-bar/SearchBar';
 import ContestEditPage from '../../../pages/administration/ContestEditPage';
 import ContestProblemsPage from '../../../pages/administration/ContestProblemsPage';
 import SubmissionRetestPage from '../../../pages/administration/SubmissionRetestPage';
@@ -25,6 +24,7 @@ import SearchPage from '../../../pages/search/SearchPage';
 import { asPage } from '../../../pages/shared/set-page-params';
 import SubmissionDetailsPage from '../../../pages/submissions/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../../pages/submissions/SubmissionsPage';
+import SearchBar from '../../search/search-bar/SearchBar';
 
 import styles from '../../../layout/content/PageContent.module.scss';
 
