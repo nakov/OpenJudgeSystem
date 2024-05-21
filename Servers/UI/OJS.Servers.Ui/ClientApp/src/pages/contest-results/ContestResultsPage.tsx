@@ -7,6 +7,7 @@ import { contestParticipationType } from '../../common/contest-helpers';
 import { IContestDetailsResponseType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestResultsGrid from '../../components/contests/contest-results-grid/ContestResultsGrid';
+import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -17,6 +18,7 @@ import { useGetContestCategoriesQuery, useGetContestResultsQuery } from '../../r
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import concatClassNames from '../../utils/class-names';
+import { getErrorMessage } from '../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
 import { getContestDetailsAppUrl } from '../../utils/urls';
@@ -151,7 +153,12 @@ const ContestResultsPage = () => {
                         <SpinningLoader />
                     </div>
                 )
-            : renderErrorMessage()
+            : (
+                <ErrorWithActionButtons
+                  message={getErrorMessage(contestResultsError)}
+                />
+            )
+
     );
 };
 
