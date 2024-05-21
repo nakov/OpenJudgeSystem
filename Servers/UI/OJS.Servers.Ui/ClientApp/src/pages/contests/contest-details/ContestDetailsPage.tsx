@@ -12,6 +12,7 @@ import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
 import Button, { ButtonType } from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
+import LegacyInfoMessage from '../../../components/guidelines/legacy-info-message/LegacyInfoMessage';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import useTheme from '../../../hooks/use-theme';
@@ -22,7 +23,6 @@ import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestDetailsPage.module.scss';
-import LegacyInfoMessage from "../../../components/guidelines/legacy-info-message/LegacyInfoMessage";
 
 const ContestDetailsPage = () => {
     const dispatch = useAppDispatch();

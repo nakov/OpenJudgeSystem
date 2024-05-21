@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
+import { FaHtml5 } from 'react-icons/fa';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
 import Icon, { IIconProps } from '../Icon';
 
 import styles from './StrategyIcon.module.scss';
-import { FaHtml5 } from 'react-icons/fa';
 
 type IHtmlCssIconProps = IIconProps
 
