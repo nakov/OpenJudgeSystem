@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Popover } from '@mui/material';
 
 import { TestRunResultType } from '../../../common/constants';
+import { getResultTypeText } from '../../../common/submissions-utils';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import { toLowerCase } from '../../../utils/string-utils';
@@ -46,24 +47,6 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
         [ testRun.id, testRun.resultType ],
     );
 
-    const getPopoverText = () => {
-        switch (testRun.resultType.toLowerCase()) {
-        case TestRunResultType.CorrectAnswer.toLowerCase():
-            return 'Correct Answer';
-        case TestRunResultType.WrongAnswer.toLowerCase():
-            return 'Wrong Answer';
-        case TestRunResultType.MemoryLimit.toLowerCase():
-            return 'Memory Limit';
-        case TestRunResultType.TimeLimit.toLowerCase():
-            return 'Time Limit';
-        case TestRunResultType.RunTimeError.toLowerCase():
-            return 'Runtime Error';
-
-        default:
-            return '';
-        }
-    };
-
     return (
         <span
           onMouseEnter={(e) => onPopoverOpen(e)}
@@ -85,7 +68,7 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
               disableRestoreFocus
             >
                 <div className={`${styles.competeIconModal} ${backgroundColorClassName}`}>
-                    {getPopoverText()}
+                    {getResultTypeText(testRun.resultType.toLowerCase())}
                 </div>
             </Popover>
             {renderTestRunIcon()}
