@@ -13,8 +13,8 @@ const getUrl = <P>(url: UrlType<P>, params?: IDictionary<P> | null) => (
 );
 
 const getErrorMessage = (
-    err: FetchBaseQueryError | SerializedError,
-    defaultErrorMessage = 'Something went wrong fetching data, please try again!',
+    err: FetchBaseQueryError | SerializedError | undefined,
+    defaultErrorMessage = 'Something went wrong, please try again!',
 ): string => {
     // we should unify the return object from BE on error
     // in order to implement better logic in this function

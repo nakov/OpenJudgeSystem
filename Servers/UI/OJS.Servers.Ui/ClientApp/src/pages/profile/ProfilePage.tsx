@@ -16,7 +16,6 @@ import { setProfile } from '../../redux/features/usersSlice';
 import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
-import concatClassNames from '../../utils/class-names';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
