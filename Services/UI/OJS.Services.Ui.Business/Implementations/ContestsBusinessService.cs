@@ -375,7 +375,7 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var modelResult = new ContestSearchServiceResultModel();
 
-            var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
+            var allContestsQueryable = this.contestsData.GetAllVisible()
                 .Include(c => c.Category)
                 .Where(c => (c.Name != null && c.Name.Contains(model.SearchTerm ?? string.Empty)) &&
                             (c.Category != null && c.Category.IsVisible));

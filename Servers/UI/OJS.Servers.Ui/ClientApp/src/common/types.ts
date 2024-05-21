@@ -491,6 +491,7 @@ interface IContestAdministration {
     practicePassword: string | null;
     limitBetweenSubmissions: number;
     isVisible: boolean;
+    visibleFrom: Date | null;
     newIpPassword: string | null;
     allowParallelSubmissionsInTasks: boolean;
     orderBy: number;

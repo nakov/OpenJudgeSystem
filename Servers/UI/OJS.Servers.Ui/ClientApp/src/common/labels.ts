@@ -47,6 +47,7 @@ export const COMPETE_END_TIME = 'End Time';
 export const PRACTICE_START_TIME = 'Practice Start Time';
 export const PRACTICE_END_TIME = 'Practice End Time';
 export const IS_VISIBLE = 'Is Visible';
+export const VISIBLE_FROM = 'Visible From';
 export const ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS = 'Allow parallel submissions in tasks';
 export const AUTO_CHANGE_TESTS_FEEDBACK_VISIBILITY = 'Auto change tests feedback visibility';
 export const CREATE_NEW_ENTITY = 'Create new contest';
