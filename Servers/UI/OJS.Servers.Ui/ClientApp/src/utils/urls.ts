@@ -232,8 +232,6 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
-
-const getSearchPageURL = () => '/search';
 const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchResultsParams) => {
     const searchQuery = `${SearchParams.search}=${searchTerm}`;
 
@@ -251,7 +249,6 @@ export {
     getLoginSubmitUrl,
     getLogoutUrl,
     getLoginPath,
-    getSearchPageURL,
     getSearchResultsUrl,
     getUserAuthInfoUrl,
     getPlatformRegisterUrl,
