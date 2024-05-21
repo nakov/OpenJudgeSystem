@@ -113,7 +113,7 @@
   opacity: 0;
 }
 
-@media only screen and (max-width: 920px) {
+@media only screen and (width <= 920px) {
   .navButtons {
     display: none;
   }
