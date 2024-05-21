@@ -1,11 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
 import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { encodeAsUrlParam, getUserProfileInfoUrlByUsername } from '../../../utils/urls';
-import { ButtonSize, LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import LegacyInfoMessage from '../../guidelines/legacy-info-message/LegacyInfoMessage';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
 
