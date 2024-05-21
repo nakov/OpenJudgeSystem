@@ -15,6 +15,7 @@ import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemSearchCard from '../../components/search/profile-search-card/ProblemSearchCard';
+import ProfileSearchList from '../../components/search/profile-search-list/ProblemsSearchList';
 import UserSearchCard from '../../components/search/user-search-card/UserSearchCard';
 import useTheme from '../../hooks/use-theme';
 import { setSearchValue } from '../../redux/features/searchSlice';
@@ -34,6 +35,7 @@ enum SearchTypeEnums {
 }
 
 const ITEMS_PER_SEARCH = 5;
+const USER_ITEMS_PER_SEARCH = 35;
 
 const SearchPage = () => {
     const dispatch = useAppDispatch();
@@ -108,7 +110,7 @@ const SearchPage = () => {
             getContestsSearch({ searchTerm: searchValue, page: selectedContestsPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
         if (selectedTerms.includes(CheckboxSearchValues.users)) {
-            getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage, itemsPerPage: ITEMS_PER_SEARCH });
+            getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage, itemsPerPage: USER_ITEMS_PER_SEARCH });
         }
     }, [
         searchValue,
@@ -160,13 +162,15 @@ const SearchPage = () => {
                         ? <div>No items found</div>
                         : (
                             <>
-                                <List
-                                  values={data.items}
-                                  itemFunc={renderFunction}
-                                  orientation={searchName === SearchTypeEnums.USERS
-                                      ? Orientation.horizontal
-                                      : Orientation.vertical}
-                                />
+                                { searchName === SearchTypeEnums.USERS
+                                    ? <ProfileSearchList data={(data.items as IIndexContestsType[])} />
+                                    : (
+                                        <List
+                                          values={data.items}
+                                          itemFunc={renderFunction}
+                                          orientation={Orientation.vertical}
+                                        />
+                                    )}
                                 <PaginationControls
                                   count={data?.pagesCount}
                                   page={selectedPageValue()}

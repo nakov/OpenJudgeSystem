@@ -107,10 +107,12 @@
   display: block !important;
   margin-left: 0 !important;
   opacity: 1;
+  pointer-events: all;
 }
 
 .burgerMenuItemsClosed {
   opacity: 0;
+  pointer-events: none;
 }
 
 @media only screen and (width <= 920px) {

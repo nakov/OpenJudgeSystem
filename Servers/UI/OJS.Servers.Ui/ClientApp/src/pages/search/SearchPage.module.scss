@@ -3,7 +3,9 @@
 @use 'src/styles/font-weights';
 
 .searchPageWrapper {
+  margin: 0 auto;
   padding: spacings.$sp-64;
+  width: 80vw;
 
   .searchTextHeader {
     font-size: variables.$f-size-24;
