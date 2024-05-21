@@ -298,9 +298,11 @@ const SubmissionDetailsPage = () => {
 
     if (retestError) {
         return (
-            <div className={getColorClassName(themeColors.textColor)}>
-                Error retesting solution. Please try again!
-            </div>
+            <ErrorWithActionButtons
+              message="Error retesting solution. Please try again!"
+              backToUrl={`/submissions/${submissionId}/details`}
+              backToText="Back to submission"
+            />
         );
     }
 
