@@ -1,13 +1,15 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
-using System.Threading.Tasks;
 using OJS.Services.Common;
-using OJS.Services.Ui.Models.Search;
-using OJS.Services.Infrastructure.Models;
-using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Infrastructure.Extensions;
+using OJS.Services.Infrastructure.Models;
 using OJS.Services.Ui.Business.Validations.Implementations.Search;
+using OJS.Services.Ui.Models.Contests;
+using OJS.Services.Ui.Models.Search;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class SearchBusinessService : ISearchBusinessService
 {
@@ -16,6 +18,7 @@ public class SearchBusinessService : ISearchBusinessService
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly IProblemsBusinessService problemsBusinessService;
     private readonly IUsersBusinessService usersBusinessService;
+    private readonly IUserProviderService userProviderService;
     private readonly ISearchValidationService searchValidationService;
     private readonly IContestsActivityService activityService;
 
@@ -23,17 +26,19 @@ public class SearchBusinessService : ISearchBusinessService
         IContestsBusinessService contestsBusinessService,
         IProblemsBusinessService problemsBusinessService,
         IUsersBusinessService usersBusinessService,
+        IUserProviderService userProviderService,
         ISearchValidationService searchValidationService,
         IContestsActivityService activityService)
     {
         this.contestsBusinessService = contestsBusinessService;
         this.problemsBusinessService = problemsBusinessService;
         this.usersBusinessService = usersBusinessService;
+        this.userProviderService = userProviderService;
         this.searchValidationService = searchValidationService;
         this.activityService = activityService;
     }
 
-    public async Task<PagedResult<ContestSearchServiceModel>> GetContestSearchResults(
+    public async Task<PagedResult<ContestForListingServiceModel>> GetContestSearchResults(
         SearchServiceModel model)
     {
         NormalizeSearchModel(model);
@@ -48,12 +53,22 @@ public class SearchBusinessService : ISearchBusinessService
         var contestSearchListingModel = new ContestSearchForListingServiceModel();
         await this.PopulateSelectedConditionValues(model, contestSearchListingModel);
 
-        var modelResult = model.Map<PagedResult<ContestSearchServiceModel>>();
+        var modelResult = model.Map<PagedResult<ContestForListingServiceModel>>();
         modelResult.Items = contestSearchListingModel.Contests;
 
-        await this.activityService.SetCanBeCompetedAndPracticed(modelResult.Items.ToList());
+        var participantResults = new Dictionary<int, List<ParticipantResultServiceModel>>();
+        if (this.userProviderService.GetCurrentUser().IsAuthenticated)
+        {
+            participantResults = await this.contestsBusinessService
+                .GetUserParticipantResultsForContestInPage(modelResult
+                    .Items
+                    .Select(c => c.Id)
+                    .ToList());
+        }
 
-        return modelResult;
+        return await this.contestsBusinessService.PrepareActivityAndResults(
+            modelResult,
+            participantResults);
     }
 
     public async Task<PagedResult<ProblemSearchServiceModel>> GetProblemSearchResults(
@@ -104,7 +119,11 @@ public class SearchBusinessService : ISearchBusinessService
     private static void NormalizeSearchModel(SearchServiceModel model)
     {
         model.SearchTerm = model.SearchTerm?.Trim();
-        model.ItemsPerPage = DefaultItemsPerPage;
+
+        if (model.ItemsPerPage <= 0)
+        {
+            model.ItemsPerPage = DefaultItemsPerPage;
+        }
     }
 
     private async Task PopulateSelectedConditionValues(

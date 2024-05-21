@@ -9,6 +9,7 @@ interface IContestButtonProps {
     isCompete: boolean;
     isDisabled: boolean;
     id: number;
+    problemId?: number;
     onClick?: () => void;
 }
 
@@ -16,7 +17,7 @@ const COMPETE_STRING = 'COMPETE';
 const PRACTICE_STRING = 'PRACTICE';
 
 const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, id, onClick } = props;
+    const { isCompete, isDisabled, id, problemId, onClick } = props;
 
     const navigate = useNavigate();
 
@@ -33,7 +34,7 @@ const ContestButton = (props: IContestButtonProps) => {
             return;
         }
 
-        navigate(getContestSubmissionPageUrl(isCompete, id));
+        navigate(getContestSubmissionPageUrl(isCompete, id, problemId), { replace: true });
     };
 
     const btnText = isCompete
