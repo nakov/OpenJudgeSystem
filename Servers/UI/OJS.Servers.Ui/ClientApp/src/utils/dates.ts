@@ -22,7 +22,7 @@ const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
-    Duration => moment.duration(moment(date).diff(Date.now()), unit);
+    Duration => moment.duration(moment(date).diff(moment().local()), unit);
 
 const preciseFormatDate = (
     date: Date,
