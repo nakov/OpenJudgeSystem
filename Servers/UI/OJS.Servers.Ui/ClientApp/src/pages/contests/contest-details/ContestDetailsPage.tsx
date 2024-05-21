@@ -74,6 +74,7 @@ const ContestDetailsPage = () => {
                 <div className={styles.problemResources}>
                     { problem.resources.map((resource: IProblemResourceType) => (
                         <ProblemResource
+                          key={`p-r-${resource.id}`}
                           resource={resource}
                           problem={problem.name}
                         />
