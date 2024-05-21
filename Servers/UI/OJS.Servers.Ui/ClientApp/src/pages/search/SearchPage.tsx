@@ -15,7 +15,7 @@ import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemSearchCard from '../../components/search/profile-search-card/ProblemSearchCard';
-import ProfileSearchList from '../../components/search/profile-search-list/ProblemsSearchList';
+import ProfileSearchList from '../../components/search/profile-search-list/ProfileSearchList';
 import UserSearchCard from '../../components/search/user-search-card/UserSearchCard';
 import useTheme from '../../hooks/use-theme';
 import { setSearchValue } from '../../redux/features/searchSlice';
@@ -25,6 +25,7 @@ import {
     useLazyGetUsersSearchQuery,
 } from '../../redux/services/searchService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
+import { getErrorMessage } from '../../utils/http-utils';
 
 import styles from './SearchPage.module.scss';
 
@@ -49,19 +50,22 @@ const SearchPage = () => {
         getContestsSearch, {
             data: contestsSearchData,
             isLoading: contestsSearchLoading,
-            isError: contestsSearchError,
+            error: contestsSearchError,
+            isError: areContestsSearchError,
         } ] = useLazyGetContestsSearchQuery();
     const [
         getProblemsSearch, {
             data: problemsSearchData,
             isLoading: problemsSearchLoading,
-            isError: problemsSearchError,
+            error: problemsSearchError,
+            isError: areProblemsSearchError,
         } ] = useLazyGetProblemsSearchQuery();
     const [
         getUsersSearch, {
             data: usersSearchData,
             isLoading: usersSearchLoading,
-            isError: usersSearchError,
+            error: usersSearchError,
+            isError: areUsersSearchError,
         },
     ] = useLazyGetUsersSearchQuery();
 
@@ -127,13 +131,15 @@ const SearchPage = () => {
         searchName: SearchTypeEnums,
         data: IPagedResultType<IIndexContestsType> | IPagedResultType<IUserType> | IPagedResultType<IProblemSearchType> | undefined,
         isLoading: boolean,
-        error: boolean,
+        isError: boolean,
+        error: any,
     ) => {
         const renderErrorFragment = () => (
             <div>
-                Error fetching
-                {' '}
-                {searchName}
+                <div className={styles.errorTextWrapper}>
+                    {getErrorMessage(error)}
+                </div>
+                { searchName !== SearchTypeEnums.USERS && (<hr className={styles.line} />)}
             </div>
         );
 
@@ -176,8 +182,9 @@ const SearchPage = () => {
                                   page={selectedPageValue()}
                                   onChange={(page: number) => {
                                       searchParams.set(`${searchName.toLowerCase()}Page`, page.toString());
-                                      setSearchParams(searchParams);
+                                      setSearchParams(searchParams, { replace: true });
                                   }}
+                                  shouldScrollDown
                                 />
                             </>
                         )}
@@ -195,7 +202,7 @@ const SearchPage = () => {
                 <div className={styles.searchSectionHeader}>
                     {searchName}
                 </div>
-                { error
+                { isError
                     ? renderErrorFragment()
                     : renderData()}
             </div>
@@ -214,11 +221,11 @@ const SearchPage = () => {
                             &quot;
                         </div>
                         {shouldIncludeContests &&
-                            renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, contestsSearchLoading, contestsSearchError)}
+                            renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, contestsSearchLoading, areContestsSearchError, contestsSearchError)}
                         {shouldIncludeProblems &&
-                            renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, problemsSearchLoading, problemsSearchError)}
+                            renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, problemsSearchLoading, areProblemsSearchError, problemsSearchError)}
                         {shouldIncludeUsers &&
-                            renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, usersSearchLoading, usersSearchError)}
+                            renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, usersSearchLoading, areUsersSearchError, usersSearchError)}
                     </>
                 )}
         </div>

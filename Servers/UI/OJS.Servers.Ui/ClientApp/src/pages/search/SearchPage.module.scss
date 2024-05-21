@@ -1,5 +1,6 @@
 @use 'src/styles/spacings';
 @use 'src/styles/variables';
+@use 'src/styles/colors';
 @use 'src/styles/font-weights';
 
 .searchPageWrapper {
@@ -28,5 +29,10 @@
     background-color: #b4b4b4 !important;
     border-color: transparent;
     margin: spacings.$sp-16 0;
+  }
+
+  .errorTextWrapper {
+    color: colors.$primary-red;
+    margin: spacings.$sp-12 0;
   }
 }

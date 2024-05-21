@@ -11,6 +11,7 @@ interface IPaginationControlsProps extends IHaveOptionalClassName {
     count: number;
     page: number;
     onChange: (value: number) => void | undefined;
+    shouldScrollDown? : boolean;
 }
 
 const PaginationControls = ({
@@ -18,6 +19,7 @@ const PaginationControls = ({
     page,
     onChange,
     className = '',
+    shouldScrollDown = false,
 } : IPaginationControlsProps) => {
     const paginationClassNames = concatClassNames(styles.paginationControlsMenu, className);
 
@@ -34,7 +36,17 @@ const PaginationControls = ({
           count={count}
           siblingCount={PAGE_SIBLING_COUNT}
           boundaryCount={PAGE_BOUNDARY_COUNT}
-          onChange={(ev, value) => onChange(value)}
+          onChange={(ev, value) => {
+              if (shouldScrollDown) {
+                  setTimeout(() => {
+                      window.scrollTo({
+                          top: (ev as any).pageY - 800,
+                          behavior: 'smooth',
+                      });
+                  }, 10);
+              }
+              onChange(value);
+          }}
           page={page}
           className={paginationClassNames}
           classes={{ ul: classes.ul }}
