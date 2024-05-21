@@ -1,6 +1,6 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
+import dayjs from 'dayjs';
 import moment, { Duration, unitOfTime } from 'moment';
-import dayjs from "dayjs";
 
 interface IConvertToTwoDigitValuesParamType {
     days: number;
@@ -36,12 +36,10 @@ const formatDate = (
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
 
-const getUTCDateAsLocal = (date: string | number | Date) => {
-    return dayjs
-        .utc(date)
-        .local()
-        .toDate();
-};
+const getUTCDateAsLocal = (date: string | number | Date) => dayjs
+    .utc(date)
+    .local()
+    .toDate();
 
 const getCurrentTimeInUTC = () => {
     const now = moment().utc();
