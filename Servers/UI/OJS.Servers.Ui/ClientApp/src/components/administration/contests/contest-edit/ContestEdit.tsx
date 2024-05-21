@@ -6,7 +6,28 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import isNaN from 'lodash/isNaN';
 
 import { ContestVariation } from '../../../../common/contest-types';
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, ALLOWED_IPS, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, DESCRIPTION, DURATION, ID, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, NAME, NEW_IP_PASSWORD, NUMBER_OF_PROBLEM_GROUPS, ORDER_BY, PRACTICE_END_TIME, PRACTICE_PASSWORD, PRACTICE_START_TIME, SELECT_CATEGORY, TYPE } from '../../../../common/labels';
+import {
+    ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS,
+    ALLOWED_IPS,
+    COMPETE_END_TIME,
+    COMPETE_PASSWORD,
+    COMPETE_START_TIME,
+    DESCRIPTION,
+    DURATION,
+    ID,
+    IS_VISIBLE,
+    LIMIT_BETWEEN_SUBMISSIONS,
+    NAME,
+    NEW_IP_PASSWORD,
+    NUMBER_OF_PROBLEM_GROUPS,
+    ORDER_BY,
+    PRACTICE_END_TIME,
+    PRACTICE_PASSWORD,
+    PRACTICE_START_TIME,
+    SELECT_CATEGORY,
+    TYPE,
+    VISIBLE_FROM,
+} from '../../../../common/labels';
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
@@ -55,6 +76,7 @@ const ContestEdit = (props:IContestEditProps) => {
         name: '',
         id: 0,
         isVisible: false,
+        visibleFrom: null,
         limitBetweenSubmissions: 0,
         newIpPassword: null,
         orderBy: 0,
@@ -176,6 +198,7 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceStartTime,
             practiceEndTime,
             isVisible,
+            visibleFrom,
             allowParallelSubmissionsInTasks,
             categoryId,
             categoryName,
@@ -292,6 +315,13 @@ const ContestEdit = (props:IContestEditProps) => {
             isVisible = checked;
             break;
         }
+        case 'visibleFrom': {
+            visibleFrom = null;
+            if (value) {
+                visibleFrom = convertToUtc(e.target.value);
+            }
+            break;
+        }
         case 'allowParallelSubmissionsInTasks': {
             allowParallelSubmissionsInTasks = checked;
             break;
@@ -343,6 +373,7 @@ const ContestEdit = (props:IContestEditProps) => {
             practiceStartTime,
             practiceEndTime,
             isVisible,
+            visibleFrom,
             allowParallelSubmissionsInTasks,
             categoryId,
             categoryName,
@@ -613,6 +644,15 @@ const ContestEdit = (props:IContestEditProps) => {
                       label={PRACTICE_END_TIME}
                       value={getDateAsLocal(contest.practiceEndTime)}
                       onChange={(newValue) => handleDateTimePickerChange('practiceEndTime', newValue, onChange)}
+                    />
+                </Box>
+                <Box className={formStyles.row}>
+                    <DateTimePicker
+                      sx={{ width: '48%', margin: '20px 0' }}
+                      name="visibleFrom"
+                      label={VISIBLE_FROM}
+                      value={getDateAsLocal(contest.visibleFrom)}
+                      onChange={(newValue) => handleDateTimePickerChange('visibleFrom', newValue, onChange)}
                     />
                 </Box>
                 <Box className={styles.checkboxes}>
