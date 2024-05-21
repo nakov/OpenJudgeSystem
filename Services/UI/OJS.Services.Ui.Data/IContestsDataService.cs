@@ -30,13 +30,13 @@ namespace OJS.Services.Ui.Data
 
         Task<Contest?> GetByIdWithParticipants(int id);
 
-        IQueryable<Contest> GetAllNonDeletedContests();
-
         Task<TServiceModel?> GetByProblemId<TServiceModel>(int id);
 
         IQueryable<Contest> GetLatestForParticipantByUsername(string username);
 
         Task<TServiceModel?> GetWithCategoryByProblem<TServiceModel>(int problemId);
+
+        IQueryable<Contest> GetAllVisible();
 
         IQueryable<Contest> GetAllActive();
 

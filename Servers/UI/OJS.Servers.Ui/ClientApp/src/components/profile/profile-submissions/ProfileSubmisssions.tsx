@@ -3,7 +3,10 @@ import isNil from 'lodash/isNil';
 
 import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import LegacyInfoMessage from '../../guidelines/legacy-info-message/LegacyInfoMessage';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
+
+import styles from './ProfileSubmissions.module.scss';
 
 interface IProfileSubmissionsProps {
     userIsProfileOwner: boolean;
@@ -62,18 +65,22 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         }
 
         return (
-            <SubmissionsGrid
-              isDataLoaded={!areSubmissionsLoading}
-              submissions={userSubmissions!}
-              handlePageChange={(page: number) => setUserSubmissionsPage(page)}
-              options={{
-                  showTaskDetails: true,
-                  showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
-                  showCompeteMarker: false,
-                  showSubmissionTypeInfo: false,
-                  showParticipantUsername: false,
-              }}
-            />
+            <>
+                <LegacyInfoMessage />
+                <SubmissionsGrid
+                  isDataLoaded={!areSubmissionsLoading}
+                  submissions={userSubmissions!}
+                  handlePageChange={(page: number) => setUserSubmissionsPage(page)}
+                  className={styles.profileSubmissionsGrid}
+                  options={{
+                      showTaskDetails: true,
+                      showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
+                      showCompeteMarker: false,
+                      showSubmissionTypeInfo: false,
+                      showParticipantUsername: false,
+                  }}
+                />
+            </>
         );
     }, [
         areSubmissionsLoading,

@@ -12,6 +12,7 @@ import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
 import Button, { ButtonType } from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
+import LegacyInfoMessage from '../../../components/guidelines/legacy-info-message/LegacyInfoMessage';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import useTheme from '../../../hooks/use-theme';
@@ -74,6 +75,7 @@ const ContestDetailsPage = () => {
                 <div className={styles.problemResources}>
                     { problem.resources.map((resource: IProblemResourceType) => (
                         <ProblemResource
+                          key={`p-r-${resource.id}`}
                           resource={resource}
                           problem={problem.name}
                         />
@@ -157,6 +159,7 @@ const ContestDetailsPage = () => {
         <div className={`${styles.contestDetailsWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
+            <LegacyInfoMessage />
             <div className={styles.descriptionBoxWrapper}>
                 <div>
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>

@@ -56,7 +56,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
 
         return (items!.userIsInRoleForContest || participantResult.participantUsername === internalUser.userName) && !isNil(bestSubmission)
             ? (
-                <td>
+                <td key={`p-r-i-${problemId}`}>
                     <LinkButton
                       className={styles.pointsResult}
                       type={LinkButtonType.plain}
@@ -66,7 +66,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                     />
                 </td>
             )
-            : <td>{bestSubmission?.points || '-'}</td>;
+            : <td key={`p-r-i-${problemId}`}>{bestSubmission?.points || '-'}</td>;
     }, [ items, internalUser ]);
 
     return (
@@ -75,10 +75,10 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                 <thead>
                     <tr className={headerClassName}>
                         {
-                        getColumns(items!).map((column) => {
+                        getColumns(items!).map((column, idx) => {
                             if (column.length > 20) {
                                 return (
-                                    <td>
+                                    <td key={`t-r-i-${idx}`}>
                                         <Tooltip title={column}>
                                             <p>{`${column.substring(0, 19)}...`}</p>
                                         </Tooltip>
@@ -86,7 +86,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                                 );
                             }
 
-                            return (<td>{column}</td>);
+                            return (<td key={`t-r-i-${idx}`}>{column}</td>);
                         })
                     }
                     </tr>
@@ -94,7 +94,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                 <tbody>
                     {
                     !isNil(items) && !isEmpty(items) && items.results.map((participantResult, index) => (
-                        <tr key={index} className={rowClassName}>
+                        <tr key={`t-r-i-${participantResult.participantUsername}`} className={rowClassName}>
                             <td>{index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {

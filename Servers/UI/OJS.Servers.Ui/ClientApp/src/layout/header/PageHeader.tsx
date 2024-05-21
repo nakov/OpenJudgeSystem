@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
+import { FaBars } from 'react-icons/fa';
 import { RiSunLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
@@ -25,8 +26,16 @@ const PageHeader = () => {
 
     const { mode } = useAppSelector((state) => state.theme);
     const { isVisible } = useAppSelector((state) => state.search);
-    const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
-    const { data: userData, isSuccess: isSuccessfulRequest } = useGetUserinfoQuery(null);
+
+    const [ areBurgerItemsOpened, setAreBurgerItemsOpened ] = useState<boolean>(false);
+    const {
+        isLoggedIn,
+        internalUser: user,
+    } = useAppSelector((state) => state.authorization);
+    const {
+        data: userData,
+        isSuccess: isSuccessfulRequest,
+    } = useGetUserinfoQuery(null);
 
     useEffect(() => {
         if (isSuccessfulRequest && userData) {
@@ -39,6 +48,27 @@ const PageHeader = () => {
 
         dispatch(setIsGetUserInfoCompleted(true));
     }, [ isSuccessfulRequest, userData, dispatch ]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (areBurgerItemsOpened && window.innerWidth > 920) {
+                setAreBurgerItemsOpened(false);
+            }
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [ areBurgerItemsOpened ]);
+
+    useEffect(() => {
+        if (areBurgerItemsOpened) {
+            setAreBurgerItemsOpened(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ pathname ]);
 
     const renderThemeSwitcher = () => (
         <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
@@ -57,36 +87,93 @@ const PageHeader = () => {
         </ToggleButtonGroup>
     );
 
-    if (!shouldRenderPageHeader) { return null; }
+    const renderBurgerMenuItems = useCallback(
+        () => {
+            const onMenuItemClick = () => {
+                setAreBurgerItemsOpened(false);
+            };
+            return (
+                <div className={`${styles.burgerMenuItems} ${areBurgerItemsOpened
+                    ? styles.burgerMenuItemsOpened
+                    : styles.burgerMenuItemsClosed}`}
+                >
+                    <Link to="/contests" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Contests</Link>
+                    <Link to="/submissions" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Submissions</Link>
+                    {user.canAccessAdministration && (
+                        <Link
+                          to="/administration-new"
+                          target="_blank"
+                          className={styles.burgerItemWrapper}
+                          onClick={onMenuItemClick}
+                        >
+                            Administration
+                        </Link>
+                    )}
+                    { isLoggedIn
+                        ? (
+                            <>
+                                <Link to="/profile" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>My Profile</Link>
+                                <Link to="/logout" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Logout</Link>
+                            </>
+                        )
+                        : (
+                            <>
+                                <Link to="/register" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Register</Link>
+                                <Link to="/login" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Login</Link>
+                            </>
+                        )}
+                </div>
+            );
+        },
+        [ areBurgerItemsOpened, isLoggedIn, user.canAccessAdministration ],
+    );
+
+    const onBurgerClick = (e: any) => {
+        e.stopPropagation();
+        setAreBurgerItemsOpened(!areBurgerItemsOpened);
+    };
+
+    if (!shouldRenderPageHeader) {
+        return null;
+    }
     return (
         <header className={styles.header}>
             <div>
                 <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>SoftUni Judge</Link>
-                <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
-                <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
-                {user.canAccessAdministration &&
-                <Link to="/administration-new" target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
+                <div className={styles.navButtons}>
+                    <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
+                    <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
+                    {user.canAccessAdministration &&
+                        <Link to="/administration-new" target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
+                </div>
             </div>
             <div className={styles.authButtons}>
                 <i className={`fas fa-search ${styles.searchIcon}`} onClick={() => dispatch(setIsVisible(!isVisible))} />
                 {isLoggedIn
                     ? (
-                        <>
+                        <div className={`${styles.navButtons} ${styles.profileNavButton}`}>
                             {' '}
-                            <Link to="/profile" className={styles.navButton}>
+                            <Link to="/profile" className={`${styles.navButton}`}>
                                 <img height={40} width={40} src={MyProfileSvg} alt="my-profile" />
                             </Link>
-                        </>
+                        </div>
                     )
                     : (
-                        <>
+                        <div className={styles.navButtons}>
                             <Link to="/login" className={styles.navButton}>LOGIN</Link>
                             <Link to="/register" className={styles.navButton}>
                                 REGISTER
                             </Link>
-                        </>
+                        </div>
                     )}
+                <div
+                  className={`${styles.burgerMenu}`}
+                  onClick={onBurgerClick}
+                >
+                    <FaBars size={25} />
+                </div>
             </div>
+            {renderBurgerMenuItems()}
             {renderThemeSwitcher()}
         </header>
     );
