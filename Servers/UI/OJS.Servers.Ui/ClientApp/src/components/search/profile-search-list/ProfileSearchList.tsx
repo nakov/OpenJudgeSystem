@@ -19,7 +19,15 @@ const ProfileSearchList = (props: IProfileSearchListProps) => {
     }
     return (
         <div className={`${styles.profileElementsWrapper} ${textColorClassName}`}>
-            {data.map((el) => <Link key={`p-l-i-${el.id}`} to={`/profile/${el.name}`} style={{ border: `1px solid ${themeColors.textColor}` }}>{el.name}</Link>)}
+            {data.map((el) => (
+                <Link
+                  key={`p-l-i-${el.id}`}
+                  to={`/profile/${el.name}`}
+                  style={{ border: `1px solid ${themeColors.textColor}` }}
+                >
+                    {el.name}
+                </Link>
+            ))}
         </div>
     );
 };
