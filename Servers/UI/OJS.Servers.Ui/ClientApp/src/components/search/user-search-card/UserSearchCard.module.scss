@@ -1,0 +1,12 @@
+@use 'src/styles/spacings';
+@use 'src/styles/border-radiuses';
+
+.userSearchCardWrapper {
+  border: 1px solid;
+  border-radius: border-radiuses.$br-6;
+  cursor: pointer;
+  display: block;
+  margin-right: spacings.$sp-18;
+  padding: spacings.$sp-8 spacings.$sp-12;
+  text-align: center;
+}

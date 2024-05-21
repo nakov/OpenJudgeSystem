@@ -1,32 +1,32 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BsFillMoonFill } from 'react-icons/bs';
 import { RiSunLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import MyProfileSvg from '../../assets/my-profile.svg';
-import { useSearch } from '../../hooks/use-search';
 import useTheme from '../../hooks/use-theme';
 import { resetInInternalUser, setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
+import { setIsVisible } from '../../redux/features/searchSlice';
 import { useGetUserinfoQuery } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 
 import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
-    const { toggleSelectedTheme } = useTheme();
+    const dispatch = useAppDispatch();
     const { pathname } = useLocation();
+    const { toggleSelectedTheme } = useTheme();
+
     const shouldRenderPageHeader = !pathname.includes('administration');
 
-    const { actions: { toggleVisibility } } = useSearch();
     const { mode } = useAppSelector((state) => state.theme);
+    const { isVisible } = useAppSelector((state) => state.search);
     const { isLoggedIn, internalUser: user } = useAppSelector((state) => state.authorization);
     const { data: userData, isSuccess: isSuccessfulRequest } = useGetUserinfoQuery(null);
-
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (isSuccessfulRequest && userData) {
@@ -68,7 +68,7 @@ const PageHeader = () => {
                 <Link to="/administration-new" target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
             </div>
             <div className={styles.authButtons}>
-                <i className={`fas fa-search ${styles.searchIcon}`} onClick={toggleVisibility} />
+                <i className={`fas fa-search ${styles.searchIcon}`} onClick={() => dispatch(setIsVisible(!isVisible))} />
                 {isLoggedIn
                     ? (
                         <>
