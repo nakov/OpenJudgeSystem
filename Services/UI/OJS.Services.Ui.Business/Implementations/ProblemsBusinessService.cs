@@ -8,6 +8,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using OJS.Common.Helpers;
     using OJS.Data.Models.Problems;
     using OJS.Services.Common.Data;
+    using OJS.Services.Infrastructure;
     using OJS.Services.Ui.Data;
     using OJS.Services.Ui.Models.Search;
     using OJS.Services.Infrastructure.Extensions;
@@ -26,6 +27,7 @@ namespace OJS.Services.Ui.Business.Implementations
         private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly ILecturersInContestsBusinessService lecturersInContestsBusinessService;
+        private readonly IDatesService dates;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -37,7 +39,8 @@ namespace OJS.Services.Ui.Business.Implementations
             ITestRunsDataService testRunsData,
             ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
-            ILecturersInContestsBusinessService lecturersInContestsBusinessService)
+            ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+            IDatesService dates)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -49,6 +52,7 @@ namespace OJS.Services.Ui.Business.Implementations
             this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.lecturersInContestsBusinessService = lecturersInContestsBusinessService;
+            this.dates = dates;
         }
 
         public async Task DeleteById(int id)
@@ -106,7 +110,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     .ThenInclude(pg => pg.Contest)
                     .ThenInclude(c => c.Category)
                 .Where(p => p.Name.Contains(model.SearchTerm ?? string.Empty) &&
-                            p.ProblemGroup.Contest.IsVisible &&
+                            (p.ProblemGroup.Contest.IsVisible || p.ProblemGroup.Contest.VisibleFrom < this.dates.GetUtcNow()) &&
                             (p.ProblemGroup.Contest.Category != null &&
                              p.ProblemGroup.Contest.Category.IsVisible));
 
