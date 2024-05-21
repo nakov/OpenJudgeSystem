@@ -1,0 +1,8 @@
+@use 'src/styles/spacings';
+@use 'src/styles/fonts';
+
+.competeIconModal {
+  @extend %font-family-normal;
+
+  padding: spacings.$sp-8 spacings.$sp-18;
+}

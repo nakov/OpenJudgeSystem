@@ -21,11 +21,15 @@ const getAllContestsUrl =
         return returnUrl;
     };
 
-const getContestSubmissionPageUrl = (isCompete: boolean, id: number) => {
+const getContestSubmissionPageUrl = (isCompete: boolean, id: number, problemId?: number) => {
     if (isCompete) {
-        return `/${CONTESTS_PATH}/${id}/compete`;
+        return `/${CONTESTS_PATH}/${id}/compete${problemId
+            ? `#${problemId}`
+            : ''}`;
     }
-    return `/${CONTESTS_PATH}/${id}/practice`;
+    return `/${CONTESTS_PATH}/${id}/practice${problemId
+        ? `#${problemId}`
+        : ''}`;
 };
 
 export {

@@ -33,18 +33,6 @@
   margin-right: 30px;
 }
 
-.searchIcon {
-  cursor: pointer;
-  font-size: variables.$f-size-24;
-  margin-left: spacings.$sp-12;
-  margin-right: spacings.$sp-48;
-  transition: all 0.1s ease-in-out;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-}
-
 .closeIcon {
   color: colors.$white-color;
   cursor: pointer;
@@ -75,6 +63,7 @@
 
 .checkboxContainer {
   display: flex;
+  margin-left: spacings.$sp-16;
 }
 
 .checkboxText {
@@ -91,4 +80,10 @@
 .checkbox {
   height: 20px;
   width: 20px;
+}
+
+.checkboxWrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }

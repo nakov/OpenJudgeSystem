@@ -375,13 +375,13 @@ namespace OJS.Services.Ui.Business.Implementations
         {
             var modelResult = new ContestSearchServiceResultModel();
 
-            var allContestsQueryable = this.contestsData.GetAllNonDeletedContests()
+            var allContestsQueryable = this.contestsData.GetAllVisible()
                 .Include(c => c.Category)
                 .Where(c => (c.Name != null && c.Name.Contains(model.SearchTerm ?? string.Empty)) &&
                             (c.Category != null && c.Category.IsVisible));
 
             var searchContests = await allContestsQueryable
-                .MapCollection<ContestSearchServiceModel>()
+                .MapCollection<ContestForListingServiceModel>()
                 .ToPagedListAsync(model.PageNumber, model.ItemsPerPage);
 
             modelResult.Contests = searchContests;
@@ -408,12 +408,24 @@ namespace OJS.Services.Ui.Business.Implementations
             var user = this.userProviderService.GetCurrentUser();
             if (user.IsAuthenticated)
             {
-                var userParticipants = this.participantsData
-                    .GetAllByUsernameAndContests(user.Username ?? string.Empty, pagedContests.Items.Select(c => c.Id));
-                participantResultsByContest = await MapParticipationResultsToContestsInPage(pagedContests, userParticipants);
+                participantResultsByContest = await this.GetUserParticipantResultsForContestInPage(pagedContests
+                    .Items
+                    .Select(c => c.Id)
+                    .ToList());
             }
 
             return await this.PrepareActivityAndResults(pagedContests, participantResultsByContest);
+        }
+
+        public async Task<Dictionary<int, List<ParticipantResultServiceModel>>> GetUserParticipantResultsForContestInPage(
+            ICollection<int> contestIds)
+        {
+            var user = this.userProviderService.GetCurrentUser();
+
+            var userParticipants = this.participantsData
+                .GetAllByUsernameAndContests(user.Username ?? string.Empty, contestIds);
+
+            return await MapParticipationResultsToContestsInPage(contestIds, userParticipants);
         }
 
         public async Task<PagedResult<ContestForListingServiceModel>> GetParticipatedByUserByFiltersAndSorting(
@@ -432,12 +444,16 @@ namespace OJS.Services.Ui.Business.Implementations
 
             if (loggedInUser.IsAuthenticated && (loggedInUser.Username == username || loggedInUser.IsAdmin))
             {
+                var contestIds = participatedContestsInPage.Items.Select(c => c.Id).ToList();
+
                 // Lecturers should not see points
                 var userParticipants = this.participantsData
-                    .GetAllByUsernameAndContests(username, participatedContestsInPage.Items.Select(c => c.Id));
+                    .GetAllByUsernameAndContests(username, contestIds);
 
                 participantResultsByContest =
-                    await MapParticipationResultsToContestsInPage(participatedContestsInPage, userParticipants);
+                    await MapParticipationResultsToContestsInPage(
+                        contestIds,
+                        userParticipants);
             }
 
             return await this.PrepareActivityAndResults(participatedContestsInPage, participantResultsByContest);
@@ -478,49 +494,6 @@ namespace OJS.Services.Ui.Business.Implementations
             await this.contestsData.SaveChanges();
         }
 
-        private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
-            PagedResult<ContestForListingServiceModel> participatedContestsInPage,
-            IQueryable<Participant> participants)
-        {
-            var participatedContestIds = participatedContestsInPage
-                .Items
-                .Select(c => c.Id)
-                .Distinct();
-
-            return (await participants
-                .Where(p => participatedContestIds.Contains(p.ContestId))
-                .MapCollection<ParticipantResultServiceModel>()
-                .ToListAsync())
-                .GroupBy(p => p.ContestId)
-                .ToDictionary(g => g.Key, g => g.ToList());
-        }
-
-        private static bool ShouldRequirePassword(Contest contest, Participant? participant, bool official)
-        {
-            if (participant != null && !participant.IsInvalidated)
-            {
-                return false;
-            }
-
-            return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
-        }
-
-        private static bool ShouldConfirmParticipation(Participant? participant, bool official, bool contestIsOnlineExam, bool userIsAdminOrLecturerInContest)
-            => contestIsOnlineExam &&
-               official &&
-               (participant == null || participant.IsInvalidated) &&
-               !userIsAdminOrLecturerInContest;
-
-        private static bool GetIsPasswordValid(Contest contest, string? password, bool isOfficial)
-        {
-            if (isOfficial)
-            {
-                return contest.ContestPassword == password;
-            }
-
-            return contest.PracticePassword == password;
-        }
-
         /// <summary>
         /// Maps activity properties, total results count and user participant results if any.
         /// </summary>
@@ -528,7 +501,7 @@ namespace OJS.Services.Ui.Business.Implementations
         /// <param name="participantResultsByContest">The user participant results, grouped by contestId.
         /// The values are of list type representing the participants associated with this contest id - usually practice and compete participants.</param>
         /// <returns>A paged collection of contests.</returns>
-        private async Task<PagedResult<ContestForListingServiceModel>> PrepareActivityAndResults(
+        public async Task<PagedResult<ContestForListingServiceModel>> PrepareActivityAndResults(
             PagedResult<ContestForListingServiceModel> pagedContests,
             Dictionary<int, List<ParticipantResultServiceModel>> participantResultsByContest)
         {
@@ -569,6 +542,47 @@ namespace OJS.Services.Ui.Business.Implementations
             });
 
             return pagedContests;
+        }
+
+        private static async Task<Dictionary<int, List<ParticipantResultServiceModel>>> MapParticipationResultsToContestsInPage(
+            IEnumerable<int> contestIds,
+            IQueryable<Participant> participants)
+        {
+            var participatedContestIds = contestIds
+                .Distinct();
+
+            return (await participants
+                .Where(p => participatedContestIds.Contains(p.ContestId))
+                .MapCollection<ParticipantResultServiceModel>()
+                .ToListAsync())
+                .GroupBy(p => p.ContestId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+        }
+
+        private static bool ShouldRequirePassword(Contest contest, Participant? participant, bool official)
+        {
+            if (participant != null && !participant.IsInvalidated)
+            {
+                return false;
+            }
+
+            return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
+        }
+
+        private static bool ShouldConfirmParticipation(Participant? participant, bool official, bool contestIsOnlineExam, bool userIsAdminOrLecturerInContest)
+            => contestIsOnlineExam &&
+               official &&
+               (participant == null || participant.IsInvalidated) &&
+               !userIsAdminOrLecturerInContest;
+
+        private static bool GetIsPasswordValid(Contest contest, string? password, bool isOfficial)
+        {
+            if (isOfficial)
+            {
+                return contest.ContestPassword == password;
+            }
+
+            return contest.PracticePassword == password;
         }
 
         private async Task<ContestFiltersServiceModel> GetNestedFilterCategoriesIfAny(ContestFiltersServiceModel? model)

@@ -13,6 +13,8 @@ public interface IContestForActivityServiceModel
 
     bool IsVisible { get; set; }
 
+    DateTime? VisibleFrom { get; set; }
+
     bool IsDeleted { get; set; }
 
     DateTime? StartTime { get; set; }

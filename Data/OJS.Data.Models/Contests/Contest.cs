@@ -18,6 +18,8 @@ namespace OJS.Data.Models.Contests
 
         public bool IsVisible { get; set; }
 
+        public DateTime? VisibleFrom { get; set; }
+
         //Deprecated
         public bool AutoChangeTestsFeedbackVisibility { get; set; }
 

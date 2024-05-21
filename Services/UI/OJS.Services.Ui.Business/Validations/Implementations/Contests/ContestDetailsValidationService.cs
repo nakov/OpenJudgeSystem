@@ -9,10 +9,15 @@ using OJS.Services.Infrastructure.Models;
 public class ContestDetailsValidationService : IContestDetailsValidationService
 {
     private readonly IContestCategoriesBusinessService categoriesService;
+    private readonly IDatesService dates;
 
     public ContestDetailsValidationService(
-        IContestCategoriesBusinessService categoriesService) =>
+        IContestCategoriesBusinessService categoriesService,
+        IDatesService dates)
+    {
         this.categoriesService = categoriesService;
+        this.dates = dates;
+    }
 
     public ValidationResult GetValidationResult((Contest?, bool) item)
     {
@@ -20,7 +25,7 @@ public class ContestDetailsValidationService : IContestDetailsValidationService
 
         if (contest == null ||
             contest.IsDeleted ||
-            ((!contest.Category!.IsVisible || !contest.IsVisible ||
+            ((!contest.Category!.IsVisible || !contest.IsVisible || contest.VisibleFrom > this.dates.GetUtcNow() ||
               this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) && !isUserAdminOrLecturerInContest))
         {
             return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);

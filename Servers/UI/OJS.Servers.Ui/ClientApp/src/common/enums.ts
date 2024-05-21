@@ -48,6 +48,17 @@ enum SettingTypeEnums {
     Boolean= 5,
 }
 
+enum CheckboxSearchValues {
+    contests = 'Contests',
+    problems = 'Problems',
+    users = 'Users',
+}
+
+enum FieldNameType {
+    search = 'Search',
+    checkbox = 'Radio',
+}
+
 enum SubmissionStrategyType {
     NotFound = 0,
     CompileExecuteAndCheck = 1,
@@ -142,4 +153,6 @@ export {
     SettingTypeEnums,
     SubmissionStrategyType,
     CompilerType,
+    CheckboxSearchValues,
+    FieldNameType,
 };
