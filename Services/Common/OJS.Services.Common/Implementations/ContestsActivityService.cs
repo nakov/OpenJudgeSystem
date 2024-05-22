@@ -121,7 +121,9 @@ public class ContestsActivityService : IContestsActivityService
 
     private bool CanBeCompeted(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
-        if (!contest.IsVisible || contest.VisibleFrom > this.dates.GetUtcNow() || contest.IsDeleted)
+        var contestIsVisible = contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow();
+
+        if (!contestIsVisible || contest.IsDeleted)
         {
             return false;
         }
@@ -133,7 +135,9 @@ public class ContestsActivityService : IContestsActivityService
 
     private bool CanBePracticed(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
-        if (!contest.IsVisible || contest.VisibleFrom > this.dates.GetUtcNow() || contest.IsDeleted)
+        var contestIsVisible = contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow();
+
+        if (!contestIsVisible || contest.IsDeleted)
         {
             return false;
         }
