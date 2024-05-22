@@ -5,12 +5,10 @@ using OJS.Common.Enumerations;
 using OJS.Data;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Problems;
-using OJS.Services.Common;
 using OJS.Services.Common.Data.Implementations;
 using OJS.Services.Infrastructure;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Extensions;
-using OJS.Common.Extensions;
 using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
@@ -21,17 +19,12 @@ using System.Threading.Tasks;
 public class ContestsDataService : DataService<Contest>, IContestsDataService
 {
     private readonly IDatesService dates;
-    private readonly IContestsActivityService activityService;
 
     public ContestsDataService(
         OjsDbContext db,
-        IDatesService dates,
-        IContestsActivityService activityService)
+        IDatesService dates)
         : base(db)
-    {
-        this.dates = dates;
-        this.activityService = activityService;
-    }
+        => this.dates = dates;
 
     public async Task<TServiceModel?> GetByProblemId<TServiceModel>(int id)
         => await this.GetQuery(c => c.ProblemGroups.Any(pg => pg.Problems.Any(p => p.Id == id)))
@@ -61,15 +54,15 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
-    public IQueryable<Contest> GetAllNonDeletedContests()
-        => this.GetQuery(c => c.IsVisible && !c.IsDeleted);
+    public IQueryable<Contest> GetAllVisible()
+        => this.GetQuery(c => c.IsVisible || c.VisibleFrom <= this.dates.GetUtcNow());
 
     public async Task<PagedResult<TServiceModel>> GetAllAsPageByFiltersAndSorting<TServiceModel>(
         ContestFiltersServiceModel model)
     {
         var contests = model.CategoryIds.Any()
             ? this.GetAllVisibleByCategories(model.CategoryIds)
-            : this.GetAllVisibleQuery()
+            : this.GetAllVisible()
                 .Include(c => c.Category);
 
         return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
@@ -81,7 +74,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
     {
         var contests = model.CategoryIds.Any()
             ? this.GetAllVisibleByCategories(model.CategoryIds)
-            : this.GetAllVisibleQuery()
+            : this.GetAllVisible()
                 .Include(c => c.Category);
 
         return await this.ApplyFiltersSortAndPagination<TServiceModel>(contests, model);
@@ -153,7 +146,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .FirstOrDefaultAsync();
 
     public IQueryable<Contest> GetAllActive()
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Where(c =>
                 c.StartTime <= DateTime.Now &&
                 (c.EndTime >= DateTime.Now ||
@@ -168,11 +161,11 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
                 !c.Participants.Any(p => p.ParticipationEndTime < DateTime.Now));
 
     public IQueryable<Contest> GetAllUpcoming()
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Where(c => c.StartTime > DateTime.Now);
 
     public IQueryable<Contest> GetAllVisibleBySubmissionType(int submissionTypeId)
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Where(c => c.ProblemGroups
                 .SelectMany(pg => pg.Problems)
                 .Any(p => p.SubmissionTypesInProblems.Any(s => s.SubmissionTypeId == submissionTypeId)));
@@ -295,7 +288,7 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .FirstOrDefaultAsync() ?? default(int);
 
     private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
@@ -303,23 +296,16 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Where(c => c.CategoryId.HasValue && categoryIds.Contains(c.CategoryId.Value));
 
     private IQueryable<Contest> GetAllCompetableQuery()
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Where(this.CanBeCompeted());
 
     private IQueryable<Contest> GetAllExpiredQuery()
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Where(this.IsExpired());
 
     private IQueryable<Contest> GetAllPracticableQuery()
-        => this.GetAllVisibleQuery()
+        => this.GetAllVisible()
             .Where(this.CanBePracticed());
-
-    private IQueryable<Contest> GetAllPracticableAndCompetableQuery()
-        => this.GetAllCompetableQuery()
-            .Concat(this.GetAllPracticableQuery());
-
-    private IQueryable<Contest> GetAllVisibleQuery()
-        => this.GetQuery(c => c.IsVisible);
 
     private Expression<Func<Contest, bool>> CanBeCompeted()
         => c => c.StartTime <= this.dates.GetUtcNow()

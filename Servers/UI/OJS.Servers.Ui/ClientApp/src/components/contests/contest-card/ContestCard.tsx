@@ -8,6 +8,7 @@ import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil,
+    getUTCDateAsLocal,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
@@ -63,7 +64,8 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const remainingDuration = calculateTimeUntil(new Date(contestEndTime));
+    const contestEndTimeLocal = getUTCDateAsLocal(contestEndTime);
+    const remainingDuration = calculateTimeUntil(contestEndTimeLocal);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
 
     const shouldShowPoints = isNil(showPoints)

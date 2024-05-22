@@ -9,8 +9,6 @@
 
 .row {
   @extend %font-family-normal;
-
-  height: 100%;
 }
 
 .lightRow {
@@ -53,24 +51,14 @@
   justify-content: start;
 }
 
-.fromContainer {
-  display: flex;
-  flex-direction: column;
-
-  .username {
-    margin-top: spacings.$sp-4;
-    max-width: 12vw;
-  }
-}
-
 .competeIcon {
   margin: 0 spacings.$sp-12;
 }
 
 .executionResultContainer {
+  align-items: center;
   display: flex;
-  flex-direction: row;
-  gap: spacings.$sp-18;
+  justify-content: flex-start;
 }
 
 .maxTimeUsed,
@@ -99,8 +87,16 @@
 .timeAndMemoryContainer {
   align-items: center;
   display: flex;
-  flex-direction: row;
   gap: spacings.$sp-12;
-  justify-content: center;
-  text-align: center;
+  justify-content: flex-start;
+}
+
+.strategyWrapper {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+
+  span {
+    margin-left: spacings.$sp-12;
+  }
 }

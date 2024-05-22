@@ -29,6 +29,8 @@ public class ContestInListModel : IMapExplicitly
 
     public bool IsVisible { get; set; }
 
+    public DateTime? VisibleFrom { get; set; }
+
     public int LimitBetweenSubmissions { get; set; }
 
     public DateTime CreatedOn { get; set; }
@@ -56,7 +58,7 @@ public class ContestInListModel : IMapExplicitly
             .ForMember(x => x.IsDeleted, opt
                 => opt.MapFrom(c => c.IsDeleted))
             .ForMember(x => x.IsVisible, opt
-                => opt.MapFrom(c => c.IsVisible))
+                => opt.MapFrom(c => c.IsVisible || c.VisibleFrom <= DateTime.UtcNow))
             .ForMember(x => x.LimitBetweenSubmissions, opt
                 => opt.MapFrom(c => c.LimitBetweenSubmissions));
 }

@@ -99,7 +99,9 @@ const ProfilePage = () => {
                           keyPrefix="profile"
                           items={[
                                 {
-                                    text: 'My Profile',
+                                    text: `${currentUserIsProfileOwner
+                                        ? 'My'
+                                        : ''} Profile`,
                                     to: '/profile',
                                 } as IPageBreadcrumbsItem,
                           ]}

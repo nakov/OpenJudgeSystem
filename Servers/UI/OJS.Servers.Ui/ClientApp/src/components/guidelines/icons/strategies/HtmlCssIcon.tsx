@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { GrHtml5 } from 'react-icons/gr';
+import { FaHtml5 } from 'react-icons/fa';
 
 import concatClassNames from '../../../../utils/class-names';
 import IconSize from '../common/icon-sizes';
@@ -18,7 +18,7 @@ const HtmlCssIcon = ({
       className={concatClassNames(styles.icon, className)}
       size={size}
       helperText={helperText}
-      Component={GrHtml5}
+      Component={FaHtml5}
     />
 );
 

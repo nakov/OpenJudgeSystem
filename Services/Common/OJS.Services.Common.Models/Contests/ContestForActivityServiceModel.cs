@@ -15,6 +15,8 @@ public class ContestForActivityServiceModel : IMapFrom<Contest>, IContestForActi
 
     public bool IsVisible { get; set; }
 
+    public DateTime? VisibleFrom { get; set; }
+
     public bool IsDeleted { get; set; }
 
     public DateTime? StartTime { get; set; }

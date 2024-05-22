@@ -16,8 +16,17 @@ const getErrorMessage = (
     err: FetchBaseQueryError | SerializedError,
     defaultErrorMessage = 'Something went wrong fetching data, please try again!',
 ): string => {
+    // we should unify the return object from BE on error
+    // in order to implement better logic in this function
     if ('data' in err) {
-        return err.data as string;
+        if ((err.data as any).detail) {
+            return (err.data as any).detail as string;
+        }
+        if (err.data) {
+            return err.data as string;
+        }
+
+        return defaultErrorMessage;
     }
     if ('status' in err) {
         return 'error' in err
@@ -27,6 +36,9 @@ const getErrorMessage = (
 
     if (err.message) {
         return err.message.replace(/"/g, '');
+    }
+    if ((err as any).detail) {
+        return (err as any).detail.replace(/"/g, '');
     }
 
     return defaultErrorMessage;
