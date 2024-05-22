@@ -56,9 +56,9 @@ const ContestCard = (props: IContestCardProps) => {
         userParticipationResult,
     } = contest;
 
-    const contestStartTime = canBeCompeted
-        ? startTime
-        : practiceStartTime;
+    const contestStartTime = canBeCompeted || (!canBeCompeted && !canBePracticed)
+        ? getUTCDateAsLocal(startTime)
+        : getUTCDateAsLocal(practiceStartTime);
 
     const contestEndTime = canBeCompeted
         ? endTime
@@ -148,7 +148,7 @@ const ContestCard = (props: IContestCardProps) => {
                     isLoggedIn && internalUser.canAccessAdministration && <div className={styles.contestCardSubTitle}>{id}</div>
                 }
                 <div className={styles.contestDetailsFragmentsWrapper}>
-                    {contestEndTime && renderContestDetailsFragment(
+                    {contestStartTime && renderContestDetailsFragment(
                         iconNames.date,
                         preciseFormatDate(new Date(contestStartTime), dateTimeFormatWithSpacing),
                     )}
@@ -167,8 +167,7 @@ const ContestCard = (props: IContestCardProps) => {
                         true,
                         'compete',
                     )}
-                    {canBeCompeted &&
-                        contestEndTime &&
+                    {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
                         renderContestDetailsFragment(

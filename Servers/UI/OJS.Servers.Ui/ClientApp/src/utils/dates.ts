@@ -29,14 +29,14 @@ const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
 const preciseFormatDate = (
     date: Date,
     formatString = defaultPreciseDateTimeFormat,
-) => moment(date).utc(true).local().format(formatString);
+) => moment(date).utc().local().format(formatString);
 
 const formatDate = (
     date: Date,
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
-    : moment(date).utc(true).local().fromNow());
+    : moment(date).utc().local().fromNow());
 
 const getUTCDateAsLocal = (date: string | number | Date) => dayjs
     .utc(date)
