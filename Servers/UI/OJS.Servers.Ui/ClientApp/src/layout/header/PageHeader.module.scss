@@ -87,6 +87,7 @@
   position: absolute;
   top: 78px;
   transition: all 0.2s ease-in-out;
+  width: 100%;
 
   .burgerItemWrapper {
     background-color: colors.$primary-blue;
@@ -94,7 +95,7 @@
     display: block;
     padding: spacings.$sp-18;
     transition: 0.2s ease-in-out;
-    width: 100vw;
+    width: 95.8%;
 
     &:hover {
       background-color: colors.$white-color;
@@ -111,6 +112,7 @@
 
 .burgerMenuItemsClosed {
   opacity: 0;
+  width: 0;
 }
 
 @media only screen and (width <= 920px) {
