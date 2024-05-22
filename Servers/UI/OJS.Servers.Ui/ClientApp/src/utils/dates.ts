@@ -14,6 +14,8 @@ const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
+const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
+
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate), 'second');
 
 const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
@@ -175,6 +177,7 @@ export {
     defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
     defaultPreciseDateTimeFormat,
+    dateTimeFormatWithSpacing,
     formatDate,
     getUTCDateAsLocal,
     preciseFormatDate,
