@@ -27,7 +27,8 @@
   }
 
   .logoBtn {
-    font-size: variables.$f-size-30 !important;
+    color: colors.$white-color;
+    font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold !important;
     margin-right: spacings.$sp-12;
   }
@@ -87,6 +88,7 @@
   position: absolute;
   top: 78px;
   transition: all 0.2s ease-in-out;
+  width: 100%;
 
   .burgerItemWrapper {
     background-color: colors.$primary-blue;
@@ -94,7 +96,7 @@
     display: block;
     padding: spacings.$sp-18;
     transition: 0.2s ease-in-out;
-    width: 100vw;
+    width: 95.8%;
 
     &:hover {
       background-color: colors.$white-color;
@@ -113,9 +115,10 @@
 .burgerMenuItemsClosed {
   opacity: 0;
   pointer-events: none;
+  width: 0;
 }
 
-@media only screen and (width <= 920px) {
+@media only screen and (max-width: 920px) {
   .navButtons {
     display: none;
   }
@@ -127,6 +130,18 @@
     svg {
       color: colors.$white-color;
       cursor: pointer;
+    }
+  }
+}
+
+@media only screen and (max-width: 580px) {
+  .logoBtn {
+    font-size: variables.$f-size-24 !important;
+  }
+
+  .header {
+    > div {
+      margin-left: spacings.$sp-18;
     }
   }
 }

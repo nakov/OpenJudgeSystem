@@ -139,7 +139,7 @@ const PageHeader = () => {
     return (
         <header className={styles.header}>
             <div>
-                <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>SoftUni Judge</Link>
+                <Link to="/" className={`${styles.logoBtn}`}>SoftUni Judge</Link>
                 <div className={styles.navButtons}>
                     <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
