@@ -1,0 +1,14 @@
+@use 'src/styles/colors';
+
+
+.legacyInfoMessage {
+  background-color: rgba(68, 169, 248, 30%) !important;
+}
+
+.profileButton {
+  background-color: inherit;
+  border: 0;
+  color: colors.$light-blue-color;
+  cursor: pointer;
+  font: inherit;
+}
