@@ -27,7 +27,7 @@
   }
 
   .logoBtn {
-    font-size: variables.$f-size-30 !important;
+    font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold !important;
     margin-right: spacings.$sp-12;
   }
@@ -112,10 +112,11 @@
 
 .burgerMenuItemsClosed {
   opacity: 0;
+  pointer-events: none;
   width: 0;
 }
 
-@media only screen and (width <= 920px) {
+@media only screen and (max-width: 920px) {
   .navButtons {
     display: none;
   }
@@ -127,6 +128,18 @@
     svg {
       color: colors.$white-color;
       cursor: pointer;
+    }
+  }
+}
+
+@media only screen and (max-width: 580px) {
+  .logoBtn {
+    font-size: variables.$f-size-24;
+  }
+
+  .header {
+    > div {
+      margin-left: spacings.$sp-12;
     }
   }
 }
