@@ -9,7 +9,6 @@ import UrlParamsProvider from './hooks/common/use-url-params';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 import ProfileSubmissionsProvider from './hooks/submissions/use-profile-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
-import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 import CurrentContestsProvider from './hooks/use-current-contest';
 import PageProvider from './hooks/use-pages';
 import ParticipationsProvider from './hooks/use-participations';
@@ -25,7 +24,6 @@ const App = () => {
         UrlParamsProvider,
         RouteUrlParamsProvider,
         PageProvider,
-        CategoriesBreadcrumbProvider,
         ParticipationsProvider,
         CurrentContestsProvider,
         ProblemSubmissionsProvider,
