@@ -24,19 +24,23 @@ const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
-    Duration => moment.duration(moment(date).diff(moment().local()), unit);
+    Duration => moment.duration(moment(date)
+    .utc(true)
+    .local()
+    .diff(moment()
+        .local()), unit);
 
 const preciseFormatDate = (
     date: Date,
     formatString = defaultPreciseDateTimeFormat,
-) => moment(date).utc().local().format(formatString);
+) => moment(date).utc(true).local().format(formatString);
 
 const formatDate = (
     date: Date,
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
-    : moment(date).utc().local().fromNow());
+    : moment(date).utc(true).local().fromNow());
 
 const getUTCDateAsLocal = (date: string | number | Date) => dayjs
     .utc(date)
