@@ -10,6 +10,7 @@ import {
 } from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
+import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import Button, { ButtonType } from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import LegacyInfoMessage from '../../../components/guidelines/legacy-info-message/LegacyInfoMessage';
@@ -19,6 +20,7 @@ import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
@@ -140,12 +142,11 @@ const ContestDetailsPage = () => {
 
     if (error) {
         return (
-            <div className={textColorClassName}>
-                Error fetching details for contest with id:
-                {' '}
-                {contestId}
-                ! Please try again!
-            </div>
+            <ErrorWithActionButtons
+              message={getErrorMessage(error)}
+              backToText="Back to contests"
+              backToUrl="/contests"
+            />
         );
     }
     if (isLoading) {

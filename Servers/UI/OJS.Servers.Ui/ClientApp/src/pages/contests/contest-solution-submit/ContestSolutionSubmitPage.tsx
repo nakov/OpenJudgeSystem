@@ -515,7 +515,7 @@ const ContestSolutionSubmitPage = () => {
                         )}
                         {submitSolutionFileHasError && (
                             <div className={styles.solutionSubmitError}>
-                                {(submitSolutionFileError as any).data.detail || 'Error submitting solution. Please try again!'}
+                                {getErrorMessage(submitSolutionFileError)}
                             </div>
                         )}
                     </div>

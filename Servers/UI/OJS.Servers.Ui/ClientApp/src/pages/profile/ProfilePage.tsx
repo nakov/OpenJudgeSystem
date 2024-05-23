@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import Button, { ButtonType } from '../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -15,7 +16,6 @@ import { setProfile } from '../../redux/features/usersSlice';
 import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
-import concatClassNames from '../../utils/class-names';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
@@ -82,11 +82,11 @@ const ProfilePage = () => {
         }
 
         return (
-            <span className={concatClassNames(getColorClassName(themeColors.textColor), styles.errorText)}>
-                {text}
-            </span>
+            <ErrorWithActionButtons
+              message={text}
+            />
         );
-    }, [ getColorClassName, isError, themeColors.textColor ]);
+    }, [ isError ]);
 
     return (
         isProfileInfoLoading || !isGetUserInfoCompleted

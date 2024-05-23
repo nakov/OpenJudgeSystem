@@ -7,7 +7,7 @@ import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
-    calculateTimeUntil,
+    calculateTimeUntil, dateTimeFormatWithSpacing,
     getUTCDateAsLocal,
     preciseFormatDate,
 } from '../../../utils/dates';
@@ -56,7 +56,7 @@ const ContestCard = (props: IContestCardProps) => {
         userParticipationResult,
     } = contest;
 
-    const contestStartTime = canBeCompeted
+    const contestStartTime = canBeCompeted || (!canBeCompeted && !canBePracticed)
         ? startTime
         : practiceStartTime;
 
@@ -148,7 +148,10 @@ const ContestCard = (props: IContestCardProps) => {
                     isLoggedIn && internalUser.canAccessAdministration && <div className={styles.contestCardSubTitle}>{id}</div>
                 }
                 <div className={styles.contestDetailsFragmentsWrapper}>
-                    {renderContestDetailsFragment(iconNames.date, preciseFormatDate(new Date(contestStartTime), 'D MMM YY, HH:mm'))}
+                    {contestStartTime && renderContestDetailsFragment(
+                        iconNames.date,
+                        preciseFormatDate(getUTCDateAsLocal(contestStartTime), dateTimeFormatWithSpacing),
+                    )}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
                     {renderContestDetailsFragment(
                         iconNames.practiceResults,
@@ -164,8 +167,7 @@ const ContestCard = (props: IContestCardProps) => {
                         true,
                         'compete',
                     )}
-                    {canBeCompeted &&
-                        contestEndTime &&
+                    {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
                         renderContestDetailsFragment(
