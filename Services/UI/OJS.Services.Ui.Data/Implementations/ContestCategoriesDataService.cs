@@ -20,7 +20,7 @@
             => this.GetQuery(cc => cc.IsVisible);
 
         public Task<IEnumerable<T>> GetAllVisible<T>()
-            => this.GetQuery(cc => cc.IsVisible && !cc.IsDeleted)
+            => this.GetQuery(cc => cc.IsVisible)
                 .MapCollection<T>()
                 .ToEnumerableAsync();
 
