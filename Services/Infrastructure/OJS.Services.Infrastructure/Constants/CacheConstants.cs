@@ -13,9 +13,9 @@
         public const string ParticipantsCountByContestsPage = "ParticipantsCountByContestsPage:{0}:{1}";
         public const string ContestCategoriesTree = "ContestCategoriesTree";
 
-        public const string ContestSubCategoriesFormat = "ContestSubCategories_id_{0}";
-        public const string ContestParentCategoriesFormat = "ContestParentCategories_id_{0}";
-        public const string ContestCategoryNameFormat = "ContestCategoryName_id_{0}";
+        public const string ContestSubCategoriesFormat = "ContestSubCategories:{0}";
+        public const string ContestParentCategoriesFormat = "ContestParentCategories:{0}";
+        public const string ContestCategoryNameFormat = "ContestCategoryName:{0}";
 
         public const string SubmissionsCountByMonthsForPastElevenMonthsKey = "Submissions_count_by_month_for_past_eleven_months";
         public const string SubmissionsCountForLastMonthKey = "Submissions_count_by_month_for_last_month";
