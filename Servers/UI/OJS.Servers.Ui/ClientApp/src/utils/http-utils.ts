@@ -2,6 +2,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios, { ResponseType } from 'axios';
 import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
 
 import { IDictionary, UrlType } from '../common/common-types';
 import { IErrorDataType } from '../hooks/use-http';
@@ -16,6 +17,10 @@ const getErrorMessage = (
     err: FetchBaseQueryError | SerializedError | undefined,
     defaultErrorMessage = 'Something went wrong, please try again!',
 ): string => {
+    if (isNil(err) || !err) {
+        return defaultErrorMessage;
+    }
+
     // we should unify the return object from BE on error
     // in order to implement better logic in this function
     if ('data' in err) {
