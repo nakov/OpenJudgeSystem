@@ -150,7 +150,7 @@ const ContestCard = (props: IContestCardProps) => {
                 <div className={styles.contestDetailsFragmentsWrapper}>
                     {contestStartTime && renderContestDetailsFragment(
                         iconNames.date,
-                        preciseFormatDate(contestStartTime, dateTimeFormatWithSpacing),
+                        preciseFormatDate(getUTCDateAsLocal(contestStartTime), dateTimeFormatWithSpacing),
                     )}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
                     {renderContestDetailsFragment(
