@@ -21,28 +21,66 @@ interface IFileUploaderProps {
 const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExtension, onFileUpload }: IFileUploaderProps) => {
     const { isDarkMode } = useTheme();
     const hiddenFileInput = useRef<HTMLInputElement | null>(null);
-    const { actions: { updateSubmissionCode } } = useSubmissions();
+    const { actions: { updateSubmissionCode, closeErrorMessage } } = useSubmissions();
+
     const [ internalFile, setInternalFile ] = useState<File | null>(null);
     const [ internalProblemId, setInternalProblemId ] = useState<number | null>(null);
-    const { actions: { closeErrorMessage } } = useSubmissions();
+    const [ isDragOver, setIsDragOver ] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (problemId !== internalProblemId && isNil(file)) {
+            setInternalFile(null);
+            return;
+        }
+
+        if (!isNil(file) && !isNil(problemId)) {
+            setInternalFile(file);
+            setInternalProblemId(problemId);
+        }
+    }, [ file, internalFile, internalProblemId, problemId ]);
+
     const handleClick = () => {
         hiddenFileInput.current?.click();
     };
 
-    useEffect(
-        () => {
-            if (problemId !== internalProblemId && isNil(file)) {
-                setInternalFile(null);
-                return;
-            }
+    const handleDragEnter = (e: any) => {
+        e.preventDefault();
+        setIsDragOver(true);
+    };
 
-            if (!isNil(file) && !isNil(problemId)) {
-                setInternalFile(file);
-                setInternalProblemId(problemId);
-            }
-        },
-        [ file, internalFile, internalProblemId, problemId ],
-    );
+    const handleDragLeave = (e: any) => {
+        e.preventDefault();
+        setIsDragOver(false);
+    };
+
+    const handleFileUpload = useCallback((uploadedFile: any, isFromDrag = false) => {
+        const processedUploadFile = isFromDrag
+            ? uploadedFile[0]
+            : uploadedFile;
+        onFileUpload(processedUploadFile);
+        const extension = processedUploadFile.name.split('.').pop();
+
+        if (allowedFileExtensions && !allowedFileExtensions.includes(extension)) {
+            onInvalidFileExtension({
+                detail: FileValidationError,
+                extensions: { Data: JSON.stringify({ ProblemId: problemId }) },
+            } as unknown as IErrorDataType);
+        } else if (problemId) {
+            closeErrorMessage(problemId.toString());
+        }
+        setInternalFile(processedUploadFile);
+        updateSubmissionCode(processedUploadFile);
+        if (problemId) {
+            setInternalProblemId(problemId);
+        }
+    }, [ allowedFileExtensions, closeErrorMessage, onFileUpload, onInvalidFileExtension, problemId, updateSubmissionCode ]);
+
+    const handleDrop = (e: any) => {
+        e.preventDefault();
+        setIsDragOver(false);
+        const draggedFile = Array.from(e.dataTransfer.files);
+        handleFileUpload(draggedFile, true);
+    };
 
     const handleChange = useCallback(
         (event: any) => {
@@ -52,30 +90,20 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             }
 
             const uploadedFile = eventTarget[0];
-            onFileUpload(uploadedFile);
-            const extension = uploadedFile.name.split('.').pop();
-
-            if (allowedFileExtensions && !allowedFileExtensions.includes(extension)) {
-                onInvalidFileExtension({
-                    detail: FileValidationError,
-                    extensions: { Data: JSON.stringify({ ProblemId: problemId }) },
-                } as unknown as IErrorDataType);
-            } else {
-                closeErrorMessage(problemId.toString());
-            }
-
-            updateSubmissionCode(eventTarget[0]);
-            setInternalFile(eventTarget[0]);
-            setInternalProblemId(problemId);
-
+            handleFileUpload(uploadedFile);
             // eslint-disable-next-line no-param-reassign
             event.target.value = null;
         },
-        [ updateSubmissionCode, problemId, allowedFileExtensions, onInvalidFileExtension, closeErrorMessage, onFileUpload ],
+        [ problemId, handleFileUpload ],
     );
 
     return (
-        <>
+        <div
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
             <div className={styles.fileUploadContainer}>
                 <Button
                   onClick={handleClick}
@@ -84,9 +112,12 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
                       : ButtonType.darkNeutral}
                   size={ButtonSize.medium}
                 >
-                    Upload
+                    {isDragOver
+                        ? 'Drop file here'
+                        : 'Upload file'}
                 </Button>
             </div>
+
             <div className={styles.fileName}>
                 {isNil(internalFile)
                     ? ''
@@ -103,7 +134,7 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
               onChange={handleChange}
               style={{ display: 'none' }}
             />
-        </>
+        </div>
     );
 };
 
