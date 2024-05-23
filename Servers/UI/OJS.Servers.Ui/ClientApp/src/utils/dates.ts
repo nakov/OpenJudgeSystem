@@ -42,11 +42,6 @@ const formatDate = (
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
 
-const getUTCDateAsLocal = (date: string | number | Date) => dayjs
-    .utc(date)
-    .local()
-    .toDate();
-
 const getCurrentTimeInUTC = () => {
     const now = moment().utc();
     return new Date(
@@ -183,7 +178,6 @@ export {
     defaultPreciseDateTimeFormat,
     dateTimeFormatWithSpacing,
     formatDate,
-    getUTCDateAsLocal,
     preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,

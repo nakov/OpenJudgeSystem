@@ -8,7 +8,6 @@ import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
     calculateTimeUntil, dateTimeFormatWithSpacing,
-    getUTCDateAsLocal,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
