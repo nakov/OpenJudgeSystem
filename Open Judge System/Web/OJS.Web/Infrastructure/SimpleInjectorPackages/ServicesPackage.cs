@@ -75,8 +75,9 @@ namespace OJS.Web.Infrastructure.SimpleInjectorPackages
                 () => new RedisCacheService(
                     container.GetInstance<IDatabase>(),
                     container.GetInstance<IEmailSenderService>(),
+                    container.GetInstance<IMemoryCacheService>(),
                     Settings.DevEmail,
-                    container.GetInstance<IMemoryCacheService>()),
+                    Settings.RedisNamespace),
                 Lifestyle.Scoped);
 #endif
         }

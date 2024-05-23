@@ -21,8 +21,6 @@
 
         public static readonly string ContestView = "ContestView:{0}";
 
-        public static readonly string KeysPrefix = "OJS:";
-
         public static readonly string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";
 
         public static readonly string ParticipantsCountByContestCategoryAndPage = "ParticipantsCountByContestCategoryAndPage:{0}:{1}";
