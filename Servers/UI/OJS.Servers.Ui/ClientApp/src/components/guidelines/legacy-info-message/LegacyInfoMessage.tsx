@@ -14,6 +14,7 @@ const LegacyInfoMessage = () => {
               to="https://judge.softuni.org/Users/Profile"
               text=" profile"
               internalClassName={styles.profileButton}
+              isToExternal
             />
             {' '}
             on the legacy system.
