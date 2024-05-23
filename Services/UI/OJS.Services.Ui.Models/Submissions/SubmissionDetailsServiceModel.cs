@@ -60,6 +60,8 @@
 
         public int ContestId { get; set; }
 
+        public int ContestCategoryId { get; set; }
+
         public IEnumerable<Test> Tests { get; set; } =
             Enumerable.Empty<Test>();
 
@@ -83,6 +85,7 @@
                 .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
                 .ForMember(d => d.Tests, opt => opt.MapFrom(s => s.Problem.Tests))
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.ContestId))
+                .ForMember(d => d.ContestCategoryId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.Contest.CategoryId))
                 .ForMember(d => d.TotalTests, opt => opt.Ignore())
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
                 .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore());

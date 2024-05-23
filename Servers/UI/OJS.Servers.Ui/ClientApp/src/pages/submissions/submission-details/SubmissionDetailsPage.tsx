@@ -11,8 +11,7 @@ import SubmissionTestRun from '../../../components/submissions/submission-test-r
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
-import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
+import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
@@ -40,7 +39,6 @@ const SubmissionDetailsPage = () => {
 
     const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
-    const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
     const [
         retestSubmission,
@@ -58,11 +56,7 @@ const SubmissionDetailsPage = () => {
             return;
         }
         if (!contestDetails || contestDetails?.id !== data?.contestId) {
-            const fetchContestById = async () => {
-                const { data: contestData } = await getContestById({ id: data?.contestId });
-                dispatch(setContestDetails({ contest: contestData || null }));
-            };
-            fetchContestById();
+            dispatch(setContestDetailsIdAndCategoryId({ id: data.contestId, categoryId: data.contestCategoryId }));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ data?.contestId ]);
