@@ -28,7 +28,7 @@ public class ContestDetailsValidationService : IContestDetailsValidationService
         if (contest == null ||
             contest.IsDeleted ||
             ((contest.Category == null || !contest.Category!.IsVisible || contest.Category!.IsDeleted ||
-              !contest.IsVisible || !contestIsVisible ||
+              !contestIsVisible ||
               this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) && !isUserAdminOrLecturerInContest))
         {
             return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);
