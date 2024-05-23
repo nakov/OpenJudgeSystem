@@ -3,7 +3,6 @@ import isNil from 'lodash/isNil';
 
 import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import LegacyInfoMessage from '../../guidelines/legacy-info-message/LegacyInfoMessage';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
 
 import styles from './ProfileSubmissions.module.scss';
