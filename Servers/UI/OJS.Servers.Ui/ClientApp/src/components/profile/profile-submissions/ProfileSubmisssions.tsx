@@ -65,22 +65,19 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
         }
 
         return (
-            <>
-                <LegacyInfoMessage />
-                <SubmissionsGrid
-                  isDataLoaded={!areSubmissionsLoading}
-                  submissions={userSubmissions!}
-                  handlePageChange={(page: number) => setUserSubmissionsPage(page)}
-                  className={styles.profileSubmissionsGrid}
-                  options={{
-                      showTaskDetails: true,
-                      showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
-                      showCompeteMarker: false,
-                      showSubmissionTypeInfo: false,
-                      showParticipantUsername: false,
-                  }}
-                />
-            </>
+            <SubmissionsGrid
+              isDataLoaded={!areSubmissionsLoading}
+              submissions={userSubmissions!}
+              handlePageChange={(page: number) => setUserSubmissionsPage(page)}
+              className={styles.profileSubmissionsGrid}
+              options={{
+                  showTaskDetails: true,
+                  showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,
+                  showCompeteMarker: false,
+                  showSubmissionTypeInfo: false,
+                  showParticipantUsername: false,
+              }}
+            />
         );
     }, [
         areSubmissionsLoading,

@@ -9,7 +9,7 @@ const LegacyInfoMessage = () => {
 
     const getLegacySubmissionsInfoMessage = () => (
         <p className={getColorClassName(themeColors.textColor)}>
-            Your contest history, submissions, and scores were not transferred to the current platform.
+            Contest history, submissions, and scores were not transferred to the current platform.
             To view this information, access your
             <LinkButton
               type={LinkButtonType.plain}
