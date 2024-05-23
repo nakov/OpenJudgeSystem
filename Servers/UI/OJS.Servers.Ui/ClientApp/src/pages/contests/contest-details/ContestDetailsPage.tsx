@@ -30,7 +30,7 @@ const ContestDetailsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { contestId } = useParams();
-    const { internalUser: user } = useAppSelector((state) => state.authorization);
+    const { internalUser: user, isLoggedIn } = useAppSelector((state) => state.authorization);
     const { themeColors, getColorClassName } = useTheme();
     const { contestDetails, selectedCategory } = useAppSelector((state) => state.contests);
     const { data, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
@@ -160,7 +160,7 @@ const ContestDetailsPage = () => {
         <div className={`${styles.contestDetailsWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
-            <LegacyInfoMessage />
+            { isLoggedIn && <LegacyInfoMessage />}
             <div className={styles.descriptionBoxWrapper}>
                 <div>
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>
