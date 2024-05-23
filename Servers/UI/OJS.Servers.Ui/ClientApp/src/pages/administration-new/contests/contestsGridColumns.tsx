@@ -4,7 +4,23 @@ import { SiMicrosoftexcel } from 'react-icons/si';
 import { Link } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS, CATEGORY, CATEGORY_ID, COMPETE_END_TIME, COMPETE_PASSWORD, COMPETE_START_TIME, CREATED_ON, EDIT, ID, IS_DELETED, IS_VISIBLE, LIMIT_BETWEEN_SUBMISSIONS, MODIFIED_ON, NAME } from '../../../common/labels';
+import {
+    ALLOW_PARALLEL_SUBMISSIONS_IN_TASKS,
+    CATEGORY,
+    CATEGORY_ID,
+    COMPETE_END_TIME,
+    COMPETE_PASSWORD,
+    COMPETE_START_TIME,
+    CREATED_ON,
+    EDIT,
+    ID,
+    IS_DELETED,
+    IS_VISIBLE,
+    LIMIT_BETWEEN_SUBMISSIONS,
+    MODIFIED_ON,
+    NAME,
+    VISIBLE_FROM,
+} from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import AdministrationGridDropdown from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
@@ -122,6 +138,17 @@ const contestFilterableColumns: GridColDef[] = [
         flex: 0,
         filterable: false,
         sortable: false,
+    },
+    {
+        field: 'visibleFrom',
+        headerName: `${VISIBLE_FROM}`,
+        flex: 1.5,
+        align: 'center',
+        type: 'date',
+        headerAlign: 'center',
+        filterable: false,
+        sortable: false,
+        valueFormatter: (params) => adminFormatDate(params.value),
     },
     {
         field: 'createdOn',

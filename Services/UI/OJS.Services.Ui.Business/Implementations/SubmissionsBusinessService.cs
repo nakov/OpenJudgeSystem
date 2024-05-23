@@ -24,6 +24,7 @@ using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Workers.Common.Models;
 using OJS.Common.Extensions;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionPublisherService submissionPublisher;
     private readonly ISubmissionsHelper submissionsHelper;
     private readonly ILogger<SubmissionsBusinessService> logger;
+    private readonly IDatesService dates;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
@@ -79,7 +81,8 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         ISubmissionPublisherService submissionPublisher,
         IContestsDataService contestsDataService,
         ISubmissionsHelper submissionsHelper,
-        ILogger<SubmissionsBusinessService> logger)
+        ILogger<SubmissionsBusinessService> logger,
+        IDatesService dates)
     {
         this.submissionsData = submissionsData;
         this.submissionsCommonData = submissionsCommonData;
@@ -102,6 +105,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         this.contestsDataService = contestsDataService;
         this.submissionsHelper = submissionsHelper;
         this.logger = logger;
+        this.dates = dates;
     }
 
     public async Task Retest(int id)
@@ -467,7 +471,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         newSubmission.IpAddress = "model.UserHostAddress";
         newSubmission.IsPublic = ((participant.IsOfficial && participant.Contest.ContestPassword == null) ||
                                   (!participant.IsOfficial && participant.Contest.PracticePassword == null)) &&
-                                 participant.Contest.IsVisible &&
+                                 (participant.Contest.IsVisible || participant.Contest.VisibleFrom <= this.dates.GetUtcNow()) &&
                                  !participant.Contest.IsDeleted &&
                                  problem.ShowResults;
 

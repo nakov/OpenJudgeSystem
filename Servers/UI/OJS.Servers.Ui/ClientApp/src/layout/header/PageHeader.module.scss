@@ -27,7 +27,8 @@
   }
 
   .logoBtn {
-    font-size: variables.$f-size-30 !important;
+    color: colors.$white-color;
+    font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold !important;
     margin-right: spacings.$sp-12;
   }
@@ -44,6 +45,10 @@
     display: flex;
     margin-right: spacings.$sp-192;
   }
+}
+
+.burgerMenu {
+  display: none;
 }
 
 .searchIcon {
@@ -64,6 +69,79 @@
   box-shadow: shadows.$dp-shadow-4;
   height: 40px;
   position: absolute;
-  right: 30px;
-  top: 22px;
+  right: 20px;
+  top: 17px;
+}
+
+.profileNavButton {
+  height: 40px;
+  width: 40px;
+}
+
+.burgerMenuItems {
+  @extend %font-family-normal;
+
+  border-top: 2px solid #d0d0d0;
+  display: none;
+  font-size: variables.$f-size-18;
+  font-weight: font-weights.$font-weight-medium;
+  position: absolute;
+  top: 78px;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+
+  .burgerItemWrapper {
+    background-color: colors.$primary-blue;
+    color: colors.$white-color;
+    display: block;
+    padding: spacings.$sp-18;
+    transition: 0.2s ease-in-out;
+    width: 95.8%;
+
+    &:hover {
+      background-color: colors.$white-color;
+      color: colors.$primary-blue;
+    }
+  }
+}
+
+.burgerMenuItemsOpened {
+  display: block !important;
+  margin-left: 0 !important;
+  opacity: 1;
+  pointer-events: all;
+}
+
+.burgerMenuItemsClosed {
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+}
+
+@media only screen and (max-width: 920px) {
+  .navButtons {
+    display: none;
+  }
+
+  .burgerMenu {
+    display: flex;
+    margin-right: -35px;
+
+    svg {
+      color: colors.$white-color;
+      cursor: pointer;
+    }
+  }
+}
+
+@media only screen and (max-width: 580px) {
+  .logoBtn {
+    font-size: variables.$f-size-24 !important;
+  }
+
+  .header {
+    > div {
+      margin-left: spacings.$sp-18;
+    }
+  }
 }
