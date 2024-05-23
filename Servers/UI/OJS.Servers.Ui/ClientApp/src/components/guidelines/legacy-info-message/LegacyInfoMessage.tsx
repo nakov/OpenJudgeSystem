@@ -1,11 +1,14 @@
+import useTheme from '../../../hooks/use-theme';
 import AlertBox, { AlertBoxType } from '../alert-box/AlertBox';
 import { ButtonSize, LinkButton, LinkButtonType } from '../buttons/Button';
 
 import styles from './LegacyInfoMessage.module.scss';
 
 const LegacyInfoMessage = () => {
+    const { getColorClassName, themeColors } = useTheme();
+
     const getLegacySubmissionsInfoMessage = () => (
-        <p>
+        <p className={getColorClassName(themeColors.textColor)}>
             Your contest history, submissions, and scores were not transferred to the current platform.
             To view this information, access your
             <LinkButton
