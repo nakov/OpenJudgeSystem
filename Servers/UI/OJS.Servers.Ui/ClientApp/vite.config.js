@@ -35,7 +35,7 @@ export default defineConfig({
                 return
               }
               warn(warning)
-            }}
+            }},
       },
     plugins: [
         react(),
@@ -43,5 +43,5 @@ export default defineConfig({
         forwardToAdmin(),
         visualizer({ open: true, filename: 'bundle-analysis.html' }),
     ],
-    server: { port: 5002 }
+    server: { port: 5002 },
 });
