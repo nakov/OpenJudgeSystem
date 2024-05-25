@@ -17,7 +17,26 @@ import NotListedLocationIcon from '@mui/icons-material/NotListedLocation';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 import ScienceIcon from '@mui/icons-material/Science';
 import TableViewIcon from '@mui/icons-material/TableView';
-import { Box, CssBaseline, CSSObject, Divider, FormControlLabel, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, styled, Switch, Theme, Tooltip, Typography } from '@mui/material';
+import {
+    Box,
+    CssBaseline,
+    CSSObject,
+    Divider,
+    FormControlLabel,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Menu,
+    MenuItem,
+    styled,
+    Switch,
+    Theme,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -25,23 +44,47 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import 'dayjs/locale/bg';
 
 import { ThemeMode } from '../../../common/enums';
-import { CHECKERS_PATH, CONTEST_CATEGORIES_PATH, CONTESTS_PATH, EXAM_GROUPS_PATH, NEW_ADMINISTRATION_PATH, PARTICIPANTS_PATH, PROBLEM_GROUPS_PATH, PROBLEM_RESOURCES_PATH, PROBLEMS_PATH, ROLES_PATH, SETTINGS_PATH, SUBMISSION_TYPES_PATH, SUBMISSIONS_FOR_PROCESSING_PATH, SUBMISSIONS_PATH, SUBMISSIONS_SIMILLARITY, TESTS_PATH, USERS_PATH } from '../../../common/urls/administration-urls';
+import {
+    CHECKERS_PATH,
+    CONTEST_CATEGORIES_PATH,
+    CONTESTS_PATH,
+    EXAM_GROUPS_PATH,
+    NEW_ADMINISTRATION_PATH,
+    PARTICIPANTS_PATH,
+    PROBLEM_GROUPS_PATH,
+    PROBLEM_RESOURCES_PATH,
+    PROBLEMS_PATH,
+    ROLES_PATH,
+    SETTINGS_PATH,
+    SUBMISSION_TYPES_PATH,
+    SUBMISSIONS_FOR_PROCESSING_PATH,
+    SUBMISSIONS_PATH,
+    SUBMISSIONS_SIMILLARITY,
+    TESTS_PATH,
+    USERS_PATH,
+} from '../../../common/urls/administration-urls';
 import AdministrationThemeProvider, { getColors } from '../../../hooks/use-administration-theme-provider';
 import AdministrationPage from '../../../pages/administration/AdministrationPage';
-import AdministrationContestCategories from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
+import AdministrationContestCategories
+    from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
 import AdministrationExamGroupsPage from '../../../pages/administration-new/exam-groups/AdministrationExamGroups';
-import ParticipantsAdministrationPage from '../../../pages/administration-new/participants/ParticipantsAdministrationPage';
-import AdministrationProblemGroupsPage from '../../../pages/administration-new/problem-groups/AdministrationProblemGroupsPage';
-import AdministrationProblemResourcesPage from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
+import ParticipantsAdministrationPage
+    from '../../../pages/administration-new/participants/ParticipantsAdministrationPage';
+import AdministrationProblemGroupsPage
+    from '../../../pages/administration-new/problem-groups/AdministrationProblemGroupsPage';
+import AdministrationProblemResourcesPage
+    from '../../../pages/administration-new/problem-resources/AdministrationProblemResourcesPage';
 import AdministrationProblemsPage from '../../../pages/administration-new/problems/AdministrationProblemsPage';
 import AdministrationRolesPage from '../../../pages/administration-new/roles/AdministrationRolesPage';
 import AdministrationSettingsPage from '../../../pages/administration-new/settings/SettingsAdministrationPage';
-import AdministrationSubmissionTypesPage from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
+import AdministrationSubmissionTypesPage
+    from '../../../pages/administration-new/submission-types/AdministrationSubmissionTypesPage';
 import AdministrationSubmissionsPage from '../../../pages/administration-new/submissions/AdministrationSubmissionsPage';
 import AdminSubmissionForProcessingDetails
     from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionForProcessing';
-import AdministrationSubmissionsForProcessingPage from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
+import AdministrationSubmissionsForProcessingPage
+    from '../../../pages/administration-new/submissions-for-processing/AdministrationSubmissionsForProcessingPage';
 import SubmissionsSimillarity from '../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import AdministrationTestsPage from '../../../pages/administration-new/tests/AdministrationTestsPage';
 import AdministrationUsersPage from '../../../pages/administration-new/users/AdministrationUsersPage';
@@ -57,6 +100,7 @@ import AdministrationProblem from '../../administration/problems/AdministrationP
 import AdministrationRole from '../../administration/roles/AdministrationRole';
 import AdministrationTest from '../../administration/tests/AdministrationTest';
 import AdministrationUser from '../../administration/users/AdministrationUser';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './AdministrationPortal.module.scss';
 
@@ -527,7 +571,13 @@ const AdministrationPortal = () => {
                               onClose={() => setShowMenu(false)}
                             >
                                 <MenuItem>
-                                    <Link to="/logout" className={styles.adminHeaderLink}>Sign out</Link>
+                                    <LinkButton
+                                      to="/logout"
+                                      isToExternal
+                                      type={LinkButtonType.plain}
+                                      className={styles.adminHeaderLink}
+                                      text="Log out"
+                                    />
                                 </MenuItem>
                                 <MenuItem>
                                     <FormControlLabel
