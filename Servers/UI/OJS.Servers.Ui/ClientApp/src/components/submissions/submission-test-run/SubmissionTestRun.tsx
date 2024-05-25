@@ -7,6 +7,7 @@ import { Popover } from '@mui/material';
 
 import { TestRunResultType } from '../../../common/constants';
 import { getResultTypeText, getTestResultColorId } from '../../../common/submissions-utils';
+import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import CodeEditor from '../../code-editor/CodeEditor';
@@ -102,7 +103,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                     { shouldRenderAdminData && (
                         <div
                           className={`${styles.testRunIdWrapper}`}
-                          onClick={() => navigate(`/administration-new/tests/${testId}`)}
+                          onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/tests/${testId}`)}
                         >
                             Test #
                             {testId}

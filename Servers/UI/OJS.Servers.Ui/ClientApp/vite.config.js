@@ -5,7 +5,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { resolve } from 'path';
 /// <reference types="vite-plugin-svgr/client" />
 
-// For development server, we want to forward all requests to /administration-new to /admin.html
+// For development server, we want to forward all requests to /administration to /admin.html
 const forwardToAdmin = () => {
     return {
         name: 'forward-to-admin-html',
@@ -13,7 +13,7 @@ const forwardToAdmin = () => {
         enforce: 'post',
         configureServer(server) {
             server.middlewares.use('/', (req, _, next) => {
-                if (req.url.startsWith('/administration-new')) {
+                if (req.url.startsWith('/administration')) {
                     req.url = '/admin.html';
                 }
                 next()

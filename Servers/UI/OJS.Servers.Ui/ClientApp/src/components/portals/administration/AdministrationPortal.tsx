@@ -64,7 +64,6 @@ import {
     USERS_PATH,
 } from '../../../common/urls/administration-urls';
 import AdministrationThemeProvider, { getColors } from '../../../hooks/use-administration-theme-provider';
-import AdministrationPage from '../../../pages/administration/AdministrationPage';
 import AdministrationContestCategories
     from '../../../pages/administration-new/contest-categories/AdministrationContestCategories';
 import AdministrationContestsPage from '../../../pages/administration-new/contests/AdministrationContests';
@@ -503,12 +502,6 @@ const AdministrationPortal = () => {
             path: `${SUBMISSIONS_SIMILLARITY}`,
             Element: SubmissionsSimillarity,
             visibleOnlyForAdmin: false,
-        },
-        {
-
-            path: '/administration',
-            Element: AdministrationPage,
-            title: 'Administration',
         },
     ];
 
