@@ -1,14 +1,14 @@
-import { ChangeEvent, FormEvent, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Checkbox, TextField } from '@mui/material';
 import debounce from 'lodash/debounce';
 
-import { CheckboxSearchValues, FieldNameType } from '../../../common/enums';
+import { CheckboxSearchValues } from '../../../common/enums';
 import useTheme from '../../../hooks/use-theme';
 import { setIsVisible, setSearchValue, setSelectedTerms } from '../../../redux/features/searchSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Form from '../../guidelines/forms/Form';
-import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../../guidelines/forms/FormControl';
 
 import styles from './SearchBar.module.scss';
 
@@ -23,6 +23,7 @@ const SearchBar = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
+    const [ inputValue, setInputValue ] = useState<string>('');
 
     const { searchValue, selectedTerms, isVisible } = useAppSelector((state) => state.search);
 
@@ -53,10 +54,17 @@ const SearchBar = () => {
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ searchValue, selectedTerms ]);
 
-    // hide search bar on page change
+    // hide search bar on page change and reset state
     useEffect(() => {
         if (!location.pathname.includes('/search')) {
+            setInputValue('');
             dispatch(setIsVisible(false));
+            dispatch(setSearchValue(''));
+            dispatch(setSelectedTerms([
+                CheckboxSearchValues.contests,
+                CheckboxSearchValues.problems,
+                CheckboxSearchValues.users,
+            ]));
         }
     }, [ location.pathname, dispatch ]);
 
@@ -67,24 +75,24 @@ const SearchBar = () => {
         });
     };
 
-    const handleSearchCheckboxClick = (event: FormEvent<HTMLInputElement>) => {
-        const { currentTarget: { value: currentValue } } = event;
-
-        if (selectedTerms.includes(currentValue as CheckboxSearchValues)) {
-            const newSelectedItems = selectedTerms.filter((term) => term !== currentValue);
+    const handleSearchCheckboxClick = (checkbox: string) => {
+        if (selectedTerms.includes(checkbox as CheckboxSearchValues)) {
+            const newSelectedItems = selectedTerms.filter((term) => term !== checkbox);
             dispatch(setSelectedTerms(newSelectedItems));
         } else {
-            dispatch(setSelectedTerms([ ...selectedTerms, (currentValue as CheckboxSearchValues) ]));
+            dispatch(setSelectedTerms([ ...selectedTerms, (checkbox as CheckboxSearchValues) ]));
         }
     };
 
     // wait user to stop typing, then dispatch in order not to dispatch on every key click
-    const debouncedDispatch = debounce((value: string) => {
-        dispatch(dispatch(setSearchValue(value)));
-    }, 250);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const debouncedDispatch = useCallback(debounce((value) => {
+        dispatch(setSearchValue(value));
+    }, 250), [ dispatch ]);
 
-    const handleSearchInputChange = (searchInput?: IFormControlOnChangeValueType | ChangeEvent<HTMLInputElement>) => {
-        debouncedDispatch(searchInput as string);
+    const handleSearchInputChange = (e: any) => {
+        setInputValue(e.target.value as string);
+        debouncedDispatch(e.target.value as string);
     };
 
     return (
@@ -98,28 +106,31 @@ const SearchBar = () => {
               onSubmit={handleSubmit}
               hideFormButton
             >
-                <FormControl
+                <TextField
                   id="search-for-text-input"
+                  variant="standard"
                   className={`${styles.searchInput} ${textColorClassName}`}
-                  name={FieldNameType.search}
-                  type={FormControlType.input}
-                  labelText={FieldNameType.search}
-                  value={searchValue}
-                  shouldDisableLabel
+                  value={inputValue}
+                  placeholder="Search value..."
+                  InputLabelProps={{ shrink: true }}
                   onChange={handleSearchInputChange}
+                  type="text"
                 />
                 {/* eslint-disable-next-line max-len */}
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */}
                 <div className={styles.checkboxContainer}>
                     {CHECKBOXES.map((checkbox) => (
                         <div key={`search-bar-checkbox-${checkbox}`} className={styles.checkboxWrapper}>
-                            <FormControl
+                            <Checkbox
+                              sx={{
+                                  '&.Mui-checked': {
+                                      color: '#1976d2',
+                                      '&:hover': { backgroundColor: 'transparent' },
+                                  },
+                              }}
                               className={styles.checkbox}
-                              name={FieldNameType.checkbox}
-                              type={FormControlType.checkbox}
-                              value={checkbox}
                               checked={selectedTerms.includes(checkbox)}
-                              onClick={handleSearchCheckboxClick}
+                              onClick={() => handleSearchCheckboxClick(checkbox)}
                             />
                             <span className={`${styles.checkboxText} ${textColorClassName}`}>
                                 {checkbox}
