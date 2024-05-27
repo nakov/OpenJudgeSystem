@@ -5,13 +5,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import { IContestCategory, IContestDetailsResponseType, IProblemType } from '../../common/types';
+import { IContestCategory, IContestDetailsResponseType, IContestDetailsSliceType, IProblemType } from '../../common/types';
 
 interface IContestState {
     selectedCategory: IContestCategory | null;
     selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
-    contestDetails: IContestDetailsResponseType | null;
+    contestDetails: IContestDetailsSliceType | null;
     contestCategories: Array<IContestCategory>;
     selectedContestDetailsProblem: IProblemType | null;
 }
@@ -46,6 +46,10 @@ export const contestSlice = createSlice({
         clearContestCategoryBreadcrumbItems: (state) => {
             state.breadcrumbItems = [];
         },
+        setContestDetailsIdAndCategoryId: (state, action: PayloadAction<{ id: number; categoryId: number}>) => {
+            const { id, categoryId } = action.payload;
+            state.contestDetails = { id, categoryId };
+        },
         setSelectedContestDetailsProblem: (state, action: PayloadAction<{ selectedProblem: IProblemType | null }>) => {
             const { selectedProblem } = action.payload;
             state.selectedContestDetailsProblem = selectedProblem;
@@ -69,6 +73,7 @@ export const {
     clearContestCategoryBreadcrumbItems,
     setSelectedContestDetailsProblem,
     setContestCategories,
+    setContestDetailsIdAndCategoryId,
 } = contestSlice.actions;
 
 export default contestSlice.reducer;

@@ -14,6 +14,8 @@ const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
+const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
+
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate), 'second');
 
 const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
@@ -27,14 +29,14 @@ const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
 const preciseFormatDate = (
     date: Date,
     formatString = defaultPreciseDateTimeFormat,
-) => moment(date).utc(true).local().format(formatString);
+) => moment(date).utc().local().format(formatString);
 
 const formatDate = (
     date: Date,
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
-    : moment(date).utc(true).local().fromNow());
+    : moment(date).utc().local().fromNow());
 
 const getUTCDateAsLocal = (date: string | number | Date) => dayjs
     .utc(date)
@@ -175,6 +177,7 @@ export {
     defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
     defaultPreciseDateTimeFormat,
+    dateTimeFormatWithSpacing,
     formatDate,
     getUTCDateAsLocal,
     preciseFormatDate,
