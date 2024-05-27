@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -249,9 +250,9 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToSubmissionAdministration = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
+        const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/submissions?filter=id~equals~${solutionId}`);
 
-        const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${problem!.id}`);
+        const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${problem!.id}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>

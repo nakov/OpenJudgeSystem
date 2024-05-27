@@ -10,6 +10,7 @@ import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
+import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
@@ -319,11 +320,11 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`/administration-new/problems?filter=id~equals~${
+    const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/problems?filter=id~equals~${
         selectedContestDetailsProblem!.id
     }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
 
-    const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${
+    const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${
         selectedContestDetailsProblem!.id
     }`);
 
@@ -628,7 +629,7 @@ const ContestSolutionSubmitPage = () => {
                     <LinkButton
                       size={ButtonSize.small}
                       type={LinkButtonType.secondary}
-                      to={`/administration-new/contests/${contestId}`}
+                      to={`/${NEW_ADMINISTRATION_PATH}/contests/${contestId}`}
                       isToExternal
                       text="Contest"
                     />
