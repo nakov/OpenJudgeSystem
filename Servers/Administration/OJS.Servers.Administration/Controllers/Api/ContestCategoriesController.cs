@@ -2,16 +2,13 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
-using OJS.Servers.Administration.Attributes;
 using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.GridData;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
-using OJS.Services.Administration.Models;
 using OJS.Services.Administration.Models.ContestCategories;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
-using System.Threading.Tasks;
 
 public class ContestCategoriesController : BaseAdminApiController<ContestCategory, int, ContestCategoryInListModel, ContestCategoryAdministrationModel>
 {
