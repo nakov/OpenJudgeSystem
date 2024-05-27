@@ -53,8 +53,7 @@ const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
     const { themeColors, getColorClassName } = useTheme();
 
-    const
-        { Keys: { YOUTUBE_VIDEO_ID } } = window;
+    const YOUTUBE_VIDEO_ID = `${import.meta.env.VITE_YOUTUBE_VIDEO_ID}`;
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
