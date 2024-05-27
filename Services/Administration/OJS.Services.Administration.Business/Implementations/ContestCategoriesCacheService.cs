@@ -21,9 +21,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public void ClearMainContestCategoriesCache() =>
-        // this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
+    public void ClearMainContestCategoriesCache()
+    {
+        this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
         this.cache.Remove(CacheConstants.ContestCategoriesTree);
+    }
 
     public async Task ClearContestCategoryParentsAndChildren(int categoryId)
     {
