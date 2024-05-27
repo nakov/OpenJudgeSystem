@@ -1,5 +1,4 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
-import dayjs from 'dayjs';
 import moment, { Duration, unitOfTime } from 'moment';
 
 interface IConvertToTwoDigitValuesParamType {
