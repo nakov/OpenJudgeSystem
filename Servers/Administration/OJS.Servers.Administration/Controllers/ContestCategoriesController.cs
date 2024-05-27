@@ -88,7 +88,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
             .GetValidationResult(validationModel)
             .VerifyResult();
 
-        await this.contestCategoriesCache.ClearContestCategory(existingEntity.Id);
+        await this.contestCategoriesCache.ClearContestCategoryParentsAndChildren(existingEntity.Id);
     }
 
     protected override Task BeforeEntitySaveOnDeleteAsync(
@@ -98,7 +98,7 @@ public class ContestCategoriesController : BaseAutoCrudAdminController<ContestCa
         this.contestCategoriesData.LoadChildrenRecursively(entity);
 
         return Task.WhenAll(
-            this.contestCategoriesCache.ClearContestCategory(entity.Id),
+            this.contestCategoriesCache.ClearContestCategoryParentsAndChildren(entity.Id),
             this.CascadeDeleteCategories(entity));
     }
 

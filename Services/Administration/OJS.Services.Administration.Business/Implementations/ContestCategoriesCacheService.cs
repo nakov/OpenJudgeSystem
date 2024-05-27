@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Services.Administration.Data;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Constants;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,13 +21,11 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
         this.contestCategoriesData = contestCategoriesData;
     }
 
-    public void ClearMainContestCategoriesCache()
-    {
-        this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
+    public void ClearMainContestCategoriesCache() =>
+        // this.cache.Remove(CacheConstants.MainContestCategoriesDropDown);
         this.cache.Remove(CacheConstants.ContestCategoriesTree);
-    }
 
-    public async Task ClearContestCategory(int categoryId)
+    public async Task ClearContestCategoryParentsAndChildren(int categoryId)
     {
         var contestCategory = await this.contestCategoriesData.GetByIdQuery(categoryId)
             .Include(cc => cc.Children)
@@ -37,35 +36,42 @@ public class ContestCategoriesCacheService : IContestCategoriesCacheService
             return;
         }
 
-        contestCategory.Children
-            .Select(cc => cc.Id)
-            .ToList()
-            .ForEach(this.RemoveCacheFromCategory);
+        // Collect all child category IDs
+        var allCategoryIds = new HashSet<int>(contestCategory.Children.Select(cc => cc.Id));
+        var currentCategory = contestCategory;
 
-        while (contestCategory != null)
+        // Traverse upwards and collect parent IDs
+        while (currentCategory != null && currentCategory.ParentId.HasValue)
         {
-            this.RemoveCacheFromCategory(contestCategory.Id);
-
-            contestCategory = contestCategory.Parent;
+            allCategoryIds.Add(currentCategory.ParentId.Value);
+            currentCategory = await this.contestCategoriesData
+                .GetByIdQuery(currentCategory.ParentId.Value)
+                .FirstOrDefaultAsync();
         }
+
+        // Add the initial categoryId
+        allCategoryIds.Add(categoryId);
+
+        // Remove cache for all collected category IDs
+        allCategoryIds.ToList().ForEach(this.RemoveCacheFromCategory);
     }
 
     private void RemoveCacheFromCategory(int contestCategoryId)
-        {
-            var categoryNameCacheId = string.Format(
-                CacheConstants.ContestCategoryNameFormat,
-                contestCategoryId);
+    {
+        var categoryNameCacheId = string.Format(
+            CacheConstants.ContestCategoryNameFormat,
+            contestCategoryId);
 
-            var subCategoriesCacheId = string.Format(
-                CacheConstants.ContestSubCategoriesFormat,
-                contestCategoryId);
+        var subCategoriesCacheId = string.Format(
+            CacheConstants.ContestSubCategoriesFormat,
+            contestCategoryId);
 
-            var parentCategoriesCacheId = string.Format(
-                CacheConstants.ContestParentCategoriesFormat,
-                contestCategoryId);
+        var parentCategoriesCacheId = string.Format(
+            CacheConstants.ContestParentCategoriesFormat,
+            contestCategoryId);
 
-            this.cache.Remove(categoryNameCacheId);
-            this.cache.Remove(subCategoriesCacheId);
-            this.cache.Remove(parentCategoriesCacheId);
-        }
+        this.cache.Remove(categoryNameCacheId);
+        this.cache.Remove(subCategoriesCacheId);
+        this.cache.Remove(parentCategoriesCacheId);
+    }
 }

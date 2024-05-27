@@ -40,18 +40,4 @@ public class ContestCategoriesController : BaseAdminApiController<ContestCategor
             .Where(x => !x.IsDeleted)
             .ToHashSet()
             .MapCollection<ContestCategoriesInContestView>());
-
-    [HttpDelete("{id}")]
-    [ProtectedEntityAction("id", AdministrationConstants.AdministrationOperations.Delete)]
-    public override async Task<IActionResult> Delete(int id)
-    {
-        var result = await base.Delete(id);
-
-        if (result is OkObjectResult)
-        {
-            this.categoriesCacheService.ClearMainContestCategoriesCache();
-        }
-
-        return result;
-    }
 }
