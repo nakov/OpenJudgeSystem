@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import Button, { ButtonType } from '../../components/guidelines/buttons/Button';
+import LegacyInfoMessage from '../../components/guidelines/legacy-info-message/LegacyInfoMessage';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
@@ -112,6 +113,7 @@ const ProfilePage = () => {
                           isUserLecturer={internalUser.isInRole}
                           isUserProfileOwner={currentUserIsProfileOwner}
                         />
+                        {currentUserIsProfileOwner && <LegacyInfoMessage />}
                         {
                             (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
                             <div className={styles.submissionsAndParticipationsToggle}>

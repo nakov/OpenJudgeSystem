@@ -8,4 +8,7 @@ public class RedisConfig : BaseConfig
 
     [Required]
     public string ConnectionString { get; set; } = string.Empty;
+
+    [Required]
+    public string InstanceName { get; set; } = string.Empty;
 }

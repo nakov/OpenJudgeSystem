@@ -188,13 +188,7 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddDistributedCaching(
             this IServiceCollection services,
             IConfiguration configuration)
-            => services.AddRedis(configuration, ApplicationFullName);
-
-        public static IServiceCollection AddDistributedCaching(
-            this IServiceCollection services,
-            IConfiguration configuration,
-            string instanceName)
-            => services.AddRedis(configuration, instanceName);
+            => services.AddRedis(configuration);
 
         public static IServiceCollection AddMessageQueue<TStartup>(
             this IServiceCollection services,
@@ -289,7 +283,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services;
         }
 
-        private static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration, string instanceName)
+        private static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
         {
             var redisConfig = configuration.GetSectionWithValidation<RedisConfig>();
 
@@ -301,7 +295,7 @@ namespace OJS.Servers.Infrastructure.Extensions
             return services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = redisConfig.ConnectionString;
-                options.InstanceName = $"{instanceName}:";
+                options.InstanceName = $"{redisConfig.InstanceName}:";
             });
         }
 
