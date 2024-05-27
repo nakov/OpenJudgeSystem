@@ -192,35 +192,39 @@ const LinkButton = ({
         ? styles.disabled
         : '';
 
-    const buttonClassName =
-        isEmpty(internalClassName)
-            ? concatClassNames(
-                styles.btn,
-                typeClassName,
-                sizeClassName,
-                stateClassName,
-                className,
-            )
-            : internalClassName;
+    const buttonClassName = isEmpty(internalClassName)
+        ? concatClassNames(
+            styles.btn,
+            typeClassName,
+            sizeClassName,
+            stateClassName,
+            className,
+        )
+        : internalClassName;
 
     const content = type === LinkButtonType.image
         ? <img src={imgSrc} alt={altText} />
         : children ?? text;
 
-    const toHref = isToExternal
-        ? { pathname: to }
-        : to;
-
-    const target = isToExternal
-        ? '_blank'
-        : '';
+    if (isToExternal) {
+        return (
+            <a
+              href={to}
+              className={buttonClassName}
+              id={id}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+                {content}
+            </a>
+        );
+    }
 
     return (
         <Link
-          to={toHref}
+          to={to}
           className={buttonClassName}
           id={id}
-          target={target}
         >
             {content}
         </Link>
