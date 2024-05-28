@@ -1,9 +1,5 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import moment, { Duration, unitOfTime } from 'moment';
-
-dayjs.extend(utc);
 
 interface IConvertToTwoDigitValuesParamType {
     days: number;
