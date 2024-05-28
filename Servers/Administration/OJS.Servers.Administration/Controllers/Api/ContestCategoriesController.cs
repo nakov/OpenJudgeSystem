@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using OJS.Data.Models.Contests;
+using OJS.Services.Administration.Business;
 using OJS.Services.Administration.Business.ContestCategories;
 using OJS.Services.Administration.Business.ContestCategories.GridData;
 using OJS.Services.Administration.Business.ContestCategories.Validators;
@@ -12,16 +13,21 @@ using System.Linq;
 public class ContestCategoriesController : BaseAdminApiController<ContestCategory, int, ContestCategoryInListModel, ContestCategoryAdministrationModel>
 {
     private readonly IContestCategoriesBusinessService contestCategoriesBusinessService;
+    private readonly IContestCategoriesCacheService categoriesCacheService;
 
     public ContestCategoriesController(
         IContestCategoriesBusinessService contestCategoriesBusinessService,
+        IContestCategoriesCacheService categoriesCacheService,
         ContestCategoryAdministrationModelValidator validator,
         IContestCategoriesGridDataService contestCategoryGridDataService)
     : base(
         contestCategoryGridDataService,
         contestCategoriesBusinessService,
         validator)
-        => this.contestCategoriesBusinessService = contestCategoriesBusinessService;
+    {
+        this.contestCategoriesBusinessService = contestCategoriesBusinessService;
+        this.categoriesCacheService = categoriesCacheService;
+    }
 
     [HttpGet]
     public IActionResult GetForContestDropdown()

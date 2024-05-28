@@ -64,7 +64,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
             contestCategory!.Parent = await this.categoriesDataService.GetById(model.ParentId);
         }
 
-        await this.contestCategoriesCache.ClearContestCategory(contestCategory.Id);
+        await this.contestCategoriesCache.ClearContestCategoryParentsAndChildren(contestCategory.Id);
 
         this.categoriesDataService.Update(contestCategory!);
         await this.categoriesDataService.SaveChanges();
@@ -86,7 +86,7 @@ public class ContestCategoriesBusinessService : AdministrationOperationService<C
         this.categoriesDataService.LoadChildrenRecursively(contestCategory);
 
         await Task.WhenAll(
-            this.contestCategoriesCache.ClearContestCategory(contestCategory.Id),
+            this.contestCategoriesCache.ClearContestCategoryParentsAndChildren(contestCategory.Id),
             this.CascadeDeleteCategories(contestCategory));
 
         this.categoriesDataService.Delete(contestCategory);
