@@ -1,9 +1,5 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import moment, { Duration, unitOfTime } from 'moment';
-
-dayjs.extend(utc);
 
 interface IConvertToTwoDigitValuesParamType {
     days: number;
@@ -27,24 +23,23 @@ const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
-    Duration => moment.duration(moment(date).diff(moment().local()), unit);
+    Duration => moment.duration(moment(date)
+    .utc(true)
+    .local()
+    .diff(moment()
+        .local()), unit);
 
 const preciseFormatDate = (
     date: Date,
     formatString = defaultPreciseDateTimeFormat,
-) => moment(date).utc().local().format(formatString);
+) => moment(date).utc(true).local().format(formatString);
 
 const formatDate = (
     date: Date,
     formatString = defaultDateTimeFormat,
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
-    : moment(date).utc().local().fromNow());
-
-const getUTCDateAsLocal = (date: string | number | Date) => dayjs
-    .utc(date)
-    .local()
-    .toDate();
+    : moment(date).utc(true).local().fromNow());
 
 const getCurrentTimeInUTC = () => {
     const now = moment().utc();
@@ -182,7 +177,6 @@ export {
     defaultPreciseDateTimeFormat,
     dateTimeFormatWithSpacing,
     formatDate,
-    getUTCDateAsLocal,
     preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,
