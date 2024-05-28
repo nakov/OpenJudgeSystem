@@ -487,6 +487,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             await this.AddNewDefaultProcessedSubmission(newSubmission);
 
             scope.Complete();
+            scope.Dispose();
             return;
         }
 
@@ -658,6 +659,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private async Task AddNewDefaultProcessedSubmission(Submission submission)
     {
         submission.Processed = true;
+        submission.IsCompiledSuccessfully = true;
         submission.Points = 0;
 
         await this.submissionsData.Add(submission);
