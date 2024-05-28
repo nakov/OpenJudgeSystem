@@ -9,6 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import MyProfileSvg from '../../assets/my-profile.svg';
+import { NEW_ADMINISTRATION_PATH } from '../../common/urls/administration-urls';
 import useTheme from '../../hooks/use-theme';
 import { resetInInternalUser, setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { setIsVisible } from '../../redux/features/searchSlice';
@@ -101,7 +102,7 @@ const PageHeader = () => {
                     <Link to="/submissions" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Submissions</Link>
                     {user.canAccessAdministration && (
                         <Link
-                          to="/administration-new"
+                          to={`/${NEW_ADMINISTRATION_PATH}`}
                           target="_blank"
                           className={styles.burgerItemWrapper}
                           onClick={onMenuItemClick}
@@ -139,12 +140,12 @@ const PageHeader = () => {
     return (
         <header className={styles.header}>
             <div>
-                <Link to="/" className={`${styles.navButton} ${styles.logoBtn}`}>SoftUni Judge</Link>
+                <Link to="/" className={`${styles.logoBtn}`}>SoftUni Judge</Link>
                 <div className={styles.navButtons}>
                     <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
                     {user.canAccessAdministration &&
-                        <Link to="/administration-new" target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
+                        <Link to={`/${NEW_ADMINISTRATION_PATH}`} target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
                 </div>
             </div>
             <div className={styles.authButtons}>

@@ -21,7 +21,7 @@ const ProblemSearchCard = (props: IProblemSearchCardProps) => {
     return (
         <div className={`${styles.problemsSearchCardWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
             <div>
-                <Link to={`/contests/${contest.id}/practice#${id}`} className={`${styles.problemName} ${textColorClassName}`}>{name}</Link>
+                <Link to={`/contests/${contest.id}`} className={`${styles.problemName} ${textColorClassName}`}>{name}</Link>
                 <div className={styles.contestName}>{contest.name}</div>
             </div>
             <div className={styles.buttonsWrapper}>

@@ -1,5 +1,4 @@
 import { differenceInDays, intervalToDuration } from 'date-fns';
-import dayjs from 'dayjs';
 import moment, { Duration, unitOfTime } from 'moment';
 
 interface IConvertToTwoDigitValuesParamType {
@@ -14,6 +13,8 @@ const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
+const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
+
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate), 'second');
 
 const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
@@ -22,7 +23,11 @@ const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
-    Duration => moment.duration(moment(date).diff(moment().local()), unit);
+    Duration => moment.duration(moment(date)
+    .utc(true)
+    .local()
+    .diff(moment()
+        .local()), unit);
 
 const preciseFormatDate = (
     date: Date,
@@ -35,11 +40,6 @@ const formatDate = (
 ) => (moment().diff(date, 'days') > 3
     ? preciseFormatDate(date, formatString)
     : moment(date).utc(true).local().fromNow());
-
-const getUTCDateAsLocal = (date: string | number | Date) => dayjs
-    .utc(date)
-    .local()
-    .toDate();
 
 const getCurrentTimeInUTC = () => {
     const now = moment().utc();
@@ -175,8 +175,8 @@ export {
     defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
     defaultPreciseDateTimeFormat,
+    dateTimeFormatWithSpacing,
     formatDate,
-    getUTCDateAsLocal,
     preciseFormatDate,
     secondsToFullTime,
     calculateTimeUntil,

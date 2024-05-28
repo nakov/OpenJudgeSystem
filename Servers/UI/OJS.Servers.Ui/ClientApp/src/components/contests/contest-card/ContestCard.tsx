@@ -7,8 +7,7 @@ import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
-    calculateTimeUntil,
-    getUTCDateAsLocal,
+    calculateTimeUntil, dateTimeFormatWithSpacing,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
@@ -56,7 +55,7 @@ const ContestCard = (props: IContestCardProps) => {
         userParticipationResult,
     } = contest;
 
-    const contestStartTime = canBeCompeted
+    const contestStartTime = canBeCompeted || (!canBeCompeted && !canBePracticed)
         ? startTime
         : practiceStartTime;
 
@@ -64,8 +63,7 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const contestEndTimeLocal = getUTCDateAsLocal(contestEndTime);
-    const remainingDuration = calculateTimeUntil(contestEndTimeLocal);
+    const remainingDuration = calculateTimeUntil(contestEndTime);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
 
     const shouldShowPoints = isNil(showPoints)
@@ -148,7 +146,10 @@ const ContestCard = (props: IContestCardProps) => {
                     isLoggedIn && internalUser.canAccessAdministration && <div className={styles.contestCardSubTitle}>{id}</div>
                 }
                 <div className={styles.contestDetailsFragmentsWrapper}>
-                    {renderContestDetailsFragment(iconNames.date, preciseFormatDate(new Date(contestStartTime), 'D MMM YY, HH:mm'))}
+                    {contestStartTime && renderContestDetailsFragment(
+                        iconNames.date,
+                        preciseFormatDate(contestStartTime, dateTimeFormatWithSpacing),
+                    )}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
                     {renderContestDetailsFragment(
                         iconNames.practiceResults,
@@ -164,8 +165,7 @@ const ContestCard = (props: IContestCardProps) => {
                         true,
                         'compete',
                     )}
-                    {canBeCompeted &&
-                        contestEndTime &&
+                    {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
                         renderContestDetailsFragment(
