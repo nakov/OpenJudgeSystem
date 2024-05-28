@@ -11,7 +11,7 @@ export const GETALL_ENDPOINT = 'GetAll';
 export const EXCEL_RESULTS_ENDPOINT = 'GetExcelFile';
 
 // Paths
-export const NEW_ADMINISTRATION_PATH = 'administration-new';
+export const NEW_ADMINISTRATION_PATH = 'administration';
 export const CONTESTS_PATH = 'contests';
 export const CONTEST_CATEGORIES_PATH = 'contest-categories';
 export const SUBMISSIONS_PATH = 'submissions';
