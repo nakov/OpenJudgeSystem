@@ -158,7 +158,7 @@ const ContestCard = (props: IContestCardProps) => {
                         true,
                         'practice',
                     )}
-                    {renderContestDetailsFragment(
+                    {!isNil(contest.userParticipationResult?.competePoints) && renderContestDetailsFragment(
                         iconNames.competeResults,
                         `compete results: ${competeResults}`,
                         true,
