@@ -158,13 +158,18 @@ const ContestCard = (props: IContestCardProps) => {
                         true,
                         'practice',
                     )}
-                    {!isNil(contest.userParticipationResult?.competePoints) && renderContestDetailsFragment(
-                        iconNames.competeResults,
-                        `compete results: ${competeResults}`,
-                        true,
-                        true,
-                        'compete',
-                    )}
+                    {
+                        // Null compete points means user is not compete participant
+                        ((internalUser.canAccessAdministration && contest.competeResults > 0) ||
+                        (contest.canBeCompeted && !isNil(contest.userParticipationResult?.competePoints))) &&
+                        renderContestDetailsFragment(
+                            iconNames.competeResults,
+                            `compete results: ${competeResults}`,
+                            true,
+                            true,
+                            'compete',
+                        )
+                    }
                     {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
