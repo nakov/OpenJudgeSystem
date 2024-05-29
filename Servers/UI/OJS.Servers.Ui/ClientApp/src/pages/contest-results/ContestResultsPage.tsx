@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
@@ -7,16 +7,16 @@ import { contestParticipationType } from '../../common/contest-helpers';
 import { IContestDetailsResponseType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestResultsGrid from '../../components/contests/contest-results-grid/ContestResultsGrid';
+import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import { usePageTitles } from '../../hooks/use-page-titles';
-import useTheme from '../../hooks/use-theme';
 import { setContestCategories, setContestDetails } from '../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery, useGetContestResultsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
-import concatClassNames from '../../utils/class-names';
+import { getErrorMessage } from '../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
 import { getContestDetailsAppUrl } from '../../utils/urls';
@@ -27,7 +27,6 @@ import styles from './ContestResultPage.module.scss';
 
 const ContestResultsPage = () => {
     const params = useParams();
-    const { getColorClassName, themeColors } = useTheme();
     const { contestId, participationType: participationUrlType, resultType } = params;
     const official = participationUrlType === ContestParticipationType.Compete;
     const full = resultType === ContestResultType.Full;
@@ -95,31 +94,6 @@ const ContestResultsPage = () => {
         }
     }, [ contestCategories, dispatch ]);
 
-    const renderErrorHeading = useCallback(
-        (message: string) => (
-            <div className={concatClassNames(getColorClassName(themeColors.textColor), styles.headingResults)}>
-                <Heading
-                  type={HeadingType.primary}
-                  className={styles.contestResultsHeading}
-                >
-                    {message}
-                </Heading>
-            </div>
-        ),
-        [ getColorClassName, themeColors.textColor ],
-    );
-
-    const renderErrorMessage = useCallback(
-        () => {
-            if (!isNil(contestResultsError)) {
-                return renderErrorHeading('Error loading contest results');
-            }
-
-            return null;
-        },
-        [ contestResultsError, renderErrorHeading ],
-    );
-
     return (
         isNil(contestResultsError)
             ? !isLoading
@@ -151,7 +125,12 @@ const ContestResultsPage = () => {
                         <SpinningLoader />
                     </div>
                 )
-            : renderErrorMessage()
+            : (
+                <ErrorWithActionButtons
+                  message={getErrorMessage(contestResultsError)}
+                />
+            )
+
     );
 };
 

@@ -5,6 +5,8 @@ import { useLazyGetUserSubmissionsQuery } from '../../../redux/services/submissi
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import SubmissionsGrid from '../../submissions/submissions-grid/SubmissionsGrid';
 
+import styles from './ProfileSubmissions.module.scss';
+
 interface IProfileSubmissionsProps {
     userIsProfileOwner: boolean;
     isChosenInToggle: boolean;
@@ -66,6 +68,7 @@ const ProfileSubmissions = ({ userIsProfileOwner, isChosenInToggle }: IProfileSu
               isDataLoaded={!areSubmissionsLoading}
               submissions={userSubmissions!}
               handlePageChange={(page: number) => setUserSubmissionsPage(page)}
+              className={styles.profileSubmissionsGrid}
               options={{
                   showTaskDetails: true,
                   showDetailedResults: internalUser.canAccessAdministration || userIsProfileOwner,

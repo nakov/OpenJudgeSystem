@@ -4,7 +4,7 @@ import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/s
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
-import { FilterColumnTypeEnum } from './enums';
+import { CheckboxSearchValues, FilterColumnTypeEnum } from './enums';
 import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
@@ -52,6 +52,12 @@ interface IRecentSubmissionsReduxState {
     latestSubmissions: IPagedResultType<IPublicSubmission>;
     profileSubmissions: IPagedResultType<IPublicSubmission>;
     currentPage: number;
+}
+
+interface ISearchSliceState {
+    isVisible: boolean;
+    searchValue: string;
+    selectedTerms: Array<CheckboxSearchValues.contests | CheckboxSearchValues.problems | CheckboxSearchValues.users>;
 }
 
 interface IPublicSubmissionProblem {
@@ -182,6 +188,13 @@ interface IProblemType {
     allowedSubmissionTypes: ISubmissionTypeType[];
 }
 
+interface IProblemSearchType {
+    id: number;
+    name: string;
+    orderBy: number;
+    contest: IContestType;
+}
+
 interface IContestDetailsProblemType {
     name: string;
     orderBy: number;
@@ -206,6 +219,22 @@ interface IContestDetailsResponseType {
     allowedSubmissionTypes: IContestDetailsSubmissionType[];
     competeParticipantsCount: number;
     practiceParticipantsCount: number;
+    categoryId: number;
+}
+
+interface IContestDetailsSliceType {
+    id: number;
+    name?: string;
+    description?: string;
+    problems?: IProblemType[];
+    canViewResults?: boolean;
+    isOnlineExam?: boolean;
+    canBeCompeted?: boolean;
+    canBePracticed?: boolean;
+    isAdminOrLecturerInContest?: boolean;
+    allowedSubmissionTypes?: IContestDetailsSubmissionType[];
+    competeParticipantsCount?: number;
+    practiceParticipantsCount?: number;
     categoryId: number;
 }
 
@@ -478,6 +507,7 @@ interface IContestAdministration {
     practicePassword: string | null;
     limitBetweenSubmissions: number;
     isVisible: boolean;
+    visibleFrom: Date | null;
     newIpPassword: string | null;
     allowParallelSubmissionsInTasks: boolean;
     orderBy: number;
@@ -727,6 +757,11 @@ interface ISettingAdministrationModel {
     type: string;
 }
 
+interface IUSerSearchCardProps {
+    id: string;
+    name: string;
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
@@ -802,4 +837,8 @@ export type {
     ISettingAdministrationModel,
     IRegisterUserForContestResponseType,
     ICompeteContestResponseType,
+    ISearchSliceState,
+    IUSerSearchCardProps,
+    IProblemSearchType,
+    IContestDetailsSliceType,
 };

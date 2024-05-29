@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable consistent-return */
+/* eslint-disable promise/prefer-await-to-then */
+/* eslint-disable promise/always-return */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -8,6 +10,7 @@ import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
+import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
@@ -25,16 +28,18 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
+import {
+    setContestDetailsIdAndCategoryId,
+} from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
-    useLazyGetContestByIdQuery,
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
+import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
@@ -48,7 +53,6 @@ const ContestSolutionSubmitPage = () => {
 
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
-    const [ contestTimeHasExpired, setContestTimeHasExpired ] = useState<boolean>(false);
     const [ remainingTimeForCompete, setRemainingTimeForCompete ] = useState<string | null>();
     const [ selectedStrategyValue, setSelectedStrategyValue ] = useState<string>('');
     const [ selectedSubmissionType, setSelectedSubmissionType ] = useState<ISubmissionTypeType>();
@@ -57,7 +61,6 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
-    const [ solutionSubmitPreError, setSolutionSubmitPreError ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -76,7 +79,6 @@ const ContestSolutionSubmitPage = () => {
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
-    const [ getContestById ] = useLazyGetContestByIdQuery();
     const [
         getSubmissionsData, {
             data: submissionsData,
@@ -166,7 +168,6 @@ const ContestSolutionSubmitPage = () => {
         const remainingTimeForParticipantOrContest = moment.utc(moment()).diff(moment.utc(endDateTimeForParticipantOrContest));
         if (remainingTimeForParticipantOrContest > 0) {
             // Positive time means time is past end time for contest or participant
-            setContestTimeHasExpired(true);
             return;
         }
 
@@ -178,7 +179,6 @@ const ContestSolutionSubmitPage = () => {
                 const formattedTime = calculatedTimeFormatted(moment.duration(remainingCompeteTime, 'millisecond'));
                 setRemainingTimeForCompete(formattedTime);
             } else {
-                setContestTimeHasExpired(true);
                 setRemainingTimeForCompete(null);
             }
         });
@@ -207,14 +207,12 @@ const ContestSolutionSubmitPage = () => {
     // in order for breadcrumbs to load and work properly
     useEffect(() => {
         if (!contestDetails || contestDetails.id !== Number(contestId)) {
-            const fetchAndSetContestDetails = async () => {
-                const { data: contestDetailsData } = await getContestById({ id: Number(contestId) });
-                dispatch(setContestDetails({ contest: contestDetailsData ?? null }));
-            };
-
-            fetchAndSetContestDetails();
+            if (!data?.contest) {
+                return;
+            }
+            dispatch(setContestDetailsIdAndCategoryId({ id: data!.contest!.id, categoryId: data!.contest!.categoryId }));
         }
-    }, [ contestDetails, contestId, getContestById, dispatch ]);
+    }, [ contestDetails, contestId, data, dispatch ]);
 
     // set dropdown data to the first element in the dropdown
     // instead of having the default empty one selected
@@ -262,29 +260,23 @@ const ContestSolutionSubmitPage = () => {
         setAnchorEl(null);
     };
 
-    const onSolutionSubmitCode = useCallback(async () => {
-        setSolutionSubmitPreError(false);
-        if (!submissionCode || submissionCode.length < 3) {
-            setSolutionSubmitPreError(true);
-            return;
-        }
-        try {
-            await submitSolution({
-                content: submissionCode!,
-                official: isCompete,
-                problemId: selectedContestDetailsProblem?.id!,
-                submissionTypeId: selectedSubmissionType?.id!,
-            });
-            refetch();
-            await getSubmissionsData({
-                id: Number(selectedContestDetailsProblem!.id),
-                page: selectedSubmissionsPage,
-                isOfficial: isCompete,
-            });
-            setSubmissionCode('');
-        } catch {
-            setSubmissionCode('');
-        }
+    const onSolutionSubmitCode = useCallback(() => {
+        setSubmissionCode('');
+        submitSolution({
+            content: submissionCode!,
+            official: isCompete,
+            problemId: selectedContestDetailsProblem?.id!,
+            submissionTypeId: selectedSubmissionType?.id!,
+        }).then((d) => {
+            if (!(d as any).error) {
+                refetch();
+                getSubmissionsData({
+                    id: Number(selectedContestDetailsProblem!.id),
+                    page: selectedSubmissionsPage,
+                    isOfficial: isCompete,
+                });
+            }
+        }).catch(() => {});
     }, [
         getSubmissionsData,
         isCompete,
@@ -330,11 +322,11 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`/administration-new/problems?filter=id~equals~${
+    const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/problems?filter=id~equals~${
         selectedContestDetailsProblem!.id
     }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
 
-    const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${
+    const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${
         selectedContestDetailsProblem!.id
     }`);
 
@@ -372,6 +364,7 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.problemResources}>
                 {resources.map((resource: IProblemResourceType) => (
                     <ProblemResource
+                      key={`resource-${resource.id}`}
                       resource={resource}
                       problem={selectedContestDetailsProblem.name}
                     />
@@ -510,7 +503,7 @@ const ContestSolutionSubmitPage = () => {
                         <Button
                           onClick={onSolutionSubmitFile}
                           text="Submit"
-                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading || contestTimeHasExpired || fileUploadError
+                          state={isSubmitButtonDisabled || submitSolutionFileIsLoading || fileUploadError
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                         />
@@ -523,7 +516,7 @@ const ContestSolutionSubmitPage = () => {
                         )}
                         {submitSolutionFileHasError && (
                             <div className={styles.solutionSubmitError}>
-                                {(submitSolutionFileError as any).data.detail || 'Error submitting solution. Please try again!'}
+                                {getErrorMessage(submitSolutionFileError)}
                             </div>
                         )}
                     </div>
@@ -547,7 +540,7 @@ const ContestSolutionSubmitPage = () => {
                     />
                     <div className={styles.remainingTimeNadSubmitButtonWrapper}>
                         <Button
-                          state={isSubmitButtonDisabled || submitSolutionIsLoading || contestTimeHasExpired
+                          state={isSubmitButtonDisabled || submitSolutionIsLoading
                               ? ButtonState.disabled
                               : ButtonState.enabled}
                           onClick={onSolutionSubmitCode}
@@ -562,7 +555,7 @@ const ContestSolutionSubmitPage = () => {
                         )}
                     </div>
                 </div>
-                {(submitSolutionHasError || solutionSubmitPreError) && (
+                {submitSolutionHasError && (
                     <div className={styles.solutionSubmitError}>
                         {(submitSolutionError as any).data.detail || 'Error submitting solution. Please try again!'}
                     </div>
@@ -575,7 +568,6 @@ const ContestSolutionSubmitPage = () => {
         submitSolutionHasError,
         isSubmitButtonDisabled,
         submitSolutionIsLoading,
-        contestTimeHasExpired,
         remainingTime,
         selectedStrategyValue,
         strategyDropdownItems,
@@ -587,7 +579,6 @@ const ContestSolutionSubmitPage = () => {
         onSolutionSubmitCode,
         submitSolutionError,
         submitSolutionFileHasError,
-        solutionSubmitPreError,
         onSolutionSubmitFile,
         setSubmissionCode,
         setUploadedFile,
@@ -600,14 +591,20 @@ const ContestSolutionSubmitPage = () => {
     }
 
     if (error) {
-        return (
-            <div className={styles.contestSolutionSubmitWrapper}>
-                <div className={textColorClassName}>Error fetching user participation data!</div>
-            </div>
-        );
+        if ((error as any).status === 401) {
+            navigate('/login');
+        } else {
+            return (
+                <ErrorWithActionButtons
+                  message={getErrorMessage(error)}
+                  backToUrl="/contests"
+                  backToText="Back to contests"
+                />
+            );
+        }
     }
 
-    if ((isRegisteredParticipant && !isActiveParticipant) || contestTimeHasExpired) {
+    if (isRegisteredParticipant && !isActiveParticipant) {
         return (
             <ErrorWithActionButtons
               message="Access to this contest has expired!"
@@ -634,7 +631,7 @@ const ContestSolutionSubmitPage = () => {
                     <LinkButton
                       size={ButtonSize.small}
                       type={LinkButtonType.secondary}
-                      to={`/administration-new/contests/${contestId}`}
+                      to={`/${NEW_ADMINISTRATION_PATH}/contests/${contestId}`}
                       isToExternal
                       text="Contest"
                     />

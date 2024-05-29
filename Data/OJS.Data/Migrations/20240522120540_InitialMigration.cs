@@ -2,8 +2,10 @@
 
 namespace OJS.Data.Migrations
 {
-    using System;
     using Microsoft.EntityFrameworkCore.Migrations;
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+
     public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -106,24 +108,17 @@ namespace OJS.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Events",
+                name: "DataProtectionKeys",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FriendlyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Xml = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.PrimaryKey("PK_DataProtectionKeys", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -146,12 +141,15 @@ namespace OJS.Data.Migrations
                 name: "Settings",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Settings", x => x.Name);
+                    table.PrimaryKey("PK_Settings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,6 +161,11 @@ namespace OJS.Data.Migrations
                     SubmissionId = table.Column<int>(type: "int", nullable: false),
                     Processing = table.Column<bool>(type: "bit", nullable: false),
                     Processed = table.Column<bool>(type: "bit", nullable: false),
+                    SerializedExecutionDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SerializedExecutionResult = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SerializedException = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -187,26 +190,6 @@ namespace OJS.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubmissionTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ForegroundColor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BackgroundColor = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -375,6 +358,7 @@ namespace OJS.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     IsVisible = table.Column<bool>(type: "bit", nullable: false),
+                    VisibleFrom = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AutoChangeTestsFeedbackVisibility = table.Column<bool>(type: "bit", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
@@ -390,6 +374,7 @@ namespace OJS.Data.Migrations
                     OrderBy = table.Column<double>(type: "float", nullable: false),
                     NumberOfProblemGroups = table.Column<short>(type: "smallint", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AllowParallelSubmissionsInTasks = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -457,34 +442,6 @@ namespace OJS.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContestQuestions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ContestId = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    AskOfficialParticipants = table.Column<bool>(type: "bit", nullable: false),
-                    AskPracticeParticipants = table.Column<bool>(type: "bit", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    RegularExpressionValidation = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContestQuestions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ContestQuestions_Contests_ContestId",
-                        column: x => x.ContestId,
-                        principalTable: "Contests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ExamGroups",
                 columns: table => new
                 {
@@ -543,6 +500,8 @@ namespace OJS.Data.Migrations
                     ParticipationEndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsOfficial = table.Column<bool>(type: "bit", nullable: false),
                     IsInvalidated = table.Column<bool>(type: "bit", nullable: false),
+                    TotalScoreSnapshot = table.Column<int>(type: "int", nullable: false),
+                    TotalScoreSnapshotModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                 },
@@ -589,30 +548,6 @@ namespace OJS.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContestQuestionAnswers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContestQuestionAnswers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ContestQuestionAnswers_ContestQuestions_QuestionId",
-                        column: x => x.QuestionId,
-                        principalTable: "ContestQuestions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UsersInExamGroups",
                 columns: table => new
                 {
@@ -632,31 +567,6 @@ namespace OJS.Data.Migrations
                         name: "FK_UsersInExamGroups_ExamGroups_ExamGroupId",
                         column: x => x.ExamGroupId,
                         principalTable: "ExamGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ParticipantAnswers",
-                columns: table => new
-                {
-                    ParticipantId = table.Column<int>(type: "int", nullable: false),
-                    ContestQuestionId = table.Column<int>(type: "int", nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParticipantAnswers", x => new { x.ParticipantId, x.ContestQuestionId });
-                    table.ForeignKey(
-                        name: "FK_ParticipantAnswers_ContestQuestions_ContestQuestionId",
-                        column: x => x.ContestQuestionId,
-                        principalTable: "ContestQuestions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ParticipantAnswers_Participants_ParticipantId",
-                        column: x => x.ParticipantId,
-                        principalTable: "Participants",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -754,48 +664,19 @@ namespace OJS.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SourceCodes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProblemId = table.Column<int>(type: "int", nullable: true),
-                    Content = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedOn = table.Column<DateTime>(type: "datetime2", nullable: true),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SourceCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SourceCodes_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SourceCodes_Problems_ProblemId",
-                        column: x => x.ProblemId,
-                        principalTable: "Problems",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Submissions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ParticipantId = table.Column<int>(type: "int", nullable: true),
-                    ProblemId = table.Column<int>(type: "int", nullable: true),
+                    ParticipantId = table.Column<int>(type: "int", nullable: false),
+                    ProblemId = table.Column<int>(type: "int", nullable: false),
                     SubmissionTypeId = table.Column<int>(type: "int", nullable: true),
                     Content = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     FileExtension = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SolutionSkeleton = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    StartedExecutionOn = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CompletedExecutionOn = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IpAddress = table.Column<string>(type: "varchar(45)", maxLength: 45, nullable: true),
                     IsCompiledSuccessfully = table.Column<bool>(type: "bit", nullable: false),
                     CompilerComment = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -816,12 +697,14 @@ namespace OJS.Data.Migrations
                         name: "FK_Submissions_Participants_ParticipantId",
                         column: x => x.ParticipantId,
                         principalTable: "Participants",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Submissions_Problems_ProblemId",
                         column: x => x.ProblemId,
                         principalTable: "Problems",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Submissions_SubmissionTypes_SubmissionTypeId",
                         column: x => x.SubmissionTypeId,
@@ -835,6 +718,9 @@ namespace OJS.Data.Migrations
                 {
                     SubmissionTypeId = table.Column<int>(type: "int", nullable: false),
                     ProblemId = table.Column<int>(type: "int", nullable: false),
+                    SolutionSkeleton = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    TimeLimit = table.Column<int>(type: "int", nullable: true),
+                    MemoryLimit = table.Column<int>(type: "int", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -849,30 +735,6 @@ namespace OJS.Data.Migrations
                         name: "FK_SubmissionTypeProblems_SubmissionTypes_SubmissionTypeId",
                         column: x => x.SubmissionTypeId,
                         principalTable: "SubmissionTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TagProblems",
-                columns: table => new
-                {
-                    TagId = table.Column<int>(type: "int", nullable: false),
-                    ProblemId = table.Column<int>(type: "int", nullable: false),
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TagProblems", x => new { x.TagId, x.ProblemId });
-                    table.ForeignKey(
-                        name: "FK_TagProblems_Problems_ProblemId",
-                        column: x => x.ProblemId,
-                        principalTable: "Problems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TagProblems_Tags_TagId",
-                        column: x => x.TagId,
-                        principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1025,16 +887,6 @@ namespace OJS.Data.Migrations
                 column: "IpId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContestQuestionAnswers_QuestionId",
-                table: "ContestQuestionAnswers",
-                column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContestQuestions_ContestId",
-                table: "ContestQuestions",
-                column: "ContestId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Contests_CategoryId",
                 table: "Contests",
                 column: "CategoryId");
@@ -1064,11 +916,6 @@ namespace OJS.Data.Migrations
                 name: "IX_LecturersInContests_ContestId",
                 table: "LecturersInContests",
                 column: "ContestId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParticipantAnswers_ContestQuestionId",
-                table: "ParticipantAnswers",
-                column: "ContestQuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Participants_ContestId",
@@ -1121,16 +968,6 @@ namespace OJS.Data.Migrations
                 column: "ParticipantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SourceCodes_AuthorId",
-                table: "SourceCodes",
-                column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SourceCodes_ProblemId",
-                table: "SourceCodes",
-                column: "ProblemId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Submissions_ParticipantId",
                 table: "Submissions",
                 column: "ParticipantId");
@@ -1146,13 +983,14 @@ namespace OJS.Data.Migrations
                 column: "SubmissionTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubmissionTypeProblems_ProblemId",
-                table: "SubmissionTypeProblems",
-                column: "ProblemId");
+                name: "IX_SubmissionsForProcessing_SubmissionId",
+                table: "SubmissionsForProcessing",
+                column: "SubmissionId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TagProblems_ProblemId",
-                table: "TagProblems",
+                name: "IX_SubmissionTypeProblems_ProblemId",
+                table: "SubmissionTypeProblems",
                 column: "ProblemId");
 
             migrationBuilder.CreateIndex(
@@ -1200,10 +1038,7 @@ namespace OJS.Data.Migrations
                 name: "ContestIps");
 
             migrationBuilder.DropTable(
-                name: "ContestQuestionAnswers");
-
-            migrationBuilder.DropTable(
-                name: "Events");
+                name: "DataProtectionKeys");
 
             migrationBuilder.DropTable(
                 name: "FeedbackReports");
@@ -1213,9 +1048,6 @@ namespace OJS.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "LecturersInContests");
-
-            migrationBuilder.DropTable(
-                name: "ParticipantAnswers");
 
             migrationBuilder.DropTable(
                 name: "ParticipantScores");
@@ -1230,16 +1062,10 @@ namespace OJS.Data.Migrations
                 name: "Settings");
 
             migrationBuilder.DropTable(
-                name: "SourceCodes");
-
-            migrationBuilder.DropTable(
                 name: "SubmissionsForProcessing");
 
             migrationBuilder.DropTable(
                 name: "SubmissionTypeProblems");
-
-            migrationBuilder.DropTable(
-                name: "TagProblems");
 
             migrationBuilder.DropTable(
                 name: "TestRuns");
@@ -1252,12 +1078,6 @@ namespace OJS.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ips");
-
-            migrationBuilder.DropTable(
-                name: "ContestQuestions");
-
-            migrationBuilder.DropTable(
-                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Submissions");

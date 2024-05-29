@@ -1,15 +1,38 @@
-@use 'src/styles/colors';
-@use 'src/styles/components';
-@use 'src/styles/global';
 @use 'src/styles/spacings';
+@use 'src/styles/variables';
+@use 'src/styles/colors';
+@use 'src/styles/font-weights';
 
-.searchHeading {
-  border: 0;
-  margin: spacings.$sp-32 0;
-  padding: 0;
-  text-align: center;
-}
+.searchPageWrapper {
+  margin: 0 auto;
+  padding: spacings.$sp-64;
+  width: 80vw;
 
-.headingSearch, {
-  @extend %contentSize;
+  .searchTextHeader {
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-medium;
+    margin-top: spacings.$sp-16;
+    text-align: center;
+  }
+
+  .searchSectionHeader {
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-medium;
+    margin-top: spacings.$sp-24;
+  }
+
+  .searchResultsWrapper {
+    margin: spacings.$sp-24 0;
+  }
+
+  .line {
+    background-color: #b4b4b4 !important;
+    border-color: transparent;
+    margin: spacings.$sp-16 0;
+  }
+
+  .errorTextWrapper {
+    color: colors.$primary-red;
+    margin: spacings.$sp-12 0;
+  }
 }

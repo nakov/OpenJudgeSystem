@@ -31,15 +31,9 @@ import {
     IUserInfoUrlParams,
 } from '../common/url-types';
 
-const
-    {
-        URLS:
-            {
-                UI_URL: baseUrl,
-                ADMINISTRATION_URL: administrationBaseUrl,
-                PLATFORM_URL: platformBaseUrl,
-            },
-    } = window;
+const baseUrl = `${import.meta.env.VITE_UI_SERVER_URL}`;
+const administrationBaseUrl = `${import.meta.env.VITE_ADMINISTRATION_URL}`;
+const platformBaseUrl = `${import.meta.env.VITE_PLATFORM_URL}`;
 
 const baseApiUrl = `${baseUrl}/api`;
 
@@ -232,8 +226,6 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
 // Search
-
-const getSearchPageURL = () => '/search';
 const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchResultsParams) => {
     const searchQuery = `${SearchParams.search}=${searchTerm}`;
 
@@ -251,7 +243,6 @@ export {
     getLoginSubmitUrl,
     getLogoutUrl,
     getLoginPath,
-    getSearchPageURL,
     getSearchResultsUrl,
     getUserAuthInfoUrl,
     getPlatformRegisterUrl,

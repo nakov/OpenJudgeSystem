@@ -2,6 +2,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import axios, { ResponseType } from 'axios';
 import isFunction from 'lodash/isFunction';
+import isNil from 'lodash/isNil';
 
 import { IDictionary, UrlType } from '../common/common-types';
 import { IErrorDataType } from '../hooks/use-http';
@@ -13,11 +14,24 @@ const getUrl = <P>(url: UrlType<P>, params?: IDictionary<P> | null) => (
 );
 
 const getErrorMessage = (
-    err: FetchBaseQueryError | SerializedError,
-    defaultErrorMessage = 'Something went wrong fetching data, please try again!',
+    err: FetchBaseQueryError | SerializedError | undefined,
+    defaultErrorMessage = 'Something went wrong, please try again!',
 ): string => {
+    if (isNil(err) || !err) {
+        return defaultErrorMessage;
+    }
+
+    // we should unify the return object from BE on error
+    // in order to implement better logic in this function
     if ('data' in err) {
-        return err.data as string;
+        if ((err.data as any).detail) {
+            return (err.data as any).detail as string;
+        }
+        if (err.data) {
+            return err.data as string;
+        }
+
+        return defaultErrorMessage;
     }
     if ('status' in err) {
         return 'error' in err
@@ -27,6 +41,9 @@ const getErrorMessage = (
 
     if (err.message) {
         return err.message.replace(/"/g, '');
+    }
+    if ((err as any).detail) {
+        return (err as any).detail.replace(/"/g, '');
     }
 
     return defaultErrorMessage;

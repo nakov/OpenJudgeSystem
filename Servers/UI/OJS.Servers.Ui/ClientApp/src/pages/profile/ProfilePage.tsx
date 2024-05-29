@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
 import PageBreadcrumbs, { IPageBreadcrumbsItem } from '../../components/guidelines/breadcrumb/PageBreadcrumbs';
 import Button, { ButtonType } from '../../components/guidelines/buttons/Button';
+import LegacyInfoMessage from '../../components/guidelines/legacy-info-message/LegacyInfoMessage';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import ProfileAboutInfo from '../../components/profile/profile-about-info/ProfileAboutInfo';
 import ProfileContestParticipations
@@ -15,7 +17,6 @@ import { setProfile } from '../../redux/features/usersSlice';
 import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
-import concatClassNames from '../../utils/class-names';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
@@ -82,11 +83,11 @@ const ProfilePage = () => {
         }
 
         return (
-            <span className={concatClassNames(getColorClassName(themeColors.textColor), styles.errorText)}>
-                {text}
-            </span>
+            <ErrorWithActionButtons
+              message={text}
+            />
         );
-    }, [ getColorClassName, isError, themeColors.textColor ]);
+    }, [ isError ]);
 
     return (
         isProfileInfoLoading || !isGetUserInfoCompleted
@@ -99,7 +100,9 @@ const ProfilePage = () => {
                           keyPrefix="profile"
                           items={[
                                 {
-                                    text: 'My Profile',
+                                    text: `${currentUserIsProfileOwner
+                                        ? 'My'
+                                        : ''} Profile`,
                                     to: '/profile',
                                 } as IPageBreadcrumbsItem,
                           ]}
@@ -110,6 +113,7 @@ const ProfilePage = () => {
                           isUserLecturer={internalUser.isInRole}
                           isUserProfileOwner={currentUserIsProfileOwner}
                         />
+                        {currentUserIsProfileOwner && <LegacyInfoMessage />}
                         {
                             (currentUserIsProfileOwner || internalUser.canAccessAdministration) && (
                             <div className={styles.submissionsAndParticipationsToggle}>

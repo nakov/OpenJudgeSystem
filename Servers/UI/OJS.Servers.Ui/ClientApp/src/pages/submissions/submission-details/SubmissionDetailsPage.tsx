@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -11,8 +12,7 @@ import SubmissionTestRun from '../../../components/submissions/submission-test-r
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
-import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
+import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
@@ -40,7 +40,6 @@ const SubmissionDetailsPage = () => {
 
     const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
-    const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
     const [
         retestSubmission,
@@ -58,11 +57,7 @@ const SubmissionDetailsPage = () => {
             return;
         }
         if (!contestDetails || contestDetails?.id !== data?.contestId) {
-            const fetchContestById = async () => {
-                const { data: contestData } = await getContestById({ id: data?.contestId });
-                dispatch(setContestDetails({ contest: contestData || null }));
-            };
-            fetchContestById();
+            dispatch(setContestDetailsIdAndCategoryId({ id: data.contestId, categoryId: data.contestCategoryId }));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ data?.contestId ]);
@@ -255,9 +250,9 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToSubmissionAdministration = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
+        const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/submissions?filter=id~equals~${solutionId}`);
 
-        const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${problem!.id}`);
+        const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${problem!.id}`);
 
         return (
             <div className={styles.adminButtonsWrapper}>
@@ -298,9 +293,11 @@ const SubmissionDetailsPage = () => {
 
     if (retestError) {
         return (
-            <div className={getColorClassName(themeColors.textColor)}>
-                Error retesting solution. Please try again!
-            </div>
+            <ErrorWithActionButtons
+              message="Error retesting solution. Please try again!"
+              backToUrl={`/submissions/${submissionId}/details`}
+              backToText="Back to submission"
+            />
         );
     }
 

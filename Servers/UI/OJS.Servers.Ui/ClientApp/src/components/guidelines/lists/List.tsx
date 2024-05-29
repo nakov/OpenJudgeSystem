@@ -24,7 +24,7 @@ enum Orientation {
 }
 
 interface IListProps<TValue> extends IHaveOptionalClassName {
-    values: TValue[];
+    values: TValue[] | undefined;
     itemFunc: ((value: TValue) => React.ReactElement) | ((value: TValue, idx: number) => React.ReactElement);
     keyFunc?: (value: TValue) => string;
     itemClassName?: ClassNameType;

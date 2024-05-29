@@ -1,9 +1,10 @@
 ﻿namespace OJS.Services.Ui.Models.Search;
 
-using System;
 using AutoMapper;
-using OJS.Services.Infrastructure.Models.Mapping;
 using OJS.Services.Infrastructure.Models;
+using OJS.Services.Infrastructure.Models.Mapping;
+using OJS.Services.Ui.Models.Contests;
+using System;
 
 public class SearchServiceModel : IMapExplicitly
 {
@@ -25,7 +26,7 @@ public class SearchServiceModel : IMapExplicitly
 
     public void RegisterMappings(IProfileExpression configuration)
     {
-        configuration.CreateMap<SearchServiceModel, PagedResult<ContestSearchServiceModel>>()
+        configuration.CreateMap<SearchServiceModel, PagedResult<ContestForListingServiceModel>>()
             .ForAllMembers(opts => ConfigurePagedResultCommon(opts));
 
         configuration.CreateMap<SearchServiceModel, PagedResult<ProblemSearchServiceModel>>()

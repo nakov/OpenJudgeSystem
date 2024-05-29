@@ -37,6 +37,8 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public bool IsVisible { get; set; }
 
+    public DateTime? VisibleFrom { get; set; }
+
     public TimeSpan? Duration { get; set; }
 
     [MaxLength(20)]

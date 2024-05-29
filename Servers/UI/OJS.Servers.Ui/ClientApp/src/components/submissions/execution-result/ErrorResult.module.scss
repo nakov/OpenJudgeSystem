@@ -1,7 +1,9 @@
 @use 'src/styles/variables';
 @use 'src/styles/colors';
+@use 'src/styles/spacings';
 
 .compileAndUnknownError {
   color: colors.$primary-red;
   font-size: variables.$f-size-16;
+  margin-left: spacings.$sp-4;
 }

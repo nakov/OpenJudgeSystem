@@ -42,10 +42,12 @@ public class ContestParticipationValidationService : IContestParticipationValida
             .GetAwaiter()
             .GetResult());
 
+        var contestIsVisible = contest?.IsVisible == true || contest?.VisibleFrom <= this.datesService.GetUtcNow();
+
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            ((!contest.IsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
+            ((!contestIsVisible || contest.Category == null || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !userIsAdminOrLecturerInContest))
         {
             return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);

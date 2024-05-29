@@ -13,6 +13,8 @@ const defaultDateTimeFormatPreciseTime = 'HH:MM:ss, DD/MMM/YYYY';
 const defaultDateTimeFormatReverse = 'DD/MMM/YYYY, HH:MM';
 const defaultPreciseDateTimeFormat = 'DD/MMM/YYYY, HH:mm:ss';
 
+const dateTimeFormatWithSpacing = 'D MMM YY, HH:mm';
+
 const calculateTimeBetweenTwoDates = (startDate: Date, endDate: Date) => moment(startDate).diff(moment(endDate), 'second');
 
 const calculatedTimeFormatted = (duration: Duration) => `${duration.days()} d, ${duration.hours()} h, ${duration.minutes()} m`;
@@ -21,7 +23,11 @@ const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
-    Duration => moment.duration(moment(date).diff(Date.now()), unit);
+    Duration => moment.duration(moment(date)
+    .utc(true)
+    .local()
+    .diff(moment()
+        .local()), unit);
 
 const preciseFormatDate = (
     date: Date,
@@ -169,6 +175,7 @@ export {
     defaultDateTimeFormatPreciseTime,
     defaultDateTimeFormatReverse,
     defaultPreciseDateTimeFormat,
+    dateTimeFormatWithSpacing,
     formatDate,
     preciseFormatDate,
     secondsToFullTime,

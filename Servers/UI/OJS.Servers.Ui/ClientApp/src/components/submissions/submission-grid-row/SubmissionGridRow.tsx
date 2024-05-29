@@ -177,8 +177,11 @@ const SubmissionGridRow = ({
     return (
         <tr key={submission.id} className={rowClassName}>
             <td>
-                #
-                {submissionId}
+                <span>
+                    {' '}
+                    #
+                    {submissionId}
+                </span>
             </td>
             <td>
                 {
@@ -200,14 +203,14 @@ const SubmissionGridRow = ({
                         : null
                 }
             </td>
-            <td className={styles.fromContainer}>
-                <span>
+            <td>
+                <div>
                     {formatDate(createdOn, defaultDateTimeFormatReverse)}
-                </span>
+                </div>
                 {
                     options.showParticipantUsername
                         ? (
-                            <span className={styles.username}>
+                            <span>
                                 {renderUsername()}
                             </span>
                         )
@@ -296,12 +299,14 @@ const SubmissionGridRow = ({
                 options.showSubmissionTypeInfo
                     ? (
                         <td className={styles.strategy}>
-                            {
+                            <div className={styles.strategyWrapper}>
+                                {
                                 internalUser.isAdmin
                                     ? renderStrategyIcon()
                                     : null
                             }
-                            <div>{strategyName}</div>
+                                <span>{strategyName}</span>
+                            </div>
                         </td>
                     )
                     : null

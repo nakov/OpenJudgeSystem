@@ -1,150 +1,235 @@
-import React, { useCallback, useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import isNil from 'lodash/isNil';
+/* eslint-disable max-len */
+import { useCallback, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { NotSelectedSearchCategoryMessage } from '../../common/constants';
-import { IContestSearchType, IProblemSearchType, IUserSearchType, SearchCategory } from '../../common/search-types';
-import { IIndexContestsType } from '../../common/types';
+import { CheckboxSearchValues } from '../../common/enums';
+import {
+    IIndexContestsType,
+    IPagedResultType,
+    IProblemSearchType,
+    IUSerSearchCardProps,
+    IUserType,
+} from '../../common/types';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
-import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
-import SearchProblem from '../../components/search/search-problems/SearchProblem';
-import SearchUser from '../../components/search/search-users/SearchUser';
-import SearchSection from '../../components/search/SearchSection';
-import { usePageTitles } from '../../hooks/use-page-titles';
-import { useSearch } from '../../hooks/use-search';
-import { setLayout } from '../shared/set-layout';
+import List, { Orientation } from '../../components/guidelines/lists/List';
+import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
+import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
+import ProblemSearchCard from '../../components/search/profile-search-card/ProblemSearchCard';
+import ProfileSearchList from '../../components/search/profile-search-list/ProfileSearchList';
+import UserSearchCard from '../../components/search/user-search-card/UserSearchCard';
+import useTheme from '../../hooks/use-theme';
+import { setSearchValue } from '../../redux/features/searchSlice';
+import {
+    useLazyGetContestsSearchQuery,
+    useLazyGetProblemsSearchQuery,
+    useLazyGetUsersSearchQuery,
+} from '../../redux/services/searchService';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import { getErrorMessage } from '../../utils/http-utils';
 
 import styles from './SearchPage.module.scss';
 
+enum SearchTypeEnums {
+    CONTESTS = 'Contests',
+    PROBLEMS = 'Problems',
+    USERS = 'Users',
+}
+
+const ITEMS_PER_SEARCH = 5;
+const USER_ITEMS_PER_SEARCH = 35;
+
 const SearchPage = () => {
-    const {
-        state: {
-            searchError,
-            searchValue,
-            getSearchResultsUrlParams,
-            isSearchingUsers,
-            isSearchingProblems,
-            isSearchingContests,
+    const dispatch = useAppDispatch();
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    const { getColorClassName, themeColors } = useTheme();
+    const { searchValue, selectedTerms } = useAppSelector((state) => state.search);
+
+    const textColorClassName = getColorClassName(themeColors.textColor);
+
+    const [
+        getContestsSearch, {
+            data: contestsSearchData,
+            isLoading: contestsSearchLoading,
+            error: contestsSearchError,
+            isError: areContestsSearchError,
+        } ] = useLazyGetContestsSearchQuery();
+    const [
+        getProblemsSearch, {
+            data: problemsSearchData,
+            isLoading: problemsSearchLoading,
+            error: problemsSearchError,
+            isError: areProblemsSearchError,
+        } ] = useLazyGetProblemsSearchQuery();
+    const [
+        getUsersSearch, {
+            data: usersSearchData,
+            isLoading: usersSearchLoading,
+            error: usersSearchError,
+            isError: areUsersSearchError,
         },
-        actions: {
-            initiateSearchResultsUrlQuery,
-            setSearchingError,
-        },
-    } = useSearch();
-    const { actions: { setPageTitle } } = usePageTitles();
+    ] = useLazyGetUsersSearchQuery();
 
-    useEffect(
-        () => {
-            setSearchingError(null);
-            initiateSearchResultsUrlQuery();
-        },
-        [ getSearchResultsUrlParams?.searchTerm, initiateSearchResultsUrlQuery, setSearchingError ],
-    );
+    const shouldIncludeContests = searchParams.get('Contests');
+    const shouldIncludeProblems = searchParams.get('Problems');
+    const shouldIncludeUsers = searchParams.get('Users');
 
-    useEffect(
-        () => {
-            setPageTitle(`Search results for "${searchValue}"`);
-        },
-        [ searchValue, setPageTitle ],
-    );
+    const selectedContestsPage = useMemo(() => {
+        if (!searchParams.get('contestsPage')) {
+            return 1;
+        }
+        return Number(searchParams.get('contestsPage'));
+    }, [ searchParams ]);
 
-    const renderErrorHeading = useCallback(
-        (message: string) => (
-            <div className={styles.headingSearch}>
-                <Heading
-                  type={HeadingType.primary}
-                  className={styles.searchHeading}
-                >
-                    {message}
-                    {' '}
-                </Heading>
-            </div>
-        ),
-        [],
-    );
+    const selectedProblemsPage = useMemo(() => {
+        if (!searchParams.get('problemsPage')) {
+            return 1;
+        }
+        return Number(searchParams.get('problemsPage'));
+    }, [ searchParams ]);
 
-    const renderErrorMessage = useCallback(
-        () => {
-            if (!isNil(searchError)) {
-                const { detail } = searchError;
-                return renderErrorHeading(detail);
-            }
+    const selectedUsersPage = useMemo(() => {
+        if (!searchParams.get('usersPage')) {
+            return 1;
+        }
+        return Number(searchParams.get('usersPage'));
+    }, [ searchParams ]);
 
-            return null;
-        },
-        [ renderErrorHeading, searchError ],
-    );
+    useEffect(() => {
+        const searchTerm = searchParams.get('searchTerm');
+        if (searchTerm) {
+            dispatch(dispatch(setSearchValue(searchTerm)));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const renderContest = useCallback(
-        (contest: IContestSearchType) => <ContestCard contest={(contest as IIndexContestsType)} />,
-        [],
-    );
+    // initiate the search
+    useEffect(() => {
+        if (searchValue.length < 3 || selectedTerms.length === 0) {
+            return;
+        }
+        if (selectedTerms.includes(CheckboxSearchValues.problems)) {
+            getProblemsSearch({ searchTerm: searchValue, page: selectedProblemsPage, itemsPerPage: ITEMS_PER_SEARCH });
+        }
+        if (selectedTerms.includes(CheckboxSearchValues.contests)) {
+            getContestsSearch({ searchTerm: searchValue, page: selectedContestsPage, itemsPerPage: ITEMS_PER_SEARCH });
+        }
+        if (selectedTerms.includes(CheckboxSearchValues.users)) {
+            getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage, itemsPerPage: USER_ITEMS_PER_SEARCH });
+        }
+    }, [
+        searchValue,
+        selectedTerms,
+        selectedContestsPage,
+        selectedProblemsPage,
+        selectedUsersPage,
+        getProblemsSearch,
+        getContestsSearch,
+        getUsersSearch,
+    ]);
 
-    const renderProblem = useCallback(
-        (problem: IProblemSearchType) => <SearchProblem problem={problem} />,
-        [],
-    );
-
-    const renderUser = useCallback(
-        (user: IUserSearchType) => <SearchUser user={user} />,
-        [],
-    );
-
-    const renderElements = useCallback(
-        () => (
-            <>
-                <div className={styles.headingSearch}>
-                    <Heading
-                      type={HeadingType.primary}
-                      className={styles.searchHeading}
-                    >
-                        Search results for
-                        {' '}
-                        {`"${searchValue}"`}
-                    </Heading>
+    const renderSearchFragmentResults = useCallback((
+        searchName: SearchTypeEnums,
+        data: IPagedResultType<IIndexContestsType> | IPagedResultType<IUserType> | IPagedResultType<IProblemSearchType> | undefined,
+        isLoading: boolean,
+        isError: boolean,
+        error: any,
+    ) => {
+        const renderErrorFragment = () => (
+            <div>
+                <div className={styles.errorTextWrapper}>
+                    {getErrorMessage(error)}
                 </div>
-                {isSearchingContests &&
-                    (
-                    <SearchSection<IContestSearchType>
-                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
-                      searchCategory={SearchCategory.Contest}
-                      renderItem={renderContest}
-                    />
-                    )}
-                {isSearchingProblems &&
-                    (
-                    <SearchSection<IProblemSearchType>
-                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
-                      searchCategory={SearchCategory.Problem}
-                      renderItem={renderProblem}
-                    />
-                    )}
-                {isSearchingUsers &&
-                    (
-                    <SearchSection<IUserSearchType>
-                      searchTerm={getSearchResultsUrlParams?.searchTerm ?? ''}
-                      searchCategory={SearchCategory.User}
-                      renderItem={renderUser}
-                    />
-                    )}
-            </>
-        ),
-        [ searchValue, isSearchingContests, getSearchResultsUrlParams?.searchTerm, renderContest,
-            isSearchingProblems, renderProblem, isSearchingUsers, renderUser ],
-    );
+                { searchName !== SearchTypeEnums.USERS && (<hr className={styles.line} />)}
+            </div>
+        );
 
-    const renderPage = useCallback(
-        () => isNil(searchError)
-            ? isEmpty(getSearchResultsUrlParams?.selectedTerms)
-                ? renderErrorHeading(NotSelectedSearchCategoryMessage)
-                : renderElements()
-            : renderErrorMessage(),
-        [ getSearchResultsUrlParams?.selectedTerms, renderElements,
-            renderErrorHeading, renderErrorMessage, searchError ],
-    );
+        const renderData = () => {
+            const renderFunction = (renderElement: any) => {
+                if (searchName === SearchTypeEnums.CONTESTS) {
+                    return <ContestCard contest={(renderElement as IIndexContestsType)} />;
+                } if (searchName === SearchTypeEnums.PROBLEMS) {
+                    return <ProblemSearchCard problem={(renderElement as IProblemSearchType)} />;
+                }
+                return <UserSearchCard user={renderElement as IUSerSearchCardProps} />;
+            };
+
+            const selectedPageValue = () => {
+                if (searchName === SearchTypeEnums.CONTESTS) {
+                    return selectedContestsPage;
+                } if (searchName === SearchTypeEnums.PROBLEMS) {
+                    return selectedProblemsPage;
+                }
+                return selectedUsersPage;
+            };
+
+            return (
+                <div className={styles.searchResultsWrapper}>
+                    {!data || data.totalItemsCount === 0
+                        ? <div>No items found</div>
+                        : (
+                            <>
+                                { searchName === SearchTypeEnums.USERS
+                                    ? <ProfileSearchList data={(data.items as IIndexContestsType[])} />
+                                    : (
+                                        <List
+                                          values={data.items}
+                                          itemFunc={renderFunction}
+                                          orientation={Orientation.vertical}
+                                        />
+                                    )}
+                                <PaginationControls
+                                  count={data?.pagesCount}
+                                  page={selectedPageValue()}
+                                  onChange={(page: number) => {
+                                      searchParams.set(`${searchName.toLowerCase()}Page`, page.toString());
+                                      setSearchParams(searchParams, { replace: true });
+                                  }}
+                                  shouldScrollDown
+                                />
+                            </>
+                        )}
+                    { searchName !== SearchTypeEnums.USERS && (<hr className={styles.line} />)}
+                </div>
+            );
+        };
+
+        if (isLoading) {
+            return <SpinningLoader />;
+        }
+
+        return (
+            <div>
+                <div className={styles.searchSectionHeader}>
+                    {searchName}
+                </div>
+                { isError
+                    ? renderErrorFragment()
+                    : renderData()}
+            </div>
+        );
+    }, [ searchParams, selectedContestsPage, selectedProblemsPage, selectedUsersPage, setSearchParams ]);
 
     return (
-        renderPage()
+        <div className={`${styles.searchPageWrapper} ${textColorClassName}`}>
+            {searchValue.length < 3
+                ? <div>The search term must be at least 3 characters!</div>
+                : (
+                    <>
+                        <div className={styles.searchTextHeader}>
+                            Search results for &quot;
+                            {searchValue}
+                            &quot;
+                        </div>
+                        {shouldIncludeContests &&
+                            renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, contestsSearchLoading, areContestsSearchError, contestsSearchError)}
+                        {shouldIncludeProblems &&
+                            renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, problemsSearchLoading, areProblemsSearchError, problemsSearchError)}
+                        {shouldIncludeUsers &&
+                            renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, usersSearchLoading, areUsersSearchError, usersSearchError)}
+                    </>
+                )}
+        </div>
     );
 };
-export default setLayout(SearchPage);
+
+export default SearchPage;

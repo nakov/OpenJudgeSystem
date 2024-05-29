@@ -16,6 +16,8 @@ public class ProblemContestSearchServiceModel : IMapExplicitly, ICanBeCompetedAn
 
     public bool IsVisible { get; set; }
 
+    public DateTime? VisibleFrom { get; set; }
+
     public bool IsDeleted { get; set; }
 
     public DateTime? StartTime { get; set; }

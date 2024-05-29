@@ -61,7 +61,11 @@ public class ContestsActivityService : IContestsActivityService
     public async Task SetCanBeCompetedAndPracticed<T>(ICollection<T> contestModels)
         where T : class, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
     {
-        var contests = contestModels.Cast<IContestForActivityServiceModel>().ToList();
+        var contests = contestModels
+            .Cast<IContestForActivityServiceModel>()
+            .DistinctBy(c => c.Id)
+            .ToList();
+
         var contestActivities = await this.GetContestActivities(contests).ToListAsync();
 
         foreach (var contestModel in contestModels)
@@ -121,7 +125,9 @@ public class ContestsActivityService : IContestsActivityService
 
     private bool CanBeCompeted(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
-        if (!contest.IsVisible || contest.IsDeleted)
+        var contestIsVisible = contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow();
+
+        if (!contestIsVisible || contest.IsDeleted)
         {
             return false;
         }
@@ -133,7 +139,9 @@ public class ContestsActivityService : IContestsActivityService
 
     private bool CanBePracticed(IContestForActivityServiceModel contest, IParticipantForActivityServiceModel? participant)
     {
-        if (!contest.IsVisible || contest.IsDeleted)
+        var contestIsVisible = contest.IsVisible || contest.VisibleFrom <= this.dates.GetUtcNow();
+
+        if (!contestIsVisible || contest.IsDeleted)
         {
             return false;
         }
