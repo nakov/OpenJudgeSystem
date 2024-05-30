@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
 import Button, { ButtonSize, ButtonType } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
@@ -28,7 +28,6 @@ import { setLayout } from '../../shared/set-layout';
 import styles from './SubmissionsDetailsPage.module.scss';
 
 const SubmissionDetailsPage = () => {
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
     const { themeColors, getColorClassName } = useTheme();
@@ -250,26 +249,18 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/submissions?filter=id~equals~${solutionId}`);
-
-        const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${problem!.id}`);
-
         return (
             <div className={styles.adminButtonsWrapper}>
                 <Button text="View Code" type={ButtonType.secondary} size={ButtonSize.small} onClick={onViewCodeClick} />
                 { userIsInRoleForContest && (
                     <>
-                        <Button
+                        <AdministrationLink
                           text="Open In Administration"
-                          size={ButtonSize.small}
-                          type={ButtonType.secondary}
-                          onClick={goToSubmissionAdministration}
+                          to={`/submissions?filter=id~equals~${solutionId}`}
                         />
-                        <Button
+                        <AdministrationLink
                           text="Tests"
-                          size={ButtonSize.small}
-                          type={ButtonType.secondary}
-                          onClick={goToTestsAdministration}
+                          to={`/tests?filter=problemid~equals~${problem!.id}`}
                         />
                         <Button
                           text="Retest"
@@ -281,7 +272,7 @@ const SubmissionDetailsPage = () => {
                 )}
             </div>
         );
-    }, [ problem, navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
+    }, [ problem, retestSubmission, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
