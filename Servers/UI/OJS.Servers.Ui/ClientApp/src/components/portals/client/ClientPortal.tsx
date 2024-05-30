@@ -139,11 +139,10 @@ const ClientPortal = () => {
         },
     ];
 
+    const params = useParams();
     const { themeColors, getColorClassName } = useTheme();
     const backgroundColorClassName = getColorClassName(themeColors.baseColor400);
 
-    const params = useParams();
-    console.log('test => ', params);
     return (
         <HelmetProvider>
             <MuiUiThemeProvider>
