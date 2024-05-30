@@ -23,6 +23,7 @@ import Form from '../guidelines/forms/Form';
 import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import SpinningLoader from '../guidelines/spinning-loader/SpinningLoader';
+import { useNavigate } from "react-router-dom";
 
 import styles from './LoginForm.module.scss';
 
@@ -38,11 +39,13 @@ const LoginForm = () => {
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
     const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
+    const navigate = useNavigate();
     const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
     const dispatch = useAppDispatch();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
+    const returnUrlString = 'returnUrl';
 
     const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -88,6 +91,8 @@ const LoginForm = () => {
     useEffect(() => {
         if (isSuccess) {
             refetch();
+            const returnUrl = localStorage.getItem(returnUrlString) || "/";
+            navigate(returnUrl);
             return;
         }
         if (error && 'error' in error) {
@@ -122,7 +127,7 @@ const LoginForm = () => {
         if (!isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
             return;
         }
-
+        
         login({ userName, password, rememberMe });
     };
 
