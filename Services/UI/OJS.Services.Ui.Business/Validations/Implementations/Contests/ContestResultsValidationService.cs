@@ -57,16 +57,16 @@ public class ContestResultsValidationService : IContestResultsValidationService
             return ValidationResult.Invalid(ValidationMessages.Participant.NoPrivilegesForContestResults);
         }
 
+        if (isUserAdminOrLecturer)
+        {
+            return ValidationResult.Valid();
+        }
+
         var contestIsVisible = contest?.IsVisible == true || contest?.VisibleFrom <= this.datesService.GetUtcNow();
 
         if (!contestIsVisible || contest!.IsDeleted)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ResultsNotVisibleForContest);
-        }
-
-        if (isUserAdminOrLecturer)
-        {
-            return ValidationResult.Valid();
         }
 
         var contestActivity = this.activityService.GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
