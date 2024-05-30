@@ -222,6 +222,22 @@ interface IContestDetailsResponseType {
     categoryId: number;
 }
 
+interface IContestDetailsSliceType {
+    id: number;
+    name?: string;
+    description?: string;
+    problems?: IProblemType[];
+    canViewResults?: boolean;
+    isOnlineExam?: boolean;
+    canBeCompeted?: boolean;
+    canBePracticed?: boolean;
+    isAdminOrLecturerInContest?: boolean;
+    allowedSubmissionTypes?: IContestDetailsSubmissionType[];
+    competeParticipantsCount?: number;
+    practiceParticipantsCount?: number;
+    categoryId: number;
+}
+
 interface IContestType {
     id: number;
     name: string;
@@ -824,4 +840,5 @@ export type {
     ISearchSliceState,
     IUSerSearchCardProps,
     IProblemSearchType,
+    IContestDetailsSliceType,
 };

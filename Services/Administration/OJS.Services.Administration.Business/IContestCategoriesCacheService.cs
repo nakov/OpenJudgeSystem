@@ -7,5 +7,5 @@ public interface IContestCategoriesCacheService : IService
 {
     void ClearMainContestCategoriesCache();
 
-    Task ClearContestCategory(int categoryId);
+    Task ClearContestCategoryParentsAndChildren(int categoryId);
 }

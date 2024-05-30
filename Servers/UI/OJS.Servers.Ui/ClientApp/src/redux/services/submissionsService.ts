@@ -15,7 +15,7 @@ import { ISubmissionDetailsResponseType } from '../../hooks/submissions/types';
 const submissionsService = createApi({
     reducerPath: submissionsServiceName,
     baseQuery: fetchBaseQuery({
-        baseUrl: window.URLS.UI_URL,
+        baseUrl: `${import.meta.env.VITE_UI_SERVER_URL}/${defaultPathIdentifier}/`,
         credentials: 'include',
         prepareHeaders: (headers: Headers) => {
             headers.set('Content-Type', 'application/json');
@@ -40,23 +40,23 @@ const submissionsService = createApi({
     endpoints: (builder) => ({
         getUnprocessedCount: builder.query<
             number,
-            null>({ query: () => ({ url: `/${defaultPathIdentifier}/Submissions/UnprocessedTotalCount` }) }),
+            null>({ query: () => ({ url: 'Submissions/UnprocessedTotalCount' }) }),
         // eslint-disable-next-line max-len
         getLatestSubmissions: builder.query<
             IPagedResultType<IPublicSubmission>,
             IGetSubmissionsUrlParams>({
                 query: ({ status, page }) => (
-                    { url: `/${defaultPathIdentifier}/Submissions/GetSubmissions?status=${status}&page=${page}` }),
+                    { url: `Submissions/GetSubmissions?status=${status}&page=${page}` }),
             }),
         getLatestSubmissionsInRole: builder.query<
             IPagedResultType<IPublicSubmission>,
             IGetSubmissionsUrlParams>({
                 query: ({ status, page }) => (
-                    { url: `/${defaultPathIdentifier}/Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
+                    { url: `Submissions/GetSubmissionsForUserInRole?status=${status}&page=${page}` }),
             }),
         getSubmissionResultsByProblem: builder.query<IPagedResultType<IPublicSubmission>, IGetSubmissionsByUserParams>({
             query: ({ id, page, isOfficial }) => ({
-                url: `${defaultPathIdentifier}/Submissions/GetUserSubmissionsByProblem/${id}`,
+                url: `Submissions/GetUserSubmissionsByProblem/${id}`,
                 params: {
                     isOfficial,
                     page,
@@ -67,22 +67,22 @@ const submissionsService = createApi({
             IPagedResultType<IPublicSubmission>,
             IGetUserSubmissionsUrlParams>({
                 query: ({ username, page }) => (
-                    { url: `/${defaultPathIdentifier}/Submissions/GetUserSubmissions?username=${username}&page=${page}` }),
+                    { url: `Submissions/GetUserSubmissions?username=${username}&page=${page}` }),
             }),
         getSubmissionDetails: builder.query<ISubmissionDetailsResponseType, { id: number }>({
             query: ({ id }) => (
-                { url: `${defaultPathIdentifier}/Submissions/Details/${id}` }),
+                { url: `Submissions/Details/${id}` }),
         }),
         getSubmissionUploadedFile: builder.query<{ blob: Blob }, { id: number }>({
             query: ({ id }) => (
-                { url: `${defaultPathIdentifier}/Submissions/Download/${id}` }),
+                { url: `Submissions/Download/${id}` }),
         }),
         retestSubmission: builder.query<
             void,
             IRetestSubmissionUrlParams>({
                 query: ({ id }) => (
                     {
-                        url: `/${defaultPathIdentifier}/Compete/Retest/${id}`,
+                        url: `Compete/Retest/${id}`,
                         method: 'POST',
                     }),
             }),

@@ -47,7 +47,7 @@ public class ContestParticipationValidationService : IContestParticipationValida
         if (contest == null ||
             user == null ||
             contest.IsDeleted ||
-            ((!contestIsVisible || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
+            ((!contestIsVisible || contest.Category == null || !contest.Category!.IsVisible || this.categoriesService.IsCategoryChildOfInvisibleParentRecursive(contest.CategoryId)) &&
             !userIsAdminOrLecturerInContest))
         {
             return ValidationResult.Invalid(ValidationMessages.Contest.NotFound);

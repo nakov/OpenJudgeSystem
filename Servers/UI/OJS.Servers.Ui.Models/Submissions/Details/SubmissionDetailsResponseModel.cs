@@ -52,5 +52,7 @@
         public DateTime? CompletedExecutionOn { get; set; }
 
         public int ContestId { get; set; }
+
+        public int ContestCategoryId { get; set; }
     }
 }

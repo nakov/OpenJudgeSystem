@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
 import { IProblemResourceType } from '../../../common/types';
-import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
-import {
-    getAllContestsUrl,
-    getContestsResultsUrl,
-} from '../../../common/urls/compose-client-urls';
+import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
+import { getAllContestsUrl, getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
-import Button, { ButtonType } from '../../../components/guidelines/buttons/Button';
+import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
+import Button, { ButtonSize, ButtonType } from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import LegacyInfoMessage from '../../../components/guidelines/legacy-info-message/LegacyInfoMessage';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -19,6 +18,7 @@ import useTheme from '../../../hooks/use-theme';
 import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { useGetContestByIdQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
 
@@ -28,7 +28,7 @@ const ContestDetailsPage = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { contestId } = useParams();
-    const { internalUser: user } = useAppSelector((state) => state.authorization);
+    const { internalUser: user, isLoggedIn } = useAppSelector((state) => state.authorization);
     const { themeColors, getColorClassName } = useTheme();
     const { contestDetails, selectedCategory } = useAppSelector((state) => state.contests);
     const { data, isLoading, error } = useGetContestByIdQuery({ id: Number(contestId) });
@@ -87,15 +87,14 @@ const ContestDetailsPage = () => {
 
     const renderAdministrationButtons = () => (
         <div>
-            <Button
-              onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}
-              type={ButtonType.secondary}
-            >
-                Edit
-            </Button>
+            <AdministrationLink
+              text="Edit"
+              to={`/${CONTESTS_PATH}/${id}`}
+            />
             <Button
               className={styles.adminBtn}
               type={ButtonType.secondary}
+              size={ButtonSize.small}
               onClick={() => navigate(getContestsResultsUrl(id!, 'compete', true))}
             >
                 Full Results
@@ -140,12 +139,11 @@ const ContestDetailsPage = () => {
 
     if (error) {
         return (
-            <div className={textColorClassName}>
-                Error fetching details for contest with id:
-                {' '}
-                {contestId}
-                ! Please try again!
-            </div>
+            <ErrorWithActionButtons
+              message={getErrorMessage(error)}
+              backToText="Back to contests"
+              backToUrl="/contests"
+            />
         );
     }
     if (isLoading) {
@@ -159,7 +157,7 @@ const ContestDetailsPage = () => {
         <div className={`${styles.contestDetailsWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <Heading className={styles.heading} type={HeadingType.primary}>{name}</Heading>
-            <LegacyInfoMessage />
+            { isLoggedIn && <LegacyInfoMessage />}
             <div className={styles.descriptionBoxWrapper}>
                 <div>
                     <div className={`${styles.title} ${textColorClassName}`}>Contest Details</div>

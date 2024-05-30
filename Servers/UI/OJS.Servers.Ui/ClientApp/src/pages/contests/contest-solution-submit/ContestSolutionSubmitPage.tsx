@@ -15,22 +15,20 @@ import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
 import Button, {
-    ButtonSize,
     ButtonState,
-    ButtonType,
-    LinkButton,
-    LinkButtonType,
 } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
+import {
+    setContestDetailsIdAndCategoryId,
+} from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
-    useLazyGetContestByIdQuery,
     useSubmitContestSolutionFileMutation,
     useSubmitContestSolutionMutation,
 } from '../../../redux/services/contestsService';
@@ -77,7 +75,6 @@ const ContestSolutionSubmitPage = () => {
         isLoading: submitSolutionFileIsLoading,
     } ] = useSubmitContestSolutionFileMutation();
 
-    const [ getContestById ] = useLazyGetContestByIdQuery();
     const [
         getSubmissionsData, {
             data: submissionsData,
@@ -206,14 +203,12 @@ const ContestSolutionSubmitPage = () => {
     // in order for breadcrumbs to load and work properly
     useEffect(() => {
         if (!contestDetails || contestDetails.id !== Number(contestId)) {
-            const fetchAndSetContestDetails = async () => {
-                const { data: contestDetailsData } = await getContestById({ id: Number(contestId) });
-                dispatch(setContestDetails({ contest: contestDetailsData ?? null }));
-            };
-
-            fetchAndSetContestDetails();
+            if (!data?.contest) {
+                return;
+            }
+            dispatch(setContestDetailsIdAndCategoryId({ id: data!.contest!.id, categoryId: data!.contest!.categoryId }));
         }
-    }, [ contestDetails, contestId, getContestById, dispatch ]);
+    }, [ contestDetails, contestId, data, dispatch ]);
 
     // set dropdown data to the first element in the dropdown
     // instead of having the default empty one selected
@@ -321,31 +316,21 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`/administration-new/problems?filter=id~equals~${
-        selectedContestDetailsProblem!.id
-    }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
-
-    const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${
-        selectedContestDetailsProblem!.id
-    }`);
-
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && (
         <div className={styles.adminButtonsContainer}>
-            <Button
-              type={ButtonType.secondary}
-              size={ButtonSize.small}
-              onClick={goToSubmissionAdministration}
-            >
-                Problem
-            </Button>
-            <Button
-              type={ButtonType.secondary}
-              size={ButtonSize.small}
-              onClick={goToTestsAdministration}
-            >
-                Tests
-            </Button>
+            <AdministrationLink
+              text="Problem"
+              to={`/problems?filter=id~equals~${
+                    selectedContestDetailsProblem!.id
+              }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+            />
+            <AdministrationLink
+              text="Tests"
+              to={`/tests?filter=problemid~equals~${
+                  selectedContestDetailsProblem!.id
+              }`}
+            />
         </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -515,7 +500,7 @@ const ContestSolutionSubmitPage = () => {
                         )}
                         {submitSolutionFileHasError && (
                             <div className={styles.solutionSubmitError}>
-                                {(submitSolutionFileError as any).data.detail || 'Error submitting solution. Please try again!'}
+                                {getErrorMessage(submitSolutionFileError)}
                             </div>
                         )}
                     </div>
@@ -627,12 +612,9 @@ const ContestSolutionSubmitPage = () => {
             </div>
             { user.canAccessAdministration && (
                 <div className={styles.administrationButtonWrapper}>
-                    <LinkButton
-                      size={ButtonSize.small}
-                      type={LinkButtonType.secondary}
-                      to={`/administration-new/contests/${contestId}`}
-                      isToExternal
+                    <AdministrationLink
                       text="Contest"
+                      to={`/contests/${contestId}`}
                     />
                 </div>
             ) }

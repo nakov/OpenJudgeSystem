@@ -1,4 +1,7 @@
+import isNil from 'lodash/isNil';
+
 import { ContestParticipationType } from './constants';
+import { IIndexContestsType } from './types';
 
 const isParticipationTypeValid =
     (participationType: ContestParticipationType) => participationType === ContestParticipationType.Compete ||
@@ -9,4 +12,20 @@ const contestParticipationType =
         ? ContestParticipationType.Compete
         : ContestParticipationType.Practice;
 
-export { isParticipationTypeValid, contestParticipationType };
+const getCompeteResultsAreVisible = (
+    contest: IIndexContestsType,
+    loggedInUserCanAccessAdministration: boolean,
+) => (loggedInUserCanAccessAdministration ||
+    (contest.canBeCompeted && !isNil(contest.userParticipationResult?.competePoints))) &&
+    contest.competeResults > 0;
+
+const getPracticeResultsAreVisible = (
+    contest: IIndexContestsType,
+    loggedInUserCanAccessAdministration: boolean,
+) => (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed)) &&
+    contest.practiceResults > 0;
+
+export { isParticipationTypeValid,
+    contestParticipationType,
+    getCompeteResultsAreVisible,
+    getPracticeResultsAreVisible };

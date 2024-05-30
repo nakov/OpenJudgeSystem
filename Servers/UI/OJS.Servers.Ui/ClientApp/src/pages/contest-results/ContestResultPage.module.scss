@@ -7,10 +7,6 @@
   text-align: center;
 }
 
-.headingResults {
-  @extend %contentSize;
-}
-
 .contestName {
   color: colors.$light-blue-color;
 }

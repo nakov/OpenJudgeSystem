@@ -1,8 +1,9 @@
 @use 'src/styles/colors';
-
+@use 'src/styles/spacings';
 
 .legacyInfoMessage {
-  background-color: rgba(68, 169, 248, 30%) !important;
+  background-color: rgb(68 169 248 / 30%) !important;
+  margin-bottom: spacings.$sp-24;
 }
 
 .profileButton {

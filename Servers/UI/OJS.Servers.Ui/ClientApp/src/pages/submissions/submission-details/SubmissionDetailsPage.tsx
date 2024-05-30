@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
 import Button, { ButtonSize, ButtonType } from '../../../components/guidelines/buttons/Button';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import SubmissionTestRun from '../../../components/submissions/submission-test-run/SubmissionTestRun';
 import SubmissionTestRuns from '../../../components/submissions/submission-test-runs/SubmissionTestRuns';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
-import { useLazyGetContestByIdQuery } from '../../../redux/services/contestsService';
+import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetSubmissionDetailsQuery,
     useLazyGetSubmissionUploadedFileQuery,
@@ -28,7 +28,6 @@ import { setLayout } from '../../shared/set-layout';
 import styles from './SubmissionsDetailsPage.module.scss';
 
 const SubmissionDetailsPage = () => {
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
     const { themeColors, getColorClassName } = useTheme();
@@ -40,7 +39,6 @@ const SubmissionDetailsPage = () => {
 
     const [ downloadSolutionErrorMessage, setDownloadSolutionErrorMessage ] = useState<string>('');
     const { data, isLoading, error } = useGetSubmissionDetailsQuery({ id: Number(submissionId) });
-    const [ getContestById ] = useLazyGetContestByIdQuery();
     const [ downloadUploadedFile ] = useLazyGetSubmissionUploadedFileQuery();
     const [
         retestSubmission,
@@ -58,11 +56,7 @@ const SubmissionDetailsPage = () => {
             return;
         }
         if (!contestDetails || contestDetails?.id !== data?.contestId) {
-            const fetchContestById = async () => {
-                const { data: contestData } = await getContestById({ id: data?.contestId });
-                dispatch(setContestDetails({ contest: contestData || null }));
-            };
-            fetchContestById();
+            dispatch(setContestDetailsIdAndCategoryId({ id: data.contestId, categoryId: data.contestCategoryId }));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ data?.contestId ]);
@@ -255,26 +249,18 @@ const SubmissionDetailsPage = () => {
             window.scrollTo({ top: yCoordinate, behavior: 'smooth' });
         };
 
-        const goToSubmissionAdministration = () => navigate(`/administration-new/submissions?filter=id~equals~${solutionId}`);
-
-        const goToTestsAdministration = () => navigate(`/administration-new/tests?filter=problemid~equals~${problem!.id}`);
-
         return (
             <div className={styles.adminButtonsWrapper}>
                 <Button text="View Code" type={ButtonType.secondary} size={ButtonSize.small} onClick={onViewCodeClick} />
                 { userIsInRoleForContest && (
                     <>
-                        <Button
+                        <AdministrationLink
                           text="Open In Administration"
-                          size={ButtonSize.small}
-                          type={ButtonType.secondary}
-                          onClick={goToSubmissionAdministration}
+                          to={`/submissions?filter=id~equals~${solutionId}`}
                         />
-                        <Button
+                        <AdministrationLink
                           text="Tests"
-                          size={ButtonSize.small}
-                          type={ButtonType.secondary}
-                          onClick={goToTestsAdministration}
+                          to={`/tests?filter=problemid~equals~${problem!.id}`}
                         />
                         <Button
                           text="Retest"
@@ -286,7 +272,7 @@ const SubmissionDetailsPage = () => {
                 )}
             </div>
         );
-    }, [ problem, navigate, retestSubmission, solutionId, userIsInRoleForContest ]);
+    }, [ problem, retestSubmission, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
@@ -298,9 +284,11 @@ const SubmissionDetailsPage = () => {
 
     if (retestError) {
         return (
-            <div className={getColorClassName(themeColors.textColor)}>
-                Error retesting solution. Please try again!
-            </div>
+            <ErrorWithActionButtons
+              message="Error retesting solution. Please try again!"
+              backToUrl={`/submissions/${submissionId}/details`}
+              backToText="Back to submission"
+            />
         );
     }
 
