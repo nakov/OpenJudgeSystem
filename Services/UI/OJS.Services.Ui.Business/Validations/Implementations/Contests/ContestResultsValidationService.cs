@@ -52,11 +52,6 @@ public class ContestResultsValidationService : IContestResultsValidationService
             .GetAwaiter()
             .GetResult());
 
-        if (isUserAdminOrLecturer)
-        {
-            return ValidationResult.Valid();
-        }
-
         if (fullResults && !user!.IsAdminOrLecturer)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.NoPrivilegesForContestResults);
@@ -67,6 +62,11 @@ public class ContestResultsValidationService : IContestResultsValidationService
         if (!contestIsVisible || contest!.IsDeleted)
         {
             return ValidationResult.Invalid(ValidationMessages.Participant.ResultsNotVisibleForContest);
+        }
+
+        if (isUserAdminOrLecturer)
+        {
+            return ValidationResult.Valid();
         }
 
         var contestActivity = this.activityService.GetContestActivity(contest!.Map<ContestForActivityServiceModel>())
