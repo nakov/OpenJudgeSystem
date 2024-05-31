@@ -10,7 +10,7 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import { useGetRegisteredUserForContestQuery, useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import {makePrivate} from "../../shared/make-private";
+import { makePrivate } from '../../shared/make-private';
 
 import styles from './ContestRegister.module.scss';
 
@@ -133,9 +133,9 @@ const ContestRegister = () => {
     if (error) {
         return (
             <ErrorWithActionButtons
-                message={getErrorMessage(error)}
-                backToUrl="/contests"
-                backToText="Back to contests"
+              message={getErrorMessage(error)}
+              backToUrl="/contests"
+              backToText="Back to contests"
             />
         );
     }

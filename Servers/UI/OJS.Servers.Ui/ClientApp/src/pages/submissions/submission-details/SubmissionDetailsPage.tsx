@@ -23,8 +23,8 @@ import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
-import {makePrivate} from "../../shared/make-private";
 
 import styles from './SubmissionsDetailsPage.module.scss';
 

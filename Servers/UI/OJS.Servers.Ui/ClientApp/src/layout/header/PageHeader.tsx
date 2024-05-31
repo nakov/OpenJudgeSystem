@@ -37,7 +37,7 @@ const PageHeader = () => {
         data: userData,
         isSuccess: isSuccessfulRequest,
     } = useGetUserinfoQuery(null);
-    
+
     useEffect(() => {
         if (isSuccessfulRequest && userData) {
             dispatch(setInternalUser(userData));
@@ -63,14 +63,14 @@ const PageHeader = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, [ areBurgerItemsOpened ]);
-    
+
     useEffect(() => {
         if (areBurgerItemsOpened) {
             setAreBurgerItemsOpened(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ pathname ]);
-    
+
     const renderThemeSwitcher = () => (
         <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>
             <ToggleButton

@@ -41,8 +41,8 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
-import {makePrivate} from "../../shared/make-private";
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -592,9 +592,9 @@ const ContestSolutionSubmitPage = () => {
     if (error) {
         return (
             <ErrorWithActionButtons
-                message={getErrorMessage(error)}
-                backToUrl="/contests"
-                backToText="Back to contests"
+              message={getErrorMessage(error)}
+              backToUrl="/contests"
+              backToText="Back to contests"
             />
         );
     }
