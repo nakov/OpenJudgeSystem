@@ -21,7 +21,6 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const { problems, onContestProblemChange, totalParticipantsCount, sumMyPoints = 0, sumTotalPoints } = props;
 
     const { hash } = useLocation();
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
@@ -48,8 +47,15 @@ const ContestProblems = (props: IContestProblemsProps) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const updateHashWithoutScroll = (problemIdHash: string) => {
+        const { location, history } = window;
+        const { pathname, search } = location;
+
+        history.replaceState(null, '', `${pathname}${search}#${problemIdHash}`);
+    };
+
     const onProblemClick = (problem: IProblemType) => {
-        navigate(`#${problem.id}`);
+        updateHashWithoutScroll(problem.id.toString());
         onContestProblemChange();
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: problem }));
     };
