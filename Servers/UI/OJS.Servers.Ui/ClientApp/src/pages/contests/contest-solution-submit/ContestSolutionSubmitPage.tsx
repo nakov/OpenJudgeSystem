@@ -317,7 +317,7 @@ const ContestSolutionSubmitPage = () => {
         : 0, [ contest ]);
 
     const renderProblemAdminButtons = useCallback(
-        () => contest && contest.userIsAdminOrLecturerInContest && (
+        () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
         <div className={styles.adminButtonsContainer}>
             <AdministrationLink
               text="Problem"
@@ -334,7 +334,7 @@ const ContestSolutionSubmitPage = () => {
         </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [ contest ],
+        [ contest, selectedContestDetailsProblem ],
     );
 
     const renderProblemResources = useCallback(() => {
