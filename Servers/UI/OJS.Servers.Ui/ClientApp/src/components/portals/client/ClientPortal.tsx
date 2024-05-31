@@ -1,6 +1,5 @@
 import React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
-import { useParams } from 'react-router';
 import { Params, Route, Routes } from 'react-router-dom';
 
 import MuiUiThemeProvider from '../../../hooks/use-mui-ui-theme';
@@ -129,17 +128,16 @@ const ClientPortal = () => {
         {
             path: '/contests',
             Element: ContestsPage,
-            title: 'SoftUni Judge Contests',
+            title: 'Contests',
         },
         // Catch-All Route
         {
             path: '*',
             Element: NotFoundPage,
-            title: 'SoftUni Judge Not Found',
+            title: 'Page Not Found',
         },
     ];
 
-    const params = useParams();
     const { themeColors, getColorClassName } = useTheme();
     const backgroundColorClassName = getColorClassName(themeColors.baseColor400);
 
@@ -152,7 +150,7 @@ const ClientPortal = () => {
                     <Routes>
                         {routes.map(({ path, Element, title }) => {
                             const elementAsPage = asPage(Element);
-                            const elementWithTitle = withTitle({ Component: elementAsPage, title, params });
+                            const elementWithTitle = withTitle({ Component: elementAsPage, title });
 
                             return (
                                 <Route

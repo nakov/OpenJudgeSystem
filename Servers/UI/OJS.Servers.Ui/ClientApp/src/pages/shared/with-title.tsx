@@ -1,14 +1,17 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Params } from 'react-router';
+import { Params, useParams } from 'react-router';
+
+import { IHaveChildrenPropsWithTitle } from '../../components/common/Props';
 
 interface IWithTitleProps {
     Component: React.FC;
     title: string | ((params: Params<string>) => string);
-    params: Readonly<Params<string>>;
 }
 
-const withTitle: React.FC<IWithTitleProps> = ({ title, Component, params }) => {
+const Page = ({ children, title }: IHaveChildrenPropsWithTitle) => {
+    const params = useParams();
+
     const pageTitle = typeof title === 'function'
         ? title(params)
         : title;
@@ -18,9 +21,15 @@ const withTitle: React.FC<IWithTitleProps> = ({ title, Component, params }) => {
             <Helmet>
                 <title>{pageTitle}</title>
             </Helmet>
-            <Component />
+            {children}
         </>
     );
 };
+
+const withTitle: React.FC<IWithTitleProps> = ({ title, Component }) => (
+    <Page title={title}>
+        <Component />
+    </Page>
+);
 
 export default withTitle;
