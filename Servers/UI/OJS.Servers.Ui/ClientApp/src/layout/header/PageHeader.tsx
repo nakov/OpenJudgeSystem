@@ -20,7 +20,7 @@ import styles from './PageHeader.module.scss';
 
 const PageHeader = () => {
     const dispatch = useAppDispatch();
-    const { pathname, search } = useLocation();
+    const { pathname } = useLocation();
     const { toggleSelectedTheme } = useTheme();
 
     const shouldRenderPageHeader = !pathname.includes('administration');
@@ -70,18 +70,6 @@ const PageHeader = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ pathname ]);
-
-    useEffect(() => {
-        if(!isLoggedIn && pathname != '/login'){
-            localStorage.setItem('returnUrl', `${pathname}${search}`);
-        }
-    }, [ isLoggedIn, pathname, search ]);
-    
-    useEffect(() => {
-        if(isLoggedIn){
-            localStorage.removeItem('returnUrl');
-        }
-    }, [ isLoggedIn ]);
     
     const renderThemeSwitcher = () => (
         <ToggleButtonGroup value={mode} className={styles.themeSwitchWrapper}>

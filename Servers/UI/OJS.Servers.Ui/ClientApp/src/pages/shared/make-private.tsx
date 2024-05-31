@@ -13,8 +13,7 @@ type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
     const location = useLocation();
-    const { isLoggedIn } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const { isLoggedIn } = useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const renderPageOrRedirectToLogin = useCallback(() => {
         if (!isLoggedIn) {

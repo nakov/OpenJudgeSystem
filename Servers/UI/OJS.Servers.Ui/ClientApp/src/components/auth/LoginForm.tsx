@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -23,7 +24,6 @@ import Form from '../guidelines/forms/Form';
 import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
 import Heading, { HeadingType } from '../guidelines/headings/Heading';
 import SpinningLoader from '../guidelines/spinning-loader/SpinningLoader';
-import { useNavigate } from "react-router-dom";
 
 import styles from './LoginForm.module.scss';
 
@@ -42,10 +42,10 @@ const LoginForm = () => {
     const navigate = useNavigate();
     const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
+    const location = useLocation();
     const dispatch = useAppDispatch();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
-    const returnUrlString = 'returnUrl';
 
     const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -91,14 +91,16 @@ const LoginForm = () => {
     useEffect(() => {
         if (isSuccess) {
             refetch();
-            const returnUrl = localStorage.getItem(returnUrlString) || "/";
+            const returnUrl = location.state !== null
+                ? `${location.state?.from?.pathname}${location.state?.from?.search}`
+                : '/';
             navigate(returnUrl);
             return;
         }
         if (error && 'error' in error) {
             setLoginErrorMessage(error.data as string);
         }
-    }, [ isSuccess, error, refetch ]);
+    }, [ isSuccess, error, refetch, location.state, navigate ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
@@ -127,7 +129,7 @@ const LoginForm = () => {
         if (!isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
             return;
         }
-        
+
         login({ userName, password, rememberMe });
     };
 

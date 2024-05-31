@@ -24,6 +24,7 @@ import downloadFile from '../../../utils/file-download-utils';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
+import {makePrivate} from "../../shared/make-private";
 
 import styles from './SubmissionsDetailsPage.module.scss';
 
@@ -343,4 +344,4 @@ const SubmissionDetailsPage = () => {
     );
 };
 
-export default setLayout(SubmissionDetailsPage);
+export default makePrivate(setLayout(SubmissionDetailsPage));

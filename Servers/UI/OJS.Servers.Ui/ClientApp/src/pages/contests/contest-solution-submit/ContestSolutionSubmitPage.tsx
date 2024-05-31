@@ -42,6 +42,7 @@ import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transf
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
+import {makePrivate} from "../../shared/make-private";
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -589,17 +590,13 @@ const ContestSolutionSubmitPage = () => {
     }
 
     if (error) {
-        if ((error as any).status === 401) {
-            navigate('/login');
-        } else {
-            return (
-                <ErrorWithActionButtons
-                  message={getErrorMessage(error)}
-                  backToUrl="/contests"
-                  backToText="Back to contests"
-                />
-            );
-        }
+        return (
+            <ErrorWithActionButtons
+                message={getErrorMessage(error)}
+                backToUrl="/contests"
+                backToText="Back to contests"
+            />
+        );
     }
 
     if (isRegisteredParticipant && !isActiveParticipant) {
@@ -695,4 +692,4 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default setLayout(ContestSolutionSubmitPage);
+export default makePrivate(setLayout(ContestSolutionSubmitPage));

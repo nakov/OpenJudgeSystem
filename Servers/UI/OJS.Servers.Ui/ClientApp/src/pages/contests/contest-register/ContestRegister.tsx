@@ -10,6 +10,7 @@ import SpinningLoader from '../../../components/guidelines/spinning-loader/Spinn
 import { useGetRegisteredUserForContestQuery, useRegisterUserForContestMutation } from '../../../redux/services/contestsService';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import {makePrivate} from "../../shared/make-private";
 
 import styles from './ContestRegister.module.scss';
 
@@ -130,17 +131,13 @@ const ContestRegister = () => {
     }
 
     if (error) {
-        if ((error as any).status === 401) {
-            navigate('/login');
-        } else {
-            return (
-                <ErrorWithActionButtons
-                  message={getErrorMessage(error)}
-                  backToUrl="/contests"
-                  backToText="Back to contests"
-                />
-            );
-        }
+        return (
+            <ErrorWithActionButtons
+                message={getErrorMessage(error)}
+                backToUrl="/contests"
+                backToText="Back to contests"
+            />
+        );
     }
 
     if (isError && registerError) {
@@ -160,4 +157,4 @@ const ContestRegister = () => {
     );
 };
 
-export default ContestRegister;
+export default makePrivate(ContestRegister);

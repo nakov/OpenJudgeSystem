@@ -21,6 +21,7 @@ import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ProfilePage.module.scss';
+import {makePrivate} from "../shared/make-private";
 
 const ProfilePage = () => {
     const { internalUser, isLoggedIn, isGetUserInfoCompleted } = useAppSelector((reduxState) => reduxState.authorization);
@@ -153,4 +154,4 @@ const ProfilePage = () => {
     );
 };
 
-export default setLayout(ProfilePage);
+export default makePrivate(setLayout(ProfilePage));
