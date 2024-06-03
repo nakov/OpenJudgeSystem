@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { LOGIN_PATH } from '../../../common/urls/client-urls';
 import { getContestSubmissionPageUrl } from '../../../common/urls/compose-client-urls';
-import { useAppSelector } from '../../../redux/store';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
 
 interface IContestButtonProps {
@@ -21,16 +19,9 @@ const ContestButton = (props: IContestButtonProps) => {
 
     const navigate = useNavigate();
 
-    const { isLoggedIn } = useAppSelector((state) => state.authorization);
-
     const onButtonClick = async () => {
         if (onClick) {
             onClick();
-            return;
-        }
-
-        if (!isLoggedIn) {
-            navigate(`/${LOGIN_PATH}`);
             return;
         }
 

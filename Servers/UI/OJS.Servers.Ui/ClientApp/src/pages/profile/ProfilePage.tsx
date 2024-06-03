@@ -18,6 +18,7 @@ import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { decodeFromUrlParam } from '../../utils/urls';
+import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ProfilePage.module.scss';
@@ -153,4 +154,4 @@ const ProfilePage = () => {
     );
 };
 
-export default setLayout(ProfilePage);
+export default makePrivate(setLayout(ProfilePage));
