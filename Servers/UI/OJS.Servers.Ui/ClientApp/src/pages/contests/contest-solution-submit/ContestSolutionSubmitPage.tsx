@@ -10,18 +10,14 @@ import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
-import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
 import Button, {
-    ButtonSize,
     ButtonState,
-    ButtonType,
-    LinkButton,
-    LinkButtonType,
 } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -41,6 +37,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
@@ -322,35 +319,25 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/problems?filter=id~equals~${
-        selectedContestDetailsProblem!.id
-    }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
-
-    const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${
-        selectedContestDetailsProblem!.id
-    }`);
-
     const renderProblemAdminButtons = useCallback(
-        () => contest && contest.userIsAdminOrLecturerInContest && (
+        () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
         <div className={styles.adminButtonsContainer}>
-            <Button
-              type={ButtonType.secondary}
-              size={ButtonSize.small}
-              onClick={goToSubmissionAdministration}
-            >
-                Problem
-            </Button>
-            <Button
-              type={ButtonType.secondary}
-              size={ButtonSize.small}
-              onClick={goToTestsAdministration}
-            >
-                Tests
-            </Button>
+            <AdministrationLink
+              text="Problem"
+              to={`/problems?filter=id~equals~${
+                    selectedContestDetailsProblem!.id
+              }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+            />
+            <AdministrationLink
+              text="Tests"
+              to={`/tests?filter=problemid~equals~${
+                  selectedContestDetailsProblem!.id
+              }`}
+            />
         </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [ contest ],
+        [ contest, selectedContestDetailsProblem ],
     );
 
     const renderProblemResources = useCallback(() => {
@@ -591,17 +578,13 @@ const ContestSolutionSubmitPage = () => {
     }
 
     if (error) {
-        if ((error as any).status === 401) {
-            navigate('/login');
-        } else {
-            return (
-                <ErrorWithActionButtons
-                  message={getErrorMessage(error)}
-                  backToUrl="/contests"
-                  backToText="Back to contests"
-                />
-            );
-        }
+        return (
+            <ErrorWithActionButtons
+              message={getErrorMessage(error)}
+              backToUrl="/contests"
+              backToText="Back to contests"
+            />
+        );
     }
 
     if (isRegisteredParticipant && !isActiveParticipant) {
@@ -628,12 +611,9 @@ const ContestSolutionSubmitPage = () => {
             </div>
             { user.canAccessAdministration && (
                 <div className={styles.administrationButtonWrapper}>
-                    <LinkButton
-                      size={ButtonSize.small}
-                      type={LinkButtonType.secondary}
-                      to={`/${NEW_ADMINISTRATION_PATH}/contests/${contestId}`}
-                      isToExternal
+                    <AdministrationLink
                       text="Contest"
+                      to={`/contests/${contestId}`}
                     />
                 </div>
             ) }
@@ -697,4 +677,4 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default setLayout(ContestSolutionSubmitPage);
+export default makePrivate(setLayout(ContestSolutionSubmitPage));

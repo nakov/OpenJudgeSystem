@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
 import { IProblemResourceType } from '../../../common/types';
-import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
-import {
-    getAllContestsUrl,
-    getContestsResultsUrl,
-} from '../../../common/urls/compose-client-urls';
+import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
+import { getAllContestsUrl, getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
-import Button, { ButtonType } from '../../../components/guidelines/buttons/Button';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
+import Button, { ButtonSize, ButtonType } from '../../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../../components/guidelines/headings/Heading';
 import LegacyInfoMessage from '../../../components/guidelines/legacy-info-message/LegacyInfoMessage';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
@@ -89,15 +87,14 @@ const ContestDetailsPage = () => {
 
     const renderAdministrationButtons = () => (
         <div>
-            <Button
-              onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/${CONTESTS_PATH}/${id}`)}
-              type={ButtonType.secondary}
-            >
-                Edit
-            </Button>
+            <AdministrationLink
+              text="Edit"
+              to={`/${CONTESTS_PATH}/${id}`}
+            />
             <Button
               className={styles.adminBtn}
               type={ButtonType.secondary}
+              size={ButtonSize.small}
               onClick={() => navigate(getContestsResultsUrl(id!, 'compete', true))}
             >
                 Full Results

@@ -9,14 +9,10 @@ import UrlParamsProvider from './hooks/common/use-url-params';
 import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
 import ProfileSubmissionsProvider from './hooks/submissions/use-profile-submissions';
 import SubmissionsProvider from './hooks/submissions/use-submissions';
-import ContestCategoriesProvider from './hooks/use-contest-categories';
-import CategoriesBreadcrumbProvider from './hooks/use-contest-categories-breadcrumb';
 import CurrentContestsProvider from './hooks/use-current-contest';
-import PageWithTitleProvider from './hooks/use-page-titles';
 import PageProvider from './hooks/use-pages';
 import ParticipationsProvider from './hooks/use-participations';
 import ProblemsProvider from './hooks/use-problems';
-import SearchProvider from './hooks/use-search';
 import PageContent from './layout/content/PageContent';
 import store, { persistor } from './redux/store';
 
@@ -28,16 +24,12 @@ const App = () => {
         UrlParamsProvider,
         RouteUrlParamsProvider,
         PageProvider,
-        PageWithTitleProvider,
-        ContestCategoriesProvider,
-        CategoriesBreadcrumbProvider,
         ParticipationsProvider,
         CurrentContestsProvider,
         ProblemSubmissionsProvider,
         ProblemsProvider,
         SubmissionsProvider,
         ProfileSubmissionsProvider,
-        SearchProvider,
     ] as ProviderType[];
 
     return (
