@@ -35,16 +35,11 @@
     .innerBodyWrapper {
       width: 95%;
 
-      a {
-        color: colors.$primary-blue;
-        font-size: variables.$f-size-24;
-        font-weight: font-weights.$font-weight-bold;
-      }
-
       .adminButtonsWrapper {
         margin: spacings.$sp-24 0;
 
-        button {
+        button,
+        a {
           margin-right: spacings.$sp-18;
         }
       }

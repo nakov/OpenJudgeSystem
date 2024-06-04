@@ -9,9 +9,9 @@
 
   align-items: center;
   display: flex;
+  font-size: variables.$f-size-20;
   justify-content: center;
   margin-top: spacings.$sp-18;
-  font-size: variables.$f-size-20;
 }
 
 .submissionsGrid {
@@ -20,12 +20,12 @@
   width: 100%;
 
   td {
-    overflow: hidden;
     height: 65px;
+    overflow: hidden;
+    padding-left: spacings.$sp-12;
+    text-align: left;
     text-overflow: ellipsis;
     vertical-align: middle;
-    text-align: left;
-    padding-left: spacings.$sp-12;
 
     .tdRight {
       text-align: right;

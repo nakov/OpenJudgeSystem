@@ -11,13 +11,13 @@ import ProfileAboutInfo from '../../components/profile/profile-about-info/Profil
 import ProfileContestParticipations
     from '../../components/profile/profile-contest-participations/ProfileContestParticipations';
 import ProfileSubmissions from '../../components/profile/profile-submissions/ProfileSubmisssions';
-import { usePageTitles } from '../../hooks/use-page-titles';
 import useTheme from '../../hooks/use-theme';
 import { setProfile } from '../../redux/features/usersSlice';
 import { useLazyGetProfileQuery } from '../../redux/services/usersService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { decodeFromUrlParam } from '../../utils/urls';
+import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
 import styles from './ProfilePage.module.scss';
@@ -28,7 +28,6 @@ const ProfilePage = () => {
     const [ toggleValue, setToggleValue ] = useState<number>(1);
     const [ currentUserIsProfileOwner, setCurrentUserIsProfileOwner ] = useState<boolean>(false);
 
-    const { actions: { setPageTitle } } = usePageTitles();
     const { username } = useParams();
     const { themeColors, getColorClassName } = useTheme();
     const dispatch = useAppDispatch();
@@ -61,9 +60,8 @@ const ProfilePage = () => {
             }
 
             dispatch(setProfile(profileInfo));
-            setPageTitle(`${profileInfo.userName}'s profile`);
         },
-        [ dispatch, profileInfo, setPageTitle ],
+        [ dispatch, profileInfo ],
     );
 
     useEffect(() => {
@@ -153,4 +151,4 @@ const ProfilePage = () => {
     );
 };
 
-export default setLayout(ProfilePage);
+export default makePrivate(setLayout(ProfilePage));
