@@ -33,8 +33,10 @@ const FileUploader = ({ file, problemId, allowedFileExtensions, onInvalidFileExt
             return;
         }
 
-        if (!isNil(file) && !isNil(problemId)) {
-            setInternalFile(file);
+        if (!file) {
+            setInternalFile(null);
+        }
+        if (problemId) {
             setInternalProblemId(problemId);
         }
     }, [ file, internalFile, internalProblemId, problemId ]);

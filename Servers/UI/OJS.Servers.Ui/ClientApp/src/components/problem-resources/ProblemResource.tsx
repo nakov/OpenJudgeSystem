@@ -53,7 +53,7 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
                 resource.link
                     ? (
                         <Link key={`resource-problem-${id}`} className={styles.resourceElement} target="_blank" to={link}>
-                            <IoDocumentText />
+                            <IoDocumentText size={20} />
                             {' '}
                             {linkName}
                         </Link>
@@ -64,7 +64,7 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
                           className={styles.resourceElement}
                           onClick={() => downloadResourceFile({ id })}
                         >
-                            <IoDocumentText />
+                            <IoDocumentText size={20} />
                             {linkName}
                         </div>
                     )

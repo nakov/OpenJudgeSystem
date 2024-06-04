@@ -286,6 +286,8 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
+        setUploadedFile(null);
+
         await submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
@@ -633,7 +635,7 @@ const ContestSolutionSubmitPage = () => {
                         {renderRemainingTimeForContest()}
                     </div>
                     <div className={styles.problemDetailsWrapper}>
-                        <div className={styles.adminButtonsAndResourcesWrapper}>
+                        <div>
                             {renderProblemAdminButtons()}
                             {renderProblemResources()}
                         </div>
