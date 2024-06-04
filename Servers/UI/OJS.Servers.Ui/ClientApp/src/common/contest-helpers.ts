@@ -22,7 +22,7 @@ const getCompeteResultsAreVisible = (
 const getPracticeResultsAreVisible = (
     contest: IIndexContestsType,
     loggedInUserCanAccessAdministration: boolean,
-) => (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed)) &&
+) => (loggedInUserCanAccessAdministration || (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed))) &&
     contest.practiceResults > 0;
 
 export { isParticipationTypeValid,
