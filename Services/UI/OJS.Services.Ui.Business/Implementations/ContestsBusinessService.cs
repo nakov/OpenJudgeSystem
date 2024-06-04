@@ -210,11 +210,11 @@ namespace OJS.Services.Ui.Business.Implementations
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-            bool shouldRequirePassword = ShouldRequirePassword(contest!, participant, isOfficial);
-            bool shouldConfirmParticipation =
+            var shouldRequirePassword = ShouldRequirePassword(contest!, participant, isOfficial);
+            var shouldConfirmParticipation =
                 ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
 
-            bool requiredPasswordIsValid = false;
+            var requiredPasswordIsValid = false;
 
             // Validate password if present
             if (password != null && !password.IsNullOrEmpty() && shouldRequirePassword)
@@ -293,22 +293,12 @@ namespace OJS.Services.Ui.Business.Implementations
                 };
             }
 
-            var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
-
-            var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest,
-                model.ContestId,
-                user,
-                model.IsOfficial)!);
-
-            if (!validationResult.IsValid)
-            {
-                throw new BusinessServiceException(validationResult.Message);
-            }
+            var contest =
+                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, user, model);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-
             var participationModel = participant.Map<ContestParticipationServiceModel>();
+            participationModel.Contest = contest;
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 
@@ -318,9 +308,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
-                .GetAllForUserByContest(contest!.Id, user.Id)
-                .Select(x => (DateTime?)x.CreatedOn)
-                .Max();
+                 .GetAllForUserByContest(contest!.Id, user.Id)
+                 .Select(x => (DateTime?)x.CreatedOn)
+                 .Max();
             participationModel.LastSubmissionTime = lastSubmissionTime;
 
             participationModel.Contest!.AllowedSubmissionTypes = participationModel

@@ -4,8 +4,13 @@ using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Cache;
+using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Cache;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
+using OJS.Services.Common.Models.Users;
+using OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +19,19 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
 {
     private readonly ICacheService cache;
     private readonly IParticipantsDataService participantsDataService;
+    private readonly IContestsDataService contestsData;
+    private readonly IContestParticipationValidationService contestParticipationValidationService;
 
     public ContestParticipantsCacheService(
         ICacheService cache,
-        IParticipantsDataService participantsDataService)
+        IParticipantsDataService participantsDataService,
+        IContestsDataService contestsData,
+        IContestParticipationValidationService contestParticipationValidationService)
     {
         this.cache = cache;
         this.participantsDataService = participantsDataService;
+        this.contestsData = contestsData;
+        this.contestParticipationValidationService = contestParticipationValidationService;
     }
 
     public async Task<IDictionary<int, ContestParticipantsCountCacheModel>> GetParticipantsCount(
@@ -43,6 +54,15 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
             string.Format(CacheConstants.ParticipantsCountByContest, contestId),
             async () => (await this.GetContestsParticipantsCount(new[] { contestId }))[contestId],
             cacheSeconds);
+
+    public async Task<ContestServiceModel> GetContestServiceModelForContest(
+        int contestId,
+        UserInfoModel user,
+        StartContestParticipationServiceModel model,
+        int cacheSeconds = CacheConstants.FiveMinutesInSeconds) => await this.cache.Get(
+        string.Format(CacheConstants.ContestServiceModelByContestId, contestId),
+        async () => (await this.GetContestServiceModel(user, model)),
+        cacheSeconds);
 
     /// <summary>
     /// Gets a dictionary with all provided contests (Id as Key) and their corresponding
@@ -67,5 +87,34 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
                 Official = officialParticipants.GetValueOrDefault(id),
                 Practice = practiceParticipants.GetValueOrDefault(id),
             });
+    }
+
+    /// <summary>
+    /// Gets the contest by its id with problem details and categories and maps it to a ContestServiceModel.
+    /// </summary>
+    /// <param name="user">The user information model representing the current user.</param>
+    /// <param name="model">The model containing the contest participation start details, including the contest id and whether it is official.</param>
+    /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
+    /// <exception cref="BusinessServiceException">Thrown if the contest data does not pass the validation checks, with a message explaining the reason.</exception>
+    private async Task<ContestServiceModel> GetContestServiceModel(
+        UserInfoModel user,
+        StartContestParticipationServiceModel model)
+    {
+        var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
+
+        var validationResult = this.contestParticipationValidationService.GetValidationResult((
+            contest,
+            model.ContestId,
+            user,
+            model.IsOfficial)!);
+
+        if (!validationResult.IsValid)
+        {
+            throw new BusinessServiceException(validationResult.Message);
+        }
+
+        var contestServiceModel = contest!.Map<ContestServiceModel>();
+
+        return contestServiceModel;
     }
 }
