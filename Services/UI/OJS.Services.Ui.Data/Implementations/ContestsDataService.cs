@@ -126,7 +126,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
 
     public Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id)
         => this.GetByIdQuery(id)
-            .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
                         .ThenInclude(p => p.Resources)
