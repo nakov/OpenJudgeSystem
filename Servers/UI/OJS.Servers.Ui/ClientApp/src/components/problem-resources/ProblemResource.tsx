@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { IoDocumentText } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { IProblemResourceType } from '../../common/types';
+import { LOGIN_PATH } from '../../common/urls/client-urls';
 import { useLazyDownloadContestProblemResourceQuery } from '../../redux/services/contestsService';
 import downloadFile from '../../utils/file-download-utils';
 
@@ -15,6 +16,8 @@ interface IProblemResourceProps {
 
 const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
     const { link, name: linkName, id } = resource;
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const [ downloadResourceFile, {
         data: problemResourceDownloadData,
@@ -30,25 +33,19 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
         downloadFile(problemResourceDownloadData.blob, problemResourceDownloadData.fileName);
     }, [ problem, problemResourceDownloadData ]);
 
+    // eslint-disable-next-line consistent-return
+    useEffect(() => {
+        if (problemResourceDownloadError) {
+            const timeout = setTimeout(() => {
+                navigate(`/${LOGIN_PATH}`, { state: { from: location } });
+            }, 5000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [ problemResourceDownloadError, navigate, location ]);
+
     return (
         <>
-            {problemResourceDownloadError || problemResourceDownloadIsLoading
-                ? (
-                    <div className={styles.problemResourceIndicator}>
-                        {problemResourceDownloadError
-                            ? (
-                                <div className={styles.problemResourceDownloadError}>
-                                    Error downloading problem resource. Please try
-                                    again!
-                                </div>
-                            )
-                            : ''}
-                        {problemResourceDownloadIsLoading
-                            ? <div className={styles.problemResourceLoading}>Downloading resource...</div>
-                            : ''}
-                    </div>
-                )
-                : null}
             {
                 resource.link
                     ? (
@@ -69,6 +66,22 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
                         </div>
                     )
             }
+            {problemResourceDownloadError || problemResourceDownloadIsLoading
+                ? (
+                    <div className={styles.problemResourceIndicator}>
+                        {problemResourceDownloadError
+                            ? (
+                                <div className={styles.problemResourceDownloadError}>
+                                    Unable to download the resource because you are not logged in. Please log in and try again.
+                                </div>
+                            )
+                            : ''}
+                        {problemResourceDownloadIsLoading
+                            ? <div className={styles.problemResourceLoading}>Downloading resource...</div>
+                            : ''}
+                    </div>
+                )
+                : null}
         </>
     );
 };
