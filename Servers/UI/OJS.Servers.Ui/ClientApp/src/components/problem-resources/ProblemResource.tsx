@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IoDocumentText } from 'react-icons/io5';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -16,12 +16,14 @@ interface IProblemResourceProps {
 
 const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
     const { link, name: linkName, id } = resource;
+    const [ isUnauthorized, setIsUnauthorized ] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
     const [ downloadResourceFile, {
         data: problemResourceDownloadData,
-        isError: problemResourceDownloadError,
+        isError: problemResourceDownloadErrorState,
+        error: problemResourceDownloadError,
         isLoading: problemResourceDownloadIsLoading,
     } ] = useLazyDownloadContestProblemResourceQuery();
 
@@ -35,14 +37,17 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
 
     // eslint-disable-next-line consistent-return
     useEffect(() => {
-        if (problemResourceDownloadError) {
+        if (problemResourceDownloadErrorState &&
+            'status' in problemResourceDownloadError! &&
+        problemResourceDownloadError.status === 401) {
+            setIsUnauthorized(true);
             const timeout = setTimeout(() => {
                 navigate(`/${LOGIN_PATH}`, { state: { from: location } });
-            }, 5000);
+            }, 3000);
 
             return () => clearTimeout(timeout);
         }
-    }, [ problemResourceDownloadError, navigate, location ]);
+    }, [ problemResourceDownloadErrorState, navigate, location, problemResourceDownloadError ]);
 
     return (
         <>
@@ -66,13 +71,15 @@ const ProblemResource = ({ resource, problem }: IProblemResourceProps) => {
                         </div>
                     )
             }
-            {problemResourceDownloadError || problemResourceDownloadIsLoading
+            {problemResourceDownloadErrorState || problemResourceDownloadIsLoading
                 ? (
                     <div className={styles.problemResourceIndicator}>
-                        {problemResourceDownloadError
+                        {problemResourceDownloadErrorState
                             ? (
-                                <div className={styles.problemResourceDownloadError}>
-                                    Unable to download the resource because you are not logged in. Please log in and try again.
+                                <div className={styles.problemResourceDownloadErrorState}>
+                                    {isUnauthorized
+                                        ? 'Unable to download the resource because you are not logged in. Please log in and try again.'
+                                        : 'Unable to download the resource. Please try again later.'}
                                 </div>
                             )
                             : ''}
