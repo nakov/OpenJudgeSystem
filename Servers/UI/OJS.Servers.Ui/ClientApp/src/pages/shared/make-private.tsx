@@ -19,7 +19,7 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
         if (!isLoggedIn) {
             const state = { from: location };
 
-            return <Navigate to="/login" state={state} />;
+            return <Navigate to="/login" state={state} replace />;
         }
 
         // eslint-disable-next-line react/jsx-no-useless-fragment
