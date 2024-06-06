@@ -112,7 +112,9 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
                 .Select(p => new UserPercentageResultsServiceModel
                 {
                     UserId = p.UserId,
-                    ResultsInPercentages = p.TotalPoints.HasValue ? p.TotalPoints.Value / contestMaxPoints * 100 : 0,
+                    ResultsInPercentages = p.TotalPoints.HasValue
+                        ? p.TotalPoints.Value / contestMaxPoints * 100
+                        : 0,
                 })
                 .OrderByDescending(p => p.ResultsInPercentages)
                 .FirstOrDefault());
