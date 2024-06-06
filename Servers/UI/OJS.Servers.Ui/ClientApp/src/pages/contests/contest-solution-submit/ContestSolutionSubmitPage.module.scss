@@ -63,11 +63,6 @@
   margin: spacings.$sp-24 0;
 }
 
-.adminButtonsAndResourcesWrapper {
-  align-items: center;
-  display: flex;
-}
-
 .adminButtonsContainer {
   display: flex;
   gap: spacings.$sp-12;
@@ -76,6 +71,7 @@
 
 .problemResources {
   display: flex;
+  margin-top: spacings.$sp-12;
 }
 
 .selectedProblemWrapper {

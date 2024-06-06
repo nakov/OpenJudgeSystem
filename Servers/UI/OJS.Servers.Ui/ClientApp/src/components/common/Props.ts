@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Params } from 'react-router';
 
 type ClassNameType = string | string[];
 
@@ -8,6 +9,11 @@ interface IHaveChildrenProps {
 
 interface IHaveOptionalChildrenProps {
     children?: ReactNode;
+}
+
+interface IHaveChildrenPropsWithTitle {
+    children: ReactNode;
+    title?: string | ((params: Params<string>) => string);
 }
 
 interface IHaveOptionalClassName {
@@ -24,6 +30,7 @@ interface IPagesInfo {
 export type {
     IHaveChildrenProps,
     IHaveOptionalChildrenProps,
+    IHaveChildrenPropsWithTitle,
     IHaveOptionalClassName,
     ClassNameType,
     IPagesInfo,

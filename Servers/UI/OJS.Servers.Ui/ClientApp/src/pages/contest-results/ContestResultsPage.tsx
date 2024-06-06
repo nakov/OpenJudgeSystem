@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
@@ -11,7 +11,6 @@ import ErrorWithActionButtons from '../../components/error/ErrorWithActionButton
 import { LinkButton, LinkButtonType } from '../../components/guidelines/buttons/Button';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
-import { usePageTitles } from '../../hooks/use-page-titles';
 import { setContestCategories, setContestDetails } from '../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery, useGetContestResultsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -48,28 +47,13 @@ const ContestResultsPage = () => {
 
     const { data: contestCategories } = useGetContestCategoriesQuery();
 
-    const { actions: { setPageTitle } } = usePageTitles();
     const dispatch = useAppDispatch();
-
-    const contestResultsPageTitle = useMemo(
-        () => isNil(contestResults)
-            ? 'Loading'
-            : `Results for ${contestResults.name}`,
-        [ contestResults ],
-    );
 
     useEffect(() => {
         if (contestId) {
             refetch();
         }
     }, [ contestId, refetch ]);
-
-    useEffect(
-        () => {
-            setPageTitle(contestResultsPageTitle);
-        },
-        [ contestResultsPageTitle, setPageTitle, contestId ],
-    );
 
     useEffect(() => {
         if (!contestResults) {

@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -38,8 +39,10 @@ const LoginForm = () => {
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
     const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
+    const navigate = useNavigate();
     const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
+    const location = useLocation();
     const dispatch = useAppDispatch();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
@@ -88,12 +91,16 @@ const LoginForm = () => {
     useEffect(() => {
         if (isSuccess) {
             refetch();
+            const returnUrl = location.state !== null
+                ? `${location.state?.from?.pathname}${location.state?.from?.search}`
+                : '/';
+            navigate(returnUrl);
             return;
         }
         if (error && 'error' in error) {
             setLoginErrorMessage(error.data as string);
         }
-    }, [ isSuccess, error, refetch ]);
+    }, [ isSuccess, error, refetch, location.state, navigate ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {

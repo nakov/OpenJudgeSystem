@@ -22,6 +22,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         IContestsDataService contestsData,
         IContestResultsValidationService contestResultsValidation,
         ILecturersInContestsBusinessService lecturersInContestsBusinessService,
+        IParticipantsDataService participantsData,
         IUserProviderService userProvider)
     {
         this.contestResultsAggregator = contestResultsAggregator;
@@ -40,7 +41,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
             throw new BusinessServiceException("Contest does not exist or is deleted.");
         }
 
-        var validationResult = this.contestResultsValidation.GetValidationResult((contest, full));
+        var validationResult = this.contestResultsValidation.GetValidationResult((contest, full, official));
 
         if (!validationResult.IsValid)
         {

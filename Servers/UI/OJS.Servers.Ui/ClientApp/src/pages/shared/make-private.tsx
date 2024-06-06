@@ -13,14 +13,13 @@ type IPrivatePageProps = IHaveChildrenProps
 
 const PrivatePage = ({ children }: IPrivatePageProps) => {
     const location = useLocation();
-    const { isLoggedIn } =
-    useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
+    const { isLoggedIn } = useSelector((state: {authorization: IAuthorizationReduxState}) => state.authorization);
 
     const renderPageOrRedirectToLogin = useCallback(() => {
         if (!isLoggedIn) {
             const state = { from: location };
 
-            return <Navigate to="/login" state={state} />;
+            return <Navigate to="/login" state={state} replace />;
         }
 
         // eslint-disable-next-line react/jsx-no-useless-fragment
