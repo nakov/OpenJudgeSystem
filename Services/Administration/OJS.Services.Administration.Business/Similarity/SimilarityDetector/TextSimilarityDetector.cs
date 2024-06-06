@@ -30,8 +30,8 @@ public class TextSimilarityDetector : ISimilarityDetector
         var differencesCount = differences.Sum(difference => difference.DeletedA + difference.InsertedB);
         var textLength = firstSource.Length + secondSource.Length;
 
-        // TODO: Revert the percentage
-        var percentage = ((decimal)differencesCount * 100) / textLength;
+        // var percentage = ((decimal)differencesCount * 100) / textLength; //Calculate the difference pecentage
+        var percentage = (1 - ((decimal)differencesCount / textLength)) * 100; // Calculate the similarity percentage
 
         return new SimilarityResult(percentage)
         {
