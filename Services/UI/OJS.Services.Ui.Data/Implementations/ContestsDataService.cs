@@ -279,13 +279,29 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Any(x => submissionTypeIds.Contains(x)); // Does not work if converted to method group
 
     private async Task<int> GetMaxPointsByIdAndProblemGroupsFilter(int id, Expression<Func<ProblemGroup, bool>> filter)
-        => await this.GetByIdQuery(id)
-            .Select(c => c.ProblemGroups
-                .AsQueryable()
-                .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
-                .Where(filter)
-                .Sum(pg => (int?)pg.Problems.First().MaximumPoints))
-            .FirstOrDefaultAsync() ?? default(int);
+    {
+        var contest = await this.GetByIdQuery(id)
+            .Include(c => c.ProblemGroups)
+                .ThenInclude(pg => pg.Problems)
+            .FirstOrDefaultAsync();
+
+        if (contest == null)
+        {
+            return 0;
+        }
+
+        var filteredProblemGroups = contest.ProblemGroups
+            .Where(pg => pg.Problems.Any(p => !p.IsDeleted))
+            .Where(filter.Compile());
+
+        var maxPoints = filteredProblemGroups
+            .Select(pg => pg.Problems
+                .Where(p => !p.IsDeleted)
+                .Max(p => (int?)p.MaximumPoints) ?? 0)
+            .Sum();
+
+        return maxPoints;
+    }
 
     private IQueryable<Contest> GetAllVisibleByCategories(IEnumerable<int> categoryIds)
         => this.GetAllVisible()
