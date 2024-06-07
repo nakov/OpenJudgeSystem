@@ -16,7 +16,7 @@ public class ValidateApiKeyAttribute : ActionFilterAttribute
     {
         if (!context.HttpContext.Request.Query.TryGetValue(ServerConstants.UrlParameters.ApiKey, out var extractedApiKey))
         {
-            context.Result = new ContentResult()
+            context.Result = new ContentResult
             {
                 StatusCode = 401,
                 Content = "API Key is missing",
@@ -27,7 +27,7 @@ public class ValidateApiKeyAttribute : ActionFilterAttribute
 
         if (!this.validApiKey.Equals(extractedApiKey))
         {
-            context.Result = new ContentResult()
+            context.Result = new ContentResult
             {
                 StatusCode = 403,
                 Content = "Invalid API key.",
