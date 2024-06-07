@@ -32,6 +32,7 @@ const SubmissionDetailsPage = () => {
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
     const { themeColors, getColorClassName } = useTheme();
+    const [ isRetestingStarted, setIsRetestingStarted ] = useState(false);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
     const { contestDetails } = useAppSelector((state) => state.contests);
@@ -84,6 +85,11 @@ const SubmissionDetailsPage = () => {
         isOfficial,
     } = data || {};
 
+    const handleRetestSubmission = useCallback(() => {
+        setIsRetestingStarted(true);
+        retestSubmission({ id: solutionId! });
+    }, [ retestSubmission, solutionId ]);
+
     const handleDownloadFile = useCallback(async () => {
         try {
             setDownloadSolutionErrorMessage('');
@@ -121,6 +127,7 @@ const SubmissionDetailsPage = () => {
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
+        const shouldLoadData = !isRetestingStarted && (testRuns && testRuns.length !== 0);
 
         return (
             <>
@@ -150,15 +157,15 @@ const SubmissionDetailsPage = () => {
                             <>
                                 <div className={styles.detailsRow}>
                                     <span>Modified on:</span>
-                                    {modifiedOn && <span>{preciseFormatDate(modifiedOn)}</span>}
+                                    {modifiedOn && shouldLoadData && <span>{preciseFormatDate(modifiedOn)}</span>}
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Started Execution on:</span>
-                                    {startedExecutionOn && <span>{preciseFormatDate(startedExecutionOn)}</span>}
+                                    {startedExecutionOn && shouldLoadData && <span>{preciseFormatDate(startedExecutionOn)}</span>}
                                 </div>
                                 <div className={styles.detailsRow}>
                                     <span>Completed Execution on:</span>
-                                    {completedExecutionOn && <span>{preciseFormatDate(completedExecutionOn)}</span>}
+                                    {completedExecutionOn && shouldLoadData && <span>{preciseFormatDate(completedExecutionOn)}</span>}
                                 </div>
                             </>
                         )}
@@ -169,6 +176,8 @@ const SubmissionDetailsPage = () => {
             </>
         );
     }, [
+        isRetestingStarted,
+        testRuns,
         user.canAccessAdministration,
         submissionType,
         createdOn,
@@ -180,7 +189,8 @@ const SubmissionDetailsPage = () => {
     ]);
 
     const renderSolutionTestDetails = useCallback(() => {
-        if (!isProcessed) {
+        const isSubmissionBeingProcessed = !isProcessed || isRetestingStarted || ((testRuns && testRuns.length === 0) && isCompiledSuccessfully);
+        if (isSubmissionBeingProcessed) {
             return (
                 <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
                     The submission is in queue and will be processed shortly. Please wait.
@@ -188,7 +198,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        if (!isCompiledSuccessfully) {
+        if (!isCompiledSuccessfully && !isRetestingStarted) {
             return (
                 <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
                     <div>A compile time error occurred:</div>
@@ -197,7 +207,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        if (isEligibleForRetest) {
+        if (isEligibleForRetest && !isRetestingStarted) {
             return (
                 <div className={`${styles.retestWrapper} ${textColorClassName}`}>
                     <div>
@@ -206,7 +216,7 @@ const SubmissionDetailsPage = () => {
                         /100) submission is now outdated. Click &quot;Restart&quot; to resubmit
                         your solution for re-evaluation against the new test cases. Your score may change.
                     </div>
-                    <Button text="RETEST" onClick={() => retestSubmission({ id: solutionId! })} />
+                    <Button text="RETEST" onClick={() => handleRetestSubmission()} />
                 </div>
             );
         }
@@ -237,11 +247,11 @@ const SubmissionDetailsPage = () => {
         points,
         testRuns,
         compilerComment,
-        retestSubmission,
-        solutionId,
         isProcessed,
         textColorClassName,
         userIsInRoleForContest,
+        handleRetestSubmission,
+        isRetestingStarted,
     ]);
 
     const renderAdminButtons = useCallback(() => {
@@ -273,13 +283,13 @@ const SubmissionDetailsPage = () => {
                           text="Retest"
                           size={ButtonSize.small}
                           type={ButtonType.secondary}
-                          onClick={() => retestSubmission({ id: solutionId! })}
+                          onClick={() => handleRetestSubmission()}
                         />
                     </>
                 )}
             </div>
         );
-    }, [ problem, retestSubmission, solutionId, userIsInRoleForContest ]);
+    }, [ handleRetestSubmission, problem, solutionId, userIsInRoleForContest ]);
 
     if (isLoading || retestIsLoading) {
         return (
@@ -311,9 +321,9 @@ const SubmissionDetailsPage = () => {
 
     return (
         <div className={`${styles.submissionsDetailsWrapper} ${textColorClassName}`}>
-            { retestSuccess && (
+            { isRetestingStarted && retestSuccess && (
                 <div className={styles.succesfulRetestWrapper}>
-                    Submission has been retested successfully, reload page to refresh results.
+                    Submission retest started!
                 </div>
             )}
             <ContestBreadcrumbs />
@@ -322,7 +332,10 @@ const SubmissionDetailsPage = () => {
                     {renderSolutionTitle()}
                 </div>
                 <div className={styles.bodyWrapper}>
-                    <SubmissionTestRuns testRuns={testRuns || []} />
+                    <SubmissionTestRuns testRuns={(!isRetestingStarted
+                        ? testRuns
+                        : []) || []}
+                    />
                     <div className={styles.innerBodyWrapper}>
                         <Link to={`/contests/${contestId}`}>{name}</Link>
                         {renderAdminButtons()}
