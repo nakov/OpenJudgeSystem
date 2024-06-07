@@ -41,7 +41,7 @@ public class ContestResultsController : BaseApiController
     [HttpGet("/api/Results/GetAllUserResultsPercentageByForContest")]
     [ProducesResponseType(typeof(IEnumerable<UserPercentageResultsServiceModel>), Status200OK)]
     [ServiceFilter(typeof(ValidateApiKeyAttribute))]
-    public async Task<IActionResult> GetAllUserResultsPercentageByForContest(int apiKey, int? contestId)
+    public async Task<IActionResult> GetAllUserResultsPercentageByForContest(string apiKey, int? contestId)
         => await this.contestResultsBusiness
             .GetAllUserResultsPercentageByForContest(contestId)
             .ToOkResult();
