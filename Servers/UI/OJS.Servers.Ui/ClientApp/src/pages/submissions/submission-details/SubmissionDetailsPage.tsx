@@ -190,9 +190,13 @@ const SubmissionDetailsPage = () => {
 
     const renderSolutionTestDetails = useCallback(() => {
         const isSubmissionBeingProcessed =
+            // The submission has not yet been processed
             !isProcessed ||
+            // The retesting of the submission has been started
             isRetestingStarted ||
-            ((testRuns && testRuns.length === 0) && isCompiledSuccessfully);
+            // If the test runs' length is 0 and the code is compiled successfully, and the
+            // submission is not eligible for retesting, then we are still processing the submission
+            ((testRuns && testRuns.length === 0) && isCompiledSuccessfully && !isEligibleForRetest);
         if (isSubmissionBeingProcessed) {
             return (
                 <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
@@ -201,7 +205,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        if (!isCompiledSuccessfully && !isRetestingStarted) {
+        if (!isCompiledSuccessfully) {
             return (
                 <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
                     <div>A compile time error occurred:</div>
@@ -210,7 +214,7 @@ const SubmissionDetailsPage = () => {
             );
         }
 
-        if (isEligibleForRetest && !isRetestingStarted) {
+        if (isEligibleForRetest) {
             return (
                 <div className={`${styles.retestWrapper} ${textColorClassName}`}>
                     <div>
@@ -254,8 +258,7 @@ const SubmissionDetailsPage = () => {
         textColorClassName,
         userIsInRoleForContest,
         handleRetestSubmission,
-        isRetestingStarted,
-    ]);
+        isRetestingStarted ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
@@ -343,7 +346,7 @@ const SubmissionDetailsPage = () => {
                         <Link to={`/contests/${contestId}`}>{name}</Link>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
-                        {!isEligibleForRetest && content && (
+                        {content && (
                             <div className={styles.codeContentWrapper} id="code-content-wrapper">
                                 <div>Source Code</div>
                                 <CodeEditor code={content} readOnly />
