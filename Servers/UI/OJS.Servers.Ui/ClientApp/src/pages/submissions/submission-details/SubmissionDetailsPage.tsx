@@ -189,7 +189,10 @@ const SubmissionDetailsPage = () => {
     ]);
 
     const renderSolutionTestDetails = useCallback(() => {
-        const isSubmissionBeingProcessed = !isProcessed || isRetestingStarted || ((testRuns && testRuns.length === 0) && isCompiledSuccessfully);
+        const isSubmissionBeingProcessed =
+            !isProcessed ||
+            isRetestingStarted ||
+            ((testRuns && testRuns.length === 0) && isCompiledSuccessfully);
         if (isSubmissionBeingProcessed) {
             return (
                 <div className={`${styles.submissionInQueueWrapper} ${textColorClassName}`}>
