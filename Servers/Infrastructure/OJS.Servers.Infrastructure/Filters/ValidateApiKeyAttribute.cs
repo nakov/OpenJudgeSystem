@@ -7,15 +7,14 @@ using OJS.Services.Infrastructure.Configurations;
 
 public class ValidateApiKeyAttribute : ActionFilterAttribute
 {
-    private const string ApiKeyParameterName = "apiKey";
-    private readonly string validApiKey; // Replace with your valid API key
+    private readonly string validApiKey;
 
     public ValidateApiKeyAttribute(IOptions<ApplicationUrlsConfig> appUrlsOptions)
         => this.validApiKey = appUrlsOptions.Value.ApiKey;
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.HttpContext.Request.Query.TryGetValue(ApiKeyParameterName, out var extractedApiKey))
+        if (!context.HttpContext.Request.Query.TryGetValue(ServerConstants.UrlParameters.ApiKey, out var extractedApiKey))
         {
             context.Result = new ContentResult()
             {

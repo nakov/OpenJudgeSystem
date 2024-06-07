@@ -85,10 +85,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
         var contestMaxPoints = await this.contestsData.GetMaxPointsForExportById(contestId.Value);
 
         var participants = await this.participantsDataService
-            .GetAllByContest(contestId.Value)
-            .Include(p => p.Scores)
-            .ThenInclude(s => s.Problem)
-            .ThenInclude(p => p.ProblemGroup)
+            .GetAllByContestWithScoresAndProblems(contestId.Value)
             .ToListAsync();
 
         var participantResults = participants
@@ -116,8 +113,7 @@ public class ContestResultsBusinessService : IContestResultsBusinessService
                         ? p.TotalPoints.Value / contestMaxPoints * 100
                         : 0,
                 })
-                .OrderByDescending(p => p.ResultsInPercentages)
-                .FirstOrDefault());
+                .MaxBy(p => p.ResultsInPercentages));
 
         return results;
     }
