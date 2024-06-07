@@ -16,5 +16,8 @@ public class ApplicationUrlsConfig : BaseConfig
     public string SulsPlatformApiKey { get; set; } = string.Empty;
 
     [Required]
+    public string ApiKey { get; set; } = string.Empty;
+
+    [Required]
     public string FrontEndUrl { get; set; } = string.Empty;
 }
