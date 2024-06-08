@@ -263,7 +263,7 @@ const SubmissionDetailsPage = () => {
         userIsInRoleForContest,
         handleRetestSubmission,
         isRetestingStarted,
-        maxPoints]);
+        maxPoints ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
