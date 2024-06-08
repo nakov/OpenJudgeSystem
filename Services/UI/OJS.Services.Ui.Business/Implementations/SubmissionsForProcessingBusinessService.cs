@@ -24,6 +24,6 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
             .GetQuery(s => s.SubmissionId == submissionId)
             .FirstOrDefault();
 
-        return result != null ? !result.Processing : false;
+        return result != null ? !result.Processing : true;
     }
 }

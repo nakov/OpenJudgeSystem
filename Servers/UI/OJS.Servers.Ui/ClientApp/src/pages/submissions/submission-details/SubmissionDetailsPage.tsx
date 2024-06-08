@@ -83,6 +83,7 @@ const SubmissionDetailsPage = () => {
         completedExecutionOn,
         userIsInRoleForContest,
         isOfficial,
+        maxPoints,
     } = data || {};
 
     const handleRetestSubmission = useCallback(() => {
@@ -218,9 +219,12 @@ const SubmissionDetailsPage = () => {
             return (
                 <div className={`${styles.retestWrapper} ${textColorClassName}`}>
                     <div>
-                        The input/ output data changed. Your (
+                        The input / output data changed. Your (
                         {points}
-                        /100) submission is now outdated. Click &quot;Restart&quot; to resubmit
+                        /
+                        {' '}
+                        {maxPoints}
+                        ) submission is now outdated. Click &quot;Retest&quot; to resubmit
                         your solution for re-evaluation against the new test cases. Your score may change.
                     </div>
                     <Button text="RETEST" onClick={() => handleRetestSubmission()} />
@@ -258,7 +262,8 @@ const SubmissionDetailsPage = () => {
         textColorClassName,
         userIsInRoleForContest,
         handleRetestSubmission,
-        isRetestingStarted ]);
+        isRetestingStarted,
+        maxPoints]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
