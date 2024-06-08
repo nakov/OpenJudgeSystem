@@ -58,6 +58,7 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
+    const [ isRotating, setIsRotating ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -81,6 +82,7 @@ const ContestSolutionSubmitPage = () => {
             data: submissionsData,
             isError: submissionsError,
             isLoading: submissionsDataLoading,
+            isFetching: submissionsDataFetching,
         },
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
@@ -128,6 +130,21 @@ const ContestSolutionSubmitPage = () => {
         () => selectedContestDetailsProblem?.allowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
         [ selectedContestDetailsProblem ],
     );
+
+    const handleRefreshClick = () => {
+        setIsRotating(true);
+        getSubmissionsData({
+            id: Number(selectedContestDetailsProblem!.id),
+            page: selectedSubmissionsPage,
+            isOfficial: isCompete,
+        });
+    };
+
+    useEffect(() => {
+        if (!submissionsDataFetching) {
+            setIsRotating(false);
+        }
+    }, [ submissionsDataFetching, setIsRotating ]);
 
     // this effect manages the disabling of the submit button as well as the
     // displaying of the seconds before the next submission would be enabled
@@ -649,11 +666,10 @@ const ContestSolutionSubmitPage = () => {
                     <span className={styles.title}>Submissions</span>
                     <IoMdRefresh
                       size={30}
-                      onClick={() => getSubmissionsData({
-                          id: Number(selectedContestDetailsProblem!.id),
-                          page: selectedSubmissionsPage,
-                          isOfficial: isCompete,
-                      })}
+                      className={isRotating
+                          ? styles.rotate
+                          : ''}
+                      onClick={handleRefreshClick}
                     />
                 </div>
                 { submissionsError
