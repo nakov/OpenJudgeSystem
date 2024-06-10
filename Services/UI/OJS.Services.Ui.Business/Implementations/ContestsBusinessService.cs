@@ -296,6 +296,17 @@ namespace OJS.Services.Ui.Business.Implementations
             var contest =
                 await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, user, model);
 
+            var validationResult = this.contestParticipationValidationService.GetValidationResult((
+                contest.Map<Contest>(),
+                model.ContestId,
+                user,
+                model.IsOfficial)!);
+
+            if (!validationResult.IsValid)
+            {
+                throw new BusinessServiceException(validationResult.Message);
+            }
+
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
             var participationModel = participant.Map<ContestParticipationServiceModel>();
             participationModel.Contest = contest;

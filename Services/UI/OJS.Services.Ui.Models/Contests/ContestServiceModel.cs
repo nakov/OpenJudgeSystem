@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Ui.Models.Contests;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
@@ -15,11 +16,15 @@ public class ContestServiceModel : IMapExplicitly
 
     public int? CategoryId { get; set; }
 
+    public ContestCategoryServiceModel? Category { get; set; }
+
     public int LimitBetweenSubmissions { get; set; }
 
     public bool IsDeleted { get; set; }
 
     public bool IsVisible { get; set; }
+
+    public DateTime? VisibleFrom { get; set; }
 
     public bool IsOnlineExam { get; set; }
 

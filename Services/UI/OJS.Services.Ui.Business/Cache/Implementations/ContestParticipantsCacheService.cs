@@ -59,10 +59,11 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         int contestId,
         UserInfoModel user,
         StartContestParticipationServiceModel model,
-        int cacheSeconds = CacheConstants.FiveMinutesInSeconds) => await this.cache.Get(
-        string.Format(CacheConstants.ContestServiceModelByContestId, contestId),
-        async () => (await this.GetContestServiceModel(user, model)),
-        cacheSeconds);
+        int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+        => await this.cache.Get(
+            string.Format(CacheConstants.ContestServiceModelByContestId, contestId),
+            async () => (await this.GetContestServiceModel(user, model)),
+            cacheSeconds);
 
     /// <summary>
     /// Gets a dictionary with all provided contests (Id as Key) and their corresponding
@@ -101,17 +102,6 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         StartContestParticipationServiceModel model)
     {
         var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
-
-        var validationResult = this.contestParticipationValidationService.GetValidationResult((
-            contest,
-            model.ContestId,
-            user,
-            model.IsOfficial)!);
-
-        if (!validationResult.IsValid)
-        {
-            throw new BusinessServiceException(validationResult.Message);
-        }
 
         var contestServiceModel = contest!.Map<ContestServiceModel>();
 
