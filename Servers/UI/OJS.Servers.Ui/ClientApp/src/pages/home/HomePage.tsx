@@ -53,7 +53,7 @@ const HOME_STATISTICS = [
 
 const HomePage = () => {
     const { data, isLoading, error } = useGetHomeStatisticsQuery();
-    const { themeColors, getColorClassName } = useTheme();
+    const { isDarkMode, themeColors, getColorClassName } = useTheme();
 
     const YOUTUBE_VIDEO_ID = `${import.meta.env.VITE_YOUTUBE_VIDEO_ID}`;
 
@@ -109,7 +109,9 @@ const HomePage = () => {
                   id={YOUTUBE_VIDEO_ID}
                   title="Guidelines for working with the SoftUni Judge platform"
                   poster="maxresdefault"
-                  wrapperClass={`yt-lite ${styles.youTubeVideoWrapper}`}
+                  wrapperClass={`yt-lite ${styles.youTubeVideoWrapper} ${isDarkMode
+                      ? styles.darkTheme
+                      : ''}`}
                 />
                 <hr />
                 {renderHomeStatisticIcons()}
