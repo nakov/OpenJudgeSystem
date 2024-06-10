@@ -62,7 +62,7 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => await this.cache.Get(
             string.Format(CacheConstants.ContestServiceModelByContestId, contestId),
-            async () => (await this.GetContestServiceModel(user, model)),
+            async () => (await this.GetContestServiceModel(model)),
             cacheSeconds);
 
     /// <summary>
@@ -93,12 +93,10 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
     /// <summary>
     /// Gets the contest by its id with problem details and categories and maps it to a ContestServiceModel.
     /// </summary>
-    /// <param name="user">The user information model representing the current user.</param>
     /// <param name="model">The model containing the contest participation start details, including the contest id and whether it is official.</param>
     /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
     /// <exception cref="BusinessServiceException">Thrown if the contest data does not pass the validation checks, with a message explaining the reason.</exception>
     private async Task<ContestServiceModel> GetContestServiceModel(
-        UserInfoModel user,
         StartContestParticipationServiceModel model)
     {
         var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
