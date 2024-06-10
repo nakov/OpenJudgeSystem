@@ -151,4 +151,4 @@ const ProfilePage = () => {
     );
 };
 
-export default makePrivate(setLayout(ProfilePage));
+export default setLayout(ProfilePage);
