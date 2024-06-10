@@ -71,8 +71,8 @@ const ContestsPage = () => {
 
     const {
         data: allContests,
-        isLoading: areContestsLoading,
         error: allContestsError,
+        isFetching: areContestsFetching,
     } = useGetAllContestsQuery({ ...contestParams });
 
     const renderContest = useCallback((contest: IIndexContestsType) => (
@@ -80,7 +80,7 @@ const ContestsPage = () => {
     ), []);
 
     const renderContests = useCallback(() => {
-        if (areContestsLoading) {
+        if (areContestsFetching) {
             return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
 
@@ -111,7 +111,7 @@ const ContestsPage = () => {
             </div>
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ allContests, areContestsLoading ]);
+    }, [ allContests, areContestsFetching, searchParams ]);
 
     if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
