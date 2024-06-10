@@ -69,6 +69,17 @@
     animation: rotate 1s linear infinite;
   }
 
+  .refreshButton {
+    display: flex;
+    align-items: center;
+    background-color: colors.$color-btn-secondary;
+    color: white;
+    padding: spacings.$sp-8 spacings.$sp-12;
+    border-radius: spacings.$sp-4;
+    cursor: pointer;
+    font-size: spacings.$sp-16;
+    margin: 0 1rem;
+  }
 }
 
 .problemDetailsWrapper {

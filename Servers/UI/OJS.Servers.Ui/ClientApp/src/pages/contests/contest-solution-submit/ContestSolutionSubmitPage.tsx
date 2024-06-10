@@ -16,17 +16,13 @@ import ContestProblems from '../../../components/contests/contest-problems/Conte
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
-import Button, {
-    ButtonState,
-} from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonState, ButtonType } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import {
-    setContestDetailsIdAndCategoryId,
-} from '../../../redux/features/contestsSlice';
+import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
     useSubmitContestSolutionFileMutation,
@@ -34,7 +30,11 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
+import {
+    calculatedTimeFormatted,
+    transformDaysHoursMinutesTextToMinutes,
+    transformSecondsToTimeSpan,
+} from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { makePrivate } from '../../shared/make-private';
@@ -664,13 +664,23 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
                     <span className={styles.title}>Submissions</span>
-                    <IoMdRefresh
-                      size={30}
-                      className={isRotating
-                          ? styles.rotate
-                          : ''}
+                    <Button
+                      type={ButtonType.secondary}
+                      size={ButtonSize.small}
+                      className={styles.refreshButton}
                       onClick={handleRefreshClick}
-                    />
+                      state={isRotating
+                          ? ButtonState.disabled
+                          : ButtonState.enabled}
+                    >
+                        Refresh
+                        <IoMdRefresh
+                          size={24}
+                          className={isRotating
+                              ? styles.rotate
+                              : ''}
+                        />
+                    </Button>
                 </div>
                 { submissionsError
                     ? <>Error loading submissions</>
