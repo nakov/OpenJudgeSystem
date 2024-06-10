@@ -308,9 +308,9 @@ namespace OJS.Services.Ui.Business.Implementations
 
             // explicitly setting lastSubmissionTime to avoid including all submissions for participant
             var lastSubmissionTime = this.submissionsData
-                 .GetAllForUserByContest(contest!.Id, user.Id)
-                 .Select(x => (DateTime?)x.CreatedOn)
-                 .Max();
+                .GetAllForUserByContest(contest!.Id, user.Id)
+                .Select(x => (DateTime?)x.CreatedOn)
+                .Max();
             participationModel.LastSubmissionTime = lastSubmissionTime;
 
             participationModel.Contest!.AllowedSubmissionTypes = participationModel
