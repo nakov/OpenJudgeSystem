@@ -128,6 +128,11 @@ const SubmissionDetailsPage = () => {
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
+        /*
+            The data will not be loaded when the submission is being retested.
+            The test runs are 0 when there is a compilation error on the
+            submission, or it is being retested.
+         */
         const shouldLoadData = !isRetestingStarted && (testRuns && testRuns.length !== 0);
 
         return (
@@ -221,6 +226,7 @@ const SubmissionDetailsPage = () => {
                     <div>
                         The input / output data changed. Your (
                         {points}
+                        {' '}
                         /
                         {' '}
                         {maxPoints}

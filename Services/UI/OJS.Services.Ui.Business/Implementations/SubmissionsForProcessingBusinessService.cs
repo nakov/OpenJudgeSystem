@@ -19,11 +19,7 @@ public class SubmissionsForProcessingBusinessService : ISubmissionsForProcessing
             .CountAsync();
 
     public bool IsSubmissionProcessing(int submissionId)
-    {
-        var result = this.submissionsForProcessingData
-            .GetQuery(s => s.SubmissionId == submissionId)
-            .FirstOrDefault();
-
-        return result != null ? !result.Processing : true;
-    }
+        => this.submissionsForProcessingData
+            .GetQuery(s => s.SubmissionId == submissionId && s.Processing)
+            .Any();
 }

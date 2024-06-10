@@ -13,5 +13,5 @@ public class SubmissionsHelper : ISubmissionsHelper
         => (detailsModel.Tests.Any() && !detailsModel.TestRuns.Any()) &&
            detailsModel.IsProcessed && detailsModel.IsCompiledSuccessfully &&
            (detailsModel.ProcessingComment == null) &&
-           this.submissionsForProcessingBusinessService.IsSubmissionProcessing(detailsModel.Id);
+           !this.submissionsForProcessingBusinessService.IsSubmissionProcessing(detailsModel.Id);
 }

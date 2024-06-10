@@ -146,7 +146,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         var currentUser = this.userProviderService.GetCurrentUser();
 
-        //AsNoTracking() Method is added to     prevent ''tracking query'' error.
+        //AsNoTracking() Method is added to prevent ''tracking query'' error.
         //Error is thrown when we map from UserSettings (owned entity) without including the
         //UserProfile (owner entity) in the query.
         var submissionDetailsServiceModel = await this.submissionsData
@@ -165,8 +165,6 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             .TestRuns
             .OrderBy(tr => !tr.IsTrialTest)
             .ThenBy(tr => tr.OrderBy);
-
-        submissionDetailsServiceModel.MaxPoints = submissionDetailsServiceModel.Problem.MaximumPoints;
 
         var userIsAdminOrLecturerInContest =
             await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(submissionDetailsServiceModel.ContestId);
