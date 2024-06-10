@@ -100,7 +100,7 @@ const SubmissionsSimillarity = () => {
                     </Select>
                 </FormControl>
                 <FormActionButton
-                  name="Check simillarities"
+                  name="Check similarities"
                   disabled={!contestId || isLoading}
                   onClick={() => checkSimilarity({ contestIds: [ contestId! ], similarityCheckType: similarityType })}
                 />
