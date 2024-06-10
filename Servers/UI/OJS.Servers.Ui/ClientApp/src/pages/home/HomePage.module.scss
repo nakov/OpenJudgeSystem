@@ -16,8 +16,11 @@
     font-weight: font-weights.$font-weight-semi-bold;
   }
 
-  iframe {
+  .youTubeVideoWrapper {
     border-radius: 12px;
+    border: 3px solid colors.$white-color;
+    width: 700px;
+    height: 320px;
     margin-top: spacings.$sp-24;
   }
 

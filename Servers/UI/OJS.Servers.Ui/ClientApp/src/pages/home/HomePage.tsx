@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
+import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 
 import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
 import IconSize from '../../components/guidelines/icons/common/icon-sizes';
@@ -11,6 +12,7 @@ import { useGetHomeStatisticsQuery } from '../../redux/services/homeStatisticsSe
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { setLayout } from '../shared/set-layout';
 
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import styles from './HomePage.module.scss';
 
 interface IHomePageStatistic {
@@ -103,12 +105,11 @@ const HomePage = () => {
             <ContestCetegories isRenderedOnHomePage />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
-                <iframe
-                  style={{ border: `3px solid ${themeColors.textColor}` }}
-                  title="home-video"
-                  width={700}
-                  height={320}
-                  src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}`}
+                <LiteYouTubeEmbed
+                  id={YOUTUBE_VIDEO_ID}
+                  title="Guidelines for working with the SoftUni Judge platform"
+                  poster="maxresdefault"
+                  wrapperClass={`yt-lite ${styles.youTubeVideoWrapper}`}
                 />
                 <hr />
                 {renderHomeStatisticIcons()}
