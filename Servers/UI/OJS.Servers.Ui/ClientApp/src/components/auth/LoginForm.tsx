@@ -14,6 +14,7 @@ import {
     UsernameFormatErrorMessage, UsernameLengthErrorMessage,
 } from '../../common/constants';
 import useTheme from '../../hooks/use-theme';
+import cacheService from '../../redux/cacheService';
 import { setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -44,6 +45,7 @@ const LoginForm = () => {
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
     const location = useLocation();
     const dispatch = useAppDispatch();
+    const { resetCache } = cacheService();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
@@ -95,12 +97,13 @@ const LoginForm = () => {
                 ? `${location.state?.from?.pathname}${location.state?.from?.search}`
                 : '/';
             navigate(returnUrl);
+            resetCache();
             return;
         }
         if (error && 'error' in error) {
             setLoginErrorMessage(error.data as string);
         }
-    }, [ isSuccess, error, refetch, location.state, navigate ]);
+    }, [ isSuccess, error, refetch, location.state, navigate, resetCache ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
