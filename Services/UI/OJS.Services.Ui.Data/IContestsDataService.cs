@@ -26,7 +26,7 @@ namespace OJS.Services.Ui.Data
 
         Task<Contest?> GetByIdWithCategoryAndProblemsAndSubmissionTypes(int id);
 
-        Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id);
+        Task<TServiceModel?> GetById<TServiceModel>(int id);
 
         Task<Contest?> GetByIdWithParticipants(int id);
 
