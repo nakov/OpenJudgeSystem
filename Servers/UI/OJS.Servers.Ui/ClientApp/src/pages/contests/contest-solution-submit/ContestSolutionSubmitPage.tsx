@@ -16,17 +16,13 @@ import ContestProblems from '../../../components/contests/contest-problems/Conte
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
-import Button, {
-    ButtonState,
-} from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonSize, ButtonState, ButtonType } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import {
-    setContestDetailsIdAndCategoryId,
-} from '../../../redux/features/contestsSlice';
+import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
     useSubmitContestSolutionFileMutation,
@@ -34,7 +30,11 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
+import {
+    calculatedTimeFormatted,
+    transformDaysHoursMinutesTextToMinutes,
+    transformSecondsToTimeSpan,
+} from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { makePrivate } from '../../shared/make-private';
@@ -58,6 +58,7 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
+    const [ isRotating, setIsRotating ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -81,6 +82,7 @@ const ContestSolutionSubmitPage = () => {
             data: submissionsData,
             isError: submissionsError,
             isLoading: submissionsDataLoading,
+            isFetching: submissionsDataFetching,
         },
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
@@ -128,6 +130,21 @@ const ContestSolutionSubmitPage = () => {
         () => selectedContestDetailsProblem?.allowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
         [ selectedContestDetailsProblem ],
     );
+
+    const handleRefreshClick = () => {
+        setIsRotating(true);
+        getSubmissionsData({
+            id: Number(selectedContestDetailsProblem!.id),
+            page: selectedSubmissionsPage,
+            isOfficial: isCompete,
+        });
+    };
+
+    useEffect(() => {
+        if (!submissionsDataFetching) {
+            setIsRotating(false);
+        }
+    }, [ submissionsDataFetching, setIsRotating ]);
 
     // this effect manages the disabling of the submit button as well as the
     // displaying of the seconds before the next submission would be enabled
@@ -647,14 +664,23 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
                     <span className={styles.title}>Submissions</span>
-                    <IoMdRefresh
-                      size={30}
-                      onClick={() => getSubmissionsData({
-                          id: Number(selectedContestDetailsProblem!.id),
-                          page: selectedSubmissionsPage,
-                          isOfficial: isCompete,
-                      })}
-                    />
+                    <Button
+                      type={ButtonType.secondary}
+                      size={ButtonSize.small}
+                      className={styles.refreshButton}
+                      onClick={handleRefreshClick}
+                      state={isRotating
+                          ? ButtonState.disabled
+                          : ButtonState.enabled}
+                    >
+                        Refresh
+                        <IoMdRefresh
+                          size={24}
+                          className={isRotating
+                              ? styles.rotate
+                              : ''}
+                        />
+                    </Button>
                 </div>
                 { submissionsError
                     ? <>Error loading submissions</>
