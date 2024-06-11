@@ -21,17 +21,18 @@ namespace OJS.Servers.Infrastructure.Extensions
     using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Data;
+    using OJS.Data.Implementations;
+    using OJS.Servers.Infrastructure.Filters;
     using OJS.Services.Common;
     using OJS.Services.Common.Data;
     using OJS.Services.Common.Data.Implementations;
     using OJS.Services.Common.Implementations;
     using OJS.Services.Infrastructure.Cache;
     using OJS.Services.Infrastructure.Cache.Implementations;
-    using OJS.Services.Infrastructure.HttpClients;
-    using OJS.Services.Infrastructure.HttpClients.Implementations;
-    using OJS.Data.Implementations;
     using OJS.Services.Infrastructure.Configurations;
     using OJS.Services.Infrastructure.Extensions;
+    using OJS.Services.Infrastructure.HttpClients;
+    using OJS.Services.Infrastructure.HttpClients.Implementations;
     using StackExchange.Redis;
     using System;
     using System.IO;
@@ -68,6 +69,8 @@ namespace OJS.Servers.Infrastructure.Extensions
             {
                 x.ValueLengthLimit = maxRequestLimit;
             });
+
+            services.AddSingleton<ValidateApiKeyAttribute>();
 
             return services;
         }
