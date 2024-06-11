@@ -5,6 +5,7 @@ using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Cache;
 using OJS.Services.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Cache;
 using OJS.Services.Infrastructure.Exceptions;
@@ -55,9 +56,8 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
             async () => (await this.GetContestsParticipantsCount(new[] { contestId }))[contestId],
             cacheSeconds);
 
-    public async Task<ContestServiceModel> GetContestServiceModelForContest(
+    public async Task<ContestServiceModel?> GetContestServiceModelForContest(
         int contestId,
-        UserInfoModel user,
         StartContestParticipationServiceModel model,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => await this.cache.Get(
@@ -95,13 +95,12 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
     /// </summary>
     /// <param name="model">The model containing the contest participation start details, including the contest id and whether it is official.</param>
     /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
-    /// <exception cref="BusinessServiceException">Thrown if the contest data does not pass the validation checks, with a message explaining the reason.</exception>
-    private async Task<ContestServiceModel> GetContestServiceModel(
+    private async Task<ContestServiceModel?> GetContestServiceModel(
         StartContestParticipationServiceModel model)
     {
-        var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
+        var contest = await this.contestsData.GetById<ContestServiceModel>(model.ContestId);
 
-        var contestServiceModel = contest!.Map<ContestServiceModel>();
+        var contestServiceModel = contest?.Map<ContestServiceModel?>();
 
         return contestServiceModel;
     }

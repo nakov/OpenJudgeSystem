@@ -44,13 +44,11 @@ public interface IContestParticipantsCacheService : IService
     /// Gets the contest service model for the contest solution submit page.
     /// </summary>
     /// <param name="contestId">The Id of the contest.</param>
-    /// <param name="user">The user information model representing the current user.</param>
     /// <param name="model">The model containing the contest participation start details, including the contest id and whether it is official.</param>
     /// <param name="cacheSeconds">Seconds to cache.</param>
     /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
-    Task<ContestServiceModel> GetContestServiceModelForContest(
+    Task<ContestServiceModel?> GetContestServiceModelForContest(
         int contestId,
-        UserInfoModel user,
         StartContestParticipationServiceModel model,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds);
 }

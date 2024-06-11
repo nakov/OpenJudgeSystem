@@ -294,11 +294,10 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var contest =
-                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, user, model);
+                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, model);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest.Map<Contest>(),
-                model.ContestId,
+                contest,
                 user,
                 model.IsOfficial)!);
 
