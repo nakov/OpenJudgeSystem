@@ -78,7 +78,6 @@ const ContestsPage = () => {
     const [ getAllContestsQuery, {
         data: allContests,
         error: allContestsError,
-        isLoading: areContestsLoading,
         isFetching: areContestsFetching,
     } ] = useLazyGetAllContestsQuery();
 
