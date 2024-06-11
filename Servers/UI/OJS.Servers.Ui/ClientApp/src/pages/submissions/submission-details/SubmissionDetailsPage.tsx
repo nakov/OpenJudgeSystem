@@ -130,10 +130,14 @@ const SubmissionDetailsPage = () => {
         const { allowBinaryFilesUpload } = submissionType || {};
         /*
             The data will not be loaded when the submission is being retested.
-            The test runs are 0 when there is a compilation error on the
-            submission, or it is being retested.
+            -> '!isRetestingStarted' - the submission's retesting has not been started,
+                the data should be loaded.
+            -> 'testRuns && testRuns.length !== 0' - if the tests' count is not 0, then the
+                submission is not being retested, the data should be loaded.
+            -> '!isCompiledSuccessfully' - if the submission is not compiled successfully,
+                the data should be loaded.
          */
-        const shouldLoadData = !isRetestingStarted && (testRuns && testRuns.length !== 0);
+        const shouldLoadData = !isRetestingStarted && ((testRuns && testRuns.length !== 0) || !isCompiledSuccessfully);
 
         return (
             <>
@@ -192,6 +196,7 @@ const SubmissionDetailsPage = () => {
         completedExecutionOn,
         modifiedOn,
         startedExecutionOn,
+        isCompiledSuccessfully,
     ]);
 
     const renderSolutionTestDetails = useCallback(() => {
