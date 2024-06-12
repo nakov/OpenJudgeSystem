@@ -67,7 +67,7 @@ public class GridDataService<TEntity>
         var results =
             await this.GetNonPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter));
 
-        return this.excelService.ExportResults(results);
+        return this.excelService.ExportResults<TModel?>(new Dictionary<string, IEnumerable<TModel?>>() { ["Results"] = results });
     }
 
     public async Task<FileResponseModel> GetExcelResults<TModel>(
@@ -79,7 +79,7 @@ public class GridDataService<TEntity>
         var results =
             await this.GetNonPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQuery(filter, orderBy, descendingOrder));
 
-        return this.excelService.ExportResults(results);
+        return this.excelService.ExportResults<TModel?>(new Dictionary<string, IEnumerable<TModel?>>() { ["Results"] = results });
     }
 
     public async Task<FileResponseModel> GetExcelResultsForUser<TModel>(
@@ -90,7 +90,7 @@ public class GridDataService<TEntity>
         var results =
             await this.GetNonPagedResultFromQuery<TModel>(paginationRequestModel, this.dataService.GetQueryForUser(user, filter));
 
-        return this.excelService.ExportResults(results);
+        return this.excelService.ExportResults<TModel?>(new Dictionary<string, IEnumerable<TModel?>>() { ["Results"] = results });
     }
 
     private static IEnumerable<FilteringModel> MapFilterStringToCollection<T>(PaginationRequestModel paginationRequestModel)
