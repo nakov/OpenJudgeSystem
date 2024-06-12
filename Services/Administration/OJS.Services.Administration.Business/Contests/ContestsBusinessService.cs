@@ -208,7 +208,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             model.Duration = null;
         }
 
-        var originalIsVisibleState = contest!.IsVisible;
         var originalContestPassword = contest!.ContestPassword;
         var originalPracticePassword = contest!.PracticePassword;
 
@@ -222,7 +221,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         contest.IpsInContests.Clear();
         await this.AddIpsToContest(contest, model.AllowedIps);
 
-        this.ClearContestCache(contest, model, originalIsVisibleState, originalContestPassword, originalPracticePassword);
+        this.ClearContestCache(contest);
 
         this.contestsData.Update(contest);
         await this.contestsData.SaveChanges();
@@ -378,21 +377,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         }
     }
 
-    private void ClearContestCache(
-        Contest contest,
-        ContestAdministrationModel model,
-        bool originalIsVisibleState,
-        string? originalContestPassword,
-        string? originalPracticePassword)
-    {
-        if (contest.IsDeleted ||
-            originalIsVisibleState != model.IsVisible ||
-            originalContestPassword != model.ContestPassword ||
-            originalPracticePassword != model.PracticePassword)
-        {
-            this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
-        }
-    }
+    private void ClearContestCache(Contest contest) =>
+        this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
 
     private IEnumerable<Submission> GetAllSubmissions(int participantId, int problemId) =>
         this.submissionsDataService
