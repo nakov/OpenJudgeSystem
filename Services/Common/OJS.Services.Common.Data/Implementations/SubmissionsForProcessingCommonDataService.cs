@@ -7,6 +7,7 @@ using OJS.Common.Helpers;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Models.Submissions;
+using OJS.Services.Infrastructure.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
     public Task<SubmissionForProcessing?> GetBySubmission(int submissionId)
         => this.GetQuery(s => s.SubmissionId == submissionId)
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync();
 
     public IQueryable<SubmissionForProcessing> GetAllPending()
@@ -81,7 +83,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
         if (submissionForProcessing == null)
         {
-            return;
+            throw new BusinessServiceException(
+                $"Submission for processing for Submission with ID {submissionId} not found in the database.");
         }
 
         submissionForProcessing.Processing = true;
@@ -125,7 +128,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
 
         if (submissionForProcessing == null)
         {
-            return;
+            throw new BusinessServiceException(
+                $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
         }
 
         submissionForProcessing.Processing = false;
