@@ -1,15 +1,15 @@
-﻿namespace OJS.Services.Administration.Data.Excel
+﻿namespace OJS.Services.Administration.Data.Excel;
+
+using OJS.Services.Common.Models.Contests.Results;
+using OJS.Services.Common.Models.Files;
+using OJS.Services.Infrastructure;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ClosedXML.Excel;
+
+public interface IExcelService : IService
 {
-    using OJS.Services.Common.Models.Contests.Results;
-    using OJS.Services.Common.Models.Files;
-    using OJS.Services.Infrastructure;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+    Task<FileResponseModel> ExportContestResultsToExcel(ContestResultsViewModel contestResults, string fileName);
 
-    public interface IExcelService : IService
-    {
-        Task<FileResponseModel> ExportContestResultsToExcel(ContestResultsViewModel contestResults, string fileName);
-
-        FileResponseModel ExportResults<TModel>(IEnumerable<TModel?> items);
-    }
+    FileResponseModel ExportResults<TModel>(Dictionary<string, IEnumerable<TModel?>> data);
 }
