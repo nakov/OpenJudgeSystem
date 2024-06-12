@@ -19,6 +19,7 @@ import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/auth
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import concatClassNames from '../../utils/class-names';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { getPlatformForgottenPasswordUrl } from '../../utils/urls';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
 import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
@@ -203,7 +204,8 @@ const LoginForm = () => {
                         <div>
                             <LinkButton
                               type={LinkButtonType.plain}
-                              to="/Account/ExternalNotify"
+                              to={getPlatformForgottenPasswordUrl()}
+                              isToExternal
                               className={styles.loginFormLink}
                             >
                                 Forgotten password
