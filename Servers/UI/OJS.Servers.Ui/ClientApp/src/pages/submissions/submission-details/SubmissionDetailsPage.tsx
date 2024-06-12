@@ -182,6 +182,7 @@ const SubmissionDetailsPage = () => {
         completedExecutionOn,
         modifiedOn,
         startedExecutionOn,
+        workerName,
     ]);
 
     const renderSolutionTestDetails = useCallback(() => {
