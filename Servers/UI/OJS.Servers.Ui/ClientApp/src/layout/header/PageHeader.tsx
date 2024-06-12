@@ -36,19 +36,22 @@ const PageHeader = () => {
     const {
         data: userData,
         isSuccess: isSuccessfulRequest,
+        isFetching: isUserDataFetching,
     } = useGetUserinfoQuery(null);
 
     useEffect(() => {
-        if (isSuccessfulRequest && userData) {
-            dispatch(setInternalUser(userData));
-            dispatch(setIsLoggedIn(true));
-        } else {
-            dispatch(resetInInternalUser());
-            dispatch(setIsLoggedIn(false));
+        if (!isUserDataFetching) {
+            if (isSuccessfulRequest && userData) {
+                dispatch(setInternalUser(userData));
+                dispatch(setIsLoggedIn(true));
+            } else {
+                dispatch(resetInInternalUser());
+                dispatch(setIsLoggedIn(false));
+            }
         }
 
-        dispatch(setIsGetUserInfoCompleted(true));
-    }, [ isSuccessfulRequest, userData, dispatch ]);
+        dispatch(setIsGetUserInfoCompleted(!isUserDataFetching));
+    }, [ isLoggedIn, isUserDataFetching, isSuccessfulRequest, userData, dispatch ]);
 
     useEffect(() => {
         const handleResize = () => {
