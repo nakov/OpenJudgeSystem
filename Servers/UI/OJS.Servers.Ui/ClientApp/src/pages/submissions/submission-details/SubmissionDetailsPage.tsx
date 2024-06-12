@@ -80,6 +80,7 @@ const SubmissionDetailsPage = () => {
         modifiedOn,
         startedExecutionOn,
         completedExecutionOn,
+        workerName,
         userIsInRoleForContest,
         isOfficial,
     } = data || {};
@@ -159,6 +160,10 @@ const SubmissionDetailsPage = () => {
                                 <div className={styles.detailsRow}>
                                     <span>Completed Execution on:</span>
                                     {completedExecutionOn && <span>{preciseFormatDate(completedExecutionOn)}</span>}
+                                </div>
+                                <div className={styles.detailsRow}>
+                                    <span>Worker Executed on:</span>
+                                    <span>{workerName}</span>
                                 </div>
                             </>
                         )}

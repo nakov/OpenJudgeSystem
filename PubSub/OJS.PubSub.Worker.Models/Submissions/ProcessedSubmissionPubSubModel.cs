@@ -24,6 +24,8 @@ public class ProcessedSubmissionPubSubModel : IMapExplicitly
 
     public DateTime? CompletedExecutionOn { get; set; }
 
+    public string? WorkerName { get; set; }
+
     public void SetExecutionResult(ExecutionResultServiceModel executionResultModel)
     {
         this.ExecutionResult = executionResultModel;
