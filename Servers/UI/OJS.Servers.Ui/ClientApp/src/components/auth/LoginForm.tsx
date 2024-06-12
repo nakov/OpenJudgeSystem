@@ -19,7 +19,9 @@ import { setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../..
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import concatClassNames from '../../utils/class-names';
+import { getErrorMessage } from '../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { getPlatformForgottenPasswordUrl } from '../../utils/urls';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
 import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
@@ -39,15 +41,16 @@ const LoginForm = () => {
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
 
-    const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
     const navigate = useNavigate();
-    const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
     const location = useLocation();
     const dispatch = useAppDispatch();
     const { resetCache } = cacheService();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
+
+    const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
+    const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
 
     const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -100,8 +103,9 @@ const LoginForm = () => {
             resetCache();
             return;
         }
-        if (error && 'error' in error) {
-            setLoginErrorMessage(error.data as string);
+
+        if (error) {
+            setLoginErrorMessage(getErrorMessage(error));
         }
     }, [ isSuccess, error, refetch, location.state, navigate, resetCache ]);
 
@@ -128,6 +132,16 @@ const LoginForm = () => {
         */
 
         setHasPressedLoginBtn(true);
+
+        if (isEmpty(userName)) {
+            handleOnChangeUpdateUsername('');
+            return;
+        }
+
+        if (isEmpty(password)) {
+            handleOnChangeUpdatePassword('');
+            return;
+        }
 
         if (!isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
             return;
@@ -206,7 +220,8 @@ const LoginForm = () => {
                         <div>
                             <LinkButton
                               type={LinkButtonType.plain}
-                              to="/Account/ExternalNotify"
+                              to={getPlatformForgottenPasswordUrl()}
+                              isToExternal
                               className={styles.loginFormLink}
                             >
                                 Forgotten password

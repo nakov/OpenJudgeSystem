@@ -50,6 +50,8 @@ const getLoginPath = () => '/login';
 const getUserAuthInfoUrl = () => `${baseApiUrl}/Users/GetUserAuthInfo`;
 const getPlatformRegisterUrl = () => `${platformBaseUrl}/identity/register?returnUrl=${encodeURIComponent(getLoginPageUrl())}`;
 
+const getPlatformForgottenPasswordUrl = () => `${platformBaseUrl}/account/forgottenpassword`;
+
 // admin
 const getAdministrationContestsGridUrl = () => `${administrationBaseUrl}/Contests`;
 const getAdministrationNavigation = () => '/administration';
@@ -246,6 +248,7 @@ export {
     getSearchResultsUrl,
     getUserAuthInfoUrl,
     getPlatformRegisterUrl,
+    getPlatformForgottenPasswordUrl,
     getAdministrationContestsGridUrl,
     getAdministrationNavigation,
     getAdministrationRetestSubmission,
