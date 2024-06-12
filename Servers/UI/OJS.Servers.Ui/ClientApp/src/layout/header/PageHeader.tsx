@@ -51,7 +51,7 @@ const PageHeader = () => {
         }
 
         dispatch(setIsGetUserInfoCompleted(!isUserDataFetching));
-    }, [ isLoggedIn, isUserDataFetching, isSuccessfulRequest, userData, dispatch ]);
+    }, [ isUserDataFetching, isSuccessfulRequest, userData, dispatch ]);
 
     useEffect(() => {
         const handleResize = () => {
