@@ -24,7 +24,7 @@ const PrivatePage = ({ children }: IPrivatePageProps) => {
 
         // eslint-disable-next-line react/jsx-no-useless-fragment
         return <>{children}</>;
-    }, [ location, isLoggedIn, children ]);
+    }, [ isLoggedIn, children, location ]);
 
     return renderPageOrRedirectToLogin();
 };
