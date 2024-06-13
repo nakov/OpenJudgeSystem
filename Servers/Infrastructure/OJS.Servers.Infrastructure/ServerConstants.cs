@@ -8,6 +8,11 @@ namespace OJS.Servers.Infrastructure
             public const string LoggedInUsername = "logged_in_username";
         }
 
+        public static class UrlParameters
+        {
+            public const string ApiKey = "apiKey";
+        }
+
         public static class ViewDataKeys
         {
             public const string ReturnUrl = "ReturnUrl";

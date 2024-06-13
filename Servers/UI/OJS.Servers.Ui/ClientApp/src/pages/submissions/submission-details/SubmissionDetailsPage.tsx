@@ -81,6 +81,7 @@ const SubmissionDetailsPage = () => {
         modifiedOn,
         startedExecutionOn,
         completedExecutionOn,
+        workerName,
         userIsInRoleForContest,
         isOfficial,
         maxPoints,
@@ -177,6 +178,10 @@ const SubmissionDetailsPage = () => {
                                     <span>Completed Execution on:</span>
                                     {completedExecutionOn && shouldLoadData && <span>{preciseFormatDate(completedExecutionOn)}</span>}
                                 </div>
+                                <div className={styles.detailsRow}>
+                                    <span>Worker Executed on:</span>
+                                    <span>{workerName}</span>
+                                </div>
                             </>
                         )}
                     </div>
@@ -197,6 +202,7 @@ const SubmissionDetailsPage = () => {
         modifiedOn,
         startedExecutionOn,
         isCompiledSuccessfully,
+        workerName,
     ]);
 
     const renderSolutionTestDetails = useCallback(() => {

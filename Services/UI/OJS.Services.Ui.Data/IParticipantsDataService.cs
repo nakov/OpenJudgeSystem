@@ -24,6 +24,8 @@ namespace OJS.Services.Ui.Data
 
         IQueryable<Participant> GetAllByContest(int contestId);
 
+        IQueryable<Participant> GetAllByContestWithScoresAndProblems(int contestId);
+
         IQueryable<Participant> GetAllOfficialByContest(int contestId);
 
         IQueryable<Participant> GetAllOfficialInOnlineContestByContestAndParticipationStartTimeRange(

@@ -139,7 +139,11 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     };
 
     if (areCategoriesLoading) {
-        return <SpinningLoader />;
+        return (
+            <div className={styles.contestCategoriesWrapper}>
+                <SpinningLoader />
+            </div>
+        );
     }
     return (
         <div className={styles.contestCategoriesWrapper}>

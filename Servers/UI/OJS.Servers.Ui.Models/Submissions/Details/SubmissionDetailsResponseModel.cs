@@ -47,11 +47,13 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public DateTime? CompletedExecutionOn { get; set; }
+
+        public string? WorkerName { get; set; }
+
         public string? ProcessingComment { get; set; }
 
         public int TotalTests { get; set; }
-
-        public DateTime? CompletedExecutionOn { get; set; }
 
         public int ContestId { get; set; }
 

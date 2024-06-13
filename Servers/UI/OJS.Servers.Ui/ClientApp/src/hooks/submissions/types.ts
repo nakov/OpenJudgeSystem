@@ -85,6 +85,7 @@ interface ISubmissionDetailsResponseType {
     modifiedOn: Date;
     startedExecutionOn: Date;
     completedExecutionOn: Date;
+    workerName: string | null;
     processingComment: string | null;
     totalTests: number;
     contestId: number;
