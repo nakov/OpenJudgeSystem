@@ -30,6 +30,7 @@ const LogoutPage = () => {
             await wait(0.7);
             window.location.href = '/';
         })();
+        // Adding resetCache as dependency results in logout request being made multiple times
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ logout ]);
 
