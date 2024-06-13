@@ -29,6 +29,8 @@
 
         public double MaxUsedMemory { get; set; }
 
+        public short MaxPoints { get; set; }
+
         public bool IsOfficial { get; set; }
 
         public bool IsCompiledSuccessfully { get; set; }
