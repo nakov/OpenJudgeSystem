@@ -297,7 +297,8 @@ namespace OJS.Services.Ui.Business.Implementations
                 await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, model);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest,
+                contest?.Map<Contest>(),
+                model.ContestId,
                 user,
                 model.IsOfficial)!);
 

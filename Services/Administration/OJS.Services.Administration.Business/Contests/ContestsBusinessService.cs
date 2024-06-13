@@ -221,7 +221,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         contest.IpsInContests.Clear();
         await this.AddIpsToContest(contest, model.AllowedIps);
 
-        this.ClearContestCache(contest);
+        this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
 
         this.contestsData.Update(contest);
         await this.contestsData.SaveChanges();
@@ -376,9 +376,6 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             await this.participantsData.InvalidateByContestAndIsOfficial(contest.Id, isOfficial: false);
         }
     }
-
-    private void ClearContestCache(Contest contest) =>
-        this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
 
     private IEnumerable<Submission> GetAllSubmissions(int participantId, int problemId) =>
         this.submissionsDataService
