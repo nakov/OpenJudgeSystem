@@ -1,6 +1,7 @@
 namespace OJS.Services.Worker.Business.Implementations;
 
 using Microsoft.Extensions.Logging;
+using OJS.Workers.Common.Helpers;
 using System;
 using System.Linq;
 using System.Net;
@@ -14,7 +15,9 @@ public class HostInfoService : IHostInfoService
         => this.logger = logger;
 
     public string GetHostName()
-        => Dns.GetHostName();
+        => OsPlatformHelpers.IsDocker()
+            ? "host.docker.internal"
+            : Dns.GetHostName();
 
     public IPAddress? GetHostIpv4Address()
     {
