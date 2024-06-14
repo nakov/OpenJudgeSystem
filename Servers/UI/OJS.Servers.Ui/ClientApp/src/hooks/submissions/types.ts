@@ -90,6 +90,7 @@ interface ISubmissionDetailsResponseType {
     totalTests: number;
     contestId: number;
     contestCategoryId: number;
+    maxPoints: number;
 }
 
 interface ISubmissionResults {

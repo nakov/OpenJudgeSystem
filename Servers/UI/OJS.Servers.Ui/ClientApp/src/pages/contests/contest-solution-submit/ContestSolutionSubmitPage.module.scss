@@ -69,18 +69,6 @@
   .rotate {
     animation: rotate 1s linear infinite;
   }
-
-  .refreshButton {
-    align-items: center;
-    background-color: colors.$color-btn-secondary;
-    border-radius: spacings.$sp-4;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    font-size: spacings.$sp-16;
-    margin: 0 1rem;
-    padding: spacings.$sp-8 spacings.$sp-12;
-  }
 }
 
 .problemDetailsWrapper {

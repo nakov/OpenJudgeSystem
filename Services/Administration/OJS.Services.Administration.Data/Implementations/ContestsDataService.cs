@@ -149,6 +149,13 @@ namespace OJS.Services.Administration.Data.Implementations
                     c.Id == id &&
                     c.ExamGroups.Any(eg => eg.UsersInExamGroups.Any(u => u.UserId == userId)));
 
+        public async Task<IEnumerable<string>> GetProblemNamesById(int id)
+            => await this.GetByIdQuery(id)
+                .SelectMany(c => c.ProblemGroups)
+                .SelectMany(pg => pg.Problems)
+                .Select(p => p.Name)
+                .ToListAsync();
+
         // Lecturers can see contests in which they are lecturers or contests that are in a category for which they are lecturers.
         protected override Expression<Func<Contest, bool>> GetUserFilter(UserInfoModel user)
             => contest => user.IsAdmin ||

@@ -36,17 +36,36 @@ public class ExcelService : IExcelService
         return new FileResponseModel(outputStream.ToArray(), fileName, GlobalConstants.MimeTypes.ExcelSheet);
     }
 
-    public FileResponseModel ExportResults<TModel>(IEnumerable<TModel?> items)
+    public FileResponseModel ExportResults<TModel>(Dictionary<string, IEnumerable<TModel?>> data)
+    {
+        // Create new Excel workbook
+        var workbook = new XLWorkbook();
+
+        foreach (var sheetName in data.Keys)
+        {
+            WriteData(data[sheetName], workbook, sheetName);
+        }
+
+        // Write the workbook to a memory stream
+        var outputStream = new MemoryStream();
+
+        workbook.SaveAs(outputStream);
+
+        // Return the result to the end user
+        return new FileResponseModel(
+            outputStream.ToArray(), // The binary data of the XLS file
+            $"{this.GetType().Name}.xls",
+            GlobalConstants.MimeTypes.ExcelSheet);
+    }
+
+    private static void WriteData<TModel>(IEnumerable<TModel?> items, XLWorkbook workbook, string sheetName)
     {
             Type dataType = items.GetType().GetGenericArguments()[0];
 
             var dataTypeProperties = dataType.GetProperties();
 
-            // Create new Excel workbook
-            var workbook = new XLWorkbook();
-
             // Create new Excel sheet
-            var sheet = workbook.Worksheets.Add("Results");
+            var sheet = workbook.Worksheets.Add(sheetName);
 
             // Create a header row
             var columnNumber = 1;
@@ -114,17 +133,6 @@ public class ExcelService : IExcelService
             }
 
             sheet.Columns().AdjustToContents();
-
-            // Write the workbook to a memory stream
-            var outputStream = new MemoryStream();
-
-            workbook.SaveAs(outputStream);
-
-            // Return the result to the end user
-            return new FileResponseModel(
-                outputStream.ToArray(), // The binary data of the XLS file
-                $"{this.GetType().Name}.xls",
-                GlobalConstants.MimeTypes.ExcelSheet);
     }
 
     private static void FillSheetWithParticipantResults(IXLWorksheet sheet, ContestResultsViewModel contestResults)
