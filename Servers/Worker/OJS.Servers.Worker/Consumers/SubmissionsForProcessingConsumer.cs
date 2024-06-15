@@ -33,10 +33,9 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
     public async Task Consume(ConsumeContext<SubmissionForProcessingPubSubModel> context)
     {
         var message = context.Message;
-        var ipv4Address = this.hostInfoService.GetHostIpv4Address();
         var result = new ProcessedSubmissionPubSubModel(message.Id)
         {
-            WorkerName = ipv4Address?.ToString() ?? this.hostInfoService.GetHostName(),
+            WorkerName = this.hostInfoService.GetHostIp(),
         };
 
         this.logger.LogInformation("Starting processing submission with id: {SubmissionId} on worker: {WorkerName}", message.Id, result.WorkerName);
