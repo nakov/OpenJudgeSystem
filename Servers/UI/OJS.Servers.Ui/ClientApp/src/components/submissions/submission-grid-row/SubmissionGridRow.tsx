@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
 
-import { contestParticipationType } from '../../../common/contest-helpers';
 import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
@@ -17,7 +16,7 @@ import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import {
     encodeAsUrlParam,
-    getParticipateInContestUrl,
+    getContestDetailsAppUrl,
     getSubmissionDetailsRedirectionUrl,
     getUserProfileInfoUrlByUsername,
 } from '../../../utils/urls';
@@ -77,8 +76,6 @@ const SubmissionGridRow = ({
         ? getDecodedUsernameFromProfile()
         : user;
 
-    const participationType = contestParticipationType(isOfficial);
-
     const handleDetailsButtonSubmit = useCallback(
         () => {
             const submissionDetailsUrl = getSubmissionDetailsRedirectionUrl({ submissionId });
@@ -90,14 +87,11 @@ const SubmissionGridRow = ({
 
     const handleParticipateInContestSubmit = useCallback(
         () => {
-            const participateInContestUrl = getParticipateInContestUrl({
-                id: contestId,
-                participationType,
-            });
+            const contestDetailsUrl = getContestDetailsAppUrl(contestId);
 
-            initiateRedirectionToProblem(problemId, participateInContestUrl);
+            initiateRedirectionToProblem(problemId, contestDetailsUrl);
         },
-        [ contestId, participationType, problemId, initiateRedirectionToProblem ],
+        [ contestId, problemId, initiateRedirectionToProblem ],
     );
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
