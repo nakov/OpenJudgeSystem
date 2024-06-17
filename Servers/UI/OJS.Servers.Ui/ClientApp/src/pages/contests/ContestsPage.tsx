@@ -5,7 +5,7 @@ import { SortType } from '../../common/contest-types';
 import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
-import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
+import { ContestCategories } from '../../components/contests/contest-categories/ContestCategories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
@@ -119,7 +119,7 @@ const ContestsPage = () => {
         <div>
             <ContestBreadcrumbs />
             <div className={styles.contestsContainer}>
-                <ContestCetegories />
+                <ContestCategories />
                 <div style={{ width: '100%' }}>
                     <div className={`${styles.headingWrapper} ${textColorClassName}`}>
                         <div>

@@ -3,7 +3,7 @@ import { IconType } from 'react-icons';
 import { FaCode, FaDeezer, FaPuzzlePiece, FaTasks, FaTrophy, FaUsers } from 'react-icons/fa';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 
-import { ContestCetegories } from '../../components/contests/contest-categories/ContestCetegories';
+import { ContestCategories } from '../../components/contests/contest-categories/ContestCategories';
 import IconSize from '../../components/guidelines/icons/common/icon-sizes';
 import Icon from '../../components/guidelines/icons/Icon';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
@@ -102,7 +102,7 @@ const HomePage = () => {
 
     return (
         <div className={styles.homePageWrapper}>
-            <ContestCetegories isRenderedOnHomePage />
+            <ContestCategories isRenderedOnHomePage />
             <div className={styles.homePageContentWrapper}>
                 <div className={styles.homePageHeader}>How to use SoftUni Judge Platform</div>
                 <LiteYouTubeEmbed

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
 import { IContestCategory } from '../../../common/types';
+import usePreserveScrollPosition from '../../../hooks/common/use-preserve-scroll-position';
 import useTheme from '../../../hooks/use-theme';
 import {
     setContestCategories,
@@ -27,7 +28,8 @@ interface IContestCategoriesProps {
     isRenderedOnHomePage?: boolean;
 }
 
-const ContestCetegories = (props: IContestCategoriesProps) => {
+const ContestCategories = (props: IContestCategoriesProps) => {
+    usePreserveScrollPosition();
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
@@ -45,6 +47,9 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
 
     const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
 
+    // Use the custom hook to preserve scroll position
+    const saveScrollPosition = usePreserveScrollPosition();
+
     useEffect(() => {
         dispatch(setContestCategories({ contestCategories: contestCategories || [] }));
     }, [ contestCategories, dispatch ]);
@@ -59,14 +64,17 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     }, [ selectedId, contestCategories ]);
 
     const onContestCategoryClick = (id: number) => {
+        saveScrollPosition();
         if (isRenderedOnHomePage) {
             navigate(`/contests?category=${id}`);
             return;
         }
+
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
         if (!selectedContestCategory) {
             return;
         }
+
         const parents = findParentNames(contestCategories, selectedContestCategory?.id);
         // click is on already selected category
         if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
@@ -244,4 +252,4 @@ const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | und
     return false;
 };
 
-export { ContestCetegories, findContestCategoryByIdRecursive, findParentNames };
+export { ContestCategories, findContestCategoryByIdRecursive, findParentNames };
