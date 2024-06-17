@@ -1,16 +1,16 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const usePreserveScrollPosition = (key = 'scrollPosition') => {
     const location = useLocation();
     const currentPathname = location.pathname;
 
-    // Save scroll position before state change or navigation
-    const saveScrollPosition = () => {
+    const saveScrollPosition = useCallback(() => {
         sessionStorage.setItem(key, window.scrollY.toString());
-    };
+    }, [ key ]);
 
-    // Restore scroll position after component mounts
+    // Wrapping this in useCallback breaks solution
+    // as 'key' is needed to be dependency and it changes frequently
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const restoreScrollPosition = () => {
         const savedPosition = sessionStorage.getItem(key);
@@ -19,7 +19,6 @@ const usePreserveScrollPosition = (key = 'scrollPosition') => {
         }
     };
 
-    // Save scroll position before navigation
     useEffect(() => {
         const handleBeforeUnload = () => {
             saveScrollPosition();
@@ -30,17 +29,14 @@ const usePreserveScrollPosition = (key = 'scrollPosition') => {
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ key ]);
+    }, [ key, saveScrollPosition ]);
 
-    // Restore scroll position on mount
     useEffect(() => {
         restoreScrollPosition();
     }, [ key, restoreScrollPosition ]);
 
     // Reset scroll position on URL change
     useEffect(() => {
-        console.log(`location change ${currentPathname}`);
         sessionStorage.setItem(key, '0');
     }, [ currentPathname, key ]);
 
