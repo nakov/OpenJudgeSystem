@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { FaFlagCheckered } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
 
@@ -38,6 +39,7 @@ const SubmissionGridRow = ({
     submission,
     options,
 }: ISubmissionGridRowProps) => {
+    const navigate = useNavigate();
     const { isDarkMode, getColorClassName, themeColors } = useTheme();
     const {
         id: submissionId,
@@ -87,11 +89,9 @@ const SubmissionGridRow = ({
 
     const handleParticipateInContestSubmit = useCallback(
         () => {
-            const contestDetailsUrl = getContestDetailsAppUrl(contestId);
-
-            initiateRedirectionToProblem(problemId, contestDetailsUrl);
+            navigate(getContestDetailsAppUrl(contestId));
         },
-        [ contestId, problemId, initiateRedirectionToProblem ],
+        [ navigate, contestId ],
     );
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
