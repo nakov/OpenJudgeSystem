@@ -6,7 +6,7 @@
         {
         }
 
-        public bool IsCorrect { get; set; } = false;
+        public bool IsCorrect { get; set; }
 
         public CheckerResultType ResultType { get; set; } = default;
 
