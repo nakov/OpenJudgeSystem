@@ -43,7 +43,6 @@ const SearchPage = () => {
     const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { getColorClassName, themeColors } = useTheme();
-    usePreserveScrollPosition();
     const saveScrollPosition = usePreserveScrollPosition();
     const { searchValue, selectedTerms } = useAppSelector((state) => state.search);
 
@@ -211,7 +210,7 @@ const SearchPage = () => {
                     : renderData()}
             </div>
         );
-    }, [ searchParams, selectedContestsPage, selectedProblemsPage, selectedUsersPage, setSearchParams ]);
+    }, [ saveScrollPosition, searchParams, selectedContestsPage, selectedProblemsPage, selectedUsersPage, setSearchParams ]);
 
     return (
         <div className={`${styles.searchPageWrapper} ${textColorClassName}`}>

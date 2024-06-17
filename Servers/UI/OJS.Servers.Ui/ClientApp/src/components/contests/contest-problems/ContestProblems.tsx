@@ -24,7 +24,6 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const { hash } = useLocation();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    usePreserveScrollPosition();
     const saveScrollPosition = usePreserveScrollPosition();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);

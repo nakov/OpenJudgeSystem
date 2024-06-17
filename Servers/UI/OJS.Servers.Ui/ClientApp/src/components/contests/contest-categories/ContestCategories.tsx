@@ -35,7 +35,6 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
-    usePreserveScrollPosition();
     const saveScrollPosition = usePreserveScrollPosition();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
