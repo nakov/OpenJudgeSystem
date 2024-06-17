@@ -49,6 +49,7 @@
         // Environment variables
         public const string AspNetCoreEnvironmentVariable = "ASPNETCORE_ENVIRONMENT";
         public const string RunsInDockerEnvironmentVariable = "DOTNET_RUNNING_IN_CONTAINER";
+        public const string HostIpEnvironmentVariable = "HOST_IP";
 
         // Runtime constants
         public const string NewLineUnix = "\n";

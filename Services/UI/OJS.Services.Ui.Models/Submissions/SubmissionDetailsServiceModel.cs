@@ -28,6 +28,8 @@
 
         public double MaxUsedMemory { get; set; }
 
+        public short MaxPoints { get; set; }
+
         public SubmissionTypeForSubmissionDetailsServiceModel SubmissionType { get; set; } = null!;
 
         public bool IsOfficial { get; set; }
@@ -52,11 +54,13 @@
 
         public DateTime? StartedExecutionOn { get; set; }
 
+        public DateTime? CompletedExecutionOn { get; set; }
+
+        public string? WorkerName { get; set; }
+
         public string? ProcessingComment { get; set; }
 
         public int TotalTests => this.Tests.Count();
-
-        public DateTime? CompletedExecutionOn { get; set; }
 
         public int ContestId { get; set; }
 
@@ -86,6 +90,7 @@
                 .ForMember(d => d.Tests, opt => opt.MapFrom(s => s.Problem.Tests))
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.ContestId))
                 .ForMember(d => d.ContestCategoryId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.Contest.CategoryId))
+                .ForMember(d => d.MaxPoints, opt => opt.MapFrom(s => s.Problem.MaximumPoints))
                 .ForMember(d => d.TotalTests, opt => opt.Ignore())
                 .ForMember(s => s.UserIsInRoleForContest, opt => opt.Ignore())
                 .ForMember(s => s.IsEligibleForRetest, opt => opt.Ignore());

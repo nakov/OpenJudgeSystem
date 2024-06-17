@@ -68,10 +68,21 @@
   text-align: center;
 }
 
-.errorMessage {
-  color: colors.$primary-red;
+%loginFormMessage {
   margin-top: 10px;
   text-align: center;
+}
+
+.errorMessage {
+  @extend %loginFormMessage;
+
+  color: colors.$primary-red;
+}
+
+.warningMessage {
+  @extend %loginFormMessage;
+
+  color: colors.$warning-color;
 }
 
 .loginFormLoader {

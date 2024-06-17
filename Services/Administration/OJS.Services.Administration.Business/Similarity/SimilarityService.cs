@@ -11,24 +11,41 @@ using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Similarity;
 using OJS.Workers.Common.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Linq;
 
 public class SimilarityService : ISimilarityService
 {
     private readonly ISubmissionsDataService submissionsDataService;
+    private readonly IContestsDataService contestsDataService;
     private readonly ISimilarityDetectorFactory similarityDetectorFactory;
     private readonly ISimilarityFinder similarityFinder;
     private readonly int minSubmissionPointsToCheckForSimilarity = 20;
 
-    public SimilarityService(ISubmissionsDataService submissionsDataService, ISimilarityDetectorFactory similarityDetectorFactory, ISimilarityFinder similarityFinder)
+    public SimilarityService(
+        ISubmissionsDataService submissionsDataService,
+        IContestsDataService contestsDataService,
+        ISimilarityDetectorFactory similarityDetectorFactory,
+        ISimilarityFinder similarityFinder)
     {
         this.submissionsDataService = submissionsDataService;
+        this.contestsDataService = contestsDataService;
         this.similarityDetectorFactory = similarityDetectorFactory;
         this.similarityFinder = similarityFinder;
     }
 
-    public IEnumerable<SubmissionSimilarityViewModel> GetSubmissionSimilarities(SimillarityCheckModel model)
+    public async Task<Dictionary<string, IEnumerable<SubmissionSimilarityViewModel?>>> GetSubmissionSimilarities(SimillarityCheckModel model)
     {
+        // The 'ContestIds' always contains a single contest id, belonging to the contest for which the similarity check is being done.
+        var problemNames = await this.contestsDataService.GetProblemNamesById(model.ContestIds![0]);
+
+        var similarities = new Dictionary<string, IEnumerable<SubmissionSimilarityViewModel?>>();
+
+        foreach (var problemName in problemNames)
+        {
+            similarities.Add(problemName, new List<SubmissionSimilarityViewModel>());
+        }
+
         var participantsSimilarSubmissionGroups =
             this.GetSimilarSubmissions(model)
                 .Select(s => new
@@ -51,7 +68,6 @@ public class SimilarityService : ISimilarityService
 
         var plagiarismDetector = this.GetPlagiarismDetector(model.SimilarityCheckType);
 
-        var similarities = new List<SubmissionSimilarityViewModel>();
         for (var index = 0; index < filter.Count; index++)
         {
             var groupOfSubmissions = filter[index].ToList();
@@ -95,7 +111,7 @@ public class SimilarityService : ISimilarityService
 
                     if (save && result.SimilarityPercentage != 0)
                     {
-                        similarities.Add(new SubmissionSimilarityViewModel
+                        similarities[groupOfSubmissions[i]!.ProblemName] = similarities[groupOfSubmissions[i]!.ProblemName].Append(new SubmissionSimilarityViewModel
                         {
                             ProblemName = groupOfSubmissions[i]!.ProblemName,
                             Points = groupOfSubmissions[i]!.Points,

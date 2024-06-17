@@ -54,5 +54,6 @@ namespace OJS.Services.Administration.Data
         Task<bool> IsUserParticipantInByContestAndUser(int id, string? userId);
 
         Task<bool> IsUserInExamGroupByContestAndUser(int id, string? userId);
+        Task<IEnumerable<string>> GetProblemNamesById(int id);
     }
 }
