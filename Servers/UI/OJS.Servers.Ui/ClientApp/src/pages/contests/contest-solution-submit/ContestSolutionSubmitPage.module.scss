@@ -55,17 +55,26 @@
       margin-bottom: spacings.$sp-16;
     }
   }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .rotate {
+    animation: rotate 1s linear infinite;
+  }
 }
 
 .problemDetailsWrapper {
   display: flex;
   justify-content: space-between;
   margin: spacings.$sp-24 0;
-}
-
-.adminButtonsAndResourcesWrapper {
-  align-items: center;
-  display: flex;
 }
 
 .adminButtonsContainer {
@@ -76,6 +85,7 @@
 
 .problemResources {
   display: flex;
+  margin-top: spacings.$sp-12;
 }
 
 .selectedProblemWrapper {

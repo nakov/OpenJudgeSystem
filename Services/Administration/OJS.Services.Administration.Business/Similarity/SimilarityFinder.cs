@@ -29,7 +29,7 @@ using System.Text.RegularExpressions;
     /// This circumstance makes the LCS and SMS functions more complicate.
     /// I added some code to the LCS function to get a fast response on sub-arrays that are identical,
     /// completely deleted or inserted.
-    /// The result from a comparisation is stored in 2 arrays that flag for modified (deleted or inserted)
+    /// The result from a comparison is stored in 2 arrays that flag for modified (deleted or inserted)
     /// lines in the 2 data arrays. These bits are then analyzed to produce a array of Item objects.
     /// Further possible optimizations:
     /// (first rule: don't do it; second: don't do it yet)

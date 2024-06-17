@@ -10,8 +10,6 @@
 
     public class TestResultServiceModel : IMapExplicitly
     {
-        public TestResultServiceModel() => this.CheckerDetails = new CheckerDetails();
-
         public int Id { get; set; }
 
         public string ResultType { get; set; } = string.Empty;
@@ -20,7 +18,7 @@
 
         public string Output { get; set; } = string.Empty;
 
-        public CheckerDetails CheckerDetails { get; set; }
+        public CheckerDetails CheckerDetails { get; set; } = new();
 
         public int TimeUsed { get; set; }
 

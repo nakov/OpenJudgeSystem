@@ -14,5 +14,7 @@
         public DateTime? StartedExecutionOn { get; set; }
 
         public DateTime? CompletedExecutionOn { get; set; }
+
+        public string? WorkerName { get; set; }
     }
 }

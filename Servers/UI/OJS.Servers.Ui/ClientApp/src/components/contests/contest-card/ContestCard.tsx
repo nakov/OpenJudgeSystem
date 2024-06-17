@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
 import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
@@ -151,20 +152,27 @@ const ContestCard = (props: IContestCardProps) => {
                         preciseFormatDate(contestStartTime, dateTimeFormatWithSpacing),
                     )}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
-                    {renderContestDetailsFragment(
-                        iconNames.practiceResults,
-                        `practice results: ${practiceResults}`,
-                        false,
-                        true,
-                        'practice',
-                    )}
-                    {renderContestDetailsFragment(
-                        iconNames.competeResults,
-                        `compete results: ${competeResults}`,
-                        true,
-                        true,
-                        'compete',
-                    )}
+                    {
+                        getPracticeResultsAreVisible(contest, internalUser.canAccessAdministration) &&
+                        renderContestDetailsFragment(
+                            iconNames.practiceResults,
+                            `practice results: ${practiceResults}`,
+                            false,
+                            true,
+                            'practice',
+                        )
+}
+                    {
+                        // Null compete points means user is not compete participant
+                        getCompeteResultsAreVisible(contest, internalUser.canAccessAdministration) &&
+                        renderContestDetailsFragment(
+                            iconNames.competeResults,
+                            `compete results: ${competeResults}`,
+                            true,
+                            true,
+                            'compete',
+                        )
+                    }
                     {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&

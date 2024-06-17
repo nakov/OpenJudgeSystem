@@ -5,32 +5,25 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
-import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
-import Button, {
-    ButtonSize,
-    ButtonState,
-    ButtonType,
-    LinkButton,
-    LinkButtonType,
-} from '../../../components/guidelines/buttons/Button';
+import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
+import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
 import SubmissionsGrid from '../../../components/submissions/submissions-grid/SubmissionsGrid';
 import useTheme from '../../../hooks/use-theme';
-import {
-    setContestDetailsIdAndCategoryId,
-} from '../../../redux/features/contestsSlice';
+import { setContestDetailsIdAndCategoryId } from '../../../redux/features/contestsSlice';
 import {
     useGetContestUserParticipationQuery,
     useSubmitContestSolutionFileMutation,
@@ -38,9 +31,14 @@ import {
 } from '../../../redux/services/contestsService';
 import { useLazyGetSubmissionResultsByProblemQuery } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import { calculatedTimeFormatted, transformDaysHoursMinutesTextToMinutes, transformSecondsToTimeSpan } from '../../../utils/dates';
+import {
+    calculatedTimeFormatted,
+    transformDaysHoursMinutesTextToMinutes,
+    transformSecondsToTimeSpan,
+} from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
@@ -61,6 +59,7 @@ const ContestSolutionSubmitPage = () => {
     const [ selectedSubmissionsPage, setSelectedSubmissionsPage ] = useState<number>(1);
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
+    const [ isRotating, setIsRotating ] = useState<boolean>(false);
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -84,6 +83,7 @@ const ContestSolutionSubmitPage = () => {
             data: submissionsData,
             isError: submissionsError,
             isLoading: submissionsDataLoading,
+            isFetching: submissionsDataFetching,
         },
     ] = useLazyGetSubmissionResultsByProblemQuery();
 
@@ -131,6 +131,23 @@ const ContestSolutionSubmitPage = () => {
         () => selectedContestDetailsProblem?.allowedSubmissionTypes?.map((item: ISubmissionTypeType) => ({ id: item.id, name: item.name })),
         [ selectedContestDetailsProblem ],
     );
+
+    const handleRefreshClick = () => {
+        setIsRotating(true);
+        getSubmissionsData({
+            id: Number(selectedContestDetailsProblem!.id),
+            page: selectedSubmissionsPage,
+            isOfficial: isCompete,
+        });
+    };
+
+    useEffect(() => {
+        if (!submissionsDataFetching) {
+            setTimeout(() => {
+                setIsRotating(false);
+            }, 900);
+        }
+    }, [ submissionsDataFetching, setIsRotating ]);
 
     // this effect manages the disabling of the submit button as well as the
     // displaying of the seconds before the next submission would be enabled
@@ -289,6 +306,8 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const onSolutionSubmitFile = useCallback(async () => {
+        setUploadedFile(null);
+
         await submitSolutionFile({
             content: uploadedFile!,
             official: isCompete,
@@ -320,35 +339,25 @@ const ContestSolutionSubmitPage = () => {
         ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
         : 0, [ contest ]);
 
-    const goToSubmissionAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/problems?filter=id~equals~${
-        selectedContestDetailsProblem!.id
-    }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`);
-
-    const goToTestsAdministration = () => navigate(`/${NEW_ADMINISTRATION_PATH}/tests?filter=problemid~equals~${
-        selectedContestDetailsProblem!.id
-    }`);
-
     const renderProblemAdminButtons = useCallback(
-        () => contest && contest.userIsAdminOrLecturerInContest && (
+        () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
         <div className={styles.adminButtonsContainer}>
-            <Button
-              type={ButtonType.secondary}
-              size={ButtonSize.small}
-              onClick={goToSubmissionAdministration}
-            >
-                Problem
-            </Button>
-            <Button
-              type={ButtonType.secondary}
-              size={ButtonSize.small}
-              onClick={goToTestsAdministration}
-            >
-                Tests
-            </Button>
+            <AdministrationLink
+              text="Problem"
+              to={`/problems?filter=id~equals~${
+                    selectedContestDetailsProblem!.id
+              }%26%26%3Bisdeleted~equals~false&sorting=id%3DDESC`}
+            />
+            <AdministrationLink
+              text="Tests"
+              to={`/tests?filter=problemid~equals~${
+                  selectedContestDetailsProblem!.id
+              }`}
+            />
         </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [ contest ],
+        [ contest, selectedContestDetailsProblem ],
     );
 
     const renderProblemResources = useCallback(() => {
@@ -589,17 +598,13 @@ const ContestSolutionSubmitPage = () => {
     }
 
     if (error) {
-        if ((error as any).status === 401) {
-            navigate('/login');
-        } else {
-            return (
-                <ErrorWithActionButtons
-                  message={getErrorMessage(error)}
-                  backToUrl="/contests"
-                  backToText="Back to contests"
-                />
-            );
-        }
+        return (
+            <ErrorWithActionButtons
+              message={getErrorMessage(error)}
+              backToUrl="/contests"
+              backToText="Back to contests"
+            />
+        );
     }
 
     if (isRegisteredParticipant && !isActiveParticipant) {
@@ -626,12 +631,9 @@ const ContestSolutionSubmitPage = () => {
             </div>
             { user.canAccessAdministration && (
                 <div className={styles.administrationButtonWrapper}>
-                    <LinkButton
-                      size={ButtonSize.small}
-                      type={LinkButtonType.secondary}
-                      to={`/${NEW_ADMINISTRATION_PATH}/contests/${contestId}`}
-                      isToExternal
+                    <AdministrationLink
                       text="Contest"
+                      to={`/contests/${contestId}`}
                     />
                 </div>
             ) }
@@ -653,7 +655,7 @@ const ContestSolutionSubmitPage = () => {
                         {renderRemainingTimeForContest()}
                     </div>
                     <div className={styles.problemDetailsWrapper}>
-                        <div className={styles.adminButtonsAndResourcesWrapper}>
+                        <div>
                             {renderProblemAdminButtons()}
                             {renderProblemResources()}
                         </div>
@@ -665,14 +667,19 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
                     <span className={styles.title}>Submissions</span>
-                    <IoMdRefresh
-                      size={30}
-                      onClick={() => getSubmissionsData({
-                          id: Number(selectedContestDetailsProblem!.id),
-                          page: selectedSubmissionsPage,
-                          isOfficial: isCompete,
-                      })}
-                    />
+                    <Tooltip
+                      title="Refresh"
+                      onClick={handleRefreshClick}
+                    >
+                        <span>
+                            <IoMdRefresh
+                              size={24}
+                              className={isRotating
+                                  ? styles.rotate
+                                  : ''}
+                            />
+                        </span>
+                    </Tooltip>
                 </div>
                 { submissionsError
                     ? <>Error loading submissions</>
@@ -695,4 +702,4 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default setLayout(ContestSolutionSubmitPage);
+export default makePrivate(setLayout(ContestSolutionSubmitPage));

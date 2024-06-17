@@ -18,14 +18,16 @@
 }
 
 .problemResourceIndicator {
-  .problemResourceDownloadError {
+  font-size: 1rem;
+
+  .problemResourceDownloadErrorState {
     color: colors.$primary-red;
-    margin-bottom: spacings.$sp-12;
-    margin-top: - spacings.$sp-12;
+    margin-bottom: spacings.$sp-4;
+    margin-top: spacings.$sp-4;
   }
 
   .problemResourceLoading {
     color: colors.$primary-blue;
-    margin-top: - spacings.$sp-12;
+    margin-top: spacings.$sp-4;
   }
 }

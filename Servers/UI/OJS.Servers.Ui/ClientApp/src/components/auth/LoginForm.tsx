@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-useless-return */
 import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
@@ -17,7 +18,9 @@ import { setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../..
 import { useGetUserinfoQuery, useLoginMutation } from '../../redux/services/authorizationService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import concatClassNames from '../../utils/class-names';
+import { getErrorMessage } from '../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
+import { getPlatformForgottenPasswordUrl } from '../../utils/urls';
 import { LinkButton, LinkButtonType } from '../guidelines/buttons/Button';
 import Form from '../guidelines/forms/Form';
 import FormControl, { FormControlType, IFormControlOnChangeValueType } from '../guidelines/forms/FormControl';
@@ -36,13 +39,18 @@ const LoginForm = () => {
     const [ passwordFormError, setPasswordFormError ] = useState('');
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
+    const [ shouldConfirmContinue, setShouldConfirmContinue ] = useState(false);
+    const [ hasClickedContinueButton, setHasClickedContinueButton ] = useState(false);
 
-    const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
-    const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
+    const navigate = useNavigate();
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
+    const location = useLocation();
     const dispatch = useAppDispatch();
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
+
+    const { data, isSuccess: isGetInfoSuccessful, refetch: refetchGetUserInfo } = useGetUserinfoQuery(null);
+    const [ login, { data: loginData, isLoading, isSuccess, error } ] = useLoginMutation();
 
     const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -86,14 +94,26 @@ const LoginForm = () => {
     }, [ setPassword ]);
 
     useEffect(() => {
-        if (isSuccess) {
-            refetch();
+        if (isSuccess && !isNil(loginData) && !hasClickedContinueButton) {
+            setShouldConfirmContinue(true);
+            setLoginErrorMessage(loginData);
             return;
         }
-        if (error && 'error' in error) {
-            setLoginErrorMessage(error.data as string);
+
+        if (isSuccess && (isNil(loginData) || (shouldConfirmContinue && hasClickedContinueButton))) {
+            refetchGetUserInfo();
+            const returnUrl = location.state !== null
+                ? `${location.state?.from?.pathname}${location.state?.from?.search}`
+                : '/';
+            navigate(returnUrl);
+
+            return;
         }
-    }, [ isSuccess, error, refetch ]);
+
+        if (error) {
+            setLoginErrorMessage(getErrorMessage(error));
+        }
+    }, [ isSuccess, error, refetchGetUserInfo, location.state, navigate, loginData, hasClickedContinueButton, shouldConfirmContinue ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
@@ -113,11 +133,22 @@ const LoginForm = () => {
     }, [ usernameFormError, passwordFormError, setLoginErrorMessage, hasPressedLoginBtn ]);
 
     const handleLoginClick = () => {
-        /* TODO:  Add message to notify the admin if SULS is not working.
-         Get the message from legacy Judge.
-        */
+        if (shouldConfirmContinue) {
+            setHasClickedContinueButton(true);
+            return;
+        }
 
         setHasPressedLoginBtn(true);
+
+        if (isEmpty(userName)) {
+            handleOnChangeUpdateUsername('');
+            return;
+        }
+
+        if (isEmpty(password)) {
+            handleOnChangeUpdatePassword('');
+            return;
+        }
 
         if (!isEmpty(usernameFormError) || !isEmpty(passwordFormError)) {
             return;
@@ -128,9 +159,16 @@ const LoginForm = () => {
 
     const renderLoginErrorMessage = useCallback(
         () => (!isNil(loginErrorMessage)
-            ? <span className={styles.errorMessage}>{loginErrorMessage}</span>
+            ? (
+                <span className={shouldConfirmContinue
+                    ? styles.warningMessage
+                    : styles.errorMessage}
+                >
+                    {loginErrorMessage}
+                </span>
+            )
             : null),
-        [ loginErrorMessage ],
+        [ shouldConfirmContinue, loginErrorMessage ],
     );
 
     const formClassName = concatClassNames(
@@ -155,7 +193,9 @@ const LoginForm = () => {
             <div className={formClassName}>
                 <Form
                   onSubmit={() => handleLoginClick()}
-                  submitText="Login"
+                  submitText={shouldConfirmContinue
+                      ? 'Continue'
+                      : 'Login'}
                   isLoading={isLoading}
                   hideFormButton={isLoading || isLoggedIn}
                   disableButton={disableLoginButton}
@@ -196,7 +236,8 @@ const LoginForm = () => {
                         <div>
                             <LinkButton
                               type={LinkButtonType.plain}
-                              to="/Account/ExternalNotify"
+                              to={getPlatformForgottenPasswordUrl()}
+                              isToExternal
                               className={styles.loginFormLink}
                             >
                                 Forgotten password

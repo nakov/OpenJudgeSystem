@@ -12,13 +12,16 @@ using OJS.Services.Administration.Business.Contests.Permissions;
 using OJS.Services.Administration.Business.Contests.Validators;
 using OJS.Services.Administration.Business.Similarity;
 using OJS.Services.Administration.Data;
+using OJS.Services.Administration.Data.Excel;
 using OJS.Services.Administration.Models.Contests;
 using OJS.Services.Administration.Models.Contests.Problems;
 using OJS.Services.Administration.Models.Submissions;
 using OJS.Services.Common.Models.Users;
+using OJS.Services.Administration.Models.Similarity;
 using OJS.Services.Infrastructure.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 public class ContestsController : BaseAdminApiController<Contest, int, ContestInListModel, ContestAdministrationModel>
 {
@@ -26,6 +29,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     private readonly ContestAdministrationModelValidator validator;
     private readonly IContestsDataService contestsData;
     private readonly ISimilarityService similarityService;
+    private readonly IExcelService excelService;
     private readonly ContestSimilarityModelValidator similarityModelValidator;
 
     public ContestsController(
@@ -34,6 +38,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         IContestsGridDataService contestGridDataService,
         IContestsDataService contestsData,
         ISimilarityService similarityService,
+        IExcelService excelService,
         ContestSimilarityModelValidator similarityModelValidator)
     : base(
         contestGridDataService,
@@ -44,6 +49,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
         this.validator = validator;
         this.contestsData = contestsData;
         this.similarityService = similarityService;
+        this.excelService = excelService;
         this.similarityModelValidator = similarityModelValidator;
     }
 
@@ -109,12 +115,9 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
             return this.UnprocessableEntity(validationResult.Errors);
         }
 
-        // It seems that the algorithm is not working.
-        // The issue is in the DIffText method of the similarity finder.
-        // For two identical submissions returns empty array and therefore the differencesCount is 0.
+        var result = await this.similarityService.GetSubmissionSimilarities(model);
 
-        // return this.Ok(this.similarityService.GetSubmissionSimilarities(model));
-
-        return this.BadRequest("The required service is not implemented yet.");
+        var file = this.excelService.ExportResults(result);
+        return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}.xls");
     }
 }

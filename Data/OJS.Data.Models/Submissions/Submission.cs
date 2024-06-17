@@ -48,6 +48,9 @@ namespace OJS.Data.Models.Submissions
         [Column(TypeName = "varchar")]
         public string? IpAddress { get; set; }
 
+        [StringLength(ConstraintConstants.Submission.WorkerNameMaxLength)]
+        public string? WorkerName { get; set; }
+
         [NotMapped]
         public bool IsBinaryFile => !string.IsNullOrWhiteSpace(this.FileExtension);
 

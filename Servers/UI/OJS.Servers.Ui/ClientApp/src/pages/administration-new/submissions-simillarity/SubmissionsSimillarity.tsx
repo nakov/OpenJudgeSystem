@@ -4,8 +4,8 @@ import isNaN from 'lodash/isNaN';
 
 import { TYPE } from '../../../common/labels';
 import { IContestAutocomplete } from '../../../common/types';
-import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
-import { useCheckSimilarityMutation, useGetContestAutocompleteQuery } from '../../../redux/services/admin/contestsAdminService';
+import ExportExcel from '../../../components/administration/common/export-excel/ExportExcel';
+import { useExportSimilaritiesToExcelMutation, useGetContestAutocompleteQuery } from '../../../redux/services/admin/contestsAdminService';
 import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
 import { renderErrorMessagesAlert } from '../../../utils/render-utils';
 
@@ -28,14 +28,6 @@ const SubmissionsSimillarity = () => {
         error: getContestDataError,
     } = useGetContestAutocompleteQuery(contestSearchString);
 
-    const [
-        checkSimilarity,
-        {
-            isLoading,
-            error: checkSimilarityError,
-        },
-    ] = useCheckSimilarityMutation();
-
     useEffect(() => {
         if (contestsAutocompleteData) {
             setContestsAutocomplete(contestsAutocompleteData);
@@ -43,8 +35,8 @@ const SubmissionsSimillarity = () => {
     }, [ contestsAutocompleteData ]);
 
     useEffect(() => {
-        getAndSetExceptionMessage([ checkSimilarityError, getContestDataError ], setErrorMessages);
-    }, [ getContestDataError, checkSimilarityError ]);
+        getAndSetExceptionMessage([ getContestDataError ], setErrorMessages);
+    }, [ getContestDataError ]);
 
     const onInputChange = debounce((e: any) => {
         setContestSearchString(e.target.value);
@@ -99,10 +91,11 @@ const SubmissionsSimillarity = () => {
                         ))}
                     </Select>
                 </FormControl>
-                <FormActionButton
-                  name="Check simillarities"
-                  disabled={!contestId || isLoading}
-                  onClick={() => checkSimilarity({ contestIds: [ contestId! ], similarityCheckType: similarityType })}
+                <ExportExcel
+                  mutation={useExportSimilaritiesToExcelMutation}
+                  contestIds={[ contestId! ]}
+                  similarityCheckType={similarityType}
+                  disabled={!contestId}
                 />
             </form>
         </>
