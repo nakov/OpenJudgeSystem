@@ -16,9 +16,16 @@
     font-weight: font-weights.$font-weight-semi-bold;
   }
 
-  iframe {
+  .youTubeVideoWrapper {
+    border: 3px solid colors.$black-color;
     border-radius: 12px;
+    height: 320px;
     margin-top: spacings.$sp-24;
+    width: 700px;
+
+    &.darkTheme {
+      border-color: colors.$white-color;
+    }
   }
 
   .homePageContentWrapper {
