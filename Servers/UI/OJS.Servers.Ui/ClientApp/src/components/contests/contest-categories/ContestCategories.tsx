@@ -29,13 +29,14 @@ interface IContestCategoriesProps {
 }
 
 const ContestCategories = (props: IContestCategoriesProps) => {
-    usePreserveScrollPosition();
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
+    usePreserveScrollPosition();
+    const saveScrollPosition = usePreserveScrollPosition();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -46,9 +47,6 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     } = useGetContestCategoriesQuery();
 
     const selectedId = useMemo(() => Number(searchParams.get('category')), [ searchParams ]);
-
-    // Use the custom hook to preserve scroll position
-    const saveScrollPosition = usePreserveScrollPosition();
 
     useEffect(() => {
         dispatch(setContestCategories({ contestCategories: contestCategories || [] }));
