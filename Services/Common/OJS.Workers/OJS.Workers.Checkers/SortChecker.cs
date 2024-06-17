@@ -68,7 +68,7 @@
                 }
             }
 
-            var checkerDetails = default(CheckerDetails);
+            var checkerDetails = new CheckerDetails();
             if (resultType != CheckerResultType.Ok)
             {
                 checkerDetails = this.PrepareCheckerDetails(receivedOutput, expectedOutput, isTrialTest, adminCheckerDetails);

@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { IoIosInformationCircleOutline, IoMdRefresh } from 'react-icons/io';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
@@ -16,7 +17,7 @@ import ContestProblems from '../../../components/contests/contest-problems/Conte
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import FileUploader from '../../../components/file-uploader/FileUploader';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
-import Button, { ButtonSize, ButtonState, ButtonType } from '../../../components/guidelines/buttons/Button';
+import Button, { ButtonState } from '../../../components/guidelines/buttons/Button';
 import Dropdown from '../../../components/guidelines/dropdown/Dropdown';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import ProblemResource from '../../../components/problem-resources/ProblemResource';
@@ -142,7 +143,9 @@ const ContestSolutionSubmitPage = () => {
 
     useEffect(() => {
         if (!submissionsDataFetching) {
-            setIsRotating(false);
+            setTimeout(() => {
+                setIsRotating(false);
+            }, 900);
         }
     }, [ submissionsDataFetching, setIsRotating ]);
 
@@ -664,23 +667,19 @@ const ContestSolutionSubmitPage = () => {
             <div className={styles.submissionsWrapper}>
                 <div className={styles.submissionsTitleWrapper}>
                     <span className={styles.title}>Submissions</span>
-                    <Button
-                      type={ButtonType.secondary}
-                      size={ButtonSize.small}
-                      className={styles.refreshButton}
+                    <Tooltip
+                      title="Refresh"
                       onClick={handleRefreshClick}
-                      state={isRotating
-                          ? ButtonState.disabled
-                          : ButtonState.enabled}
                     >
-                        Refresh
-                        <IoMdRefresh
-                          size={24}
-                          className={isRotating
-                              ? styles.rotate
-                              : ''}
-                        />
-                    </Button>
+                        <span>
+                            <IoMdRefresh
+                              size={24}
+                              className={isRotating
+                                  ? styles.rotate
+                                  : ''}
+                            />
+                        </span>
+                    </Tooltip>
                 </div>
                 { submissionsError
                     ? <>Error loading submissions</>

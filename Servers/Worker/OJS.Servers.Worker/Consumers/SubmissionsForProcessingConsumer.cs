@@ -15,15 +15,18 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
 {
     private readonly ISubmissionsBusinessService submissionsBusiness;
     private readonly IPublisherService publisher;
+    private readonly IHostInfoService hostInfoService;
     private readonly ILogger<SubmissionsForProcessingConsumer> logger;
 
     public SubmissionsForProcessingConsumer(
         ISubmissionsBusinessService submissionsBusiness,
         IPublisherService publisher,
+        IHostInfoService hostInfoService,
         ILogger<SubmissionsForProcessingConsumer> logger)
     {
         this.submissionsBusiness = submissionsBusiness;
         this.publisher = publisher;
+        this.hostInfoService = hostInfoService;
         this.logger = logger;
     }
 
@@ -32,7 +35,7 @@ public class SubmissionsForProcessingConsumer : IConsumer<SubmissionForProcessin
         var message = context.Message;
         var result = new ProcessedSubmissionPubSubModel(message.Id)
         {
-            WorkerName = context.Host.MachineName,
+            WorkerName = this.hostInfoService.GetHostIp(),
         };
 
         this.logger.LogInformation("Starting processing submission with id: {SubmissionId} on worker: {WorkerName}", message.Id, result.WorkerName);
