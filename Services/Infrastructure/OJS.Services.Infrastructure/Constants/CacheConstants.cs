@@ -11,6 +11,7 @@
         public const string ContestResults = "Contest:{0}:official:{1}:full:{2}";
         public const string ParticipantsCountByContest = "ParticipantsCountByContest:{0}";
         public const string ParticipantsCountByContestsPage = "ParticipantsCountByContestsPage:{0}:{1}";
+        public const string ContestServiceModelByContestId = "ContestServiceModelByContestId:{0}";
         public const string ContestCategoriesTree = "ContestCategoriesTree";
 
         public const string ContestSubCategoriesFormat = "ContestSubCategories:{0}";
