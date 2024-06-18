@@ -2,17 +2,16 @@
 import React, { useState } from 'react';
 import { BiMemoryCard } from 'react-icons/bi';
 import { FaRegClock } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import { Popover } from '@mui/material';
 
 import { TestRunResultType } from '../../../common/constants';
 import { getResultTypeText, getTestResultColorId } from '../../../common/submissions-utils';
-import { NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import CodeEditor from '../../code-editor/CodeEditor';
 import Diff from '../../diff/Diff';
-import Button, { ButtonSize, ButtonType } from '../../guidelines/buttons/Button';
+import AdministrationLink from '../../guidelines/buttons/AdministrationLink';
+import Button, { ButtonSize, ButtonType, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './SubmissionTestRun.module.scss';
 
@@ -26,7 +25,6 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
     const { testRun, idx, shouldRenderAdminData = false } = props;
 
     const { isDarkMode, themeColors, getColorClassName } = useTheme();
-    const navigate = useNavigate();
 
     const [ testShowInput, setTestShowInput ] = useState<boolean>(false);
     const [ memoryAnchorEl, setMemoryAnchorEl ] = useState<HTMLElement | null>(null);
@@ -101,13 +99,12 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
                         />
                     )}
                     { shouldRenderAdminData && (
-                        <div
-                          className={`${styles.testRunIdWrapper}`}
-                          onClick={() => navigate(`/${NEW_ADMINISTRATION_PATH}/tests/${testId}`)}
-                        >
-                            Test #
-                            {testId}
-                        </div>
+                        <AdministrationLink
+                          text={`Test #${testId}`}
+                          to={`/tests/${testId}`}
+                          type={LinkButtonType.plain}
+                          className={styles.testRunIdWrapper}
+                        />
                     )}
                     <div className={styles.timeAndMemoryWrapper}>
                         <span style={{ color: themeColors.baseColor100 }}>
