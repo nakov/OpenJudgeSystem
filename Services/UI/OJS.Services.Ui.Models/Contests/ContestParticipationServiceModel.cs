@@ -12,6 +12,8 @@ public class ContestParticipationServiceModel : IMapExplicitly
 
     public bool IsRegisteredParticipant { get; set; }
 
+    public bool IsInvalidated { get; set; }
+
     public bool IsActiveParticipant { get; set; }
 
     public int ParticipantId { get; set; }
@@ -30,6 +32,7 @@ public class ContestParticipationServiceModel : IMapExplicitly
     public void RegisterMappings(IProfileExpression configuration)
         => configuration.CreateMap<Participant, ContestParticipationServiceModel>()
             .ForMember(d => d.Contest, opt => opt.MapFrom(s => s.Contest))
+            .ForMember(d => d.IsInvalidated, opt => opt.MapFrom(s => s.IsInvalidated))
             .ForMember(d => d.EndDateTimeForParticipantOrContest, opt => opt.Ignore())
             .ForAllOtherMembers(opt => opt.Ignore());
 }
