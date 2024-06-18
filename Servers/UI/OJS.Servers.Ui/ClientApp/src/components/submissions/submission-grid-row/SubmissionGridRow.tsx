@@ -10,6 +10,8 @@ import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profil
 import { useProblems } from '../../../hooks/use-problems';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
+import { setProfile } from '../../../redux/features/usersSlice';
+import { useAppDispatch } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
 import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
@@ -64,6 +66,7 @@ const SubmissionGridRow = ({
     const { internalUser } =
         useSelector((reduxState: {authorization: IAuthorizationReduxState}) => reduxState.authorization);
     const { actions: { getDecodedUsernameFromProfile } } = useUserProfileSubmissions();
+    const dispatch = useAppDispatch();
 
     const [ competeIconAnchorElement, setCompeteIconAnchorElement ] = useState<HTMLElement | null>(null);
     const isCompeteIconModalOpen = Boolean(competeIconAnchorElement);
@@ -210,7 +213,7 @@ const SubmissionGridRow = ({
                 {
                     options.showParticipantUsername
                         ? (
-                            <span>
+                            <span onClick={() => dispatch(setProfile(null))}>
                                 {renderUsername()}
                             </span>
                         )

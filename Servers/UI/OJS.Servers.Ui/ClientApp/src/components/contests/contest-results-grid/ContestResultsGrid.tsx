@@ -94,7 +94,17 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                 <tbody>
                     {
                     !isNil(items) && !isEmpty(items) && items.results.map((participantResult, index) => (
-                        <tr key={`t-r-i-${participantResult.participantUsername}`} className={rowClassName}>
+                        <tr
+                          key={`t-r-i-${participantResult.participantUsername}`}
+                          className={concatClassNames(
+                              rowClassName,
+                              participantResult.participantUsername === internalUser.userName
+                                  ? isDarkMode
+                                      ? styles.userRowDark
+                                      : styles.userRowLight
+                                  : '',
+                          )}
+                        >
                             <td>{index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {

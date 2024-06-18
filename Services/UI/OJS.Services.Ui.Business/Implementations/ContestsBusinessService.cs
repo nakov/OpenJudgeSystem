@@ -107,7 +107,7 @@ namespace OJS.Services.Ui.Business.Implementations
                 contestDetailsServiceModel.Problems = problemsForParticipant.Map<ICollection<ContestProblemServiceModel>>();
             }
 
-            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted) || isLecturerOrAdmin;
+            var canShowProblemsInCompete = (!contest!.HasContestPassword && !contest.IsOnlineExam && contestActivityEntity.CanBeCompeted && participant != null) || isLecturerOrAdmin;
             var canShowProblemsInPractice = (!contest.HasPracticePassword && contestActivityEntity.CanBePracticed) || isLecturerOrAdmin;
             var canShowProblemsForAnonymous = user.IsAuthenticated || !contestActivityEntity.CanBeCompeted;
 
@@ -210,11 +210,11 @@ namespace OJS.Services.Ui.Business.Implementations
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-            bool shouldRequirePassword = ShouldRequirePassword(contest!, participant, isOfficial);
-            bool shouldConfirmParticipation =
+            var shouldRequirePassword = ShouldRequirePassword(contest!, participant, isOfficial);
+            var shouldConfirmParticipation =
                 ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
 
-            bool requiredPasswordIsValid = false;
+            var requiredPasswordIsValid = false;
 
             // Validate password if present
             if (password != null && !password.IsNullOrEmpty() && shouldRequirePassword)
@@ -293,10 +293,11 @@ namespace OJS.Services.Ui.Business.Implementations
                 };
             }
 
-            var contest = await this.contestsData.GetByIdWithProblemsDetailsAndCategories(model.ContestId);
+            var contest =
+                await this.contestParticipantsCacheService.GetContestServiceModelForContest(participant.ContestId, model);
 
             var validationResult = this.contestParticipationValidationService.GetValidationResult((
-                contest,
+                contest?.Map<Contest>(),
                 model.ContestId,
                 user,
                 model.IsOfficial)!);
@@ -307,8 +308,8 @@ namespace OJS.Services.Ui.Business.Implementations
             }
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-
             var participationModel = participant.Map<ContestParticipationServiceModel>();
+            participationModel.Contest = contest;
             participationModel.IsRegisteredParticipant = true;
             participationModel.Contest!.UserIsAdminOrLecturerInContest = userIsAdminOrLecturerInContest;
 

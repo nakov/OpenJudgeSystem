@@ -3,6 +3,7 @@ import { RiFileExcel2Fill } from 'react-icons/ri';
 import { IconButton, Tooltip } from '@mui/material';
 
 import { IGetAllAdminParams } from '../../../../common/types';
+import { SimillarityType } from '../../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import concatClassNames from '../../../../utils/class-names';
 import downloadFile from '../../../../utils/file-download-utils';
 import { getAndSetExceptionMessage } from '../../../../utils/messages-utils';
@@ -14,13 +15,15 @@ interface IExportExcelProps{
    mutation?: any;
    disabled?: boolean;
    queryParams?: IGetAllAdminParams;
+   contestIds?: Array<number>;
+    similarityCheckType?: SimillarityType;
 }
 const ExportExcel = (props:IExportExcelProps) => {
-    const { mutation: lazyQuery, disabled = false, queryParams } = props;
+    const { mutation: lazyQuery, disabled = false, queryParams, contestIds, similarityCheckType } = props;
 
     const [ exceptionMessages, setExceptionMessages ] = useState<Array<string>>([]);
 
-    /* Use lazy queries because in other case everytime te queryParams changes,
+    /* Use lazy queries because in other case everytime the queryParams changes,
     there will be call to download */
     const [ trigger, { data, error, isSuccess, isLoading, isFetching } ] = lazyQuery
         ? lazyQuery()
@@ -51,7 +54,12 @@ const ExportExcel = (props:IExportExcelProps) => {
                 : 'Export to excel'}
             >
                 <span>
-                    <IconButton disabled={disabled || isLoading || isFetching} onClick={() => { trigger(queryParams); }}>
+                    <IconButton
+                      disabled={disabled || isLoading || isFetching}
+                      onClick={() => {
+                          trigger(queryParams || { contestIds, similarityCheckType });
+                      }}
+                    >
                         <RiFileExcel2Fill
                           className={disabled || isLoading || isFetching
                               ? concatClassNames(styles.size, styles.disabledColor)

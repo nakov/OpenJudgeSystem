@@ -40,6 +40,8 @@ const LoginForm = () => {
     const [ passwordFormError, setPasswordFormError ] = useState('');
     const [ disableLoginButton, setDisableLoginButton ] = useState(false);
     const [ hasPressedLoginBtn, setHasPressedLoginBtn ] = useState(false);
+    const [ shouldConfirmContinue, setShouldConfirmContinue ] = useState(false);
+    const [ hasClickedContinueButton, setHasClickedContinueButton ] = useState(false);
 
     const navigate = useNavigate();
     const { isLoggedIn } = useAppSelector((state) => state.authorization);
@@ -49,8 +51,8 @@ const LoginForm = () => {
     const usernameFieldName = 'Username';
     const passwordFieldName = 'Password';
 
-    const { data, isSuccess: isGetInfoSuccessful, refetch } = useGetUserinfoQuery(null);
-    const [ login, { isLoading, isSuccess, error } ] = useLoginMutation();
+    const { data, isSuccess: isGetInfoSuccessful, refetch: refetchGetUserInfo } = useGetUserinfoQuery(null);
+    const [ login, { data: loginData, isLoading, isSuccess, error } ] = useLoginMutation();
 
     const handleOnChangeUpdateUsername = useCallback((value?: IFormControlOnChangeValueType) => {
         if (isEmpty(value)) {
@@ -94,20 +96,28 @@ const LoginForm = () => {
     }, [ setPassword ]);
 
     useEffect(() => {
-        if (isSuccess) {
-            refetch();
+        if (isSuccess && !isNil(loginData) && !hasClickedContinueButton) {
+            setShouldConfirmContinue(true);
+            setLoginErrorMessage(loginData);
+            return;
+        }
+
+        if (isSuccess && (isNil(loginData) || (shouldConfirmContinue && hasClickedContinueButton))) {
+            refetchGetUserInfo();
             const returnUrl = location.state !== null
                 ? `${location.state?.from?.pathname}${location.state?.from?.search}`
                 : '/';
-            navigate(returnUrl);
             resetCache();
+            navigate(returnUrl);
+
             return;
         }
 
         if (error) {
             setLoginErrorMessage(getErrorMessage(error));
         }
-    }, [ isSuccess, error, refetch, location.state, navigate, resetCache ]);
+    }, [ isSuccess, error, refetchGetUserInfo, location.state, navigate, loginData,
+        hasClickedContinueButton, shouldConfirmContinue, resetCache ]);
 
     useEffect(() => {
         if (!isEmpty(usernameFormError) && hasPressedLoginBtn) {
@@ -127,9 +137,10 @@ const LoginForm = () => {
     }, [ usernameFormError, passwordFormError, setLoginErrorMessage, hasPressedLoginBtn ]);
 
     const handleLoginClick = () => {
-        /* TODO:  Add message to notify the admin if SULS is not working.
-         Get the message from legacy Judge.
-        */
+        if (shouldConfirmContinue) {
+            setHasClickedContinueButton(true);
+            return;
+        }
 
         setHasPressedLoginBtn(true);
 
@@ -152,9 +163,16 @@ const LoginForm = () => {
 
     const renderLoginErrorMessage = useCallback(
         () => (!isNil(loginErrorMessage)
-            ? <span className={styles.errorMessage}>{loginErrorMessage}</span>
+            ? (
+                <span className={shouldConfirmContinue
+                    ? styles.warningMessage
+                    : styles.errorMessage}
+                >
+                    {loginErrorMessage}
+                </span>
+            )
             : null),
-        [ loginErrorMessage ],
+        [ shouldConfirmContinue, loginErrorMessage ],
     );
 
     const formClassName = concatClassNames(
@@ -179,7 +197,9 @@ const LoginForm = () => {
             <div className={formClassName}>
                 <Form
                   onSubmit={() => handleLoginClick()}
-                  submitText="Login"
+                  submitText={shouldConfirmContinue
+                      ? 'Continue'
+                      : 'Login'}
                   isLoading={isLoading}
                   hideFormButton={isLoading || isLoggedIn}
                   disableButton={disableLoginButton}

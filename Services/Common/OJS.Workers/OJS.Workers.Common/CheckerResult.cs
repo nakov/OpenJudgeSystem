@@ -2,13 +2,17 @@
 {
     public struct CheckerResult
     {
-        public bool IsCorrect { get; set; }
+        public CheckerResult()
+        {
+        }
 
-        public CheckerResultType ResultType { get; set; }
+        public bool IsCorrect { get; set; } = false;
+
+        public CheckerResultType ResultType { get; set; } = default;
 
         /// <summary>
         /// Gets or sets more detailed information visible only by administrators.
         /// </summary>
-        public CheckerDetails? CheckerDetails { get; set; }
+        public CheckerDetails CheckerDetails { get; set; } = new();
     }
 }

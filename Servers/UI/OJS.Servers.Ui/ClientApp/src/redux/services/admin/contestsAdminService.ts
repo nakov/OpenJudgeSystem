@@ -92,7 +92,7 @@ export const contestService = createApi({
             keepUnusedDataFor: 5,
         }),
 
-        checkSimilarity: builder.mutation<null, {contestIds:Array<number>; similarityCheckType: SimillarityType} >({
+        exportSimilaritiesToExcel: builder.mutation<IFileModel, {contestIds:Array<number>; similarityCheckType: SimillarityType} >({
             query: ({ ...contestAdministrationModel }) => ({
                 url: '/CheckSimilarity',
                 method: 'POST',
@@ -113,6 +113,6 @@ export const {
     useGetContestAutocompleteQuery,
     useLazyExportContestsToExcelQuery,
     useGetContestActivityQuery,
-    useCheckSimilarityMutation,
+    useExportSimilaritiesToExcelMutation,
 } = contestService;
 export default contestService;
