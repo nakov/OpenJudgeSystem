@@ -1,6 +1,7 @@
 import React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { Params, Route, Routes } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 
 import MuiUiThemeProvider from '../../../hooks/use-mui-ui-theme';
 import useTheme from '../../../hooks/use-theme';
@@ -26,15 +27,10 @@ import { asPage } from '../../../pages/shared/set-page-params';
 import withTitle from '../../../pages/shared/with-title';
 import SubmissionDetailsPage from '../../../pages/submissions/submission-details/SubmissionDetailsPage';
 import SubmissionsPage from '../../../pages/submissions/SubmissionsPage';
+import { capitalizeFirstLetter } from '../../../utils/string-utils';
 import SearchBar from '../../search/search-bar/SearchBar';
 
 import styles from '../../../layout/content/PageContent.module.scss';
-
-interface IRoute {
-    path: string;
-    Element: React.FC;
-    title: string | ((params: Params<string>) => string);
-}
 
 const ClientPortal = () => {
     const routes: Array<IRoute> = [
@@ -73,35 +69,36 @@ const ClientPortal = () => {
         {
             path: '/profile/:username?',
             Element: ProfilePage,
-            title: (params: Readonly<Params<string>>) => `Profile of ${params.username || 'Unknown'}`,
+            title: (params: Readonly<Params<string>>) => !isEmpty(params.username)
+                ? `${params.username}'s profile`
+                : 'My Profile',
         },
         // Submissions routes,
         {
             path: '/submissions/:submissionId/details',
             Element: SubmissionDetailsPage,
-            title: (params: Readonly<Params<string>>) => `Submission Details - ${params.submissionId || 'Unknown'}`,
+            title: (params: Readonly<Params<string>>) => `Submission #${params.submissionId}`,
         },
         {
             path: '/submissions/retest/:submissionId',
             Element: SubmissionRetestPage,
-            title: (params: Readonly<Params<string>>) => `Submission Retest - ${params.submissionId || 'Unknown'}`,
+            title: (params: Readonly<Params<string>>) => `Retest - ${params.submissionId}`,
         },
         {
             path: '/tests/edit/:testId',
             Element: TestEditPage,
-            title: (params: Readonly<Params<string>>) => `Edit Test - ${params.testId || 'Unknown'}`,
+            title: (params: Readonly<Params<string>>) => `Edit Test - ${params.testId}`,
         },
         // Contest Routes
         {
             path: '/contests/:contestId',
             Element: ContestDetailsPage,
-            title: (params: Readonly<Params<string>>) => `Contest Details - ${params.contestId || 'Unknown'}`,
+            title: (params: Readonly<Params<string>>) => `Contest #${params.contestId}`,
         },
         {
             path: '/contests/register/:contestId/:participationType',
             Element: ContestRegister,
-            title: (params: Readonly<Params<string>>) => `Contest Register - ${params.contestId || 'Unknown'} 
-                for ${params.participationType || 'Unknown'} type`,
+            title: (params: Readonly<Params<string>>) => `Contest Register - ${params.contestId}`,
         },
         {
             path: '/contests/problems/:contestId',
@@ -116,14 +113,13 @@ const ClientPortal = () => {
         {
             path: '/contests/:contestId/:participationType',
             Element: ContestSolutionSubmitPage,
-            title: (params: Readonly<Params<string>>) => `Solution Submit - ${params.contestId || 'Unknown'}
-                for ${params.participationType || 'Unknown'} type`,
+            title: (params: Readonly<Params<string>>) => `
+${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
         },
         {
             path: '/contests/:contestId/:participationType/results/:resultType',
             Element: ContestResultsPage,
-            title: (params: Readonly<Params<string>>) => `Contest Results - ${params.contestId || 'Unknown'} 
-                for ${params.participationType || 'Unknown'} for ${params.resultType || 'Unknown'} type`,
+            title: (params: Readonly<Params<string>>) => `Results #${params.contestId}`,
         },
         {
             path: '/contests',
@@ -148,18 +144,23 @@ const ClientPortal = () => {
                 <SearchBar />
                 <main className={`${styles.main} ${backgroundColorClassName}`}>
                     <Routes>
-                        {routes.map(({ path, Element, title }) => {
-                            const elementAsPage = asPage(Element);
-                            const elementWithTitle = withTitle({ Component: elementAsPage, title });
+                        {
+                            routes.map(({ path, Element, title }) => {
+                                const elementAsPage = asPage(Element);
+                                const elementWithTitle = withTitle({
+                                    Component: elementAsPage,
+                                    title,
+                                });
 
-                            return (
-                                <Route
-                                  key={path}
-                                  path={path}
-                                  element={elementWithTitle}
-                                />
-                            );
-                        })}
+                                return (
+                                    <Route
+                                      key={path}
+                                      path={path}
+                                      element={elementWithTitle}
+                                    />
+                                );
+                            })
+                        }
                     </Routes>
                 </main>
                 <PageFooter />
@@ -167,4 +168,11 @@ const ClientPortal = () => {
         </HelmetProvider>
     );
 };
+
+interface IRoute {
+    path: string;
+    Element: React.FC;
+    title: string | ((params: Params<string>) => string);
+}
+
 export default ClientPortal;
