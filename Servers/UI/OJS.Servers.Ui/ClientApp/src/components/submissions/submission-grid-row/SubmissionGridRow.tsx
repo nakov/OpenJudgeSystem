@@ -87,7 +87,7 @@ const SubmissionGridRow = ({
         [ initiateRedirectionToProblem, problemId, submissionId ],
     );
 
-    const handleParticipateInContestSubmit = useCallback(
+    const handleContestDetailsButtonSubmit = useCallback(
         () => {
             navigate(getContestDetailsAppUrl(contestId));
         },
@@ -192,7 +192,7 @@ const SubmissionGridRow = ({
                                   size={ButtonSize.small}
                                   className={styles.link}
                                   internalClassName={styles.redirectButton}
-                                  onClick={handleParticipateInContestSubmit}
+                                  onClick={handleContestDetailsButtonSubmit}
                                   text={contestName}
                                 />
                             </>
