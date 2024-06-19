@@ -64,8 +64,11 @@ public class ExcelService : IExcelService
 
             var dataTypeProperties = dataType.GetProperties();
 
-            // Create new Excel sheet
-            var sheet = workbook.Worksheets.Add(sheetName);
+            /*
+             * Create new Excel sheet.
+             * The maximum length for the Excel sheet's name is 31 characters.
+             */
+            var sheet = workbook.Worksheets.Add(sheetName.Length > 31 ? sheetName.Substring(0, 31) : sheetName);
 
             // Create a header row
             var columnNumber = 1;
