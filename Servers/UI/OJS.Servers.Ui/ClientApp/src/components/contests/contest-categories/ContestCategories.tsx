@@ -28,7 +28,7 @@ interface IContestCategoriesProps {
     isRenderedOnHomePage?: boolean;
 }
 
-const ContestCetegories = (props: IContestCategoriesProps) => {
+const ContestCategories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
@@ -247,4 +247,4 @@ const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | und
     return false;
 };
 
-export { ContestCetegories, findContestCategoryByIdRecursive, findParentNames };
+export { ContestCategories, findContestCategoryByIdRecursive, findParentNames };
