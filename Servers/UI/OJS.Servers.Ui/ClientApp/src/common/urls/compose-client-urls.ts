@@ -1,3 +1,5 @@
+import { createUrlFriendlyString } from '../contest-helpers';
+
 import { CONTESTS_PATH } from './client-urls';
 
 const getContestsResultsUrl =
@@ -6,8 +8,10 @@ const getContestsResultsUrl =
         : 'full'}`;
 
 const getAllContestsUrl =
-    (categoryId?: number, strategyId?: number) => {
-        const returnUrl = `/${CONTESTS_PATH}`;
+    (categoryId?: number, strategyId?: number, categoryName?: string) => {
+        const returnUrl = `/${CONTESTS_PATH}/${categoryName
+            ? `${createUrlFriendlyString(categoryName)}`
+            : 'all-contests'}`;
         const prefixes = [ `${categoryId
             ? `category=${categoryId}`
             : ''}`, `${strategyId
