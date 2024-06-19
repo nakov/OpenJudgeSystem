@@ -357,13 +357,8 @@ const SubmissionDetailsPage = () => {
             )}
             <ContestBreadcrumbs />
             <div>
-                <div className={styles.contestTitleWrapper}>
-                    <Link
-                      to={`/contests/${contestId}/details/${createUrlFriendlyString(contestName)}`}
-                      className={`${styles.contestTitle} ${textColorClassName}`}
-                    >
-                        {contestName}
-                    </Link>
+                <div className={styles.submissionTitle}>
+                    {renderSolutionTitle()}
                 </div>
                 <div className={styles.bodyWrapper}>
                     <SubmissionTestRuns testRuns={(!isRetestingStarted
@@ -371,8 +366,12 @@ const SubmissionDetailsPage = () => {
                         : []) || []}
                     />
                     <div className={styles.innerBodyWrapper}>
-                        <div className={styles.submissionTitle}>
-                            {renderSolutionTitle()}
+                        <div className={styles.contestTitle}>
+                            <Link
+                              to={`/contests/${contestId}/details/${createUrlFriendlyString(contestName)}`}
+                            >
+                                {contestName}
+                            </Link>
                         </div>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}

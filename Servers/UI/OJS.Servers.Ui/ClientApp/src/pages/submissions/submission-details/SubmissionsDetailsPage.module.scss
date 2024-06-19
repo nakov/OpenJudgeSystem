@@ -8,18 +8,10 @@
 .submissionsDetailsWrapper {
   @extend %font-family-normal;
 
-  .contestTitleWrapper {
-    margin: spacings.$sp-24 0;
-    
-    .contestTitle {
-      font-size: variables.$f-size-30;
-      font-weight: font-weights.$font-weight-bold;
-    }
-  }
-
   .submissionTitle {
     font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold;
+    margin: spacings.$sp-24 0;
 
     a {
       color: inherit;
@@ -42,6 +34,15 @@
 
     .innerBodyWrapper {
       width: 95%;
+
+      .contestTitle {
+        font-size: variables.$f-size-24;
+        font-weight: font-weights.$font-weight-bold;
+        
+        a {
+          color: colors.$primary-blue;
+        }
+      }
 
       .adminButtonsWrapper {
         margin: spacings.$sp-24 0;
