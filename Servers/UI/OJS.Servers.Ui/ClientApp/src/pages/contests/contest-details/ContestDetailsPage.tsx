@@ -142,7 +142,7 @@ const ContestDetailsPage = () => {
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
               backToText="Back to contests"
-              backToUrl="/contests"
+              backToUrl="/contests/all-contests"
             />
         );
     }
