@@ -25,7 +25,34 @@ const getPracticeResultsAreVisible = (
 ) => (loggedInUserCanAccessAdministration || (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed))) &&
     contest.practiceResults > 0;
 
+const createUrlFriendlyString = (inputString: string | undefined): string => {
+    let resultString = '';
+    let isLastCharacterDash = false;
+
+    const cleanedString = inputString
+        ? inputString
+            .replace(/C#/g, 'CSharp')
+            .replace(/C\+\+/g, 'CPlusPlus')
+            .toLowerCase()
+        : '';
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < cleanedString.length; i++) {
+        const character = cleanedString[i];
+        if (/[a-zA-Z0-9]/.test(character)) {
+            resultString += character;
+            isLastCharacterDash = false;
+        } else if (!isLastCharacterDash) {
+            resultString += '-';
+            isLastCharacterDash = true;
+        }
+    }
+
+    return resultString.replace(/^-+|-+$/g, '');
+};
+
 export { isParticipationTypeValid,
     contestParticipationType,
     getCompeteResultsAreVisible,
-    getPracticeResultsAreVisible };
+    getPracticeResultsAreVisible,
+    createUrlFriendlyString };
