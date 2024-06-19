@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
-import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
+import {
+    createUrlFriendlyString,
+    getCompeteResultsAreVisible,
+    getPracticeResultsAreVisible,
+} from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
 import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
@@ -139,7 +143,7 @@ const ContestCard = (props: IContestCardProps) => {
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
-                <Link className={styles.contestCardTitle} to={`/contests/${id}`}>
+                <Link className={styles.contestCardTitle} to={`/contests/${id}/details/${createUrlFriendlyString(name)}`}>
                     {name}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
