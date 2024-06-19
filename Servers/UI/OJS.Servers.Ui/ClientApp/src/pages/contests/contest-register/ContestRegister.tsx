@@ -99,7 +99,7 @@ const ContestRegister = () => {
                           navigate(`/contests/${contestId}/${participationType}`);
                       }
                   }}
-                  onDecline={() => navigate('/contests')}
+                  onDecline={() => navigate('/contests/all-contests')}
                 />
             );
         }
@@ -134,7 +134,7 @@ const ContestRegister = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
-              backToUrl="/contests"
+              backToUrl="/contests/all-contests"
               backToText="Back to contests"
             />
         );
@@ -144,7 +144,7 @@ const ContestRegister = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(registerError)}
-              backToUrl="/contests"
+              backToUrl="/contests/all-contests"
               backToText="Back to contests"
             />
         );
