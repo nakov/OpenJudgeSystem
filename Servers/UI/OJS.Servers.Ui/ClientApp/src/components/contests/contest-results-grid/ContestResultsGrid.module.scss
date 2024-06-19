@@ -57,8 +57,12 @@
   background: colors.$primary-dark-grey-color;
 }
 
-.pointsResult {
+.pointsResultLight {
   color: colors.$white-color;
+}
+
+.pointsResultDark {
+  color: colors.$black-color;
 }
 
 .userRowDark {
