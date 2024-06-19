@@ -41,7 +41,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
             return;
         }
 
-        const selectedProblem = problems.find((prob) => prob.id === Number(hash.substring(1)));
+        const selectedProblem = problems.find((prob) => prob.orderBy === Number(hash.substring(1)));
         if (selectedProblem) {
             dispatch(setSelectedContestDetailsProblem({ selectedProblem }));
         } else {
@@ -52,7 +52,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
 
     const onProblemClick = (problem: IProblemType) => {
         saveScrollPosition();
-        navigate(`#${problem.id}`);
+        navigate(`#${problem.orderBy}`);
         onContestProblemChange();
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: problem }));
     };
