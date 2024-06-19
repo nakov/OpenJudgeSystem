@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
+import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -365,7 +366,12 @@ const SubmissionDetailsPage = () => {
                         : []) || []}
                     />
                     <div className={styles.innerBodyWrapper}>
-                        <Link to={`/contests/${contestId}`}>{name}</Link>
+                        <Link
+                          to={`/contests/${contestId}/details/${createUrlFriendlyString(name)}`}
+                          className={`${styles.title} ${textColorClassName}`}
+                        >
+                            {name}
+                        </Link>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
                         {content && (

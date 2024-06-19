@@ -83,7 +83,7 @@ const SubmissionGridRow = ({
         () => {
             const submissionDetailsUrl = getSubmissionDetailsRedirectionUrl({ submissionId });
 
-            dispatch(setContestDetails({ contest: { id: contestId, name: contestName } as IContestDetailsResponseType ?? null }));
+            dispatch(setContestDetails({ contest: { id: contestId, name: contestName } as IContestDetailsResponseType }));
             initiateRedirectionToProblem(problemId, submissionDetailsUrl);
         },
         [ contestId, contestName, dispatch, initiateRedirectionToProblem, problemId, submissionId ],

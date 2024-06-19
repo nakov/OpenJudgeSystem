@@ -43,6 +43,11 @@
           margin-right: spacings.$sp-18;
         }
       }
+
+      .title {
+        font-size: variables.$f-size-30;
+        font-weight: font-weights.$font-weight-bold;
+      }
     }
 
     .compileTimeErrorWrapper {
