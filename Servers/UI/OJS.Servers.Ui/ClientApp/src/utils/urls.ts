@@ -7,6 +7,7 @@ import {
     ISubmissionDetailsUrlParams,
 } from '../common/app-url-types';
 import { ContestResultType } from '../common/constants';
+import { createUrlFriendlyString } from '../common/contest-helpers';
 import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
@@ -131,7 +132,7 @@ const getParticipateInContestUrl = ({
 const getContestDetailsUrl =
     ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
 
-const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
+const getContestDetailsAppUrl = (id: number, name: string | undefined) => `/contests/${id}/details/${createUrlFriendlyString(name)}`;
 
 const getRegisterForContestUrl = ({
     id,
