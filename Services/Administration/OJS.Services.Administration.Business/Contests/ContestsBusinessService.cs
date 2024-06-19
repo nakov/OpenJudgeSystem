@@ -38,6 +38,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly Business.IUserProviderService userProvider;
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
+    private readonly IContestParticipantsCacheService contestParticipantsCacheService;
     private readonly IParticipantsDataService participantsData;
     private readonly IUserProviderService userProviderService;
     private readonly IContestResultsAggregatorCommonService contestResultsAggregatorCommonService;
@@ -52,6 +53,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         Business.IUserProviderService userProvider,
         IIpsDataService ipsData,
         IContestsActivityService activityService,
+        IContestParticipantsCacheService contestParticipantsCacheService,
         IParticipantsDataService participantsData,
         IUserProviderService userProviderService,
         IContestResultsAggregatorCommonService contestResultsAggregatorCommonService,
@@ -65,6 +67,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         this.userProvider = userProvider;
         this.ipsData = ipsData;
         this.activityService = activityService;
+        this.contestParticipantsCacheService = contestParticipantsCacheService;
         this.participantsData = participantsData;
         this.userProviderService = userProviderService;
         this.contestResultsAggregatorCommonService = contestResultsAggregatorCommonService;
@@ -218,6 +221,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         contest.IpsInContests.Clear();
         await this.AddIpsToContest(contest, model.AllowedIps);
 
+        this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
+
         this.contestsData.Update(contest);
         await this.contestsData.SaveChanges();
 
@@ -237,6 +242,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         {
             throw new BusinessServiceException("Cannot delete active contest.");
         }
+
+        this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
 
         this.contestsData.Delete(contest);
         await this.contestsData.SaveChanges();

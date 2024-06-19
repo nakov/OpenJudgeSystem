@@ -17,6 +17,7 @@ import SpinningLoader from '../../components/guidelines/spinning-loader/Spinning
 import ProblemSearchCard from '../../components/search/profile-search-card/ProblemSearchCard';
 import ProfileSearchList from '../../components/search/profile-search-list/ProfileSearchList';
 import UserSearchCard from '../../components/search/user-search-card/UserSearchCard';
+import usePreserveScrollPosition from '../../hooks/common/use-preserve-scroll-position';
 import useTheme from '../../hooks/use-theme';
 import { setSearchValue } from '../../redux/features/searchSlice';
 import {
@@ -42,6 +43,7 @@ const SearchPage = () => {
     const dispatch = useAppDispatch();
     const [ searchParams, setSearchParams ] = useSearchParams();
     const { getColorClassName, themeColors } = useTheme();
+    const saveScrollPosition = usePreserveScrollPosition();
     const { searchValue, selectedTerms } = useAppSelector((state) => state.search);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -181,6 +183,7 @@ const SearchPage = () => {
                                   count={data?.pagesCount}
                                   page={selectedPageValue()}
                                   onChange={(page: number) => {
+                                      saveScrollPosition();
                                       searchParams.set(`${searchName.toLowerCase()}Page`, page.toString());
                                       setSearchParams(searchParams, { replace: true });
                                   }}
@@ -207,7 +210,7 @@ const SearchPage = () => {
                     : renderData()}
             </div>
         );
-    }, [ searchParams, selectedContestsPage, selectedProblemsPage, selectedUsersPage, setSearchParams ]);
+    }, [ saveScrollPosition, searchParams, selectedContestsPage, selectedProblemsPage, selectedUsersPage, setSearchParams ]);
 
     return (
         <div className={`${styles.searchPageWrapper} ${textColorClassName}`}>
