@@ -24,7 +24,6 @@ const convertTimeIntervalToHoursMinutesAndSeconds =
 
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
     Duration => moment.duration(moment(date)
-    .utc(true)
     .local()
     .diff(moment()
         .local()), unit);
