@@ -8,6 +8,7 @@ import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
+import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import { IContestCategory } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import {
@@ -58,9 +59,10 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ selectedId, contestCategories ]);
 
-    const onContestCategoryClick = (id: number) => {
+    const onContestCategoryClick = (id: number, name: string) => {
+        const formattedCategoryName = createUrlFriendlyString(name);
         if (isRenderedOnHomePage) {
-            navigate(`/contests?category=${id}`);
+            navigate(`/contests/${formattedCategoryName}?category=${id}`);
             return;
         }
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
@@ -94,6 +96,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
         }
 
         setSearchParams(searchParams);
+        navigate(`/contests/${formattedCategoryName}?${searchParams}`);
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {
@@ -119,7 +122,7 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
                           : 1}px solid ${themeColors.textColor}`,
                   }}
                   className={categoryItemClassNames}
-                  onClick={() => onContestCategoryClick(category.id)}
+                  onClick={() => onContestCategoryClick(category.id, category.name)}
                 >
                     { isChildElement && category.children.length > 0 && <FaAngleRight /> }
                     <div>
