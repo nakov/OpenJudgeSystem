@@ -93,7 +93,7 @@ const ClientPortal = () => {
         },
         // Contest Routes
         {
-            path: '/contests/:contestId',
+            path: '/contests/:contestId/details/:slug',
             Element: ContestDetailsPage,
             title: (params: Readonly<Params<string>>) => `Contest Details - ${params.contestId || 'Unknown'}`,
         },
@@ -126,7 +126,7 @@ const ClientPortal = () => {
                 for ${params.participationType || 'Unknown'} for ${params.resultType || 'Unknown'} type`,
         },
         {
-            path: '/contests',
+            path: '/contests/:slug',
             Element: ContestsPage,
             title: 'Contests',
         },
