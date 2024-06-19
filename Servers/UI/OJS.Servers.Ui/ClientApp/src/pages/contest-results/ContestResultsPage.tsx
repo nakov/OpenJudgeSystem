@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
-import { contestParticipationType, createUrlFriendlyString } from '../../common/contest-helpers';
+import { contestParticipationType } from '../../common/contest-helpers';
 import { IContestDetailsResponseType } from '../../common/types';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestResultsGrid from '../../components/contests/contest-results-grid/ContestResultsGrid';
