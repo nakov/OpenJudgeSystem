@@ -101,7 +101,7 @@ const PageHeader = () => {
                     ? styles.burgerMenuItemsOpened
                     : styles.burgerMenuItemsClosed}`}
                 >
-                    <Link to="/contests" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Contests</Link>
+                    <Link to="/contests/all-contests" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Contests</Link>
                     <Link to="/submissions" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Submissions</Link>
                     {user.canAccessAdministration && (
                         <Link
@@ -145,7 +145,7 @@ const PageHeader = () => {
             <div>
                 <Link to="/" className={`${styles.logoBtn}`}>SoftUni Judge</Link>
                 <div className={styles.navButtons}>
-                    <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
+                    <Link to="/contests/all-contests" className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
                     {user.canAccessAdministration &&
                         <Link to={`/${NEW_ADMINISTRATION_PATH}`} target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
