@@ -10,6 +10,7 @@ import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
+import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -601,7 +602,7 @@ const ContestSolutionSubmitPage = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
-              backToUrl="/contests"
+              backToUrl="/contests/all-contests"
               backToText="Back to contests"
             />
         );
@@ -612,7 +613,7 @@ const ContestSolutionSubmitPage = () => {
             <ErrorWithActionButtons
               message="Access to this contest has expired!"
               backToText="Back to contests"
-              backToUrl="/contests"
+              backToUrl="/contests/all-contests"
             />
         );
     }
@@ -621,7 +622,12 @@ const ContestSolutionSubmitPage = () => {
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <Link to={`/contests/${contest?.id}`} className={`${styles.title} ${textColorClassName}`}>{contest?.name}</Link>
+                <Link
+                  to={`/contests/${contest?.id}/details/${createUrlFriendlyString(contest?.name)}`}
+                  className={`${styles.title} ${textColorClassName}`}
+                >
+                    {contest?.name}
+                </Link>
                 <div
                   className={styles.allResultsLink}
                   onClick={() => navigate(`/contests/${contest?.id}/${participationType}/results/simple`)}
