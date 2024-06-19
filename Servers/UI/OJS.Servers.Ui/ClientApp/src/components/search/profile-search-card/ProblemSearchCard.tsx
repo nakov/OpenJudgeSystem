@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import { IProblemSearchType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import ContestButton from '../../contests/contest-button/ContestButton';
@@ -21,7 +22,12 @@ const ProblemSearchCard = (props: IProblemSearchCardProps) => {
     return (
         <div className={`${styles.problemsSearchCardWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
             <div>
-                <Link to={`/contests/${contest.id}`} className={`${styles.problemName} ${textColorClassName}`}>{name}</Link>
+                <Link
+                  to={`/contests/${contest.id}/details/${createUrlFriendlyString(contest.name)}`}
+                  className={`${styles.problemName} ${textColorClassName}`}
+                >
+                    {name}
+                </Link>
                 <div className={styles.contestName}>{contest.name}</div>
             </div>
             <div className={styles.buttonsWrapper}>
