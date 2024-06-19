@@ -64,11 +64,11 @@ const SubmissionDetailsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ data?.contestId ]);
 
-    const { name } = contestDetails || {};
     const {
         id: solutionId,
         isProcessed,
         contestId,
+        contestName,
         problem,
         user: contestUser,
         content,
@@ -357,8 +357,13 @@ const SubmissionDetailsPage = () => {
             )}
             <ContestBreadcrumbs />
             <div>
-                <div className={styles.submissionTitle}>
-                    {renderSolutionTitle()}
+                <div className={styles.contestTitleWrapper}>
+                    <Link
+                      to={`/contests/${contestId}/details/${createUrlFriendlyString(contestName)}`}
+                      className={`${styles.contestTitle} ${textColorClassName}`}
+                    >
+                        {contestName}
+                    </Link>
                 </div>
                 <div className={styles.bodyWrapper}>
                     <SubmissionTestRuns testRuns={(!isRetestingStarted
@@ -366,12 +371,9 @@ const SubmissionDetailsPage = () => {
                         : []) || []}
                     />
                     <div className={styles.innerBodyWrapper}>
-                        <Link
-                          to={`/contests/${contestId}/details/${createUrlFriendlyString(name)}`}
-                          className={`${styles.title} ${textColorClassName}`}
-                        >
-                            {name}
-                        </Link>
+                        <div className={styles.submissionTitle}>
+                            {renderSolutionTitle()}
+                        </div>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
                         {content && (

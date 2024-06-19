@@ -5,12 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
 
-import { IContestDetailsResponseType, IPublicSubmission } from '../../../common/types';
+import { IPublicSubmission } from '../../../common/types';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 import useTheme from '../../../hooks/use-theme';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
-import { setContestDetails } from '../../../redux/features/contestsSlice';
 import { setProfile } from '../../../redux/features/usersSlice';
 import { useAppDispatch } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
@@ -83,10 +82,9 @@ const SubmissionGridRow = ({
         () => {
             const submissionDetailsUrl = getSubmissionDetailsRedirectionUrl({ submissionId });
 
-            dispatch(setContestDetails({ contest: { id: contestId, name: contestName } as IContestDetailsResponseType }));
             initiateRedirectionToProblem(problemId, submissionDetailsUrl);
         },
-        [ contestId, contestName, dispatch, initiateRedirectionToProblem, problemId, submissionId ],
+        [ initiateRedirectionToProblem, problemId, submissionId ],
     );
 
     const handleContestDetailsButtonSubmit = useCallback(

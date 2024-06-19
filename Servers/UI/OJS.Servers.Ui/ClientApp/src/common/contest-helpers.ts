@@ -25,7 +25,7 @@ const getPracticeResultsAreVisible = (
 ) => (loggedInUserCanAccessAdministration || (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed))) &&
     contest.practiceResults > 0;
 
-const createUrlFriendlyString = (inputString: string | undefined): string => {
+const createUrlFriendlyString = (inputString: string | undefined | null): string => {
     let resultString = '';
     let isLastCharacterDash = false;
 
