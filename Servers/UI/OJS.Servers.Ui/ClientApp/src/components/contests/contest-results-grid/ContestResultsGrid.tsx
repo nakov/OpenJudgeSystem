@@ -63,6 +63,10 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
             ? styles.notUnderlinedPointsResultDark
             : styles.notUnderlinedPointsResultLight;
 
+        const pointsResultStyle = isDarkMode
+            ? styles.pointsResultLight
+            : styles.pointsResultDark;
+
         return (items!.userIsInRoleForContest || participantResult.participantUsername === internalUser.userName) && !isNil(bestSubmission)
             ? (
                 <td key={`p-r-i-${problemId}`}>

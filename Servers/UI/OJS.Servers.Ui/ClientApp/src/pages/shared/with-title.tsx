@@ -19,7 +19,7 @@ const Page = ({ children, title }: IHaveChildrenPropsWithTitle) => {
     return (
         <>
             <Helmet>
-                <title>{pageTitle}</title>
+                <title>{`${pageTitle} - SoftUni Judge`}</title>
             </Helmet>
             {children}
         </>
