@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import { CREATED_ON, MODIFIED_ON, VIEW } from '../../../common/labels';
+import { CREATED_ON, MODIFIED_ON } from '../../../common/labels';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
@@ -23,7 +23,6 @@ const dataColumns: GridColDef[] = [
         flex: 1,
         filterable: false,
         sortable: false,
-        valueFormatter: (params) => params.value.toString(),
         renderCell: (params: GridRenderCellParams) => (
             <ExternalLink to={`/submissions/${Number(params.row.id)}/details`} text={params.row.id.toString()} />
         ),
