@@ -53,16 +53,21 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
             .find((pr) => pr.problemId === problemId);
 
         const bestSubmission = problemResult?.bestSubmission;
+        
+        console.log(isDarkMode);
+        const underlinedPointsResultStyle = isDarkMode
+            ? styles.underlinedPointsResultDark
+            : styles.underlinedPointsResultLight;
 
-        const pointsResultStyle = isDarkMode
-            ? styles.pointsResultLight
-            : styles.pointsResultDark;
+        const notUnderlinedPointsResultStyle = isDarkMode
+            ? styles.notUnderlinedPointsResultDark
+            : styles.notUnderlinedPointsResultLight;
 
         return (items!.userIsInRoleForContest || participantResult.participantUsername === internalUser.userName) && !isNil(bestSubmission)
             ? (
                 <td key={`p-r-i-${problemId}`}>
                     <LinkButton
-                      className={pointsResultStyle}
+                      className={underlinedPointsResultStyle}
                       type={LinkButtonType.plain}
                       size={ButtonSize.small}
                       text={`${bestSubmission.points}`}
@@ -73,7 +78,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
             : (
                 <td
                   key={`p-r-i-${problemId}`}
-                  className={pointsResultStyle}
+                  className={notUnderlinedPointsResultStyle}
                 >
                     {bestSubmission?.points || '-'}
                 </td>
