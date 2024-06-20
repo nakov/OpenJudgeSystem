@@ -39,6 +39,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly IIpsDataService ipsData;
     private readonly IContestsActivityService activityService;
     private readonly IContestParticipantsCacheService contestParticipantsCacheService;
+    private readonly IContestsCacheService contestsCacheService;
     private readonly IParticipantsDataService participantsData;
     private readonly IUserProviderService userProviderService;
     private readonly IContestResultsAggregatorCommonService contestResultsAggregatorCommonService;
@@ -54,6 +55,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IIpsDataService ipsData,
         IContestsActivityService activityService,
         IContestParticipantsCacheService contestParticipantsCacheService,
+        IContestsCacheService contestsCacheService,
         IParticipantsDataService participantsData,
         IUserProviderService userProviderService,
         IContestResultsAggregatorCommonService contestResultsAggregatorCommonService,
@@ -68,6 +70,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         this.ipsData = ipsData;
         this.activityService = activityService;
         this.contestParticipantsCacheService = contestParticipantsCacheService;
+        this.contestsCacheService = contestsCacheService;
         this.participantsData = participantsData;
         this.userProviderService = userProviderService;
         this.contestResultsAggregatorCommonService = contestResultsAggregatorCommonService;
@@ -222,6 +225,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         await this.AddIpsToContest(contest, model.AllowedIps);
 
         this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
+        this.contestsCacheService.ClearContestsCacheByContestId(contest.Id);
 
         this.contestsData.Update(contest);
         await this.contestsData.SaveChanges();
@@ -244,6 +248,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         }
 
         this.contestParticipantsCacheService.ClearContestCacheByContestId(contest.Id);
+        this.contestsCacheService.ClearContestsCacheByContestId(contest.Id);
 
         this.contestsData.Delete(contest);
         await this.contestsData.SaveChanges();
