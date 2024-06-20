@@ -17,7 +17,7 @@ import {
     IS_VISIBLE,
     LIMIT_BETWEEN_SUBMISSIONS,
     MODIFIED_ON,
-    NAME, VIEW,
+    NAME,
     VISIBLE_FROM,
 } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
