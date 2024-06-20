@@ -6,7 +6,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { CREATED_ON, MODIFIED_ON, VIEW } from '../../../common/labels';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH, PROBLEMS_PATH } from '../../../common/urls/administration-urls';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
-import ViewRedirectButton from '../../../components/administration/common/edit/ViewRedirectButton';
+import ExternalLink from '../../../components/guidelines/buttons/ExternalLink';
 import IconSize from '../../../components/guidelines/icons/common/icon-sizes';
 import DownloadIcon from '../../../components/guidelines/icons/DownloadIcon';
 import RefreshIcon from '../../../components/guidelines/icons/RefreshIcon';
@@ -24,6 +24,9 @@ const dataColumns: GridColDef[] = [
         filterable: false,
         sortable: false,
         valueFormatter: (params) => params.value.toString(),
+        renderCell: (params: GridRenderCellParams) => (
+            <ExternalLink to={`/submissions/${Number(params.row.id)}/details`} text={params.row.id.toString()} />
+        ),
     },
     {
         field: 'participantName',
@@ -157,10 +160,6 @@ export const returnSubmissionsNonFilterableColumns = (
                         <RefreshIcon size={IconSize.Large} />
                     </IconButton>
                 </Tooltip>
-                <ViewRedirectButton
-                  path={`/submissions/${Number(params.row.id)}/details`}
-                  location={VIEW}
-                />
                 <DeleteButton
                   id={Number(params.row.id)}
                   name="Submission"

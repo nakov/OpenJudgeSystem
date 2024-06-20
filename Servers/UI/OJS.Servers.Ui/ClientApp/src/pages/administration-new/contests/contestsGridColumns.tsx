@@ -17,7 +17,7 @@ import {
     IS_VISIBLE,
     LIMIT_BETWEEN_SUBMISSIONS,
     MODIFIED_ON,
-    NAME,
+    NAME, VIEW,
     VISIBLE_FROM,
 } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
@@ -41,7 +41,7 @@ const contestFilterableColumns: GridColDef[] = [
         filterable: false,
         sortable: false,
         renderCell: (params) => (
-            <ExternalLink text={params.value.toString()} to={`/${CONTESTS_PATH}/${params.row.id}`} />
+            <ExternalLink to={`/${CONTESTS_PATH}/${params.row.id}`} text={params.value.toString()} />
         ),
     },
     {

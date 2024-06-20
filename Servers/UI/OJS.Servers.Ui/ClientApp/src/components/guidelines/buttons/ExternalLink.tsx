@@ -5,16 +5,16 @@ import { ButtonSize, LinkButton, LinkButtonType } from './Button';
 import styles from './ExternalLink.module.scss';
 
 interface IExternalLinkProps {
-    text: string;
     to: string;
+    text: string;
 }
 
 const ExternalLink = ({ text, to }: IExternalLinkProps) => (
     <LinkButton
-      size={ButtonSize.small}
-      type={LinkButtonType.plain}
       to={to}
       isToExternal
+      size={ButtonSize.small}
+      type={LinkButtonType.plain}
       internalClassName={styles.externalLink}
     >
         {text}
