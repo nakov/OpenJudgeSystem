@@ -53,8 +53,7 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
             .find((pr) => pr.problemId === problemId);
 
         const bestSubmission = problemResult?.bestSubmission;
-        
-        console.log(isDarkMode);
+
         const underlinedPointsResultStyle = isDarkMode
             ? styles.underlinedPointsResultDark
             : styles.underlinedPointsResultLight;
@@ -62,10 +61,6 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
         const notUnderlinedPointsResultStyle = isDarkMode
             ? styles.notUnderlinedPointsResultDark
             : styles.notUnderlinedPointsResultLight;
-
-        const pointsResultStyle = isDarkMode
-            ? styles.pointsResultLight
-            : styles.pointsResultDark;
 
         return (items!.userIsInRoleForContest || participantResult.participantUsername === internalUser.userName) && !isNil(bestSubmission)
             ? (
