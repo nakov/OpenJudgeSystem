@@ -12,9 +12,10 @@ import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
-import { clearContestCategoryBreadcrumbItems } from '../../redux/features/contestsSlice';
-import { useGetAllContestsQuery } from '../../redux/services/contestsService';
+import { clearContestCategoryBreadcrumbItems, setContests } from '../../redux/features/contestsSlice';
+import { useLazyGetAllContestsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
+import isNilOrEmpty from '../../utils/check-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { setLayout } from '../shared/set-layout';
 
@@ -24,7 +25,12 @@ const ContestsPage = () => {
     const dispatch = useAppDispatch();
     const { breadcrumbItems } = useAppSelector((state) => state.contests);
     const { themeColors, getColorClassName } = useTheme();
-    const { selectedCategory, selectedStrategy } = useAppSelector((state) => state.contests);
+    const {
+        contests,
+        selectedCategory,
+        selectedStrategy,
+    } = useAppSelector((state) => state.contests);
+
     const [ searchParams, setSearchParams ] = useSearchParams();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
@@ -69,11 +75,23 @@ const ContestsPage = () => {
         return params;
     }, [ selectedCategory, selectedStrategy, selectedPage ]);
 
-    const {
+    const [ getAllContestsQuery, {
         data: allContests,
         error: allContestsError,
         isFetching: areContestsFetching,
-    } = useGetAllContestsQuery({ ...contestParams });
+    } ] = useLazyGetAllContestsQuery();
+
+    useEffect(() => {
+        if (isNilOrEmpty(contests)) {
+            getAllContestsQuery({ ...contestParams });
+        }
+    }, [ contestParams, contests, getAllContestsQuery ]);
+
+    useEffect(() => {
+        if (allContests && !isNilOrEmpty(allContests)) {
+            dispatch(setContests(allContests));
+        }
+    }, [ allContests, dispatch ]);
 
     const renderContest = useCallback((contest: IIndexContestsType) => (
         <ContestCard contest={contest} />
@@ -84,7 +102,7 @@ const ContestsPage = () => {
             return <div style={{ ...flexCenterObjectStyles }}><SpinningLoader /></div>;
         }
 
-        if (!allContests?.items?.length) {
+        if (!contests?.items?.length) {
             return (
                 <Heading type={HeadingType.secondary} className={`${textColorClassName} ${styles.contestHeading}`}>
                     No contests apply for this filter
@@ -95,13 +113,13 @@ const ContestsPage = () => {
         return (
             <div className={styles.contestsListContainer}>
                 <List
-                  values={allContests?.items}
+                  values={contests?.items}
                   itemFunc={renderContest}
                   className={styles.contestsList}
                   orientation={Orientation.vertical}
                 />
                 <PaginationControls
-                  count={allContests?.pagesCount}
+                  count={contests?.pagesCount}
                   page={selectedPage}
                   onChange={(page:number) => {
                       searchParams.set('page', page.toString());
@@ -111,7 +129,7 @@ const ContestsPage = () => {
             </div>
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ allContests, areContestsFetching, searchParams ]);
+    }, [ contests, areContestsFetching, searchParams ]);
 
     if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
