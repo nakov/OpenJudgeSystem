@@ -104,6 +104,7 @@ const ContestSolutionSubmitPage = () => {
     const {
         contest,
         isRegisteredParticipant,
+        isInvalidated,
         isActiveParticipant,
         participantsCount,
         lastSubmissionTime,
@@ -213,10 +214,10 @@ const ContestSolutionSubmitPage = () => {
         if (isLoading) {
             return;
         }
-        if ((!isRegisteredParticipant && !isActiveParticipant) && !isError) {
+        if (((!isRegisteredParticipant && !isActiveParticipant) && !isError) || isInvalidated) {
             navigate(`/contests/register/${contestId}/${participationType}`, { replace: true });
         }
-    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, isInvalidated ]);
 
     useEffect(() => {
         setSubmissionCode('');
