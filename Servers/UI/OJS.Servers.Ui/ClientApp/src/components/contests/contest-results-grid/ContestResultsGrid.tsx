@@ -54,11 +54,15 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
 
         const bestSubmission = problemResult?.bestSubmission;
 
+        const pointsResultStyle = isDarkMode
+            ? styles.pointsResultLight
+            : styles.pointsResultDark;
+
         return (items!.userIsInRoleForContest || participantResult.participantUsername === internalUser.userName) && !isNil(bestSubmission)
             ? (
                 <td key={`p-r-i-${problemId}`}>
                     <LinkButton
-                      className={styles.pointsResult}
+                      className={pointsResultStyle}
                       type={LinkButtonType.plain}
                       size={ButtonSize.small}
                       text={`${bestSubmission.points}`}
@@ -66,8 +70,15 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                     />
                 </td>
             )
-            : <td key={`p-r-i-${problemId}`}>{bestSubmission?.points || '-'}</td>;
-    }, [ items, internalUser ]);
+            : (
+                <td
+                  key={`p-r-i-${problemId}`}
+                  className={pointsResultStyle}
+                >
+                    {bestSubmission?.points || '-'}
+                </td>
+            );
+    }, [ items, internalUser.userName, isDarkMode ]);
 
     return (
         <div className={styles.tableContainer}>
@@ -94,7 +105,17 @@ const ContestResultsGrid = ({ items }: IContestResultsGridProps) => {
                 <tbody>
                     {
                     !isNil(items) && !isEmpty(items) && items.results.map((participantResult, index) => (
-                        <tr key={`t-r-i-${participantResult.participantUsername}`} className={rowClassName}>
+                        <tr
+                          key={`t-r-i-${participantResult.participantUsername}`}
+                          className={concatClassNames(
+                              rowClassName,
+                              participantResult.participantUsername === internalUser.userName
+                                  ? isDarkMode
+                                      ? styles.userRowDark
+                                      : styles.userRowLight
+                                  : '',
+                          )}
+                        >
                             <td>{index + 1}</td>
                             <td>{participantResult.participantUsername}</td>
                             {

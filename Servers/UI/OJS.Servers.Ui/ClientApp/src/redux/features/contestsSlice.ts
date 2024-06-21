@@ -5,9 +5,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ContestBreadcrumb, IContestStrategyFilter } from '../../common/contest-types';
-import { IContestCategory, IContestDetailsResponseType, IContestDetailsSliceType, IProblemType } from '../../common/types';
+import {
+    IContestCategory,
+    IContestDetailsResponseType,
+    IContestDetailsSliceType,
+    IIndexContestsType, IPagedResultType,
+    IProblemType,
+} from '../../common/types';
 
 interface IContestState {
+    contests: IPagedResultType<IIndexContestsType> | null;
     selectedCategory: IContestCategory | null;
     selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
@@ -17,6 +24,7 @@ interface IContestState {
 }
 
 const initialState: IContestState = {
+    contests: null,
     selectedCategory: null,
     selectedStrategy: null,
     breadcrumbItems: [],
@@ -30,6 +38,9 @@ export const contestSlice = createSlice({
     name: 'contests',
     initialState,
     reducers: {
+        setContests: (state, action: PayloadAction<IPagedResultType<IIndexContestsType> | null>) => {
+            state.contests = action.payload;
+        },
         setContestCategory: (state, action: PayloadAction<IContestCategory | null>) => {
             state.selectedCategory = action.payload;
         },
@@ -66,6 +77,7 @@ export const contestSlice = createSlice({
 });
 
 export const {
+    setContests,
     setContestDetails,
     setContestCategory,
     setContestStrategy,

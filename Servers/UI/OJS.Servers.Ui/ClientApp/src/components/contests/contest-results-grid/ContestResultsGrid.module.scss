@@ -57,6 +57,18 @@
   background: colors.$primary-dark-grey-color;
 }
 
-.pointsResult {
-  color: colors.$primary-blue;
+.pointsResultLight {
+  color: colors.$white-color;
+}
+
+.pointsResultDark {
+  color: colors.$black-color;
+}
+
+.userRowDark {
+  background: colors.$light-blue-color;
+}
+
+.userRowLight {
+  background: colors.$text-light-gray-color;
 }
