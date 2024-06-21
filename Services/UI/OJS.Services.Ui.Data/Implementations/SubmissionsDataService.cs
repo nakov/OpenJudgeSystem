@@ -5,6 +5,7 @@ using OJS.Common.Extensions;
 using OJS.Data;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Common.Data.Implementations;
+using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Infrastructure.Models;
 using System;
@@ -14,10 +15,11 @@ using System.Threading.Tasks;
 
 public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataService
 {
-    public SubmissionsDataService(OjsDbContext db)
+    private readonly IDatesService datesService;
+
+    public SubmissionsDataService(OjsDbContext db, IDatesService datesService)
         : base(db)
-    {
-    }
+        => this.datesService = datesService;
 
     public TServiceModel? GetSubmissionById<TServiceModel>(int id)
         => this.GetByIdQuery(id)
@@ -137,7 +139,7 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
         {
             // check if the submission was sent after the submission time limit has passed
             var latestSubmissionTime = lastSubmission.CreatedOn;
-            var differenceBetweenSubmissions = DateTime.UtcNow - latestSubmissionTime;
+            var differenceBetweenSubmissions = this.datesService.GetUtcNow() - latestSubmissionTime;
             if (differenceBetweenSubmissions.TotalSeconds < limitBetweenSubmissions)
             {
                 return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
