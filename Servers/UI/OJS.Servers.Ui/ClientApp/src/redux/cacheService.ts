@@ -1,4 +1,4 @@
-import { setContests } from './features/contestsSlice';
+import { setContests, setContestsCacheIsReset } from './features/contestsSlice';
 import { useAppDispatch } from './store';
 
 interface ICacheServiceContext {
@@ -10,6 +10,7 @@ const CacheService = (): ICacheServiceContext => {
 
     const resetContests = () => {
         dispatch(setContests(null));
+        dispatch(setContestsCacheIsReset(true));
     };
 
     const resetCache = () => {
