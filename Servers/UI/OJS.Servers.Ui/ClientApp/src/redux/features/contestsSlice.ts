@@ -15,6 +15,7 @@ import {
 
 interface IContestState {
     contests: IPagedResultType<IIndexContestsType> | null;
+    contestsCacheIsReset: boolean;
     selectedCategory: IContestCategory | null;
     selectedStrategy: IContestStrategyFilter | null;
     breadcrumbItems: Array<ContestBreadcrumb>;
@@ -25,6 +26,7 @@ interface IContestState {
 
 const initialState: IContestState = {
     contests: null,
+    contestsCacheIsReset: false,
     selectedCategory: null,
     selectedStrategy: null,
     breadcrumbItems: [],
@@ -40,6 +42,9 @@ export const contestSlice = createSlice({
     reducers: {
         setContests: (state, action: PayloadAction<IPagedResultType<IIndexContestsType> | null>) => {
             state.contests = action.payload;
+        },
+        setContestsCacheIsReset: (state, action: PayloadAction<boolean>) => {
+            state.contestsCacheIsReset = action.payload;
         },
         setContestCategory: (state, action: PayloadAction<IContestCategory | null>) => {
             state.selectedCategory = action.payload;
@@ -78,6 +83,7 @@ export const contestSlice = createSlice({
 
 export const {
     setContests,
+    setContestsCacheIsReset,
     setContestDetails,
     setContestCategory,
     setContestStrategy,

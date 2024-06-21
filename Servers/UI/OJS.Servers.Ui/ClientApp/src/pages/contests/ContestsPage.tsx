@@ -12,8 +12,12 @@ import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
 import useTheme from '../../hooks/use-theme';
-import { clearContestCategoryBreadcrumbItems, setContests } from '../../redux/features/contestsSlice';
-import { useLazyGetAllContestsQuery } from '../../redux/services/contestsService';
+import {
+    clearContestCategoryBreadcrumbItems,
+    setContests,
+    setContestsCacheIsReset,
+} from '../../redux/features/contestsSlice';
+import { useGetAllContestsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
@@ -27,6 +31,7 @@ const ContestsPage = () => {
     const { themeColors, getColorClassName } = useTheme();
     const {
         contests,
+        contestsCacheIsReset,
         selectedCategory,
         selectedStrategy,
     } = useAppSelector((state) => state.contests);
@@ -75,17 +80,19 @@ const ContestsPage = () => {
         return params;
     }, [ selectedCategory, selectedStrategy, selectedPage ]);
 
-    const [ getAllContestsQuery, {
+    const {
         data: allContests,
+        refetch: refetchAllContests,
         error: allContestsError,
         isFetching: areContestsFetching,
-    } ] = useLazyGetAllContestsQuery();
+    } = useGetAllContestsQuery({ ...contestParams });
 
     useEffect(() => {
-        if (isNilOrEmpty(contests)) {
-            getAllContestsQuery({ ...contestParams });
+        if (contestsCacheIsReset) {
+            refetchAllContests();
+            dispatch(setContestsCacheIsReset(false));
         }
-    }, [ contestParams, contests, getAllContestsQuery ]);
+    }, [ refetchAllContests, contestsCacheIsReset, dispatch ]);
 
     useEffect(() => {
         if (allContests && !isNilOrEmpty(allContests)) {
