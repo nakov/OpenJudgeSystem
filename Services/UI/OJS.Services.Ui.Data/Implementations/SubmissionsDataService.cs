@@ -141,8 +141,8 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             var latestSubmissionTime = lastSubmission.CreatedOn;
             var differenceBetweenSubmissions = this.datesService.GetUtcNow() - latestSubmissionTime;
             // Adding 5 seconds to equalize time difference between server and client time
-            var differenceMinusPlusFiveSeconds = differenceBetweenSubmissions.TotalSeconds + 5;
-            if (differenceMinusPlusFiveSeconds < limitBetweenSubmissions)
+            var differencePlusFiveSeconds = differenceBetweenSubmissions.TotalSeconds + 5;
+            if (differencePlusFiveSeconds < limitBetweenSubmissions)
             {
                 return limitBetweenSubmissions - differenceBetweenSubmissions.TotalSeconds.ToInt();
             }
