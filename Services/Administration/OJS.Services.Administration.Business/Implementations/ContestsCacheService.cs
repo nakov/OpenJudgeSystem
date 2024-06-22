@@ -12,5 +12,8 @@ public class ContestsCacheService : IContestsCacheService
         => this.cache = cache;
 
     public void ClearContestsCacheByContestId(int contestId)
-        => this.cache.Remove(string.Format(CacheConstants.ContestDetailsServiceModelByContestId, contestId));
+    {
+        this.cache.Remove(string.Format(CacheConstants.ContestDetails, contestId));
+        this.cache.Remove(string.Format(CacheConstants.ContestDetailsForSubmit, contestId));
+    }
 }

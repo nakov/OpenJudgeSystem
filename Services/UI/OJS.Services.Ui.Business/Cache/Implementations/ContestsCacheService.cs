@@ -26,7 +26,7 @@ public class ContestsCacheService : IContestsCacheService
         int contestId,
         int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
         => await this.cache.Get(
-            string.Format(CacheConstants.ContestDetailsServiceModelByContestId, contestId),
+            string.Format(CacheConstants.ContestDetails, contestId),
             async () => (await this.GetContestServiceModel(contestId)),
             cacheSeconds);
 
