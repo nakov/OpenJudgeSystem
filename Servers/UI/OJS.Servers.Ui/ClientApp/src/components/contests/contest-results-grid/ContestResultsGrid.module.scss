@@ -57,7 +57,24 @@
   background: colors.$primary-dark-grey-color;
 }
 
-.pointsResult {
+.underlinedPointsResultLight:hover,
+.underlinedPointsResultDark:hover {
+  text-decoration: underline;
+}
+
+.underlinedPointsResultLight {
+  color: colors.$black-color;
+}
+
+.underlinedPointsResultDark {
+  color: colors.$white-color;
+}
+
+.notUnderlinedPointsResultLight {
+  color: colors.$black-color;
+}
+
+.notUnderlinedPointsResultDark {
   color: colors.$white-color;
 }
 
