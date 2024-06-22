@@ -51,7 +51,7 @@ const ContestButton = (props: IContestButtonProps) => {
           isCompete={isCompete}
           onClick={onButtonClick}
           className={isUserAdminOrLecturer && isDisabled
-              ? styles.contestButtonFaint
+              ? styles.adminDisabled
               : ''}
         />
     );
