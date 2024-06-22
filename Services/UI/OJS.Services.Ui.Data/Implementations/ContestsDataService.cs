@@ -54,6 +54,11 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .MapCollection<TServiceModel>()
             .ToListAsync();
 
+    public async Task<TServiceModel?> GetById<TServiceModel>(int id)
+        => await this.GetByIdQuery(id)
+            .MapCollection<TServiceModel>()
+            .FirstOrDefaultAsync();
+
     public IQueryable<Contest> GetAllVisible()
         => this.GetQuery(c => c.IsVisible || c.VisibleFrom <= this.dates.GetUtcNow());
 
@@ -109,35 +114,6 @@ public class ContestsDataService : DataService<Contest>, IContestsDataService
             .Include(c => c.Category)
             .Include(c => c.ProblemGroups)
                 .ThenInclude(pg => pg.Problems)
-            .FirstOrDefaultAsync();
-
-    public Task<Contest?> GetByIdWithCategoryAndProblemsAndSubmissionTypes(int id)
-        => this.GetByIdQuery(id)
-            .Include(c => c.Category)
-            .Include(c => c.ProblemGroups)
-            .ThenInclude(pg => pg.Problems)
-                .ThenInclude(p => p.SubmissionTypesInProblems)
-                    .ThenInclude(stp => stp.SubmissionType)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                    .ThenInclude(p => p.Resources)
-            .AsSplitQuery()
-            .FirstOrDefaultAsync();
-
-    public Task<Contest?> GetByIdWithProblemsDetailsAndCategories(int id)
-        => this.GetByIdQuery(id)
-            .Include(c => c.Category)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                        .ThenInclude(p => p.Resources)
-            .Include(c => c.ProblemGroups)
-                 .ThenInclude(pg => pg.Problems)
-                    .ThenInclude(p => p.SubmissionTypesInProblems)
-                        .ThenInclude(sp => sp.SubmissionType)
-            .Include(c => c.ProblemGroups)
-                .ThenInclude(pg => pg.Problems)
-                    .ThenInclude(p => p.Checker)
-            .AsSplitQuery()
             .FirstOrDefaultAsync();
 
     public Task<Contest?> GetByIdWithParticipants(int id)

@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-
 import { getContestSubmissionPageUrl } from '../../../common/urls/compose-client-urls';
+import useNavigation from '../../../hooks/common/use-routing';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
-import { useAppDispatch } from '../../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
+
+import styles from './ContestButton.module.scss';
 
 interface IContestButtonProps {
     isCompete: boolean;
@@ -18,9 +19,11 @@ const PRACTICE_STRING = 'PRACTICE';
 
 const ContestButton = (props: IContestButtonProps) => {
     const { isCompete, isDisabled, id, problemId, onClick } = props;
+    const { internalUser } = useAppSelector((reduxState) => reduxState.authorization);
+
     const dispatch = useAppDispatch();
 
-    const navigate = useNavigate();
+    const { navigateInNewWindow } = useNavigation();
 
     const onButtonClick = async () => {
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: null }));
@@ -29,8 +32,10 @@ const ContestButton = (props: IContestButtonProps) => {
             return;
         }
 
-        navigate(getContestSubmissionPageUrl(isCompete, id, problemId), { replace: true });
+        navigateInNewWindow(getContestSubmissionPageUrl(isCompete, id, problemId));
     };
+
+    const isUserAdminOrLecturer = internalUser.isAdmin || internalUser.isLecturer;
 
     const btnText = isCompete
         ? COMPETE_STRING
@@ -39,12 +44,15 @@ const ContestButton = (props: IContestButtonProps) => {
     return (
         <Button
           text={btnText}
-          state={isDisabled
+          state={!isUserAdminOrLecturer && isDisabled
               ? ButtonState.disabled
               : ButtonState.enabled}
           size={ButtonSize.small}
           isCompete={isCompete}
           onClick={onButtonClick}
+          className={isUserAdminOrLecturer && isDisabled
+              ? styles.adminDisabled
+              : ''}
         />
     );
 };

@@ -57,6 +57,31 @@
   background: colors.$primary-dark-grey-color;
 }
 
-.pointsResult {
-  color: colors.$primary-blue;
+.underlinedPointsResultLight:hover,
+.underlinedPointsResultDark:hover {
+  text-decoration: underline;
+}
+
+.underlinedPointsResultLight {
+  color: colors.$black-color;
+}
+
+.underlinedPointsResultDark {
+  color: colors.$white-color;
+}
+
+.notUnderlinedPointsResultLight {
+  color: colors.$black-color;
+}
+
+.notUnderlinedPointsResultDark {
+  color: colors.$white-color;
+}
+
+.userRowDark {
+  background: colors.$light-blue-color;
+}
+
+.userRowLight {
+  background: colors.$text-light-gray-color;
 }

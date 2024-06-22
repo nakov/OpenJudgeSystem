@@ -27,7 +27,7 @@ interface IContestCategoriesProps {
     isRenderedOnHomePage?: boolean;
 }
 
-const ContestCetegories = (props: IContestCategoriesProps) => {
+const ContestCategories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
 
     const navigate = useNavigate();
@@ -63,10 +63,12 @@ const ContestCetegories = (props: IContestCategoriesProps) => {
             navigate(`/contests?category=${id}`);
             return;
         }
+
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
         if (!selectedContestCategory) {
             return;
         }
+
         const parents = findParentNames(contestCategories, selectedContestCategory?.id);
         // click is on already selected category
         if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
@@ -244,4 +246,4 @@ const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | und
     return false;
 };
 
-export { ContestCetegories, findContestCategoryByIdRecursive, findParentNames };
+export { ContestCategories, findContestCategoryByIdRecursive, findParentNames };

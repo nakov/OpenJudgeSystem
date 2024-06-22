@@ -4,8 +4,14 @@ using OJS.Common.Extensions;
 using OJS.Common.Utils;
 using OJS.Services.Infrastructure.Constants;
 using OJS.Services.Infrastructure.Cache;
+using OJS.Services.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Cache;
+using OJS.Services.Infrastructure.Exceptions;
+using OJS.Services.Ui.Business.Validations.Implementations.Contests;
+using OJS.Services.Common.Models.Users;
+using OJS.Services.Ui.Models.Contests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +20,19 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
 {
     private readonly ICacheService cache;
     private readonly IParticipantsDataService participantsDataService;
+    private readonly IContestsDataService contestsData;
+    private readonly IContestParticipationValidationService contestParticipationValidationService;
 
     public ContestParticipantsCacheService(
         ICacheService cache,
-        IParticipantsDataService participantsDataService)
+        IParticipantsDataService participantsDataService,
+        IContestsDataService contestsData,
+        IContestParticipationValidationService contestParticipationValidationService)
     {
         this.cache = cache;
         this.participantsDataService = participantsDataService;
+        this.contestsData = contestsData;
+        this.contestParticipationValidationService = contestParticipationValidationService;
     }
 
     public async Task<IDictionary<int, ContestParticipantsCountCacheModel>> GetParticipantsCount(
@@ -42,6 +54,15 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
         => await this.cache.Get(
             string.Format(CacheConstants.ParticipantsCountByContest, contestId),
             async () => (await this.GetContestsParticipantsCount(new[] { contestId }))[contestId],
+            cacheSeconds);
+
+    public async Task<ContestServiceModel?> GetContestServiceModelForContest(
+        int contestId,
+        StartContestParticipationServiceModel model,
+        int cacheSeconds = CacheConstants.FiveMinutesInSeconds)
+        => await this.cache.Get(
+            string.Format(CacheConstants.ContestDetailsForSubmit, contestId),
+            async () => (await this.GetContestServiceModel(model)),
             cacheSeconds);
 
     /// <summary>
@@ -67,5 +88,20 @@ public class ContestParticipantsCacheService : IContestParticipantsCacheService
                 Official = officialParticipants.GetValueOrDefault(id),
                 Practice = practiceParticipants.GetValueOrDefault(id),
             });
+    }
+
+    /// <summary>
+    /// Gets the contest by its id with problem details and categories and maps it to a ContestServiceModel.
+    /// </summary>
+    /// <param name="model">The model containing the contest participation start details, including the contest id and whether it is official.</param>
+    /// <returns>A ContestServiceModel containing detailed information about the contest.</returns>
+    private async Task<ContestServiceModel?> GetContestServiceModel(
+        StartContestParticipationServiceModel model)
+    {
+        var contest = await this.contestsData.GetById<ContestServiceModel>(model.ContestId);
+
+        var contestServiceModel = contest?.Map<ContestServiceModel?>();
+
+        return contestServiceModel;
     }
 }
