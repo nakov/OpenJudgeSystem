@@ -91,14 +91,30 @@ const ClientPortal = () => {
         },
         // Contest Routes
         {
-            path: '/contests/:contestId/details/:slug',
+            path: '/contests/:slug',
+            Element: ContestsPage,
+            title: 'Contests',
+        },
+        {
+            path: '/contests/:slug/:contestId',
             Element: ContestDetailsPage,
             title: (params: Readonly<Params<string>>) => `Contest #${params.contestId}`,
         },
         {
-            path: '/contests/register/:contestId/:participationType',
+            path: '/contests/:slug/:contestId/:participationType',
+            Element: ContestSolutionSubmitPage,
+            title: (params: Readonly<Params<string>>) => `
+        ${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
+        },
+        {
+            path: '/contests/:slug/:contestId/:participationType/register',
             Element: ContestRegister,
             title: (params: Readonly<Params<string>>) => `Contest Register - ${params.contestId}`,
+        },
+        {
+            path: '/contests/:slug/:contestId/:participationType/results/:resultType',
+            Element: ContestResultsPage,
+            title: (params: Readonly<Params<string>>) => `Results #${params.contestId}`,
         },
         {
             path: '/contests/problems/:contestId',
@@ -109,22 +125,6 @@ const ClientPortal = () => {
             path: '/contests/edit/:contestId',
             Element: ContestEditPage,
             title: (params: Readonly<Params<string>>) => `Contest Edit - ${params.contestId || 'Unknown'}`,
-        },
-        {
-            path: '/contests/:contestId/:participationType',
-            Element: ContestSolutionSubmitPage,
-            title: (params: Readonly<Params<string>>) => `
-${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
-        },
-        {
-            path: '/contests/:contestId/:participationType/results/:resultType',
-            Element: ContestResultsPage,
-            title: (params: Readonly<Params<string>>) => `Results #${params.contestId}`,
-        },
-        {
-            path: '/contests/:slug',
-            Element: ContestsPage,
-            title: 'Contests',
         },
         // Catch-All Route
         {
