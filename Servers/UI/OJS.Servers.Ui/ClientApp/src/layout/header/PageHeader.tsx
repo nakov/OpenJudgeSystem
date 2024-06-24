@@ -141,6 +141,9 @@ const PageHeader = () => {
     if (!shouldRenderPageHeader) {
         return null;
     }
+
+    const isThemeSwitchVisible = `${import.meta.env.VITE_IS_THEME_SWITCH_VISIBLE}` === 'true';
+
     return (
         <header className={styles.header}>
             <div>
@@ -152,7 +155,10 @@ const PageHeader = () => {
                         <Link to={`/${NEW_ADMINISTRATION_PATH}`} target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}
                 </div>
             </div>
-            <div className={styles.authButtons}>
+            <div className={`${styles.authButtons} ${isThemeSwitchVisible
+                ? styles.themeSwitchVisible
+                : ''}`}
+            >
                 <i className={`fas fa-search ${styles.searchIcon}`} onClick={() => dispatch(setIsVisible(!isVisible))} />
                 {isLoggedIn
                     ? (
@@ -179,7 +185,7 @@ const PageHeader = () => {
                 </div>
             </div>
             {renderBurgerMenuItems()}
-            {renderThemeSwitcher()}
+            {isThemeSwitchVisible && renderThemeSwitcher()}
         </header>
     );
 };

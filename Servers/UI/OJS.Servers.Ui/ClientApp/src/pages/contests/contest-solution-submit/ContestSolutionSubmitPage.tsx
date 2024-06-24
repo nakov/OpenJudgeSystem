@@ -109,6 +109,7 @@ const ContestSolutionSubmitPage = () => {
     const {
         contest,
         isRegisteredParticipant,
+        isInvalidated,
         isActiveParticipant,
         participantsCount,
         lastSubmissionTime,
@@ -167,7 +168,9 @@ const ContestSolutionSubmitPage = () => {
             const newRemainingTime = userSubmissionsTimeLimit - elapsedTimeInSeconds;
 
             if (newRemainingTime <= 0) {
-                setIsSubmitButtonDisabled(false);
+                setTimeout(() => {
+                    setIsSubmitButtonDisabled(false);
+                }, 1000);
                 setRemainingTime(0);
                 clearInterval(intervalId);
             } else {

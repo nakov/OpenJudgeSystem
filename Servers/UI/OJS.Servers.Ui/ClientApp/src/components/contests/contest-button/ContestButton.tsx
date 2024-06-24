@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
-import { useAppDispatch } from '../../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
+
+import styles from './ContestButton.module.scss';
 
 interface IContestButtonProps {
     isCompete: boolean;
@@ -21,7 +23,7 @@ const ContestButton = (props: IContestButtonProps) => {
     const { isCompete, isDisabled, id, problemId, onClick, name } = props;
     const dispatch = useAppDispatch();
 
-    const navigate = useNavigate();
+    const { navigateInNewWindow } = useNavigation();
 
     const onButtonClick = async () => {
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: null }));
@@ -38,6 +40,8 @@ const ContestButton = (props: IContestButtonProps) => {
         }), { replace: true });
     };
 
+    const isUserAdminOrLecturer = internalUser.isAdmin || internalUser.isLecturer;
+
     const btnText = isCompete
         ? COMPETE_STRING
         : PRACTICE_STRING;
@@ -45,12 +49,15 @@ const ContestButton = (props: IContestButtonProps) => {
     return (
         <Button
           text={btnText}
-          state={isDisabled
+          state={!isUserAdminOrLecturer && isDisabled
               ? ButtonState.disabled
               : ButtonState.enabled}
           size={ButtonSize.small}
           isCompete={isCompete}
           onClick={onButtonClick}
+          className={isUserAdminOrLecturer && isDisabled
+              ? styles.adminDisabled
+              : ''}
         />
     );
 };
