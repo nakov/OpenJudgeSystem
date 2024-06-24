@@ -8,8 +8,8 @@ import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
-import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import { IContestCategory } from '../../../common/types';
+import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
     setContestCategories,
@@ -60,9 +60,8 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     }, [ selectedId, contestCategories ]);
 
     const onContestCategoryClick = (id: number, name: string) => {
-        const formattedCategoryName = createUrlFriendlyString(name);
         if (isRenderedOnHomePage) {
-            navigate(`/contests/${formattedCategoryName}?category=${id}`);
+            navigate(getAllContestsPageUrl({ categoryName: name, categoryId: id }));
             return;
         }
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
@@ -96,7 +95,11 @@ const ContestCategories = (props: IContestCategoriesProps) => {
         }
 
         setSearchParams(searchParams);
-        navigate(`/contests/${formattedCategoryName}?${searchParams}`);
+        navigate(getAllContestsPageUrl({
+            categoryName: name,
+            categoryId: searchParams.get('category'),
+            strategyId: searchParams.get('strategy'),
+        }));
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {

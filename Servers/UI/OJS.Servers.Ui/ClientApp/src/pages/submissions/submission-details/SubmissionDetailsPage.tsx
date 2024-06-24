@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import { createUrlFriendlyString } from '../../../common/contest-helpers';
+import { getContestsDetailsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -119,14 +119,11 @@ const SubmissionDetailsPage = () => {
             {' '}
             for problem
             {' '}
-            <Link to={`/contests/${contestId}/${isOfficial
-                ? 'compete'
-                : 'practice'}#${problem?.id}`}
-            >
+            <Link to={getContestsSolutionSubmitPageUrl({ isCompete: isOfficial, contestId, contestName, problemId: problem?.id })}>
                 {problem?.name}
             </Link>
         </div>
-    ), [ solutionId, contestUser?.userName, contestId, isOfficial, problem?.id, problem?.name ]);
+    ), [ solutionId, contestUser?.userName, contestName, contestId, isOfficial, problem?.id, problem?.name ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
@@ -368,7 +365,7 @@ const SubmissionDetailsPage = () => {
                     <div className={styles.innerBodyWrapper}>
                         <div className={styles.contestTitle}>
                             <Link
-                              to={`/contests/${contestId}/details/${createUrlFriendlyString(contestName)}`}
+                              to={getContestsDetailsPageUrl({ contestId, contestName })}
                             >
                                 {contestName}
                             </Link>

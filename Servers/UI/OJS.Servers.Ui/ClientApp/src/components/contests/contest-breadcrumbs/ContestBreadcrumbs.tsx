@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { ContestBreadcrumb } from '../../../common/contest-types';
-import { getAllContestsUrl } from '../../../common/urls/compose-client-urls';
+import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
     setContestCategories,
@@ -63,7 +63,7 @@ const ContestBreadcrumbs = () => {
     const renderBreadcrumbItems = (breadcrumbItem: ContestBreadcrumb, isLast: boolean) => (
         <Link
           key={`contest-breadcrumb-item-${breadcrumbItem.id}`}
-          to={getAllContestsUrl(breadcrumbItem.id, undefined, breadcrumbItem.name)}
+          to={getAllContestsPageUrl({ categoryId: breadcrumbItem.id, categoryName: breadcrumbItem.name })}
         >
             <div
               onClick={() => {
@@ -92,7 +92,7 @@ const ContestBreadcrumbs = () => {
             <Link to="/" className={`${styles.item} ${styles.staticItem}`}>Home</Link>
             {' / '}
             <Link
-              to="/contests/all-contests"
+              to={getAllContestsPageUrl({})}
               className={`${styles.item} ${styles.staticItem} ${breadcrumbItems.length === 0
                   ? textColorClassName
                   : ''}`}

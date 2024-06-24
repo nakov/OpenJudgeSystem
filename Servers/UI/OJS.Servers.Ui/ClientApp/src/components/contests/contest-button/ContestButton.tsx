@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { getContestSubmissionPageUrl } from '../../../common/urls/compose-client-urls';
+import { getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
 import { useAppDispatch } from '../../../redux/store';
 import Button, { ButtonSize, ButtonState } from '../../guidelines/buttons/Button';
@@ -11,13 +11,14 @@ interface IContestButtonProps {
     id: number;
     problemId?: number;
     onClick?: () => void;
+    name: string;
 }
 
 const COMPETE_STRING = 'COMPETE';
 const PRACTICE_STRING = 'PRACTICE';
 
 const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, id, problemId, onClick } = props;
+    const { isCompete, isDisabled, id, problemId, onClick, name } = props;
     const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
@@ -29,7 +30,12 @@ const ContestButton = (props: IContestButtonProps) => {
             return;
         }
 
-        navigate(getContestSubmissionPageUrl(isCompete, id, problemId), { replace: true });
+        navigate(getContestsSolutionSubmitPageUrl({
+            isCompete,
+            contestId: id,
+            contestName: name,
+            problemId,
+        }), { replace: true });
     };
 
     const btnText = isCompete

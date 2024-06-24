@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
+import { ContestParticipationType } from '../../../common/constants';
 import {
     createUrlFriendlyString,
     getCompeteResultsAreVisible,
     getPracticeResultsAreVisible,
 } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
-import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
+import { getContestsDetailsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
@@ -107,7 +108,14 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={getContestsResultsUrl(id!, participationType, true)}
+                          to={getContestsResultsPageUrl({
+                              slug: createUrlFriendlyString(name),
+                              contestId: id!,
+                              participationType: participationType === ContestParticipationType.Compete
+                                  ? ContestParticipationType.Compete
+                                  : ContestParticipationType.Practice,
+                              isSimple: true,
+                          })}
                         >
                             {renderBody()}
                         </Link>
@@ -136,14 +144,14 @@ const ContestCard = (props: IContestCardProps) => {
             : !canBePracticed;
 
         return (
-            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
+            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} name={name} />
         );
     };
 
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
-                <Link className={styles.contestCardTitle} to={`/contests/${id}/details/${createUrlFriendlyString(name)}`}>
+                <Link className={styles.contestCardTitle} to={getContestsDetailsPageUrl({ contestId: id, contestName: name })}>
                     {name}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
@@ -163,7 +171,7 @@ const ContestCard = (props: IContestCardProps) => {
                             `practice results: ${practiceResults}`,
                             false,
                             true,
-                            'practice',
+                            ContestParticipationType.Practice,
                         )
 }
                     {
@@ -174,7 +182,7 @@ const ContestCard = (props: IContestCardProps) => {
                             `compete results: ${competeResults}`,
                             true,
                             true,
-                            'compete',
+                            ContestParticipationType.Compete,
                         )
                     }
                     {contestEndTime &&

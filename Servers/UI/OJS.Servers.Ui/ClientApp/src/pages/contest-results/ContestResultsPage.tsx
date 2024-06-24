@@ -5,6 +5,7 @@ import isNil from 'lodash/isNil';
 import { ContestParticipationType, ContestResultType } from '../../common/constants';
 import { contestParticipationType } from '../../common/contest-helpers';
 import { IContestDetailsResponseType } from '../../common/types';
+import { getContestsDetailsPageUrl } from '../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestResultsGrid from '../../components/contests/contest-results-grid/ContestResultsGrid';
 import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
@@ -18,7 +19,6 @@ import isNilOrEmpty from '../../utils/check-utils';
 import { getErrorMessage } from '../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
-import { getContestDetailsAppUrl } from '../../utils/urls';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
 
@@ -95,7 +95,7 @@ const ContestResultsPage = () => {
                             Results For
                             {' '}
                             <LinkButton
-                              to={getContestDetailsAppUrl(Number(contestId!), contestResults?.name)}
+                              to={getContestsDetailsPageUrl({ contestId: Number(contestId!), contestName: contestResults?.name })}
                               text={contestResults?.name}
                               type={LinkButtonType.plain}
                               className={styles.contestName}

@@ -6,6 +6,7 @@ import { Popover } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { IPublicSubmission } from '../../../common/types';
+import { getContestsDetailsPageUrl } from '../../../common/urls/compose-client-urls';
 import { useUserProfileSubmissions } from '../../../hooks/submissions/use-profile-submissions';
 import { useProblems } from '../../../hooks/use-problems';
 import useTheme from '../../../hooks/use-theme';
@@ -17,7 +18,6 @@ import { defaultDateTimeFormatReverse, formatDate } from '../../../utils/dates';
 import { fullStrategyNameToStrategyType, strategyTypeToIcon } from '../../../utils/strategy-type-utils';
 import {
     encodeAsUrlParam,
-    getContestDetailsAppUrl,
     getSubmissionDetailsRedirectionUrl,
     getUserProfileInfoUrlByUsername,
 } from '../../../utils/urls';
@@ -89,7 +89,7 @@ const SubmissionGridRow = ({
 
     const handleContestDetailsButtonSubmit = useCallback(
         () => {
-            navigate(getContestDetailsAppUrl(contestId, contestName));
+            navigate(getContestsDetailsPageUrl({ contestId, contestName }));
         },
         [ navigate, contestId, contestName ],
     );
