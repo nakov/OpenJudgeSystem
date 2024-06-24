@@ -26,6 +26,8 @@ export const INPUT = 'Input';
 export const OUTPUT = 'Output';
 export const PROBLEM_RESOURCE = 'Problem Resource';
 
+export const TRANSFER = 'Transfer';
+
 export const CREATE_NEW_RECORD = 'Create new record';
 
 export const CLASS_NAME = 'Class Name';

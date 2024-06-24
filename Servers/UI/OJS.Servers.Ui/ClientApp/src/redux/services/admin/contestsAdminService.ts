@@ -7,6 +7,7 @@ import { IContestDetailsUrlParams } from '../../../common/url-types';
 import { CREATE_ENDPOINT, DELETE_ENDPOINT, EXCEL_RESULTS_ENDPOINT, GET_ENDPOINT, GETALL_ENDPOINT, UPDATE_ENDPOINT } from '../../../common/urls/administration-urls';
 import { SimillarityType } from '../../../pages/administration-new/submissions-simillarity/SubmissionsSimillarity';
 import getCustomBaseQuery from '../../middlewares/customBaseQuery';
+import {BaseQueryArg} from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 
 export const contestService = createApi({
     reducerPath: 'contestsAdminService',
@@ -93,12 +94,19 @@ export const contestService = createApi({
         }),
 
         exportSimilaritiesToExcel: builder.mutation<IFileModel, {contestIds:Array<number>; similarityCheckType: SimillarityType} >({
-            query: ({ ...contestAdministrationModel }) => ({
+            query: ({ ...similarityCheckModel }) => ({
                 url: '/CheckSimilarity',
                 method: 'POST',
-                body: contestAdministrationModel,
+                body: similarityCheckModel,
             }),
         }),
+        
+        transferParticipants: builder.mutation<string, number>({
+            query:(id) => ({ 
+                url: `/TransferParticipants?contestId=${id}`,
+                method: 'PATCH'
+            }),
+        })
     }),
 });
 
@@ -114,5 +122,6 @@ export const {
     useLazyExportContestsToExcelQuery,
     useGetContestActivityQuery,
     useExportSimilaritiesToExcelMutation,
+    useTransferParticipantsMutation,
 } = contestService;
 export default contestService;

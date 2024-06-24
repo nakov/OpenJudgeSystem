@@ -27,7 +27,9 @@ import AdministrationGridDropdown from '../../../components/administration/commo
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
+import TransferParticipantsButton
+    from '../../../components/administration/common/transfer-participants/TransferParticipantsButton';
+import { useDeleteContestMutation, useTransferParticipantsMutation } from '../../../redux/services/admin/contestsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const contestFilterableColumns: GridColDef[] = [
@@ -195,6 +197,12 @@ export const returnContestsNonFilterableColumns = (
                   text={DELETE_CONFIRMATION_MESSAGE}
                   mutation={useDeleteContestMutation}
                   onSuccess={onSuccessDelete}
+                />
+                <TransferParticipantsButton
+                  id={Number(params.row.id)}
+                  name={params.row.name}
+                  category={params.row.category}
+                  mutation={useTransferParticipantsMutation}
                 />
                 <AdministrationGridDropdown
                   sections={
