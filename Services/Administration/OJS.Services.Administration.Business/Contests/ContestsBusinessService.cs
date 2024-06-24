@@ -7,6 +7,7 @@ using OJS.Common.Enumerations;
 using OJS.Common.Extensions.Strings;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
+using OJS.Data.Models.Participants;
 using OJS.Data.Models.Problems;
 using OJS.Data.Models.Submissions;
 using OJS.Services.Administration.Data;
@@ -45,6 +46,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly IExcelService excelService;
     private readonly IProblemsDataService problemsDataService;
     private readonly IParticipantsCommonDataService participantsCommonDataService;
+    private readonly IParticipantScoresDataService participantScoresDataService;
     private readonly ISubmissionsDataService submissionsDataService;
     private readonly IZipArchivesService zipArchivesService;
 
@@ -60,6 +62,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IExcelService excelService,
         IProblemsDataService problemsDataService,
         IParticipantsCommonDataService participantsCommonDataService,
+        IParticipantScoresDataService participantScoresDataService,
         ISubmissionsDataService submissionsDataService,
         IZipArchivesService zipArchivesService)
     {
@@ -74,6 +77,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         this.excelService = excelService;
         this.problemsDataService = problemsDataService;
         this.participantsCommonDataService = participantsCommonDataService;
+        this.participantScoresDataService = participantScoresDataService;
         this.submissionsDataService = submissionsDataService;
         this.zipArchivesService = zipArchivesService;
     }
@@ -260,6 +264,77 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         await this.contestsData.Add(contest);
         await this.contestsData.SaveChanges();
         return model;
+    }
+
+    public async Task TransferParticipantsToPracticeById(int contestId)
+    {
+        var contest = await this.contestsData.GetByIdWithParticipants(contestId);
+
+        var competeOnlyParticipants = contest!.Participants
+            .GroupBy(p => p.UserId)
+            .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
+            .Select(gr => gr.FirstOrDefault());
+
+        foreach (var participant in competeOnlyParticipants)
+        {
+            foreach (var participantScore in participant!.Scores)
+            {
+                participantScore.IsOfficial = false;
+            }
+
+            participant.IsOfficial = false;
+        }
+
+        var competeAndPracticeParticipants = contest.Participants
+            .GroupBy(p => p.UserId)
+            .Where(g => g.Count() == 2)
+            .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
+
+        var participantsForDeletion = new List<Participant>();
+
+        foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
+        {
+            var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
+            var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
+            participantsForDeletion.Add(officialParticipant);
+
+            foreach (var officialParticipantSubmission in officialParticipant.Submissions)
+            {
+                officialParticipantSubmission.Participant = unofficialParticipant;
+            }
+
+            var scoresForDeletion = new List<ParticipantScore>();
+
+            foreach (var officialParticipantScore in officialParticipant.Scores)
+            {
+                var unofficialParticipantScore = unofficialParticipant
+                    .Scores
+                    .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
+
+                if (unofficialParticipantScore != null)
+                {
+                    if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
+                        (unofficialParticipantScore.Points == officialParticipantScore.Points &&
+                         unofficialParticipantScore.Id < officialParticipantScore.Id))
+                    {
+                        unofficialParticipantScore = officialParticipantScore;
+                        unofficialParticipantScore.IsOfficial = false;
+                        unofficialParticipantScore.Participant = unofficialParticipant;
+                    }
+
+                    scoresForDeletion.Add(officialParticipantScore);
+                }
+                else
+                {
+                    officialParticipantScore.IsOfficial = false;
+                    officialParticipantScore.Participant = unofficialParticipant;
+                }
+            }
+
+            await this.participantScoresDataService.Delete(scoresForDeletion);
+        }
+
+        await this.participantsData.Delete(participantsForDeletion);
     }
 
     private static StringBuilder PrepareSolutionsFileComment(

@@ -55,6 +55,9 @@ namespace OJS.Services.Administration.Data.Implementations
         public Task<Contest?> GetByIdWithParticipants(int id)
             => this.GetByIdQuery(id)
                 .Include(c => c.Participants)
+                    .ThenInclude(p => p.Scores)
+                .Include(p => p.Participants)
+                    .ThenInclude(p => p.Submissions)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Contest> GetAllActive()
