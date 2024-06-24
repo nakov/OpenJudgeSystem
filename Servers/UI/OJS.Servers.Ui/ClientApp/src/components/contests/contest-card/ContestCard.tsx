@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
+import moment from 'moment/moment';
 
 import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
@@ -63,6 +64,8 @@ const ContestCard = (props: IContestCardProps) => {
     const contestEndTime = canBeCompeted
         ? endTime
         : practiceEndTime;
+
+    const hasContestStartTimePassed = moment().local().isSameOrAfter(moment(contestStartTime).utc(true).local());
 
     const remainingDuration = calculateTimeUntil(contestEndTime);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
@@ -176,6 +179,7 @@ const ContestCard = (props: IContestCardProps) => {
                     {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
+                        hasContestStartTimePassed &&
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
                             `remaining time: ${remainingTimeFormatted}`,
