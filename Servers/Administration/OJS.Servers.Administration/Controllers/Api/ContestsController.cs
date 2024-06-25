@@ -128,7 +128,7 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
     public async Task<IActionResult> TransferParticipants(int contestId)
     {
-        var model = new ContestTransferParticipantsModel() { ContestId = contestId };
+        var model = new ContestTransferParticipantsModel { ContestId = contestId };
 
         var validationResult = await this.contestTransferParticipantsModelValidator
             .ValidateAsync(model)
