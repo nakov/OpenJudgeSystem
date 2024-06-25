@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
-import moment from 'moment/moment';
 
 import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
@@ -9,7 +8,9 @@ import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
-    calculateTimeUntil, dateTimeFormatWithSpacing,
+    calculateTimeUntil,
+    dateTimeFormatWithSpacing,
+    isCurrentTimeAfterOrEqualTo,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
@@ -65,7 +66,7 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
-    const hasContestStartTimePassed = moment().local().isSameOrAfter(moment(contestStartTime).utc(true).local());
+    const hasContestStartTimePassed = isCurrentTimeAfterOrEqualTo(contestStartTime);
 
     const remainingDuration = calculateTimeUntil(contestEndTime);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
