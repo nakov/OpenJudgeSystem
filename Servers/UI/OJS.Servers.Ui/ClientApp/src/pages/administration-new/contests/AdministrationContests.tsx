@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { concatClassnames } from 'react-alice-carousel/lib/utils';
 import { useSearchParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
-import { DOWNLOAD } from '../../../common/labels';
+import { DOWNLOAD, TRANSFER } from '../../../common/labels';
 import { CONTEST_IS_DELETED, CONTEST_IS_NOT_VISIBLE } from '../../../common/messages';
 import { IGetAllAdminParams } from '../../../common/types';
 import CreateButton from '../../../components/administration/common/create/CreateButton';
@@ -11,7 +12,6 @@ import ContestCompetePracticeButtons from '../../../components/administration/co
 import ContestDownloadSubmissions from '../../../components/administration/contests/contest-download-submissions/ContestDownloadSubmissions';
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
-import ConfirmDialog from '../../../components/guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { getColors } from '../../../hooks/use-administration-theme-provider';
 import {
@@ -74,6 +74,7 @@ const AdministrationContestsPage = () => {
         {
             data: transferParticipantsData,
             isSuccess: isTransferParticipantsSuccess,
+            isLoading: isTransferParticipantsLoading,
             error: transferParticipantsError,
         },
     ] = useTransferParticipantsMutation();
@@ -175,16 +176,31 @@ const AdministrationContestsPage = () => {
     );
 
     const renderTransferParticipantsModal = (index: number) => (
-        <ConfirmDialog
+        <AdministrationModal
           key={index}
-          title="Transfer participants"
-          text={`Are you sure you want to transfer all participants from "Contest" to "Practice" 
-          for the contest "${contestName}" from the category "${categoryName}"`}
-          confirmButtonText="Transfer"
-          declineButtonText="Cancel"
-          confirmFunction={() => transfer(contestId!)}
+          index={index}
+          open={showTransferParticipantsModal}
           onClose={() => setShowTransferParticipantsModal(false)}
-        />
+        >
+            <>
+                <Typography className={formStyles.centralize} variant="h4">Transfer participants</Typography>
+                <Typography className={concatClassnames(formStyles.centralize, formStyles.spacing)} variant="h6">
+                    {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
+                    Are you sure you want to transfer all participants from <b> Contest</b>{' '}
+                    {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
+                    to <b>Practice</b> for the contest <b>{contestName}</b> from the category <b>{categoryName}</b>?
+                </Typography>
+                <form className={formStyles.form}>
+                    <FormActionButton
+                      className={formStyles.buttonsWrapper}
+                      buttonClassName={formStyles.button}
+                      onClick={() => transfer(contestId!)}
+                      name={TRANSFER}
+                      disabled={isTransferParticipantsLoading}
+                    />
+                </form>
+            </>
+        </AdministrationModal>
     );
 
     const renderContestModal = (index: number, isEditMode: boolean) => (
