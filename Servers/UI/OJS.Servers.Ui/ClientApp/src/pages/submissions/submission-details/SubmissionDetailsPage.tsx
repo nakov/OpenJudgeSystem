@@ -3,6 +3,7 @@ import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import CodeEditor from '../../../components/code-editor/CodeEditor';
+import MultiLineTextDisplay from '../../../components/common/MultiLineTextDisplay';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
@@ -226,7 +227,7 @@ const SubmissionDetailsPage = () => {
             return (
                 <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
                     <div>A compile time error occurred:</div>
-                    { compilerComment && <div>{compilerComment}</div>}
+                    <MultiLineTextDisplay text={compilerComment} />
                 </div>
             );
         }
