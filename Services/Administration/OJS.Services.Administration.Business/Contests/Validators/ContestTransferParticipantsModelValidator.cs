@@ -46,6 +46,6 @@ public class ContestTransferParticipantsModelValidator : BaseValidator<ContestTr
     {
         var contest = await this.contestsData.GetByIdWithParticipants(contestId);
 
-        return contest!.Participants.Any(p => p.IsOfficial);
+        return contest?.Participants.Any(p => p.IsOfficial) ?? false;
     }
 }

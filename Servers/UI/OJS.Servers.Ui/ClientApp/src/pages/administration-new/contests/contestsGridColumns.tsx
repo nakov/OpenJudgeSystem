@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import React from 'react';
+import { BiTransfer } from 'react-icons/bi';
 import { FaCloudDownloadAlt } from 'react-icons/fa';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { Link } from 'react-router-dom';
@@ -27,9 +29,7 @@ import AdministrationGridDropdown from '../../../components/administration/commo
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
 import RedirectButton from '../../../components/administration/common/edit/RedirectButton';
-import TransferParticipantsButton
-    from '../../../components/administration/common/transfer-participants/TransferParticipantsButton';
-import { useDeleteContestMutation, useTransferParticipantsMutation } from '../../../redux/services/admin/contestsAdminService';
+import { useDeleteContestMutation } from '../../../redux/services/admin/contestsAdminService';
 import { adminFormatDate } from '../../../utils/administration/administration-dates';
 
 const contestFilterableColumns: GridColDef[] = [
@@ -176,8 +176,9 @@ const contestFilterableColumns: GridColDef[] = [
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
     onSuccessDelete: () => void,
-    onMoreClick: Function,
+    onExcelClick: Function,
     onDownloadSubmissionClick: Function,
+    onTransferParticipantsClick: Function,
 ) => [
     {
         field: 'actions',
@@ -198,24 +199,27 @@ export const returnContestsNonFilterableColumns = (
                   mutation={useDeleteContestMutation}
                   onSuccess={onSuccessDelete}
                 />
-                <TransferParticipantsButton
-                  id={Number(params.row.id)}
-                  name={params.row.name}
-                  category={params.row.category}
-                  mutation={useTransferParticipantsMutation}
-                />
                 <AdministrationGridDropdown
                   sections={
                     [
                         {
                             icon: <SiMicrosoftexcel />,
                             label: 'Export results',
-                            handleClick: onMoreClick,
+                            handleClick: onExcelClick,
                         },
                         {
                             icon: <FaCloudDownloadAlt />,
                             label: 'Download submissions',
                             handleClick: onDownloadSubmissionClick,
+                        },
+                        {
+                            icon: <BiTransfer />,
+                            label: 'Transfer participants',
+                            handleClick: () => onTransferParticipantsClick(
+                                Number(params.row.id),
+                                params.row.name,
+                                params.row.category,
+                            ),
                         },
                     ]
                 }

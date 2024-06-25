@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
 
@@ -11,14 +11,20 @@ import ContestCompetePracticeButtons from '../../../components/administration/co
 import ContestDownloadSubmissions from '../../../components/administration/contests/contest-download-submissions/ContestDownloadSubmissions';
 import ContestEdit from '../../../components/administration/contests/contest-edit/ContestEdit';
 import FormActionButton from '../../../components/administration/form-action-button/FormActionButton';
+import ConfirmDialog from '../../../components/guidelines/dialog/ConfirmDialog';
 import SpinningLoader from '../../../components/guidelines/spinning-loader/SpinningLoader';
 import { getColors } from '../../../hooks/use-administration-theme-provider';
-import { useDownloadResultsMutation, useGetAllAdminContestsQuery, useLazyExportContestsToExcelQuery } from '../../../redux/services/admin/contestsAdminService';
+import {
+    useDownloadResultsMutation,
+    useGetAllAdminContestsQuery,
+    useLazyExportContestsToExcelQuery,
+    useTransferParticipantsMutation,
+} from '../../../redux/services/admin/contestsAdminService';
 import { useAppSelector } from '../../../redux/store';
 import downloadFile from '../../../utils/file-download-utils';
-import { getAndSetExceptionMessage } from '../../../utils/messages-utils';
+import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../utils/messages-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { renderErrorMessagesAlert } from '../../../utils/render-utils';
+import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../utils/render-utils';
 import { applyDefaultFilterToQueryString } from '../administration-filters/AdministrationFilters';
 import AdministrationGridView, { defaultFilterToAdd, defaultSorterToAdd } from '../AdministrationGridView';
 
@@ -33,14 +39,18 @@ const AdministrationContestsPage = () => {
     const [ openEditContestModal, setOpenEditContestModal ] = useState(false);
     const [ openShowCreateContestModal, setOpenShowCreateContestModal ] = useState<boolean>(false);
     const [ contestId, setContestId ] = useState<number>();
+    const [ contestName, setContestName ] = useState<string>();
+    const [ categoryName, setCategoryName ] = useState<string>();
     const [ showDownloadSubsModal, setShowDownloadSubsModal ] = useState<boolean>(false);
     const [ showExportExcelModal, setShowExportExcelModal ] = useState<boolean>(false);
+    const [ showTransferParticipantsModal, setShowTransferParticipantsModal ] = useState<boolean>(false);
 
     const [ excelExportType, setExcelExportType ] = useState<number>(0);
     // eslint-disable-next-line max-len
     const [ queryParams, setQueryParams ] = useState<IGetAllAdminParams>(applyDefaultFilterToQueryString(defaultFilterToAdd, defaultSorterToAdd, searchParams));
 
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
+    const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
 
     const {
         refetch: retakeContests,
@@ -58,6 +68,15 @@ const AdministrationContestsPage = () => {
             reset: resetExport,
         },
     ] = useDownloadResultsMutation();
+
+    const [
+        transfer,
+        {
+            data: transferParticipantsData,
+            isSuccess: isTransferParticipantsSuccess,
+            error: transferParticipantsError,
+        },
+    ] = useTransferParticipantsMutation();
 
     const onEditClick = (id: number) => {
         setOpenEditContestModal(true);
@@ -79,6 +98,19 @@ const AdministrationContestsPage = () => {
         getAndSetExceptionMessage([ downloadError ], setErrorMessages);
     }, [ downloadError ]);
 
+    useEffect(() => {
+        const message = getAndSetSuccesfullMessages([ {
+            message: transferParticipantsData as string,
+            shouldGet: isTransferParticipantsSuccess,
+        },
+        ]);
+        setSuccessMessage(message);
+    }, [ transferParticipantsData, isTransferParticipantsSuccess ]);
+
+    useEffect(() => {
+        getAndSetExceptionMessage([ transferParticipantsError ], setErrorMessages);
+    }, [ transferParticipantsError ]);
+
     const onClose = (isEditMode: boolean) => {
         if (isEditMode) {
             setOpenEditContestModal(false);
@@ -88,14 +120,25 @@ const AdministrationContestsPage = () => {
         retakeContests();
     };
 
-    const onClickExcel = (exelExportContestId: number) => {
+    const onExcelClick = (excelExportContestId: number) => {
         setShowExportExcelModal(true);
-        setContestId(exelExportContestId);
+        setContestId(excelExportContestId);
     };
 
     const onDownloadSubmissionClick = (contestToDownloadSubs: number) => {
         setShowDownloadSubsModal(true);
         setContestId(contestToDownloadSubs);
+    };
+
+    const onTransferParticipantsClick = (
+        transferParticipantsContestId: number,
+        transferParticipantsContestName: string,
+        transferParticipantsCategoryName: string,
+    ) => {
+        setShowTransferParticipantsModal(true);
+        setContestId(transferParticipantsContestId);
+        setContestName(transferParticipantsContestName);
+        setCategoryName(transferParticipantsCategoryName);
     };
 
     const renderDownloadSubsModal = (index: number) => (
@@ -129,6 +172,19 @@ const AdministrationContestsPage = () => {
                 </form>
             </>
         </AdministrationModal>
+    );
+
+    const renderTransferParticipantsModal = (index: number) => (
+        <ConfirmDialog
+          key={index}
+          title="Transfer participants"
+          text={`Are you sure you want to transfer all participants from "Contest" to "Practice" 
+          for the contest "${contestName}" from the category "${categoryName}"`}
+          confirmButtonText="Transfer"
+          declineButtonText="Cancel"
+          confirmFunction={() => transfer(contestId!)}
+          onClose={() => setShowTransferParticipantsModal(false)}
+        />
     );
 
     const renderContestModal = (index: number, isEditMode: boolean) => (
@@ -166,6 +222,7 @@ const AdministrationContestsPage = () => {
 
     return (
         <>
+            {renderSuccessfullAlert(successMessage)}
             {renderErrorMessagesAlert(errorMessages)}
             <AdministrationGridView
               data={data}
@@ -174,8 +231,9 @@ const AdministrationContestsPage = () => {
               notFilterableGridColumnDef={returnContestsNonFilterableColumns(
                   onEditClick,
                   retakeContests,
-                  onClickExcel,
+                  onExcelClick,
                   onDownloadSubmissionClick,
+                  onTransferParticipantsClick,
               )}
               renderActionButtons={renderGridActions}
               queryParams={queryParams}
@@ -185,6 +243,7 @@ const AdministrationContestsPage = () => {
                   { showModal: openEditContestModal, modal: (i) => renderContestModal(i, true) },
                   { showModal: showDownloadSubsModal, modal: (i) => renderDownloadSubsModal(i) },
                   { showModal: showExportExcelModal, modal: (i) => renderExcelExportModal(i) },
+                  { showModal: showTransferParticipantsModal, modal: (i) => renderTransferParticipantsModal(i) },
               ]}
               legendProps={[
                   { color: getColors(themeMode).palette.deleted, message: CONTEST_IS_DELETED },

@@ -36,7 +36,6 @@ import {
     useCreateContestMutation,
     useDeleteContestMutation,
     useGetContestByIdQuery,
-    useTransferParticipantsMutation,
     useUpdateContestMutation,
 } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
@@ -46,7 +45,6 @@ import { getEnumMemberName } from '../../../../utils/string-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import DeleteButton from '../../common/delete/DeleteButton';
-import TransferParticipantsButton from '../../common/transfer-participants/TransferParticipantsButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -689,19 +687,13 @@ const ContestEdit = (props:IContestEditProps) => {
               disabled={!isValidForm}
             />
 
-            <Box sx={{ alignSelf: 'flex-end', display: 'flex' }}>
+            <Box sx={{ alignSelf: 'flex-end' }}>
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}
                   onSuccess={onDelete}
                   mutation={useDeleteContestMutation}
                   text={DELETE_CONFIRMATION_MESSAGE}
-                />
-                <TransferParticipantsButton
-                  id={Number(contestId!)}
-                  name={contest.name}
-                  category={contestCategories?.find((category) => category.id === contest.categoryId)?.name}
-                  mutation={useTransferParticipantsMutation}
                 />
             </Box>
         </Box>
