@@ -12,7 +12,8 @@ import moment from 'moment';
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
 import {
-    getAllContestsPageUrl, getContestsDetailsPageUrl,
+    getAllContestsPageUrl,
+    getContestsDetailsPageUrl,
     getContestsRegisterPageUrl,
     getContestsResultsPageUrl,
 } from '../../../common/urls/compose-client-urls';
@@ -219,14 +220,14 @@ const ContestSolutionSubmitPage = () => {
         if (isLoading) {
             return;
         }
-        if ((!isRegisteredParticipant && !isActiveParticipant) && !isError) {
+        if (((!isRegisteredParticipant && !isActiveParticipant) && !isError) || isInvalidated) {
             navigate(getContestsRegisterPageUrl({
                 isCompete: participationType === ContestParticipationType.Compete,
                 contestId,
                 contestName: slug,
             }), { replace: true });
         }
-    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, slug ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, slug, isInvalidated ]);
 
     useEffect(() => {
         setSubmissionCode('');
