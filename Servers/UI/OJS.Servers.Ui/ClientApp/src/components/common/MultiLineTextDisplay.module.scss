@@ -1,0 +1,24 @@
+.multiLineTextContainer {
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+
+  .readMoreButton {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+
+    .iconAdjustment {
+      position: relative;
+      top: 1px; /* Adjust this value to move the icon up or down */
+      left: 5px; /* Adjust this value to move the icon left or right */
+    }
+  }
+
+  .multiLineTextParagraph {
+    margin: 0;
+  }
+}
