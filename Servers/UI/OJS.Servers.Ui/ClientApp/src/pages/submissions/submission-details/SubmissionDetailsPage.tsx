@@ -20,6 +20,7 @@ import {
     useLazyRetestSubmissionQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { getErrorMessage } from '../../../utils/http-utils';
@@ -32,7 +33,7 @@ import styles from './SubmissionsDetailsPage.module.scss';
 const SubmissionDetailsPage = () => {
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
-    const { themeColors, getColorClassName } = useTheme();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
     const [ isRetestingStarted, setIsRetestingStarted ] = useState(false);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -223,11 +224,19 @@ const SubmissionDetailsPage = () => {
             );
         }
 
+        const compileTimeErrorClasses = concatClassNames(
+            styles.compileTimeErrorWrapper,
+            textColorClassName,
+            isDarkMode
+                ? styles.darkTheme
+                : '',
+        );
+
         if (!isCompiledSuccessfully) {
             return (
-                <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
+                <div className={compileTimeErrorClasses}>
                     <div>A compile time error occurred:</div>
-                    <MultiLineTextDisplay text={compilerComment} />
+                    <MultiLineTextDisplay text={compilerComment} maxVisibleLines={50} />
                 </div>
             );
         }
@@ -281,7 +290,9 @@ const SubmissionDetailsPage = () => {
         userIsInRoleForContest,
         handleRetestSubmission,
         isRetestingStarted,
-        maxPoints ]);
+        maxPoints,
+        isDarkMode,
+    ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
