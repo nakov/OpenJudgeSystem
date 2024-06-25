@@ -201,7 +201,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             var consumers = typeof(TStartup).Assembly
                 .GetExportedTypes()
-                .Where(t => typeof(IConsumer).IsAssignableFrom(t))
+                .Where(t => typeof(IConsumer).IsAssignableFrom(t) && t is { IsInterface: false, IsAbstract: false })
                 .ToList();
 
             var messageQueueConfig = configuration.GetSectionWithValidation<MessageQueueConfig>();
