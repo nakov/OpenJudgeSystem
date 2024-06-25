@@ -1,22 +1,22 @@
 @use 'src/styles/spacings';
 
 .multiLineTextContainer {
-  width: 100%;
   overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
   white-space: pre-wrap; /* Preserve whitespace and line breaks */
+  width: 100%;
+  word-break: break-word;
+  word-wrap: break-word;
 
   .readMoreButton {
-    margin-top: spacings.$sp-8;
-    display: inline-flex;
     align-items: center;
     color: inherit;
+    display: inline-flex;
+    margin-top: spacings.$sp-8;
 
     .iconAdjustment {
+      left: 5px; /* Adjust this value to move the icon left or right */
       position: relative;
       top: 1px; /* Adjust this value to move the icon up or down */
-      left: 5px; /* Adjust this value to move the icon left or right */
     }
   }
 
