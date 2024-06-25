@@ -1,12 +1,10 @@
-import isEmpty from 'lodash/isEmpty';
-
 interface IMultiLineTextProps {
-    text: string;
+    text: string | null | undefined;
     className?: string;
 }
 
 const MultiLineTextDisplay = ({ text, className } : IMultiLineTextProps) => {
-    if (isEmpty(text)) {
+    if (!text) {
         return null;
     }
 

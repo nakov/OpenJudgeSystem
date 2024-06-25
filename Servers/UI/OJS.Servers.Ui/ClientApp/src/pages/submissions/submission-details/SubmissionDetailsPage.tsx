@@ -227,7 +227,7 @@ const SubmissionDetailsPage = () => {
             return (
                 <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
                     <div>A compile time error occurred:</div>
-                    { compilerComment && <MultiLineTextDisplay text={compilerComment} /> }
+                    <MultiLineTextDisplay text={compilerComment} />
                 </div>
             );
         }
