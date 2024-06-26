@@ -8,7 +8,9 @@ import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
-    calculateTimeUntil, dateTimeFormatWithSpacing,
+    calculateTimeUntil,
+    dateTimeFormatWithSpacing,
+    isCurrentTimeAfterOrEqualTo,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
@@ -63,6 +65,8 @@ const ContestCard = (props: IContestCardProps) => {
     const contestEndTime = canBeCompeted
         ? endTime
         : practiceEndTime;
+
+    const hasContestStartTimePassed = isCurrentTimeAfterOrEqualTo(contestStartTime);
 
     const remainingDuration = calculateTimeUntil(contestEndTime);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
@@ -176,6 +180,7 @@ const ContestCard = (props: IContestCardProps) => {
                     {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
+                        hasContestStartTimePassed &&
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
                             `remaining time: ${remainingTimeFormatted}`,
