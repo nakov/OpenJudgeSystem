@@ -11,6 +11,12 @@ import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
 import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
+import {
+    getAllContestsPageUrl,
+    getContestsDetailsPageUrl,
+    getContestsRegisterPageUrl,
+    getContestsResultsPageUrl,
+} from '../../../common/urls/compose-client-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
@@ -47,7 +53,7 @@ const ContestSolutionSubmitPage = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
-    const { contestId, participationType } = useParams();
+    const { contestId, participationType, slug } = useParams();
 
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
@@ -215,9 +221,13 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
         if (((!isRegisteredParticipant && !isActiveParticipant) && !isError) || isInvalidated) {
-            navigate(`/contests/register/${contestId}/${participationType}`, { replace: true });
+            navigate(getContestsRegisterPageUrl({
+                isCompete: participationType === ContestParticipationType.Compete,
+                contestId,
+                contestName: slug,
+            }), { replace: true });
         }
-    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, isInvalidated ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, slug, isInvalidated ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -604,7 +614,7 @@ const ContestSolutionSubmitPage = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
               backToText="Back to contests"
             />
         );
@@ -615,7 +625,7 @@ const ContestSolutionSubmitPage = () => {
             <ErrorWithActionButtons
               message="Access to this contest has expired!"
               backToText="Back to contests"
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
             />
         );
     }
@@ -624,10 +634,22 @@ const ContestSolutionSubmitPage = () => {
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <Link to={`/contests/${contest?.id}`} className={`${styles.title} ${textColorClassName}`}>{contest?.name}</Link>
+                <Link
+                  to={getContestsDetailsPageUrl({ contestId: contest?.id, contestName: contest?.name })}
+                  className={`${styles.title} ${textColorClassName}`}
+                >
+                    {contest?.name}
+                </Link>
                 <div
                   className={styles.allResultsLink}
-                  onClick={() => navigate(`/contests/${contest?.id}/${participationType}/results/simple`)}
+                  onClick={() => navigate(getContestsResultsPageUrl({
+                      slug,
+                      contestId: contest?.id,
+                      participationType: participationType === ContestParticipationType.Compete
+                          ? ContestParticipationType.Compete
+                          : ContestParticipationType.Practice,
+                      isSimple: true,
+                  }))}
                 >
                     Show all results
                 </div>

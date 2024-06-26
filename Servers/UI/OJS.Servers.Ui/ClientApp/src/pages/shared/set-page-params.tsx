@@ -16,13 +16,11 @@ const routes = [
     '/profile/:username',
     '/submissions',
     '/submissions/:id/details',
-    '/contests',
-    '/contests/:id/compete',
-    '/contests/:id/practice',
-    '/contests/:id',
-    '/contests/register/:id/:participationType',
-    '/contests/:id/practice/results/simple',
-    '/contests/:id/compete/results/simple',
+    '/contests/:slug',
+    '/contests/:slug/:id',
+    '/contests/:slug/:id/:participationType',
+    '/contests/:slug/:id/:participationType/register',
+    '/contests/:slug/:id/:participationType/results/:resultType',
     '/administration',
     '/submissions/retest/:id',
     '/contest/problems/:id',
@@ -37,7 +35,9 @@ const isPathInAllowedRoutes = (pathname: string) => {
         const regexPattern = route
             .replace(/:id/g, '([1-9]\\d{0,8}|0|2147483647)')
             .replace(/:username/g, '([^/]+)')
-            .replace(/:participationType/g, '([a-zA-Z]+)');
+            .replace(/:participationType/g, '([a-zA-Z]+)')
+            .replace(/:slug/g, '([a-zA-Z0-9\\-]+)')
+            .replace(/:resultType/g, '[a-zA-Z]+');
         return new RegExp(`^${regexPattern}$`).test(exactPathname);
     });
 

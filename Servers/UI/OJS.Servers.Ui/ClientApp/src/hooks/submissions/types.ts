@@ -89,6 +89,7 @@ interface ISubmissionDetailsResponseType {
     processingComment: string | null;
     totalTests: number;
     contestId: number;
+    contestName: string | null;
     contestCategoryId: number;
     maxPoints: number;
 }

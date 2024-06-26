@@ -3,6 +3,7 @@ import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 
 import { ContestParticipationType } from '../../../common/constants';
+import { getAllContestsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import ContestCompeteModal from '../../../components/contests/contest-compete-modal/ContestCompeteModal';
 import ContestPasswordForm from '../../../components/contests/contest-password-form/ContestPasswordForm';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -16,7 +17,7 @@ import styles from './ContestRegister.module.scss';
 
 const ContestRegister = () => {
     const navigate = useNavigate();
-    const { contestId, participationType } = useParams();
+    const { contestId, participationType, slug } = useParams();
     const [ hasAcceptedOnlineModal, setHasAcceptedOnlineModal ] = useState<boolean>(false);
 
     const {
@@ -41,9 +42,13 @@ const ContestRegister = () => {
             return;
         }
         if (isRegisteredSuccessfully && !shouldConfirmParticipation && !requirePassword) {
-            navigate(`/contests/${contestId}/${participationType}`, { replace: true });
+            navigate(getContestsSolutionSubmitPageUrl({
+                isCompete: participationType === ContestParticipationType.Compete,
+                contestId,
+                contestName: slug,
+            }), { replace: true });
         }
-    }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword ]);
+    }, [ isLoading, isRegisteredSuccessfully, navigate, contestId, participationType, shouldConfirmParticipation, requirePassword, slug ]);
 
     // register user automatically if no password or modal confirmation is required
     useEffect(() => {
@@ -59,7 +64,11 @@ const ContestRegister = () => {
                 hasConfirmedParticipation: true,
                 // eslint-disable-next-line promise/prefer-await-to-then,promise/always-return
             }).then(() => {
-                navigate(`/contests/${contestId}/${participationType}`);
+                navigate(getContestsSolutionSubmitPageUrl({
+                    isCompete: participationType === ContestParticipationType.Compete,
+                    contestId,
+                    contestName: slug,
+                }));
             });
         }
     }, [
@@ -72,6 +81,7 @@ const ContestRegister = () => {
         participationType,
         registerUserForContest,
         navigate,
+        slug,
     ]);
 
     useEffect(() => {
@@ -96,10 +106,14 @@ const ContestRegister = () => {
                               password: '',
                               hasConfirmedParticipation: true,
                           });
-                          navigate(`/contests/${contestId}/${participationType}`);
+                          navigate(getContestsSolutionSubmitPageUrl({
+                              isCompete: participationType === ContestParticipationType.Compete,
+                              contestId,
+                              contestName: slug,
+                          }));
                       }
                   }}
-                  onDecline={() => navigate('/contests')}
+                  onDecline={() => navigate(getAllContestsPageUrl({}))}
                 />
             );
         }
@@ -108,7 +122,11 @@ const ContestRegister = () => {
                 <ContestPasswordForm
                   contestName={name!}
                   hasConfirmedParticipation={hasAcceptedOnlineModal}
-                  onSuccess={() => navigate(`/contests/${contestId}/${participationType}`)}
+                  onSuccess={() => navigate(getContestsSolutionSubmitPageUrl({
+                      isCompete: participationType === ContestParticipationType.Compete,
+                      contestId,
+                      contestName: slug,
+                  }))}
                 />
             );
         }
@@ -124,6 +142,7 @@ const ContestRegister = () => {
         setHasAcceptedOnlineModal,
         registerUserForContest,
         navigate,
+        slug,
     ]);
 
     if (isLoading) {
@@ -134,7 +153,7 @@ const ContestRegister = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
               backToText="Back to contests"
             />
         );
@@ -144,7 +163,7 @@ const ContestRegister = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(registerError)}
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
               backToText="Back to contests"
             />
         );
