@@ -52,7 +52,7 @@ namespace OJS.Services.Administration.Data.Implementations
                     .ThenInclude(pg => pg.Problems)
                 .FirstOrDefaultAsync();
 
-        public Task<Contest?> GetByIdWithParticipants(int id)
+        public Task<Contest?> GetByIdWithParticipantsScoresAndSubmissions(int id)
             => this.GetByIdQuery(id)
                 .Include(c => c.Participants)
                     .ThenInclude(p => p.Scores)

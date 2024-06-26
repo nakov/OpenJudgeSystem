@@ -268,7 +268,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
     public async Task TransferParticipantsToPracticeById(int contestId)
     {
-        var contest = await this.contestsData.GetByIdWithParticipants(contestId);
+        var contest = await this.contestsData.GetByIdWithParticipantsScoresAndSubmissions(contestId);
 
         var competeOnlyParticipants = contest!.Participants
             .GroupBy(p => p.UserId)
