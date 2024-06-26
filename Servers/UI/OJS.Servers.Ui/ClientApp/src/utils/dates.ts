@@ -23,6 +23,9 @@ const calculatedTimeFormatted =
 const convertTimeIntervalToHoursMinutesAndSeconds =
     (duration: Duration) => `${Math.floor(duration.asHours())}:${duration.minutes()}:${duration.seconds()}`;
 
+const isCurrentTimeAfterOrEqualTo = (date: Date):
+    boolean => moment().local().isSameOrAfter(moment(date).utc(true).local());
+
 const calculateTimeUntil = (date: Date, unit: unitOfTime.Diff = 'milliseconds'):
     Duration => moment.duration(moment(date)
     .utc(true)
@@ -180,6 +183,7 @@ export {
     formatDate,
     preciseFormatDate,
     secondsToFullTime,
+    isCurrentTimeAfterOrEqualTo,
     calculateTimeUntil,
     convertToSecondsRemaining,
     convertToTwoDigitValues,
