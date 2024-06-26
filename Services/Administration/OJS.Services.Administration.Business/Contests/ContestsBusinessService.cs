@@ -317,12 +317,11 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
                         (unofficialParticipantScore.Points == officialParticipantScore.Points &&
                          unofficialParticipantScore.Id < officialParticipantScore.Id))
                     {
-                        unofficialParticipantScore = officialParticipantScore;
-                        unofficialParticipantScore.IsOfficial = false;
-                        unofficialParticipantScore.Participant = unofficialParticipant;
+                        officialParticipantScore.IsOfficial = false;
+                        officialParticipantScore.Participant = unofficialParticipant;
                     }
 
-                    scoresForDeletion.Add(officialParticipantScore);
+                    scoresForDeletion.Add(unofficialParticipantScore);
                 }
                 else
                 {

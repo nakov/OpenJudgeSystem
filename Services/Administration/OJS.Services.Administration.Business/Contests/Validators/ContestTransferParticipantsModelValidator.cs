@@ -10,11 +10,14 @@ using System.Threading.Tasks;
 public class ContestTransferParticipantsModelValidator : BaseValidator<ContestTransferParticipantsModel>
 {
     private readonly IContestsDataService contestsData;
+    private readonly IParticipantsDataService participantsData;
 
     public ContestTransferParticipantsModelValidator(
-        IContestsDataService contestsData)
+        IContestsDataService contestsData,
+        IParticipantsDataService participantsData)
     {
         this.contestsData = contestsData;
+        this.participantsData = participantsData;
 
         this.RuleFor(model => model.ContestId)
             .Must((model, _) => ContestIdMustBeValid(model.ContestId))
@@ -29,7 +32,7 @@ public class ContestTransferParticipantsModelValidator : BaseValidator<ContestTr
             .WithMessage("The contest must not be active.");
 
         this.RuleFor(model => model.ContestId)
-            .MustAsync(async (contestId, _) => await this.ContestMustHaveParticipants(contestId))
+            .Must((model, _) => this.ContestMustHaveParticipants(model.ContestId))
             .WithMessage("The contest must have participants in \"Compete\".");
     }
 
@@ -42,10 +45,6 @@ public class ContestTransferParticipantsModelValidator : BaseValidator<ContestTr
     private async Task<bool> ContestMustNotBeActive(int contestId)
         => !await this.contestsData.IsActiveById(contestId);
 
-    private async Task<bool> ContestMustHaveParticipants(int contestId)
-    {
-        var contest = await this.contestsData.GetByIdWithParticipants(contestId);
-
-        return contest?.Participants.Any(p => p.IsOfficial) ?? false;
-    }
+    private bool ContestMustHaveParticipants(int contestId)
+        => this.participantsData.GetAllOfficialByContest(contestId).Any();
 }
