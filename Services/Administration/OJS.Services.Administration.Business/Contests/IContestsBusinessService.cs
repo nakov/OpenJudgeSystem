@@ -19,4 +19,6 @@ public interface IContestsBusinessService : IAdministrationOperationService<Cont
     Task<FileResponseModel> DownloadSubmissions(DownloadSubmissionsModel model);
 
     Task<ContestActivityModel> GetContestActivity(int contestId);
+
+    Task TransferParticipantsToPracticeById(int contestId);
 }

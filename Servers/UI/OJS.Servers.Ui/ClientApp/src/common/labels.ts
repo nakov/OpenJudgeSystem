@@ -11,6 +11,8 @@ export const CHECKER = 'Checker';
 
 export const DOWNLOAD = 'Download';
 
+export const TRANSFER = 'Transfer';
+
 export const CREATED_ON = 'Created On';
 export const MODIFIED_ON = 'Modified On';
 

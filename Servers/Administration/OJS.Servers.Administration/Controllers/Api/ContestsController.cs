@@ -27,19 +27,21 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
 {
     private readonly IContestsBusinessService contestsBusinessService;
     private readonly ContestAdministrationModelValidator validator;
+    private readonly ContestSimilarityModelValidator similarityModelValidator;
+    private readonly ContestTransferParticipantsModelValidator contestTransferParticipantsModelValidator;
     private readonly IContestsDataService contestsData;
     private readonly ISimilarityService similarityService;
     private readonly IExcelService excelService;
-    private readonly ContestSimilarityModelValidator similarityModelValidator;
 
     public ContestsController(
         IContestsBusinessService contestsBusinessService,
         ContestAdministrationModelValidator validator,
+        ContestSimilarityModelValidator similarityModelValidator,
+        ContestTransferParticipantsModelValidator contestTransferParticipantsModelValidator,
         IContestsGridDataService contestGridDataService,
         IContestsDataService contestsData,
         ISimilarityService similarityService,
-        IExcelService excelService,
-        ContestSimilarityModelValidator similarityModelValidator)
+        IExcelService excelService)
     : base(
         contestGridDataService,
         contestsBusinessService,
@@ -47,10 +49,11 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
     {
         this.contestsBusinessService = contestsBusinessService;
         this.validator = validator;
+        this.similarityModelValidator = similarityModelValidator;
+        this.contestTransferParticipantsModelValidator = contestTransferParticipantsModelValidator;
         this.contestsData = contestsData;
         this.similarityService = similarityService;
         this.excelService = excelService;
-        this.similarityModelValidator = similarityModelValidator;
     }
 
     [HttpGet]
@@ -119,5 +122,24 @@ public class ContestsController : BaseAdminApiController<Contest, int, ContestIn
 
         var file = this.excelService.ExportResults(result);
         return this.File(file.Content!, file.MimeType!, $"{nameof(this.CheckSimilarity)}.xls");
+    }
+
+    [HttpPatch]
+    [ProtectedEntityAction("contestId", typeof(ContestIdPermissionsService))]
+    public async Task<IActionResult> TransferParticipants(int contestId)
+    {
+        var model = new ContestTransferParticipantsModel { ContestId = contestId };
+
+        var validationResult = await this.contestTransferParticipantsModelValidator
+            .ValidateAsync(model)
+            .ToExceptionResponseAsync();
+
+        if (!validationResult.IsValid)
+        {
+            return this.UnprocessableEntity(validationResult.Errors);
+        }
+
+        await this.contestsBusinessService.TransferParticipantsToPracticeById(model.ContestId);
+        return this.Ok("The participants were transferred successfully.");
     }
 }
