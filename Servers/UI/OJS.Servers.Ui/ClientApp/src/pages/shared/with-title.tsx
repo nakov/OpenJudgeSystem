@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Params, useParams } from 'react-router';
+import { Params, useParams } from 'react-router-dom';
 
-import { IHaveChildrenPropsWithTitle } from '../../components/common/Props';
+import { Anything } from '../../common/common-types';
 
-interface IWithTitleProps {
-    Component: React.FC;
+interface IHaveChildrenPropsWithTitle {
+    children: React.ReactNode;
     title: string | ((params: Params<string>) => string);
 }
 
-const Page = ({ children, title }: IHaveChildrenPropsWithTitle) => {
+const Page = ({ children, title } : IHaveChildrenPropsWithTitle) => {
     const params = useParams();
 
     const pageTitle = typeof title === 'function'
@@ -26,9 +26,9 @@ const Page = ({ children, title }: IHaveChildrenPropsWithTitle) => {
     );
 };
 
-const withTitle: React.FC<IWithTitleProps> = ({ title, Component }) => (
+const withTitle = (ComponentToWrap: FC, title: string | ((params: Params<string>) => string)) => (props: Anything) => (
     <Page title={title}>
-        <Component />
+        <ComponentToWrap {...props} />
     </Page>
 );
 

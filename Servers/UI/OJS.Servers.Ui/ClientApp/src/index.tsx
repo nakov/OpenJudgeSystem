@@ -7,6 +7,8 @@ import SpinningLoader from './components/guidelines/spinning-loader/SpinningLoad
 import { flexCenterObjectStyles } from './utils/object-utils';
 import App from './App';
 
+import './styles/global.scss';
+
 const container = document.getElementById('root');
 const root = createRoot(container!);
 

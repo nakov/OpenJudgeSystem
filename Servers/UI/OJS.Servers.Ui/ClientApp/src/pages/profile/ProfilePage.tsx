@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
 import ErrorWithActionButtons from '../../components/error/ErrorWithActionButtons';
@@ -18,6 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { decodeFromUrlParam } from '../../utils/urls';
 import { setLayout } from '../shared/set-layout';
+import withTitle from '../shared/with-title';
 
 import styles from './ProfilePage.module.scss';
 
@@ -150,4 +152,6 @@ const ProfilePage = () => {
     );
 };
 
-export default setLayout(ProfilePage);
+export default setLayout(withTitle(ProfilePage, (params) => !isEmpty(params.username)
+    ? `${params.username}'s profile`
+    : 'My Profile'));
