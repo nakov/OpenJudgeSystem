@@ -36,6 +36,7 @@ const FooterNavigation = () => {
               className={styles.footerLogo}
               altText="Softuni logo"
               imgSrc={logo}
+              isToExternal
             />
             {renderSystemInfoAndLinksSection()}
         </div>
