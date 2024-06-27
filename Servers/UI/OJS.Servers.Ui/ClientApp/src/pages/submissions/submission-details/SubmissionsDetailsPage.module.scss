@@ -55,12 +55,16 @@
     }
 
     .compileTimeErrorWrapper {
-      background-color: colors.$primary-red;
+      background-color: colors.$light-base-color-200;
       border-radius: border-radiuses.$br-6;
       padding: spacings.$sp-24 spacings.$sp-32;
 
+      &.darkTheme {
+        background-color: colors.$dark-base-color-200;
+      }
+
       div:first-child {
-        font-weight: font-weights.$font-weight-bold;
+        color: colors.$primary-red;
       }
 
       div:nth-child(2) {

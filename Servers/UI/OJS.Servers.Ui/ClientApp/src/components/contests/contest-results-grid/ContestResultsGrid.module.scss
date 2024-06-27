@@ -57,11 +57,6 @@
   background: colors.$primary-dark-grey-color;
 }
 
-.underlinedPointsResultLight:hover,
-.underlinedPointsResultDark:hover {
-  text-decoration: underline;
-}
-
 .underlinedPointsResultLight {
   color: colors.$black-color;
 }
@@ -76,6 +71,11 @@
 
 .notUnderlinedPointsResultDark {
   color: colors.$white-color;
+}
+
+.underlinedPointsResultLight:hover,
+.underlinedPointsResultDark:hover {
+  text-decoration: underline;
 }
 
 .userRowDark {

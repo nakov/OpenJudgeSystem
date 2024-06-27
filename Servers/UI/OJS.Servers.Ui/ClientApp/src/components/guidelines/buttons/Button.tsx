@@ -222,7 +222,9 @@ const LinkButton = ({
 
     return (
         <Link
-          to={to}
+          to={`${to.startsWith('/')
+              ? ''
+              : '/'}${to}`}
           className={buttonClassName}
           id={id}
         >

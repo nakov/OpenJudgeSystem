@@ -32,11 +32,17 @@ import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, C
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import {
+    useCreateContestMutation,
+    useDeleteContestMutation,
+    useGetContestByIdQuery,
+    useUpdateContestMutation,
+} from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
 import { getEnumMemberName } from '../../../../utils/string-utils';
+import ExternalLink from '../../../guidelines/buttons/ExternalLink';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import DeleteButton from '../../common/delete/DeleteButton';
@@ -411,7 +417,7 @@ const ContestEdit = (props:IContestEditProps) => {
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
-                {contest.name || 'Contest form'}
+                {(contest.name && <ExternalLink to={`/contests/${contest.id}`} text={contest.name} />) || 'Contest form'}
             </Typography>
             <form className={`${formStyles.form}`}>
                 <Box className={`${styles.fieldBox}`}>
