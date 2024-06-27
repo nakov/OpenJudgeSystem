@@ -1,6 +1,6 @@
 import React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 
 import HashUrlParamProvider from '../../../hooks/common/use-hash-url-params';
 import RouteUrlParamsProvider from '../../../hooks/common/use-route-url-params';
@@ -48,6 +48,7 @@ const ClientPortal = () => {
                         <Outlet />
                     </main>
                     <PageFooter />
+                    <ScrollRestoration />
                 </MuiUiThemeProvider>
             </HelmetProvider>
         </InitProviders>

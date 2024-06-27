@@ -30,6 +30,7 @@
   }
 
   .categoryItem {
+    color: colors.$light-text-color;
     align-items: center;
     cursor: pointer;
     display: flex;
@@ -38,6 +39,14 @@
     justify-content: space-between;
     padding: spacings.$sp-12 spacings.$sp-4;
     transition: background-color 0.2s ease-in-out;
+
+    border-bottom: 1px solid colors.$light-text-color;
+    border-radius: 0;
+
+    &.darkCategoryItem {
+      color: colors.$dark-text-color;
+      border-color: colors.$dark-text-color;
+    }
 
     > svg {
       margin-right: spacings.$sp-12;
@@ -62,6 +71,7 @@
 
   .childCategoryItem {
     justify-content: flex-start;
+    border-bottom: none;
   }
 
   .selectedCategory {

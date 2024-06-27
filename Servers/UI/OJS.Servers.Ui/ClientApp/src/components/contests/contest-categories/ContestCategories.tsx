@@ -5,7 +5,6 @@
 /* eslint-disable consistent-return */
 import { useEffect, useMemo } from 'react';
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
-import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
 import { IContestCategory } from '../../../common/types';
@@ -20,6 +19,7 @@ import {
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestCategories.module.scss';
@@ -31,10 +31,9 @@ interface IContestCategoriesProps {
 const ContestCategories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
 
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors, getColorClassName } = useTheme();
+    const [ searchParams ] = useSearchParams();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -59,47 +58,13 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ selectedId, contestCategories ]);
 
-    const onContestCategoryClick = (id: number, name: string) => {
-        if (isRenderedOnHomePage) {
-            navigate(getAllContestsPageUrl({ categoryName: name, categoryId: id }));
-            return;
-        }
+    const onContestCategoryClick = (id: number) => {
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
         if (!selectedContestCategory) {
             return;
         }
-        const parents = findParentNames(contestCategories, selectedContestCategory?.id);
-        // click is on already selected category
-        if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
-            if (parents && parents?.length > 1) {
-                const selectedParentCategory = parents[parents.length - 2];
-                searchParams.set('category', selectedParentCategory.id.toString());
-                searchParams.delete('strategy');
 
-                const contestElementInFormat = findContestCategoryByIdRecursive(contestCategories, selectedParentCategory.id);
-                dispatch(setContestCategory(contestElementInFormat));
-                dispatch(setContestStrategy(null));
-            } else {
-                searchParams.delete('category');
-
-                dispatch(setContestCategory(null));
-                dispatch(setContestStrategy(null));
-            }
-        } else {
-            searchParams.set('page', '1');
-            searchParams.set('category', id.toString());
-            searchParams.delete('strategy');
-
-            dispatch(setContestCategory(selectedContestCategory));
-            dispatch(setContestStrategy(null));
-        }
-
-        setSearchParams(searchParams);
-        navigate(getAllContestsPageUrl({
-            categoryName: name,
-            categoryId: searchParams.get('category'),
-            strategyId: searchParams.get('strategy'),
-        }));
+        dispatch(setContestStrategy(null));
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {
@@ -112,27 +77,29 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             isChildElement
                 ? styles.childCategoryItem
                 : '',
+            isDarkMode
+                ? styles.darkCategoryItem
+                : '',
         );
 
         return (
             <div
               key={`contest-category-item-${category.id}`}
+              onClick={(ev) => {
+                  ev.stopPropagation();
+                  onContestCategoryClick(category.id);
+              }}
             >
-                <div
-                  style={{
-                      borderBottom: `${isChildElement
-                          ? 0
-                          : 1}px solid ${themeColors.textColor}`,
-                  }}
+                <LinkButton
+                  to={getAllContestsPageUrl({ categoryName: category.name, categoryId: category.id })}
+                  type={LinkButtonType.plain}
+                  preventScrollReset
                   className={categoryItemClassNames}
-                  onClick={() => onContestCategoryClick(category.id, category.name)}
                 >
                     { isChildElement && category.children.length > 0 && <FaAngleRight /> }
-                    <div>
-                        {category.name}
-                    </div>
+                    {category.name}
                     { !isChildElement && category.children.length > 0 && <FaAngleDown />}
-                </div>
+                </LinkButton>
                 <div
                   className={`${styles.categoryChildren} ${isActiveOrHasActiveChild
                       ? styles.activeChildren

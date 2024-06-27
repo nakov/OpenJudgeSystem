@@ -57,6 +57,7 @@ interface IButtonProps extends IButtonBaseProps<ButtonType> {
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean;
+    preventScrollReset?: boolean;
     internalClassName?: string;
 }
 
@@ -177,6 +178,7 @@ const LinkButton = ({
     id = generateId(),
     state = ButtonState.enabled,
     isToExternal = false,
+    preventScrollReset = false,
     imgSrc = '',
     altText = '',
     internalClassName = '',
@@ -227,6 +229,7 @@ const LinkButton = ({
               : '/'}${to}`}
           className={buttonClassName}
           id={id}
+          preventScrollReset={preventScrollReset}
         >
             {content}
         </Link>
