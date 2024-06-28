@@ -8,8 +8,6 @@ using System;
 
 public class ParticipantResultServiceModel : IMapExplicitly, IParticipantForActivityServiceModel
 {
-    public string UserId { get; set; } = string.Empty;
-
     public int ContestId { get; set; }
 
     public DateTime? ParticipationStartTime { get; set; }
