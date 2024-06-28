@@ -526,8 +526,14 @@ namespace OJS.Services.Ui.Business.Implementations
                     var competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
                     var practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
 
-                    c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
-                    c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
+                    var userId = this.userProviderService.GetCurrentUser().Id;
+
+                    if (competeParticipant?.UserId == userId ||
+                        practiceParticipant?.UserId == userId)
+                    {
+                        c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
+                        c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
+                    }
 
                     c.UserParticipationResult = new ContestParticipantResultServiceModel
                     {
