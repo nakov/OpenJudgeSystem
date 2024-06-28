@@ -183,9 +183,6 @@ const LinkButton = ({
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
-    const toFixed = `${to.startsWith('/')
-        ? ''
-        : '/'}${to}`;
 
     const { [type]: typeClassName } = classNameToLinkButonType;
 
@@ -212,7 +209,7 @@ const LinkButton = ({
     if (isToExternal) {
         return (
             <a
-              href={toFixed}
+              href={to}
               className={buttonClassName}
               id={id}
               target="_blank"
@@ -225,7 +222,9 @@ const LinkButton = ({
 
     return (
         <Link
-          to={toFixed}
+          to={`${to.startsWith('/')
+              ? ''
+              : '/'}${to}`}
           className={buttonClassName}
           id={id}
         >

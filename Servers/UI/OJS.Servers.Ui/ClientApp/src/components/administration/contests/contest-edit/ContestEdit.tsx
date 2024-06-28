@@ -32,7 +32,12 @@ import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, C
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import {
+    useCreateContestMutation,
+    useDeleteContestMutation,
+    useGetContestByIdQuery,
+    useUpdateContestMutation,
+} from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';

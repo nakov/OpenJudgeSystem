@@ -3,14 +3,21 @@ import { IoIosLock } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
-import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
+import { ContestParticipationType } from '../../../common/constants';
+import {
+    createUrlFriendlyString,
+    getCompeteResultsAreVisible,
+    getPracticeResultsAreVisible,
+} from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
-import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
+import { getContestsDetailsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
-    calculateTimeUntil, dateTimeFormatWithSpacing,
+    calculateTimeUntil,
+    dateTimeFormatWithSpacing,
+    isCurrentTimeAfterOrEqualTo,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
@@ -69,6 +76,8 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
+    const hasContestStartTimePassed = isCurrentTimeAfterOrEqualTo(contestStartTime);
+
     const remainingDuration = calculateTimeUntil(contestEndTime);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
 
@@ -110,7 +119,14 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={getContestsResultsUrl(id!, participationType, true)}
+                          to={getContestsResultsPageUrl({
+                              slug: createUrlFriendlyString(name),
+                              contestId: id!,
+                              participationType: participationType === ContestParticipationType.Compete
+                                  ? ContestParticipationType.Compete
+                                  : ContestParticipationType.Practice,
+                              isSimple: true,
+                          })}
                         >
                             {renderBody()}
                         </Link>
@@ -139,7 +155,34 @@ const ContestCard = (props: IContestCardProps) => {
             : !canBePracticed;
 
         return (
-            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
+            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} name={name} />
+        );
+    };
+
+    const renderLockIcon = (isCompete: boolean, requirePassword: boolean) => {
+        if (!requirePassword) {
+            return <IoIosLock className={styles.hideLock} size="24px" />;
+        }
+
+        const isDisabled = isCompete
+            ? !canBeCompeted
+            : !canBePracticed;
+
+        const lockClassName = isDisabled && isUserAdminOrLecturer
+            ? concatClassnames(isCompete
+                ? styles.competeLock
+                : styles.practiceLock, styles.lockFaint)
+            : isCompete
+                ? styles.competeLock
+                : styles.practiceLock;
+
+        return (
+            <IoIosLock
+              className={isDisabled && !isUserAdminOrLecturer
+                  ? styles.hideLock
+                  : lockClassName}
+              size="24px"
+            />
         );
     };
 
@@ -173,7 +216,7 @@ const ContestCard = (props: IContestCardProps) => {
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
-                <Link className={styles.contestCardTitle} to={`/contests/${id}`}>
+                <Link className={styles.contestCardTitle} to={getContestsDetailsPageUrl({ contestId: id, contestName: name })}>
                     {name}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
@@ -193,7 +236,7 @@ const ContestCard = (props: IContestCardProps) => {
                             `practice results: ${practiceResults}`,
                             false,
                             true,
-                            'practice',
+                            ContestParticipationType.Practice,
                         )
 }
                     {
@@ -204,12 +247,13 @@ const ContestCard = (props: IContestCardProps) => {
                             `compete results: ${competeResults}`,
                             true,
                             true,
-                            'compete',
+                            ContestParticipationType.Compete,
                         )
                     }
                     {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
+                        hasContestStartTimePassed &&
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
                             `remaining time: ${remainingTimeFormatted}`,

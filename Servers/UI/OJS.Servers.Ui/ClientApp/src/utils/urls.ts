@@ -1,12 +1,9 @@
 import isNil from 'lodash/isNil';
 
 import {
-    IContestResultsUrl,
-    IParticipateInContestTypeUrlParams,
     IProblemSubmissionDetailsUrlParams,
     ISubmissionDetailsUrlParams,
 } from '../common/app-url-types';
-import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
 import { SearchParams } from '../common/search-types';
 import {
@@ -123,15 +120,8 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
 
 const getContestsByStrategyUrl = (id: number) => `${baseUrl}/Contests?strategy=${id}&page=1`;
 
-const getParticipateInContestUrl = ({
-    id,
-    participationType,
-}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
-
 const getContestDetailsUrl =
     ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
-
-const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
 const getRegisterForContestUrl = ({
     id,
@@ -158,11 +148,6 @@ const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
-
-const getContestResultsUrl = ({
-    id,
-    participationType,
-}: IContestResultsUrl) => `/contests/${id}/${participationType}/results/${ContestResultType.Simple}`;
 
 const getContestResultsApiUrl = ({
     id,
@@ -254,7 +239,6 @@ export {
     getAdministrationRetestSubmission,
     getUserProfileInfoUrlByUsername,
     getProfileInfoUrl,
-    getParticipateInContestUrl,
     getContestCategoryBreadcrumbItemPath,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
@@ -268,7 +252,6 @@ export {
     getStartContestParticipationUrl,
     getContestParticipantScoresForParticipantUrl,
     getSubmissionsForProfileByContestUrl,
-    getContestResultsUrl,
     getContestResultsApiUrl,
     getCategoriesTreeUrl,
     getContestByProblemUrl,
@@ -286,7 +269,6 @@ export {
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
     getContestDetailsUrl,
-    getContestDetailsAppUrl,
     getAdministrationProblems,
     getAdministrationContestEditUrl,
     getAdministrationContestEditInternalUrl,
