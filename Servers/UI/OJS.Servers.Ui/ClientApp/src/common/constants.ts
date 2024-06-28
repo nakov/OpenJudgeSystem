@@ -22,13 +22,6 @@ const { OrderBy: DEFAULT_SORT_TYPE } = SortType;
 const LECTURER = 'Lecturer';
 const defaultPathIdentifier = 'api';
 
-const MaxBreadcrumbsStringLength = 100;
-const BreadcrumbItemNameMinLength = 2;
-const BreadcrumbItemNameMaxLength = 100;
-const BreadcrumbItemNameMinShorteningPercentage = 0.2;
-const BreadcrumbItemNameMaxShorteningPercentage = 0.6;
-const Elipsis = '...';
-
 enum TestRunResultType {
     CorrectAnswer = 'CorrectAnswer',
     WrongAnswer = 'WrongAnswer',
@@ -74,10 +67,4 @@ export {
     EmptyPasswordErrorMessage,
     PasswordLengthErrorMessage,
     LECTURER,
-    MaxBreadcrumbsStringLength,
-    BreadcrumbItemNameMinLength,
-    BreadcrumbItemNameMaxLength,
-    BreadcrumbItemNameMinShorteningPercentage,
-    BreadcrumbItemNameMaxShorteningPercentage,
-    Elipsis,
 };
