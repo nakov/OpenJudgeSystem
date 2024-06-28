@@ -185,33 +185,6 @@ const ContestCard = (props: IContestCardProps) => {
         );
     };
 
-    const renderLockIcon = (isCompete: boolean, requirePassword: boolean) => {
-        if (!requirePassword) {
-            return <IoIosLock className={styles.hideLock} size="24px" />;
-        }
-
-        const isDisabled = isCompete
-            ? !canBeCompeted
-            : !canBePracticed;
-
-        const lockClassName = isDisabled && isUserAdminOrLecturer
-            ? concatClassnames(isCompete
-                ? styles.competeLock
-                : styles.practiceLock, styles.lockFaint)
-            : isCompete
-                ? styles.competeLock
-                : styles.practiceLock;
-
-        return (
-            <IoIosLock
-              className={isDisabled && !isUserAdminOrLecturer
-                  ? styles.hideLock
-                  : lockClassName}
-              size="24px"
-            />
-        );
-    };
-
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
