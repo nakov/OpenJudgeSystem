@@ -535,6 +535,11 @@ namespace OJS.Services.Ui.Business.Implementations
                         PracticePoints = practiceParticipant?.Points,
                     };
                 }
+                else
+                {
+                    c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, null, true);
+                    c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, null, false);
+                }
             });
 
             return pagedContests;
