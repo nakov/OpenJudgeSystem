@@ -161,7 +161,7 @@ namespace OJS.Services.Ui.Business.Implementations
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
 
             var registerModel = contest!.Map<ContestRegistrationDetailsServiceModel>();
-            registerModel.RequirePassword = ShouldRequirePassword(contest!, participant!, isOfficial);
+            registerModel.RequirePassword = ShouldRequirePassword(contest!.HasContestPassword, contest!.HasPracticePassword, participant!, isOfficial);
             registerModel.ParticipantId = participant?.Id;
             registerModel.IsRegisteredSuccessfully = participant != null && !participant.IsInvalidated;
             registerModel.ShouldConfirmParticipation = ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
@@ -202,7 +202,7 @@ namespace OJS.Services.Ui.Business.Implementations
                     isOfficial);
 
             var userIsAdminOrLecturerInContest = await this.lecturersInContestsBusiness.IsCurrentUserAdminOrLecturerInContest(contest?.Id);
-            var shouldRequirePassword = ShouldRequirePassword(contest!, participant, isOfficial);
+            var shouldRequirePassword = ShouldRequirePassword(contest!.HasContestPassword, contest!.HasPracticePassword, participant, isOfficial);
             var shouldConfirmParticipation =
                 ShouldConfirmParticipation(participant, isOfficial, contest!.IsOnlineExam, userIsAdminOrLecturerInContest);
 
@@ -526,6 +526,9 @@ namespace OJS.Services.Ui.Business.Implementations
                     var competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
                     var practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
 
+                    c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
+                    c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
+
                     c.UserParticipationResult = new ContestParticipantResultServiceModel
                     {
                         CompetePoints = competeParticipant?.Points,
@@ -552,14 +555,14 @@ namespace OJS.Services.Ui.Business.Implementations
                 .ToDictionary(g => g.Key, g => g.ToList());
         }
 
-        private static bool ShouldRequirePassword(Contest contest, Participant? participant, bool official)
+        private static bool ShouldRequirePassword(bool hasContestPassword, bool hasPracticePassword, Participant? participant, bool official)
         {
             if (participant != null && !participant.IsInvalidated)
             {
                 return false;
             }
 
-            return (official && contest.HasContestPassword) || (!official && contest.HasPracticePassword);
+            return (official && hasContestPassword) || (!official && hasPracticePassword);
         }
 
         private static bool ShouldConfirmParticipation(Participant? participant, bool official, bool contestIsOnlineExam, bool userIsAdminOrLecturerInContest)
