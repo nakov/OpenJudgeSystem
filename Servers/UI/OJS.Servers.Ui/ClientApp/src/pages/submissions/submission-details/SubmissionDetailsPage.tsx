@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
+import { getContestsDetailsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import MultiLineTextDisplay from '../../../components/common/MultiLineTextDisplay';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
@@ -65,11 +66,11 @@ const SubmissionDetailsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ data?.contestId ]);
 
-    const { name } = contestDetails || {};
     const {
         id: solutionId,
         isProcessed,
         contestId,
+        contestName,
         problem,
         user: contestUser,
         content,
@@ -120,14 +121,11 @@ const SubmissionDetailsPage = () => {
             {' '}
             for problem
             {' '}
-            <Link to={`/contests/${contestId}/${isOfficial
-                ? 'compete'
-                : 'practice'}#${problem?.orderBy}`}
-            >
+            <Link to={getContestsSolutionSubmitPageUrl({ isCompete: isOfficial, contestId, contestName, problemId: problem?.id })}>
                 {problem?.name}
             </Link>
         </div>
-    ), [ solutionId, contestUser?.userName, contestId, isOfficial, problem?.orderBy, problem?.name ]);
+    ), [ solutionId, contestUser?.userName, contestName, contestId, isOfficial, problem?.id, problem?.name ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
@@ -377,7 +375,13 @@ const SubmissionDetailsPage = () => {
                         : []) || []}
                     />
                     <div className={styles.innerBodyWrapper}>
-                        <Link to={`/contests/${contestId}`}>{name}</Link>
+                        <div className={styles.contestTitle}>
+                            <Link
+                              to={getContestsDetailsPageUrl({ contestId, contestName })}
+                            >
+                                {contestName}
+                            </Link>
+                        </div>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
                         {content && (

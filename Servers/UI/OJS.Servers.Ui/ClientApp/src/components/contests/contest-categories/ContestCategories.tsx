@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 
 import { IContestCategory } from '../../../common/types';
+import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
     setContestCategories,
@@ -58,17 +59,15 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [ selectedId, contestCategories ]);
 
-    const onContestCategoryClick = (id: number) => {
+    const onContestCategoryClick = (id: number, name: string) => {
         if (isRenderedOnHomePage) {
-            navigate(`/contests?category=${id}`);
+            navigate(getAllContestsPageUrl({ categoryName: name, categoryId: id }));
             return;
         }
-
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
         if (!selectedContestCategory) {
             return;
         }
-
         const parents = findParentNames(contestCategories, selectedContestCategory?.id);
         // click is on already selected category
         if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
@@ -96,6 +95,11 @@ const ContestCategories = (props: IContestCategoriesProps) => {
         }
 
         setSearchParams(searchParams);
+        navigate(getAllContestsPageUrl({
+            categoryName: name,
+            categoryId: searchParams.get('category'),
+            strategyId: searchParams.get('strategy'),
+        }));
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {
@@ -121,7 +125,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
                           : 1}px solid ${themeColors.textColor}`,
                   }}
                   className={categoryItemClassNames}
-                  onClick={() => onContestCategoryClick(category.id)}
+                  onClick={() => onContestCategoryClick(category.id, category.name)}
                 >
                     { isChildElement && category.children.length > 0 && <FaAngleRight /> }
                     <div>

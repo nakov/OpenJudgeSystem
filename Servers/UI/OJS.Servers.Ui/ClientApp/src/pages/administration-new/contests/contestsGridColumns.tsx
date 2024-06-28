@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import React from 'react';
+import { BiTransfer } from 'react-icons/bi';
 import { FaCloudDownloadAlt } from 'react-icons/fa';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -172,8 +174,9 @@ const contestFilterableColumns: GridColDef[] = [
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
     onSuccessDelete: () => void,
-    onMoreClick: Function,
+    onExcelClick: Function,
     onDownloadSubmissionClick: Function,
+    onTransferParticipantsClick: Function,
 ) => [
     {
         field: 'actions',
@@ -200,12 +203,21 @@ export const returnContestsNonFilterableColumns = (
                         {
                             icon: <SiMicrosoftexcel />,
                             label: 'Export results',
-                            handleClick: onMoreClick,
+                            handleClick: onExcelClick,
                         },
                         {
                             icon: <FaCloudDownloadAlt />,
                             label: 'Download submissions',
                             handleClick: onDownloadSubmissionClick,
+                        },
+                        {
+                            icon: <BiTransfer />,
+                            label: 'Transfer participants',
+                            handleClick: () => onTransferParticipantsClick(
+                                Number(params.row.id),
+                                params.row.name,
+                                params.row.category,
+                            ),
                         },
                     ]
                 }

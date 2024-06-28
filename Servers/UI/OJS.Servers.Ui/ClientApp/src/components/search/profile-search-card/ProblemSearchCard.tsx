@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { IProblemSearchType } from '../../../common/types';
+import { getContestsDetailsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import ContestButton from '../../contests/contest-button/ContestButton';
 
@@ -21,12 +22,17 @@ const ProblemSearchCard = (props: IProblemSearchCardProps) => {
     return (
         <div className={`${styles.problemsSearchCardWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
             <div>
-                <Link to={`/contests/${contest.id}`} className={`${styles.problemName} ${textColorClassName}`}>{name}</Link>
+                <Link
+                  to={getContestsDetailsPageUrl({ contestId: contest.id, contestName: contest.name })}
+                  className={`${styles.problemName} ${textColorClassName}`}
+                >
+                    {name}
+                </Link>
                 <div className={styles.contestName}>{contest.name}</div>
             </div>
             <div className={styles.buttonsWrapper}>
-                <ContestButton isCompete isDisabled={!contest.canBeCompeted} id={contest.id} problemId={id} />
-                <ContestButton isCompete={false} isDisabled={!contest.canBePracticed} id={contest.id} problemId={id} />
+                <ContestButton isCompete isDisabled={!contest.canBeCompeted} id={contest.id} problemId={id} name={name} />
+                <ContestButton isCompete={false} isDisabled={!contest.canBePracticed} id={contest.id} problemId={id} name={name} />
             </div>
         </div>
     );
