@@ -35,7 +35,7 @@ import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestC
 import {
     useCreateContestMutation,
     useDeleteContestMutation,
-    useGetContestByIdQuery,
+    useGetContestByIdQuery, useTransferParticipantsMutation,
     useUpdateContestMutation,
 } from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
@@ -45,6 +45,7 @@ import { getEnumMemberName } from '../../../../utils/string-utils';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import DeleteButton from '../../common/delete/DeleteButton';
+import TransferParticipantsButton from '../../common/transfer-participants/TransferParticipantsButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -93,6 +94,7 @@ const ContestEdit = (props:IContestEditProps) => {
         numberOfProblemGroups: 0,
         duration: undefined,
         canBeCompeted: false,
+        officialParticipants: 0,
     });
 
     const [ contestValidations, setContestValidations ] = useState({
@@ -687,7 +689,14 @@ const ContestEdit = (props:IContestEditProps) => {
               disabled={!isValidForm}
             />
 
-            <Box sx={{ alignSelf: 'flex-end' }}>
+            <Box sx={{ alignSelf: 'flex-end', display: 'flex' }}>
+                <TransferParticipantsButton
+                  contestId={Number(contestId!)}
+                  contestName={contest.name}
+                  contestOfficialParticipants={contest.officialParticipants}
+                  categoryName={contestCategories?.find((category) => category.id === contest.categoryId)?.name}
+                  mutation={useTransferParticipantsMutation}
+                />
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}

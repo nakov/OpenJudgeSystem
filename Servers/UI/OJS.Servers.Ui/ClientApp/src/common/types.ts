@@ -297,6 +297,7 @@ interface IIndexContestsType {
     userParticipationResult?: IUserParticipationResult;
     createdOn: Date;
     modifiedOn: Date | null;
+    officialParticipants: number;
 }
 
 interface IGetContestsForIndexResponseType {
@@ -516,6 +517,7 @@ interface IContestAdministration {
     numberOfProblemGroups: number;
     duration: string | undefined;
     canBeCompeted: boolean;
+    officialParticipants: number;
 }
 
 interface ISubmissionsAdminGridViewType {

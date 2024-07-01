@@ -219,6 +219,7 @@ export const returnContestsNonFilterableColumns = (
                                 Number(params.row.id),
                                 params.row.name,
                                 params.row.category,
+                                params.row.officialParticipants,
                             ),
                         },
                     ]
