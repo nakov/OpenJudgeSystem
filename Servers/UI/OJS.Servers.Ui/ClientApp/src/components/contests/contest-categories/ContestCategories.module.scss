@@ -29,13 +29,31 @@
     transition: opacity 0.2s ease-in-out;
   }
 
+  .categoryListItem {
+    border-bottom: 1px solid colors.$dark-text-color;
+
+
+    .isChild {
+      border-bottom: none;
+    }
+
+    .categoryListItemContent {
+      padding: spacings.$sp-8 spacings.$sp-4;
+      font-size: variables.$f-size-16;
+
+      &:hover {
+        background-color: #76a2d2;
+        border-radius: 0;
+      }
+    }
+  }
+
   .categoryItem {
     color: colors.$light-text-color;
     align-items: center;
     cursor: pointer;
     display: flex;
     font-size: variables.$f-size-16;
-    font-weight: font-weights.$font-weight-regular;
     justify-content: space-between;
     padding: spacings.$sp-12 spacings.$sp-4;
     transition: background-color 0.2s ease-in-out;
@@ -54,18 +72,6 @@
 
     &:hover {
       background-color: #76a2d2;
-    }
-  }
-
-  .categoryChildren {
-    margin-left: 20px;
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.25s ease-in-out;
-
-    &.activeChildren {
-      max-height: 1000px;
-      transition: all 0.25s ease-in-out;
     }
   }
 

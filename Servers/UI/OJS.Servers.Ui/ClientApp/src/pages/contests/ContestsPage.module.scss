@@ -1,3 +1,4 @@
+@use 'src/styles/components';
 @use 'src/styles/colors';
 @use 'src/styles/variables';
 @use 'src/styles/fonts';
@@ -5,6 +6,8 @@
 @use 'src/styles/font-weights';
 
 .contestsContainer {
+  @extend %contentSize;
+
   display: flex;
 }
 

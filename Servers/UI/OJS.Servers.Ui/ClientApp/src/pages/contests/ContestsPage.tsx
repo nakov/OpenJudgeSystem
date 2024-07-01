@@ -3,9 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { SortType } from '../../common/contest-types';
 import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
-import ContestBreadcrumbs from '../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestCard from '../../components/contests/contest-card/ContestCard';
-import { ContestCategories } from '../../components/contests/contest-categories/ContestCategories';
 import ContestStrategies from '../../components/contests/contest-strategies/ContestStrategies';
 import Heading, { HeadingType } from '../../components/guidelines/headings/Heading';
 import List, { Orientation } from '../../components/guidelines/lists/List';
@@ -21,7 +19,7 @@ import { useGetAllContestsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import isNilOrEmpty from '../../utils/check-utils';
 import { flexCenterObjectStyles } from '../../utils/object-utils';
-import { setLayout } from '../shared/set-layout';
+import withTitle from '../shared/with-title';
 
 import styles from './ContestsPage.module.scss';
 
@@ -47,10 +45,6 @@ const ContestsPage = () => {
     });
 
     useEffect(() => {
-        if (!searchParams.get('page')) {
-            searchParams.set('page', '1');
-            setSearchParams(searchParams);
-        }
         if (!searchParams.get('category') || searchParams.get('category') === 'undefined') {
             searchParams.delete('category');
             setSearchParams(searchParams);
@@ -141,24 +135,20 @@ const ContestsPage = () => {
     if (allContestsError) { return <div className={`${textColorClassName}`}>Error loading contests</div>; }
 
     return (
-        <div>
-            <ContestBreadcrumbs />
-            <div className={styles.contestsContainer}>
-                <ContestCategories />
-                <div style={{ width: '100%' }}>
-                    <div className={`${styles.headingWrapper} ${textColorClassName}`}>
-                        <div>
-                            { selectedCategory
-                                ? selectedCategory.name
-                                : 'All Categories'}
-                        </div>
-                        <ContestStrategies />
+        <div className={styles.contestsContainer}>
+            <div style={{ width: '100%' }}>
+                <div className={`${styles.headingWrapper} ${textColorClassName}`}>
+                    <div>
+                        { selectedCategory
+                            ? selectedCategory.name
+                            : 'All Categories'}
                     </div>
-                    {renderContests()}
+                    <ContestStrategies />
                 </div>
+                {renderContests()}
             </div>
         </div>
     );
 };
 
-export default setLayout(ContestsPage);
+export default withTitle(ContestsPage, 'Contests');

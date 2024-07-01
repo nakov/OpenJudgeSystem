@@ -14,11 +14,16 @@ import {
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import concatClassNames from '../../../utils/class-names';
 import { findContestCategoryByIdRecursive, findParentNames } from '../contest-categories/ContestCategories';
 
 import styles from './ContestBreadcrumbs.module.scss';
 
-const ContestBreadcrumbs = () => {
+interface IContestBreadcrumbsProps {
+    isHidden?: boolean;
+}
+
+const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
     const [ searchParams, setSearchParams ] = useSearchParams();
@@ -87,8 +92,17 @@ const ContestBreadcrumbs = () => {
         return <div className={getColorClassName(themeColors.textColor)}>Loading breadcrumbs...</div>;
     }
 
+    const className = concatClassNames(
+        styles.breadcrumbsWrapper,
+        textColorClassName,
+        backgroundColorClassName,
+        isHidden
+            ? styles.nonVisible
+            : '',
+    );
+
     return (
-        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
+        <div className={className}>
             <Link to="/" className={`${styles.item} ${styles.staticItem}`}>Home</Link>
             {' / '}
             <Link

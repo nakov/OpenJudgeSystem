@@ -16,6 +16,7 @@ import ContestDetailsPage from './pages/contests/contest-details/ContestDetailsP
 import ContestRegister from './pages/contests/contest-register/ContestRegister';
 import ContestSolutionSubmitPage from './pages/contests/contest-solution-submit/ContestSolutionSubmitPage';
 import ContestsPage from './pages/contests/ContestsPage';
+import HomeInfoPage from './pages/home/HomeInfoPage';
 import HomePage from './pages/home/HomePage';
 import NotFoundPage from './pages/not-found/NotFoundPage';
 import ProfilePage from './pages/profile/ProfilePage';
@@ -34,6 +35,16 @@ const App = () => {
                 {
                     path: '/',
                     element: <HomePage />,
+                    children: [
+                        {
+                            path: '/',
+                            element: <HomeInfoPage />,
+                        },
+                        {
+                            path: '/contests/:slug',
+                            element: <ContestsPage />,
+                        },
+                    ],
                 },
                 {
                     path: '/login',
@@ -74,10 +85,6 @@ const App = () => {
                     element: <TestEditPage />,
                 },
                 // Contest Routes
-                {
-                    path: '/contests/:slug',
-                    element: <ContestsPage />,
-                },
                 {
                     path: '/contests/:slug/:contestId',
                     element: <ContestDetailsPage />,

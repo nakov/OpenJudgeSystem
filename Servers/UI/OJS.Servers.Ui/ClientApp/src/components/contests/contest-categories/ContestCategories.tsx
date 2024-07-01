@@ -3,9 +3,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
-import { useEffect, useMemo } from 'react';
-import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
-import { useSearchParams } from 'react-router-dom';
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeItem2 } from '@mui/x-tree-view/TreeItem2';
 
 import { IContestCategory } from '../../../common/types';
 import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
@@ -17,7 +19,7 @@ import {
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
-import { useAppDispatch } from '../../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
 import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
@@ -30,6 +32,9 @@ interface IContestCategoriesProps {
 
 const ContestCategories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
+    const { pathname } = useLocation();
+    const [ expandedItems, setExpandedItems ] = useState<string[]>([]);
+    const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
     const dispatch = useAppDispatch();
     const [ searchParams ] = useSearchParams();
@@ -50,24 +55,37 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     }, [ contestCategories, dispatch ]);
 
     useEffect(() => {
-        const selectedCategory = findContestCategoryByIdRecursive(contestCategories, selectedId);
-        const breadcrumbItems = findParentNames(contestCategories, selectedId);
+        const category = findContestCategoryByIdRecursive(contestCategories, selectedId);
+        const breadcrumbCategories = findParentNames(contestCategories, selectedId);
 
-        dispatch(setContestCategory(selectedCategory));
-        dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
+        dispatch(setContestCategory(category));
+        dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbCategories }));
     }, [ selectedId, contestCategories, dispatch ]);
 
-    const onContestCategoryClick = (id: number) => {
-        const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
-        if (!selectedContestCategory) {
-            return;
+    useEffect(() => {
+        if (pathname === '/' || pathname === '/contests/all') {
+            setExpandedItems([]);
         }
+    }, [ pathname ]);
 
-        dispatch(setContestStrategy(null));
+    useEffect(() => {
+        const breadcrumbItemIds = breadcrumbItems.map((item) => item.id.toString());
+        setExpandedItems((prev) => {
+            // Create a new Set with previous items and the new breadcrumbItemIds
+            const updatedItems = new Set([ ...prev, ...breadcrumbItemIds ]);
+            // Convert the Set back to an array
+            return Array.from(updatedItems);
+        });
+    }, [ breadcrumbItems ]);
+
+    const handleExpandedItemsChange = (
+        event: SyntheticEvent,
+        itemIds: string[],
+    ) => {
+        setExpandedItems(itemIds);
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {
-        const isActiveOrHasActiveChild = findActiveChildrenByIdRecursive(category.children, selectedId) || selectedId === category.id;
         const categoryItemClassNames = concatClassNames(
             styles.categoryItem,
             selectedId === category.id
@@ -81,32 +99,41 @@ const ContestCategories = (props: IContestCategoriesProps) => {
                 : '',
         );
 
-        return (
-            <div
-              key={`contest-category-item-${category.id}`}
-              onClick={(ev) => {
-                  ev.stopPropagation();
-                  onContestCategoryClick(category.id);
-              }}
-            >
-                <LinkButton
-                  to={getAllContestsPageUrl({ categoryName: category.name, categoryId: category.id })}
-                  type={LinkButtonType.plain}
-                  preventScrollReset
-                  className={categoryItemClassNames}
-                >
-                    { isChildElement && category.children.length > 0 && <FaAngleRight /> }
-                    {category.name}
-                    { !isChildElement && category.children.length > 0 && <FaAngleDown />}
-                </LinkButton>
-                <div
-                  className={`${styles.categoryChildren} ${isActiveOrHasActiveChild
-                      ? styles.activeChildren
-                      : ''}`}
+        const categoryListItemClassNames = concatClassNames(
+            styles.categoryListItem,
+            isChildElement
+                ? styles.isChild
+                : '',
+        );
+
+        const categoryListItemContentClassNames = concatClassNames(styles.categoryListItemContent);
+
+        if (category.children.length > 0) {
+            return (
+                <TreeItem2
+                  itemId={`${category.id}`}
+                  key={category.id}
+                  onClick={(ev) => {
+                      ev.stopPropagation();
+                      dispatch(setContestStrategy(null));
+                  }}
+                  label={category.name}
+                  className={categoryListItemClassNames}
+                  classes={{ content: categoryListItemContentClassNames }}
                 >
                     {category.children.map((child) => renderCategory(child, true))}
-                </div>
-            </div>
+                </TreeItem2>
+            );
+        }
+
+        return (
+            <LinkButton
+              to={getAllContestsPageUrl({ categoryName: category.name, categoryId: category.id })}
+              type={LinkButtonType.plain}
+              preventScrollReset
+              className={categoryItemClassNames}
+              text={category.name}
+            />
         );
     };
 
@@ -117,6 +144,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             </div>
         );
     }
+
     return (
         <div className={styles.contestCategoriesWrapper}>
             <div
@@ -129,13 +157,20 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             >
                 <div>Contest Categories</div>
             </div>
-            { categoriesError
+            {categoriesError
                 ? <div className={textColorClassName}>Error loading categories</div>
                 : (
                     <div
                       className={`${styles.contestCategoriesInnerWrapper} ${textColorClassName}`}
                     >
-                        {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
+                        <Box>
+                            <SimpleTreeView
+                              expandedItems={expandedItems}
+                              onExpandedItemsChange={handleExpandedItemsChange}
+                            >
+                                {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
+                            </SimpleTreeView>
+                        </Box>
                     </div>
                 )}
         </div>
@@ -151,7 +186,7 @@ const findParentNames = (collection: Array<IContestCategory> | undefined, select
         element: IContestCategory,
         targetId: number,
         parents: Array<{ name: string; id: number }> = [],
-    ): Array<{name: string; id: number}> | null => {
+    ): Array<{ name: string; id: number }> | null => {
         if (element.id === targetId) {
             return [ ...parents, { name: element.name, id: element.id } ];
         }
@@ -196,24 +231,5 @@ const findContestCategoryByIdRecursive =
         }
         return null;
     };
-
-const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number) => {
-    if (!elements) {
-        return null;
-    }
-    // eslint-disable-next-line no-restricted-syntax
-    for (const element of elements) {
-        if (element.id === id) {
-            return true;
-        }
-        if (element.children) {
-            const found = findActiveChildrenByIdRecursive(element.children, id);
-            if (found) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
 
 export { ContestCategories, findContestCategoryByIdRecursive, findParentNames };
