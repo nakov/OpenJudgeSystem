@@ -10,7 +10,7 @@ import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
+import { IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
 import {
     getAllContestsPageUrl,
     getContestsDetailsPageUrl,
@@ -66,6 +66,7 @@ const ContestSolutionSubmitPage = () => {
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
+    const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -147,6 +148,29 @@ const ContestSolutionSubmitPage = () => {
             isOfficial: isCompete,
         });
     };
+
+    useEffect(() => {
+        if (submissionsData?.items && problems && submissionsData.items.length > 0) {
+            // eslint-disable-next-line max-len
+            const latestSubmission = submissionsData.items.reduce((newest, current) => new Date(current.createdOn) > new Date(newest.createdOn)
+                ? current
+                : newest, submissionsData.items[0]);
+
+            if (latestSubmission?.problem) {
+                const probIndex = problems.findIndex((p) => p.id === latestSubmission.problem.id);
+                if (probIndex !== -1) {
+                    const updatedProb = { ...problems[probIndex] };
+                    updatedProb.points = Math.max(latestSubmission.result.points, updatedProb.points);
+
+                    setUpdatedProblems([
+                        ...problems.slice(0, probIndex),
+                        updatedProb,
+                        ...problems.slice(probIndex + 1),
+                    ]);
+                }
+            }
+        }
+    }, [ problems, submissionsData ]);
 
     useEffect(() => {
         if (!submissionsDataFetching) {
@@ -344,13 +368,13 @@ const ContestSolutionSubmitPage = () => {
         uploadedFile,
     ]);
 
-    const sumMyPoints = useMemo(() => contest
-        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.points, 0)
-        : 0, [ contest ]);
+    const sumMyPoints = useMemo(() => updatedProblems
+        ? updatedProblems.reduce((accumulator, problem) => accumulator + problem.points, 0)
+        : 0, [ updatedProblems ]);
 
-    const sumAllContestPoints = useMemo(() => contest
-        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
-        : 0, [ contest ]);
+    const sumAllContestPoints = useMemo(() => updatedProblems
+        ? updatedProblems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
+        : 0, [ updatedProblems ]);
 
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
@@ -664,7 +688,7 @@ const ContestSolutionSubmitPage = () => {
             ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
-                  problems={problems || []}
+                  problems={updatedProblems || problems || []}
                   onContestProblemChange={() => setSelectedSubmissionsPage(1)}
                   totalParticipantsCount={participantsCount}
                   sumMyPoints={sumMyPoints}
