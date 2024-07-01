@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions.Strings;
+using OJS.Data;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
@@ -30,6 +31,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Resource = OJS.Common.Resources.ContestsGeneral;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
@@ -49,6 +51,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly IParticipantScoresDataService participantScoresDataService;
     private readonly ISubmissionsDataService submissionsDataService;
     private readonly IZipArchivesService zipArchivesService;
+    private readonly ITransactionsProvider transactions;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
@@ -64,7 +67,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IParticipantsCommonDataService participantsCommonDataService,
         IParticipantScoresDataService participantScoresDataService,
         ISubmissionsDataService submissionsDataService,
-        IZipArchivesService zipArchivesService)
+        IZipArchivesService zipArchivesService,
+        ITransactionsProvider transactions)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
@@ -80,6 +84,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         this.participantScoresDataService = participantScoresDataService;
         this.submissionsDataService = submissionsDataService;
         this.zipArchivesService = zipArchivesService;
+        this.transactions = transactions;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -199,7 +204,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             .MapCollection<ContestForActivityServiceModel>().FirstAsync()).Map<ContestActivityModel>();
 
     public override async Task<ContestAdministrationModel> Get(int id)
-        => await this.contestsData.GetByIdWithProblems(id).Map<ContestAdministrationModel>();
+        => await this.contestsData.GetByIdWithProblemsAndParticipants(id).Map<ContestAdministrationModel>();
 
     public override async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model)
     {
@@ -266,75 +271,88 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         return model;
     }
 
-    public async Task TransferParticipantsToPracticeById(int contestId)
-    {
-        var contest = await this.contestsData.GetByIdWithParticipantsScoresAndSubmissions(contestId);
-
-        var competeOnlyParticipants = contest!.Participants
-            .GroupBy(p => p.UserId)
-            .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
-            .Select(gr => gr.FirstOrDefault());
-
-        foreach (var participant in competeOnlyParticipants)
+    public async Task TransferParticipantsToPracticeById(int contestId) =>
+        await this.transactions.ExecuteInTransaction(async () =>
         {
-            foreach (var participantScore in participant!.Scores)
+            var contest = await this.contestsData.GetByIdWithParticipantsScoresAndSubmissions(contestId);
+
+            var competeOnlyParticipants = contest!.Participants
+                .GroupBy(p => p.UserId)
+                .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
+                .Select(gr => gr.FirstOrDefault());
+
+            foreach (var participant in competeOnlyParticipants)
             {
-                participantScore.IsOfficial = false;
-            }
-
-            participant.IsOfficial = false;
-        }
-
-        var competeAndPracticeParticipants = contest.Participants
-            .GroupBy(p => p.UserId)
-            .Where(g => g.Count() == 2)
-            .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
-
-        var participantsForDeletion = new List<Participant>();
-
-        foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
-        {
-            var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
-            var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
-            participantsForDeletion.Add(officialParticipant);
-
-            foreach (var officialParticipantSubmission in officialParticipant.Submissions)
-            {
-                officialParticipantSubmission.Participant = unofficialParticipant;
-            }
-
-            var scoresForDeletion = new List<ParticipantScore>();
-
-            foreach (var officialParticipantScore in officialParticipant.Scores)
-            {
-                var unofficialParticipantScore = unofficialParticipant
-                    .Scores
-                    .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
-
-                if (unofficialParticipantScore != null)
+                foreach (var participantScore in participant!.Scores)
                 {
-                    if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
-                        (unofficialParticipantScore.Points == officialParticipantScore.Points &&
-                         unofficialParticipantScore.Id < officialParticipantScore.Id))
+                    participantScore.IsOfficial = false;
+                }
+
+                participant.IsOfficial = false;
+            }
+
+            var competeAndPracticeParticipants = contest.Participants
+                .GroupBy(p => p.UserId)
+                .Where(g => g.Count() == 2)
+                .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
+
+            var participantsForDeletion = new List<Participant>();
+
+            foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
+            {
+                var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
+                var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
+                participantsForDeletion.Add(officialParticipant);
+
+                foreach (var officialParticipantSubmission in officialParticipant.Submissions)
+                {
+                    officialParticipantSubmission.Participant = unofficialParticipant;
+                }
+
+                var scoresForDeletion = new List<ParticipantScore>();
+
+                var pointsToAdd = 0;
+                foreach (var officialParticipantScore in officialParticipant.Scores)
+                {
+                    var unofficialParticipantScore = unofficialParticipant
+                        .Scores
+                        .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
+
+                    if (unofficialParticipantScore != null)
+                    {
+                        if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
+                            (unofficialParticipantScore.Points == officialParticipantScore.Points &&
+                             unofficialParticipantScore.Id < officialParticipantScore.Id))
+                        {
+                            officialParticipantScore.IsOfficial = false;
+                            officialParticipantScore.Participant = unofficialParticipant;
+                            scoresForDeletion.Add(unofficialParticipantScore);
+                            pointsToAdd += officialParticipantScore.Points - unofficialParticipantScore.Points;
+                        }
+                        else
+                        {
+                            scoresForDeletion.Add(officialParticipantScore);
+                        }
+                    }
+                    else
                     {
                         officialParticipantScore.IsOfficial = false;
                         officialParticipantScore.Participant = unofficialParticipant;
+                        pointsToAdd += officialParticipantScore.Points;
                     }
+                }
 
-                    scoresForDeletion.Add(unofficialParticipantScore);
-                }
-                else
+                if (pointsToAdd > 0)
                 {
-                    officialParticipantScore.IsOfficial = false;
-                    officialParticipantScore.Participant = unofficialParticipant;
+                    unofficialParticipant.TotalScoreSnapshot += pointsToAdd;
+                    unofficialParticipant.TotalScoreSnapshotModifiedOn = officialParticipant.TotalScoreSnapshotModifiedOn;
                 }
+
+                await this.participantScoresDataService.Delete(scoresForDeletion);
             }
 
-            await this.participantScoresDataService.Delete(scoresForDeletion);
-        }
-
-        await this.participantsData.Delete(participantsForDeletion);
-    }
+            await this.participantsData.Delete(participantsForDeletion);
+        });
 
     private static StringBuilder PrepareSolutionsFileComment(
         bool isOfficialContest,
