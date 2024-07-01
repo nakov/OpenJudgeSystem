@@ -55,8 +55,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
 
         dispatch(setContestCategory(selectedCategory));
         dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [ selectedId, contestCategories ]);
+    }, [ selectedId, contestCategories, dispatch ]);
 
     const onContestCategoryClick = (id: number) => {
         const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
