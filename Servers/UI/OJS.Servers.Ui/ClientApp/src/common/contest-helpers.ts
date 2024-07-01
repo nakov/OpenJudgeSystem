@@ -22,8 +22,10 @@ const getCompeteResultsAreVisible = (
 const getPracticeResultsAreVisible = (
     contest: IIndexContestsType,
     loggedInUserCanAccessAdministration: boolean,
-) => (loggedInUserCanAccessAdministration || (!loggedInUserCanAccessAdministration && (contest.canBeCompeted || contest.canBePracticed))) &&
-    contest.practiceResults > 0;
+) => (loggedInUserCanAccessAdministration ||
+     (!loggedInUserCanAccessAdministration &&
+     ((contest.canBeCompeted || contest.canBePracticed) && !isNil(contest.userParticipationResult?.practicePoints)))) &&
+     contest.practiceResults > 0;
 
 const createUrlFriendlyString = (inputString: string | undefined | null): string => {
     let resultString = '';
