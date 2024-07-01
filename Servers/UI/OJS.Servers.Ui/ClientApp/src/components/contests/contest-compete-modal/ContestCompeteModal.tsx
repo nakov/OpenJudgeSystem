@@ -60,7 +60,7 @@ const ContestCompeteModal = (props: IContestCompeteModalProps) => {
                     <b>Are you sure you want to start the contest now?</b>
                 </div>
                 <div className={styles.buttonsWrapper}>
-                    <ContestButton isCompete isDisabled={false} id={1} onClick={onAccept} />
+                    <ContestButton isCompete isDisabled={false} id={1} onClick={onAccept} name={examName} />
                     <Button
                       className={styles.declineBtn}
                       text="cancel"

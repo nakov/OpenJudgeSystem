@@ -10,6 +10,7 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import MyProfileSvg from '../../assets/my-profile.svg';
 import { NEW_ADMINISTRATION_PATH } from '../../common/urls/administration-urls';
+import { getAllContestsPageUrl } from '../../common/urls/compose-client-urls';
 import useTheme from '../../hooks/use-theme';
 import { resetInInternalUser, setInternalUser, setIsGetUserInfoCompleted, setIsLoggedIn } from '../../redux/features/authorizationSlice';
 import { setIsVisible } from '../../redux/features/searchSlice';
@@ -101,7 +102,7 @@ const PageHeader = () => {
                     ? styles.burgerMenuItemsOpened
                     : styles.burgerMenuItemsClosed}`}
                 >
-                    <Link to="/contests" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Contests</Link>
+                    <Link to={getAllContestsPageUrl({})} className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Contests</Link>
                     <Link to="/submissions" className={styles.burgerItemWrapper} onClick={onMenuItemClick}>Submissions</Link>
                     {user.canAccessAdministration && (
                         <Link
@@ -148,7 +149,7 @@ const PageHeader = () => {
             <div>
                 <Link to="/" className={`${styles.logoBtn}`}>SoftUni Judge</Link>
                 <div className={styles.navButtons}>
-                    <Link to="/contests" className={styles.navButton}>CONTESTS</Link>
+                    <Link to={getAllContestsPageUrl({})} className={styles.navButton}>CONTESTS</Link>
                     <Link to="/submissions" className={styles.navButton}>SUBMISSIONS</Link>
                     {user.canAccessAdministration &&
                         <Link to={`/${NEW_ADMINISTRATION_PATH}`} target="_blank" className={styles.navButton}>ADMINISTRATION</Link>}

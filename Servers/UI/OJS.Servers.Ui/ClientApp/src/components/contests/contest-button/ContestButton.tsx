@@ -1,4 +1,4 @@
-import { getContestSubmissionPageUrl } from '../../../common/urls/compose-client-urls';
+import { getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import useNavigation from '../../../hooks/common/use-routing';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
@@ -12,15 +12,15 @@ interface IContestButtonProps {
     id: number;
     problemId?: number;
     onClick?: () => void;
+    name: string;
 }
 
 const COMPETE_STRING = 'COMPETE';
 const PRACTICE_STRING = 'PRACTICE';
 
 const ContestButton = (props: IContestButtonProps) => {
-    const { isCompete, isDisabled, id, problemId, onClick } = props;
+    const { isCompete, isDisabled, id, problemId, onClick, name } = props;
     const { internalUser } = useAppSelector((reduxState) => reduxState.authorization);
-
     const dispatch = useAppDispatch();
 
     const { navigateInNewWindow } = useNavigation();
@@ -32,7 +32,12 @@ const ContestButton = (props: IContestButtonProps) => {
             return;
         }
 
-        navigateInNewWindow(getContestSubmissionPageUrl(isCompete, id, problemId));
+        navigateInNewWindow(getContestsSolutionSubmitPageUrl({
+            isCompete,
+            contestId: id,
+            contestName: name,
+            problemId,
+        }));
     };
 
     const isUserAdminOrLecturer = internalUser.isAdmin || internalUser.isLecturer;

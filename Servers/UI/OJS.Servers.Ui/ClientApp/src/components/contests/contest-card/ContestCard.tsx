@@ -1,14 +1,23 @@
+import { concatClassnames } from 'react-alice-carousel/lib/utils';
+import { IoIosLock } from 'react-icons/io';
 import { Link } from 'react-router-dom';
 import isNil from 'lodash/isNil';
 
-import { getCompeteResultsAreVisible, getPracticeResultsAreVisible } from '../../../common/contest-helpers';
+import { ContestParticipationType } from '../../../common/constants';
+import {
+    createUrlFriendlyString,
+    getCompeteResultsAreVisible,
+    getPracticeResultsAreVisible,
+} from '../../../common/contest-helpers';
 import { IIndexContestsType } from '../../../common/types';
-import { getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
+import { getContestsDetailsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import { useAppSelector } from '../../../redux/store';
 import {
     calculatedTimeFormatted,
-    calculateTimeUntil, dateTimeFormatWithSpacing,
+    calculateTimeUntil,
+    dateTimeFormatWithSpacing,
+    isCurrentTimeAfterOrEqualTo,
     preciseFormatDate,
 } from '../../../utils/dates';
 import ContestButton from '../contest-button/ContestButton';
@@ -54,7 +63,10 @@ const ContestCard = (props: IContestCardProps) => {
         competeMaximumPoints,
         practiceMaximumPoints,
         userParticipationResult,
+        requirePasswordForCompete,
+        requirePasswordForPractice,
     } = contest;
+    console.log(userParticipationResult);
 
     const contestStartTime = canBeCompeted || (!canBeCompeted && !canBePracticed)
         ? startTime
@@ -64,12 +76,16 @@ const ContestCard = (props: IContestCardProps) => {
         ? endTime
         : practiceEndTime;
 
+    const hasContestStartTimePassed = isCurrentTimeAfterOrEqualTo(contestStartTime);
+
     const remainingDuration = calculateTimeUntil(contestEndTime);
     const remainingTimeFormatted = calculatedTimeFormatted(remainingDuration);
 
     const shouldShowPoints = isNil(showPoints)
         ? true
         : showPoints;
+
+    const isUserAdminOrLecturer = internalUser.isAdmin || internalUser.isLecturer;
 
     const renderContestDetailsFragment = (
         iconName: string, text: string | number | undefined,
@@ -103,7 +119,14 @@ const ContestCard = (props: IContestCardProps) => {
                           className={`${styles.contestDetailsFragment} ${isGreenColor
                               ? styles.greenColor
                               : ''}`}
-                          to={getContestsResultsUrl(id!, participationType, true)}
+                          to={getContestsResultsPageUrl({
+                              slug: createUrlFriendlyString(name),
+                              contestId: id!,
+                              participationType: participationType === ContestParticipationType.Compete
+                                  ? ContestParticipationType.Compete
+                                  : ContestParticipationType.Practice,
+                              isSimple: true,
+                          })}
                         >
                             {renderBody()}
                         </Link>
@@ -132,14 +155,41 @@ const ContestCard = (props: IContestCardProps) => {
             : !canBePracticed;
 
         return (
-            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} />
+            <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id} name={name} />
+        );
+    };
+
+    const renderLockIcon = (isCompete: boolean, requirePassword: boolean) => {
+        if (!requirePassword) {
+            return <IoIosLock className={styles.hideLock} size="24px" />;
+        }
+
+        const isDisabled = isCompete
+            ? !canBeCompeted
+            : !canBePracticed;
+
+        const lockClassName = isDisabled && isUserAdminOrLecturer
+            ? concatClassnames(isCompete
+                ? styles.competeLock
+                : styles.practiceLock, styles.lockFaint)
+            : isCompete
+                ? styles.competeLock
+                : styles.practiceLock;
+
+        return (
+            <IoIosLock
+              className={isDisabled && !isUserAdminOrLecturer
+                  ? styles.hideLock
+                  : lockClassName}
+              size="24px"
+            />
         );
     };
 
     return (
         <div className={`${backgroundColorClass} ${textColorClass} ${styles.contestCardWrapper}`}>
             <div>
-                <Link className={styles.contestCardTitle} to={`/contests/${id}`}>
+                <Link className={styles.contestCardTitle} to={getContestsDetailsPageUrl({ contestId: id, contestName: name })}>
                     {name}
                 </Link>
                 <div className={styles.contestCardSubTitle}>{category}</div>
@@ -159,7 +209,7 @@ const ContestCard = (props: IContestCardProps) => {
                             `practice results: ${practiceResults}`,
                             false,
                             true,
-                            'practice',
+                            ContestParticipationType.Practice,
                         )
 }
                     {
@@ -170,12 +220,13 @@ const ContestCard = (props: IContestCardProps) => {
                             `compete results: ${competeResults}`,
                             true,
                             true,
-                            'compete',
+                            ContestParticipationType.Compete,
                         )
                     }
                     {contestEndTime &&
                         remainingDuration &&
                         remainingDuration.seconds() > 0 &&
+                        hasContestStartTimePassed &&
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
                             `remaining time: ${remainingTimeFormatted}`,
@@ -187,11 +238,17 @@ const ContestCard = (props: IContestCardProps) => {
             <div className={styles.contestBtnsWrapper}>
                 <div className={styles.buttonAndPointsLabelWrapper}>
                     { shouldShowPoints && renderPointsText(competeMaximumPoints, userParticipationResult?.competePoints)}
-                    {renderContestButton(true)}
+                    <div className={styles.buttonAndLockLabelWrapper}>
+                        {renderContestButton(true)}
+                        {renderLockIcon(true, requirePasswordForCompete)}
+                    </div>
                 </div>
                 <div className={styles.buttonAndPointsLabelWrapper}>
                     { shouldShowPoints && renderPointsText(practiceMaximumPoints, userParticipationResult?.practicePoints)}
-                    {renderContestButton(false)}
+                    <div className={styles.buttonAndLockLabelWrapper}>
+                        {renderContestButton(false)}
+                        {renderLockIcon(false, requirePasswordForPractice)}
+                    </div>
                 </div>
             </div>
         </div>

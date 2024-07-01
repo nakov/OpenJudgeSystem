@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
+import { getContestsDetailsPageUrl, getContestsSolutionSubmitPageUrl } from '../../../common/urls/compose-client-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
+import MultiLineTextDisplay from '../../../components/common/MultiLineTextDisplay';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
 import AdministrationLink from '../../../components/guidelines/buttons/AdministrationLink';
@@ -19,6 +21,7 @@ import {
     useLazyRetestSubmissionQuery,
 } from '../../../redux/services/submissionsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import concatClassNames from '../../../utils/class-names';
 import { preciseFormatDate } from '../../../utils/dates';
 import downloadFile from '../../../utils/file-download-utils';
 import { getErrorMessage } from '../../../utils/http-utils';
@@ -31,7 +34,7 @@ import styles from './SubmissionsDetailsPage.module.scss';
 const SubmissionDetailsPage = () => {
     const dispatch = useAppDispatch();
     const { submissionId } = useParams();
-    const { themeColors, getColorClassName } = useTheme();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
     const [ isRetestingStarted, setIsRetestingStarted ] = useState(false);
 
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -63,11 +66,11 @@ const SubmissionDetailsPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ data?.contestId ]);
 
-    const { name } = contestDetails || {};
     const {
         id: solutionId,
         isProcessed,
         contestId,
+        contestName,
         problem,
         user: contestUser,
         content,
@@ -118,14 +121,11 @@ const SubmissionDetailsPage = () => {
             {' '}
             for problem
             {' '}
-            <Link to={`/contests/${contestId}/${isOfficial
-                ? 'compete'
-                : 'practice'}#${problem?.orderBy}`}
-            >
+            <Link to={getContestsSolutionSubmitPageUrl({ isCompete: isOfficial, contestId, contestName, problemId: problem?.id })}>
                 {problem?.name}
             </Link>
         </div>
-    ), [ solutionId, contestUser?.userName, contestId, isOfficial, problem?.orderBy, problem?.name ]);
+    ), [ solutionId, contestUser?.userName, contestName, contestId, isOfficial, problem?.id, problem?.name ]);
 
     const renderSolutionDetails = useCallback(() => {
         const { allowBinaryFilesUpload } = submissionType || {};
@@ -222,11 +222,19 @@ const SubmissionDetailsPage = () => {
             );
         }
 
+        const compileTimeErrorClasses = concatClassNames(
+            styles.compileTimeErrorWrapper,
+            textColorClassName,
+            isDarkMode
+                ? styles.darkTheme
+                : '',
+        );
+
         if (!isCompiledSuccessfully) {
             return (
-                <div className={`${styles.compileTimeErrorWrapper} ${textColorClassName}`}>
+                <div className={compileTimeErrorClasses}>
                     <div>A compile time error occurred:</div>
-                    { compilerComment && <div>{compilerComment}</div>}
+                    <MultiLineTextDisplay text={compilerComment} maxVisibleLines={50} />
                 </div>
             );
         }
@@ -280,7 +288,9 @@ const SubmissionDetailsPage = () => {
         userIsInRoleForContest,
         handleRetestSubmission,
         isRetestingStarted,
-        maxPoints ]);
+        maxPoints,
+        isDarkMode,
+    ]);
 
     const renderAdminButtons = useCallback(() => {
         const onViewCodeClick = () => {
@@ -365,7 +375,13 @@ const SubmissionDetailsPage = () => {
                         : []) || []}
                     />
                     <div className={styles.innerBodyWrapper}>
-                        <Link to={`/contests/${contestId}`}>{name}</Link>
+                        <div className={styles.contestTitle}>
+                            <Link
+                              to={getContestsDetailsPageUrl({ contestId, contestName })}
+                            >
+                                {contestName}
+                            </Link>
+                        </div>
                         {renderAdminButtons()}
                         {renderSolutionTestDetails()}
                         {content && (

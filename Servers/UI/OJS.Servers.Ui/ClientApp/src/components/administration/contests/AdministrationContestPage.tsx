@@ -66,6 +66,7 @@ const AdministrationContestPage = () => {
             <ProblemsInContestView
               key={key}
               contestId={Number(contestId)}
+              contestName={data?.name}
               contestType={ContestVariation[data?.type as keyof typeof ContestVariation]}
               canContestBeCompeted={activityData?.canBeCompeted || false}
             />

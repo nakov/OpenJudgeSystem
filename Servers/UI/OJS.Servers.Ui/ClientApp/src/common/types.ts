@@ -298,6 +298,8 @@ interface IIndexContestsType {
     createdOn: Date;
     modifiedOn: Date | null;
     officialParticipants: number;
+    requirePasswordForCompete: boolean;
+    requirePasswordForPractice: boolean;
 }
 
 interface IGetContestsForIndexResponseType {

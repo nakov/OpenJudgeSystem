@@ -9,6 +9,7 @@ import { getResultTypeText, getTestResultColorId } from '../../../common/submiss
 import { ITestRunType } from '../../../hooks/submissions/types';
 import useTheme from '../../../hooks/use-theme';
 import CodeEditor from '../../code-editor/CodeEditor';
+import MultiLineTextDisplay from '../../common/MultiLineTextDisplay';
 import Diff from '../../diff/Diff';
 import AdministrationLink from '../../guidelines/buttons/AdministrationLink';
 import Button, { ButtonSize, ButtonType, LinkButtonType } from '../../guidelines/buttons/Button';
@@ -187,7 +188,7 @@ const SubmissionTestRun = (props: ISubmissionTestRunProps) => {
             )}
             {
                 testRun.resultType.toLowerCase() === TestRunResultType.RunTimeError.toLowerCase() && testRun.executionComment && (
-                    <div className={styles.runtimeExecutionComment}>{testRun.executionComment}</div>
+                    <MultiLineTextDisplay text={testRun.executionComment} maxVisibleLines={5} className={styles.runtimeExecutionComment} />
                 )
             }
         </div>
