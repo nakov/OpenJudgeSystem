@@ -39,7 +39,7 @@ const createUrlFriendlyString = (inputString: string | undefined | null): string
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < cleanedString.length; i++) {
         const character = cleanedString[i];
-        if (/[a-zA-Z0-9]/.test(character)) {
+        if (/[\p{L}\p{Nd}]/u.test(character)) {
             resultString += character;
             isLastCharacterDash = false;
         } else if (!isLastCharacterDash) {

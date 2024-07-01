@@ -31,6 +31,7 @@ import {
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
+import { getContestsDetailsPageUrl } from '../../../../common/urls/compose-client-urls';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import {
     useCreateContestMutation,
@@ -417,7 +418,15 @@ const ContestEdit = (props:IContestEditProps) => {
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
-                {(contest.name && <ExternalLink to={`/contests/${contest.id}`} text={contest.name} />) || 'Contest form'}
+                {(contest.name && (
+                <ExternalLink
+                  to={getContestsDetailsPageUrl({
+                      contestId: contest.id,
+                      contestName: contest.name,
+                  })}
+                  text={contest.name}
+                />
+                )) || 'Contest form'}
             </Typography>
             <form className={`${formStyles.form}`}>
                 <Box className={`${styles.fieldBox}`}>

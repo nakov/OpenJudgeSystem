@@ -7,6 +7,7 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Common.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
+using System.Collections.Generic;
 
 public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPracticed, IContestForActivityServiceModel
 {
@@ -52,6 +53,14 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
 
     public int PracticeMaximumPoints { get; set; }
 
+    public bool HasContestPassword { get; set; }
+
+    public bool HasPracticePassword { get; set; }
+
+    public bool RequirePasswordForCompete { get; set; }
+
+    public bool RequirePasswordForPractice { get; set; }
+
     public ContestParticipantResultServiceModel? UserParticipationResult { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -65,15 +74,17 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
             .ForMember(
                 d => d.Duration,
                 opt => opt.MapFrom(src =>
-                    src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue) ? (src.EndTime - src.StartTime) : null)))
+                    src.Duration ?? ((src.StartTime.HasValue && src.EndTime.HasValue)
+                        ? (src.EndTime - src.StartTime)
+                        : null)))
             .ForMember(d => d.CanBeCompeted, opt => opt.Ignore())
             .ForMember(d => d.CanBePracticed, opt => opt.Ignore())
             .ForMember(
                 d => d.PracticeMaximumPoints,
                 opt => opt.MapFrom(src => src.ProblemGroups
-                        .SelectMany(pg => pg.Problems)
-                        .Where(x => !x.IsDeleted)
-                        .Sum(pr => pr.MaximumPoints)))
+                    .SelectMany(pg => pg.Problems)
+                    .Where(x => !x.IsDeleted)
+                    .Sum(pr => pr.MaximumPoints)))
             // For online contests:
             // In a problem group with multiple problems, compete points are derived from a single problem,
             // unlike practice mode where points can be accumulated from all problems across groups.
@@ -88,5 +99,7 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
             // Mapped from cache
             .ForMember(d => d.UserParticipationResult, opt => opt.Ignore())
             .ForMember(d => d.CompeteResults, opt => opt.Ignore())
-            .ForMember(d => d.PracticeResults, opt => opt.Ignore());
+            .ForMember(d => d.PracticeResults, opt => opt.Ignore())
+            .ForMember(d => d.RequirePasswordForCompete, opt => opt.Ignore())
+            .ForMember(d => d.RequirePasswordForPractice, opt => opt.Ignore());
 }

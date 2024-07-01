@@ -297,6 +297,8 @@ interface IIndexContestsType {
     userParticipationResult?: IUserParticipationResult;
     createdOn: Date;
     modifiedOn: Date | null;
+    requirePasswordForCompete: boolean;
+    requirePasswordForPractice: boolean;
 }
 
 interface IGetContestsForIndexResponseType {

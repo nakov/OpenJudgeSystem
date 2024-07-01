@@ -64,10 +64,10 @@ const PageBreadcrumbs = ({
                               ? textColorClassName
                               : ''}`}
                         >
-                            <div>
+                            <p>
                                 {item.text}
                                 {' '}
-                            </div>
+                            </p>
                         </div>
                     );
                 });
