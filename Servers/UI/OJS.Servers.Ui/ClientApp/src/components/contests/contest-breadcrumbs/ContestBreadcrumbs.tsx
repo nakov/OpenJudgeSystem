@@ -14,6 +14,7 @@ import {
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import trimBreadcrumbItems from '../../../utils/breadcrumb-utils';
 import { findContestCategoryByIdRecursive, findParentNames } from '../contest-categories/ContestCategories';
 
 import styles from './ContestBreadcrumbs.module.scss';
@@ -101,7 +102,7 @@ const ContestBreadcrumbs = () => {
             </Link>
             {breadcrumbItems?.length > 0 && ' / '}
             {/* eslint-disable-next-line max-len */}
-            {breadcrumbItems?.map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
+            {trimBreadcrumbItems(breadcrumbItems)?.map((item: ContestBreadcrumb, idx: number) => renderBreadcrumbItems(item, idx === breadcrumbItems.length - 1))}
         </div>
     );
 };
