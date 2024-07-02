@@ -15,8 +15,8 @@ import {
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
-import concatClassNames from '../../../utils/class-names';
 import trimBreadcrumbItems from '../../../utils/breadcrumb-utils';
+import concatClassNames from '../../../utils/class-names';
 import { findContestCategoryByIdRecursive, findParentNames } from '../contest-categories/ContestCategories';
 
 import styles from './ContestBreadcrumbs.module.scss';
