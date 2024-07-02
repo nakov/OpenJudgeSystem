@@ -8,8 +8,6 @@
 .contestSolutionSubmitWrapper {
   @extend %font-family-normal;
 
-  padding: spacings.$sp-16 spacings.$sp-64;
-
   .title {
     font-size: variables.$f-size-30;
     font-weight: font-weights.$font-weight-bold;
