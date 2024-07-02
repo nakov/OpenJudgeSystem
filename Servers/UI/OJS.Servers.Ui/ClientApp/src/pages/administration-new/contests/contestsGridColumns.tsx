@@ -24,6 +24,7 @@ import {
 } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
+import { getContestsDetailsPageUrl } from '../../../common/urls/compose-client-urls';
 import AdministrationGridDropdown from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
@@ -43,7 +44,13 @@ const contestFilterableColumns: GridColDef[] = [
         filterable: false,
         sortable: false,
         renderCell: (params) => (
-            <ExternalLink to={`/${CONTESTS_PATH}/${params.row.id}`} text={params.value.toString()} />
+            <ExternalLink
+              to={getContestsDetailsPageUrl({
+                  contestId: params.row.id,
+                  contestName: params.row.name,
+              })}
+              text={params.value.toString()}
+            />
         ),
     },
     {

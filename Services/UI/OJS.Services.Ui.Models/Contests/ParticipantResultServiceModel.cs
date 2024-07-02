@@ -35,5 +35,6 @@ public class ParticipantResultServiceModel : IMapExplicitly, IParticipantForActi
             .ForMember(
                 d => d.Points,
                 opt =>
-                    opt.MapFrom(src => src.TotalScoreSnapshot));
+                    opt.MapFrom(src => src.TotalScoreSnapshot))
+            .ReverseMap();
 }

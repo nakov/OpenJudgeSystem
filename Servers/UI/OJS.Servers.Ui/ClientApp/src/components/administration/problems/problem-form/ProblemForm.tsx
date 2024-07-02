@@ -48,7 +48,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
     const [ filteredSubmissionTypes, setFilteredSubmissionTypes ] = useState<Array<ISubmissionTypeInProblem>>([]);
     const [ problemGroupIds, setProblemGroupsIds ] = useState<Array<IProblemGroupDropdownModel>>([]);
     const [ currentProblem, setCurrentProblem ] = useState<IProblemAdministration>({
-        checkerId: '1',
+        checkerId: '2',
         contestId: contestId ?? -1,
         id: 0,
         maximumPoints: defaultMaxPoints,
@@ -57,7 +57,7 @@ const ProblemForm = (props: IProblemFormCreateProps | IProblemFormEditProps) => 
         orderBy: 0,
         problemGroupType: 'None',
         showDetailedFeedback: false,
-        showResults: false,
+        showResults: true,
         sourceCodeSizeLimit: defaultSourceCodeSizeLimit,
         submissionTypes: [],
         timeLimit: defaultTimeLimit,
