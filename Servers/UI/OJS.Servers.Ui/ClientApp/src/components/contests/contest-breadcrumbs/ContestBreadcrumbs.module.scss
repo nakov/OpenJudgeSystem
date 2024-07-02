@@ -24,6 +24,10 @@
       white-space: nowrap;
     }
   }
+
+  &.nonVisible {
+    visibility: hidden;
+  }
 }
 
 .staticItem {

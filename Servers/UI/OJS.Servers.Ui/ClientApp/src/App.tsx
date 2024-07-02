@@ -1,45 +1,131 @@
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import InitProviders, { ProviderType } from './components/common/InitProviders';
-import HashUrlParamProvider from './hooks/common/use-hash-url-params';
-import RouteUrlParamsProvider from './hooks/common/use-route-url-params';
-import UrlParamsProvider from './hooks/common/use-url-params';
-import ProblemSubmissionsProvider from './hooks/submissions/use-problem-submissions';
-import ProfileSubmissionsProvider from './hooks/submissions/use-profile-submissions';
-import SubmissionsProvider from './hooks/submissions/use-submissions';
-import CurrentContestsProvider from './hooks/use-current-contest';
-import PageProvider from './hooks/use-pages';
-import ParticipationsProvider from './hooks/use-participations';
-import ProblemsProvider from './hooks/use-problems';
-import PageContent from './layout/content/PageContent';
+import ClientPortal from './components/portals/client/ClientPortal';
+import ContestEditPage from './pages/administration/ContestEditPage';
+import ContestProblemsPage from './pages/administration/ContestProblemsPage';
+import SubmissionRetestPage from './pages/administration/SubmissionRetestPage';
+import TestEditPage from './pages/administration/TestEditPage';
+import LoginPage from './pages/auth/login/LoginPage';
+import LogoutPage from './pages/auth/logout/LogoutPage';
+import RegisterPage from './pages/auth/register/RegisterPage';
+import ContestResultsPage from './pages/contest-results/ContestResultsPage';
+import ContestDetailsPage from './pages/contests/contest-details/ContestDetailsPage';
+import ContestRegister from './pages/contests/contest-register/ContestRegister';
+import ContestSolutionSubmitPage from './pages/contests/contest-solution-submit/ContestSolutionSubmitPage';
+import ContestsPage from './pages/contests/ContestsPage';
+import HomeInfoPage from './pages/home/HomeInfoPage';
+import HomePage from './pages/home/HomePage';
+import NotFoundPage from './pages/not-found/NotFoundPage';
+import ProfilePage from './pages/profile/ProfilePage';
+import SearchPage from './pages/search/SearchPage';
+import SubmissionDetailsPage from './pages/submissions/submission-details/SubmissionDetailsPage';
+import SubmissionsPage from './pages/submissions/SubmissionsPage';
 import store, { persistor } from './redux/store';
 
-import './styles/global.scss';
-
 const App = () => {
-    const providers = [
-        HashUrlParamProvider,
-        UrlParamsProvider,
-        RouteUrlParamsProvider,
-        PageProvider,
-        ParticipationsProvider,
-        CurrentContestsProvider,
-        ProblemSubmissionsProvider,
-        ProblemsProvider,
-        SubmissionsProvider,
-        ProfileSubmissionsProvider,
-    ] as ProviderType[];
+    const router = createBrowserRouter([
+        // Static Routes
+        {
+            path: '/',
+            element: <ClientPortal />,
+            children: [
+                {
+                    path: '/',
+                    element: <HomePage />,
+                    children: [
+                        {
+                            path: '/',
+                            element: <HomeInfoPage />,
+                        },
+                        {
+                            path: '/contests/:slug',
+                            element: <ContestsPage />,
+                        },
+                    ],
+                },
+                {
+                    path: '/login',
+                    element: <LoginPage />,
+                },
+                {
+                    path: '/register',
+                    element: <RegisterPage />,
+                },
+                {
+                    path: '/logout',
+                    element: <LogoutPage />,
+                },
+                {
+                    path: '/search',
+                    element: <SearchPage />,
+                },
+                {
+                    path: '/submissions',
+                    element: <SubmissionsPage />,
+                },
+                // Profile routes
+                {
+                    path: '/profile/:username?',
+                    element: <ProfilePage />,
+                },
+                // Submissions routes,
+                {
+                    path: '/submissions/:submissionId/details',
+                    element: <SubmissionDetailsPage />,
+                },
+                {
+                    path: '/submissions/retest/:submissionId',
+                    element: <SubmissionRetestPage />,
+                },
+                {
+                    path: '/tests/edit/:testId',
+                    element: <TestEditPage />,
+                },
+                // Contest Routes
+                {
+                    path: '/contests/:slug/:contestId',
+                    element: <ContestDetailsPage />,
+                },
+                {
+                    path: '/contests/:slug/:contestId/:participationType',
+                    element: <ContestSolutionSubmitPage />,
+                },
+                {
+                    path: '/contests/:slug/:contestId/:participationType/register',
+                    element: <ContestRegister />,
+                },
+                {
+                    path: '/contests/:slug/:contestId/:participationType/results/:resultType',
+                    element: <ContestResultsPage />,
+                },
+                {
+                    path: '/contests/problems/:contestId',
+                    element: <ContestProblemsPage />,
+                },
+                {
+                    path: '/contests/edit/:contestId',
+                    element: <ContestEditPage />,
+                },
+                // Catch-All Route
+                {
+                    path: '*',
+                    element: <NotFoundPage />,
+                },
+            ],
+        },
+        // Catch-All Route
+        {
+            path: '*',
+            element: <NotFoundPage />,
+        },
+    ]);
 
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
-                <Router>
-                    <InitProviders providers={providers}>
-                        <PageContent />
-                    </InitProviders>
-                </Router>
+                <RouterProvider router={router} />
             </PersistGate>
         </Provider>
     );

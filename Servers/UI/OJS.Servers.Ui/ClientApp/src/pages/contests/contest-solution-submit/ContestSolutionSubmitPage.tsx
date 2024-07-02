@@ -44,8 +44,10 @@ import {
 } from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { capitalizeFirstLetter } from '../../../utils/string-utils';
 import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
+import withTitle from '../../shared/with-title';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -727,4 +729,7 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default makePrivate(setLayout(ContestSolutionSubmitPage));
+export default makePrivate(setLayout(withTitle(
+    ContestSolutionSubmitPage,
+    (params) => `${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
+)));

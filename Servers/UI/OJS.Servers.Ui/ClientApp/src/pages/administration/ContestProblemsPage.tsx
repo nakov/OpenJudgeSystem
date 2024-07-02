@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { RedirectExternal } from '../../components/common/RedirectExternal';
 import { getAdministrationProblems } from '../../utils/urls';
+import withTitle from '../shared/with-title';
 
 const ContestProblemsPage = () => {
     const params = useParams();
@@ -14,4 +15,4 @@ const ContestProblemsPage = () => {
     return RedirectExternal(getAdministrationProblems({ id: Number(contestId) }));
 };
 
-export default ContestProblemsPage;
+export default withTitle(ContestProblemsPage, (params) => `Contest Problems #${params.contestId}`);

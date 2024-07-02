@@ -21,6 +21,7 @@ import { flexCenterObjectStyles } from '../../utils/object-utils';
 import { capitalizeFirstLetter } from '../../utils/string-utils';
 import { makePrivate } from '../shared/make-private';
 import { setLayout } from '../shared/set-layout';
+import withTitle from '../shared/with-title';
 
 import styles from './ContestResultPage.module.scss';
 
@@ -118,4 +119,4 @@ const ContestResultsPage = () => {
     );
 };
 
-export default makePrivate(setLayout(ContestResultsPage));
+export default makePrivate(setLayout(withTitle(ContestResultsPage, (params) => `Results #${params.contestId}`)));
