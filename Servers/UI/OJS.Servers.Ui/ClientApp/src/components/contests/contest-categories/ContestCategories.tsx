@@ -4,7 +4,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem2 } from '@mui/x-tree-view/TreeItem2';
@@ -32,7 +32,6 @@ interface IContestCategoriesProps {
 
 const ContestCategories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
-    const { pathname } = useLocation();
     const [ expandedItems, setExpandedItems ] = useState<string[]>([]);
     const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
@@ -63,20 +62,23 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     }, [ selectedId, contestCategories, dispatch ]);
 
     useEffect(() => {
-        if (pathname === '/' || pathname === '/contests/all') {
+        // If no category is selected, we want to collapse all categories
+        if (!searchParams.get('category')) {
             setExpandedItems([]);
+            return;
         }
-    }, [ pathname ]);
 
-    useEffect(() => {
         const breadcrumbItemIds = breadcrumbItems.map((item) => item.id.toString());
-        setExpandedItems((prev) => {
-            // Create a new Set with previous items and the new breadcrumbItemIds
-            const updatedItems = new Set([ ...prev, ...breadcrumbItemIds ]);
-            // Convert the Set back to an array
-            return Array.from(updatedItems);
-        });
-    }, [ breadcrumbItems ]);
+
+        if (breadcrumbItemIds) {
+            setExpandedItems((prev) => {
+                // Create a unique Set with previous open categories and the breadcrumb categories,
+                // to prevent already open categories from closing and to open the breadcrumb ones.
+                const updatedItems = new Set([ ...prev, ...breadcrumbItemIds ]);
+                return Array.from(updatedItems);
+            });
+        }
+    }, [ breadcrumbItems, searchParams ]);
 
     const handleExpandedItemsChange = (
         event: SyntheticEvent,
@@ -126,6 +128,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             );
         }
 
+        // Most inner category is the link that will load the contests.
         return (
             <LinkButton
               to={getAllContestsPageUrl({ categoryName: category.name, categoryId: category.id })}
@@ -133,6 +136,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
               preventScrollReset
               className={categoryItemClassNames}
               text={category.name}
+              key={category.id.toString()}
             />
         );
     };
