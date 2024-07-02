@@ -47,6 +47,7 @@
     }
   }
 
+  // categories with no children that are links and load the contests
   .categoryItem {
     align-items: center;
     border-bottom: 1px solid colors.$light-text-color;
@@ -62,6 +63,10 @@
     &.darkCategoryItem {
       border-color: colors.$dark-text-color;
       color: colors.$dark-text-color;
+    }
+
+    &.mainTreeCategoryItem {
+      padding-left: 28px;
     }
 
     > svg {

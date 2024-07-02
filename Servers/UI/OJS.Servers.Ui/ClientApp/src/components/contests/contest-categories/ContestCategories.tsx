@@ -100,6 +100,9 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             isDarkMode
                 ? styles.darkCategoryItem
                 : '',
+            category.parentId === null
+                ? styles.mainTreeCategoryItem
+                : '',
         );
 
         const categoryListItemClassNames = concatClassNames(
