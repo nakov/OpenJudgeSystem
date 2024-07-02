@@ -46,12 +46,12 @@ interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOpt
     state?: ButtonState;
     imgSrc?: string;
     altText?: string;
+    style?: object;
 }
 interface IButtonProps extends IButtonBaseProps<ButtonType> {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     isWide?: boolean;
     internalClassName?: string;
-    style?: object;
     isCompete?: boolean;
 }
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
@@ -59,6 +59,7 @@ interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     isToExternal?: boolean;
     preventScrollReset?: boolean;
     internalClassName?: string;
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 const classNameToButonType = {
@@ -182,6 +183,8 @@ const LinkButton = ({
     imgSrc = '',
     altText = '',
     internalClassName = '',
+    style,
+    onClick,
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
@@ -216,6 +219,7 @@ const LinkButton = ({
               id={id}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={onClick}
             >
                 {content}
             </a>
@@ -224,12 +228,12 @@ const LinkButton = ({
 
     return (
         <Link
-          to={`${to.startsWith('/')
-              ? ''
-              : '/'}${to}`}
+          to={to}
           className={buttonClassName}
           id={id}
           preventScrollReset={preventScrollReset}
+          style={style}
+          onClick={onClick}
         >
             {content}
         </Link>
