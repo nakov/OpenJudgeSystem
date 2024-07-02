@@ -510,11 +510,13 @@ namespace OJS.Services.Ui.Business.Implementations
                 pagedContests.Items.ToList(),
                 participantResultsByContest.Values.SelectMany(x => x).ToList());
 
-            pagedContests.Items.ForEach(c =>
+            await pagedContests.Items.ForEachAsync(c =>
             {
                 c.CompeteResults = participantsCount[c.Id].Official;
                 c.PracticeResults = participantsCount[c.Id].Practice;
 
+                ParticipantResultServiceModel? competeParticipant = null;
+                ParticipantResultServiceModel? practiceParticipant = null;
                 if (participantResultsByContest.Any())
                 {
                     var participants = participantResultsByContest.GetValueOrDefault(c.Id);
@@ -523,11 +525,8 @@ namespace OJS.Services.Ui.Business.Implementations
                         return;
                     }
 
-                    var competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
-                    var practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
-
-                    c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
-                    c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
+                    competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
+                    practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
 
                     c.UserParticipationResult = new ContestParticipantResultServiceModel
                     {
@@ -535,6 +534,9 @@ namespace OJS.Services.Ui.Business.Implementations
                         PracticePoints = practiceParticipant?.Points,
                     };
                 }
+
+                c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
+                c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
             });
 
             return pagedContests;

@@ -66,7 +66,6 @@ const ContestCard = (props: IContestCardProps) => {
         requirePasswordForCompete,
         requirePasswordForPractice,
     } = contest;
-    console.log(userParticipationResult);
 
     const contestStartTime = canBeCompeted || (!canBeCompeted && !canBePracticed)
         ? startTime
