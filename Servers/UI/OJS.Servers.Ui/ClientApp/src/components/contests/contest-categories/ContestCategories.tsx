@@ -62,12 +62,6 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     }, [ selectedId, contestCategories, dispatch ]);
 
     useEffect(() => {
-        // If no category is selected, we want to collapse all categories
-        if (!searchParams.get('category')) {
-            setExpandedItems([]);
-            return;
-        }
-
         const breadcrumbItemIds = breadcrumbItems.map((item) => item.id.toString());
 
         if (breadcrumbItemIds) {
@@ -78,7 +72,14 @@ const ContestCategories = (props: IContestCategoriesProps) => {
                 return Array.from(updatedItems);
             });
         }
-    }, [ breadcrumbItems, searchParams ]);
+    }, [ breadcrumbItems ]);
+
+    useEffect(() => {
+        // If no category is selected, we want to collapse all categories
+        if (!searchParams.get('category')) {
+            setExpandedItems([]);
+        }
+    }, [ searchParams ]);
 
     const handleExpandedItemsChange = (
         event: SyntheticEvent,

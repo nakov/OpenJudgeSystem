@@ -16,6 +16,14 @@
   flex-direction: column;
   justify-content: center;
   margin-left: 50px;
+
+  .paginationControlsUpper {
+    padding: 0 0 spacings.$sp-8 0;
+  }
+
+  .paginationControlsLower {
+    padding: spacings.$sp-8 0 spacings.$sp-16 0;
+  }
 }
 
 .contestsList {

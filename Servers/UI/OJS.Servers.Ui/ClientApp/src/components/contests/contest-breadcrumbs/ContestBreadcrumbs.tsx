@@ -9,6 +9,7 @@ import { ContestBreadcrumb } from '../../../common/contest-types';
 import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
+    clearContestCategoryBreadcrumbItems,
     setContestCategories,
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
@@ -55,8 +56,10 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
             : contestDetails?.categoryId;
 
         if (!selectedCategoryId) {
+            dispatch(clearContestCategoryBreadcrumbItems());
             return;
         }
+
         const selectedCategory = findContestCategoryByIdRecursive(contestCategories, Number(selectedCategoryId));
         if (selectedCategory) {
             const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);

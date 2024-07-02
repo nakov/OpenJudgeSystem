@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 import { SortType } from '../../common/contest-types';
 import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
@@ -9,6 +8,7 @@ import Heading, { HeadingType } from '../../components/guidelines/headings/Headi
 import List, { Orientation } from '../../components/guidelines/lists/List';
 import PaginationControls from '../../components/guidelines/pagination/PaginationControls';
 import SpinningLoader from '../../components/guidelines/spinning-loader/SpinningLoader';
+import usePreserveScrollOnSearchParamsChange from '../../hooks/common/usePreserveScrollOnSearchParamsChange';
 import useTheme from '../../hooks/use-theme';
 import {
     clearContestCategoryBreadcrumbItems,
@@ -34,7 +34,7 @@ const ContestsPage = () => {
         selectedStrategy,
     } = useAppSelector((state) => state.contests);
 
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams, setSearchParams ] = usePreserveScrollOnSearchParamsChange([ 'page' ]);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -43,14 +43,6 @@ const ContestsPage = () => {
             dispatch(clearContestCategoryBreadcrumbItems());
         }
     });
-
-    useEffect(() => {
-        if (!searchParams.get('category') || searchParams.get('category') === 'undefined') {
-            searchParams.delete('category');
-            setSearchParams(searchParams);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     const selectedPage = useMemo(() => {
         if (!searchParams.get('page')) {
@@ -112,7 +104,7 @@ const ContestsPage = () => {
         }
 
         return (
-            <div className={styles.contestsListContainer}>
+            <>
                 <List
                   values={contests?.items}
                   itemFunc={renderContest}
@@ -126,8 +118,9 @@ const ContestsPage = () => {
                       searchParams.set('page', page.toString());
                       setSearchParams(searchParams);
                   }}
+                  className={`${styles.paginationControlsLower}`}
                 />
-            </div>
+            </>
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ contests, areContestsFetching, searchParams ]);
@@ -145,7 +138,18 @@ const ContestsPage = () => {
                     </div>
                     <ContestStrategies />
                 </div>
-                {renderContests()}
+                <div className={styles.contestsListContainer}>
+                    <PaginationControls
+                      count={contests?.pagesCount || 0}
+                      page={selectedPage}
+                      onChange={(page:number) => {
+                          searchParams.set('page', page.toString());
+                          setSearchParams(searchParams);
+                      }}
+                      className={styles.paginationControlsUpper}
+                    />
+                    {renderContests()}
+                </div>
             </div>
         </div>
     );
