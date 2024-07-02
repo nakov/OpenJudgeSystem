@@ -157,15 +157,15 @@ const ContestSolutionSubmitPage = () => {
                 : newest, submissionsData.items[0]);
 
             if (latestSubmission?.problem) {
-                const probIndex = problems.findIndex((p) => p.id === latestSubmission.problem.id);
-                if (probIndex !== -1) {
-                    const updatedProb = { ...problems[probIndex] };
-                    updatedProb.points = Math.max(latestSubmission.result.points, updatedProb.points);
+                const problemIndex = problems.findIndex((p) => p.id === latestSubmission.problem.id);
+                if (problemIndex !== -1) {
+                    const updatedProblem = { ...problems[problemIndex] };
+                    updatedProblem.points = Math.max(latestSubmission.result.points, updatedProblem.points);
 
                     setUpdatedProblems([
-                        ...problems.slice(0, probIndex),
-                        updatedProb,
-                        ...problems.slice(probIndex + 1),
+                        ...problems.slice(0, problemIndex),
+                        updatedProblem,
+                        ...problems.slice(problemIndex + 1),
                     ]);
                 }
             }
@@ -368,13 +368,13 @@ const ContestSolutionSubmitPage = () => {
         uploadedFile,
     ]);
 
-    const sumMyPoints = useMemo(() => updatedProblems
-        ? updatedProblems.reduce((accumulator, problem) => accumulator + problem.points, 0)
-        : 0, [ updatedProblems ]);
+    const sumMyPoints = useMemo(() => contest
+        ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.points, 0)
+        : 0, [ contest, updatedProblems ]);
 
-    const sumAllContestPoints = useMemo(() => updatedProblems
-        ? updatedProblems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
-        : 0, [ updatedProblems ]);
+    const sumAllContestPoints = useMemo(() => contest
+        ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
+        : 0, [ contest, updatedProblems ]);
 
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
