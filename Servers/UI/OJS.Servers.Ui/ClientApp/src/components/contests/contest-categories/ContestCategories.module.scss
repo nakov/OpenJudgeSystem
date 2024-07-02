@@ -32,14 +32,13 @@
   .categoryListItem {
     border-bottom: 1px solid colors.$dark-text-color;
 
-
     .isChild {
       border-bottom: none;
     }
 
     .categoryListItemContent {
-      padding: spacings.$sp-8 spacings.$sp-4;
       font-size: variables.$f-size-16;
+      padding: spacings.$sp-8 spacings.$sp-4;
 
       &:hover {
         background-color: #76a2d2;
@@ -49,8 +48,10 @@
   }
 
   .categoryItem {
-    color: colors.$light-text-color;
     align-items: center;
+    border-bottom: 1px solid colors.$light-text-color;
+    border-radius: 0;
+    color: colors.$light-text-color;
     cursor: pointer;
     display: flex;
     font-size: variables.$f-size-16;
@@ -58,12 +59,9 @@
     padding: spacings.$sp-12 spacings.$sp-4;
     transition: background-color 0.2s ease-in-out;
 
-    border-bottom: 1px solid colors.$light-text-color;
-    border-radius: 0;
-
     &.darkCategoryItem {
-      color: colors.$dark-text-color;
       border-color: colors.$dark-text-color;
+      color: colors.$dark-text-color;
     }
 
     > svg {
@@ -76,8 +74,8 @@
   }
 
   .childCategoryItem {
-    justify-content: flex-start;
     border-bottom: none;
+    justify-content: flex-start;
   }
 
   .selectedCategory {
