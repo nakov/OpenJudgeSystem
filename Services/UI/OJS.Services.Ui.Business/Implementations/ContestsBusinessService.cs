@@ -520,19 +520,17 @@ namespace OJS.Services.Ui.Business.Implementations
                 if (participantResultsByContest.Any())
                 {
                     var participants = participantResultsByContest.GetValueOrDefault(c.Id);
-                    if (participants == null)
+                    if (participants != null)
                     {
-                        return;
+                        competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
+                        practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
+
+                        c.UserParticipationResult = new ContestParticipantResultServiceModel
+                        {
+                            CompetePoints = competeParticipant?.Points,
+                            PracticePoints = practiceParticipant?.Points,
+                        };
                     }
-
-                    competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
-                    practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
-
-                    c.UserParticipationResult = new ContestParticipantResultServiceModel
-                    {
-                        CompetePoints = competeParticipant?.Points,
-                        PracticePoints = practiceParticipant?.Points,
-                    };
                 }
 
                 c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
