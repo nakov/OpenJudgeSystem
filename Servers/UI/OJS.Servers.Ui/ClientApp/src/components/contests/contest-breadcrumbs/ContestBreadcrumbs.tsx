@@ -92,10 +92,6 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
         </Link>
     );
 
-    if (isLoading) {
-        return <div className={getColorClassName(themeColors.textColor)}>Loading breadcrumbs...</div>;
-    }
-
     const className = concatClassNames(
         styles.breadcrumbsWrapper,
         textColorClassName,
@@ -104,6 +100,10 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
             ? styles.nonVisible
             : '',
     );
+
+    if (isLoading) {
+        return <div className={className}>Loading breadcrumbs...</div>;
+    }
 
     return (
         <div className={className}>
