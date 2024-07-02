@@ -1,5 +1,4 @@
 import React from 'react';
-import { HelmetProvider } from 'react-helmet-async';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 
 import HashUrlParamProvider from '../../../hooks/common/use-hash-url-params';
@@ -40,17 +39,15 @@ const ClientPortal = () => {
 
     return (
         <InitProviders providers={providers}>
-            <HelmetProvider>
-                <MuiUiThemeProvider>
-                    <PageHeader />
-                    <SearchBar />
-                    <main className={`${styles.main} ${backgroundColorClassName}`}>
-                        <Outlet />
-                    </main>
-                    <PageFooter />
-                    <ScrollRestoration />
-                </MuiUiThemeProvider>
-            </HelmetProvider>
+            <MuiUiThemeProvider>
+                <PageHeader />
+                <SearchBar />
+                <main className={`${styles.main} ${backgroundColorClassName}`}>
+                    <Outlet />
+                </main>
+                <PageFooter />
+                <ScrollRestoration />
+            </MuiUiThemeProvider>
         </InitProviders>
     );
 };

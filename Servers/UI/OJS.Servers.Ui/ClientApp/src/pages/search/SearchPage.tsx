@@ -26,6 +26,7 @@ import {
 } from '../../redux/services/searchService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { getErrorMessage } from '../../utils/http-utils';
+import withTitle from '../shared/with-title';
 
 import styles from './SearchPage.module.scss';
 
@@ -232,4 +233,4 @@ const SearchPage = () => {
     );
 };
 
-export default SearchPage;
+export default withTitle(SearchPage, 'Search');

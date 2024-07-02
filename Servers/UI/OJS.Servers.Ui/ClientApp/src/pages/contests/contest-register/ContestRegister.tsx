@@ -12,6 +12,7 @@ import { useGetRegisteredUserForContestQuery, useRegisterUserForContestMutation 
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { makePrivate } from '../../shared/make-private';
+import withTitle from '../../shared/with-title';
 
 import styles from './ContestRegister.module.scss';
 
@@ -176,4 +177,4 @@ const ContestRegister = () => {
     );
 };
 
-export default makePrivate(ContestRegister);
+export default makePrivate(withTitle(ContestRegister, (params) => `Contest Register #${params.contestId}`));

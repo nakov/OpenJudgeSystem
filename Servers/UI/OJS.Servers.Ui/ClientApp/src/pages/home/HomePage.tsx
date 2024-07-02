@@ -9,7 +9,6 @@ import {
 } from '../../redux/features/contestsSlice';
 import { useAppDispatch } from '../../redux/store';
 import { setLayout } from '../shared/set-layout';
-import withTitle from '../shared/with-title';
 
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import styles from './HomePage.module.scss';
@@ -41,4 +40,4 @@ const HomePage = () => {
     );
 };
 
-export default setLayout(withTitle(HomePage, 'Home'));
+export default setLayout(HomePage);

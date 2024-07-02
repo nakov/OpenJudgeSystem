@@ -155,4 +155,9 @@ const ContestsPage = () => {
     );
 };
 
-export default withTitle(ContestsPage, 'Contests');
+export default withTitle(
+    ContestsPage,
+    (params) => `Contests${params.slug !== 'all'
+        ? ` in ${params.slug}`
+        : ''}`,
+);

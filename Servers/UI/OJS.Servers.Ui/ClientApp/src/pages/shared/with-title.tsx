@@ -1,26 +1,30 @@
-import React, { FC } from 'react';
-import { Helmet } from 'react-helmet-async';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Params, useParams } from 'react-router-dom';
 
 import { Anything } from '../../common/common-types';
 
 interface IHaveChildrenPropsWithTitle {
     children: React.ReactNode;
-    title: string | ((params: Params<string>) => string);
+    title: string | ((params: Params) => string);
 }
 
 const Page = ({ children, title } : IHaveChildrenPropsWithTitle) => {
     const params = useParams();
 
-    const pageTitle = typeof title === 'function'
-        ? title(params)
-        : title;
+    const pageTitle = useMemo(
+        () => typeof title === 'function'
+            ? title(params)
+            : title,
+        [ title, params ],
+    );
+
+    useEffect(() => {
+        document.title = `${pageTitle} - SoftUni Judge`;
+    }, [ pageTitle ]);
 
     return (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
-            <Helmet>
-                <title>{`${pageTitle} - SoftUni Judge`}</title>
-            </Helmet>
             {children}
         </>
     );
