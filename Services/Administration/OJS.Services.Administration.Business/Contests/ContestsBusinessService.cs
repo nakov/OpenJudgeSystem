@@ -271,88 +271,88 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         return model;
     }
 
-    public async Task TransferParticipantsToPracticeById(int contestId) =>
-        await this.transactions.ExecuteInTransaction(async () =>
-        {
-            var contest = await this.contestsData.GetByIdWithParticipantsScoresAndSubmissions(contestId);
+    public async Task TransferParticipantsToPracticeById(int contestId)
+    {
+        var contest = await this.contestsData.GetByIdWithParticipantsScoresAndSubmissions(contestId);
 
-            var competeOnlyParticipants = contest!.Participants
+        var competeOnlyParticipants = contest!.Participants
                 .GroupBy(p => p.UserId)
                 .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
                 .Select(gr => gr.FirstOrDefault());
 
-            foreach (var participant in competeOnlyParticipants)
+        foreach (var participant in competeOnlyParticipants)
+        {
+            foreach (var participantScore in participant!.Scores)
             {
-                foreach (var participantScore in participant!.Scores)
-                {
-                    participantScore.IsOfficial = false;
-                }
-
-                participant.IsOfficial = false;
+                participantScore.IsOfficial = false;
             }
 
-            var competeAndPracticeParticipants = contest.Participants
-                .GroupBy(p => p.UserId)
-                .Where(g => g.Count() == 2)
-                .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
+            participant.IsOfficial = false;
+        }
 
-            var participantsForDeletion = new List<Participant>();
+        var competeAndPracticeParticipants = contest.Participants
+            .GroupBy(p => p.UserId)
+            .Where(g => g.Count() == 2)
+            .ToDictionary(grp => grp.Key, grp => grp.OrderBy(p => p.IsOfficial));
 
-            foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
+        var participantsForDeletion = new List<Participant>();
+
+        foreach (var competeAndPracticeParticipant in competeAndPracticeParticipants)
+        {
+            var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
+            var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
+            participantsForDeletion.Add(officialParticipant);
+
+            foreach (var officialParticipantSubmission in officialParticipant.Submissions)
             {
-                var unofficialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].First();
-                var officialParticipant = competeAndPracticeParticipants[competeAndPracticeParticipant.Key].Last();
-                participantsForDeletion.Add(officialParticipant);
+                officialParticipantSubmission.Participant = unofficialParticipant;
+            }
 
-                foreach (var officialParticipantSubmission in officialParticipant.Submissions)
+            var scoresForDeletion = new List<ParticipantScore>();
+
+            var pointsToAdd = 0;
+            foreach (var officialParticipantScore in officialParticipant.Scores)
+            {
+                var unofficialParticipantScore = unofficialParticipant
+                    .Scores
+                    .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
+
+                if (unofficialParticipantScore != null)
                 {
-                    officialParticipantSubmission.Participant = unofficialParticipant;
-                }
-
-                var scoresForDeletion = new List<ParticipantScore>();
-
-                var pointsToAdd = 0;
-                foreach (var officialParticipantScore in officialParticipant.Scores)
-                {
-                    var unofficialParticipantScore = unofficialParticipant
-                        .Scores
-                        .FirstOrDefault(s => s.ProblemId == officialParticipantScore.ProblemId);
-
-                    if (unofficialParticipantScore != null)
-                    {
-                        if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
-                            (unofficialParticipantScore.Points == officialParticipantScore.Points &&
-                             unofficialParticipantScore.Id < officialParticipantScore.Id))
-                        {
-                            officialParticipantScore.IsOfficial = false;
-                            officialParticipantScore.Participant = unofficialParticipant;
-                            scoresForDeletion.Add(unofficialParticipantScore);
-                            pointsToAdd += officialParticipantScore.Points - unofficialParticipantScore.Points;
-                        }
-                        else
-                        {
-                            scoresForDeletion.Add(officialParticipantScore);
-                        }
-                    }
-                    else
+                    if (unofficialParticipantScore.Points < officialParticipantScore.Points ||
+                        (unofficialParticipantScore.Points == officialParticipantScore.Points &&
+                         unofficialParticipantScore.Id < officialParticipantScore.Id))
                     {
                         officialParticipantScore.IsOfficial = false;
                         officialParticipantScore.Participant = unofficialParticipant;
-                        pointsToAdd += officialParticipantScore.Points;
+                        scoresForDeletion.Add(unofficialParticipantScore);
+                        pointsToAdd += officialParticipantScore.Points - unofficialParticipantScore.Points;
+                    }
+                    else
+                    {
+                        scoresForDeletion.Add(officialParticipantScore);
                     }
                 }
-
-                if (pointsToAdd > 0)
+                else
                 {
-                    unofficialParticipant.TotalScoreSnapshot += pointsToAdd;
-                    unofficialParticipant.TotalScoreSnapshotModifiedOn = officialParticipant.TotalScoreSnapshotModifiedOn;
+                    officialParticipantScore.IsOfficial = false;
+                    officialParticipantScore.Participant = unofficialParticipant;
+                    pointsToAdd += officialParticipantScore.Points;
                 }
-
-                await this.participantScoresDataService.Delete(scoresForDeletion);
             }
 
-            await this.participantsData.Delete(participantsForDeletion);
-        });
+            if (pointsToAdd > 0)
+            {
+                unofficialParticipant.TotalScoreSnapshot += pointsToAdd;
+                unofficialParticipant.TotalScoreSnapshotModifiedOn = officialParticipant.TotalScoreSnapshotModifiedOn;
+            }
+
+            this.participantScoresDataService.DeleteMany(scoresForDeletion);
+        }
+
+        this.participantsData.DeleteMany(participantsForDeletion);
+        await this.participantsData.SaveChanges();
+    }
 
     private static StringBuilder PrepareSolutionsFileComment(
         bool isOfficialContest,
