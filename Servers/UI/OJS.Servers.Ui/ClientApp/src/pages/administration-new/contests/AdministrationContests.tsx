@@ -41,6 +41,7 @@ const AdministrationContestsPage = () => {
     const [ contestId, setContestId ] = useState<number>();
     const [ contestName, setContestName ] = useState<string>();
     const [ categoryName, setCategoryName ] = useState<string>();
+    const [ contestOfficialParticipants, setContestOfficialParticipants ] = useState<number>();
     const [ showDownloadSubsModal, setShowDownloadSubsModal ] = useState<boolean>(false);
     const [ showExportExcelModal, setShowExportExcelModal ] = useState<boolean>(false);
     const [ showTransferParticipantsModal, setShowTransferParticipantsModal ] = useState<boolean>(false);
@@ -135,11 +136,13 @@ const AdministrationContestsPage = () => {
         transferParticipantsContestId: number,
         transferParticipantsContestName: string,
         transferParticipantsCategoryName: string,
+        transferParticipantsContestOfficialParticipants: number,
     ) => {
         setShowTransferParticipantsModal(true);
         setContestId(transferParticipantsContestId);
         setContestName(transferParticipantsContestName);
         setCategoryName(transferParticipantsCategoryName);
+        setContestOfficialParticipants(transferParticipantsContestOfficialParticipants);
     };
 
     const renderDownloadSubsModal = (index: number) => (
@@ -186,7 +189,7 @@ const AdministrationContestsPage = () => {
                 <Typography className={formStyles.centralize} variant="h4">Transfer participants</Typography>
                 <Typography className={concatClassnames(formStyles.centralize, formStyles.spacing)} variant="h6">
                     {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
-                    Are you sure you want to transfer all participants from <b> Contest</b>{' '}
+                    Are you sure you want to transfer <b>{contestOfficialParticipants}</b> participants from <b>Compete</b>{' '}
                     {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
                     to <b>Practice</b> for the contest <b>{contestName}</b> from the category <b>{categoryName}</b>?
                 </Typography>
