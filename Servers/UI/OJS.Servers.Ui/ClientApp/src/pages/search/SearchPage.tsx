@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
-import { useCallback, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 
 import { CheckboxSearchValues } from '../../common/enums';
 import {
@@ -17,6 +16,7 @@ import SpinningLoader from '../../components/guidelines/spinning-loader/Spinning
 import ProblemSearchCard from '../../components/search/profile-search-card/ProblemSearchCard';
 import ProfileSearchList from '../../components/search/profile-search-list/ProfileSearchList';
 import UserSearchCard from '../../components/search/user-search-card/UserSearchCard';
+import usePreserveScrollOnSearchParamsChange from '../../hooks/common/usePreserveScrollOnSearchParamsChange';
 import useTheme from '../../hooks/use-theme';
 import { setSearchValue } from '../../redux/features/searchSlice';
 import {
@@ -41,30 +41,33 @@ const USER_ITEMS_PER_SEARCH = 35;
 
 const SearchPage = () => {
     const dispatch = useAppDispatch();
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams, setSearchParams ] = usePreserveScrollOnSearchParamsChange([ 'contestsPage', 'problemsPage', 'usersPage' ]);
     const { getColorClassName, themeColors } = useTheme();
     const { searchValue, selectedTerms } = useAppSelector((state) => state.search);
+    const [ selectedContestsPage, setSelectedContestsPage ] = useState(1);
+    const [ selectedProblemsPage, setSelectedProblemsPage ] = useState(1);
+    const [ selectedUsersPage, setSelectedUsersPage ] = useState(1);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     const [
         getContestsSearch, {
             data: contestsSearchData,
-            isLoading: contestsSearchLoading,
+            isFetching: isContestsSearchFetching,
             error: contestsSearchError,
             isError: areContestsSearchError,
         } ] = useLazyGetContestsSearchQuery();
     const [
         getProblemsSearch, {
             data: problemsSearchData,
-            isLoading: problemsSearchLoading,
+            isFetching: isProblemsSearchFetching,
             error: problemsSearchError,
             isError: areProblemsSearchError,
         } ] = useLazyGetProblemsSearchQuery();
     const [
         getUsersSearch, {
             data: usersSearchData,
-            isLoading: usersSearchLoading,
+            isFetching: isUsersSearchFetching,
             error: usersSearchError,
             isError: areUsersSearchError,
         },
@@ -74,27 +77,6 @@ const SearchPage = () => {
     const shouldIncludeProblems = searchParams.get('Problems');
     const shouldIncludeUsers = searchParams.get('Users');
 
-    const selectedContestsPage = useMemo(() => {
-        if (!searchParams.get('contestsPage')) {
-            return 1;
-        }
-        return Number(searchParams.get('contestsPage'));
-    }, [ searchParams ]);
-
-    const selectedProblemsPage = useMemo(() => {
-        if (!searchParams.get('problemsPage')) {
-            return 1;
-        }
-        return Number(searchParams.get('problemsPage'));
-    }, [ searchParams ]);
-
-    const selectedUsersPage = useMemo(() => {
-        if (!searchParams.get('usersPage')) {
-            return 1;
-        }
-        return Number(searchParams.get('usersPage'));
-    }, [ searchParams ]);
-
     useEffect(() => {
         const searchTerm = searchParams.get('searchTerm');
         if (searchTerm) {
@@ -103,30 +85,37 @@ const SearchPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // initiate the search
+    // initiate the search for each of the selected search types
     useEffect(() => {
-        if (searchValue.length < 3 || selectedTerms.length === 0) {
-            return;
-        }
-        if (selectedTerms.includes(CheckboxSearchValues.problems)) {
-            getProblemsSearch({ searchTerm: searchValue, page: selectedProblemsPage, itemsPerPage: ITEMS_PER_SEARCH });
-        }
-        if (selectedTerms.includes(CheckboxSearchValues.contests)) {
+        if (searchValue.length > 3 && selectedTerms.includes(CheckboxSearchValues.contests)) {
             getContestsSearch({ searchTerm: searchValue, page: selectedContestsPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
-        if (selectedTerms.includes(CheckboxSearchValues.users)) {
+    }, [ searchValue, selectedTerms, selectedContestsPage, getContestsSearch ]);
+
+    useEffect(() => {
+        if (searchValue.length > 3 && selectedTerms.includes(CheckboxSearchValues.problems)) {
+            getProblemsSearch({ searchTerm: searchValue, page: selectedProblemsPage, itemsPerPage: ITEMS_PER_SEARCH });
+        }
+    }, [ searchValue, selectedTerms, selectedProblemsPage, getProblemsSearch ]);
+
+    useEffect(() => {
+        if (searchValue.length > 3 && selectedTerms.includes(CheckboxSearchValues.users)) {
             getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage, itemsPerPage: USER_ITEMS_PER_SEARCH });
         }
-    }, [
-        searchValue,
-        selectedTerms,
-        selectedContestsPage,
-        selectedProblemsPage,
-        selectedUsersPage,
-        getProblemsSearch,
-        getContestsSearch,
-        getUsersSearch,
-    ]);
+    }, [ searchValue, selectedTerms, selectedUsersPage, getUsersSearch ]);
+
+    const onPaginationChange = useCallback((page: number, searchName: SearchTypeEnums) => {
+        if (searchName === SearchTypeEnums.CONTESTS) {
+            setSelectedContestsPage(page);
+        } else if (searchName === SearchTypeEnums.PROBLEMS) {
+            setSelectedProblemsPage(page);
+        } else if (searchName === SearchTypeEnums.USERS) {
+            setSelectedUsersPage(page);
+        }
+
+        searchParams.set(`${searchName.toLowerCase()}Page`, page.toString());
+        setSearchParams(searchParams, { replace: true });
+    }, [ searchParams, setSearchParams ]);
 
     const renderSearchFragmentResults = useCallback((
         searchName: SearchTypeEnums,
@@ -144,6 +133,15 @@ const SearchPage = () => {
             </div>
         );
 
+        const selectedPageValue = () => {
+            if (searchName === SearchTypeEnums.CONTESTS) {
+                return selectedContestsPage;
+            } if (searchName === SearchTypeEnums.PROBLEMS) {
+                return selectedProblemsPage;
+            }
+            return selectedUsersPage;
+        };
+
         const renderData = () => {
             const renderFunction = (renderElement: any) => {
                 if (searchName === SearchTypeEnums.CONTESTS) {
@@ -154,49 +152,22 @@ const SearchPage = () => {
                 return <UserSearchCard user={renderElement as IUSerSearchCardProps} />;
             };
 
-            const selectedPageValue = () => {
-                if (searchName === SearchTypeEnums.CONTESTS) {
-                    return selectedContestsPage;
-                } if (searchName === SearchTypeEnums.PROBLEMS) {
-                    return selectedProblemsPage;
-                }
-                return selectedUsersPage;
-            };
-
             return (
                 <div className={styles.searchResultsWrapper}>
                     {!data || data.totalItemsCount === 0
                         ? <div>No items found</div>
-                        : (
-                            <>
-                                { searchName === SearchTypeEnums.USERS
-                                    ? <ProfileSearchList data={(data.items as IIndexContestsType[])} />
-                                    : (
-                                        <List
-                                          values={data.items}
-                                          itemFunc={renderFunction}
-                                          orientation={Orientation.vertical}
-                                        />
-                                    )}
-                                <PaginationControls
-                                  count={data?.pagesCount}
-                                  page={selectedPageValue()}
-                                  onChange={(page: number) => {
-                                      searchParams.set(`${searchName.toLowerCase()}Page`, page.toString());
-                                      setSearchParams(searchParams, { replace: true });
-                                  }}
-                                  shouldScrollDown
+                        : searchName === SearchTypeEnums.USERS
+                            ? <ProfileSearchList data={(data.items as IIndexContestsType[])} />
+                            : (
+                                <List
+                                  values={data.items}
+                                  itemFunc={renderFunction}
+                                  orientation={Orientation.vertical}
                                 />
-                            </>
-                        )}
-                    { searchName !== SearchTypeEnums.USERS && (<hr className={styles.line} />)}
+                            )}
                 </div>
             );
         };
-
-        if (isLoading) {
-            return <SpinningLoader />;
-        }
 
         return (
             <div>
@@ -205,10 +176,20 @@ const SearchPage = () => {
                 </div>
                 { isError
                     ? renderErrorFragment()
-                    : renderData()}
+                    : isLoading
+                        ? <SpinningLoader />
+                        : renderData()}
+                <PaginationControls
+                  count={data?.pagesCount || 0}
+                  page={selectedPageValue()}
+                  onChange={(page: number) => {
+                      onPaginationChange(page, searchName);
+                  }}
+                />
+                { searchName !== SearchTypeEnums.USERS && (<hr className={styles.line} />)}
             </div>
         );
-    }, [ searchParams, selectedContestsPage, selectedProblemsPage, selectedUsersPage, setSearchParams ]);
+    }, [ onPaginationChange, selectedContestsPage, selectedProblemsPage, selectedUsersPage ]);
 
     return (
         <div className={`${styles.searchPageWrapper} ${textColorClassName}`}>
@@ -222,11 +203,11 @@ const SearchPage = () => {
                             &quot;
                         </div>
                         {shouldIncludeContests &&
-                            renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, contestsSearchLoading, areContestsSearchError, contestsSearchError)}
+                            renderSearchFragmentResults(SearchTypeEnums.CONTESTS, contestsSearchData, isContestsSearchFetching, areContestsSearchError, contestsSearchError)}
                         {shouldIncludeProblems &&
-                            renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, problemsSearchLoading, areProblemsSearchError, problemsSearchError)}
+                            renderSearchFragmentResults(SearchTypeEnums.PROBLEMS, problemsSearchData, isProblemsSearchFetching, areProblemsSearchError, problemsSearchError)}
                         {shouldIncludeUsers &&
-                            renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, usersSearchLoading, areUsersSearchError, usersSearchError)}
+                            renderSearchFragmentResults(SearchTypeEnums.USERS, usersSearchData, isUsersSearchFetching, areUsersSearchError, usersSearchError)}
                     </>
                 )}
         </div>
