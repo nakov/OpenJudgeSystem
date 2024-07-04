@@ -4,6 +4,7 @@ using OJS.Data.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
 using AutoMapper;
+using System.Linq;
 
 public class ContestInListModel : IMapExplicitly
 {
@@ -37,6 +38,8 @@ public class ContestInListModel : IMapExplicitly
 
     public DateTime? ModifiedOn { get; set; }
 
+    public int OfficialParticipants { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration) =>
         configuration.CreateMap<Contest, ContestInListModel>()
             .ForMember(x => x.Id, opt
@@ -60,5 +63,7 @@ public class ContestInListModel : IMapExplicitly
             .ForMember(x => x.IsVisible, opt
                 => opt.MapFrom(c => c.IsVisible || c.VisibleFrom <= DateTime.UtcNow))
             .ForMember(x => x.LimitBetweenSubmissions, opt
-                => opt.MapFrom(c => c.LimitBetweenSubmissions));
+                => opt.MapFrom(c => c.LimitBetweenSubmissions))
+            .ForMember(x => x.OfficialParticipants, opt
+                => opt.MapFrom(c => c.Participants.Count(p => p.IsOfficial)));
 }
