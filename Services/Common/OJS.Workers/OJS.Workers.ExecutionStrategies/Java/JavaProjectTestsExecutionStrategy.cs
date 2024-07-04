@@ -21,6 +21,7 @@ namespace OJS.Workers.ExecutionStrategies.Java
     public class JavaProjectTestsExecutionStrategy<TSettings> : JavaUnitTestsExecutionStrategy<TSettings>
         where TSettings : JavaProjectTestsExecutionStrategySettings
     {
+        private const string InvalidNumberOfTestCasesPrefix = "Invalid number of test cases";
         private const string TestRanPrefix = "Test Ran. Successful:";
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
 
@@ -88,7 +89,7 @@ public class _$TestRunner {{
 
             var failureCount = result.getFailures().size();
             if (failureCount > 1) {{
-                System.out.printf(""Invalid number of test cases (%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
             }} else {{
                 for (Failure failure : result.getFailures()) {{
                     String failureClass = failure.getDescription().getTestClass().getSimpleName();
@@ -179,7 +180,7 @@ public class _$TestRunner {{
             System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + !hasFailures);
 
             if (failureCount > 1) {{
-                System.out.printf(""Invalid number of test cases (%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
             }} else {{
                 summary.getFailures().forEach(failure -> {{
                     String failureClass = failure.getTestIdentifier().getDisplayName();
@@ -426,7 +427,7 @@ public class _$TestRunner {{
                 if (!isTestSuccessful)
                 {
                     var errorLine = output.ReadLine();
-                    if (errorLine!.StartsWith("Invalid number of test cases"))
+                    if (errorLine!.StartsWith(InvalidNumberOfTestCasesPrefix))
                     {
                         throw new InvalidOperationException(errorLine);
                     }
