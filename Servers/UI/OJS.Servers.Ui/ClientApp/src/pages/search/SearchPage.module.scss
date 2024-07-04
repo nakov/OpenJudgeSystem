@@ -38,6 +38,9 @@
 }
 
 .spinningLoader {
+  // margin must be the same as .searchResultsWrapper, in order for the spinner container
+  // to be the same size and position as the search results,
+  // to not move the between loading and loaded states
   margin-top: spacings.$sp-24;
   display: flex;
   justify-content: center;
