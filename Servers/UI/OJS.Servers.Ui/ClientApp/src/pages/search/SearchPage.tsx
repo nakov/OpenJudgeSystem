@@ -25,6 +25,7 @@ import {
     useLazyGetUsersSearchQuery,
 } from '../../redux/services/searchService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
+import getTotalHeight from '../../utils/dom-element-utils';
 import { getErrorMessage } from '../../utils/http-utils';
 import withTitle from '../shared/with-title';
 
@@ -94,19 +95,19 @@ const SearchPage = () => {
 
     useEffect(() => {
         if (contestsContentRef.current) {
-            setContestsContentHeight(contestsContentRef.current.offsetHeight);
+            setContestsContentHeight(getTotalHeight(contestsContentRef.current));
         }
     }, [ contestsSearchData, isContestsSearchFetching ]);
 
     useEffect(() => {
         if (problemsContentRef.current) {
-            setProblemsContentHeight(problemsContentRef.current.offsetHeight);
+            setProblemsContentHeight(getTotalHeight(problemsContentRef.current));
         }
     }, [ problemsSearchData, isProblemsSearchFetching ]);
 
     useEffect(() => {
         if (usersContentRef.current) {
-            setUsersContentHeight(usersContentRef.current.offsetHeight);
+            setUsersContentHeight(getTotalHeight(usersContentRef.current));
         }
     }, [ usersSearchData, isUsersSearchFetching ]);
 
