@@ -14,6 +14,7 @@ import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
 import styles from './TestRunIcon.module.scss';
+import concatClassNames from "../../../utils/class-names";
 
 interface ITestRunIconProps {
     testRun: ITestRunType;
@@ -24,7 +25,12 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
     const [ competeIconAnchorElement, setCompeteIconAnchorElement ] = useState<HTMLElement | null>(null);
 
     const isIconModalOpen = Boolean(competeIconAnchorElement);
+    
     const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
+    
+    const iconClassName = testRun.isTrialTest
+        ? styles.trialTestIcon
+        : '';
 
     const onPopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
         setCompeteIconAnchorElement(event.currentTarget);
@@ -32,13 +38,14 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
 
     const renderTestRunIcon = useCallback(
         () => {
+            console.log(iconClassName);
             switch (toLowerCase(testRun.resultType)) {
             // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/1287
-            case TestRunResultType.CorrectAnswer.toLowerCase(): return <TickIcon key={testRun.id} />;
-            case TestRunResultType.WrongAnswer.toLowerCase(): return <WrongAnswerIcon key={testRun.id} />;
-            case TestRunResultType.MemoryLimit.toLowerCase(): return <MemoryLimitIcon key={testRun.id} />;
-            case TestRunResultType.TimeLimit.toLowerCase(): return <TimeLimitIcon key={testRun.id} />;
-            case TestRunResultType.RunTimeError.toLowerCase(): return <RuntimeErrorIcon key={testRun.id} />;
+            case TestRunResultType.CorrectAnswer.toLowerCase(): return <TickIcon className={iconClassName} key={testRun.id} />;
+            case TestRunResultType.WrongAnswer.toLowerCase(): return <WrongAnswerIcon className={iconClassName} key={testRun.id} />;
+            case TestRunResultType.MemoryLimit.toLowerCase(): return <MemoryLimitIcon className={iconClassName} key={testRun.id} />;
+            case TestRunResultType.TimeLimit.toLowerCase(): return <TimeLimitIcon className={iconClassName} key={testRun.id} />;
+            case TestRunResultType.RunTimeError.toLowerCase(): return <RuntimeErrorIcon className={iconClassName} key={testRun.id} />;
             default: return (
                 <ErrorIcon />
             );

@@ -31,7 +31,7 @@ const PaginationControls = ({
     }));
     const classes = useStyles();
 
-    return (
+    return count > 0 && (
         <Pagination
           count={count}
           siblingCount={PAGE_SIBLING_COUNT}
