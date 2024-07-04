@@ -14,7 +14,6 @@ import TimeLimitIcon from '../../guidelines/icons/TimeLimitIcon';
 import WrongAnswerIcon from '../../guidelines/icons/WrongAnswerIcon';
 
 import styles from './TestRunIcon.module.scss';
-import concatClassNames from "../../../utils/class-names";
 
 interface ITestRunIconProps {
     testRun: ITestRunType;
@@ -25,9 +24,9 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
     const [ competeIconAnchorElement, setCompeteIconAnchorElement ] = useState<HTMLElement | null>(null);
 
     const isIconModalOpen = Boolean(competeIconAnchorElement);
-    
+
     const backgroundColorClassName = getColorClassName(themeColors.baseColor100);
-    
+
     const iconClassName = testRun.isTrialTest
         ? styles.trialTestIcon
         : '';
@@ -51,7 +50,7 @@ const TestRunIcon = ({ testRun }: ITestRunIconProps) => {
             );
             }
         },
-        [ testRun.id, testRun.resultType ],
+        [ iconClassName, testRun.id, testRun.resultType ],
     );
 
     return (
