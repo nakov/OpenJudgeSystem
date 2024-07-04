@@ -17,6 +17,8 @@ namespace OJS.Services.Administration.Data
 
         Task<Contest?> GetByIdWithProblems(int id);
 
+        Task<Contest?> GetByIdWithProblemsAndParticipants(int id);
+
         Task<Contest?> GetByIdWithParticipantsScoresAndSubmissions(int id);
 
         IQueryable<Contest> GetAllActive();
