@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CheckboxSearchValues } from '../../common/enums';
 import {
@@ -47,6 +47,13 @@ const SearchPage = () => {
     const [ selectedContestsPage, setSelectedContestsPage ] = useState(1);
     const [ selectedProblemsPage, setSelectedProblemsPage ] = useState(1);
     const [ selectedUsersPage, setSelectedUsersPage ] = useState(1);
+    const [ contestsContentHeight, setContestsContentHeight ] = useState(0);
+    const [ problemsContentHeight, setProblemsContentHeight ] = useState(0);
+    const [ usersContentHeight, setUsersContentHeight ] = useState(0);
+
+    const contestsContentRef = useRef<HTMLDivElement>(null);
+    const problemsContentRef = useRef<HTMLDivElement>(null);
+    const usersContentRef = useRef<HTMLDivElement>(null);
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -84,6 +91,24 @@ const SearchPage = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (contestsContentRef.current) {
+            setContestsContentHeight(contestsContentRef.current.offsetHeight);
+        }
+    }, [ contestsSearchData, isContestsSearchFetching ]);
+
+    useEffect(() => {
+        if (problemsContentRef.current) {
+            setProblemsContentHeight(problemsContentRef.current.offsetHeight);
+        }
+    }, [ problemsSearchData, isProblemsSearchFetching ]);
+
+    useEffect(() => {
+        if (usersContentRef.current) {
+            setUsersContentHeight(usersContentRef.current.offsetHeight);
+        }
+    }, [ usersSearchData, isUsersSearchFetching ]);
 
     // initiate the search for each of the selected search types
     useEffect(() => {
@@ -152,8 +177,14 @@ const SearchPage = () => {
                 return <UserSearchCard user={renderElement as IUSerSearchCardProps} />;
             };
 
+            const contentRef = searchName === SearchTypeEnums.CONTESTS
+                ? contestsContentRef
+                : searchName === SearchTypeEnums.PROBLEMS
+                    ? problemsContentRef
+                    : usersContentRef;
+
             return (
-                <div className={styles.searchResultsWrapper}>
+                <div className={styles.searchResultsWrapper} ref={contentRef}>
                     {!data || data.totalItemsCount === 0
                         ? <div>No items found</div>
                         : searchName === SearchTypeEnums.USERS
@@ -169,6 +200,12 @@ const SearchPage = () => {
             );
         };
 
+        const contentHeight = searchName === SearchTypeEnums.CONTESTS
+            ? contestsContentHeight
+            : searchName === SearchTypeEnums.PROBLEMS
+                ? problemsContentHeight
+                : usersContentHeight;
+
         return (
             <div>
                 <div className={styles.searchSectionHeader}>
@@ -177,19 +214,33 @@ const SearchPage = () => {
                 { isError
                     ? renderErrorFragment()
                     : isLoading
-                        ? <SpinningLoader />
+                        ? (
+                            <div className={styles.spinningLoader} style={{ minHeight: `${contentHeight}px` }}>
+                                <SpinningLoader />
+                            </div>
+                        )
                         : renderData()}
-                <PaginationControls
-                  count={data?.pagesCount || 0}
-                  page={selectedPageValue()}
-                  onChange={(page: number) => {
-                      onPaginationChange(page, searchName);
-                  }}
-                />
+                { data && data.totalItemsCount > 0 && (
+                    <PaginationControls
+                      count={data?.pagesCount || 0}
+                      page={selectedPageValue()}
+                      onChange={(page: number) => {
+                          onPaginationChange(page, searchName);
+                      }}
+                    />
+                )}
                 { searchName !== SearchTypeEnums.USERS && (<hr className={styles.line} />)}
             </div>
         );
-    }, [ onPaginationChange, selectedContestsPage, selectedProblemsPage, selectedUsersPage ]);
+    }, [
+        contestsContentHeight,
+        onPaginationChange,
+        problemsContentHeight,
+        selectedContestsPage,
+        selectedProblemsPage,
+        selectedUsersPage,
+        usersContentHeight,
+    ]);
 
     return (
         <div className={`${styles.searchPageWrapper} ${textColorClassName}`}>

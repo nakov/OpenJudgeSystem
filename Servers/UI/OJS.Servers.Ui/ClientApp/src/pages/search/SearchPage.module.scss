@@ -36,3 +36,11 @@
     margin: spacings.$sp-12 0;
   }
 }
+
+.spinningLoader {
+  margin-top: spacings.$sp-24;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
