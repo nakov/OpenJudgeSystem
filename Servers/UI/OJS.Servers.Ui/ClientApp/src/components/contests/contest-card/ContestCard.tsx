@@ -208,7 +208,7 @@ const ContestCard = (props: IContestCardProps) => {
                     {contestStartTime && renderContestDetailsFragment(
                         iconNames.date,
                         preciseFormatDate(contestStartTime, dateTimeFormatWithSpacing),
-                        'Contest\'s start date',
+                        'Start date',
                     )}
                     {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems, 'Problem count')}
                     {
@@ -241,7 +241,7 @@ const ContestCard = (props: IContestCardProps) => {
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
                             `remaining time: ${remainingTimeFormatted}`,
-                            'Contest\'s remaining time',
+                            'Remaining time',
                             false,
                             false,
                         )}
