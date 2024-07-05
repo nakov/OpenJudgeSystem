@@ -55,8 +55,6 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
                     filter: s => !s.IsDeleted && userParticipantsIds.Contains(s.ParticipantId!),
                     orderBy: s => s.Id,
                     descending: true)
-                .Include(s => s.TestRuns)
-                .ThenInclude(tr => tr.Test)
                 .MapCollection<TServiceModel>()
                 .ToPagedResultAsync(submissionsPerPage, pageNumber);
 
