@@ -31,29 +31,31 @@ const PaginationControls = ({
     }));
     const classes = useStyles();
 
-    return count > 1 && (
-        <Pagination
-          count={count}
-          siblingCount={PAGE_SIBLING_COUNT}
-          boundaryCount={PAGE_BOUNDARY_COUNT}
-          onChange={(ev, value) => {
-              if (shouldScrollDown) {
-                  setTimeout(() => {
-                      window.scrollTo({
-                          top: (ev as any).pageY - 800,
-                          behavior: 'smooth',
-                      });
-                  }, 10);
-              }
-              onChange(value);
-          }}
-          page={page}
-          className={paginationClassNames}
-          classes={{ ul: classes.ul }}
-          showFirstButton
-          showLastButton
-        />
-    );
+    return count > 1
+        ? (
+            <Pagination
+              count={count}
+              siblingCount={PAGE_SIBLING_COUNT}
+              boundaryCount={PAGE_BOUNDARY_COUNT}
+              onChange={(ev, value) => {
+                  if (shouldScrollDown) {
+                      setTimeout(() => {
+                          window.scrollTo({
+                              top: (ev as any).pageY - 800,
+                              behavior: 'smooth',
+                          });
+                      }, 10);
+                  }
+                  onChange(value);
+              }}
+              page={page}
+              className={paginationClassNames}
+              classes={{ ul: classes.ul }}
+              showFirstButton
+              showLastButton
+            />
+        )
+        : null;
 };
 
 export default PaginationControls;
