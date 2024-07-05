@@ -81,7 +81,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                               }}
                               onClick={() => onProblemClick(problem)}
                             >
-                                <div>
+                                <div className={styles.problemName}>
                                     {problem.name}
                                     {problem.isExcludedFromHomework && (
                                     <div

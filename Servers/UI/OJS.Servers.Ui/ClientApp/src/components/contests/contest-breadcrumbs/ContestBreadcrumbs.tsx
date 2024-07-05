@@ -28,7 +28,7 @@ interface IContestBreadcrumbsProps {
 const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
     const { data, isLoading, refetch } = useGetContestCategoriesQuery();
@@ -75,10 +75,6 @@ const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
           to={getAllContestsPageUrl({ categoryId: breadcrumbItem.id, categoryName: breadcrumbItem.name })}
         >
             <div
-              onClick={() => {
-                  searchParams.set('category', breadcrumbItem.id.toString());
-                  setSearchParams(searchParams);
-              }}
               className={`${styles.item} ${isLast
                   ? textColorClassName
                   : ''}`}
