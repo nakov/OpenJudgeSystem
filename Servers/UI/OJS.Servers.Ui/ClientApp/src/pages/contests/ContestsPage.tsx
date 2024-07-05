@@ -157,7 +157,16 @@ const ContestsPage = () => {
 
 export default withTitle(
     ContestsPage,
-    (params) => `Contests${params.slug !== 'all'
-        ? ` in ${params.slug}`
-        : ''}`,
+    (params, searchParams) => {
+        const pageTitle = `Contests${params.slug !== 'all'
+            ? ` in ${params.slug}`
+            : ''}`;
+
+        const currentPage = parseInt(searchParams.get('page') || '', 10);
+        const pageSuffix = currentPage >= 1
+            ? ` - page ${currentPage}`
+            : '';
+
+        return `${pageTitle}${pageSuffix}`;
+    },
 );
