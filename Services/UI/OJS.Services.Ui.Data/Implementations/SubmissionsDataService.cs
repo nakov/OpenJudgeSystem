@@ -38,27 +38,13 @@ public class SubmissionsDataService : DataService<Submission>, ISubmissionsDataS
             .MapCollection<TServiceModel>()
             .ToEnumerableAsync();
 
-    public async Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(
-        int submissionsPerPage,
-        int pageNumber,
-        bool includeTestRuns)
-    {
-        var query = this.GetQuery(
-            filter: s => !s.IsDeleted,
-            orderBy: s => s.Id,
-            descending: true);
-
-        if (includeTestRuns)
-        {
-            query = query
-                .Include(s => s.TestRuns)
-                .ThenInclude(tr => tr.Test);
-        }
-
-        return await query
-            .MapCollection<TServiceModel>()
-            .ToPagedResultAsync(submissionsPerPage, pageNumber);
-    }
+    public async Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(int submissionsPerPage, int pageNumber)
+            => await this.GetQuery(
+                    filter: s => !s.IsDeleted,
+                    orderBy: s => s.Id,
+                    descending: true)
+                .MapCollection<TServiceModel>()
+                .ToPagedResultAsync(submissionsPerPage, pageNumber);
 
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/903
     public async Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(

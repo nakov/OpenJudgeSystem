@@ -30,9 +30,6 @@
             => configuration.CreateMap<TestRun, TestRunServiceModel>()
                 .ForMember(
                     d => d.ResultType,
-                    opt => opt.MapFrom(s => s.ResultType.ToString()))
-                .ForMember(
-                    d => d.IsTrialTest,
-                    opt => opt.MapFrom(s => s.Test.IsTrialTest));
+                    opt => opt.MapFrom(s => s.ResultType.ToString()));
     }
 }

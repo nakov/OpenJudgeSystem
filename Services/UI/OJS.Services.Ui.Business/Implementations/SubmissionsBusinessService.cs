@@ -607,12 +607,10 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
             var user = this.userProviderService.GetCurrentUser();
             if (user.IsAdminOrLecturer)
             {
-                return await this.submissionsData
-                    .GetLatestSubmissions<TServiceModel>(itemsPerPage, page, true);
+                return await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, page);
             }
 
-            var submissions = await this.submissionsData
-                .GetLatestSubmissions<TServiceModel>(itemsPerPage, 1, false);
+            var submissions = await this.submissionsData.GetLatestSubmissions<TServiceModel>(itemsPerPage, 1);
 
             return new PagedResult<TServiceModel>
             {

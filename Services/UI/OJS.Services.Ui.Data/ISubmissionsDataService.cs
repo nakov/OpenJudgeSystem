@@ -16,8 +16,7 @@ public interface ISubmissionsDataService : IDataService<Submission>
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissions<TServiceModel>(
         int submissionsPerPage,
-        int pageNumber,
-        bool includeTestRuns);
+        int pageNumber);
 
     Task<PagedResult<TServiceModel>> GetLatestSubmissionsByUserParticipations<TServiceModel>(
         IEnumerable<int?> userParticipantsIds,

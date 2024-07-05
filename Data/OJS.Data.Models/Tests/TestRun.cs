@@ -20,6 +20,8 @@ namespace OJS.Data.Models.Tests
 
         public TestRunResultType ResultType { get; set; }
 
+        public bool IsTrialTest { get; set; }
+
         public string? ExecutionComment { get; set; }
 
         public string? CheckerComment { get; set; }
