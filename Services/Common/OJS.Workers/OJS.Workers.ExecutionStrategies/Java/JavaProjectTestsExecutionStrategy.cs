@@ -427,7 +427,13 @@ public class _$TestRunner {{
                 if (!isTestSuccessful)
                 {
                     var errorLine = output.ReadLine();
-                    if (errorLine!.StartsWith(InvalidNumberOfTestCasesPrefix))
+
+                    if (errorLine == null)
+                    {
+                        throw new InvalidOperationException("The test was unsuccessful, but no error message was found.");
+                    }
+
+                    if (errorLine.StartsWith(InvalidNumberOfTestCasesPrefix))
                     {
                         throw new InvalidOperationException(errorLine);
                     }
