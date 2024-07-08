@@ -9,6 +9,7 @@ import { CREATE, EDIT, ID, NAME, RECORD, TYPE, VALUE } from '../../../../common/
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { ISettingAdministrationModel } from '../../../../common/types';
 import { NEW_ADMINISTRATION_PATH, SETTINGS_PATH } from '../../../../common/urls/administration-urls';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useCreateSettingMutation, useDeleteSettingMutation, useGetSettingByIdQuery, useUpdateSettingMutation } from '../../../../redux/services/admin/settingsAdminService';
 import { getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -68,6 +69,8 @@ const SettingForm = (props: ISettingFormProps) => {
             isLoading: isUpdating,
         },
     ] = useUpdateSettingMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         if (settingData) {
