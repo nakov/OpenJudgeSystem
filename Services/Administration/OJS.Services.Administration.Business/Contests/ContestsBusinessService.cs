@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Extensions.Strings;
+using OJS.Data;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Participants;
@@ -30,6 +31,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using Resource = OJS.Common.Resources.ContestsGeneral;
 
 public class ContestsBusinessService : AdministrationOperationService<Contest, int, ContestAdministrationModel>, IContestsBusinessService
@@ -49,6 +51,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
     private readonly IParticipantScoresDataService participantScoresDataService;
     private readonly ISubmissionsDataService submissionsDataService;
     private readonly IZipArchivesService zipArchivesService;
+    private readonly ITransactionsProvider transactions;
 
     public ContestsBusinessService(
         IContestsDataService contestsData,
@@ -64,7 +67,8 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         IParticipantsCommonDataService participantsCommonDataService,
         IParticipantScoresDataService participantScoresDataService,
         ISubmissionsDataService submissionsDataService,
-        IZipArchivesService zipArchivesService)
+        IZipArchivesService zipArchivesService,
+        ITransactionsProvider transactions)
     {
         this.contestsData = contestsData;
         this.userProvider = userProvider;
@@ -80,6 +84,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         this.participantScoresDataService = participantScoresDataService;
         this.submissionsDataService = submissionsDataService;
         this.zipArchivesService = zipArchivesService;
+        this.transactions = transactions;
     }
 
     public async Task<bool> UserHasContestPermissions(
@@ -199,7 +204,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
             .MapCollection<ContestForActivityServiceModel>().FirstAsync()).Map<ContestActivityModel>();
 
     public override async Task<ContestAdministrationModel> Get(int id)
-        => await this.contestsData.GetByIdWithProblems(id).Map<ContestAdministrationModel>();
+        => await this.contestsData.GetByIdWithProblemsAndParticipants(id).Map<ContestAdministrationModel>();
 
     public override async Task<ContestAdministrationModel> Edit(ContestAdministrationModel model)
     {
@@ -271,9 +276,9 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
         var contest = await this.contestsData.GetByIdWithParticipantsScoresAndSubmissions(contestId);
 
         var competeOnlyParticipants = contest!.Participants
-            .GroupBy(p => p.UserId)
-            .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
-            .Select(gr => gr.FirstOrDefault());
+                .GroupBy(p => p.UserId)
+                .Where(g => g.Count() == 1 && g.All(p => p.IsOfficial))
+                .Select(gr => gr.FirstOrDefault());
 
         foreach (var participant in competeOnlyParticipants)
         {
@@ -305,6 +310,7 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
 
             var scoresForDeletion = new List<ParticipantScore>();
 
+            var pointsToAdd = 0;
             foreach (var officialParticipantScore in officialParticipant.Scores)
             {
                 var unofficialParticipantScore = unofficialParticipant
@@ -319,21 +325,33 @@ public class ContestsBusinessService : AdministrationOperationService<Contest, i
                     {
                         officialParticipantScore.IsOfficial = false;
                         officialParticipantScore.Participant = unofficialParticipant;
+                        scoresForDeletion.Add(unofficialParticipantScore);
+                        pointsToAdd += officialParticipantScore.Points - unofficialParticipantScore.Points;
                     }
-
-                    scoresForDeletion.Add(unofficialParticipantScore);
+                    else
+                    {
+                        scoresForDeletion.Add(officialParticipantScore);
+                    }
                 }
                 else
                 {
                     officialParticipantScore.IsOfficial = false;
                     officialParticipantScore.Participant = unofficialParticipant;
+                    pointsToAdd += officialParticipantScore.Points;
                 }
             }
 
-            await this.participantScoresDataService.Delete(scoresForDeletion);
+            if (pointsToAdd > 0)
+            {
+                unofficialParticipant.TotalScoreSnapshot += pointsToAdd;
+                unofficialParticipant.TotalScoreSnapshotModifiedOn = officialParticipant.TotalScoreSnapshotModifiedOn;
+            }
+
+            this.participantScoresDataService.DeleteMany(scoresForDeletion);
         }
 
-        await this.participantsData.Delete(participantsForDeletion);
+        this.participantsData.DeleteMany(participantsForDeletion);
+        await this.participantsData.SaveChanges();
     }
 
     private static StringBuilder PrepareSolutionsFileComment(

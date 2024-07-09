@@ -92,10 +92,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task Delete(IEnumerable<ParticipantScore> participantScores)
         {
-            foreach (var participantScore in participantScores)
-            {
-                this.Delete(participantScore);
-            }
+            this.DeleteMany(participantScores);
 
             await this.SaveChanges();
         }

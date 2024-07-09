@@ -1,21 +1,22 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Params, useParams } from 'react-router-dom';
+import { Params, useParams, useSearchParams } from 'react-router-dom';
 
 import { Anything } from '../../common/common-types';
 
 interface IHaveChildrenPropsWithTitle {
     children: React.ReactNode;
-    title: string | ((params: Params) => string);
+    title: string | ((params: Params, searchParams: URLSearchParams) => string);
 }
 
 const Page = ({ children, title } : IHaveChildrenPropsWithTitle) => {
     const params = useParams();
+    const [ searchParams ] = useSearchParams();
 
     const pageTitle = useMemo(
         () => typeof title === 'function'
-            ? title(params)
+            ? title(params, searchParams)
             : title,
-        [ title, params ],
+        [ title, params, searchParams ],
     );
 
     useEffect(() => {
@@ -30,7 +31,10 @@ const Page = ({ children, title } : IHaveChildrenPropsWithTitle) => {
     );
 };
 
-const withTitle = (ComponentToWrap: FC, title: string | ((params: Params<string>) => string)) => (props: Anything) => (
+const withTitle = (
+    ComponentToWrap: FC,
+    title: string | ((params: Params, searchParams: URLSearchParams) => string),
+) => (props: Anything) => (
     <Page title={title}>
         <ComponentToWrap {...props} />
     </Page>

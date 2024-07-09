@@ -297,6 +297,7 @@ interface IIndexContestsType {
     userParticipationResult?: IUserParticipationResult;
     createdOn: Date;
     modifiedOn: Date | null;
+    officialParticipants: number;
     requirePasswordForCompete: boolean;
     requirePasswordForPractice: boolean;
 }
@@ -518,6 +519,7 @@ interface IContestAdministration {
     numberOfProblemGroups: number;
     duration: string | undefined;
     canBeCompeted: boolean;
+    officialParticipants: number;
 }
 
 interface ISubmissionsAdminGridViewType {
