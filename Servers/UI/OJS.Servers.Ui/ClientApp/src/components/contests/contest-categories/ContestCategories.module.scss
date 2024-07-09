@@ -58,6 +58,7 @@
     font-size: variables.$f-size-16;
     justify-content: space-between;
     padding: spacings.$sp-12 spacings.$sp-4;
+    text-align: left;
     transition: background-color 0.2s ease-in-out;
 
     &.darkCategoryItem {
