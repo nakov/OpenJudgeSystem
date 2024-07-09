@@ -1,5 +1,7 @@
 namespace OJS.Services.Worker.Business.Implementations;
 
+using Microsoft.Build.Framework;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OJS.Services.Worker.Models.Configuration;
 using OJS.Workers.Common;
@@ -10,9 +12,15 @@ using System;
 public class CompilerFactory : ICompilerFactory
 {
     private readonly OjsWorkersConfig settings;
+    private readonly ILogger<Compiler> logger;
 
-    public CompilerFactory(IOptions<OjsWorkersConfig> settingsAccessor)
-        => this.settings = settingsAccessor.Value;
+    public CompilerFactory(
+        IOptions<OjsWorkersConfig> settingsAccessor,
+        ILogger<Compiler> logger)
+    {
+        this.settings = settingsAccessor.Value;
+        this.logger = logger;
+    }
 
     public string GetCompilerPath(CompilerType compilerType, ExecutionStrategyType strategyType)
     {
@@ -43,17 +51,29 @@ public class CompilerFactory : ICompilerFactory
             CompilerType.CSharpDotNetCore => new CSharpDotNetCoreCompiler(
                 this.settings.CSharpDotNetCoreCompilerProcessExitTimeOutMultiplier,
                 this.GetCSharpDotNetCoreCompilerPath(strategyType),
-                this.GetDotNetCoreSharedAssembliesPath(strategyType)),
-            CompilerType.CPlusPlusGcc => new CPlusPlusCompiler(this.settings
-                .CPlusPlusCompilerProcessExitTimeOutMultiplier),
-            CompilerType.Java => new JavaCompiler(this.settings.JavaCompilerProcessExitTimeOutMultiplier),
-            CompilerType.JavaZip => new JavaZipCompiler(this.settings.JavaZipCompilerProcessExitTimeOutMultiplier),
-            CompilerType.JavaInPlaceCompiler => new JavaInPlaceFolderCompiler(this.settings
-                .JavaInPlaceCompilerProcessExitTimeOutMultiplier),
-            CompilerType.CPlusPlusZip => new CPlusPlusZipCompiler(this.settings
-                .CPlusPlusZipCompilerProcessExitTimeOutMultiplier),
-            CompilerType.DotNetCompiler => new DotNetCompiler(this.settings.DotNetCompilerProcessExitTimeOutMultiplier),
-            CompilerType.GolangCompiler => new GolangCompiler(this.settings.GolangCompilerProcessExitTimeOutMultiplier),
+                this.GetDotNetCoreSharedAssembliesPath(strategyType),
+                this.logger),
+            CompilerType.CPlusPlusGcc => new CPlusPlusCompiler(
+                this.settings.CPlusPlusCompilerProcessExitTimeOutMultiplier,
+                this.logger),
+            CompilerType.Java => new JavaCompiler(
+                this.settings.JavaCompilerProcessExitTimeOutMultiplier,
+                this.logger),
+            CompilerType.JavaZip => new JavaZipCompiler(
+                this.settings.JavaZipCompilerProcessExitTimeOutMultiplier,
+                this.logger),
+            CompilerType.JavaInPlaceCompiler => new JavaInPlaceFolderCompiler(
+                this.settings.JavaInPlaceCompilerProcessExitTimeOutMultiplier,
+                this.logger),
+            CompilerType.CPlusPlusZip => new CPlusPlusZipCompiler(
+                this.settings.CPlusPlusZipCompilerProcessExitTimeOutMultiplier,
+                this.logger),
+            CompilerType.DotNetCompiler => new DotNetCompiler(
+                this.settings.DotNetCompilerProcessExitTimeOutMultiplier,
+                this.logger),
+            CompilerType.GolangCompiler => new GolangCompiler(
+                this.settings.GolangCompilerProcessExitTimeOutMultiplier,
+                this.logger),
             _ => throw new ArgumentException("Unsupported compiler."),
         };
 

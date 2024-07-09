@@ -1,11 +1,14 @@
 ﻿namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System.Text;
 
     public class CPlusPlusCompiler : Compiler
     {
-        public CPlusPlusCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public CPlusPlusCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 

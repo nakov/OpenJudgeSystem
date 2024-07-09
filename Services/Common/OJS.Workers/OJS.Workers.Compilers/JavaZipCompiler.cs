@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.Linq;
@@ -15,8 +16,10 @@ namespace OJS.Workers.Compilers
         private const string MainClassFileName = "Main.class";
         private static readonly string MainClassFilePathSuffix = FileHelpers.BuildPath(string.Empty, MainClassFileName);
 
-        public JavaZipCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public JavaZipCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 

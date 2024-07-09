@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System.IO;
     using System.Text;
 
@@ -9,8 +10,10 @@ namespace OJS.Workers.Compilers
 
     public class DotNetCompiler : Compiler
     {
-        public DotNetCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public DotNetCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 

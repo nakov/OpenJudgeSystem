@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -14,8 +15,9 @@
         public CSharpDotNetCoreCompiler(
             int processExitTimeOutMultiplier,
             string cSharpDotNetCoreCompilerPath,
-            string dotNetCoreSharedAssembliesPath)
-            : base(processExitTimeOutMultiplier)
+            string dotNetCoreSharedAssembliesPath,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
             this.cSharpDotNetCoreCompilerPath = cSharpDotNetCoreCompilerPath;
             this.dotNetCoreSharedAssembliesPath = dotNetCoreSharedAssembliesPath;

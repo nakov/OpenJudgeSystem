@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.Compilers;
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,9 +17,15 @@ public abstract class Compiler : ICompiler
 {
     protected const string CompilationDirectoryName = "CompilationDir";
 
-    protected Compiler(int processExitTimeOutMultiplier) =>
-        this.MaxProcessExitTimeOutInMilliseconds =
-            Constants.DefaultProcessExitTimeOutMilliseconds * processExitTimeOutMultiplier;
+    private readonly ILogger<Compiler> logger;
+
+    protected Compiler(
+        int processExitTimeOutMultiplier,
+        ILogger<Compiler> logger)
+    {
+        this.MaxProcessExitTimeOutInMilliseconds = Constants.DefaultProcessExitTimeOutMilliseconds * processExitTimeOutMultiplier;
+        this.logger = logger;
+    }
 
     public virtual bool ShouldDeleteSourceFile => true;
 
@@ -61,6 +68,7 @@ public abstract class Compiler : ICompiler
 
         this.CompilationDirectory = Path.Combine(inputFileDirectory, CompilationDirectoryName);
         Directory.CreateDirectory(this.CompilationDirectory);
+        this.logger.LogInformation($"Compilation directory created: {this.CompilationDirectory}");
 
         // Move source file if needed
         string newInputFilePath = this.RenameInputFile(inputFile);

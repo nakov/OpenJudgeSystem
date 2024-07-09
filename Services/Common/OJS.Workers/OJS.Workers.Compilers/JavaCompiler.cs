@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Text;
 
@@ -12,8 +13,10 @@
 
         private static readonly string JavaSourceFileExtension = $".{CompilerType.Java.GetFileExtension()}";
 
-        public JavaCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public JavaCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 

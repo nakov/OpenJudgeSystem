@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.Text;
@@ -11,8 +12,10 @@
     {
         private const string JavaSourceFilesSearchPattern = "*.java";
 
-        public JavaInPlaceFolderCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public JavaInPlaceFolderCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 

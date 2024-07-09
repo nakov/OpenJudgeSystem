@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.Linq;
@@ -13,8 +14,10 @@
         private const string CPlusPlusClassFileExtension = ".cpp";
         private const string CClassFileExtension = ".c";
 
-        public CPlusPlusZipCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public CPlusPlusZipCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 

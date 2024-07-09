@@ -1,12 +1,15 @@
 ﻿namespace OJS.Workers.Compilers
 {
+    using Microsoft.Extensions.Logging;
     using System.Text;
     using OJS.Workers.Common.Helpers;
 
     public class GolangCompiler : Compiler
     {
-        public GolangCompiler(int processExitTimeOutMultiplier)
-            : base(processExitTimeOutMultiplier)
+        public GolangCompiler(
+            int processExitTimeOutMultiplier,
+            ILogger<Compiler> logger)
+            : base(processExitTimeOutMultiplier, logger)
         {
         }
 
