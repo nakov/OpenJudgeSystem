@@ -4,6 +4,7 @@ import { Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuIte
 import { ADDITIONAL_COMPILER_ARGUMENTS, ALLOW_BINARY_FILES_UPLOAD, ALLOWED_FILE_EXTENSIONS, COMPILER, DESCRIPTION, EXECUTION_STRATEGY, ID, IS_SELECTED, NAME } from '../../../../common/labels';
 import { SUBMISSION_TYPE_FILE_EXTENSION_PLACEHOLDER, SUBMISSION_TYPE_FORM_NAME } from '../../../../common/messages';
 import { ISubmissionTypeAdministrationModel } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useCreateSubmissionTypeMutation, useGetByIdQuery, useGetCompilersQuery, useGetExecutionStrategiesQuery, useUpdateSubmissionTypeMutation } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -74,6 +75,8 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
             isLoading: isUpdating,
         },
     ] = useUpdateSubmissionTypeMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([

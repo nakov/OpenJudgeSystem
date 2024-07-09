@@ -6,6 +6,7 @@ import isNaN from 'lodash/isNaN';
 
 import { AGE, CITY, COMPANY, DATE_OF_BIRTH, EDIT, EDUCATIONAL_INSTITUTE, EMAIL, FACULTY_NUMBER, FIRSTNAME, ID, JOB_TITLE, LASTNAME, USERNAME } from '../../../../common/labels';
 import { IUserAdministrationModel } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../../redux/services/admin/usersAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -62,6 +63,8 @@ const UserForm = (props: IUserFormProps) => {
             isLoading: isUpdating,
         },
     ] = useUpdateUserMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         if (providedUser) {
