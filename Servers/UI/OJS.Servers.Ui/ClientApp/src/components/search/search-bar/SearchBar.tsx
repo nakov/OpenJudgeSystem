@@ -30,13 +30,13 @@ const SearchBar = () => {
     const textColorClassName = getColorClassName(themeColors.textColor);
     const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
 
-    const composeSearchString = () => {
+    const composeSearchString = useCallback(() => {
         const searchStringValue = searchValue
             ? `searchTerm=${searchValue}`
             : '';
         const selectedTermsStringValue = selectedTerms.map((term) => `&${term}=true`).join('');
         return `?${searchStringValue}${selectedTermsStringValue}`;
-    };
+    }, [ searchValue, selectedTerms ]);
 
     useEffect(() => {
         if (isVisible) {
@@ -46,13 +46,13 @@ const SearchBar = () => {
     }, [ isVisible ]);
 
     useEffect(() => {
-        if (!isVisible) {
+        if (!isVisible || searchValue?.trim().length < 3) {
             return;
         }
+
         const searchString = composeSearchString();
         navigate(`/search${searchString}`);
-        /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [ searchValue, selectedTerms ]);
+    }, [ composeSearchString, isVisible, navigate, searchValue, selectedTerms ]);
 
     // hide search bar on page change and reset state
     useEffect(() => {

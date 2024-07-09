@@ -5,7 +5,6 @@ import {
     ISubmissionDetailsUrlParams,
 } from '../common/app-url-types';
 import { FilterType } from '../common/contest-types';
-import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
     IContestDetailsUrlParams,
@@ -16,7 +15,6 @@ import {
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
-    IGetSearchResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsUrlParams,
@@ -212,15 +210,6 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 // Statistics
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
-// Search
-const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchResultsParams) => {
-    const searchQuery = `${SearchParams.search}=${searchTerm}`;
-
-    const pageQuery = `page=${page}`;
-
-    return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
-};
-
 // Username url utils for decoding/encoding usernames containing '.'
 
 const encodeAsUrlParam = (username: string) => username.replace(/\./g, '~');
@@ -230,7 +219,6 @@ export {
     getLoginSubmitUrl,
     getLogoutUrl,
     getLoginPath,
-    getSearchResultsUrl,
     getUserAuthInfoUrl,
     getPlatformRegisterUrl,
     getPlatformForgottenPasswordUrl,

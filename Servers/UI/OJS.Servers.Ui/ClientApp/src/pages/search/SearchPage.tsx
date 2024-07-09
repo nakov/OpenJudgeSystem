@@ -90,8 +90,13 @@ const SearchPage = () => {
         if (searchTerm) {
             dispatch(dispatch(setSearchValue(searchTerm)));
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [ dispatch, searchParams ]);
+
+    useEffect(() => {
+        setSelectedContestsPage(1);
+        setSelectedProblemsPage(1);
+        setSelectedUsersPage(1);
+    }, [ searchValue ]);
 
     useEffect(() => {
         if (contestsContentRef.current) {
@@ -113,19 +118,19 @@ const SearchPage = () => {
 
     // initiate the search for each of the selected search types
     useEffect(() => {
-        if (searchValue.length > 3 && selectedTerms.includes(CheckboxSearchValues.contests)) {
+        if (searchValue.trim().length >= 3 && selectedTerms.includes(CheckboxSearchValues.contests)) {
             getContestsSearch({ searchTerm: searchValue, page: selectedContestsPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
     }, [ searchValue, selectedTerms, selectedContestsPage, getContestsSearch ]);
 
     useEffect(() => {
-        if (searchValue.length > 3 && selectedTerms.includes(CheckboxSearchValues.problems)) {
+        if (searchValue.trim().length >= 3 && selectedTerms.includes(CheckboxSearchValues.problems)) {
             getProblemsSearch({ searchTerm: searchValue, page: selectedProblemsPage, itemsPerPage: ITEMS_PER_SEARCH });
         }
     }, [ searchValue, selectedTerms, selectedProblemsPage, getProblemsSearch ]);
 
     useEffect(() => {
-        if (searchValue.length > 3 && selectedTerms.includes(CheckboxSearchValues.users)) {
+        if (searchValue.trim().length >= 3 && selectedTerms.includes(CheckboxSearchValues.users)) {
             getUsersSearch({ searchTerm: searchValue, page: selectedUsersPage, itemsPerPage: USER_ITEMS_PER_SEARCH });
         }
     }, [ searchValue, selectedTerms, selectedUsersPage, getUsersSearch ]);
@@ -266,4 +271,7 @@ const SearchPage = () => {
     );
 };
 
-export default withTitle(SearchPage, 'Search');
+export default withTitle(
+    SearchPage,
+    (params, searchParams) => `Search results for ${searchParams.get('searchTerm')}`,
+);
