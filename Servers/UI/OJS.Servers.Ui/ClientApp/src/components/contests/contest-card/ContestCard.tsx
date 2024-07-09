@@ -240,7 +240,7 @@ const ContestCard = (props: IContestCardProps) => {
                         hasContestStartTimePassed &&
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
-                            `remaining time: ${remainingTimeFormatted}`,
+                            `Remaining time: ${remainingTimeFormatted}`,
                             'Remaining time',
                             false,
                             false,
