@@ -1,7 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CPlusPlus
 {
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -11,11 +10,11 @@
         where TSettings : CPlusPlusCompileExecuteAndCheckExecutionStrategySettings
     {
         public CPlusPlusCompileExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

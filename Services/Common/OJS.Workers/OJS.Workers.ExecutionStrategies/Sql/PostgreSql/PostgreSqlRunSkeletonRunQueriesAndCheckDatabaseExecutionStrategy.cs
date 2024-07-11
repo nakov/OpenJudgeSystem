@@ -2,7 +2,6 @@
 {
     using System.Data;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<TSettings>
@@ -10,9 +9,9 @@
         where TSettings : PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public PostgreSqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            : base(submission, settingsProvider)
         {
         }
 

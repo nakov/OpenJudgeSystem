@@ -25,10 +25,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string TestsFolderName = "tests";
 
         public PythonProjectTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
         }
 

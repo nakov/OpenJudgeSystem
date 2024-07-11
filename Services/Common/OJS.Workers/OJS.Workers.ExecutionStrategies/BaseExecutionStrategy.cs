@@ -17,11 +17,11 @@
         private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy<>));
 
         protected BaseExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
         {
-            this.Type = type;
-            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)
+            this.Type = submission.ExecutionStrategyType;
+            this.Settings = settingsProvider.GetSettings<TSettings>(submission)
                 ?? throw new ArgumentException(
                     $"Cannot get settings of type {typeof(TSettings).Name} for execution strategy {this.Type}. ",
                     nameof(settingsProvider));

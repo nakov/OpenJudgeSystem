@@ -19,10 +19,10 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         where TSettings : NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings
     {
         public NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider) // TODO: make this modular by getting requires from test
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
             if (!Directory.Exists(this.Settings.JsDomModulePath))
             {

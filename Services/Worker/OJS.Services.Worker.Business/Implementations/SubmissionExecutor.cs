@@ -11,8 +11,7 @@
     {
         private readonly IExecutionStrategyFactory executionStrategyFactory;
 
-        public SubmissionExecutor(
-            IExecutionStrategyFactory executionStrategyFactory)
+        public SubmissionExecutor(IExecutionStrategyFactory executionStrategyFactory)
             => this.executionStrategyFactory = executionStrategyFactory;
 
         public Task<IExecutionResult<TResult>> Execute<TInput, TResult>(
@@ -30,7 +29,7 @@
         {
             try
             {
-                return this.executionStrategyFactory.CreateExecutionStrategy(submission.ExecutionStrategyType);
+                return this.executionStrategyFactory.CreateExecutionStrategy(submission);
             }
             catch (Exception ex)
             {
@@ -51,8 +50,8 @@
                     FileContent = submission.FileContent,
                     AllowedFileExtensions = submission.AllowedFileExtensions,
                     CompilerType = submission.CompilerType,
-                    MemoryLimit = submission.MemoryLimit + (submission.ExecutionStrategyBaseMemoryLimit ?? 0),
-                    TimeLimit = submission.TimeLimit + (submission.ExecutionStrategyBaseTimeLimit ?? 0),
+                    MemoryLimit = submission.MemoryLimit,
+                    TimeLimit = submission.TimeLimit,
                     Input = submission.Input,
                 };
             }

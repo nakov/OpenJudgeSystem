@@ -9,9 +9,9 @@
         where TSettings : PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
     {
         public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            : base(submission, settingsProvider)
         {
         }
 

@@ -6,5 +6,5 @@ using OJS.Services.Infrastructure;
 
 public interface IExecutionStrategyFactory : ISingletonService
 {
-    IExecutionStrategy CreateExecutionStrategy(ExecutionStrategyType type);
+    IExecutionStrategy CreateExecutionStrategy(IOjsSubmission submission);
 }

@@ -13,11 +13,11 @@
         where TSettings : BaseCompiledCodeExecutionStrategySettings
     {
         protected BaseCompiledCodeExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
             => this.CompilerFactory = compilerFactory;
 
         protected ICompilerFactory CompilerFactory { get; }
