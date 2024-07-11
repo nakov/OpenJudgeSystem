@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20240711075743_AddedBaseTimeAndMemoryUsedInSubmissionType")]
-    partial class AddedBaseTimeAndMemoryUsedInSubmissionType
+    [Migration("20240711203649_AddedTimeAndMemoryConstraintsInSubmissionType")]
+    partial class AddedTimeAndMemoryConstraintsInSubmissionType
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -947,6 +947,12 @@ namespace OJS.Data.Migrations
 
                     b.Property<bool>("IsSelectedByDefault")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("MaxAllowedMemoryLimitInBytes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxAllowedTimeLimitInMilliseconds")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

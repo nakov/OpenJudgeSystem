@@ -43,6 +43,10 @@ namespace OJS.Data.Models.Submissions
 
         public int? BaseMemoryUsedInBytes { get; set; }
 
+        public int? MaxAllowedTimeLimitInMilliseconds { get; set; }
+
+        public int? MaxAllowedMemoryLimitInBytes { get; set; }
+
         [NotMapped]
         public IEnumerable<string> AllowedFileExtensionsList
         {

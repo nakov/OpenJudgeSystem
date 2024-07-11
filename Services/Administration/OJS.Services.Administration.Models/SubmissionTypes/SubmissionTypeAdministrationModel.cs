@@ -27,6 +27,10 @@ public class SubmissionTypeAdministrationModel : BaseAdministrationModel<int>, I
 
     public int? BaseMemoryUsedInBytes { get; set; }
 
+    public int? MaxAllowedTimeLimitInMilliseconds { get; set; }
+
+    public int? MaxAllowedMemoryLimitInBytes { get; set; }
+
     public void RegisterMappings(IProfileExpression configuration)
     {
         configuration.CreateMap<SubmissionType, SubmissionTypeAdministrationModel>()

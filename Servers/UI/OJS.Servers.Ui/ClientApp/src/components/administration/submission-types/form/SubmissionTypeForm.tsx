@@ -22,7 +22,7 @@ import {
     DESCRIPTION,
     EXECUTION_STRATEGY,
     ID,
-    IS_SELECTED,
+    IS_SELECTED, MAX_ALLOWED_MEMORY_LIMIT, MAX_ALLOWED_TIME_LIMIT,
     NAME,
 } from '../../../../common/labels';
 import { SUBMISSION_TYPE_FILE_EXTENSION_PLACEHOLDER, SUBMISSION_TYPE_FORM_NAME } from '../../../../common/messages';
@@ -285,6 +285,30 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                           name="baseMemoryUsedInBytes"
                           onChange={(e) => onChange(e)}
                           value={currentSubmissionType.baseMemoryUsedInBytes}
+                        />
+                    </FormControl>
+                </Box>
+                <Box className={formStyles.fieldBox}>
+                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
+                        <TextField
+                          variant="standard"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          label={MAX_ALLOWED_TIME_LIMIT}
+                          name="maxAllowedTimeLimitInMilliseconds"
+                          onChange={(e) => onChange(e)}
+                          value={currentSubmissionType.maxAllowedTimeLimitInMilliseconds}
+                        />
+                    </FormControl>
+                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
+                        <TextField
+                          variant="standard"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          label={MAX_ALLOWED_MEMORY_LIMIT}
+                          name="maxAllowedMemoryLimitInBytes"
+                          onChange={(e) => onChange(e)}
+                          value={currentSubmissionType.maxAllowedMemoryLimitInBytes}
                         />
                     </FormControl>
                 </Box>

@@ -131,7 +131,21 @@
                     opt => opt.Ignore())
                 .ForMember(
                     d => d.ExecutionOptions,
-                    opt => opt.Ignore());
+                    opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    if (src.SubmissionType is { MaxAllowedTimeLimitInMilliseconds: not null } &&
+                        dest.TimeLimit > src.SubmissionType.MaxAllowedTimeLimitInMilliseconds)
+                    {
+                        dest.TimeLimit = src.SubmissionType.MaxAllowedTimeLimitInMilliseconds.Value;
+                    }
+
+                    if (src.SubmissionType is { MaxAllowedMemoryLimitInBytes: not null } &&
+                        dest.MemoryLimit > src.SubmissionType.MaxAllowedMemoryLimitInBytes)
+                    {
+                        dest.MemoryLimit = src.SubmissionType.MaxAllowedMemoryLimitInBytes.Value;
+                    }
+                });
         }
     }
 }

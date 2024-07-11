@@ -643,6 +643,8 @@ interface ISubmissionTypeAdministrationModel {
     allowBinaryFilesUpload: boolean;
     baseTimeUsedInMilliseconds?: number;
     baseMemoryUsedInBytes?: number;
+    maxAllowedTimeLimitInMilliseconds?: number;
+    maxAllowedMemoryLimitInBytes?: number;
 }
 
 interface ICheckerInListModel {

@@ -946,6 +946,12 @@ namespace OJS.Data.Migrations
                     b.Property<bool>("IsSelectedByDefault")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("MaxAllowedMemoryLimitInBytes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxAllowedTimeLimitInMilliseconds")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)

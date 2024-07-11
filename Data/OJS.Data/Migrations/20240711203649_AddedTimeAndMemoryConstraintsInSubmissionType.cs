@@ -4,7 +4,7 @@ namespace OJS.Data.Migrations
 {
     using Microsoft.EntityFrameworkCore.Migrations;
 
-    public partial class AddedBaseTimeAndMemoryUsedInSubmissionType : Migration
+    public partial class AddedTimeAndMemoryConstraintsInSubmissionType : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,6 +19,18 @@ namespace OJS.Data.Migrations
                 table: "SubmissionTypes",
                 type: "int",
                 nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "MaxAllowedMemoryLimitInBytes",
+                table: "SubmissionTypes",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "MaxAllowedTimeLimitInMilliseconds",
+                table: "SubmissionTypes",
+                type: "int",
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -29,6 +41,14 @@ namespace OJS.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "BaseTimeUsedInMilliseconds",
+                table: "SubmissionTypes");
+
+            migrationBuilder.DropColumn(
+                name: "MaxAllowedMemoryLimitInBytes",
+                table: "SubmissionTypes");
+
+            migrationBuilder.DropColumn(
+                name: "MaxAllowedTimeLimitInMilliseconds",
                 table: "SubmissionTypes");
         }
     }

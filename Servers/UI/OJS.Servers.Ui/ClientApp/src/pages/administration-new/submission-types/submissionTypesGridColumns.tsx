@@ -7,7 +7,7 @@ import {
     ALLOWED_FILE_EXTENSIONS,
     BASE_MEMORY_USED,
     BASE_TIME_USED,
-    COMPILER, EXECUTION_STRATEGY, ID, NAME,
+    COMPILER, EXECUTION_STRATEGY, ID, MAX_ALLOWED_MEMORY_LIMIT, MAX_ALLOWED_TIME_LIMIT, NAME,
     PROBLEM_GROUP,
 } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
@@ -93,6 +93,27 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         sortable: false,
         align: 'center',
         headerAlign: 'center',
+    },
+    {
+        field: 'maxAllowedTimeLimitInMilliseconds',
+        headerName: MAX_ALLOWED_TIME_LIMIT,
+        flex: 1,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'maxAllowedMemoryLimitInBytes',
+        headerName: MAX_ALLOWED_MEMORY_LIMIT,
+        flex: 1,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+        hideable: true,
     },
     {
         field: 'allowBinaryFilesUpload',
