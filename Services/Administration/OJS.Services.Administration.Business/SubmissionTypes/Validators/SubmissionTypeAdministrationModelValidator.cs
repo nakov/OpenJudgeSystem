@@ -27,5 +27,13 @@ public class SubmissionTypeAdministrationModelValidator : BaseAdministrationMode
         this.RuleFor(model => model.ExecutionStrategyType)
             .MustBeValidEnum<SubmissionTypeAdministrationModel, ExecutionStrategyType>()
             .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
+
+        this.RuleFor(model => model.BaseTimeUsedInMilliseconds)
+            .Must(t => t is null or > 0)
+            .WithMessage("Base time used must be empty or greater than 0");
+
+        this.RuleFor(model => model.BaseMemoryUsedInBytes)
+            .Must(m => m is null or > 0)
+            .WithMessage("Base memory used must be empty or greater than 0");
     }
 }

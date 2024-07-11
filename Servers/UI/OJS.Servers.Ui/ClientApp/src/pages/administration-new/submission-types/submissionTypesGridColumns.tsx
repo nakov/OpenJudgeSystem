@@ -2,7 +2,14 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { CompilerType, SubmissionStrategyType } from '../../../common/enums';
-import { PROBLEM_GROUP } from '../../../common/labels';
+import {
+    ALLOW_BINARY_FILES_UPLOAD,
+    ALLOWED_FILE_EXTENSIONS,
+    BASE_MEMORY_USED,
+    BASE_TIME_USED,
+    COMPILER, EXECUTION_STRATEGY, ID, NAME,
+    PROBLEM_GROUP,
+} from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { IEnumType } from '../../../common/types';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
@@ -13,7 +20,7 @@ import { getStringObjectKeys } from '../../../utils/object-utils';
 const submissionTypesFilterableColumns: GridColDef[] = [
     {
         field: 'id',
-        headerName: 'Id',
+        headerName: ID,
         flex: 1,
         type: 'number',
         filterable: false,
@@ -24,8 +31,8 @@ const submissionTypesFilterableColumns: GridColDef[] = [
     },
     {
         field: 'name',
-        headerName: 'Name',
-        flex: 2,
+        headerName: NAME,
+        flex: 3,
         type: 'string',
         filterable: false,
         sortable: false,
@@ -34,8 +41,8 @@ const submissionTypesFilterableColumns: GridColDef[] = [
     },
     {
         field: 'executionStrategyType',
-        headerName: 'Execution Strategy Type',
-        flex: 2,
+        headerName: EXECUTION_STRATEGY,
+        flex: 3,
         type: 'enum',
         filterable: false,
         sortable: false,
@@ -47,8 +54,8 @@ const submissionTypesFilterableColumns: GridColDef[] = [
     } as GridColDef & IEnumType,
     {
         field: 'compilerType',
-        headerName: 'Compiler Type',
-        flex: 2,
+        headerName: COMPILER,
+        flex: 1,
         type: 'enum',
         filterable: false,
         sortable: false,
@@ -59,8 +66,8 @@ const submissionTypesFilterableColumns: GridColDef[] = [
     } as GridColDef & IEnumType,
     {
         field: 'allowedFileExtensions',
-        headerName: 'Allowed File Extensions',
-        flex: 2,
+        headerName: ALLOWED_FILE_EXTENSIONS,
+        flex: 1,
         type: 'string',
         filterable: false,
         sortable: false,
@@ -68,9 +75,29 @@ const submissionTypesFilterableColumns: GridColDef[] = [
         headerAlign: 'center',
     },
     {
+        field: 'baseTimeUsedInMilliseconds',
+        headerName: BASE_TIME_USED,
+        flex: 1,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
+        field: 'baseMemoryUsedInBytes',
+        headerName: BASE_MEMORY_USED,
+        flex: 1,
+        type: 'number',
+        filterable: false,
+        sortable: false,
+        align: 'center',
+        headerAlign: 'center',
+    },
+    {
         field: 'allowBinaryFilesUpload',
-        headerName: 'Allow Binary Files Upload',
-        flex: 2,
+        headerName: ALLOW_BINARY_FILES_UPLOAD,
+        flex: 1,
         type: 'boolean',
         filterable: false,
         sortable: false,
