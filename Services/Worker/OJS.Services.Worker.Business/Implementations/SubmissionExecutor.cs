@@ -1,5 +1,7 @@
 ﻿namespace OJS.Services.Worker.Business.Implementations
 {
+    using Microsoft.Extensions.Options;
+    using OJS.Services.Worker.Models.Configuration;
     using System;
 
     using OJS.Workers.Common;
@@ -10,9 +12,15 @@
     public class SubmissionExecutor : ISubmissionExecutor
     {
         private readonly IExecutionStrategyFactory executionStrategyFactory;
+        private readonly OjsWorkersConfig settings;
 
-        public SubmissionExecutor(IExecutionStrategyFactory executionStrategyFactory)
-            => this.executionStrategyFactory = executionStrategyFactory;
+        public SubmissionExecutor(
+            IExecutionStrategyFactory executionStrategyFactory,
+            IOptions<OjsWorkersConfig> ojsWorkersConfigAccessor)
+        {
+            this.executionStrategyFactory = executionStrategyFactory;
+            this.settings = ojsWorkersConfigAccessor.Value;
+        }
 
         public Task<IExecutionResult<TResult>> Execute<TInput, TResult>(
             OjsSubmission<TInput> submission)
@@ -50,8 +58,8 @@
                     FileContent = submission.FileContent,
                     AllowedFileExtensions = submission.AllowedFileExtensions,
                     CompilerType = submission.CompilerType,
-                    MemoryLimit = submission.MemoryLimit,
-                    TimeLimit = submission.TimeLimit,
+                    MemoryLimit = submission.MemoryLimit + (submission.ExecutionStrategyBaseMemoryLimit ?? 0),
+                    TimeLimit = submission.TimeLimit + (submission.ExecutionStrategyBaseTimeLimit ?? 0),
                     Input = submission.Input,
                 };
             }

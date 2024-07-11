@@ -2,7 +2,6 @@
 {
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Models.Mappings;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.Common;
