@@ -26,7 +26,11 @@
 
         public int TimeLimit { get; set; }
 
+        public int? ExecutionStrategyBaseTimeLimit { get; set; }
+
         public int MemoryLimit { get; set; }
+
+        public int? ExecutionStrategyBaseMemoryLimit { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
 
@@ -62,8 +66,14 @@
                     nameof(OjsSubmission<object>.MemoryLimit),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.MemoryLimit)))
                 .ForMember(
+                    nameof(OjsSubmission<object>.ExecutionStrategyBaseMemoryLimit),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyBaseMemoryLimit)))
+                .ForMember(
                     nameof(OjsSubmission<object>.TimeLimit),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.TimeLimit)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.ExecutionStrategyBaseTimeLimit),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyBaseTimeLimit)))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             configuration.CreateMap<Submission, SubmissionServiceModel>()
@@ -96,6 +106,18 @@
                         ? s.SubmissionType.SubmissionTypesInProblems
                             .Where(x => x.ProblemId == s.ProblemId).Select(x => x.MemoryLimit).First()
                         : s.Problem.MemoryLimit))
+                .ForMember(
+                    d => d.ExecutionStrategyBaseTimeLimit,
+                    opt => opt.MapFrom(s =>
+                        s.SubmissionType == null
+                            ? null
+                            : s.SubmissionType.BaseTimeUsedInMilliseconds))
+                .ForMember(
+                    d => d.ExecutionStrategyBaseMemoryLimit,
+                    opt => opt.MapFrom(s =>
+                        s.SubmissionType == null
+                            ? null
+                            : s.SubmissionType.BaseMemoryUsedInBytes))
                 .ForMember(
                     d => d.TestsExecutionDetails,
                     opt => opt.MapFrom(s => s.Problem))
