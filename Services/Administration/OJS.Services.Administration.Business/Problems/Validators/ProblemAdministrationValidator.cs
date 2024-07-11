@@ -1,6 +1,7 @@
 ﻿namespace OJS.Services.Administration.Business.Problems.Validators;
 
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using OJS.Common.Enumerations;
 using OJS.Data.Models.Problems;
@@ -12,13 +13,13 @@ using OJS.Services.Common.Validation;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static OJS.Workers.Common.Constants;
 
 public class ProblemAdministrationValidator : BaseAdministrationModelValidator<ProblemAdministrationModel, int, Problem>
 {
+    private const int MaximumMemoryLimitInBytes = int.MaxValue;
     private readonly IProblemsDataService problemsDataService;
     private readonly IContestsActivityService contestsActivityService;
-    private readonly int maxTimeLimitValue = 50000;
-    private readonly int maxMemoryLimitValue = int.MaxValue;
 
     public ProblemAdministrationValidator(IProblemsDataService problemsDataService, IContestsActivityService contestsActivityService)
         : base(problemsDataService)
@@ -32,12 +33,14 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
 
             this.RuleFor(model => model.TimeLimit)
                 .GreaterThan(0)
-                .WithMessage("Time limit cannot be zero or less.")
+                .LessThanOrEqualTo(MaxTimeLimitInMilliseconds)
+                .WithMessage($"Time limit must be between 1 and {MaxTimeLimitInMilliseconds}.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
             this.RuleFor(model => model.MemoryLimit)
-                .GreaterThan(0)
-                .WithMessage("Memory limit cannot be zero or less.")
+                .GreaterThanOrEqualTo(MinimumMemoryLimitInBytes)
+                .LessThanOrEqualTo(MaximumMemoryLimitInBytes)
+                .WithMessage($"Memory limit must be between {MinimumMemoryLimitInBytes} and {MaximumMemoryLimitInBytes}.")
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
 
             this.RuleFor(model => model.SourceCodeSizeLimit)
@@ -72,9 +75,29 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
                 .When(x => x.OperationType is CrudOperationType.Delete);
 
             this.RuleFor(model => model.SubmissionTypes)
-                .Must(this.MustHaveValidSubmissionTypeDetails)
+                .Custom(MustHaveValidSubmissionTypeDetails)
                 .When(x => x.OperationType is CrudOperationType.Create or CrudOperationType.Update);
         }
+
+    private static void MustHaveValidSubmissionTypeDetails(IEnumerable<ProblemSubmissionType> problemSubmissionTypes, ValidationContext<ProblemAdministrationModel> context)
+    {
+        foreach (var problemSubmissionType in problemSubmissionTypes)
+        {
+            if (problemSubmissionType.TimeLimit is < MinimumTimeLimitInMilliseconds or > MaxTimeLimitInMilliseconds)
+            {
+                context.AddFailure(new ValidationFailure(
+                    nameof(ProblemAdministrationModel.SubmissionTypes),
+                    $"Time limit for {problemSubmissionType.Name} must be between 1 and {MaxTimeLimitInMilliseconds}."));
+            }
+
+            if (problemSubmissionType.MemoryLimit is < MinimumMemoryLimitInBytes or > MaxMemoryLimitInBytes)
+            {
+                context.AddFailure(new ValidationFailure(
+                    nameof(ProblemAdministrationModel.SubmissionTypes),
+                    $"Memory limit for {problemSubmissionType.Name} must be between {MinimumMemoryLimitInBytes} and {MaxMemoryLimitInBytes}."));
+            }
+        }
+    }
 
     private async Task<bool> ContestMustNotBeActive(int problemId)
     {
@@ -84,23 +107,5 @@ public class ProblemAdministrationValidator : BaseAdministrationModelValidator<P
             .FirstAsync();
 
         return !await this.contestsActivityService.IsContestActive(contestId);
-    }
-
-    private bool MustHaveValidSubmissionTypeDetails(IEnumerable<ProblemSubmissionType> problemSubmissionTypes)
-    {
-        foreach (var problemSubmissionType in problemSubmissionTypes)
-        {
-            if (problemSubmissionType.TimeLimit <= 0 || problemSubmissionType.TimeLimit > this.maxTimeLimitValue)
-            {
-                return false;
-            }
-
-            if (problemSubmissionType.MemoryLimit <= 0 || problemSubmissionType.MemoryLimit > this.maxMemoryLimitValue)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
