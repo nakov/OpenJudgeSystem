@@ -1,7 +1,5 @@
 ﻿namespace OJS.Services.Worker.Business.Implementations
 {
-    using Microsoft.Extensions.Options;
-    using OJS.Services.Worker.Models.Configuration;
     using System;
 
     using OJS.Workers.Common;
@@ -12,15 +10,10 @@
     public class SubmissionExecutor : ISubmissionExecutor
     {
         private readonly IExecutionStrategyFactory executionStrategyFactory;
-        private readonly OjsWorkersConfig settings;
 
         public SubmissionExecutor(
-            IExecutionStrategyFactory executionStrategyFactory,
-            IOptions<OjsWorkersConfig> ojsWorkersConfigAccessor)
-        {
-            this.executionStrategyFactory = executionStrategyFactory;
-            this.settings = ojsWorkersConfigAccessor.Value;
-        }
+            IExecutionStrategyFactory executionStrategyFactory)
+            => this.executionStrategyFactory = executionStrategyFactory;
 
         public Task<IExecutionResult<TResult>> Execute<TInput, TResult>(
             OjsSubmission<TInput> submission)
