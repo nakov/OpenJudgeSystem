@@ -5,7 +5,6 @@
     using System.IO;
 
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -18,10 +17,10 @@
         protected const string TestsPlaceholder = "#testsCode#";
 
         public NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
             if (!File.Exists(this.Settings.MochaModulePath))
             {

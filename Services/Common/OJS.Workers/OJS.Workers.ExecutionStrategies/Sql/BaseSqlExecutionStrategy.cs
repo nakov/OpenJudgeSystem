@@ -22,9 +22,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         protected static readonly Type TimeSpanType = typeof(TimeSpan);
 
         protected BaseSqlExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            : base(submission, settingsProvider)
         {
             if (string.IsNullOrWhiteSpace(this.Settings.MasterDbConnectionString))
             {

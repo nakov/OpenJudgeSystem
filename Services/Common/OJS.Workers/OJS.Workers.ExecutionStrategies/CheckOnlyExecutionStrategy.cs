@@ -1,7 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -9,10 +8,10 @@
         where TSettings : CheckOnlyExecutionStrategySettings
     {
         public CheckOnlyExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
         }
 

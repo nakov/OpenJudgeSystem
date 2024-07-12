@@ -435,8 +435,8 @@ const ContestEdit = (props:IContestEditProps) => {
                 )) || 'Contest form'}
             </Typography>
             <form className={`${formStyles.form}`}>
-                <Box className={`${styles.fieldBox}`}>
-                    <Box>
+                <Box className={`${formStyles.fieldBox}`}>
+                    <Box className={formStyles.fieldBoxElementLeft}>
                         <TextField
                           className={formStyles.inputRow}
                           label={ID}
@@ -512,7 +512,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         />
                         )}
                     </Box>
-                    <Box>
+                    <Box className={formStyles.fieldBoxElementRight}>
                         <TextField
                           className={formStyles.inputRow}
                           type="text"

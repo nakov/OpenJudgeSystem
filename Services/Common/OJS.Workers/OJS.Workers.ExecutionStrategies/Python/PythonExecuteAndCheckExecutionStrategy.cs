@@ -15,10 +15,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         where TSettings : PythonExecuteAndCheckExecutionStrategySettings
     {
         public PythonExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
             if (!FileHelpers.FileExists(this.Settings.PythonExecutablePath))
             {

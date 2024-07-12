@@ -33,11 +33,11 @@ namespace OJS.Workers.ExecutionStrategies.Java
         protected const string TestResultsRegex = @"Total Tests: (\d+) Successful: (\d+) Failed: (\d+)";
 
         public JavaUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
             => this.TestNames = new List<string>();
 
         protected string JUnitTestRunnerSourceFilePath =>

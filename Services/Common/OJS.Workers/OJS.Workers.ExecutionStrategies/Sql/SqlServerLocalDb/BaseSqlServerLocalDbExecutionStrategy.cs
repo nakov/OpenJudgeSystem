@@ -1,7 +1,7 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerLocalDb
 {
     using Microsoft.Data.SqlClient;
-    using OJS.Workers.Common.Models;
+    using OJS.Workers.Common;
     using System;
     using System.Data;
     using System.Globalization;
@@ -16,9 +16,9 @@
         private static readonly Type DateTimeOffsetType = typeof(DateTimeOffset);
 
         protected BaseSqlServerLocalDbExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            : base(submission, settingsProvider)
         {
         }
 

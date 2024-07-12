@@ -80,6 +80,10 @@ export const EXECUTION_STRATEGY = 'Execution Strategy';
 export const ALLOWED_FILE_EXTENSIONS = 'Allowed File Extensions';
 export const IS_SELECTED = 'Is Selected';
 export const ALLOW_BINARY_FILES_UPLOAD = 'Allow Binary files upload';
+export const BASE_TIME_USED = 'Base time used in milliseconds';
+export const BASE_MEMORY_USED = 'Base memory used in bytes';
+export const MAX_ALLOWED_TIME_LIMIT = 'Max allowed time limit in milliseconds';
+export const MAX_ALLOWED_MEMORY_LIMIT = 'Max allowed memory limit in bytes';
 
 // Tests
 export const TESTS = 'Tests';
