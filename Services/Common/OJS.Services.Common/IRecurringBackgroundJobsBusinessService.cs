@@ -1,5 +1,6 @@
 ﻿namespace OJS.Services.Common
 {
+    using OJS.Services.Common.Filters;
     using OJS.Services.Infrastructure;
     using System.Threading.Tasks;
 
@@ -8,6 +9,7 @@
         /// <summary>
         /// Enqueues all submissions that are pending (not added in the message queue, nor processing).
         /// </summary>
+        [MessageBusExceptionFilter]
         Task<object> EnqueuePendingSubmissions();
 
         /// <summary>
