@@ -71,7 +71,7 @@
         {
             try
             {
-                return executionStrategy.SafeExecute<TInput, TResult>(executionContext);
+                return executionStrategy.SafeExecute<TInput, TResult>(executionContext, (int)submission.Id);
             }
             catch (Exception ex)
             {

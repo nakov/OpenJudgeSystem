@@ -57,6 +57,10 @@
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="MassTransit" Version="8.0.16" />
+    </ItemGroup>
+
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
         <ItemGroup>
             <DistFiles Include="$(SpaRoot)build\**; $(SpaRoot)build-ssr\**" />

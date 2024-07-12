@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using System;
 
     using OJS.Workers.Common;
@@ -23,8 +24,9 @@
         protected BaseCodeExecutionStrategy(
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, settingsProvider, logger)
             => this.ProcessExecutorFactory = processExecutorFactory;
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)

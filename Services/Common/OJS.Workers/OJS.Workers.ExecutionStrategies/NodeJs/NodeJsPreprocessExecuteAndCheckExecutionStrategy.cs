@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -27,8 +28,9 @@
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, settingsProvider, logger)
         {
             if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {

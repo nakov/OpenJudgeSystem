@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -11,8 +12,9 @@
         public CheckOnlyExecutionStrategy(
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, settingsProvider, logger)
         {
         }
 

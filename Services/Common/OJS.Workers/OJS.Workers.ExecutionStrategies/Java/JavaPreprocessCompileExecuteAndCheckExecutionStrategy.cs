@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -27,8 +28,9 @@
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
             if (!File.Exists(this.Settings.JavaExecutablePath))
             {

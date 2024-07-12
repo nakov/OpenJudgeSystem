@@ -65,6 +65,8 @@ public class ExecutionContextBuilderService : IExecutionContextBuilderService
             ? DefaultAllowedFileExtension
             : default!;
 
+        submission.Id = submissionServiceModel.Id;
+
         return submission;
     }
 }

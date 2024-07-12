@@ -5,6 +5,7 @@
     using System.Globalization;
     using System.Text.RegularExpressions;
     using global::MySql.Data.MySqlClient;
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -17,8 +18,9 @@
 
         protected BaseMySqlExecutionStrategy(
             ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, settingsProvider, logger)
             {
             }
 

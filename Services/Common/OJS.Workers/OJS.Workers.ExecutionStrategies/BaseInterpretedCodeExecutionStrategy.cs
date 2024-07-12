@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
@@ -13,8 +14,9 @@
         protected BaseInterpretedCodeExecutionStrategy(
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, settingsProvider, logger)
         {
         }
 

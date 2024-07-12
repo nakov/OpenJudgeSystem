@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
@@ -30,8 +31,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

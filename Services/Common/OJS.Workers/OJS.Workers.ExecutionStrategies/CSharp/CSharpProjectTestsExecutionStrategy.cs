@@ -7,6 +7,7 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
     using System.Linq;
     using System.Text.RegularExpressions;
     using Microsoft.Build.Evaluation;
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Extensions;
@@ -67,8 +68,9 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();

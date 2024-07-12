@@ -4,7 +4,7 @@
     using System.IO;
 
     using Ionic.Zip;
-
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
     using OJS.Workers.Common.Models;
@@ -20,8 +20,9 @@
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

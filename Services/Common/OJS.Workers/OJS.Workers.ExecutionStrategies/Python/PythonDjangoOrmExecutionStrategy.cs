@@ -1,6 +1,7 @@
 #nullable disable
 namespace OJS.Workers.ExecutionStrategies.Python
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -34,8 +35,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
         public PythonDjangoOrmExecutionStrategy(
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, settingsProvider, logger)
         {
         }
 

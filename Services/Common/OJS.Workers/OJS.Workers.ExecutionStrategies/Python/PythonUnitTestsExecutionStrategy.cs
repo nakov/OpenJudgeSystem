@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Python
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -24,8 +25,9 @@ namespace OJS.Workers.ExecutionStrategies.Python
         public PythonUnitTestsExecutionStrategy(
             ExecutionStrategyType type,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(type, processExecutorFactory, settingsProvider, logger)
         {
         }
 

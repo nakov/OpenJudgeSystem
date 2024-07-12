@@ -26,7 +26,7 @@ public class ExecutionResultConsumer : IConsumer<ProcessedSubmissionPubSubModel>
     {
         var workerName = context.Message.WorkerName + $" ({context.Host.MachineName})";
 
-        this.logger.LogInformation("Starting processing execution result for submission with id: {SubmissionId} from worker {WorkerName}", context.Message.Id, workerName);
+        this.logger.LogInformation("Starting processing execution result for submission #{SubmissionId} from worker {WorkerName}", context.Message.Id, workerName);
         this.logger.LogDebug("Received execution result for submission #{SubmissionId}: {@ExecutionResult}", context.Message.Id, context.Message.ExecutionResult);
         this.logger.LogDebug("Exception for submission #{SubmissionId}: {@Exception}", context.Message.Id, context.Message.Exception);
 
