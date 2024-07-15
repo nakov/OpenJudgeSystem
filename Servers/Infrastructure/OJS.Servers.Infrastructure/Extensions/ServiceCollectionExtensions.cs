@@ -140,7 +140,8 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddHangfireServer(
             this IServiceCollection services,
             IConfiguration configuration,
-            ApplicationName app)
+            ApplicationName app,
+            bool handleDefaultQueue = true)
         {
             var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
 
@@ -159,8 +160,13 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services.AddHangfireServer(options =>
             {
+                var appQueueName = app.ToString().ToLowerInvariant();
+                var queues = handleDefaultQueue
+                    ? new[] { appQueueName, "default" }
+                    : new[] { appQueueName };
+
                 options.ServerName = app.ToString();
-                options.Queues = new[] { app.ToString().ToLowerInvariant() };
+                options.Queues = queues;
             });
 
             services.AddHostedService<BackgroundJobsHostedService>();

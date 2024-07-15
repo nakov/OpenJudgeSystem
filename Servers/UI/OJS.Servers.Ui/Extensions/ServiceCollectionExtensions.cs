@@ -4,7 +4,6 @@ namespace OJS.Servers.Ui.Extensions
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Models.Users;
@@ -35,7 +34,7 @@ namespace OJS.Servers.Ui.Extensions
                 .AddWebServer<Program>(configuration)
                 .AddHttpContextServices()
                 .AddSwaggerDocs(apiVersion.ToApiName(), ApiDocsTitle, apiVersion)
-                .AddHangfireServer(configuration, AppName)
+                .AddHangfireServer(configuration, AppName, handleDefaultQueue: false)
                 .ConfigureCorsPolicy(configuration)
                 .AddMessageQueue<Program>(configuration)
                 .AddIdentityDatabase<OjsDbContext, UserProfile, Role, UserInRole>(configuration)
