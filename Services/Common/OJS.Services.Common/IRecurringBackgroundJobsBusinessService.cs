@@ -21,7 +21,7 @@
         [Queue(AdministrationQueueName)]
         Task<object> DeleteProcessedSubmissions();
 
-        // [Queue(AdministrationQueueName)]
+        [Queue(AdministrationQueueName)]
         Task<object> UpdateTotalScoreSnapshotOfParticipants();
 
         [Queue(AdministrationQueueName)]
