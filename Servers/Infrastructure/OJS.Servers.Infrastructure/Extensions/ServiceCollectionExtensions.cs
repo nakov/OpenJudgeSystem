@@ -19,7 +19,6 @@ namespace OJS.Servers.Infrastructure.Extensions
     using Microsoft.Net.Http.Headers;
     using Microsoft.OpenApi.Models;
     using OJS.Common;
-    using OJS.Common.Enumerations;
     using OJS.Data;
     using OJS.Data.Implementations;
     using OJS.Servers.Infrastructure.Filters;
@@ -140,8 +139,8 @@ namespace OJS.Servers.Infrastructure.Extensions
         public static IServiceCollection AddHangfireServer(
             this IServiceCollection services,
             IConfiguration configuration,
-            ApplicationName app,
-            bool handleDefaultQueue = true)
+            string serverName,
+            string[] queues)
         {
             var connectionString = configuration.GetConnectionString(DefaultDbConnectionName);
 
@@ -160,12 +159,7 @@ namespace OJS.Servers.Infrastructure.Extensions
 
             services.AddHangfireServer(options =>
             {
-                var appQueueName = app.ToString().ToLowerInvariant();
-                var queues = handleDefaultQueue
-                    ? new[] { appQueueName, "default" }
-                    : new[] { appQueueName };
-
-                options.ServerName = app.ToString();
+                options.ServerName = serverName;
                 options.Queues = queues;
             });
 
