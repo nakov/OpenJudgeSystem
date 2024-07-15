@@ -315,8 +315,8 @@ class _$SandboxSecurityManager extends SecurityManager {
                     executionContext.MemoryLimit,
                     executionArguments,
                     null,
-                    false,
-                    true);
+                    useProcessTime: false,
+                    useSystemEncoding: true);
 
             UpdateExecutionTime(
                 timeMeasurementFilePath,
