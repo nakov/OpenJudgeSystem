@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 {
+    using Microsoft.Extensions.Logging;
     using System.Data;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Models;
@@ -9,9 +10,10 @@
         where TSettings : PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategySettings
     {
         public PostgreSqlPrepareDatabaseAndRunQueriesExecutionStrategy(
-            ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IOjsSubmission submission,
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
         }
 

@@ -1,12 +1,12 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Models;
@@ -43,11 +43,12 @@
             $@"<ProjectReference Include=""{ProjectPathPlaceholder}"" />";
 
         public DotNetCoreProjectTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

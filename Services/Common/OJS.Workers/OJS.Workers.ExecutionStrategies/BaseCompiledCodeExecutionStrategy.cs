@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
 
@@ -13,11 +14,12 @@
         where TSettings : BaseCompiledCodeExecutionStrategySettings
     {
         protected BaseCompiledCodeExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
             => this.CompilerFactory = compilerFactory;
 
         protected ICompilerFactory CompilerFactory { get; }

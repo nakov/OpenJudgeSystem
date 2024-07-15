@@ -4,10 +4,9 @@
     using System.IO;
 
     using Ionic.Zip;
-
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.Executors;
 
@@ -17,11 +16,12 @@
         protected const string SubmissionFileName = "_$submission";
 
         public JavaZipFileCompileExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

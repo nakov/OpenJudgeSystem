@@ -59,3 +59,24 @@
 .inlineElement {
   width: 50%;
 }
+
+.fieldBox {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: auto;
+  justify-content: space-between;
+  width: 90%;
+
+  .fieldBoxElementLeft {
+    margin-right: 1rem;
+  }
+
+  .fieldBoxElementRight {
+    margin-left: 1rem;
+  }
+
+  & > div > div {
+    width: 100%;
+  }
+}

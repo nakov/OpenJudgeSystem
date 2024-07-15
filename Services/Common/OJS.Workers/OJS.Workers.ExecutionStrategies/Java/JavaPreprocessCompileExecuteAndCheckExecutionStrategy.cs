@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -24,11 +25,12 @@
         private const double NanosecondsInOneMillisecond = 1000000;
 
         public JavaPreprocessCompileExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
             if (!File.Exists(this.Settings.JavaExecutablePath))
             {

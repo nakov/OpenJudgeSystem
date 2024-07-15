@@ -2,7 +2,8 @@
 namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
 {
     using Microsoft.Data.SqlClient;
-    using OJS.Workers.Common.Models;
+    using Microsoft.Extensions.Logging;
+    using OJS.Workers.Common;
     using System.Data;
     using System.Transactions;
 
@@ -18,9 +19,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql.SqlServerSingleDatabase
         private TransactionScope transactionScope;
 
         protected BaseSqlServerSingleDatabaseExecutionStrategy(
-            ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IOjsSubmission submission,
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
             => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_DO_NOT_DELETE";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{this.Settings.RestrictedUserId}";

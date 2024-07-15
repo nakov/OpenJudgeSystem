@@ -17,7 +17,11 @@ namespace OJS.Workers.Common
 
         public int MemoryLimit { get; set; }
 
+        public int? ExecutionStrategyBaseMemoryLimit { get; set; }
+
         public int TimeLimit { get; set; }
+
+        public int? ExecutionStrategyBaseTimeLimit { get; set; }
 
         public string Code
         {

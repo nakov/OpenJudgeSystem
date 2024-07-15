@@ -6,6 +6,7 @@ import { ContestVariation } from '../../../../common/contest-types';
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { CHECKER, CONTEST_ID, ID, MAXIMUM_POINTS, MEMORY_LIMIT, NAME, ORDER_BY, PROBLEM_GROUP_TYPE, SHOW_DETAILED_FEEDBACK, SHOW_RESULTS, SOURCE_CODE_SIZE_LIMIT, TIME_LIMIT } from '../../../../common/labels';
 import { IProblemAdministration, IProblemGroupDropdownModel } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetCheckersForProblemQuery } from '../../../../redux/services/admin/checkersAdminService';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -19,6 +20,8 @@ interface IProblemFormBasicInfoProps {
 const ProblemFormBasicInfo = (props: IProblemFormBasicInfoProps) => {
     const { onChange, currentProblem, problemGroups } = props;
     const { data: checkers } = useGetCheckersForProblemQuery(null);
+
+    useDisableMouseWheelOnNumberInputs();
 
     const renderProblemGroups = () => {
         if (currentProblem.contestType === ContestVariation.OnlinePracticalExam) {

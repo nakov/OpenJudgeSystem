@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OJS.Data;
 
@@ -11,9 +12,10 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    partial class OjsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240711203649_AddedTimeAndMemoryConstraintsInSubmissionType")]
+    partial class AddedTimeAndMemoryConstraintsInSubmissionType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1040,9 +1042,6 @@ namespace OJS.Data.Migrations
 
                     b.Property<string>("ExpectedOutputFragment")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsTrialTest")
-                        .HasColumnType("bit");
 
                     b.Property<long>("MemoryUsed")
                         .HasColumnType("bigint");

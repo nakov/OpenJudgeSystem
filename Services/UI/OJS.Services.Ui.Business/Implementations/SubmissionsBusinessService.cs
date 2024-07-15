@@ -642,6 +642,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         var testResults =
             executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
 
+        submission.TestRuns.Clear();
         submission.TestRuns.AddRange(
             testResults.Select(testResult => testResult.Map<TestRun>()));
     }

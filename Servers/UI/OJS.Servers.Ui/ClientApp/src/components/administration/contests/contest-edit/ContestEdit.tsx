@@ -32,6 +32,7 @@ import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, C
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
 import { getContestsDetailsPageUrl } from '../../../../common/urls/compose-client-urls';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
 import {
     useCreateContestMutation,
@@ -73,6 +74,8 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ errorMessages, setErrorMessages ] = useState<Array<string>>([]);
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
+
+    useDisableMouseWheelOnNumberInputs();
 
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
@@ -432,8 +435,8 @@ const ContestEdit = (props:IContestEditProps) => {
                 )) || 'Contest form'}
             </Typography>
             <form className={`${formStyles.form}`}>
-                <Box className={`${styles.fieldBox}`}>
-                    <Box>
+                <Box className={`${formStyles.fieldBox}`}>
+                    <Box className={formStyles.fieldBoxElementLeft}>
                         <TextField
                           className={formStyles.inputRow}
                           label={ID}
@@ -509,7 +512,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         />
                         )}
                     </Box>
-                    <Box>
+                    <Box className={formStyles.fieldBoxElementRight}>
                         <TextField
                           className={formStyles.inputRow}
                           type="text"

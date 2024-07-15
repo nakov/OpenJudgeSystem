@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using System;
 
     using OJS.Workers.Common;
@@ -21,10 +22,11 @@
 #pragma warning restore SA1401
 
         protected BaseCodeExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
             => this.ProcessExecutorFactory = processExecutorFactory;
 
         protected static void SaveZipSubmission(byte[] submissionContent, string directory)

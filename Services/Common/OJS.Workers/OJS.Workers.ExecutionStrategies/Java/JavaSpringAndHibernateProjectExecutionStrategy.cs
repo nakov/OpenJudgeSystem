@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
     using System.Linq;
@@ -9,7 +10,6 @@ namespace OJS.Workers.ExecutionStrategies.Java
     using System.Xml;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
@@ -35,11 +35,12 @@ namespace OJS.Workers.ExecutionStrategies.Java
             $@"\[ERROR\]";
 
         public JavaSpringAndHibernateProjectExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

@@ -5,17 +5,19 @@ import { FormControl, FormGroup, FormLabel, IconButton, TextareaAutosize, TextFi
 import { MEMORY_LIMIT, NAME, SOLUTION_SKELETON, TIME_LIMIT } from '../../../../common/labels';
 import { SOLUTION_SKELETON_PLACEHOLDER } from '../../../../common/messages';
 import { IProblemSubmissionType } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 
 import styles from './ProblemSubmissionTypes.module.scss';
 
-interface IProblemSUbmissionTypesProps{
+interface IProblemSubmissionTypesProps{
   onPropChange: Function;
     onStrategyRemoved: Function;
     strategy: IProblemSubmissionType;
 }
 
-const ProblemSubmissionTypes = (props: IProblemSUbmissionTypesProps) => {
+const ProblemSubmissionTypes = (props: IProblemSubmissionTypesProps) => {
     const { onPropChange, onStrategyRemoved, strategy } = props;
+    useDisableMouseWheelOnNumberInputs();
     return (
         <FormGroup
           sx={{

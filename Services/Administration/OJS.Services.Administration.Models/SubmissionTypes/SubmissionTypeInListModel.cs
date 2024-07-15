@@ -17,4 +17,12 @@ public class SubmissionTypeInListModel : IMapFrom<SubmissionType>
     public bool AllowBinaryFilesUpload { get; set; }
 
     public string? AllowedFileExtensions { get; set; }
+
+    public int? BaseTimeUsedInMilliseconds { get; set; }
+
+    public int? BaseMemoryUsedInBytes { get; set; }
+
+    public int? MaxAllowedTimeLimitInMilliseconds { get; set; }
+
+    public int? MaxAllowedMemoryLimitInBytes { get; set; }
 }

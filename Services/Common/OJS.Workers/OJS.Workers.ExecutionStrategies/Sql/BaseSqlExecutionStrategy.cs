@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Sql
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Data;
     using System.Globalization;
@@ -22,9 +23,10 @@ namespace OJS.Workers.ExecutionStrategies.Sql
         protected static readonly Type TimeSpanType = typeof(TimeSpan);
 
         protected BaseSqlExecutionStrategy(
-            ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IOjsSubmission submission,
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
             if (string.IsNullOrWhiteSpace(this.Settings.MasterDbConnectionString))
             {
