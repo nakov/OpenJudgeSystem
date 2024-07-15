@@ -1,9 +1,33 @@
 import { useEffect, useState } from 'react';
-import { Checkbox, FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextareaAutosize,
+    TextField,
+    Typography,
+} from '@mui/material';
 
-import { ADDITIONAL_COMPILER_ARGUMENTS, ALLOW_BINARY_FILES_UPLOAD, ALLOWED_FILE_EXTENSIONS, COMPILER, DESCRIPTION, EXECUTION_STRATEGY, ID, IS_SELECTED, NAME } from '../../../../common/labels';
+import {
+    ADDITIONAL_COMPILER_ARGUMENTS,
+    ALLOW_BINARY_FILES_UPLOAD,
+    ALLOWED_FILE_EXTENSIONS, BASE_MEMORY_USED,
+    BASE_TIME_USED,
+    COMPILER,
+    DESCRIPTION,
+    EXECUTION_STRATEGY,
+    ID,
+    IS_SELECTED, MAX_ALLOWED_MEMORY_LIMIT, MAX_ALLOWED_TIME_LIMIT,
+    NAME,
+} from '../../../../common/labels';
 import { SUBMISSION_TYPE_FILE_EXTENSION_PLACEHOLDER, SUBMISSION_TYPE_FORM_NAME } from '../../../../common/messages';
 import { ISubmissionTypeAdministrationModel } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useCreateSubmissionTypeMutation, useGetByIdQuery, useGetCompilersQuery, useGetExecutionStrategiesQuery, useUpdateSubmissionTypeMutation } from '../../../../redux/services/admin/submissionTypesAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -34,7 +58,6 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
         isSelectedByDefault: false,
         allowedFileExtensions: '',
         allowBinaryFilesUpload: false,
-
     });
 
     const {
@@ -74,6 +97,8 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
             isLoading: isUpdating,
         },
     ] = useUpdateSubmissionTypeMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         const message = getAndSetSuccesfullMessages([
@@ -126,9 +151,9 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
             [name]: type === 'checkbox'
                 ? checked
                 : type === 'number'
-                    ? value === ''
-                        ? ''
-                        : Number(value)
+                    ? value
+                        ? Number(value)
+                        : null
                     : value,
         }));
     };
@@ -239,6 +264,54 @@ const SubmissionTypesForm = (props : ISubmissionTypesFormProps) => {
                       value={currentSubmissionType.allowedFileExtensions}
                     />
                 </FormControl>
+                <Box className={formStyles.fieldBox}>
+                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
+                        <TextField
+                          variant="standard"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          label={BASE_TIME_USED}
+                          name="baseTimeUsedInMilliseconds"
+                          onChange={(e) => onChange(e)}
+                          value={currentSubmissionType.baseTimeUsedInMilliseconds}
+                        />
+                    </FormControl>
+                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
+                        <TextField
+                          variant="standard"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          label={BASE_MEMORY_USED}
+                          name="baseMemoryUsedInBytes"
+                          onChange={(e) => onChange(e)}
+                          value={currentSubmissionType.baseMemoryUsedInBytes}
+                        />
+                    </FormControl>
+                </Box>
+                <Box className={formStyles.fieldBox}>
+                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
+                        <TextField
+                          variant="standard"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          label={MAX_ALLOWED_TIME_LIMIT}
+                          name="maxAllowedTimeLimitInMilliseconds"
+                          onChange={(e) => onChange(e)}
+                          value={currentSubmissionType.maxAllowedTimeLimitInMilliseconds}
+                        />
+                    </FormControl>
+                    <FormControl className={`${formStyles.inputRow} ${formStyles.fieldBoxElementLeft}`}>
+                        <TextField
+                          variant="standard"
+                          InputLabelProps={{ shrink: true }}
+                          type="number"
+                          label={MAX_ALLOWED_MEMORY_LIMIT}
+                          name="maxAllowedMemoryLimitInBytes"
+                          onChange={(e) => onChange(e)}
+                          value={currentSubmissionType.maxAllowedMemoryLimitInBytes}
+                        />
+                    </FormControl>
+                </Box>
                 <FormControl className={formStyles.inputRow}>
                     <FormControlLabel
                       control={<Checkbox checked={currentSubmissionType.isSelectedByDefault} />}

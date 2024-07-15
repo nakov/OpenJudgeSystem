@@ -40,6 +40,10 @@
         // Other
         public const int DefaultProcessExitTimeOutMilliseconds = 5000;
         public const int ProcessDefaultBufferSizeInBytes = 4096;
+        public const int MinimumMemoryLimitInBytes = 1024 * 1024 * 5;
+        public const int MaxMemoryLimitInBytes = 1024 * 1024 * 1000;
+        public const int MinimumTimeLimitInMilliseconds = 1;
+        public const int MaxTimeLimitInMilliseconds = 1000 * 60 * 5;
 
         public const string AppSettingsConfigSectionName = "appSettings";
         public const string ConnectionStringsConfigSectionName = "connectionStrings";

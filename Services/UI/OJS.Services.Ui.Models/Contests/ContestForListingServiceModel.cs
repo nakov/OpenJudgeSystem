@@ -96,6 +96,12 @@ public class ContestForListingServiceModel : IMapExplicitly, ICanBeCompetedAndPr
                         .Where(p => !p.IsDeleted)
                         .Take(1))
                     .Sum(p => p.MaximumPoints)))
+            /*
+             * Automapper doesn't deal well with mapping calculated properties, such as 'HasContestPassword' and 'HasPracticePassword'.
+             * That is why it is better to manually map them.
+             */
+            .ForMember(d => d.HasContestPassword, opt => opt.MapFrom(s => s.ContestPassword != null))
+            .ForMember(d => d.HasPracticePassword, opt => opt.MapFrom(s => s.PracticePassword != null))
             // Mapped from cache
             .ForMember(d => d.UserParticipationResult, opt => opt.Ignore())
             .ForMember(d => d.CompeteResults, opt => opt.Ignore())

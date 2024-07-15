@@ -22,10 +22,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
             $"Class name not found in Solution Skeleton. Expecting \"{ClassNamePlaceholder}\" followed by the test class's name.";
 
         public PythonUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
         }
 

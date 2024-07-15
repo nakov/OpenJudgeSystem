@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
 import { getPlatformRegisterUrl } from '../../../utils/urls';
+import withTitle from '../../shared/with-title';
 
 const RegisterPage = () => {
     const { isLoggedIn } =
@@ -21,4 +22,4 @@ const RegisterPage = () => {
     return (<div />);
 };
 
-export default RegisterPage;
+export default withTitle(RegisterPage, 'Register');

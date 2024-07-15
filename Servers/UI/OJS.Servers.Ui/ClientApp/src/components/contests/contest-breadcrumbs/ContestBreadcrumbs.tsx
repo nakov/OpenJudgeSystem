@@ -9,20 +9,26 @@ import { ContestBreadcrumb } from '../../../common/contest-types';
 import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
 import useTheme from '../../../hooks/use-theme';
 import {
+    clearContestCategoryBreadcrumbItems,
     setContestCategories,
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import trimBreadcrumbItems from '../../../utils/breadcrumb-utils';
+import concatClassNames from '../../../utils/class-names';
 import { findContestCategoryByIdRecursive, findParentNames } from '../contest-categories/ContestCategories';
 
 import styles from './ContestBreadcrumbs.module.scss';
 
-const ContestBreadcrumbs = () => {
+interface IContestBreadcrumbsProps {
+    isHidden?: boolean;
+}
+
+const ContestBreadcrumbs = ({ isHidden = false }: IContestBreadcrumbsProps) => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const [ searchParams, setSearchParams ] = useSearchParams();
+    const [ searchParams ] = useSearchParams();
     const { themeColors, getColorClassName } = useTheme();
     const { breadcrumbItems, contestCategories, contestDetails } = useAppSelector((state) => state.contests);
     const { data, isLoading, refetch } = useGetContestCategoriesQuery();
@@ -51,8 +57,10 @@ const ContestBreadcrumbs = () => {
             : contestDetails?.categoryId;
 
         if (!selectedCategoryId) {
+            dispatch(clearContestCategoryBreadcrumbItems());
             return;
         }
+
         const selectedCategory = findContestCategoryByIdRecursive(contestCategories, Number(selectedCategoryId));
         if (selectedCategory) {
             const selectedCategoryBreadcrumbItems = findParentNames(contestCategories, selectedCategory.id);
@@ -67,10 +75,6 @@ const ContestBreadcrumbs = () => {
           to={getAllContestsPageUrl({ categoryId: breadcrumbItem.id, categoryName: breadcrumbItem.name })}
         >
             <div
-              onClick={() => {
-                  searchParams.set('category', breadcrumbItem.id.toString());
-                  setSearchParams(searchParams);
-              }}
               className={`${styles.item} ${isLast
                   ? textColorClassName
                   : ''}`}
@@ -84,12 +88,21 @@ const ContestBreadcrumbs = () => {
         </Link>
     );
 
+    const className = concatClassNames(
+        styles.breadcrumbsWrapper,
+        textColorClassName,
+        backgroundColorClassName,
+        isHidden
+            ? styles.nonVisible
+            : '',
+    );
+
     if (isLoading) {
-        return <div className={getColorClassName(themeColors.textColor)}>Loading breadcrumbs...</div>;
+        return <div className={className}>Loading breadcrumbs...</div>;
     }
 
     return (
-        <div className={`${styles.breadcrumbsWrapper} ${textColorClassName} ${backgroundColorClassName}`}>
+        <div className={className}>
             <Link to="/" className={`${styles.item} ${styles.staticItem}`}>Home</Link>
             {' / '}
             <Link

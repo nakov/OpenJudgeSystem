@@ -28,6 +28,7 @@ import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
+import withTitle from '../../shared/with-title';
 
 import styles from './SubmissionsDetailsPage.module.scss';
 
@@ -398,4 +399,4 @@ const SubmissionDetailsPage = () => {
     );
 };
 
-export default makePrivate(setLayout(SubmissionDetailsPage));
+export default makePrivate(setLayout(withTitle(SubmissionDetailsPage, (params) => `Submission #${params.submissionId}`)));

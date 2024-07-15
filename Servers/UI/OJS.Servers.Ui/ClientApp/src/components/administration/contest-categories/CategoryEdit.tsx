@@ -5,6 +5,7 @@ import {
     IContestCategories,
     IContestCategoryAdministration,
 } from '../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import {
     useCreateContestCategoryMutation,
     useGetCategoriesQuery,
@@ -69,6 +70,8 @@ const ContestCategoryEdit = (props:IContestCategoryEditProps) => {
             error: createError,
             isLoading: isCreating,
         } ] = useCreateContestCategoryMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(
         () => {

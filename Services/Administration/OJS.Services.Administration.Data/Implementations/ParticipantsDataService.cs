@@ -77,10 +77,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
         public async Task Delete(IEnumerable<Participant> participantsForDeletion)
         {
-            foreach (var participant in participantsForDeletion)
-            {
-                this.Delete(participant);
-            }
+            this.DeleteMany(participantsForDeletion);
 
             await this.SaveChanges();
         }

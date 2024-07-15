@@ -16,9 +16,9 @@
         private const string TimeSpanFormat = "HH:mm:ss";
 
         protected BaseMySqlExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            : base(submission, settingsProvider)
             {
             }
 

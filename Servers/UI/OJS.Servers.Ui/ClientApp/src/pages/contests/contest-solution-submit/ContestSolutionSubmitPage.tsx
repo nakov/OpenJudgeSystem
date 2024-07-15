@@ -10,7 +10,7 @@ import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
+import { IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
 import {
     getAllContestsPageUrl,
     getContestsDetailsPageUrl,
@@ -44,8 +44,10 @@ import {
 } from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { capitalizeFirstLetter } from '../../../utils/string-utils';
 import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
+import withTitle from '../../shared/with-title';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -66,6 +68,7 @@ const ContestSolutionSubmitPage = () => {
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
+    const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -147,6 +150,29 @@ const ContestSolutionSubmitPage = () => {
             isOfficial: isCompete,
         });
     };
+
+    useEffect(() => {
+        if (submissionsData?.items && problems && submissionsData.items.length > 0) {
+            // eslint-disable-next-line max-len
+            const latestSubmission = submissionsData.items.reduce((newest, current) => new Date(current.createdOn) > new Date(newest.createdOn)
+                ? current
+                : newest, submissionsData.items[0]);
+
+            if (latestSubmission?.problem) {
+                const problemIndex = problems.findIndex((p) => p.id === latestSubmission.problem.id);
+                if (problemIndex !== -1) {
+                    const updatedProblem = { ...problems[problemIndex] };
+                    updatedProblem.points = Math.max(latestSubmission.result.points, updatedProblem.points);
+
+                    setUpdatedProblems([
+                        ...problems.slice(0, problemIndex),
+                        updatedProblem,
+                        ...problems.slice(problemIndex + 1),
+                    ]);
+                }
+            }
+        }
+    }, [ problems, submissionsData ]);
 
     useEffect(() => {
         if (!submissionsDataFetching) {
@@ -345,12 +371,12 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const sumMyPoints = useMemo(() => contest
-        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.points, 0)
-        : 0, [ contest ]);
+        ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.points, 0)
+        : 0, [ contest, updatedProblems ]);
 
     const sumAllContestPoints = useMemo(() => contest
-        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
-        : 0, [ contest ]);
+        ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
+        : 0, [ contest, updatedProblems ]);
 
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
@@ -664,7 +690,7 @@ const ContestSolutionSubmitPage = () => {
             ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
-                  problems={problems || []}
+                  problems={updatedProblems || problems || []}
                   onContestProblemChange={() => setSelectedSubmissionsPage(1)}
                   totalParticipantsCount={participantsCount}
                   sumMyPoints={sumMyPoints}
@@ -727,4 +753,7 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default makePrivate(setLayout(ContestSolutionSubmitPage));
+export default makePrivate(setLayout(withTitle(
+    ContestSolutionSubmitPage,
+    (params) => `${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
+)));

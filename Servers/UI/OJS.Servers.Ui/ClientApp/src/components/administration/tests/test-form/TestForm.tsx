@@ -3,6 +3,7 @@ import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Inp
 import isNaN from 'lodash/isNaN';
 
 import { HIDE_INPUT, ID, INPUT, ORDER_BY, OUTPUT, TYPE } from '../../../../common/labels';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useCreateTestMutation, useGetTestByIdQuery, useUpdateTestMutation } from '../../../../redux/services/admin/testsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -46,6 +47,8 @@ const TestForm = (props: ITestFormProps) => {
         createTest,
         { data: createData, error: createError, isLoading: isCreating, isSuccess: isSuccessfullyCreated },
     ] = useCreateTestMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         if (testData) {

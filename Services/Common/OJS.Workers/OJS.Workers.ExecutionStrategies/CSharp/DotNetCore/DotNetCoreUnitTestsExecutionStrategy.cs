@@ -4,7 +4,6 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.Compilers;
     using OJS.Workers.ExecutionStrategies.Extensions;
     using OJS.Workers.ExecutionStrategies.Helpers;
@@ -27,11 +26,11 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         private string nUnitLiteConsoleAppCsProjTemplate;
 
         public DotNetCoreUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

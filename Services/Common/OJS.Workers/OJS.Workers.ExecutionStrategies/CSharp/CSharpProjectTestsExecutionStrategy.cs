@@ -64,11 +64,11 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
             @"((?:\d+|\d+-\d+)\) (?:Failed|Error)\s:\s(.*)\.(.*))\r?\n((?:.*)\r?\n(?:.*))";
 
         public CSharpProjectTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
         {
             this.TestNames = new List<string>();
             this.TestPaths = new List<string>();

@@ -2,6 +2,7 @@ namespace OJS.Services.Worker.Business.Implementations;
 
 using Microsoft.Extensions.Options;
 using OJS.Services.Worker.Models.Configuration;
+using OJS.Workers.Common;
 using OJS.Workers.Common.Models;
 using OJS.Workers.ExecutionStrategies;
 using OJS.Workers.ExecutionStrategies.CPlusPlus;
@@ -28,21 +29,23 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
         this.submissionProcessorIdentifier = appConfigAccessor.Value.SubmissionsProcessorIdentifierNumber.ToString();
     }
 
-    public TSettings? GetSettings<TSettings>(ExecutionStrategyType executionStrategyType)
+    public TSettings? GetSettings<TSettings>(IOjsSubmission submission)
         where TSettings : class, IExecutionStrategySettings
-        => executionStrategyType switch
+    {
+        var executionStrategyType = submission.ExecutionStrategyType;
+        return executionStrategyType switch
         {
             ExecutionStrategyType.CompileExecuteAndCheck => new
                 CompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.MsBuildBaseTimeUsedInMilliseconds,
-                    this.settings.MsBuildBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.MsBuildBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.MsBuildBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndCheck or
             ExecutionStrategyType.NodeJsV20PreprocessExecuteAndCheck => new
                 NodeJsPreprocessExecuteAndCheckExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds * 2,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds * 2),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
                     this.GetNodeJsExecutablePath(executionStrategyType),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath))
 
@@ -50,8 +53,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.JavaPreprocessCompileExecuteAndCheck or
             ExecutionStrategyType.Java21PreprocessCompileExecuteAndCheck => new
                 JavaPreprocessCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.JavaBaseTimeUsedInMilliseconds,
-                    this.settings.JavaBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
@@ -64,8 +67,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.JavaZipFileCompileExecuteAndCheck or
             ExecutionStrategyType.Java21ZipFileCompileExecuteAndCheck => new
                 JavaZipFileCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.JavaBaseTimeUsedInMilliseconds,
-                    this.settings.JavaBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
@@ -73,16 +76,16 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.PythonExecuteAndCheck => new
                 PythonExecuteAndCheckExecutionStrategySettings(
-                    this.settings.PythonBaseTimeUsedInMilliseconds,
-                    this.settings.PythonBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.PythonBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.PythonBaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunUnitTestsWithMocha or
             ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunUnitTestsWithMocha => new
                 NodeJsPreprocessExecuteAndRunUnitTestsWithMochaExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
                     this.GetNodeJsExecutablePath(executionStrategyType),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
@@ -94,8 +97,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunJsDomUnitTests or
             ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunJsDomUnitTests => new
                 NodeJsPreprocessExecuteAndRunJsDomUnitTestsExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
                     this.GetNodeJsExecutablePath(executionStrategyType),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
@@ -131,8 +134,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy or
             ExecutionStrategyType.NodeJsV20PreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategy => new
                 NodeJsPreprocessExecuteAndRunCodeAgainstUnitTestsWithMochaExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
                     this.GetNodeJsExecutablePath(executionStrategyType),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
@@ -147,8 +150,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.NodeJsZipExecuteHtmlAndCssStrategy or
             ExecutionStrategyType.NodeJsV20ZipExecuteHtmlAndCssStrategy => new
                 NodeJsZipExecuteHtmlAndCssStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
                     this.GetNodeJsExecutablePath(executionStrategyType),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.UnderscoreModulePath),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
@@ -164,8 +167,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.JavaProjectTestsExecutionStrategy or
             ExecutionStrategyType.Java21ProjectTestsExecutionStrategy => new
                 JavaProjectTestsExecutionStrategySettings(
-                    this.settings.JavaBaseTimeUsedInMilliseconds,
-                    this.settings.JavaBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
@@ -173,15 +176,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.CPlusPlusZipFileExecutionStrategy => new
                 CPlusPlusZipFileExecutionStrategySettings(
-                    this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
-                    this.settings.GPlusPlusBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.GPlusPlusBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.GPlusPlusBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.JavaUnitTestsExecutionStrategy or
             ExecutionStrategyType.Java21UnitTestsExecutionStrategy => new
                 JavaUnitTestsExecutionStrategySettings(
-                    this.settings.JavaBaseTimeUsedInMilliseconds,
-                    this.settings.JavaBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds)
@@ -189,15 +192,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.CPlusPlusCompileExecuteAndCheckExecutionStrategy => new
                 CPlusPlusCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.GPlusPlusBaseTimeUsedInMilliseconds,
-                    this.settings.GPlusPlusBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.GPlusPlusBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.GPlusPlusBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.JavaSpringAndHibernateProjectExecutionStrategy or
             ExecutionStrategyType.Java21SpringAndHibernateProjectExecution => new
                 JavaSpringAndHibernateProjectExecutionStrategySettings(
-                    this.settings.JavaBaseTimeUsedInMilliseconds,
-                    this.settings.JavaBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.JavaBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.JavaBaseMemoryUsedInBytes),
                     this.GetJavaExecutablePath(executionStrategyType),
                     this.GetJavaLibsPath(executionStrategyType),
                     this.settings.JavaBaseUpdateTimeOffsetInMilliseconds,
@@ -207,14 +210,14 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectExecutionStrategy => new
                 DotNetCoreProjectExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreProjectTestsExecutionStrategy => new
                 DotNetCoreProjectTestsExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes),
                     "netcoreapp3.1",
                     "3.1.4",
                     "3.1.4")
@@ -222,15 +225,15 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.DotNetCoreCompileExecuteAndCheck => new
                 DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.DotNetCscBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCscBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCscBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCscBaseMemoryUsedInBytes),
                     this.settings.DotNetCore3RuntimeVersion)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCoreUnitTestsExecutionStrategy => new
                 DotNetCoreUnitTestsExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes),
                     "netcoreapp3.1",
                     "3.1.4",
                     "3.1.4")
@@ -238,29 +241,29 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.PythonUnitTests => new
                 PythonProjectUnitTestsExecutionStrategySettings(
-                    this.settings.PythonBaseTimeUsedInMilliseconds,
-                    this.settings.PythonBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.PythonBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.PythonBaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.PythonCodeExecuteAgainstUnitTests => new
                 PythonCodeExecuteAgainstUnitTestsExecutionStrategySettings(
-                    this.settings.PythonBaseTimeUsedInMilliseconds,
-                    this.settings.PythonBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.PythonBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.PythonBaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectTests => new
                 PythonProjectTestsExecutionStrategySettings(
-                    this.settings.PythonBaseTimeUsedInMilliseconds,
-                    this.settings.PythonBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.PythonBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.PythonBaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePath)
 
                 as TSettings,
             ExecutionStrategyType.PythonProjectUnitTests => new
                 PythonProjectUnitTestsExecutionStrategySettings(
-                    this.settings.PythonBaseTimeUsedInMilliseconds,
-                    this.settings.PythonBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.PythonBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.PythonBaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePath)
 
                 as TSettings,
@@ -291,8 +294,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategy or
             ExecutionStrategyType.RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests => new
                 RunSpaAndExecuteMochaTestsExecutionStrategySettings(
-                    this.settings.NodeJsBaseTimeUsedInMilliseconds,
-                    this.settings.NodeJsBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.NodeJsBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.NodeJsBaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePath,
                     this.GetNodeResourcePath(executionStrategyType, this.settings.JsProjNodeModules),
                     this.GetNodeResourcePath(executionStrategyType, this.settings.MochaModulePath),
@@ -302,14 +305,14 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.GolangCompileExecuteAndCheck => new
                 GolangCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.GolangBaseTimeUsedInMilliseconds,
-                    this.settings.GolangBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.GolangBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.GolangBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6ProjectTestsExecutionStrategy => new
                 DotNetCoreProjectTestsExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes),
                     "net6.0",
                     "6.0.1",
                     "6.0.1")
@@ -317,8 +320,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.DotNetCore5ProjectTestsExecutionStrategy => new
                 DotNetCoreProjectTestsExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes),
                     "net5.0",
                     "5.0.13",
                     "5.0.13")
@@ -326,22 +329,22 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.DotNetCore5CompileExecuteAndCheck => new
                 DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.DotNetCscBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCscBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCscBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCscBaseMemoryUsedInBytes),
                     this.settings.DotNetCore5RuntimeVersion)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6CompileExecuteAndCheck => new
                 DotNetCoreCompileExecuteAndCheckExecutionStrategySettings(
-                    this.settings.DotNetCscBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCscBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCscBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCscBaseMemoryUsedInBytes),
                     this.settings.DotNetCore6RuntimeVersion)
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore5UnitTestsExecutionStrategy => new
                 DotNetCoreUnitTestsExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes),
                     "net5.0",
                     "5.0.13",
                     "5.0.13")
@@ -349,8 +352,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.DotNetCore6UnitTestsExecutionStrategy => new
                 DotNetCoreUnitTestsExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes),
                     "net6.0",
                     "6.0.1",
                     "6.0.1")
@@ -358,14 +361,14 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.DotNetCore5ProjectExecutionStrategy => new
                 DotNetCoreProjectExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.DotNetCore6ProjectExecutionStrategy => new
                 DotNetCoreProjectExecutionStrategySettings(
-                    this.settings.DotNetCliBaseTimeUsedInMilliseconds,
-                    this.settings.DotNetCliBaseMemoryUsedInBytes)
+                    GetBaseTimeUsed(submission, this.settings.DotNetCliBaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.DotNetCliBaseMemoryUsedInBytes))
 
                 as TSettings,
             ExecutionStrategyType.PostgreSqlPrepareDatabaseAndRunQueries => new
@@ -394,8 +397,8 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 as TSettings,
             ExecutionStrategyType.PythonDjangoOrmExecutionStrategy => new
                 PythonDjangoOrmExecutionStrategySettings(
-                    this.settings.PythonV311BaseTimeUsedInMilliseconds,
-                    this.settings.PythonV311BaseMemoryUsedInBytes,
+                    GetBaseTimeUsed(submission, this.settings.PythonV311BaseTimeUsedInMilliseconds),
+                    GetBaseMemoryUsed(submission, this.settings.PythonV311BaseMemoryUsedInBytes),
                     this.settings.PythonExecutablePathV311,
                     this.settings.PipExecutablePathV311,
                     this.settings.PythonV311InstallPackagesTimeUsedInMilliseconds)
@@ -407,6 +410,13 @@ public class ExecutionStrategySettingsProvider : IExecutionStrategySettingsProvi
                 nameof(executionStrategyType)),
             _ => throw new ArgumentOutOfRangeException(nameof(executionStrategyType), executionStrategyType, null),
         };
+    }
+
+    private static int GetBaseTimeUsed(IOjsSubmission submission, int defaultBaseTimeUsed)
+        => submission.ExecutionStrategyBaseTimeLimit ?? defaultBaseTimeUsed;
+
+    private static int GetBaseMemoryUsed(IOjsSubmission submission, int defaultBaseMemoryUsed)
+        => submission.ExecutionStrategyBaseMemoryLimit ?? defaultBaseMemoryUsed;
 
     private static bool IsJava21(ExecutionStrategyType type)
         => type.ToString().Contains("21");

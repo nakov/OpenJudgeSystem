@@ -50,6 +50,8 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
 
     public double OrderBy { get; set; }
 
+    public int OfficialParticipants { get; set; }
+
     public bool IsOnlineExam => this.Type == ContestType.OnlinePracticalExam.ToString();
 
     public int NumberOfProblemGroups { get; set; }
@@ -62,7 +64,9 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
             .ForMember(crm => crm.OperationType, opt
                 => opt.Ignore())
             .ForMember(crm => crm.AllowedIps, opt
-                => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())));
+                => opt.MapFrom(c => string.Join(';', c.IpsInContests.Select(x => x.Ip.Value).ToHashSet())))
+            .ForMember(crm => crm.OfficialParticipants, opt
+                => opt.MapFrom(c => c.Participants.Count(p => p.IsOfficial)));
 
         configuration.CreateMap<ContestAdministrationModel, Contest>()
             //TODO Fix
@@ -87,6 +91,6 @@ public class ContestAdministrationModel : BaseAdministrationModel<int>, IMapExpl
             .ForMember(crm => crm.ModifiedOn, opt
                 => opt.Ignore())
             .ForMember(crm => crm.AutoChangeTestsFeedbackVisibility, opt
-            => opt.Ignore());
+                => opt.Ignore());
     }
 }

@@ -40,10 +40,10 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private int expectedProjectFilesCount;
 
         public PythonProjectUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            : base(submission, processExecutorFactory, settingsProvider)
         {
         }
 

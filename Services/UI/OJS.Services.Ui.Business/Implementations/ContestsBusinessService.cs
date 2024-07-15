@@ -510,31 +510,31 @@ namespace OJS.Services.Ui.Business.Implementations
                 pagedContests.Items.ToList(),
                 participantResultsByContest.Values.SelectMany(x => x).ToList());
 
-            pagedContests.Items.ForEach(c =>
+            await pagedContests.Items.ForEachAsync(c =>
             {
                 c.CompeteResults = participantsCount[c.Id].Official;
                 c.PracticeResults = participantsCount[c.Id].Practice;
 
+                ParticipantResultServiceModel? competeParticipant = null;
+                ParticipantResultServiceModel? practiceParticipant = null;
                 if (participantResultsByContest.Any())
                 {
                     var participants = participantResultsByContest.GetValueOrDefault(c.Id);
-                    if (participants == null)
+                    if (participants != null)
                     {
-                        return;
+                        competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
+                        practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
+
+                        c.UserParticipationResult = new ContestParticipantResultServiceModel
+                        {
+                            CompetePoints = competeParticipant?.Points,
+                            PracticePoints = practiceParticipant?.Points,
+                        };
                     }
-
-                    var competeParticipant = participants.SingleOrDefault(p => p.IsOfficial);
-                    var practiceParticipant = participants.SingleOrDefault(p => !p.IsOfficial);
-
-                    c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
-                    c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
-
-                    c.UserParticipationResult = new ContestParticipantResultServiceModel
-                    {
-                        CompetePoints = competeParticipant?.Points,
-                        PracticePoints = practiceParticipant?.Points,
-                    };
                 }
+
+                c.RequirePasswordForCompete = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, competeParticipant?.Map<Participant>(), true);
+                c.RequirePasswordForPractice = ShouldRequirePassword(c.HasContestPassword, c.HasPracticePassword, practiceParticipant?.Map<Participant>(), false);
             });
 
             return pagedContests;

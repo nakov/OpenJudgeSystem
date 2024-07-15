@@ -1,6 +1,7 @@
 import { concatClassnames } from 'react-alice-carousel/lib/utils';
 import { IoIosLock } from 'react-icons/io';
 import { Link } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
@@ -66,7 +67,6 @@ const ContestCard = (props: IContestCardProps) => {
         requirePasswordForCompete,
         requirePasswordForPractice,
     } = contest;
-    console.log(userParticipationResult);
 
     const contestStartTime = canBeCompeted || (!canBeCompeted && !canBePracticed)
         ? startTime
@@ -88,8 +88,11 @@ const ContestCard = (props: IContestCardProps) => {
     const isUserAdminOrLecturer = internalUser.isAdmin || internalUser.isLecturer;
 
     const renderContestDetailsFragment = (
-        iconName: string, text: string | number | undefined,
-        isGreenColor?: boolean, hasUnderLine?: boolean,
+        iconName: string,
+        text: string | number | undefined,
+        tooltipTitle?: string,
+        isGreenColor?: boolean,
+        hasUnderLine?: boolean,
         participationType?: string,
     ) => {
         if (!text || !iconName) {
@@ -109,37 +112,42 @@ const ContestCard = (props: IContestCardProps) => {
             </>
         );
 
+        const content = participationType
+            ? (
+                <Link
+                  className={`${styles.contestDetailsFragment} ${isGreenColor
+                      ? styles.greenColor
+                      : ''}`}
+                  to={getContestsResultsPageUrl({
+                      slug: createUrlFriendlyString(name),
+                      contestId: id!,
+                      participationType: participationType === ContestParticipationType.Compete
+                          ? ContestParticipationType.Compete
+                          : ContestParticipationType.Practice,
+                      isSimple: true,
+                  })}
+                >
+                    {renderBody()}
+                </Link>
+            )
+            : (
+                <div className={`${styles.contestDetailsFragment} ${isGreenColor
+                    ? styles.greenColor
+                    : ''}`}
+                >
+                    {renderBody()}
+                </div>
+            );
+
         // eslint-disable-next-line consistent-return
         return (
-            // eslint-disable-next-line react/jsx-no-useless-fragment
-            <>
-                {participationType
-                    ? (
-                        <Link
-                          className={`${styles.contestDetailsFragment} ${isGreenColor
-                              ? styles.greenColor
-                              : ''}`}
-                          to={getContestsResultsPageUrl({
-                              slug: createUrlFriendlyString(name),
-                              contestId: id!,
-                              participationType: participationType === ContestParticipationType.Compete
-                                  ? ContestParticipationType.Compete
-                                  : ContestParticipationType.Practice,
-                              isSimple: true,
-                          })}
-                        >
-                            {renderBody()}
-                        </Link>
-                    )
-                    : (
-                        <div className={`${styles.contestDetailsFragment} ${isGreenColor
-                            ? styles.greenColor
-                            : ''}`}
-                        >
-                            {renderBody()}
-                        </div>
-                    )}
-            </>
+            tooltipTitle
+                ? (
+                    <Tooltip title={tooltipTitle}>
+                        {content}
+                    </Tooltip>
+                )
+                : content
         );
     };
 
@@ -200,13 +208,15 @@ const ContestCard = (props: IContestCardProps) => {
                     {contestStartTime && renderContestDetailsFragment(
                         iconNames.date,
                         preciseFormatDate(contestStartTime, dateTimeFormatWithSpacing),
+                        'Start date',
                     )}
-                    {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems)}
+                    {renderContestDetailsFragment(iconNames.numberOfProblems, numberOfProblems, 'Problem count')}
                     {
                         getPracticeResultsAreVisible(contest, internalUser.canAccessAdministration) &&
                         renderContestDetailsFragment(
                             iconNames.practiceResults,
-                            `practice results: ${practiceResults}`,
+                            `Practice results: ${practiceResults}`,
+                            undefined,
                             false,
                             true,
                             ContestParticipationType.Practice,
@@ -217,7 +227,8 @@ const ContestCard = (props: IContestCardProps) => {
                         getCompeteResultsAreVisible(contest, internalUser.canAccessAdministration) &&
                         renderContestDetailsFragment(
                             iconNames.competeResults,
-                            `compete results: ${competeResults}`,
+                            `Compete results: ${competeResults}`,
+                            undefined,
                             true,
                             true,
                             ContestParticipationType.Compete,
@@ -229,7 +240,8 @@ const ContestCard = (props: IContestCardProps) => {
                         hasContestStartTimePassed &&
                         renderContestDetailsFragment(
                             iconNames.remainingTime,
-                            `remaining time: ${remainingTimeFormatted}`,
+                            `Remaining time: ${remainingTimeFormatted}`,
+                            'Remaining time',
                             false,
                             false,
                         )}

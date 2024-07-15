@@ -20,11 +20,11 @@
         private const string FileNameAndExtensionPattern = @"//((\w+)\.(cpp|h))//";
 
         public CPlusPlusZipFileExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider)
         {
         }
 

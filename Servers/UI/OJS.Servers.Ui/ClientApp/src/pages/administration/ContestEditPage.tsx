@@ -3,6 +3,7 @@ import isNil from 'lodash/isNil';
 
 import { RedirectExternal } from '../../components/common/RedirectExternal';
 import { getAdministrationContestEditUrl } from '../../utils/urls';
+import withTitle from '../shared/with-title';
 
 const ContestEditPage = () => {
     const params = useParams();
@@ -14,4 +15,4 @@ const ContestEditPage = () => {
     return RedirectExternal(getAdministrationContestEditUrl({ id: Number(contestId) }));
 };
 
-export default ContestEditPage;
+export default withTitle(ContestEditPage, (params) => `Contest Edit #${params.contestId}`);

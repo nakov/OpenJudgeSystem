@@ -5,6 +5,7 @@ import isNaN from 'lodash/isNaN';
 import { ProblemGroupTypes } from '../../../../common/enums';
 import { ID, ORDER_BY, TYPE } from '../../../../common/labels';
 import { IContestAutocomplete } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCreateProblemGroupMutation, useGetProblemGroupByIdQuery, useUpdateProblemGroupMutation } from '../../../../redux/services/admin/problemGroupsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -61,6 +62,8 @@ const ProblemGroupForm = (props: IProblemFormProps) => {
             error: createError,
             isSuccess: isSuccessfullyCreated,
         } ] = useCreateProblemGroupMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         if (contestsAutocompleteData) {

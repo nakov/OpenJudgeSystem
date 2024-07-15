@@ -3,10 +3,11 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
-import { useEffect, useMemo } from 'react';
-import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
-import { useNavigate } from 'react-router';
+import { SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeItem2 } from '@mui/x-tree-view/TreeItem2';
 
 import { IContestCategory } from '../../../common/types';
 import { getAllContestsPageUrl } from '../../../common/urls/compose-client-urls';
@@ -18,8 +19,9 @@ import {
     updateContestCategoryBreadcrumbItem,
 } from '../../../redux/features/contestsSlice';
 import { useGetContestCategoriesQuery } from '../../../redux/services/contestsService';
-import { useAppDispatch } from '../../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import concatClassNames from '../../../utils/class-names';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 import SpinningLoader from '../../guidelines/spinning-loader/SpinningLoader';
 
 import styles from './ContestCategories.module.scss';
@@ -30,11 +32,12 @@ interface IContestCategoriesProps {
 
 const ContestCategories = (props: IContestCategoriesProps) => {
     const { isRenderedOnHomePage = false } = props;
+    const [ expandedItems, setExpandedItems ] = useState<string[]>([]);
+    const { breadcrumbItems } = useAppSelector((state) => state.contests);
 
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [ searchParams, setSearchParams ] = useSearchParams();
-    const { themeColors, getColorClassName } = useTheme();
+    const [ searchParams ] = useSearchParams();
+    const { themeColors, getColorClassName, isDarkMode } = useTheme();
 
     const textColorClassName = getColorClassName(themeColors.textColor);
 
@@ -51,59 +54,41 @@ const ContestCategories = (props: IContestCategoriesProps) => {
     }, [ contestCategories, dispatch ]);
 
     useEffect(() => {
-        const selectedCategory = findContestCategoryByIdRecursive(contestCategories, selectedId);
-        const breadcrumbItems = findParentNames(contestCategories, selectedId);
+        const category = findContestCategoryByIdRecursive(contestCategories, selectedId);
+        const breadcrumbCategories = findParentNames(contestCategories, selectedId);
 
-        dispatch(setContestCategory(selectedCategory));
-        dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbItems }));
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [ selectedId, contestCategories ]);
+        dispatch(setContestCategory(category));
+        dispatch(updateContestCategoryBreadcrumbItem({ elements: breadcrumbCategories }));
+    }, [ selectedId, contestCategories, dispatch ]);
 
-    const onContestCategoryClick = (id: number, name: string) => {
-        if (isRenderedOnHomePage) {
-            navigate(getAllContestsPageUrl({ categoryName: name, categoryId: id }));
-            return;
+    useEffect(() => {
+        const breadcrumbItemIds = breadcrumbItems.map((item) => item.id.toString());
+
+        if (breadcrumbItemIds) {
+            setExpandedItems((prev) => {
+                // Create a unique Set with previous open categories and the breadcrumb categories,
+                // to prevent already open categories from closing and to open the breadcrumb ones.
+                const updatedItems = new Set([ ...prev, ...breadcrumbItemIds ]);
+                return Array.from(updatedItems);
+            });
         }
-        const selectedContestCategory = findContestCategoryByIdRecursive(contestCategories, id);
-        if (!selectedContestCategory) {
-            return;
+    }, [ breadcrumbItems ]);
+
+    useEffect(() => {
+        // If no category is selected, we want to collapse all categories
+        if (!searchParams.get('category')) {
+            setExpandedItems([]);
         }
-        const parents = findParentNames(contestCategories, selectedContestCategory?.id);
-        // click is on already selected category
-        if (searchParams.get('category') === selectedContestCategory?.id.toString()) {
-            if (parents && parents?.length > 1) {
-                const selectedParentCategory = parents[parents.length - 2];
-                searchParams.set('category', selectedParentCategory.id.toString());
-                searchParams.delete('strategy');
+    }, [ searchParams ]);
 
-                const contestElementInFormat = findContestCategoryByIdRecursive(contestCategories, selectedParentCategory.id);
-                dispatch(setContestCategory(contestElementInFormat));
-                dispatch(setContestStrategy(null));
-            } else {
-                searchParams.delete('category');
-
-                dispatch(setContestCategory(null));
-                dispatch(setContestStrategy(null));
-            }
-        } else {
-            searchParams.set('page', '1');
-            searchParams.set('category', id.toString());
-            searchParams.delete('strategy');
-
-            dispatch(setContestCategory(selectedContestCategory));
-            dispatch(setContestStrategy(null));
-        }
-
-        setSearchParams(searchParams);
-        navigate(getAllContestsPageUrl({
-            categoryName: name,
-            categoryId: searchParams.get('category'),
-            strategyId: searchParams.get('strategy'),
-        }));
+    const handleExpandedItemsChange = (
+        event: SyntheticEvent,
+        itemIds: string[],
+    ) => {
+        setExpandedItems(itemIds);
     };
 
     const renderCategory = (category: IContestCategory, isChildElement = false) => {
-        const isActiveOrHasActiveChild = findActiveChildrenByIdRecursive(category.children, selectedId) || selectedId === category.id;
         const categoryItemClassNames = concatClassNames(
             styles.categoryItem,
             selectedId === category.id
@@ -112,35 +97,51 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             isChildElement
                 ? styles.childCategoryItem
                 : '',
+            isDarkMode
+                ? styles.darkCategoryItem
+                : '',
+            category.parentId === null
+                ? styles.mainTreeCategoryItem
+                : '',
         );
 
-        return (
-            <div
-              key={`contest-category-item-${category.id}`}
-            >
-                <div
-                  style={{
-                      borderBottom: `${isChildElement
-                          ? 0
-                          : 1}px solid ${themeColors.textColor}`,
+        const categoryListItemClassNames = concatClassNames(
+            styles.categoryListItem,
+            isChildElement
+                ? styles.isChild
+                : '',
+        );
+
+        const categoryListItemContentClassNames = concatClassNames(styles.categoryListItemContent);
+
+        if (category.children.length > 0) {
+            return (
+                <TreeItem2
+                  itemId={`${category.id}`}
+                  key={category.id}
+                  onClick={(ev) => {
+                      ev.stopPropagation();
+                      dispatch(setContestStrategy(null));
                   }}
-                  className={categoryItemClassNames}
-                  onClick={() => onContestCategoryClick(category.id, category.name)}
-                >
-                    { isChildElement && category.children.length > 0 && <FaAngleRight /> }
-                    <div>
-                        {category.name}
-                    </div>
-                    { !isChildElement && category.children.length > 0 && <FaAngleDown />}
-                </div>
-                <div
-                  className={`${styles.categoryChildren} ${isActiveOrHasActiveChild
-                      ? styles.activeChildren
-                      : ''}`}
+                  label={category.name}
+                  className={categoryListItemClassNames}
+                  classes={{ content: categoryListItemContentClassNames }}
                 >
                     {category.children.map((child) => renderCategory(child, true))}
-                </div>
-            </div>
+                </TreeItem2>
+            );
+        }
+
+        // Most inner category is the link that will load the contests.
+        return (
+            <LinkButton
+              to={getAllContestsPageUrl({ categoryName: category.name, categoryId: category.id })}
+              type={LinkButtonType.plain}
+              preventScrollReset
+              className={categoryItemClassNames}
+              text={category.name}
+              key={category.id.toString()}
+            />
         );
     };
 
@@ -151,6 +152,7 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             </div>
         );
     }
+
     return (
         <div className={styles.contestCategoriesWrapper}>
             <div
@@ -163,13 +165,20 @@ const ContestCategories = (props: IContestCategoriesProps) => {
             >
                 <div>Contest Categories</div>
             </div>
-            { categoriesError
+            {categoriesError
                 ? <div className={textColorClassName}>Error loading categories</div>
                 : (
                     <div
                       className={`${styles.contestCategoriesInnerWrapper} ${textColorClassName}`}
                     >
-                        {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
+                        <Box>
+                            <SimpleTreeView
+                              expandedItems={expandedItems}
+                              onExpandedItemsChange={handleExpandedItemsChange}
+                            >
+                                {contestCategories?.map((contestCategory: IContestCategory) => renderCategory(contestCategory))}
+                            </SimpleTreeView>
+                        </Box>
                     </div>
                 )}
         </div>
@@ -185,7 +194,7 @@ const findParentNames = (collection: Array<IContestCategory> | undefined, select
         element: IContestCategory,
         targetId: number,
         parents: Array<{ name: string; id: number }> = [],
-    ): Array<{name: string; id: number}> | null => {
+    ): Array<{ name: string; id: number }> | null => {
         if (element.id === targetId) {
             return [ ...parents, { name: element.name, id: element.id } ];
         }
@@ -230,24 +239,5 @@ const findContestCategoryByIdRecursive =
         }
         return null;
     };
-
-const findActiveChildrenByIdRecursive = (elements: Array<IContestCategory> | undefined, id: number) => {
-    if (!elements) {
-        return null;
-    }
-    // eslint-disable-next-line no-restricted-syntax
-    for (const element of elements) {
-        if (element.id === id) {
-            return true;
-        }
-        if (element.children) {
-            const found = findActiveChildrenByIdRecursive(element.children, id);
-            if (found) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
 
 export { ContestCategories, findContestCategoryByIdRecursive, findParentNames };

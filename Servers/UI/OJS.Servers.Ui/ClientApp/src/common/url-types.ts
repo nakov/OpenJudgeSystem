@@ -160,12 +160,6 @@ interface IGetSearchResultsUrlParams {
     selectedTerms: ITerm[];
 }
 
-interface IGetSearchResultsParams {
-    searchTerm: string;
-    page: number;
-    searchCategory: string;
-}
-
 interface ISubmitContestSolutionParams {
     content: string | File;
     official: boolean;
@@ -186,7 +180,6 @@ export type {
     ISubmitContestPasswordUrlParams,
     IContestDetailsUrlParams,
     IAllContestsUrlParams,
-    IGetSearchResultsParams,
     IContestCategoriesUrlParams,
     IStartContestParticipationUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,

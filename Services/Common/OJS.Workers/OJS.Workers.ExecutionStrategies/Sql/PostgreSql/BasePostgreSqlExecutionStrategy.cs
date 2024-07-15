@@ -23,9 +23,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
         private bool isDisposed;
 
         protected BasePostgreSqlExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            : base(submission, settingsProvider)
             => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_do_not_delete";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";
