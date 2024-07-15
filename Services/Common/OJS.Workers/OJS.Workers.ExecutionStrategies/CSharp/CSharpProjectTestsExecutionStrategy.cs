@@ -198,8 +198,8 @@ namespace OJS.Workers.ExecutionStrategies.CSharp
                 executionContext.MemoryLimit,
                 arguments,
                 null,
-                false,
-                true);
+                useProcessTime: false,
+                useSystemEncoding: true);
 
             if (!string.IsNullOrWhiteSpace(processExecutionResult.ErrorOutput))
             {

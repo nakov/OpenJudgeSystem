@@ -117,8 +117,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 executionContext.MemoryLimit,
                 this.ExecutionArguments.Concat(new[] { codeSavePath }),
                 directory,
-                false,
-                true);
+                useProcessTime: false,
+                useSystemEncoding: true);
     }
 
     public record PythonExecuteAndCheckExecutionStrategySettings(

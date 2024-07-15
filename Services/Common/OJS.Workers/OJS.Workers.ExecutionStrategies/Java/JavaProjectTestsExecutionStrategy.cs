@@ -326,7 +326,7 @@ public class _$TestRunner {{
                 executionContext.MemoryLimit,
                 arguments,
                 this.WorkingDirectory,
-                true);
+                useProcessTime: true);
 
             if (!string.IsNullOrWhiteSpace(processExecutionResult.ErrorOutput))
             {
