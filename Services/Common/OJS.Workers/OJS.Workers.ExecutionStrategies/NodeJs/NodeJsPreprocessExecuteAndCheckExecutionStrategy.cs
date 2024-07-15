@@ -26,11 +26,11 @@
         private const string DefaultAdapterFunctionCode = "(input, code) => code(input);";
 
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, processExecutorFactory, settingsProvider, logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
             if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {

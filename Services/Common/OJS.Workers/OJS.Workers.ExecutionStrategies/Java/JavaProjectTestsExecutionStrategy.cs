@@ -27,12 +27,12 @@ namespace OJS.Workers.ExecutionStrategies.Java
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
 
         public JavaProjectTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider, logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
             => this.UserClassNames = new List<string>();
 
         protected List<string> UserClassNames { get; }

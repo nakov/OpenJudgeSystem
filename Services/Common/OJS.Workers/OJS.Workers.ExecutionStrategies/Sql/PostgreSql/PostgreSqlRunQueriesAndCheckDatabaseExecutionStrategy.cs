@@ -3,17 +3,16 @@
     using Microsoft.Extensions.Logging;
     using System.Data;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BasePostgreSqlExecutionStrategy<TSettings>
         where TSettings : PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public PostgreSqlRunQueriesAndCheckDatabaseExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, settingsProvider, logger)
+            : base(submission, settingsProvider, logger)
         {
         }
 

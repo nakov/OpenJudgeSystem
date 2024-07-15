@@ -23,11 +23,11 @@ namespace OJS.Workers.ExecutionStrategies.NodeJs
         protected const string EntryFileName = "*.html";
 
         public NodeJsZipExecuteHtmlAndCssStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, processExecutorFactory, settingsProvider, logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
             if (!Directory.Exists(this.Settings.JsDomModulePath))
             {

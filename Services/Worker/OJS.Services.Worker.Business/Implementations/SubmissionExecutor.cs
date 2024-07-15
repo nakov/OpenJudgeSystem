@@ -29,7 +29,7 @@
         {
             try
             {
-                return this.executionStrategyFactory.CreateExecutionStrategy(submission.ExecutionStrategyType);
+                return this.executionStrategyFactory.CreateExecutionStrategy(submission);
             }
             catch (Exception ex)
             {

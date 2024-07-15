@@ -22,11 +22,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string TestResultsRegexPattern = @"^([.FE]+)\s*.+(?<=\r\n|\r|\n)(OK|FAILED\s\(.+\))(?=\s*?$)";
 
         public PythonCodeExecuteAgainstUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, processExecutorFactory, settingsProvider, logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
         }
 

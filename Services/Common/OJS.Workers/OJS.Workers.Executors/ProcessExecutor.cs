@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-
-    using OJS.Workers.Common;
     using System.ComponentModel;
+    using System.IO;
+    using OJS.Workers.Common;
+    using static OJS.Workers.Common.Constants;
 
     public abstract class ProcessExecutor : IExecutor
     {
@@ -14,7 +14,6 @@
 #pragma warning restore SA1401
 
         private const int TimeIntervalBetweenTwoResourceConsumptionRequests = 10;
-        private const int MinimumMemoryLimitInBytes = 5 * 1024 * 1024;
 
         private readonly int baseTimeUsed;
         private readonly int baseMemoryUsed;
@@ -110,11 +109,27 @@
         private void BeforeExecute()
         {
             this.timeLimit += this.baseTimeUsed;
+
+            if (this.timeLimit < MinimumTimeLimitInMilliseconds)
+            {
+                this.timeLimit = MinimumTimeLimitInMilliseconds;
+            }
+
+            if (this.timeLimit > MaxTimeLimitInMilliseconds)
+            {
+                this.timeLimit = MaxTimeLimitInMilliseconds;
+            }
+
             this.memoryLimit += this.baseMemoryUsed;
 
             if (this.memoryLimit < MinimumMemoryLimitInBytes)
             {
                 this.memoryLimit = MinimumMemoryLimitInBytes;
+            }
+
+            if (this.memoryLimit > MaxMemoryLimitInBytes)
+            {
+                this.memoryLimit = MaxMemoryLimitInBytes;
             }
         }
 

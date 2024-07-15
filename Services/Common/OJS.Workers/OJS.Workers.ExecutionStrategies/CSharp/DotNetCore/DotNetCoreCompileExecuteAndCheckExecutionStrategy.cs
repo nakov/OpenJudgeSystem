@@ -19,12 +19,12 @@ namespace OJS.Workers.ExecutionStrategies.CSharp.DotNetCore
         private const string DotNetCoreCodeStringTemplate = "{0}{1}{2}";
 
         public DotNetCoreCompileExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider, logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

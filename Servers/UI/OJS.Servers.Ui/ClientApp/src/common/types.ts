@@ -641,6 +641,10 @@ interface ISubmissionTypeAdministrationModel {
     allowedFileExtensions: string;
     isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
+    baseTimeUsedInMilliseconds?: number;
+    baseMemoryUsedInBytes?: number;
+    maxAllowedTimeLimitInMilliseconds?: number;
+    maxAllowedMemoryLimitInBytes?: number;
 }
 
 interface ICheckerInListModel {

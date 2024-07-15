@@ -17,10 +17,10 @@
         private const string TimeSpanFormat = "HH:mm:ss";
 
         protected BaseMySqlExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
-            : base(type, settingsProvider, logger)
+            : base(submission, settingsProvider, logger)
             {
             }
 

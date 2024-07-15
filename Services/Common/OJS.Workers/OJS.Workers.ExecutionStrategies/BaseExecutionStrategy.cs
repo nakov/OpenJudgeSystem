@@ -16,14 +16,14 @@
         private readonly ILogger<BaseExecutionStrategy<TSettings>> logger;
 
         protected BaseExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IExecutionStrategySettingsProvider settingsProvider,
             ILogger<BaseExecutionStrategy<TSettings>> logger)
         {
             this.logger = logger;
 
-            this.Type = type;
-            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)
+            this.Type = submission.ExecutionStrategyType;
+            this.Settings = settingsProvider.GetSettings<TSettings>(submission)
                 ?? throw new ArgumentException(
                     $"Cannot get settings of type {typeof(TSettings).Name} for execution strategy {this.Type}.",
                     nameof(settingsProvider));
