@@ -44,6 +44,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -53,6 +55,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.lang.reflect.Method;
 
 public class _$TestRunner {{
     public static void main(String[] args) {{
@@ -83,19 +87,26 @@ public class _$TestRunner {{
         System.setOut(originalOut);
 
         for (int i = 0; i < results.size(); i++){{
+            var testMethodCount = 0;
+            for (Method method : testClasses[i].getDeclaredMethods()) {{
+                if (method.isAnnotationPresent(Test.class)) {{
+                   testMethodCount++;
+                }}
+            }}
+
+            if (testMethodCount > 1) {{
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", testMethodCount, testClasses[i].getSimpleName());
+                continue;
+            }}
+
             Result result = results.get(i);
 
             System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + result.wasSuccessful());
 
-            var failureCount = result.getFailures().size();
-            if (failureCount > 1) {{
-                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
-            }} else {{
-                for (Failure failure : result.getFailures()) {{
-                    String failureClass = failure.getDescription().getTestClass().getSimpleName();
-                    String failureException = failure.getException().toString().replaceAll(""\r"", ""\\\\r"").replaceAll(""\n"",""\\\\n"");
-                    System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
-                }}
+            for (Failure failure : result.getFailures()) {{
+                String failureClass = failure.getDescription().getTestClass().getSimpleName();
+                String failureException = failure.getException().toString().replaceAll(""\r"", ""\\\\r"").replaceAll(""\n"",""\\\\n"");
+                System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
             }}
         }}
     }}
@@ -114,6 +125,8 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -123,6 +136,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.lang.reflect.Method;
 
 class Classes {{
     public static Map<String, Class> allClasses = new HashMap<>();
@@ -171,23 +186,29 @@ public class _$TestRunner {{
         System.setOut(originalOut);
 
         for (int i = 0; i < listeners.size(); i++) {{
+            var testMethodCount = 0;
+            for (Method method : testClasses[i].getDeclaredMethods()) {{
+                if (method.isAnnotationPresent(Test.class)) {{
+                   testMethodCount++;
+                }}
+            }}
+
+            if (testMethodCount > 1) {{
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", testMethodCount, testClasses[i].getSimpleName());
+                continue;
+            }}
+
             SummaryGeneratingListener listener = listeners.get(i);
             var summary = listener.getSummary();
 
-            var failureCount = summary.getTotalFailureCount();
-
-            var hasFailures = failureCount > 0;
+            var hasFailures = summary.getTotalFailureCount() > 0;
             System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + !hasFailures);
 
-            if (failureCount > 1) {{
-                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
-            }} else {{
-                summary.getFailures().forEach(failure -> {{
-                    String failureClass = failure.getTestIdentifier().getDisplayName();
-                    String failureException = failure.getException().toString().replaceAll(""\r"", ""\\r"").replaceAll(""\n"",""\\n"");
-                    System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
-                }});
-            }}
+            summary.getFailures().forEach(failure -> {{
+                String failureClass = failure.getTestIdentifier().getDisplayName();
+                String failureException = failure.getException().toString().replaceAll(""\r"", ""\\r"").replaceAll(""\n"",""\\n"");
+                System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
+            }});
         }}
     }}
 }}";
@@ -397,6 +418,23 @@ public class _$TestRunner {{
                     .Select(x => x.Contains(".") ? x.Substring(0, x.LastIndexOf(".", StringComparison.Ordinal)) : x)
                     .Select(x => x.Replace("/", ".")));
 
+        private static string ReadAndValidateLine(StringReader output)
+        {
+            var line = output.ReadLine();
+
+            if (line == null)
+            {
+                throw new InvalidOperationException("Unexpected end of output.");
+            }
+
+            if (line.StartsWith(InvalidNumberOfTestCasesPrefix))
+            {
+                throw new InvalidOperationException(line);
+            }
+
+            return line;
+        }
+
         private Dictionary<string, string> GetTestErrors(string receivedOutput)
         {
             if (string.IsNullOrWhiteSpace(receivedOutput))
@@ -410,7 +448,7 @@ public class _$TestRunner {{
 
             foreach (var testName in this.TestNames)
             {
-                var line = output.ReadLine();
+                var line = ReadAndValidateLine(output);
 
                 var firstSpaceIndex = line.IndexOf(" ", StringComparison.Ordinal);
                 var fileName = line.Substring(0, firstSpaceIndex);
@@ -426,19 +464,10 @@ public class _$TestRunner {{
 
                 if (!isTestSuccessful)
                 {
-                    var errorLine = output.ReadLine();
-
-                    if (errorLine == null)
-                    {
-                        throw new InvalidOperationException("The test was unsuccessful, but no error message was found.");
-                    }
-
-                    if (errorLine.StartsWith(InvalidNumberOfTestCasesPrefix))
-                    {
-                        throw new InvalidOperationException(errorLine);
-                    }
+                    var errorLine = ReadAndValidateLine(output);
 
                     var errorMessage = errorLine.Substring(firstSpaceIndex);
+
                     errorsByFiles.Add(fileName, errorMessage);
                 }
             }
