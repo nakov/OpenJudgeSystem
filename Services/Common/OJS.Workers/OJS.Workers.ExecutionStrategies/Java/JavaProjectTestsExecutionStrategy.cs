@@ -102,15 +102,10 @@ public class _$TestRunner {{
 
             System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + result.wasSuccessful());
 
-            var failureCount = result.getFailures().size();
-            if (failureCount > 1) {{
-                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
-            }} else {{
-                for (Failure failure : result.getFailures()) {{
-                    String failureClass = failure.getDescription().getTestClass().getSimpleName();
-                    String failureException = failure.getException().toString().replaceAll(""\r"", ""\\\\r"").replaceAll(""\n"",""\\\\n"");
-                    System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
-                }}
+            for (Failure failure : result.getFailures()) {{
+                String failureClass = failure.getDescription().getTestClass().getSimpleName();
+                String failureException = failure.getException().toString().replaceAll(""\r"", ""\\\\r"").replaceAll(""\n"",""\\\\n"");
+                System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
             }}
         }}
     }}
@@ -205,20 +200,14 @@ public class _$TestRunner {{
             SummaryGeneratingListener listener = listeners.get(i);
             var summary = listener.getSummary();
 
-            var failureCount = summary.getTotalFailureCount();
-
-            var hasFailures = failureCount > 0;
+            var hasFailures = summary.getTotalFailureCount() > 0;
             System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + !hasFailures);
 
-            if (failureCount > 1) {{
-                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", failureCount, testClasses[i].getSimpleName());
-            }} else {{
-                summary.getFailures().forEach(failure -> {{
-                    String failureClass = failure.getTestIdentifier().getDisplayName();
-                    String failureException = failure.getException().toString().replaceAll(""\r"", ""\\r"").replaceAll(""\n"",""\\n"");
-                    System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
-                }});
-            }}
+            summary.getFailures().forEach(failure -> {{
+                String failureClass = failure.getTestIdentifier().getDisplayName();
+                String failureException = failure.getException().toString().replaceAll(""\r"", ""\\r"").replaceAll(""\n"",""\\n"");
+                System.out.printf(""%s %s%s"", failureClass, failureException, System.lineSeparator());
+            }});
         }}
     }}
 }}";
@@ -434,7 +423,7 @@ public class _$TestRunner {{
 
             if (line == null)
             {
-                throw new InvalidOperationException("Unexpected end of output.");
+                throw new InvalidOperationException("Unexpected end of output. Please verify that all test cases are executed correctly and produce the expected results.");
             }
 
             if (line.StartsWith(InvalidNumberOfTestCasesPrefix))
