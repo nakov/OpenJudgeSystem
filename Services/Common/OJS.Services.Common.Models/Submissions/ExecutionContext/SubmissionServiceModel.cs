@@ -41,6 +41,9 @@
             configuration
                 .CreateMap(typeof(SubmissionServiceModel), typeof(OjsSubmission<>))
                 .ForMember(
+                    nameof(OjsSubmission<object>.Id),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.Id)))
+                .ForMember(
                     nameof(OjsSubmission<object>.Input),
                     opt => opt.MapFrom(typeof(SubmissionInputValueResolver)))
                 .ForMember(
