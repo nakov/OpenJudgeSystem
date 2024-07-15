@@ -2,7 +2,9 @@
 {
     public interface IExecutionStrategy
     {
-        Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
+        Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(
+            IExecutionContext<TInput> executionContext,
+            int submissionId)
             where TResult : ISingleCodeRunResult, new();
     }
 }

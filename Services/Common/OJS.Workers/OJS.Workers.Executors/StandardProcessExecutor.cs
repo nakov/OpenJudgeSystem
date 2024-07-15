@@ -5,8 +5,7 @@
     using System.Diagnostics;
     using System.Text;
 
-    using log4net;
-
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Helpers;
 
@@ -15,12 +14,15 @@
     {
         private const int TimeBeforeClosingOutputStreams = 100;
 
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(StandardProcessExecutor));
+        private readonly ILogger<StandardProcessExecutor> logger;
 
-        public StandardProcessExecutor(int baseTimeUsed, int baseMemoryUsed, ITasksService tasksService)
+        public StandardProcessExecutor(
+            int baseTimeUsed,
+            int baseMemoryUsed,
+            ITasksService tasksService,
+            ILogger<StandardProcessExecutor> logger)
             : base(baseTimeUsed, baseMemoryUsed, tasksService)
-        {
-        }
+            => this.logger = logger;
 
         protected override async Task<ProcessExecutionResult> InternalExecute(
             string fileName,
@@ -67,7 +69,7 @@
             var processOutputTask = process.StandardOutput.ReadToEndAsync();
             var errorOutputTask = process.StandardError.ReadToEndAsync();
 
-            await WriteInputToProcess(process, inputData);
+            await this.WriteInputToProcess(process, inputData);
 
             // Wait the process to complete. Kill it after (timeLimit * 1.5) milliseconds if not completed.
             // We are waiting the process for more than defined time and after this we compare the process time with the real time limit.
@@ -93,12 +95,15 @@
             }
             catch (AggregateException ex)
             {
-                Logger.Warn("AggregateException caught.", ex.InnerException);
+                if (!(ex.InnerException is TaskCanceledException))
+                {
+                    this.logger.LogWarning($"AggregateException caught: {ex.InnerException}");
+                }
             }
 
             // Read the standard output and error and set the result
-            result.ErrorOutput = await GetReceivedOutput(errorOutputTask, "error output");
-            result.ReceivedOutput = await GetReceivedOutput(processOutputTask, "standard output");
+            result.ErrorOutput = await this.GetReceivedOutput(errorOutputTask, "error output");
+            result.ReceivedOutput = await this.GetReceivedOutput(processOutputTask, "standard output");
 
             Debug.Assert(process.HasExited, "Standard process didn't exit!");
 
@@ -109,7 +114,7 @@
             return result;
         }
 
-        private static async Task WriteInputToProcess(Process process, string inputData)
+        private async Task WriteInputToProcess(Process process, string inputData)
         {
             try
             {
@@ -118,7 +123,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Error($"Exception in writing to standard input with input data: {inputData}", ex);
+                this.logger.LogError($"Exception in writing to standard input with input data: {inputData}", ex);
             }
             finally
             {
@@ -131,14 +136,14 @@
                         process.StandardInput.Close();
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Logger.Warn("Exception caught while closing the standard input.", e);
+                    this.logger.LogWarning($"Exception caught while closing the standard input: {ex}");
                 }
             }
         }
 
-        private static async Task<string> GetReceivedOutput(Task<string> outputTask, string outputName)
+        private async Task<string> GetReceivedOutput(Task<string> outputTask, string outputName)
         {
             try
             {
@@ -155,7 +160,7 @@
             }
             catch (Exception ex)
             {
-                Logger.Warn("Exception caught while reading the process error output.", ex);
+                this.logger.LogWarning($"Exception caught while reading the process error output: {ex}");
                 return $"Error while reading the {outputName} of the underlying process: {ex.Message}";
             }
         }

@@ -2,6 +2,7 @@
 
 namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Data;
     using System.Globalization;
@@ -24,8 +25,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql.PostgreSql
 
         protected BasePostgreSqlExecutionStrategy(
             IOjsSubmission submission,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
             => this.databaseNameForSubmissionProcessor = $"worker_{this.Settings.SubmissionProcessorIdentifier}_do_not_delete";
 
         protected override string RestrictedUserId => $"{this.GetDatabaseName()}_{base.RestrictedUserId}";

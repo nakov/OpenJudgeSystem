@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Sql
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Data;
     using System.Globalization;
@@ -23,8 +24,9 @@ namespace OJS.Workers.ExecutionStrategies.Sql
 
         protected BaseSqlExecutionStrategy(
             IOjsSubmission submission,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(submission, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
             if (string.IsNullOrWhiteSpace(this.Settings.MasterDbConnectionString))
             {
