@@ -120,7 +120,7 @@ public class SubmissionsController : BaseAutoCrudAdminController<Submission>
         {
             this.TempData.AddDangerMessage(GlobalResource.SubmissionNotFileUpload);
 
-            return this.Redirect(this.Request.Headers.Referer);
+            return this.Redirect(this.Request.Headers.Referer.ToString());
         }
 
         return this.File(
