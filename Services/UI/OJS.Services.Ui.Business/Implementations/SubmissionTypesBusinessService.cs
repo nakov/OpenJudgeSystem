@@ -1,6 +1,5 @@
 ﻿namespace OJS.Services.Ui.Business.Implementations;
 
-using AutoMapper.Internal;
 using OJS.Services.Infrastructure.Extensions;
 using OJS.Services.Ui.Models.Submissions;
 using System.Collections.Generic;
@@ -54,7 +53,7 @@ public class SubmissionTypesBusinessService : ISubmissionTypesBusinessService
             .ToDictionary(x => x.Key!.Value, x => x.Count());
 
         return allSubmissionTypes
-            .OrderByDescending(x => submissionTypesUsageGroups.GetOrDefault(x.Id));
+            .OrderByDescending(x => submissionTypesUsageGroups.GetValueOrDefault(x.Id));
     }
 
     public void ValidateSubmissionType(int submissionTypeId, Problem problem, bool shouldAllowBinaryFiles = false)

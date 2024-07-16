@@ -14,26 +14,21 @@ public class CopyToAnotherContestViewModel : IMapExplicitly
 
     public string? FromContestName { get; set; }
 
-    [IgnoreMap]
     public SelectList? ContestsToCopyTo { get; set; }
 
-    [IgnoreMap]
     [Display(Name = Resource.ContestLabel)]
     [Required(ErrorMessage = Resource.ContestRequired)]
     public int? ToContestId { get; set; }
 
-    [IgnoreMap]
     public string? ToContestName { get; set; }
 
     public int FromProblemId { get; set; }
 
     public string? FromProblemName { get; set; }
 
-    [IgnoreMap]
     [Display(Name = Resource.ProblemGroupLabel)]
     public int ToProblemGroupId { get; set; }
 
-    [IgnoreMap]
     public SelectList? ProblemGroupsToCopyTo { get; set; }
 
     public void RegisterMappings(IProfileExpression configuration)
@@ -51,13 +46,18 @@ public class CopyToAnotherContestViewModel : IMapExplicitly
                 opt => opt.MapFrom(src => src.ProblemGroup.ContestId))
             .ForMember(
                 m => m.FromContestName,
-                opt => opt.MapFrom(src => src.ProblemGroup.Contest.Name));
+                opt => opt.MapFrom(src => src.ProblemGroup.Contest.Name))
+            .ForMember(m => m.ContestsToCopyTo, opt => opt.Ignore())
+            .ForMember(m => m.ToContestId, opt => opt.Ignore())
+            .ForMember(m => m.ToContestName, opt => opt.Ignore())
+            .ForMember(m => m.ToProblemGroupId, opt => opt.Ignore())
+            .ForMember(m => m.ProblemGroupsToCopyTo, opt => opt.Ignore());
 
         configuration
             .CreateMap<CopyToAnotherContestViewModel, ContestCopyProblemsValidationServiceModel>()
             .ForMember(
                 m => m.Id,
                 opt => opt.MapFrom(src => src.ToContestId))
-            .ForAllOtherMembers(opt => opt.Ignore());
+            .ForMember(m => m.Name, opt => opt.Ignore());
     }
 }

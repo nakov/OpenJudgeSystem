@@ -15,6 +15,5 @@ public class LecturerInContestServiceModel : IMapExplicitly
             .CreateMap<LecturerInContest, LecturerInContestServiceModel>()
             .ReverseMap()
             .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.ContestId))
-            .ForMember(d => d.LecturerId, opt => opt.MapFrom(s => s.LecturerId))
-            .ForAllOtherMembers(opt => opt.Ignore());
+            .ForMember(d => d.LecturerId, opt => opt.MapFrom(s => s.LecturerId));
 }
