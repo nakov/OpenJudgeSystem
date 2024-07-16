@@ -1,6 +1,4 @@
-﻿@using static AutoCrudAdmin.Constants.TempDataKeys;
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -20,15 +18,6 @@
     @await Html.PartialAsync("_NavPartial")
 </header>
 <main role="main" class="container-fluid pb-3">
-    @if (TempData.TryGetValue(DangerMessage, out var dangerMessage))
-    {
-        <p class="alert alert-danger">@Html.Raw(dangerMessage)</p>
-    }
-    else if (TempData.TryGetValue(SuccessMessage, out var successMessage))
-    {
-        <p class="alert alert-success">@Html.Raw(successMessage)</p>
-    }
-
     @RenderBody()
 </main>
 <footer class="border-top footer text-muted">
