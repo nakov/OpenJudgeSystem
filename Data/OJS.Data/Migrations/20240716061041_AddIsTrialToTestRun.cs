@@ -4,7 +4,7 @@ namespace OJS.Data.Migrations
 {
     using Microsoft.EntityFrameworkCore.Migrations;
 
-    public partial class AddIsTrialTestToTestRun : Migration
+    public partial class AddIsTrialToTestRun : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

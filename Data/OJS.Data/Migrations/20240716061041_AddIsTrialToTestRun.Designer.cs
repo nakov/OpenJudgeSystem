@@ -12,8 +12,8 @@ using OJS.Data;
 namespace OJS.Data.Migrations
 {
     [DbContext(typeof(OjsDbContext))]
-    [Migration("20240705143437_AddIsTrialTestToTestRun")]
-    partial class AddIsTrialTestToTestRun
+    [Migration("20240716061041_AddIsTrialToTestRun")]
+    partial class AddIsTrialToTestRun
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -930,6 +930,12 @@ namespace OJS.Data.Migrations
                     b.Property<string>("AllowedFileExtensions")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("BaseMemoryUsedInBytes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BaseTimeUsedInMilliseconds")
+                        .HasColumnType("int");
+
                     b.Property<int>("CompilerType")
                         .HasColumnType("int");
 
@@ -941,6 +947,12 @@ namespace OJS.Data.Migrations
 
                     b.Property<bool>("IsSelectedByDefault")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("MaxAllowedMemoryLimitInBytes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxAllowedTimeLimitInMilliseconds")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
