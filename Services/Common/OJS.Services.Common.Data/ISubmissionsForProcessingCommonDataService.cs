@@ -8,6 +8,8 @@ using OJS.Services.Common.Models.Submissions;
 
 public interface ISubmissionsForProcessingCommonDataService : IDataService<SubmissionForProcessing>
 {
+    Task<SubmissionForProcessing?> GetBySubmission(int submissionId);
+
     IQueryable<SubmissionForProcessing> GetAllPending();
 
     IQueryable<SubmissionForProcessing> GetAllUnprocessed();
@@ -24,5 +26,5 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     Task MarkMultipleForProcessing(ICollection<int> submissionsIds);
 
-    Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
+    void MarkProcessed(SubmissionForProcessing submissionForProcessing, SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
 }

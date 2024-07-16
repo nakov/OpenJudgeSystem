@@ -70,12 +70,6 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         }
     }
 
-    public new async Task Update(SubmissionForProcessing submissionForProcessing)
-    {
-        base.Update(submissionForProcessing);
-        await this.SaveChanges();
-    }
-
     public async Task MarkProcessing(int submissionId)
     {
         var submissionForProcessing = await this
@@ -90,7 +84,8 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         submissionForProcessing.Processing = true;
         submissionForProcessing.Processed = false;
 
-        await this.Update(submissionForProcessing);
+        this.Update(submissionForProcessing);
+        await this.SaveChanges();
     }
 
     public async Task MarkMultipleForProcessing(ICollection<int> submissionsIds)
@@ -122,21 +117,13 @@ public class SubmissionsForProcessingCommonDataService : DataService<SubmissionF
         scope.Complete();
     }
 
-    public async Task MarkProcessed(SerializedSubmissionExecutionResultServiceModel submissionExecutionResult)
+    public void MarkProcessed(SubmissionForProcessing submissionForProcessing, SerializedSubmissionExecutionResultServiceModel submissionExecutionResult)
     {
-        var submissionForProcessing = await this.GetBySubmission(submissionExecutionResult.SubmissionId);
-
-        if (submissionForProcessing == null)
-        {
-            throw new BusinessServiceException(
-                $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
-        }
-
         submissionForProcessing.Processing = false;
         submissionForProcessing.Processed = true;
         submissionForProcessing.SerializedException = submissionExecutionResult.SerializedException;
         submissionForProcessing.SerializedExecutionResult = submissionExecutionResult.SerializedExecutionResult;
 
-        await this.Update(submissionForProcessing);
+        this.Update(submissionForProcessing);
     }
 }

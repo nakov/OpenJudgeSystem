@@ -1,13 +1,12 @@
 namespace OJS.Services.Ui.Business.Implementations;
 
-using FluentExtensions.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OJS.Common;
 using OJS.Common.Enumerations;
 using OJS.Common.Helpers;
-using OJS.Data.Models.Problems;
+using OJS.Data;
+using OJS.Data.Models.Participants;
 using OJS.Data.Models.Submissions;
 using OJS.Data.Models.Tests;
 using OJS.Services.Common;
@@ -23,7 +22,6 @@ using OJS.Services.Ui.Data;
 using OJS.Services.Ui.Models.Participants;
 using OJS.Services.Ui.Models.Submissions;
 using OJS.Workers.Common.Models;
-using OJS.Common.Extensions;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.Models;
 using System;
@@ -40,72 +38,63 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
     private readonly IUsersBusinessService usersBusiness;
     private readonly IParticipantScoresBusinessService participantScoresBusinessService;
-    private readonly IParticipantsBusinessService participantsBusinessService;
     private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
 
     // TODO: https://github.com/SoftUni-Internal/exam-systems-issues/issues/624
     private readonly IParticipantsDataService participantsDataService;
     private readonly IProblemsDataService problemsDataService;
-    private readonly IContestsDataService contestsDataService;
     private readonly IUserProviderService userProviderService;
     private readonly ILecturersInContestsBusinessService lecturersInContestsBusiness;
     private readonly ISubmissionDetailsValidationService submissionDetailsValidationService;
-    private readonly IContestParticipationValidationService contestParticipationValidationService;
     private readonly ISubmitSubmissionValidationService submitSubmissionValidationService;
     private readonly ISubmissionResultsValidationService submissionResultsValidationService;
     private readonly ISubmissionFileDownloadValidationService submissionFileDownloadValidationService;
     private readonly IRetestSubmissionValidationService retestSubmissionValidationService;
     private readonly ISubmissionPublisherService submissionPublisher;
     private readonly ISubmissionsHelper submissionsHelper;
-    private readonly ILogger<SubmissionsBusinessService> logger;
     private readonly IDatesService dates;
+    private readonly ITransactionsProvider transactionsProvider;
 
     public SubmissionsBusinessService(
         ISubmissionsDataService submissionsData,
         ISubmissionsCommonDataService submissionsCommonData,
         IUsersBusinessService usersBusiness,
         IProblemsDataService problemsDataService,
-        IParticipantsBusinessService participantsBusinessService,
         IParticipantsDataService participantsDataService,
         ISubmissionsCommonBusinessService submissionsCommonBusinessService,
         IUserProviderService userProviderService,
         IParticipantScoresBusinessService participantScoresBusinessService,
         ILecturersInContestsBusinessService lecturersInContestsBusiness,
         ISubmissionDetailsValidationService submissionDetailsValidationService,
-        IContestParticipationValidationService contestParticipationValidationService,
         ISubmitSubmissionValidationService submitSubmissionValidationService,
         ISubmissionResultsValidationService submissionResultsValidationService,
         ISubmissionFileDownloadValidationService submissionFileDownloadValidationService,
         IRetestSubmissionValidationService retestSubmissionValidationService,
         ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
         ISubmissionPublisherService submissionPublisher,
-        IContestsDataService contestsDataService,
         ISubmissionsHelper submissionsHelper,
-        ILogger<SubmissionsBusinessService> logger,
-        IDatesService dates)
+        IDatesService dates,
+        ITransactionsProvider transactionsProvider)
     {
         this.submissionsData = submissionsData;
         this.submissionsCommonData = submissionsCommonData;
         this.usersBusiness = usersBusiness;
         this.problemsDataService = problemsDataService;
-        this.participantsBusinessService = participantsBusinessService;
         this.lecturersInContestsBusiness = lecturersInContestsBusiness;
         this.submissionsCommonBusinessService = submissionsCommonBusinessService;
         this.participantsDataService = participantsDataService;
         this.userProviderService = userProviderService;
         this.participantScoresBusinessService = participantScoresBusinessService;
         this.submissionDetailsValidationService = submissionDetailsValidationService;
-        this.contestParticipationValidationService = contestParticipationValidationService;
         this.submitSubmissionValidationService = submitSubmissionValidationService;
         this.submissionResultsValidationService = submissionResultsValidationService;
         this.submissionFileDownloadValidationService = submissionFileDownloadValidationService;
         this.retestSubmissionValidationService = retestSubmissionValidationService;
         this.submissionPublisher = submissionPublisher;
         this.submissionsForProcessingData = submissionsForProcessingData;
-        this.contestsDataService = contestsDataService;
         this.submissionsHelper = submissionsHelper;
-        this.logger = logger;
         this.dates = dates;
+        this.transactionsProvider = transactionsProvider;
     }
 
     public async Task Retest(int id)
@@ -484,7 +473,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         if (submissionType.ExecutionStrategyType is ExecutionStrategyType.NotFound or ExecutionStrategyType.DoNothing)
         {
             // Submission is just uploaded and should not be processed
-            await this.AddNewDefaultProcessedSubmission(newSubmission);
+            await this.AddNewDefaultProcessedSubmission(participant, newSubmission);
 
             scope.Complete();
             scope.Dispose();
@@ -510,6 +499,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
     {
         var submission = await this.submissionsData
             .GetByIdQuery(submissionExecutionResult.SubmissionId)
+            .IgnoreQueryFilters()
             .Include(s => s.Problem!.Tests)
             .Include(s => s.TestRuns)
             .FirstOrDefaultAsync();
@@ -520,47 +510,61 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
                 $"Submission with Id: \"{submissionExecutionResult.SubmissionId}\" not found.");
         }
 
-        submission.StartedExecutionOn = submissionExecutionResult.StartedExecutionOn;
-        submission.CompletedExecutionOn = submissionExecutionResult.CompletedExecutionOn;
-        submission.WorkerName = submissionExecutionResult.WorkerName;
+        var submissionForProcessing = await this.submissionsForProcessingData
+            .GetBySubmission(submission.Id);
+
+        if (submissionForProcessing == null)
+        {
+            throw new BusinessServiceException(
+                $"Submission for processing for Submission with ID {submissionExecutionResult.SubmissionId} not found in the database.");
+        }
+
+        var participant = await this.participantsDataService
+            .GetByIdQuery(submission.ParticipantId)
+            .IgnoreQueryFilters()
+            .Include(p => p.User)
+            .FirstOrDefaultAsync();
+
+        if (participant == null)
+        {
+            throw new BusinessServiceException(
+                $"Participant with Id: \"{submission.ParticipantId}\" not found.");
+        }
 
         var exception = submissionExecutionResult.Exception;
         var executionResult = submissionExecutionResult.ExecutionResult;
 
-        submission.Processed = true;
-        submission.ProcessingComment = null;
-
         var serializedExecutionResultServiceModel =
             submissionExecutionResult.Map<SerializedSubmissionExecutionResultServiceModel>();
 
-        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        if (executionResult != null)
+        await this.transactionsProvider.ExecuteInTransaction(async () =>
         {
-            ProcessTestsExecutionResult(submission, executionResult);
+            submission.Processed = true;
+            submission.ProcessingComment = null;
+            submission.StartedExecutionOn = submissionExecutionResult.StartedExecutionOn;
+            submission.CompletedExecutionOn = submissionExecutionResult.CompletedExecutionOn;
+            submission.WorkerName = submissionExecutionResult.WorkerName;
 
-            this.submissionsData.Update(submission);
+            if (executionResult != null)
+            {
+                ProcessTestsExecutionResult(submission, executionResult);
+                await this.SaveParticipantScore(participant, submission);
+                CacheTestRuns(submission);
+            }
+            else
+            {
+                submission.IsCompiledSuccessfully = false;
+                var errorMessage = exception?.Message
+                    ?? "Invalid execution result received. Please contact an administrator.";
+                submission.ProcessingComment = errorMessage;
+                submission.CompilerComment = errorMessage;
+            }
 
-            await this.SaveParticipantScore(submission);
-
-            await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
-            CacheTestRuns(submission);
-        }
-        else
-        {
-            submission.IsCompiledSuccessfully = false;
-            var errorMessage = exception?.Message
-                               ?? "Invalid execution result received. Please contact an administrator.";
-            submission.ProcessingComment = errorMessage;
-            submission.CompilerComment = errorMessage;
-
-            this.submissionsData.Update(submission);
-            await this.submissionsForProcessingData.MarkProcessed(serializedExecutionResultServiceModel);
-        }
-
-        await this.submissionsData.SaveChanges();
-
-        scope.Complete();
-        scope.Dispose();
+            this.submissionsForProcessingData.MarkProcessed(
+                submissionForProcessing,
+                serializedExecutionResultServiceModel);
+            await this.submissionsData.SaveChanges();
+        });
     }
 
     public async Task<PagedResult<SubmissionResultsServiceModel>> GetSubmissionResults(int submissionId, int page)
@@ -631,19 +635,29 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         submission.IsCompiledSuccessfully = executionResult.IsCompiledSuccessfully;
         submission.CompilerComment = executionResult.CompilerComment;
         submission.Points = executionResult.TaskResult!.Points;
+        submission.TestRuns.Clear();
 
         if (!executionResult.IsCompiledSuccessfully)
         {
-            submission.TestRuns.Clear();
             return;
         }
 
-        var testResults =
-            executionResult.TaskResult?.TestResults ?? Enumerable.Empty<TestResultServiceModel>();
-
-        submission.TestRuns.Clear();
-        submission.TestRuns.AddRange(
-            testResults.Select(testResult => testResult.Map<TestRun>()));
+        foreach (var testResult in executionResult.TaskResult?.TestResults ?? [])
+        {
+            submission.TestRuns.Add(
+                new TestRun
+                {
+                    ResultType = (TestRunResultType)Enum.Parse(typeof(TestRunResultType), testResult.ResultType),
+                    CheckerComment = testResult.CheckerDetails.Comment,
+                    ExecutionComment = testResult.ExecutionComment,
+                    ExpectedOutputFragment = testResult.CheckerDetails.ExpectedOutputFragment,
+                    UserOutputFragment = testResult.CheckerDetails.UserOutputFragment,
+                    TimeUsed = testResult.TimeUsed,
+                    MemoryUsed = testResult.MemoryUsed,
+                    SubmissionId = submission.Id,
+                    TestId = testResult.Id,
+                });
+        }
     }
 
     private static void CacheTestRuns(Submission submission)
@@ -658,7 +672,7 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         }
     }
 
-    private async Task AddNewDefaultProcessedSubmission(Submission submission)
+    private async Task AddNewDefaultProcessedSubmission(Participant participant, Submission submission)
     {
         submission.Processed = true;
         submission.IsCompiledSuccessfully = true;
@@ -667,14 +681,14 @@ public class SubmissionsBusinessService : ISubmissionsBusinessService
         await this.submissionsData.Add(submission);
         await this.submissionsData.SaveChanges();
 
-        await this.participantScoresBusinessService.SaveForSubmission(submission);
+        await this.participantScoresBusinessService.SaveForSubmission(participant, submission);
     }
 
-    private async Task SaveParticipantScore(Submission submission)
+    private async Task SaveParticipantScore(Participant participant, Submission submission)
     {
         try
         {
-            await this.participantScoresBusinessService.SaveForSubmission(submission);
+            await this.participantScoresBusinessService.SaveForSubmission(participant, submission);
         }
         catch (Exception ex)
         {
