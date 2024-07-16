@@ -1,25 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\OJS.Workers.Checkers\OJS.Workers.Checkers.csproj" />
-      <ProjectReference Include="..\OJS.Workers.Common\OJS.Workers.Common.csproj" />
-      <ProjectReference Include="..\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj" />
-      <ProjectReference Include="..\OJS.Workers.Executors\OJS.Workers.Executors.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Build" Version="17.0.0" />
-      <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
-      <PackageReference Include="MySql.Data" Version="8.0.33" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="Npgsql" Version="8.0.0-preview.4" />
-      <PackageReference Include="System.CodeDom" Version="4.5.0" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OJS.Workers.Checkers\OJS.Workers.Checkers.csproj" />
+    <ProjectReference Include="..\OJS.Workers.Common\OJS.Workers.Common.csproj" />
+    <ProjectReference Include="..\OJS.Workers.Compilers\OJS.Workers.Compilers.csproj" />
+    <ProjectReference Include="..\OJS.Workers.Executors\OJS.Workers.Executors.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.0.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
+    <PackageReference Include="MySql.Data" Version="8.0.33" />
+    <PackageReference Include="Npgsql" Version="8.0.0-preview.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.CodeDom" Version="8.0.0" />
+  </ItemGroup>
 </Project>

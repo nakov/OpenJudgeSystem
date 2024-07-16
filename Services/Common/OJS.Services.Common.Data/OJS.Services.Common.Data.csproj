@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
-      <ProjectReference Include="..\..\..\Data\OJS.Data\OJS.Data.csproj" />
-      <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
-      <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.0" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\OJS.Common\OJS.Common.csproj" />
+    <ProjectReference Include="..\..\..\Data\OJS.Data\OJS.Data.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\OJS.Services.Infrastructure\OJS.Services.Infrastructure.csproj" />
+    <ProjectReference Include="..\OJS.Services.Common.Models\OJS.Services.Common.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.0" />
+  </ItemGroup>
 </Project>
