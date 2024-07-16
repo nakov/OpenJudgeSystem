@@ -64,4 +64,7 @@ public static class TypeExtensions
 
         return type.Assembly.GetPrefix();
     }
+
+    public static bool IsOpenGenericType(this Type type)
+        => type is { IsGenericType: true, ContainsGenericParameters: true };
 }
