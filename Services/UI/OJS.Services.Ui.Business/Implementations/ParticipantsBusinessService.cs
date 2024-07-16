@@ -97,7 +97,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
 
         this.participantsData.Update(participant);
 
-        return ServiceResult<string>.Success(participant.User.UserName);
+        return ServiceResult<string>.Success(participant.User.UserName!);
     }
 
     public async Task<ServiceResult<ICollection<string>>>
@@ -130,7 +130,7 @@ public class ParticipantsBusinessService : IParticipantsBusinessService
                 .Where(p =>
                     p.ParticipationEndTime!.Value.AddMinutes(timeInMinutes) <
                     p.ParticipationStartTime!.Value.AddMinutes(contestTotalDurationInMinutes))
-                .Select(p => p.User.UserName)
+                .Select(p => p.User.UserName!)
                 .ToList();
 
         var participantsInTimeRange =

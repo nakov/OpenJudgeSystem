@@ -65,7 +65,7 @@ namespace OJS.Services.Administration.Data.Implementations
 
             if (existingScore == null)
             {
-                await this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName, participant.IsOfficial, participant.Participant);
+                await this.AddBySubmissionByUsernameAndIsOfficial(submission, participant.UserName!, participant.IsOfficial, participant.Participant);
             }
             else
             {

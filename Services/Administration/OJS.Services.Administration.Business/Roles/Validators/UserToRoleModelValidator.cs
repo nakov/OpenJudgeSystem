@@ -63,7 +63,7 @@ public class UserToRoleModelValidator : BaseValidator<UserToRoleModel>
 
         var role = await this.roleDataService
             .GetByIdQuery(roleId)
-            .Select(x => x.Name)
+            .Select(x => x.Name!)
             .AsNoTracking()
             .FirstAsync();
 

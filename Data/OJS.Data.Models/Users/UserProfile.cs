@@ -14,7 +14,7 @@ namespace OJS.Data.Models.Users
         [MinLength(EmailMinLength)]
         [RegularExpression(EmailRegEx)]
         [DataType(DataType.EmailAddress)]
-        public override string Email { get; set; } = string.Empty;
+        public override string? Email { get; set; } = string.Empty;
 
         [Required]
         public UserSettings UserSettings { get; set; } = new();
@@ -39,6 +39,6 @@ namespace OJS.Data.Models.Users
         public virtual ICollection<UserInRole> UsersInRoles { get; set; }
             = new HashSet<UserInRole>();
 
-        public override string ToString() => this.UserName;
+        public override string ToString() => this.UserName ?? string.Empty;
     }
 }

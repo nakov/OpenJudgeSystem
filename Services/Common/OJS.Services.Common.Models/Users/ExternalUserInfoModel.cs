@@ -5,7 +5,7 @@ namespace OJS.Services.Common.Models.Users
 
     public class ExternalUserInfoModel
     {
-        public string? Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         public string UserName { get; set; } = string.Empty;
 

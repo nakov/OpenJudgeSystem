@@ -82,7 +82,7 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 await this.participantScoresData.AddBySubmissionByUsernameAndIsOfficial(
                     submission,
-                    participant.UserName,
+                    participant.UserName!,
                     participant.IsOfficial,
                     participant.Participant);
 

@@ -51,7 +51,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
                                 absoluteExpiration)
                             .Wait();
 
-                        return ParseValue<T>(this.cache.Get(cacheId));
+                        return ParseValue<T>(this.cache.Get(cacheId)!);
                     }
                     catch (RedisConnectionException ex)
                     {
@@ -73,7 +73,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
                             getItemCallback,
                             absoluteExpiration);
 
-                        return ParseValue<T>(await this.cache.GetAsync(cacheId));
+                        return ParseValue<T>((await this.cache.GetAsync(cacheId))!);
                     }
                     catch (RedisConnectionException ex)
                     {
@@ -208,7 +208,7 @@ namespace OJS.Services.Infrastructure.Cache.Implementations
 
         private bool ShouldSendExceptionEmail(string exceptionName, string exceptionValue)
         {
-            if (this.memoryCache.TryGetValue(exceptionName, out string cacheValue))
+            if (this.memoryCache.TryGetValue(exceptionName, out string? cacheValue))
             {
                 return false;
             }
