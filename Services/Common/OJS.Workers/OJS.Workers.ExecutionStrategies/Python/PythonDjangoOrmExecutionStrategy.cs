@@ -230,8 +230,8 @@ namespace OJS.Workers.ExecutionStrategies.Python
                 executionContext.MemoryLimit,
                 arguments,
                 this.WorkingDirectory,
-                false,
-                true);
+                useProcessTime: false,
+                useSystemEncoding: true);
     }
 
     public record PythonDjangoOrmExecutionStrategySettings(

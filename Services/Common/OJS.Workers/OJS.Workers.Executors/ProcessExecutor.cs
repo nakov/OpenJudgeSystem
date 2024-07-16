@@ -138,8 +138,11 @@
             bool dependOnExitCodeForRunTimeError,
             ProcessExecutionResult result)
         {
-            if ((useProcessTime && result.TimeWorked.TotalMilliseconds > this.timeLimit) ||
-                result.TotalProcessorTime.TotalMilliseconds > this.timeLimit)
+            var timeUsed = useProcessTime
+                ? result.TimeWorked.TotalMilliseconds
+                : result.TotalProcessorTime.TotalMilliseconds;
+
+            if (timeUsed > this.timeLimit)
             {
                 result.Type = ProcessExecutionResultType.TimeLimit;
             }
