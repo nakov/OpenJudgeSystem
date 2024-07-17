@@ -22,7 +22,6 @@ import { useGetContestByIdQuery } from '../../../redux/services/contestsService'
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
-import { isInteger } from '../../../utils/string-utils';
 import { setLayout } from '../../shared/set-layout';
 import withTitle from '../../shared/with-title';
 
@@ -56,12 +55,6 @@ const ContestDetailsPage = () => {
             dispatch(setContestDetails({ contest: data ?? null }));
         }
     }, [ data, contestDetails, dispatch ]);
-
-    useEffect(() => {
-        if (!isInteger(contestId)) {
-
-        }
-    }, [ contestId ]);
 
     const renderAllowedLanguages = () => allowedSubmissionTypes?.map((allowedSubmissionType) => (
         <span key={`contest-sub-strategy-btn-${allowedSubmissionType.id}`}>
