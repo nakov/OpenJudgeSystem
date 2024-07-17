@@ -1,11 +1,8 @@
-import React from 'react';
-
 import { ISubmissionDetailsType, ISubmissionResults, ITestRun } from '../hooks/submissions/types';
 import { IErrorDataType } from '../hooks/use-http';
 
 import { ContestVariation, SortType, SortTypeDirection } from './contest-types';
 import { CheckboxSearchValues, FilterColumnTypeEnum } from './enums';
-import { SearchCategory } from './search-types';
 
 interface ISubmissionTypeType {
     id: number;
@@ -297,6 +294,9 @@ interface IIndexContestsType {
     userParticipationResult?: IUserParticipationResult;
     createdOn: Date;
     modifiedOn: Date | null;
+    officialParticipants: number;
+    requirePasswordForCompete: boolean;
+    requirePasswordForPractice: boolean;
 }
 
 interface IGetContestsForIndexResponseType {
@@ -487,12 +487,6 @@ interface IUserPermissionsType {
     canAccessAdministration: boolean;
 }
 
-interface ISearchProps<T> {
-    searchTerm : string;
-    searchCategory : SearchCategory;
-    renderItem: (item: T) => React.ReactElement<any, string | React.JSXElementConstructor<any>>;
-}
-
 interface IContestAdministration {
     id: number;
     name: string;
@@ -516,6 +510,7 @@ interface IContestAdministration {
     numberOfProblemGroups: number;
     duration: string | undefined;
     canBeCompeted: boolean;
+    officialParticipants: number;
 }
 
 interface ISubmissionsAdminGridViewType {
@@ -646,6 +641,10 @@ interface ISubmissionTypeAdministrationModel {
     allowedFileExtensions: string;
     isSelectedByDefault: boolean;
     allowBinaryFilesUpload: boolean;
+    baseTimeUsedInMilliseconds?: number;
+    baseMemoryUsedInBytes?: number;
+    maxAllowedTimeLimitInMilliseconds?: number;
+    maxAllowedMemoryLimitInBytes?: number;
 }
 
 interface ICheckerInListModel {
@@ -766,7 +765,6 @@ interface IUSerSearchCardProps {
 // eslint-disable-next-line import/prefer-default-export
 export type {
     IIndexContestsType,
-    ISearchProps,
     IGetContestsForIndexResponseType,
     IRegisterForContestResponseType,
     IStartParticipationResponseType,

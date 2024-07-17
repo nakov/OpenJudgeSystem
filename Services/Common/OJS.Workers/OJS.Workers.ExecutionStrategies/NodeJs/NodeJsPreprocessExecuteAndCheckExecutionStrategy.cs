@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.NodeJs
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -25,10 +26,11 @@
         private const string DefaultAdapterFunctionCode = "(input, code) => code(input);";
 
         public NodeJsPreprocessExecuteAndCheckExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
             if (!File.Exists(this.Settings.NodeJsExecutablePath))
             {

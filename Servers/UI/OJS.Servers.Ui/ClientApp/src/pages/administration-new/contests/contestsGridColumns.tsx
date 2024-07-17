@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import React from 'react';
+import { BiTransfer } from 'react-icons/bi';
 import { FaCloudDownloadAlt } from 'react-icons/fa';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -22,6 +24,7 @@ import {
 } from '../../../common/labels';
 import { DELETE_CONFIRMATION_MESSAGE } from '../../../common/messages';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../common/urls/administration-urls';
+import { getContestsDetailsPageUrl } from '../../../common/urls/compose-client-urls';
 import AdministrationGridDropdown from '../../../components/administration/common/administration-grid-dropdown/AdministrationGridDropdown';
 import DeleteButton from '../../../components/administration/common/delete/DeleteButton';
 import QuickEditButton from '../../../components/administration/common/edit/QuickEditButton';
@@ -41,7 +44,13 @@ const contestFilterableColumns: GridColDef[] = [
         filterable: false,
         sortable: false,
         renderCell: (params) => (
-            <ExternalLink to={`/${CONTESTS_PATH}/${params.row.id}`} text={params.value.toString()} />
+            <ExternalLink
+              to={getContestsDetailsPageUrl({
+                  contestId: params.row.id,
+                  contestName: params.row.name,
+              })}
+              text={params.value.toString()}
+            />
         ),
     },
     {
@@ -172,8 +181,9 @@ const contestFilterableColumns: GridColDef[] = [
 export const returnContestsNonFilterableColumns = (
     onEditClick: Function,
     onSuccessDelete: () => void,
-    onMoreClick: Function,
+    onExcelClick: Function,
     onDownloadSubmissionClick: Function,
+    onTransferParticipantsClick: Function,
 ) => [
     {
         field: 'actions',
@@ -200,12 +210,22 @@ export const returnContestsNonFilterableColumns = (
                         {
                             icon: <SiMicrosoftexcel />,
                             label: 'Export results',
-                            handleClick: onMoreClick,
+                            handleClick: onExcelClick,
                         },
                         {
                             icon: <FaCloudDownloadAlt />,
                             label: 'Download submissions',
                             handleClick: onDownloadSubmissionClick,
+                        },
+                        {
+                            icon: <BiTransfer />,
+                            label: 'Transfer participants',
+                            handleClick: () => onTransferParticipantsClick(
+                                Number(params.row.id),
+                                params.row.name,
+                                params.row.category,
+                                params.row.officialParticipants,
+                            ),
                         },
                     ]
                 }

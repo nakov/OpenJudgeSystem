@@ -4,6 +4,7 @@ import { FaLongArrowAltRight } from 'react-icons/fa';
 import { Autocomplete, Box, Button, debounce, MenuItem, Modal, TextField, Typography } from '@mui/material';
 
 import { IContestAutocomplete } from '../../../../common/types';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetContestAutocompleteQuery } from '../../../../redux/services/admin/contestsAdminService';
 import { useCopyAllMutation, useCopyMutation } from '../../../../redux/services/admin/problemsAdminService';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
@@ -56,6 +57,8 @@ const CopyModal = (props: ICopyModalProps) => {
             isLoading: isCopyingAll,
             error: copyAllError,
         } ] = useCopyAllMutation();
+
+    useDisableMouseWheelOnNumberInputs();
 
     useEffect(() => {
         if (data) {

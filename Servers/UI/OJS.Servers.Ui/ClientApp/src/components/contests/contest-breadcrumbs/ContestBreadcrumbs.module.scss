@@ -10,6 +10,7 @@
   align-items: center;
   cursor: pointer;
   display: flex;
+  flex-wrap: wrap;
   font-size: variables.$f-size-18;
   justify-content: flex-start;
   padding: spacings.$sp-8 spacings.$sp-8;
@@ -18,6 +19,14 @@
   .item {
     color: colors.$primary-blue;
     margin-left: spacings.$sp-4;
+
+    p {
+      white-space: nowrap;
+    }
+  }
+
+  &.nonVisible {
+    visibility: hidden;
   }
 }
 

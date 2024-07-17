@@ -35,6 +35,15 @@
     .innerBodyWrapper {
       width: 95%;
 
+      .contestTitle {
+        font-size: variables.$f-size-24;
+        font-weight: font-weights.$font-weight-bold;
+
+        a {
+          color: colors.$primary-blue;
+        }
+      }
+
       .adminButtonsWrapper {
         margin: spacings.$sp-24 0;
 

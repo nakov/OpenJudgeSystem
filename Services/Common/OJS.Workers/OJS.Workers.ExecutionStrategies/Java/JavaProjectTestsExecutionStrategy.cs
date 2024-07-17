@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Java
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -21,15 +22,17 @@ namespace OJS.Workers.ExecutionStrategies.Java
     public class JavaProjectTestsExecutionStrategy<TSettings> : JavaUnitTestsExecutionStrategy<TSettings>
         where TSettings : JavaProjectTestsExecutionStrategySettings
     {
+        private const string InvalidNumberOfTestCasesPrefix = "Invalid number of test cases";
         private const string TestRanPrefix = "Test Ran. Successful:";
         private readonly string testResultRegexPattern = $@"(?:{TestRanPrefix})\s*(true|false)";
 
         public JavaProjectTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
             => this.UserClassNames = new List<string>();
 
         protected List<string> UserClassNames { get; }
@@ -43,6 +46,8 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -52,6 +57,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.lang.reflect.Method;
 
 public class _$TestRunner {{
     public static void main(String[] args) {{
@@ -82,6 +89,18 @@ public class _$TestRunner {{
         System.setOut(originalOut);
 
         for (int i = 0; i < results.size(); i++){{
+            var testMethodCount = 0;
+            for (Method method : testClasses[i].getDeclaredMethods()) {{
+                if (method.isAnnotationPresent(Test.class)) {{
+                   testMethodCount++;
+                }}
+            }}
+
+            if (testMethodCount > 1) {{
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", testMethodCount, testClasses[i].getSimpleName());
+                continue;
+            }}
+
             Result result = results.get(i);
 
             System.out.println(testClasses[i].getSimpleName() + "" {TestRanPrefix} "" + result.wasSuccessful());
@@ -108,6 +127,8 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -117,6 +138,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.lang.reflect.Method;
 
 class Classes {{
     public static Map<String, Class> allClasses = new HashMap<>();
@@ -165,6 +188,18 @@ public class _$TestRunner {{
         System.setOut(originalOut);
 
         for (int i = 0; i < listeners.size(); i++) {{
+            var testMethodCount = 0;
+            for (Method method : testClasses[i].getDeclaredMethods()) {{
+                if (method.isAnnotationPresent(Test.class)) {{
+                   testMethodCount++;
+                }}
+            }}
+
+            if (testMethodCount > 1) {{
+                System.out.printf(""{InvalidNumberOfTestCasesPrefix} "" + ""(%d) for %s. There should be a single test case per test.%n"", testMethodCount, testClasses[i].getSimpleName());
+                continue;
+            }}
+
             SummaryGeneratingListener listener = listeners.get(i);
             var summary = listener.getSummary();
 
@@ -291,7 +326,7 @@ public class _$TestRunner {{
                 executionContext.MemoryLimit,
                 arguments,
                 this.WorkingDirectory,
-                true);
+                useProcessTime: true);
 
             if (!string.IsNullOrWhiteSpace(processExecutionResult.ErrorOutput))
             {
@@ -385,6 +420,23 @@ public class _$TestRunner {{
                     .Select(x => x.Contains(".") ? x.Substring(0, x.LastIndexOf(".", StringComparison.Ordinal)) : x)
                     .Select(x => x.Replace("/", ".")));
 
+        private static string ReadAndValidateLine(StringReader output)
+        {
+            var line = output.ReadLine();
+
+            if (line == null)
+            {
+                throw new InvalidOperationException("Unexpected end of output. Please verify that all test cases are executed correctly and produce the expected results.");
+            }
+
+            if (line.StartsWith(InvalidNumberOfTestCasesPrefix))
+            {
+                throw new InvalidOperationException(line);
+            }
+
+            return line;
+        }
+
         private Dictionary<string, string> GetTestErrors(string receivedOutput)
         {
             if (string.IsNullOrWhiteSpace(receivedOutput))
@@ -398,7 +450,7 @@ public class _$TestRunner {{
 
             foreach (var testName in this.TestNames)
             {
-                var line = output.ReadLine();
+                var line = ReadAndValidateLine(output);
 
                 var firstSpaceIndex = line.IndexOf(" ", StringComparison.Ordinal);
                 var fileName = line.Substring(0, firstSpaceIndex);
@@ -414,8 +466,10 @@ public class _$TestRunner {{
 
                 if (!isTestSuccessful)
                 {
-                    var errorLine = output.ReadLine();
+                    var errorLine = ReadAndValidateLine(output);
+
                     var errorMessage = errorLine.Substring(firstSpaceIndex);
+
                     errorsByFiles.Add(fileName, errorMessage);
                 }
             }

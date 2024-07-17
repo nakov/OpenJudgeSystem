@@ -6,6 +6,7 @@ namespace OJS.Workers.ExecutionStrategies
     using System.Linq;
     using System.Text.RegularExpressions;
     using Ionic.Zip;
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Extensions;
     using OJS.Workers.Common.Helpers;
@@ -31,10 +32,11 @@ namespace OJS.Workers.ExecutionStrategies
         private readonly Regex testTimeoutRegex = new Regex(@"Timeout (?:of )?\d+ms exceeded\.");
 
         public RunSpaAndExecuteMochaTestsExecutionStrategySeparateTests(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
         }
 

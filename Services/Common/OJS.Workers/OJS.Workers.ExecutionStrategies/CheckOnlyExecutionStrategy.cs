@@ -1,7 +1,7 @@
 ﻿namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
     using OJS.Workers.Executors;
 
@@ -9,10 +9,11 @@
         where TSettings : CheckOnlyExecutionStrategySettings
     {
         public CheckOnlyExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
         }
 

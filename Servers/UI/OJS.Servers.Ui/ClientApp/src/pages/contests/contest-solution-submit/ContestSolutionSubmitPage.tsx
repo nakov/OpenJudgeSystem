@@ -10,7 +10,13 @@ import Popover from '@mui/material/Popover';
 import moment from 'moment';
 
 import { ContestParticipationType } from '../../../common/constants';
-import { IProblemResourceType, ISubmissionTypeType } from '../../../common/types';
+import { IProblemResourceType, IProblemType, ISubmissionTypeType } from '../../../common/types';
+import {
+    getAllContestsPageUrl,
+    getContestsDetailsPageUrl,
+    getContestsRegisterPageUrl,
+    getContestsResultsPageUrl,
+} from '../../../common/urls/compose-client-urls';
 import CodeEditor from '../../../components/code-editor/CodeEditor';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestProblems from '../../../components/contests/contest-problems/ContestProblems';
@@ -38,8 +44,10 @@ import {
 } from '../../../utils/dates';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
+import { capitalizeFirstLetter } from '../../../utils/string-utils';
 import { makePrivate } from '../../shared/make-private';
 import { setLayout } from '../../shared/set-layout';
+import withTitle from '../../shared/with-title';
 
 import styles from './ContestSolutionSubmitPage.module.scss';
 
@@ -47,7 +55,7 @@ const ContestSolutionSubmitPage = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
-    const { contestId, participationType } = useParams();
+    const { contestId, participationType, slug } = useParams();
 
     const [ isSubmitButtonDisabled, setIsSubmitButtonDisabled ] = useState<boolean>(false);
     const [ remainingTime, setRemainingTime ] = useState<number>(0);
@@ -60,6 +68,7 @@ const ContestSolutionSubmitPage = () => {
     const [ uploadedFile, setUploadedFile ] = useState<File | null>(null);
     const [ fileUploadError, setFileUploadError ] = useState<string>('');
     const [ isRotating, setIsRotating ] = useState<boolean>(false);
+    const [ updatedProblems, setUpdatedProblems ] = useState<Array<IProblemType>>();
 
     const { selectedContestDetailsProblem, contestDetails } = useAppSelector((state) => state.contests);
     const { internalUser: user } = useAppSelector((state) => state.authorization);
@@ -143,6 +152,29 @@ const ContestSolutionSubmitPage = () => {
     };
 
     useEffect(() => {
+        if (submissionsData?.items && problems && submissionsData.items.length > 0) {
+            // eslint-disable-next-line max-len
+            const latestSubmission = submissionsData.items.reduce((newest, current) => new Date(current.createdOn) > new Date(newest.createdOn)
+                ? current
+                : newest, submissionsData.items[0]);
+
+            if (latestSubmission?.problem) {
+                const problemIndex = problems.findIndex((p) => p.id === latestSubmission.problem.id);
+                if (problemIndex !== -1) {
+                    const updatedProblem = { ...problems[problemIndex] };
+                    updatedProblem.points = Math.max(latestSubmission.result.points, updatedProblem.points);
+
+                    setUpdatedProblems([
+                        ...problems.slice(0, problemIndex),
+                        updatedProblem,
+                        ...problems.slice(problemIndex + 1),
+                    ]);
+                }
+            }
+        }
+    }, [ problems, submissionsData ]);
+
+    useEffect(() => {
         if (!submissionsDataFetching) {
             setTimeout(() => {
                 setIsRotating(false);
@@ -215,9 +247,13 @@ const ContestSolutionSubmitPage = () => {
             return;
         }
         if (((!isRegisteredParticipant && !isActiveParticipant) && !isError) || isInvalidated) {
-            navigate(`/contests/register/${contestId}/${participationType}`, { replace: true });
+            navigate(getContestsRegisterPageUrl({
+                isCompete: participationType === ContestParticipationType.Compete,
+                contestId,
+                contestName: slug,
+            }), { replace: true });
         }
-    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, isInvalidated ]);
+    }, [ isLoading, isError, isRegisteredParticipant, isActiveParticipant, contestId, participationType, navigate, slug, isInvalidated ]);
 
     useEffect(() => {
         setSubmissionCode('');
@@ -335,12 +371,12 @@ const ContestSolutionSubmitPage = () => {
     ]);
 
     const sumMyPoints = useMemo(() => contest
-        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.points, 0)
-        : 0, [ contest ]);
+        ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.points, 0)
+        : 0, [ contest, updatedProblems ]);
 
     const sumAllContestPoints = useMemo(() => contest
-        ? contest.problems.reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
-        : 0, [ contest ]);
+        ? (updatedProblems || contest.problems).reduce((accumulator, problem) => accumulator + problem.maximumPoints, 0)
+        : 0, [ contest, updatedProblems ]);
 
     const renderProblemAdminButtons = useCallback(
         () => contest && contest.userIsAdminOrLecturerInContest && selectedContestDetailsProblem && (
@@ -604,7 +640,7 @@ const ContestSolutionSubmitPage = () => {
         return (
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
               backToText="Back to contests"
             />
         );
@@ -615,7 +651,7 @@ const ContestSolutionSubmitPage = () => {
             <ErrorWithActionButtons
               message="Access to this contest has expired!"
               backToText="Back to contests"
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
             />
         );
     }
@@ -624,10 +660,22 @@ const ContestSolutionSubmitPage = () => {
         <div className={`${styles.contestSolutionSubmitWrapper} ${textColorClassName}`}>
             <ContestBreadcrumbs />
             <div className={styles.nameWrapper}>
-                <Link to={`/contests/${contest?.id}`} className={`${styles.title} ${textColorClassName}`}>{contest?.name}</Link>
+                <Link
+                  to={getContestsDetailsPageUrl({ contestId: contest?.id, contestName: contest?.name })}
+                  className={`${styles.title} ${textColorClassName}`}
+                >
+                    {contest?.name}
+                </Link>
                 <div
                   className={styles.allResultsLink}
-                  onClick={() => navigate(`/contests/${contest?.id}/${participationType}/results/simple`)}
+                  onClick={() => navigate(getContestsResultsPageUrl({
+                      slug,
+                      contestId: contest?.id,
+                      participationType: participationType === ContestParticipationType.Compete
+                          ? ContestParticipationType.Compete
+                          : ContestParticipationType.Practice,
+                      isSimple: true,
+                  }))}
                 >
                     Show all results
                 </div>
@@ -642,7 +690,7 @@ const ContestSolutionSubmitPage = () => {
             ) }
             <div className={styles.problemsAndEditorWrapper}>
                 <ContestProblems
-                  problems={problems || []}
+                  problems={updatedProblems || problems || []}
                   onContestProblemChange={() => setSelectedSubmissionsPage(1)}
                   totalParticipantsCount={participantsCount}
                   sumMyPoints={sumMyPoints}
@@ -705,4 +753,7 @@ const ContestSolutionSubmitPage = () => {
     );
 };
 
-export default makePrivate(setLayout(ContestSolutionSubmitPage));
+export default makePrivate(setLayout(withTitle(
+    ContestSolutionSubmitPage,
+    (params) => `${capitalizeFirstLetter(params.participationType!)} #${params.contestId}`,
+)));

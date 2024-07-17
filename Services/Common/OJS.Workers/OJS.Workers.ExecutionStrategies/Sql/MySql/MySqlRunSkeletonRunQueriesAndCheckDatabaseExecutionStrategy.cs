@@ -1,16 +1,17 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.Sql.MySql
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
     using OJS.Workers.ExecutionStrategies.Models;
 
     public class MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy<TSettings> : BaseMySqlExecutionStrategy<TSettings>
         where TSettings : MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategySettings
     {
         public MySqlRunSkeletonRunQueriesAndCheckDatabaseExecutionStrategy(
-            ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IOjsSubmission submission,
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
         }
 

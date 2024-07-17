@@ -12,7 +12,11 @@
 
         int MemoryLimit { get; }
 
+        int? ExecutionStrategyBaseMemoryLimit { get; }
+
         int TimeLimit { get; }
+
+        int? ExecutionStrategyBaseTimeLimit { get; }
 
         string Code { get; }
 

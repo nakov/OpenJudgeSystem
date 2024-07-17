@@ -31,8 +31,16 @@ import {
 import { CONTEST_DESCRIPTION_PLACEHOLDER_MESSAGE, CONTEST_DURATION_VALIDATION, CONTEST_LIMIT_BETWEEN_SUBMISSIONS_VALIDATION, CONTEST_NAME_VALIDATION, CONTEST_NEW_IP_PASSWORD_VALIDATION, CONTEST_NUMBER_OF_PROBLEM_GROUPS, CONTEST_ORDER_BY_VALIDATION, CONTEST_TYPE_VALIDATION, DELETE_CONFIRMATION_MESSAGE } from '../../../../common/messages';
 import { IContestAdministration } from '../../../../common/types';
 import { CONTESTS_PATH, NEW_ADMINISTRATION_PATH } from '../../../../common/urls/administration-urls';
+import { getContestsDetailsPageUrl } from '../../../../common/urls/compose-client-urls';
+import useDisableMouseWheelOnNumberInputs from '../../../../hooks/common/use-disable-mouse-wheel-on-number-inputs';
 import { useGetCategoriesQuery } from '../../../../redux/services/admin/contestCategoriesAdminService';
-import { useCreateContestMutation, useDeleteContestMutation, useGetContestByIdQuery, useUpdateContestMutation } from '../../../../redux/services/admin/contestsAdminService';
+import {
+    useCreateContestMutation,
+    useDeleteContestMutation,
+    useGetContestByIdQuery,
+    useTransferParticipantsMutation,
+    useUpdateContestMutation,
+} from '../../../../redux/services/admin/contestsAdminService';
 import { convertToUtc, getDateAsLocal } from '../../../../utils/administration/administration-dates';
 import { getAndSetExceptionMessage, getAndSetSuccesfullMessages } from '../../../../utils/messages-utils';
 import { renderErrorMessagesAlert, renderSuccessfullAlert } from '../../../../utils/render-utils';
@@ -41,6 +49,7 @@ import ExternalLink from '../../../guidelines/buttons/ExternalLink';
 import SpinningLoader from '../../../guidelines/spinning-loader/SpinningLoader';
 import AdministrationFormButtons from '../../common/administration-form-buttons/AdministrationFormButtons';
 import DeleteButton from '../../common/delete/DeleteButton';
+import TransferParticipantsButton from '../../common/transfer-participants/TransferParticipantsButton';
 import { handleAutocompleteChange, handleDateTimePickerChange } from '../../utils/mui-utils';
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -66,6 +75,8 @@ const ContestEdit = (props:IContestEditProps) => {
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null);
     const [ isValidForm, setIsValidForm ] = useState<boolean>(!!isEditMode);
 
+    useDisableMouseWheelOnNumberInputs();
+
     const [ contest, setContest ] = useState<IContestAdministration>({
         allowedIps: '',
         allowParallelSubmissionsInTasks: false,
@@ -89,6 +100,7 @@ const ContestEdit = (props:IContestEditProps) => {
         numberOfProblemGroups: 0,
         duration: undefined,
         canBeCompeted: false,
+        officialParticipants: 0,
     });
 
     const [ contestValidations, setContestValidations ] = useState({
@@ -412,11 +424,19 @@ const ContestEdit = (props:IContestEditProps) => {
             {renderErrorMessagesAlert(errorMessages)}
             {renderSuccessfullAlert(successMessage)}
             <Typography className={formStyles.centralize} variant="h4">
-                {(contest.name && <ExternalLink to={`/contests/${contest.id}`} text={contest.name} />) || 'Contest form'}
+                {(contest.name && (
+                <ExternalLink
+                  to={getContestsDetailsPageUrl({
+                      contestId: contest.id,
+                      contestName: contest.name,
+                  })}
+                  text={contest.name}
+                />
+                )) || 'Contest form'}
             </Typography>
             <form className={`${formStyles.form}`}>
-                <Box className={`${styles.fieldBox}`}>
-                    <Box>
+                <Box className={`${formStyles.fieldBox}`}>
+                    <Box className={formStyles.fieldBoxElementLeft}>
                         <TextField
                           className={formStyles.inputRow}
                           label={ID}
@@ -492,7 +512,7 @@ const ContestEdit = (props:IContestEditProps) => {
                         />
                         )}
                     </Box>
-                    <Box>
+                    <Box className={formStyles.fieldBoxElementRight}>
                         <TextField
                           className={formStyles.inputRow}
                           type="text"
@@ -683,7 +703,14 @@ const ContestEdit = (props:IContestEditProps) => {
               disabled={!isValidForm}
             />
 
-            <Box sx={{ alignSelf: 'flex-end' }}>
+            <Box sx={{ alignSelf: 'flex-end', display: 'flex' }}>
+                <TransferParticipantsButton
+                  contestId={Number(contestId!)}
+                  contestName={contest.name}
+                  contestOfficialParticipants={contest.officialParticipants}
+                  categoryName={contestCategories?.find((category) => category.id === contest.categoryId)?.name}
+                  mutation={useTransferParticipantsMutation}
+                />
                 <DeleteButton
                   id={Number(contestId!)}
                   name={contest.name}

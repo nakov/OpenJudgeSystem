@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
 
+import { ContestParticipationType } from '../../../common/constants';
+import { createUrlFriendlyString } from '../../../common/contest-helpers';
 import { IProblemResourceType } from '../../../common/types';
 import { CONTESTS_PATH } from '../../../common/urls/administration-urls';
-import { getAllContestsUrl, getContestsResultsUrl } from '../../../common/urls/compose-client-urls';
+import { getAllContestsPageUrl, getContestsResultsPageUrl } from '../../../common/urls/compose-client-urls';
 import ContestBreadcrumbs from '../../../components/contests/contest-breadcrumbs/ContestBreadcrumbs';
 import ContestButton from '../../../components/contests/contest-button/ContestButton';
 import ErrorWithActionButtons from '../../../components/error/ErrorWithActionButtons';
@@ -21,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { getErrorMessage } from '../../../utils/http-utils';
 import { flexCenterObjectStyles } from '../../../utils/object-utils';
 import { setLayout } from '../../shared/set-layout';
+import withTitle from '../../shared/with-title';
 
 import styles from './ContestDetailsPage.module.scss';
 
@@ -57,7 +60,7 @@ const ContestDetailsPage = () => {
         <span key={`contest-sub-strategy-btn-${allowedSubmissionType.id}`}>
             <Link
               className={styles.allowedLanguageLink}
-              to={getAllContestsUrl(selectedCategory?.id, allowedSubmissionType.id)}
+              to={getAllContestsPageUrl({ categoryId: selectedCategory?.id, strategyId: allowedSubmissionType.id })}
             >
                 {allowedSubmissionType.name}
             </Link>
@@ -95,7 +98,12 @@ const ContestDetailsPage = () => {
               className={styles.adminBtn}
               type={ButtonType.secondary}
               size={ButtonSize.small}
-              onClick={() => navigate(getContestsResultsUrl(id!, 'compete', true))}
+              onClick={() => navigate(getContestsResultsPageUrl({
+                  slug: createUrlFriendlyString(name),
+                  contestId: id!,
+                  participationType: ContestParticipationType.Compete,
+                  isSimple: true,
+              }))}
             >
                 Full Results
             </Button>
@@ -109,14 +117,19 @@ const ContestDetailsPage = () => {
 
         return (
             <div className={styles.actionBtnWrapper}>
-                <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id!} />
+                <ContestButton isCompete={isCompete} isDisabled={isDisabled} id={id!} name={name ?? ''} />
                 <Link
                   className={`${isCompete
                       ? styles.greenColor
                       : styles.blueColor}`}
-                  to={getContestsResultsUrl(id!, isCompete
-                      ? 'compete'
-                      : 'practice', true)}
+                  to={getContestsResultsPageUrl({
+                      slug: createUrlFriendlyString(name),
+                      contestId: id!,
+                      participationType: isCompete
+                          ? ContestParticipationType.Compete
+                          : ContestParticipationType.Practice,
+                      isSimple: true,
+                  })}
                 >
                     <i className="fas fa-user" />
                     <div className={`${styles.underlinedBtnText}`}>
@@ -140,7 +153,7 @@ const ContestDetailsPage = () => {
             <ErrorWithActionButtons
               message={getErrorMessage(error)}
               backToText="Back to contests"
-              backToUrl="/contests"
+              backToUrl={getAllContestsPageUrl({})}
             />
         );
     }
@@ -187,4 +200,4 @@ const ContestDetailsPage = () => {
     );
 };
 
-export default setLayout(ContestDetailsPage);
+export default setLayout(withTitle(ContestDetailsPage, (params) => `Contest #${params.contestId}`));

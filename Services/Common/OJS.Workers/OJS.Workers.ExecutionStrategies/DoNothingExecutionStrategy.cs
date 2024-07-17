@@ -1,16 +1,17 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies
 {
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
-    using OJS.Workers.Common.Models;
 
     public class DoNothingExecutionStrategy<TSettings> : BaseExecutionStrategy<TSettings>
         where TSettings : DoNothingExecutionStrategySettings
     {
         public DoNothingExecutionStrategy(
-            ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, settingsProvider)
+            IOjsSubmission submission,
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, settingsProvider, logger)
         {
         }
 

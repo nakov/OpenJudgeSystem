@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import LoginForm from '../../../components/auth/LoginForm';
 import { IAuthorizationReduxState } from '../../../redux/features/authorizationSlice';
+import withTitle from '../../shared/with-title';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -25,4 +26,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default withTitle(LoginPage, 'Login');

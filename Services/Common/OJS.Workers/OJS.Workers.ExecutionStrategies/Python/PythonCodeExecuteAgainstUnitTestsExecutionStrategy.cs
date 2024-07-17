@@ -1,6 +1,7 @@
 ﻿#nullable disable
 namespace OJS.Workers.ExecutionStrategies.Python
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Text.RegularExpressions;
 
@@ -21,10 +22,11 @@ namespace OJS.Workers.ExecutionStrategies.Python
         private const string TestResultsRegexPattern = @"^([.FE]+)\s*.+(?<=\r\n|\r|\n)(OK|FAILED\s\(.+\))(?=\s*?$)";
 
         public PythonCodeExecuteAgainstUnitTestsExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, settingsProvider, logger)
         {
         }
 

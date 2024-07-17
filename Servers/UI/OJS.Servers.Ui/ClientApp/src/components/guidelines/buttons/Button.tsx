@@ -46,18 +46,20 @@ interface IButtonBaseProps<TButtonType> extends IHaveOptionalClassName, IHaveOpt
     state?: ButtonState;
     imgSrc?: string;
     altText?: string;
+    style?: object;
 }
 interface IButtonProps extends IButtonBaseProps<ButtonType> {
     onClick: React.MouseEventHandler<HTMLButtonElement>;
     isWide?: boolean;
     internalClassName?: string;
-    style?: object;
     isCompete?: boolean;
 }
 interface ILinkButtonProps extends IButtonBaseProps<LinkButtonType> {
     to: string;
     isToExternal?: boolean;
+    preventScrollReset?: boolean;
     internalClassName?: string;
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 }
 
 const classNameToButonType = {
@@ -177,15 +179,15 @@ const LinkButton = ({
     id = generateId(),
     state = ButtonState.enabled,
     isToExternal = false,
+    preventScrollReset = false,
     imgSrc = '',
     altText = '',
     internalClassName = '',
+    style,
+    onClick,
 }: ILinkButtonProps) => {
     validateOnlyChildrenOrText(text, children);
     const isDisabled = state === ButtonState.disabled;
-    const toFixed = `${to.startsWith('/')
-        ? ''
-        : '/'}${to}`;
 
     const { [type]: typeClassName } = classNameToLinkButonType;
 
@@ -212,11 +214,12 @@ const LinkButton = ({
     if (isToExternal) {
         return (
             <a
-              href={toFixed}
+              href={to}
               className={buttonClassName}
               id={id}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={onClick}
             >
                 {content}
             </a>
@@ -225,9 +228,12 @@ const LinkButton = ({
 
     return (
         <Link
-          to={toFixed}
+          to={to}
           className={buttonClassName}
           id={id}
+          preventScrollReset={preventScrollReset}
+          style={style}
+          onClick={onClick}
         >
             {content}
         </Link>

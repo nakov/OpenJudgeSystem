@@ -16,7 +16,7 @@
   font-size: variables.$f-size-12;
   justify-content: space-between;
   margin: spacings.$sp-8 0;
-  padding: spacings.$sp-16 spacings.$sp-18;
+  padding: spacings.$sp-16 spacings.$sp-4 spacings.$sp-16 spacings.$sp-18;
 
   .contestDetailsFragmentsWrapper {
     display: flex;
@@ -60,6 +60,22 @@
     cursor: pointer;
     text-decoration: underline;
   }
+
+  .competeLock {
+    color: colors.$secondary-green;
+  }
+
+  .practiceLock {
+    color: colors.$light-blue-color;
+  }
+
+  .hideLock {
+    visibility: hidden;
+  }
+
+  .lockFaint {
+    opacity: 0.5;
+  }
 }
 
 .contestBtnsWrapper {
@@ -82,5 +98,12 @@
     &:nth-child(2) {
       margin-top: spacings.$sp-12;
     }
+  }
+
+  .buttonAndLockLabelWrapper {
+    align-items: center;
+    display: flex;
+    gap: spacings.$sp-4;
+    justify-content: flex-end;
   }
 }

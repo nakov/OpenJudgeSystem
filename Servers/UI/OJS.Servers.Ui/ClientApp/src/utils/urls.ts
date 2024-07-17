@@ -1,14 +1,10 @@
 import isNil from 'lodash/isNil';
 
 import {
-    IContestResultsUrl,
-    IParticipateInContestTypeUrlParams,
     IProblemSubmissionDetailsUrlParams,
     ISubmissionDetailsUrlParams,
 } from '../common/app-url-types';
-import { ContestResultType } from '../common/constants';
 import { FilterType } from '../common/contest-types';
-import { SearchParams } from '../common/search-types';
 import {
     IAllContestsUrlParams,
     IContestDetailsUrlParams,
@@ -19,7 +15,6 @@ import {
     IGetContestByProblemUrlParams,
     IGetContestParticipationScoresForParticipantUrlParams,
     IGetContestResultsParams,
-    IGetSearchResultsParams,
     IGetSubmissionDetailsByIdUrlParams,
     IGetSubmissionResultsByProblemUrlParams,
     IGetSubmissionsUrlParams,
@@ -123,15 +118,8 @@ const getAllContestsUrl = ({ filters, sorting, page }: IAllContestsUrlParams) =>
 
 const getContestsByStrategyUrl = (id: number) => `${baseUrl}/Contests?strategy=${id}&page=1`;
 
-const getParticipateInContestUrl = ({
-    id,
-    participationType,
-}: IParticipateInContestTypeUrlParams) => `/contests/${id}/${participationType}`;
-
 const getContestDetailsUrl =
     ({ id }: IContestDetailsUrlParams) => `${baseApiUrl}/Contests/Details/${id}`;
-
-const getContestDetailsAppUrl = (id: number) => `/contests/${id}`;
 
 const getRegisterForContestUrl = ({
     id,
@@ -158,11 +146,6 @@ const getCategoriesTreeUrl =
     () => `${baseApiUrl}/ContestCategories/GetCategoriesTree`;
 
 const getContestCategoryBreadcrumbItemPath = (id: string) => `/Contests?${FilterType.Category.toString()}=${id}`;
-
-const getContestResultsUrl = ({
-    id,
-    participationType,
-}: IContestResultsUrl) => `/contests/${id}/${participationType}/results/${ContestResultType.Simple}`;
 
 const getContestResultsApiUrl = ({
     id,
@@ -227,15 +210,6 @@ const getDownloadProblemResourceUrl = ({ id }: IDownloadProblemResourceUrlParams
 // Statistics
 const getHomeStatisticsUrl = () => `${baseApiUrl}/StatisticsPreview/GetForHome`;
 
-// Search
-const getSearchResultsUrl = ({ searchTerm, page, searchCategory }: IGetSearchResultsParams) => {
-    const searchQuery = `${SearchParams.search}=${searchTerm}`;
-
-    const pageQuery = `page=${page}`;
-
-    return `${baseApiUrl}/Search/Get${searchCategory}SearchResults?${searchQuery}&${searchCategory}=true&${pageQuery}`;
-};
-
 // Username url utils for decoding/encoding usernames containing '.'
 
 const encodeAsUrlParam = (username: string) => username.replace(/\./g, '~');
@@ -245,7 +219,6 @@ export {
     getLoginSubmitUrl,
     getLogoutUrl,
     getLoginPath,
-    getSearchResultsUrl,
     getUserAuthInfoUrl,
     getPlatformRegisterUrl,
     getPlatformForgottenPasswordUrl,
@@ -254,7 +227,6 @@ export {
     getAdministrationRetestSubmission,
     getUserProfileInfoUrlByUsername,
     getProfileInfoUrl,
-    getParticipateInContestUrl,
     getContestCategoryBreadcrumbItemPath,
     getSubmissionsForProfileUrl,
     getParticipationsForProfileUrl,
@@ -268,7 +240,6 @@ export {
     getStartContestParticipationUrl,
     getContestParticipantScoresForParticipantUrl,
     getSubmissionsForProfileByContestUrl,
-    getContestResultsUrl,
     getContestResultsApiUrl,
     getCategoriesTreeUrl,
     getContestByProblemUrl,
@@ -286,7 +257,6 @@ export {
     getDownloadProblemResourceUrl,
     getHomeStatisticsUrl,
     getContestDetailsUrl,
-    getContestDetailsAppUrl,
     getAdministrationProblems,
     getAdministrationContestEditUrl,
     getAdministrationContestEditInternalUrl,

@@ -27,12 +27,17 @@
 
   .problem {
     align-items: center;
+    border-radius: 0;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     line-height: 1.2;
     padding: spacings.$sp-18;
     transition: all 0.1s ease-in-out;
+
+    .problemName {
+      text-align: left;
+    }
 
     > div {
       &:nth-child(2) {

@@ -1,34 +1,42 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Params, useParams } from 'react-router';
+import React, { FC, useEffect, useMemo } from 'react';
+import { Params, useParams, useSearchParams } from 'react-router-dom';
 
-import { IHaveChildrenPropsWithTitle } from '../../components/common/Props';
+import { Anything } from '../../common/common-types';
 
-interface IWithTitleProps {
-    Component: React.FC;
-    title: string | ((params: Params<string>) => string);
+interface IHaveChildrenPropsWithTitle {
+    children: React.ReactNode;
+    title: string | ((params: Params, searchParams: URLSearchParams) => string);
 }
 
-const Page = ({ children, title }: IHaveChildrenPropsWithTitle) => {
+const Page = ({ children, title } : IHaveChildrenPropsWithTitle) => {
     const params = useParams();
+    const [ searchParams ] = useSearchParams();
 
-    const pageTitle = typeof title === 'function'
-        ? title(params)
-        : title;
+    const pageTitle = useMemo(
+        () => typeof title === 'function'
+            ? title(params, searchParams)
+            : title,
+        [ title, params, searchParams ],
+    );
+
+    useEffect(() => {
+        document.title = `${pageTitle} - SoftUni Judge`;
+    }, [ pageTitle ]);
 
     return (
+        // eslint-disable-next-line react/jsx-no-useless-fragment
         <>
-            <Helmet>
-                <title>{`${pageTitle} - SoftUni Judge`}</title>
-            </Helmet>
             {children}
         </>
     );
 };
 
-const withTitle: React.FC<IWithTitleProps> = ({ title, Component }) => (
+const withTitle = (
+    ComponentToWrap: FC,
+    title: string | ((params: Params, searchParams: URLSearchParams) => string),
+) => (props: Anything) => (
     <Page title={title}>
-        <Component />
+        <ComponentToWrap {...props} />
     </Page>
 );
 

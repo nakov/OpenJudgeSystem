@@ -64,6 +64,8 @@
 
         public int ContestId { get; set; }
 
+        public string? ContestName { get; set; }
+
         public int ContestCategoryId { get; set; }
 
         public IEnumerable<Test> Tests { get; set; } =
@@ -89,6 +91,7 @@
                 .ForMember(s => s.IsProcessed, opt => opt.MapFrom(s => s.Processed))
                 .ForMember(d => d.Tests, opt => opt.MapFrom(s => s.Problem.Tests))
                 .ForMember(d => d.ContestId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.ContestId))
+                .ForMember(d => d.ContestName, opt => opt.MapFrom(s => s.Problem.ProblemGroup.Contest.Name))
                 .ForMember(d => d.ContestCategoryId, opt => opt.MapFrom(s => s.Problem.ProblemGroup.Contest.CategoryId))
                 .ForMember(d => d.MaxPoints, opt => opt.MapFrom(s => s.Problem.MaximumPoints))
                 .ForMember(d => d.TotalTests, opt => opt.Ignore())

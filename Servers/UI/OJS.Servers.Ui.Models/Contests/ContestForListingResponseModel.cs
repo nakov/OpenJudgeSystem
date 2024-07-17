@@ -3,6 +3,7 @@ namespace OJS.Servers.Ui.Models.Contests;
 using OJS.Services.Ui.Models.Contests;
 using OJS.Services.Infrastructure.Models.Mapping;
 using System;
+using System.Collections.Generic;
 
 public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceModel>
 {
@@ -35,4 +36,8 @@ public class ContestForListingResponseModel : IMapFrom<ContestForListingServiceM
     public int PracticeMaximumPoints { get; set; }
 
     public ContestParticipantResultResponseModel? UserParticipationResult { get; set; }
+
+    public bool RequirePasswordForCompete { get; set; }
+
+    public bool RequirePasswordForPractice { get; set; }
 }

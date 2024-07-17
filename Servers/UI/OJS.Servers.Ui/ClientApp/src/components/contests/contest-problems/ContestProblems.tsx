@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Popover } from '@mui/material';
 
 import { IProblemType } from '../../../common/types';
 import useTheme from '../../../hooks/use-theme';
 import { setSelectedContestDetailsProblem } from '../../../redux/features/contestsSlice';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { LinkButton, LinkButtonType } from '../../guidelines/buttons/Button';
 
 import styles from './ContestProblems.module.scss';
 
@@ -21,7 +22,6 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const { problems, onContestProblemChange, totalParticipantsCount, sumMyPoints = 0, sumTotalPoints } = props;
 
     const { hash } = useLocation();
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { themeColors, getColorClassName } = useTheme();
     const { selectedContestDetailsProblem } = useAppSelector((state) => state.contests);
@@ -31,6 +31,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
     const backgroundColorClassName = getColorClassName(themeColors.baseColor200);
     const modalBackgroundColorClassName = getColorClassName(themeColors.baseColor100);
     const darkBackgroundClassName = getColorClassName(themeColors.baseColor500);
+    const colorClassName = getColorClassName(themeColors.textColor);
 
     const isExcludedFromHomeworkModalOpen = Boolean(excludedFromHomeworkAnchorElement);
 
@@ -49,7 +50,6 @@ const ContestProblems = (props: IContestProblemsProps) => {
     }, []);
 
     const onProblemClick = (problem: IProblemType) => {
-        navigate(`#${problem.orderBy}`);
         onContestProblemChange();
         dispatch(setSelectedContestDetailsProblem({ selectedProblem: problem }));
     };
@@ -66,9 +66,12 @@ const ContestProblems = (props: IContestProblemsProps) => {
                         const isActive = selectedContestDetailsProblem?.id === problem.id;
                         const isLast = idx === problems.length - 1;
                         return (
-                            <div
+                            <LinkButton
+                              to={`#${problem.orderBy}`}
+                              type={LinkButtonType.plain}
+                              preventScrollReset
                               key={`contest-problem-${problem.id}`}
-                              className={`${styles.problem} ${isActive
+                              className={`${styles.problem} ${colorClassName} ${isActive
                                   ? styles.activeProblem
                                   : ''}`}
                               style={{
@@ -78,7 +81,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                               }}
                               onClick={() => onProblemClick(problem)}
                             >
-                                <div>
+                                <div className={styles.problemName}>
                                     {problem.name}
                                     {problem.isExcludedFromHomework && (
                                     <div
@@ -116,7 +119,7 @@ const ContestProblems = (props: IContestProblemsProps) => {
                                     /
                                     {problem.maximumPoints}
                                 </div>
-                            </div>
+                            </LinkButton>
                         );
                     })}
                 </div>

@@ -1,0 +1,65 @@
+@use 'src/styles/colors';
+@use 'src/styles/fonts';
+@use 'src/styles/variables';
+@use 'src/styles/spacings';
+@use 'src/styles/font-weights';
+
+.homePageHeader {
+  color: colors.$primary-blue;
+  font-size: variables.$f-size-24;
+  font-weight: font-weights.$font-weight-semi-bold;
+  margin-top: spacings.$sp-32;
+}
+
+.youTubeVideoWrapper {
+  border: 3px solid colors.$black-color;
+  border-radius: 12px;
+  height: 320px;
+  margin-top: spacings.$sp-24;
+  width: 700px;
+
+  &.darkTheme {
+    border-color: colors.$white-color;
+  }
+}
+
+.homePageContentWrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0 160px;
+
+  hr {
+    margin: spacings.$sp-64 0;
+    width: 100%;
+  }
+}
+
+.gridWrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.homeStatistics {
+  display: grid;
+  gap: 80px;
+  grid-template-columns: repeat(3, 33%);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.homePageStatisticWrapper {
+  align-items: center;
+  display: flex;
+
+  .homeStatisticCount {
+    font-size: variables.$f-size-24;
+    font-weight: font-weights.$font-weight-bold;
+    margin-top: spacings.$sp-12;
+  }
+}
+
+.homePageStatisticTextWrapper {
+  font-size: variables.$f-size-16;
+  font-weight: font-weights.$font-weight-light;
+  margin-left: spacings.$sp-32;
+}

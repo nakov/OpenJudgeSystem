@@ -3,8 +3,7 @@
     using System;
     using System.Threading.Tasks;
 
-    using log4net;
-
+    using Microsoft.Extensions.Logging;
     using OJS.Workers.Common;
     using OJS.Workers.Common.Exceptions;
     using OJS.Workers.Common.Helpers;
@@ -14,16 +13,19 @@
     public abstract class BaseExecutionStrategy<TSettings> : IExecutionStrategy
         where TSettings : BaseExecutionStrategySettings
     {
-        private readonly ILog logger = LogManager.GetLogger(typeof(BaseExecutionStrategy<>));
+        private readonly ILogger<BaseExecutionStrategy<TSettings>> logger;
 
         protected BaseExecutionStrategy(
-            ExecutionStrategyType type,
-            IExecutionStrategySettingsProvider settingsProvider)
+            IOjsSubmission submission,
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
         {
-            this.Type = type;
-            this.Settings = settingsProvider.GetSettings<TSettings>(this.Type)
+            this.logger = logger;
+
+            this.Type = submission.ExecutionStrategyType;
+            this.Settings = settingsProvider.GetSettings<TSettings>(submission)
                 ?? throw new ArgumentException(
-                    $"Cannot get settings of type {typeof(TSettings).Name} for execution strategy {this.Type}. ",
+                    $"Cannot get settings of type {typeof(TSettings).Name} for execution strategy {this.Type}.",
                     nameof(settingsProvider));
         }
 
@@ -33,10 +35,13 @@
 
         protected string WorkingDirectory { get; set; } = string.Empty;
 
-        public async Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(IExecutionContext<TInput> executionContext)
+        public async Task<IExecutionResult<TResult>> SafeExecute<TInput, TResult>(
+            IExecutionContext<TInput> executionContext,
+            int submissionId)
             where TResult : ISingleCodeRunResult, new()
         {
             this.WorkingDirectory = DirectoryHelpers.CreateTempDirectoryForExecutionStrategy();
+            this.logger.LogInformation($"Execution strategy: '{this.Type}' created a working directory: '{this.WorkingDirectory}' for submission #{submissionId}");
 
             try
             {
@@ -47,7 +52,7 @@
             finally
             {
                 // Use another thread for deletion of the working directory,
-                // because we don't want the execution flow to wait for the clean up
+                // because we don't want the execution flow to wait for the cleanup
                 await Task.Run(() =>
                 {
                     try
@@ -57,11 +62,11 @@
                     catch (Exception ex)
                     {
                         // Sometimes deletion of the working directory cannot be done,
-                        // because the process did not released it yet, which is nondeterministic.
+                        // because the process has not released it yet, which is nondeterministic.
                         // Problems in the deletion of leftover files should not break the execution flow,
                         // because the execution is already completed and results are generated.
                         // Only log the exception and continue.
-                        this.logger.Error("executionStrategy.SafeDeleteDirectory has thrown an exception:", ex);
+                        this.logger.LogError($"executionStrategy.SafeDeleteDirectory has thrown an exception: {ex}");
                     }
                 });
             }

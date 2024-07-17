@@ -57,6 +57,8 @@
 
         public int ContestId { get; set; }
 
+        public string? ContestName { get; set; }
+
         public int ContestCategoryId { get; set; }
     }
 }

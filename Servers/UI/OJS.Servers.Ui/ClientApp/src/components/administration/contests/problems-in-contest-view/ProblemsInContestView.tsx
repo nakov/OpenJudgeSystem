@@ -23,12 +23,13 @@ import ProblemRetest from '../../problems/retest/ProblemRetest';
 
 interface IProblemsInContestViewProps {
     contestId: number;
+    contestName?: string;
     contestType: ContestVariation | undefined;
     canContestBeCompeted: boolean;
 }
 
 const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
-    const { contestId, contestType, canContestBeCompeted } = props;
+    const { contestId, contestName, contestType, canContestBeCompeted } = props;
 
     const [ openEditModal, setOpenEditModal ] = useState<boolean>(false);
     const [ problemId, setProblemId ] = useState<number>(-1);
@@ -186,7 +187,7 @@ const ProblemsInContestView = (props:IProblemsInContestViewProps) => {
                 </IconButton>
             </Tooltip>
 
-            <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} />
+            <SubmitSolution contestId={contestId} canBeCompeted={canContestBeCompeted} contestName={contestName} />
         </>
     );
 

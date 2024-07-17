@@ -1,5 +1,6 @@
 ﻿namespace OJS.Workers.ExecutionStrategies.CPlusPlus
 {
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -20,11 +21,12 @@
         private const string FileNameAndExtensionPattern = @"//((\w+)\.(cpp|h))//";
 
         public CPlusPlusZipFileExecutionStrategy(
-            ExecutionStrategyType type,
+            IOjsSubmission submission,
             IProcessExecutorFactory processExecutorFactory,
             ICompilerFactory compilerFactory,
-            IExecutionStrategySettingsProvider settingsProvider)
-            : base(type, processExecutorFactory, compilerFactory, settingsProvider)
+            IExecutionStrategySettingsProvider settingsProvider,
+            ILogger<BaseExecutionStrategy<TSettings>> logger)
+            : base(submission, processExecutorFactory, compilerFactory, settingsProvider, logger)
         {
         }
 

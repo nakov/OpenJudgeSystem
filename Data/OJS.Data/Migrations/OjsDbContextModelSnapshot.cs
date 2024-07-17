@@ -928,6 +928,12 @@ namespace OJS.Data.Migrations
                     b.Property<string>("AllowedFileExtensions")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("BaseMemoryUsedInBytes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BaseTimeUsedInMilliseconds")
+                        .HasColumnType("int");
+
                     b.Property<int>("CompilerType")
                         .HasColumnType("int");
 
@@ -939,6 +945,12 @@ namespace OJS.Data.Migrations
 
                     b.Property<bool>("IsSelectedByDefault")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("MaxAllowedMemoryLimitInBytes")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxAllowedTimeLimitInMilliseconds")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

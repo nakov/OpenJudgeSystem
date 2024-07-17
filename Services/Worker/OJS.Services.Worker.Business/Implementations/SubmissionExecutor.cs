@@ -29,7 +29,7 @@
         {
             try
             {
-                return this.executionStrategyFactory.CreateExecutionStrategy(submission.ExecutionStrategyType);
+                return this.executionStrategyFactory.CreateExecutionStrategy(submission);
             }
             catch (Exception ex)
             {
@@ -71,7 +71,7 @@
         {
             try
             {
-                return executionStrategy.SafeExecute<TInput, TResult>(executionContext);
+                return executionStrategy.SafeExecute<TInput, TResult>(executionContext, (int)submission.Id);
             }
             catch (Exception ex)
             {

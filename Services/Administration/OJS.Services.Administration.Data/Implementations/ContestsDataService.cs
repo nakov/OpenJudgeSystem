@@ -52,9 +52,19 @@ namespace OJS.Services.Administration.Data.Implementations
                     .ThenInclude(pg => pg.Problems)
                 .FirstOrDefaultAsync();
 
-        public Task<Contest?> GetByIdWithParticipants(int id)
+        public Task<Contest?> GetByIdWithProblemsAndParticipants(int id)
+            => this.GetByIdQuery(id)
+                .Include(c => c.ProblemGroups)
+                    .ThenInclude(pg => pg.Problems)
+                .Include(c => c.Participants)
+                .FirstOrDefaultAsync();
+
+        public Task<Contest?> GetByIdWithParticipantsScoresAndSubmissions(int id)
             => this.GetByIdQuery(id)
                 .Include(c => c.Participants)
+                    .ThenInclude(p => p.Scores)
+                .Include(p => p.Participants)
+                    .ThenInclude(p => p.Submissions)
                 .FirstOrDefaultAsync();
 
         public IQueryable<Contest> GetAllActive()

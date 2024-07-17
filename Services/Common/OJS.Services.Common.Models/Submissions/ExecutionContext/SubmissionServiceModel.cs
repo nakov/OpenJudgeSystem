@@ -2,7 +2,6 @@
 {
     using AutoMapper;
     using OJS.Data.Models.Submissions;
-    using OJS.Services.Common.Models.Mappings;
     using OJS.Services.Common.Models.Submissions.ExecutionContext.Mapping;
     using OJS.Services.Common.Models.Submissions.ExecutionDetails;
     using OJS.Workers.Common;
@@ -26,7 +25,11 @@
 
         public int TimeLimit { get; set; }
 
+        public int? ExecutionStrategyBaseTimeLimit { get; set; }
+
         public int MemoryLimit { get; set; }
+
+        public int? ExecutionStrategyBaseMemoryLimit { get; set; }
 
         public DateTime? StartedExecutionOn { get; set; }
 
@@ -40,6 +43,9 @@
         {
             configuration
                 .CreateMap(typeof(SubmissionServiceModel), typeof(OjsSubmission<>))
+                .ForMember(
+                    nameof(OjsSubmission<object>.Id),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.Id)))
                 .ForMember(
                     nameof(OjsSubmission<object>.Input),
                     opt => opt.MapFrom(typeof(SubmissionInputValueResolver)))
@@ -62,8 +68,14 @@
                     nameof(OjsSubmission<object>.MemoryLimit),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.MemoryLimit)))
                 .ForMember(
+                    nameof(OjsSubmission<object>.ExecutionStrategyBaseMemoryLimit),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyBaseMemoryLimit)))
+                .ForMember(
                     nameof(OjsSubmission<object>.TimeLimit),
                     opt => opt.MapFrom(nameof(SubmissionServiceModel.TimeLimit)))
+                .ForMember(
+                    nameof(OjsSubmission<object>.ExecutionStrategyBaseTimeLimit),
+                    opt => opt.MapFrom(nameof(SubmissionServiceModel.ExecutionStrategyBaseTimeLimit)))
                 .ForAllOtherMembers(opt => opt.Ignore());
 
             configuration.CreateMap<Submission, SubmissionServiceModel>()
@@ -97,6 +109,18 @@
                             .Where(x => x.ProblemId == s.ProblemId).Select(x => x.MemoryLimit).First()
                         : s.Problem.MemoryLimit))
                 .ForMember(
+                    d => d.ExecutionStrategyBaseTimeLimit,
+                    opt => opt.MapFrom(s =>
+                        s.SubmissionType == null
+                            ? null
+                            : s.SubmissionType.BaseTimeUsedInMilliseconds))
+                .ForMember(
+                    d => d.ExecutionStrategyBaseMemoryLimit,
+                    opt => opt.MapFrom(s =>
+                        s.SubmissionType == null
+                            ? null
+                            : s.SubmissionType.BaseMemoryUsedInBytes))
+                .ForMember(
                     d => d.TestsExecutionDetails,
                     opt => opt.MapFrom(s => s.Problem))
                 .ForMember(
@@ -110,7 +134,21 @@
                     opt => opt.Ignore())
                 .ForMember(
                     d => d.ExecutionOptions,
-                    opt => opt.Ignore());
+                    opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    if (src.SubmissionType is { MaxAllowedTimeLimitInMilliseconds: not null } &&
+                        dest.TimeLimit > src.SubmissionType.MaxAllowedTimeLimitInMilliseconds)
+                    {
+                        dest.TimeLimit = src.SubmissionType.MaxAllowedTimeLimitInMilliseconds.Value;
+                    }
+
+                    if (src.SubmissionType is { MaxAllowedMemoryLimitInBytes: not null } &&
+                        dest.MemoryLimit > src.SubmissionType.MaxAllowedMemoryLimitInBytes)
+                    {
+                        dest.MemoryLimit = src.SubmissionType.MaxAllowedMemoryLimitInBytes.Value;
+                    }
+                });
         }
     }
 }
