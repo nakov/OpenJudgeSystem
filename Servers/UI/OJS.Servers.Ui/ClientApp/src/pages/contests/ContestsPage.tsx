@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { SortType } from '../../common/contest-types';
 import { IContestsSortAndFilterOptions, IIndexContestsType } from '../../common/types';
@@ -13,7 +14,7 @@ import useTheme from '../../hooks/use-theme';
 import {
     clearContestCategoryBreadcrumbItems,
     setContests,
-    setContestsCacheIsReset,
+    setContestsCacheIsReset, setContestStrategy,
 } from '../../redux/features/contestsSlice';
 import { useGetAllContestsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -25,6 +26,7 @@ import styles from './ContestsPage.module.scss';
 
 const ContestsPage = () => {
     const dispatch = useAppDispatch();
+    const { categoryId } = useParams();
     const { breadcrumbItems } = useAppSelector((state) => state.contests);
     const { themeColors, getColorClassName } = useTheme();
     const {
@@ -39,10 +41,15 @@ const ContestsPage = () => {
     const textColorClassName = getColorClassName(themeColors.textColor);
 
     useEffect(() => {
-        if (!searchParams.get('category') && breadcrumbItems.length > 0) {
+        if (!categoryId && breadcrumbItems.length > 0) {
             dispatch(clearContestCategoryBreadcrumbItems());
         }
     });
+
+    useEffect(() => {
+        // Reset strategy when category is changed or page reloaded
+        dispatch(setContestStrategy(null));
+    }, [ dispatch ]);
 
     const selectedPage = useMemo(() => {
         if (!searchParams.get('page')) {
@@ -158,10 +165,7 @@ const ContestsPage = () => {
 export default withTitle(
     ContestsPage,
     (params, searchParams) => {
-        const pageTitle = `Contests${params.slug !== 'all'
-            ? ` in ${params.slug}`
-            : ''}`;
-
+        const pageTitle = `Contests in ${params.slug || 'all categories'}`;
         const currentPage = parseInt(searchParams.get('page') || '', 10);
         const pageSuffix = currentPage >= 1
             ? ` - page ${currentPage}`

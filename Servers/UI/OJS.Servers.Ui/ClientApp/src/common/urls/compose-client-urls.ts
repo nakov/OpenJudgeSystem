@@ -24,12 +24,16 @@ const getAllContestsPageUrl = ({
     strategyId,
     categoryId,
 } : IAllContestsPageUrlParams) => {
-    const returnUrl = `/${CONTESTS_PATH}/${categoryName
-        ? `${createUrlFriendlyString(categoryName)}`
-        : 'all'}`;
-    const prefixes = [ `${categoryId
-        ? `category=${categoryId}`
-        : ''}`, `${strategyId
+    const slug = categoryName
+        ? `/${createUrlFriendlyString(categoryName)}`
+        : '';
+
+    const categoryPath = categoryId
+        ? `/by-category${slug}/${categoryId}`
+        : '';
+
+    const returnUrl = `/${CONTESTS_PATH}${categoryPath}`;
+    const prefixes = [ `${strategyId
         ? `strategy=${strategyId}`
         : ''}` ];
     const composedString = prefixes.filter((prefix) => prefix).join('&');

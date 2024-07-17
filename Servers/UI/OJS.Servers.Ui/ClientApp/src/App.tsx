@@ -3,10 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import ClientPortal from './components/portals/client/ClientPortal';
-import ContestEditPage from './pages/administration/ContestEditPage';
-import ContestProblemsPage from './pages/administration/ContestProblemsPage';
 import SubmissionRetestPage from './pages/administration/SubmissionRetestPage';
-import TestEditPage from './pages/administration/TestEditPage';
 import LoginPage from './pages/auth/login/LoginPage';
 import LogoutPage from './pages/auth/logout/LogoutPage';
 import RegisterPage from './pages/auth/register/RegisterPage';
@@ -40,73 +37,87 @@ const App = () => {
                             element: <HomeInfoPage />,
                         },
                         {
-                            path: '/contests/:slug',
+                            path: 'contests',
+                            element: <ContestsPage />,
+                        },
+                        {
+                            path: 'contests/by-category/:slug/:categoryId',
+                            element: <ContestsPage />,
+                        },
+                        {
+                            path: 'contests/by-category/:categoryId', // without slug (have to be last)
                             element: <ContestsPage />,
                         },
                     ],
                 },
                 {
-                    path: '/login',
+                    path: 'login',
                     element: <LoginPage />,
                 },
                 {
-                    path: '/register',
+                    path: 'register',
                     element: <RegisterPage />,
                 },
                 {
-                    path: '/logout',
+                    path: 'logout',
                     element: <LogoutPage />,
                 },
                 {
-                    path: '/search',
+                    path: 'search',
                     element: <SearchPage />,
                 },
                 {
-                    path: '/submissions',
+                    path: 'submissions',
                     element: <SubmissionsPage />,
                 },
                 // Profile routes
                 {
-                    path: '/profile/:username?',
+                    path: 'profile/:username?',
                     element: <ProfilePage />,
                 },
                 // Submissions routes,
                 {
-                    path: '/submissions/:submissionId/details',
+                    path: 'submissions/:submissionId/details',
                     element: <SubmissionDetailsPage />,
                 },
                 {
-                    path: '/submissions/retest/:submissionId',
+                    path: 'submissions/retest/:submissionId',
                     element: <SubmissionRetestPage />,
-                },
-                {
-                    path: '/tests/edit/:testId',
-                    element: <TestEditPage />,
                 },
                 // Contest Routes
                 {
-                    path: '/contests/:slug/:contestId',
+                    path: 'contests/:slug/:contestId',
                     element: <ContestDetailsPage />,
                 },
                 {
-                    path: '/contests/:slug/:contestId/:participationType',
+                    path: 'contests/:slug/:contestId/:participationType',
                     element: <ContestSolutionSubmitPage />,
                 },
                 {
-                    path: '/contests/:slug/:contestId/:participationType/register',
+                    path: 'contests/:slug/:contestId/:participationType/register',
                     element: <ContestRegister />,
                 },
                 {
-                    path: '/contests/:slug/:contestId/:participationType/results/:resultType',
+                    path: 'contests/:slug/:contestId/:participationType/results/:resultType',
                     element: <ContestResultsPage />,
                 },
+                // Contest Routes without slug (have to be last)
                 {
-                    path: '/contests/problems/:contestId',
-                    element: <ContestProblemsPage />,
+                    path: 'contests/:contestId',
+                    element: <ContestDetailsPage />,
                 },
                 {
-                    path: '/contests/edit/:contestId',
-                    element: <ContestEditPage />,
+                    path: 'contests/:contestId/:participationType',
+                    element: <ContestSolutionSubmitPage />,
+                    errorElement: <NotFoundPage />,
+                },
+                {
+                    path: 'contests/:contestId/:participationType/register',
+                    element: <ContestRegister />,
+                },
+                {
+                    path: 'contests/:contestId/:participationType/results/:resultType',
+                    element: <ContestResultsPage />,
                 },
                 // Catch-All Route
                 {
