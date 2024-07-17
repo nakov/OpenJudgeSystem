@@ -20,11 +20,13 @@ public interface ISubmissionsForProcessingCommonDataService : IDataService<Submi
 
     Task<SubmissionForProcessing> AddOrUpdate(int submissionId, string serializedExecutionDetails);
 
+    Task AddOrUpdateMany(ICollection<int> submissionIds);
+
     Task RemoveBySubmission(int submissionId);
 
-    Task MarkProcessing(int submissionId);
+    void MarkProcessing(SubmissionForProcessing submissionForProcessing);
 
-    Task MarkMultipleForProcessing(ICollection<int> submissionsIds);
+    Task MarkMultipleForProcessing(ICollection<int> submissionIds);
 
     void MarkProcessed(SubmissionForProcessing submissionForProcessing, SerializedSubmissionExecutionResultServiceModel submissionExecutionResult);
 }

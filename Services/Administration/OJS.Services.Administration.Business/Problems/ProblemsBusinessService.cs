@@ -3,9 +3,9 @@ namespace OJS.Services.Administration.Business.Problems
     using FluentExtensions.Extensions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common;
     using OJS.Common.Enumerations;
     using OJS.Common.Helpers;
+    using OJS.Data;
     using OJS.Data.Models;
     using OJS.Data.Models.Problems;
     using OJS.Services.Administration.Business.Contests;
@@ -38,12 +38,12 @@ namespace OJS.Services.Administration.Business.Problems
         private readonly ISubmissionsDataService submissionsData;
         private readonly ISubmissionsForProcessingCommonDataService submissionsForProcessingData;
         private readonly ITestRunsDataService testRunsData;
-        private readonly ISubmissionTypesDataService submissionTypesData;
         private readonly IProblemGroupsBusinessService problemGroupsBusiness;
         private readonly IContestsBusinessService contestsBusiness;
         private readonly ISubmissionsCommonBusinessService submissionsCommonBusinessService;
         private readonly IProblemGroupsDataService problemGroupsDataService;
         private readonly IZippedTestsParserService zippedTestsParser;
+        private readonly ITransactionsProvider transactionsProvider;
 
         public ProblemsBusinessService(
             IContestsDataService contestsData,
@@ -53,12 +53,12 @@ namespace OJS.Services.Administration.Business.Problems
             ISubmissionsDataService submissionsData,
             ISubmissionsForProcessingCommonDataService submissionsForProcessingData,
             ITestRunsDataService testRunsData,
-            ISubmissionTypesDataService submissionTypesData,
             IProblemGroupsBusinessService problemGroupsBusiness,
             IContestsBusinessService contestsBusiness,
             ISubmissionsCommonBusinessService submissionsCommonBusinessService,
             IProblemGroupsDataService problemGroupsDataService,
-            IZippedTestsParserService zippedTestsParser)
+            IZippedTestsParserService zippedTestsParser,
+            ITransactionsProvider transactionsProvider)
         {
             this.contestsData = contestsData;
             this.participantScoresData = participantScoresData;
@@ -67,12 +67,12 @@ namespace OJS.Services.Administration.Business.Problems
             this.submissionsData = submissionsData;
             this.submissionsForProcessingData = submissionsForProcessingData;
             this.testRunsData = testRunsData;
-            this.submissionTypesData = submissionTypesData;
             this.problemGroupsBusiness = problemGroupsBusiness;
             this.contestsBusiness = contestsBusiness;
             this.submissionsCommonBusinessService = submissionsCommonBusinessService;
             this.problemGroupsDataService = problemGroupsDataService;
             this.zippedTestsParser = zippedTestsParser;
+            this.transactionsProvider = transactionsProvider;
         }
 
         public override async Task<ProblemAdministrationModel> Create(ProblemAdministrationModel model)
@@ -238,13 +238,11 @@ namespace OJS.Services.Administration.Business.Problems
 
         public async Task RetestById(int id)
         {
-            var submissions = await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id);
+            var submissions = (await this.submissionsData.GetAllNonDeletedByProblemId<SubmissionServiceModel>(id)).ToList();
 
             var submissionIds = submissions.Select(s => s.Id).ToList();
 
-            using (var scope = TransactionsHelper.CreateTransactionScope(
-                       IsolationLevel.RepeatableRead,
-                       TransactionScopeAsyncFlowOption.Enabled))
+            await this.transactionsProvider.ExecuteInTransaction(async () =>
             {
                 await this.testRunsData.DeleteInBatchesBySubmissionIds(submissionIds);
 
@@ -252,8 +250,8 @@ namespace OJS.Services.Administration.Business.Problems
 
                 await this.submissionsData.SetAllToUnprocessedByProblem(id);
 
-                scope.Complete();
-            }
+                await this.submissionsForProcessingData.AddOrUpdateMany(submissionIds);
+            });
 
             await this.submissionsCommonBusinessService.PublishSubmissionsForProcessing(submissions);
         }
