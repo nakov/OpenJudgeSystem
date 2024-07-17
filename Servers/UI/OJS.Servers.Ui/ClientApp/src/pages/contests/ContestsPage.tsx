@@ -14,7 +14,7 @@ import useTheme from '../../hooks/use-theme';
 import {
     clearContestCategoryBreadcrumbItems,
     setContests,
-    setContestsCacheIsReset, setContestStrategy,
+    setContestsCacheIsReset,
 } from '../../redux/features/contestsSlice';
 import { useGetAllContestsQuery } from '../../redux/services/contestsService';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -45,11 +45,6 @@ const ContestsPage = () => {
             dispatch(clearContestCategoryBreadcrumbItems());
         }
     });
-
-    useEffect(() => {
-        // Reset strategy when category is changed or page reloaded
-        dispatch(setContestStrategy(null));
-    }, [ dispatch ]);
 
     const selectedPage = useMemo(() => {
         if (!searchParams.get('page')) {
