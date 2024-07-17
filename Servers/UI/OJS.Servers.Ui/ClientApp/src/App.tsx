@@ -109,7 +109,6 @@ const App = () => {
                 {
                     path: 'contests/:contestId/:participationType',
                     element: <ContestSolutionSubmitPage />,
-                    errorElement: <NotFoundPage />,
                 },
                 {
                     path: 'contests/:contestId/:participationType/register',
