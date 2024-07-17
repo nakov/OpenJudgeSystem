@@ -1,11 +1,9 @@
 namespace OJS.Services.Ui.Business.Implementations
 {
     using Microsoft.EntityFrameworkCore;
-    using OJS.Common.Enumerations;
     using OJS.Data.Models;
     using OJS.Data.Models.Contests;
     using OJS.Data.Models.Users;
-    using OJS.Services.Common.Models;
     using OJS.Services.Common.Models.Users;
     using OJS.Services.Infrastructure;
     using OJS.Services.Infrastructure.BackgroundJobs;
@@ -15,6 +13,7 @@ namespace OJS.Services.Ui.Business.Implementations
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using static OJS.Common.GlobalConstants;
     using static OJS.Common.GlobalConstants.Urls;
 
     public class ExamGroupsBusinessService : IExamGroupsBusinessService
@@ -54,7 +53,7 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 this.backgroundJobs.AddFireAndForgetJob<IExamGroupsBusinessService>(
                     x => x.AddExternalUsersByIdAndUserIds(examGroup.Id, externalUserIds),
-                    ApplicationName.Ui.ToString().ToLower());
+                    BackgroundJobs.UiQueueName);
             }
         }
 
@@ -76,7 +75,7 @@ namespace OJS.Services.Ui.Business.Implementations
             {
                 this.backgroundJobs.AddFireAndForgetJob<IExamGroupsBusinessService>(
                     x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames),
-                    ApplicationName.Ui.ToString().ToLower());
+                    BackgroundJobs.UiQueueName);
             }
         }
 

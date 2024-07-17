@@ -4,11 +4,11 @@ using FluentExtensions.Extensions;
 using Hangfire;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OJS.Common.Enumerations;
 using OJS.Services.Infrastructure.BackgroundJobs;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using static OJS.Common.GlobalConstants.BackgroundJobs;
 
 /// <summary>
 /// Service that runs in the background on each app startup and registers or updates all hangfire background jobs.
@@ -20,7 +20,6 @@ public class BackgroundJobsHostedService : IHostedService
     private readonly string deleteProcessedSubmissionsCronExpression = Cron.Daily(2);
     private readonly string updatingParticipantTotalScoreSnapshotCronExpression = Cron.Daily(4);
     private readonly string removingMultipleParticipantScoresForProblemCronExpression = Cron.Daily(3);
-    private readonly string administrationQueueName = ApplicationName.Administration.ToString();
 
     private readonly IHangfireBackgroundJobsService hangfireBackgroundJobs;
     private readonly ILogger<BackgroundJobsHostedService> logger;
@@ -62,7 +61,7 @@ public class BackgroundJobsHostedService : IHostedService
                 nameof(IRecurringBackgroundJobsBusinessService.EnqueuePendingSubmissions),
                 m => m.EnqueuePendingSubmissions(),
                 EnqueuePendingSubmissionsCronExpression,
-                this.administrationQueueName);
+                AdministrationQueueName);
 
         this.logger.LogInformation("Job for enqueueing pending submissions is added or updated");
 
@@ -71,7 +70,7 @@ public class BackgroundJobsHostedService : IHostedService
                 nameof(IRecurringBackgroundJobsBusinessService.DeleteProcessedSubmissions),
                 m => m.DeleteProcessedSubmissions(),
                 this.deleteProcessedSubmissionsCronExpression,
-                this.administrationQueueName);
+                AdministrationQueueName);
 
         this.logger.LogInformation("Job for deleting processed submissions is added or updated");
 
@@ -80,7 +79,7 @@ public class BackgroundJobsHostedService : IHostedService
                 nameof(IRecurringBackgroundJobsBusinessService.UpdateTotalScoreSnapshotOfParticipants),
                 m => m.UpdateTotalScoreSnapshotOfParticipants(),
                 this.updatingParticipantTotalScoreSnapshotCronExpression,
-                this.administrationQueueName);
+                AdministrationQueueName);
 
         this.logger.LogInformation("Job for updating total score snapshot of participants is added or updated");
 
@@ -89,7 +88,7 @@ public class BackgroundJobsHostedService : IHostedService
                 nameof(IRecurringBackgroundJobsBusinessService.RemoveParticipantMultipleScores),
                 m => m.RemoveParticipantMultipleScores(),
                 this.removingMultipleParticipantScoresForProblemCronExpression,
-                this.administrationQueueName);
+                AdministrationQueueName);
 
         this.logger.LogInformation("Job for removing participant multiple scores is added or updated");
     }

@@ -1,7 +1,6 @@
 ﻿namespace OJS.Services.Administration.Business.ExamGroups;
 
 using Microsoft.EntityFrameworkCore;
-using OJS.Common.Enumerations;
 using OJS.Data.Models;
 using OJS.Data.Models.Contests;
 using OJS.Data.Models.Users;
@@ -9,7 +8,6 @@ using OJS.Data.Validation;
 using OJS.Services.Administration.Data;
 using OJS.Services.Administration.Models.ExamGroups;
 using OJS.Services.Common.Data;
-using OJS.Services.Common.Models;
 using OJS.Services.Common.Models.Users;
 using OJS.Services.Infrastructure;
 using OJS.Services.Infrastructure.BackgroundJobs;
@@ -21,7 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GlobalConstants = OJS.Common.GlobalConstants;
+using static OJS.Common.GlobalConstants;
 
 public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup, int, ExamGroupAdministrationModel>,
     IExamGroupsBusinessService
@@ -122,7 +120,7 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
         {
             this.backgroundJobsService.AddFireAndForgetJob<IExamGroupsBusinessService>(
                 x => x.AddExternalUsersByIdAndUsernames(examGroup.Id, externalUsernames),
-                ApplicationName.Administration.ToString().ToLower());
+                BackgroundJobs.AdministrationQueueName);
         }
 
         return model;
@@ -204,13 +202,13 @@ public class ExamGroupBusinessService : AdministrationOperationService<ExamGroup
         {
             response = await this.httpClientService.GetAsync<ExternalUserInfoModel>(
                 new { userId },
-                GlobalConstants.Urls.GetUserInfoByIdPath);
+                Urls.GetUserInfoByIdPath);
         }
         else if (username != null)
         {
             response = await this.httpClientService.GetAsync<ExternalUserInfoModel>(
                 new { username },
-                string.Format(GlobalConstants.Urls.GetUserInfoByUsernamePath));
+                string.Format(Urls.GetUserInfoByUsernamePath));
         }
         else
         {

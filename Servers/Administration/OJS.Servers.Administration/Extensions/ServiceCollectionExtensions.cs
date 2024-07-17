@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OJS.Common.Enumerations;
 using OJS.Common.Exceptions;
 using OJS.Data;
 using OJS.Data.Models.Users;
@@ -16,14 +15,15 @@ using OJS.Services.Administration.Data.Implementations;
 using OJS.Services.Common.Data;
 using OJS.Services.Common.Validation;
 using OJS.Services.Infrastructure.Configurations;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using static OJS.Common.GlobalConstants.BackgroundJobs;
 using ApplicationConfig = OJS.Services.Administration.Models.ApplicationConfig;
-using System.Collections.Generic;
 
 internal static class ServiceCollectionExtensions
 {
-    private const ApplicationName AppName = ApplicationName.Administration;
+    private const string AppName = "Administration";
 
     public static void ConfigureServices(
         this IServiceCollection services,
@@ -35,7 +35,7 @@ internal static class ServiceCollectionExtensions
             .AddTransient(typeof(IDataService<>), typeof(AdministrationDataService<>))
             .AddTransient<AdministrationExceptionMiddleware>()
             .AddHttpContextServices()
-            .AddHangfireServer(configuration, AppName)
+            .AddHangfireServer(configuration, AppName, new[] { AdministrationQueueName })
             .AddMessageQueue<Program>(configuration)
             .ConfigureGlobalDateFormat()
             .ConfigureCorsPolicy(configuration)
