@@ -6,7 +6,6 @@ import isNil from 'lodash/isNil';
 
 import { ContestParticipationType } from '../../../common/constants';
 import {
-    createUrlFriendlyString,
     getCompeteResultsAreVisible,
     getPracticeResultsAreVisible,
 } from '../../../common/contest-helpers';
@@ -119,7 +118,7 @@ const ContestCard = (props: IContestCardProps) => {
                       ? styles.greenColor
                       : ''}`}
                   to={getContestsResultsPageUrl({
-                      slug: createUrlFriendlyString(name),
+                      contestName: name,
                       contestId: id!,
                       participationType: participationType === ContestParticipationType.Compete
                           ? ContestParticipationType.Compete
