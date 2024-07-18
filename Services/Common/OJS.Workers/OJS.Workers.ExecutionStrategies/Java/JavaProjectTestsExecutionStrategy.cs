@@ -445,6 +445,16 @@ public class _$TestRunner {{
             var output = new StringReader(receivedOutput);
             var testResultRegex = new Regex(this.testResultRegexPattern);
 
+            var duplicateTest = this.TestNames
+                .GroupBy(t => t)
+                .Select(g => new { TestName = g.Key, Count = g.Count() })
+                .FirstOrDefault(g => g.Count > 1);
+
+            if (duplicateTest is not null)
+            {
+                throw new InvalidOperationException($"There are multiple tests ({duplicateTest.Count}) with the same name: {duplicateTest.TestName}");
+            }
+
             foreach (var testName in this.TestNames)
             {
                 var line = ReadAndValidateLine(output);
